@@ -39,6 +39,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -876,9 +877,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (index != -1) {
             SparkTab tab = getTabAt(index);
             Font font = tab.getTitleLabel().getFont();
-            tab.getTitleLabel().setForeground(Color.red);
+
+            final JLabel titleLabel = tab.getTitleLabel();
             Font newFont = font.deriveFont(Font.BOLD);
-            tab.getTitleLabel().setFont(newFont);
+            titleLabel.setFont(newFont);
+            titleLabel.setForeground(Color.red);
         }
     }
 

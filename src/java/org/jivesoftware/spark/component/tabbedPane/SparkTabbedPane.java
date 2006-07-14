@@ -210,7 +210,10 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         }
         */
 
-        setSelectedTab(tab);
+        if (getSelectedIndex() == -1) {
+            setSelectedTab(tab);
+        }
+
 
         fireTabAdded(tab, component, getIndex(tab));
         return tab;

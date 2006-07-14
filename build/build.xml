@@ -30,6 +30,7 @@
     <property name="plugins" location="${target.build}/plugins"/>
     <property name="bin" location="${target.build}/bin"/>
     <property name="resources.dir" location="../src/resources"/>
+    <property name="commercial.plugin.dir" location="../src/commercial"/>
 
     <!-- Installer Ant Script -->
 
@@ -129,6 +130,11 @@
         <copy todir="${target.resources}/sounds">
             <fileset dir="${resources.dir}/sounds">
                 <include name="*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${plugins}">
+            <fileset dir="${commercial.plugin.dir}">
+                <include name="*.jar"/>
             </fileset>
         </copy>
 
