@@ -1,0 +1,376 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.spark.ui.conferences;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.PrivateDataManager;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.component.JiveTreeNode;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.Tree;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ContactGroup;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.ui.status.StatusBar;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultTreeModel;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
+ * you can remove from the plugins.xml file located in the classpath of Communicator.
+ */
+public class Conferences {
+    private static BookmarkedConferences bookedMarkedConferences;
+
+    private boolean mucSupported;
+
+    public void initialize() {
+        ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
+
+        if (mucSupported) {
+            // Load the conference data from Private Data
+            loadBookmarks();
+
+            // Add an invitation listener.
+            addInvitationListener();
+
+            addChatRoomListener();
+
+            addPopupListeners();
+
+            // Add Join Conference Button to StatusBar
+            // Get command panel and add View Online/Offline, Add Contact
+            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+            JPanel commandPanel = statusBar.getCommandPanel();
+
+            RolloverButton joinConference = new RolloverButton(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+            joinConference.setToolTipText("Join a conference");
+            commandPanel.add(joinConference);
+            joinConference.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ConferenceRooms rooms = new ConferenceRooms(bookedMarkedConferences.getTree(), getDefaultServiceName());
+                    rooms.invoke();
+                }
+            });
+        }
+    }
+
+    /**
+     * Adds an invitation listener to check for any MUC invites.
+     */
+    private static void addInvitationListener() {
+        // Add Invite Listener
+        MultiUserChat.addInvitationListener(SparkManager.getConnection(), new InvitationListener() {
+            public void invitationReceived(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        Collection listeners = new ArrayList(SparkManager.getChatManager().getInvitationListeners());
+                        Iterator iter = listeners.iterator();
+                        while (iter.hasNext()) {
+                            RoomInvitationListener listener = (RoomInvitationListener)iter.next();
+                            boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
+                            if (handle) {
+                                return;
+                            }
+                        }
+
+                        // If no listeners handled the invitation, default to generic invite.
+                        final InvitationDialog inviteDialog = new InvitationDialog();
+                        inviteDialog.invitationReceived(conn, room, inviter, reason, password, message);
+                    }
+                });
+
+            }
+        });
+    }
+
+    /**
+     * Persists bookmarked data, if any.
+     */
+    public void shutdown() {
+        if (!mucSupported) {
+            return;
+        }
+
+        ConferenceData conferenceData = new ConferenceData();
+
+        Tree tree = bookedMarkedConferences.getTree();
+        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+        JiveTreeNode rootNode = (JiveTreeNode)model.getRoot();
+
+        int children = rootNode.getChildCount();
+        for (int i = 0; i < children; i++) {
+            JiveTreeNode serviceNode = (JiveTreeNode)rootNode.getChildAt(i);
+            int bookmarks = serviceNode.getChildCount();
+            for (int j = 0; j < bookmarks; j++) {
+                JiveTreeNode node = (JiveTreeNode)serviceNode.getChildAt(j);
+                Bookmark bookmark = new Bookmark();
+                bookmark.setRoomJID((String)node.getAssociatedObject());
+                bookmark.setRoomName(node.getUserObject().toString());
+                bookmark.setServiceName(serviceNode.getUserObject().toString());
+                conferenceData.addBookmark(bookmark);
+            }
+        }
+
+        PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+        try {
+            pdm.setPrivateData(conferenceData);
+        }
+        catch (XMPPException e) {
+            Log.error("Unable to save Bookmarks in Private Data.", e);
+        }
+    }
+
+    /**
+     * Load all bookmarked data.
+     */
+    private void loadBookmarks() {
+        final Workspace workspace = SparkManager.getWorkspace();
+
+
+        SwingWorker lazyWorker = new SwingWorker() {
+            ConferenceData conferenceData;
+
+            public Object construct() {
+                PrivateDataManager.addPrivateDataProvider(ConferenceData.ELEMENT, ConferenceData.NAMESPACE, new ConferenceData.ConferencePrivateDataProvider());
+
+                PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+                try {
+                    conferenceData = (ConferenceData)pdm.getPrivateData(ConferenceData.ELEMENT, ConferenceData.NAMESPACE);
+                }
+                catch (XMPPException e) {
+                    Log.error("Unable to load private data for bookmarks.", e);
+                }
+                return conferenceData;
+            }
+
+            public void finished() {
+                bookedMarkedConferences = new BookmarkedConferences();
+
+                workspace.getWorkspacePane().addTab("Conferences", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookedMarkedConferences);
+
+                if (conferenceData != null) {
+                    // Add ConferenceDataProvider
+
+                    Collection bookmakrs = conferenceData.getBookmarks();
+                    bookedMarkedConferences.setBookmarks(bookmakrs);
+                }
+            }
+        };
+
+        lazyWorker.start();
+    }
+
+    private void addChatRoomListener() {
+        ChatManager chatManager = SparkManager.getChatManager();
+        chatManager.addChatRoomListener(new ChatRoomListener() {
+            public void chatRoomOpened(ChatRoom room) {
+                if (room instanceof ChatRoomImpl) {
+                    final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
+
+                    // Add Conference Invite Button.
+                    ChatRoomButton inviteButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
+                    inviteButton.setToolTipText("Invite this user to a conference");
+
+                    room.getToolBar().addChatRoomButton(inviteButton);
+
+                    inviteButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            String userName = StringUtils.parseName(SparkManager.getSessionManager().getJID());
+                            final String roomName = userName + "_" + StringUtils.randomString(3);
+
+
+                            final List jids = new ArrayList();
+                            jids.add(chatRoom.getParticipantJID());
+
+                            final String serviceName = getDefaultServiceName();
+                            if (serviceName != null) {
+                                SwingWorker worker = new SwingWorker() {
+                                    public Object construct() {
+                                        try {
+                                            Thread.sleep(25);
+                                        }
+                                        catch (InterruptedException e1) {
+                                            Log.error(e1);
+                                        }
+                                        return "ok";
+                                    }
+
+                                    public void finished() {
+                                        ConferenceUtils.createPrivateConference(serviceName, "Please join me in a conference.", roomName, jids);
+                                    }
+                                };
+                                worker.start();
+
+                            }
+                        }
+                    });
+                }
+            }
+
+            public void chatRoomLeft(ChatRoom room) {
+
+            }
+
+            public void chatRoomClosed(ChatRoom room) {
+
+            }
+
+            public void chatRoomActivated(ChatRoom room) {
+
+            }
+
+            public void userHasJoined(ChatRoom room, String userid) {
+
+            }
+
+            public void userHasLeft(ChatRoom room, String userid) {
+
+            }
+        });
+    }
+
+
+    public boolean canShutDown() {
+        return true;
+    }
+
+    public static String getDefaultServiceName() {
+        String serviceName = null;
+        Collection services = bookedMarkedConferences.getMucServices();
+        if (services != null) {
+            Iterator serviceIterator = services.iterator();
+            while (serviceIterator.hasNext()) {
+                serviceName = (String)serviceIterator.next();
+                break;
+            }
+        }
+        return serviceName;
+    }
+
+    private void addPopupListeners() {
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+        // Add ContactList items.
+        final Action inviteAllAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                Collection contacts = contactList.getActiveGroup().getContactItems();
+                startConference(contacts);
+
+            }
+        };
+
+        inviteAllAction.putValue(Action.NAME, "Invite group to conference");
+        inviteAllAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+
+
+        final Action conferenceAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                Collection contacts = contactList.getSelectedUsers();
+                startConference(contacts);
+            }
+        };
+
+        conferenceAction.putValue(Action.NAME, "Start a Conference...");
+        conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_WORKGROUP_QUEUE_IMAGE));
+
+
+        contactList.addContextMenuListener(new ContextMenuListener() {
+            public void poppingUp(Object component, JPopupMenu popup) {
+                Collection col = contactList.getSelectedUsers();
+                if (component instanceof ContactGroup) {
+                    popup.add(inviteAllAction);
+                }
+                else if (component instanceof Collection && col.size() > 0) {
+                    popup.add(conferenceAction);
+                }
+            }
+
+            public void poppingDown(JPopupMenu popup) {
+
+            }
+
+            public boolean handleDefaultAction(MouseEvent e) {
+                return false;
+            }
+        });
+
+        // Add to Actions Menu
+        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName("Actions");
+        actionsMenu.add(conferenceAction);
+    }
+
+    private void startConference(Collection items) {
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        List jids = new ArrayList();
+        Iterator contacts = items.iterator();
+        while (contacts.hasNext()) {
+            ContactItem item = (ContactItem)contacts.next();
+
+            ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
+            contactGroup.clearSelection();
+
+            if (item.isAvailable()) {
+                jids.add(item.getFullJID());
+            }
+        }
+
+        String userName = StringUtils.parseName(SparkManager.getSessionManager().getJID());
+        final String roomName = userName + "_" + StringUtils.randomString(3);
+
+        String serviceName = getDefaultServiceName();
+        if (ModelUtil.hasLength(serviceName)) {
+            ConferenceUtils.inviteUsersToRoom(serviceName, roomName, jids);
+        }
+    }
+
+    /**
+     * Returns the UI for the addition and removal of Conference bookmarks.
+     *
+     * @return the BookedMarkedConferences UI.
+     */
+    public static BookmarkedConferences getBookmarkedConferences() {
+        return bookedMarkedConferences;
+    }
+
+}

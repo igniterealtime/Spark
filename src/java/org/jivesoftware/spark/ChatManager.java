@@ -1,0 +1,261 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.spark;
+
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.MessageFilter;
+import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
+import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
+ * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
+ */
+public class ChatManager {
+    private List messageFilters = new ArrayList();
+    private final ChatContainer chatContainer;
+    private List invitationListeners = new ArrayList();
+    private String conferenceService;
+
+    /**
+     * Create a new instance of ChatManager.
+     */
+    public ChatManager() {
+        chatContainer = new ChatContainer();
+    }
+
+
+    /**
+     * Used to listen for rooms opening, closing or being
+     * activated( already opened, but tabbed to )
+     *
+     * @param listener the ChatRoomListener to add
+     */
+    public void addChatRoomListener(ChatRoomListener listener) {
+        getChatContainer().addChatRoomListener(listener);
+    }
+
+    /**
+     * Simplace facade for chatroom. Removes a listener
+     *
+     * @param listener the ChatRoomListener to remove
+     */
+    public void removeChatRoomListener(ChatRoomListener listener) {
+        getChatContainer().removeChatRoomListener(listener);
+    }
+
+
+    /**
+     * Removes the personal 1 to 1 chat from the ChatFrame.
+     *
+     * @param chatRoom the ChatRoom to remove.
+     */
+    public void removeChat(ChatRoom chatRoom) {
+        chatContainer.closeTab(chatRoom);
+    }
+
+
+    /**
+     * Returns all ChatRooms currently active.
+     *
+     * @return all ChatRooms.
+     */
+    public ChatContainer getChatContainer() {
+        return chatContainer;
+    }
+
+    /**
+     * Returns the MultiUserChat associated with the specified roomname.
+     *
+     * @param roomName the name of the chat room.
+     * @return the MultiUserChat found for that room.
+     */
+    public GroupChatRoom getGroupChat(String roomName) throws ChatNotFoundException {
+        Iterator iter = getChatContainer().getAllChatRooms();
+        while (iter.hasNext()) {
+            ChatRoom chatRoom = (ChatRoom)iter.next();
+            if (chatRoom instanceof GroupChatRoom) {
+                GroupChatRoom groupChat = (GroupChatRoom)chatRoom;
+                if (groupChat.getRoomname().equals(roomName)) {
+                    return groupChat;
+                }
+            }
+
+        }
+
+        throw new ChatNotFoundException("Could not locate Group Chat Room - " + roomName);
+    }
+
+
+    /**
+     * Creates and/or opens a chat room with the specified user.
+     *
+     * @param userJID  the jid of the user to chat with.
+     * @param nickname the nickname to use for the user.
+     */
+    public ChatRoom createChatRoom(String userJID, String nickname, String title) {
+        ChatRoom chatRoom = null;
+        try {
+            chatRoom = getChatContainer().getChatRoom(userJID);
+        }
+        catch (ChatRoomNotFoundException e) {
+            chatRoom = new ChatRoomImpl(userJID, nickname, title);
+            getChatContainer().addChatRoom(chatRoom);
+        }
+
+        return chatRoom;
+    }
+
+    /**
+     * Returns the <code>ChatRoom</code> for the giving jid. If the ChatRoom is not found,
+     * a new ChatRoom will be created.
+     *
+     * @param jid the jid of the user to chat with.
+     * @return the ChatRoom.
+     */
+    public ChatRoom getChatRoom(String jid) {
+        ChatRoom chatRoom = null;
+        try {
+            chatRoom = getChatContainer().getChatRoom(jid);
+        }
+        catch (ChatRoomNotFoundException e) {
+            ContactList contactList = SparkManager.getWorkspace().getContactList();
+            ContactItem item = contactList.getContactItemByJID(jid);
+
+            String nickname = item.getNickname();
+            chatRoom = new ChatRoomImpl(jid, nickname, nickname);
+            getChatContainer().addChatRoom(chatRoom);
+        }
+
+        return chatRoom;
+    }
+
+
+    /**
+     * Creates a new public Conference Room.
+     *
+     * @param roomName    the name of the room.
+     * @param serviceName the service name to use (ex.conference.jivesoftware.com)
+     * @return the new ChatRoom created. If an error occured, null will be returned.
+     */
+    public ChatRoom createConferenceRoom(String roomName, String serviceName) {
+        final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomName + "@" + serviceName);
+
+        final GroupChatRoom room = new GroupChatRoom(chatRoom);
+
+        try {
+            ChatPreferences chatPref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
+            chatRoom.create(chatPref.getNickname());
+
+            // Send an empty room configuration form which indicates that we want
+            // an instant room
+            chatRoom.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+        }
+        catch (XMPPException e1) {
+            Log.error("Unable to send conference room chat configuration form.", e1);
+            return null;
+        }
+
+        getChatContainer().addChatRoom(room);
+        return room;
+    }
+
+    /**
+     * Adds a new <code>MessageFilter</code>.
+     *
+     * @param filter the MessageFilter.
+     */
+    public void addMessageFilter(MessageFilter filter) {
+        messageFilters.add(filter);
+    }
+
+    /**
+     * Removes a <code>MessageFilter</code>.
+     *
+     * @param filter the MessageFilter.
+     */
+    public void removeMessageFilter(MessageFilter filter) {
+        messageFilters.remove(filter);
+    }
+
+    /**
+     * Returns a Collection of MessageFilters registered to Spark.
+     *
+     * @return the Collection of MessageFilters.
+     */
+    public Collection getMessageFilters() {
+        return messageFilters;
+    }
+
+    public void filterIncomingMessage(Message message) {
+        // Fire Message Filters
+        final ChatManager chatManager = SparkManager.getChatManager();
+        Iterator filters = chatManager.getMessageFilters().iterator();
+        while (filters.hasNext()) {
+            ((MessageFilter)filters.next()).filterIncoming(message);
+        }
+    }
+
+    public void filterOutgoingMessage(Message message) {
+        // Fire Message Filters
+        final ChatManager chatManager = SparkManager.getChatManager();
+        Iterator filters = chatManager.getMessageFilters().iterator();
+        while (filters.hasNext()) {
+            ((MessageFilter)filters.next()).filterOutgoing(message);
+        }
+    }
+
+    public void addInvitationListener(RoomInvitationListener listener) {
+        invitationListeners.add(listener);
+    }
+
+    public void removeInvitationListener(RoomInvitationListener listener) {
+        invitationListeners.remove(listener);
+    }
+
+    public Collection getInvitationListeners() {
+        return invitationListeners;
+    }
+
+    public String getDefaultConferenceService() {
+        if (conferenceService == null) {
+            try {
+                Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                if (col.size() > 0) {
+                    conferenceService = (String)col.iterator().next();
+                }
+            }
+            catch (XMPPException e) {
+                Log.error(e);
+            }
+        }
+
+        return conferenceService;
+    }
+}

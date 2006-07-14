@@ -1,0 +1,139 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.spark.ui.conferences;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.component.renderer.ListIconRenderer;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Iterator;
+
+
+/**
+ * Handles unbanning banned users in Chat Rooms.
+ */
+public class BannedUsers extends JPanel {
+    private GroupChatRoom chatRoom;
+    private MultiUserChat chat;
+
+    private DefaultListModel listModel = new DefaultListModel();
+    private JList list = new JList(listModel);
+    private JMenuItem unBanMenuItem = new JMenuItem("Unban");
+
+    /**
+     * Construct UI
+     */
+    public BannedUsers() {
+        setLayout(new BorderLayout());
+        list.setCellRenderer(new ListIconRenderer());
+        add(list, BorderLayout.CENTER);
+        // Respond to Double-Click in Agent List to start a chat
+        list.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    list.setSelectedIndex(index);
+                    ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+                    String jid = icon.getDescription();
+                    showPopup(evt, jid);
+                }
+            }
+
+            public void mouseReleased(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    list.setSelectedIndex(index);
+                    ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+                    String jid = icon.getDescription();
+                    showPopup(evt, jid);
+                }
+            }
+        });
+
+        unBanMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int index = list.getSelectedIndex();
+                ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+                String jid = icon.getDescription();
+                try {
+                    chat.grantMembership(jid);
+                }
+                catch (XMPPException memEx) {
+                    Log.error("Error granting membership", memEx);
+                }
+                listModel.removeElementAt(index);
+
+            }
+        });
+    }
+
+    /**
+     * Binds a ChatRoom to listen to.
+     *
+     * @param cRoom the group chat room.
+     */
+    public void setChatRoom(ChatRoom cRoom) {
+        this.chatRoom = (GroupChatRoom)cRoom;
+        chat = chatRoom.getMultiUserChat();
+    }
+
+    /**
+     * Loads all banned users in a ChatRoom.
+     */
+    public void loadAllBannedUsers() {
+        // Clear all elements from model
+        listModel.clear();
+
+        Iterator bannedUsers = null;
+        try {
+            bannedUsers = chat.getOutcasts().iterator();
+        }
+        catch (XMPPException e) {
+            Log.error("Error loading all banned users", e);
+        }
+
+        while (bannedUsers != null && bannedUsers.hasNext()) {
+            Affiliate bannedUser = (Affiliate)bannedUsers.next();
+            ImageIcon icon = SparkRes.getImageIcon(SparkRes.STAR_RED_IMAGE);
+            icon.setDescription(bannedUser.getJid());
+            listModel.addElement(icon);
+        }
+    }
+
+    /**
+     * Responsible for popping up the menu items.
+     *
+     * @param e   the MouseEvent that triggered it.
+     * @param jid the JID to handle.
+     */
+    private void showPopup(MouseEvent e, String jid) {
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(unBanMenuItem);
+        popup.show(this, e.getX(), e.getY());
+    }
+}

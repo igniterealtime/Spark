@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Define new plugins -->
+<plugins>
+    <plugin>
+        <name>Server Alerts</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Used to display alerts from server. Can be used for server administrators for global
+            notification.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Jabber Browser</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Used for discovering items on a XMPP server.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.jabber.JabberBrowser</class>
+    </plugin>
+    <plugin>
+        <name>Asterisks Phone Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds phone-pbx capabilities within Spark. Users can make calls, take incoming calls and be
+            notified of presence changes.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin</class>
+    </plugin>
+    <plugin>
+        <name>Jabber Version</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Displays which version of Spark users are running.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.jabber.JabberVersion</class>
+    </plugin>
+    <plugin>
+        <name>Sounds Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds sound preferences for Spark.</description>
+        <class>org.jivesoftware.sparkimpl.preference.sounds.SoundPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Layout Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Persists users layouts on subsequent loads</description>
+        <class>org.jivesoftware.sparkimpl.plugin.layout.LayoutPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Chat Post Loader</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to specify command-line arguments to control Spark on startup.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ChatArgumentsPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Presence Change Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Tracks users presenences during the runtime of Spark.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.PresenceChangePlugin</class>
+    </plugin>
+    <plugin>
+        <name>Plugin Viewer Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to download, install and uninstall 3rd party plugins</description>
+        <class>org.jivesoftware.sparkimpl.plugin.viewer.PluginViewer</class>
+    </plugin>
+    <plugin>
+        <name>Emoticon Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to use a pick list for Emoticons.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Sparklers Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users set Active Sparklers within a Chat Conversation.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.sparklers.SparklersPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Notes Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to have scratch paper within Spark.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.scratchpad.ScratchPadPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Bookmark Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to have bookmarks.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin</class>
+    </plugin>
+</plugins>

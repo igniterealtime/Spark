@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Spark" default="jar" basedir=".">
+
+    <!-- Optional add this file to override any of the properties below -->
+    <property file="${basedir}/build.properties"/>
+    <property name="version.major" value="1"/>
+    <property name="version.minor" value="1"/>
+    <property name="version.revision" value="4"/>
+
+    <property name="version.period" value="${version.major}.${version.minor}.${version.revision}"/>
+    <property name="version.underscore" value="${version.major}_${version.minor}_${version.revision}"/>
+
+    <description>Jive Spark Build</description>
+    <!--set global properties for this build-->
+    <property name="src" location="../src/java"/>
+    <property name="lib.dir" location="./lib"/>
+    <property name="dist.libs.dir" location="./lib/dist"/>
+    <property name="merge.libs.dir" location="./lib/merge"/>
+    <property name="libs.windows.dir" location="${dist.libs.dir}/windows"/>
+    <property name="libs.linux.dir" location="${dist.libs.dir}/linux"/>
+    <property name="target" location="../target"/>
+    <property name="classes" location="${target}/classes"/>
+    <property name="target.build" location="${target}/build"/>
+    <property name="sparkplugs.build" location="${target}/sparkplugs"/>
+    <property name="target.resources" location="${target.build}/resources"/>
+    <property name="targetlib" location="${target.build}/lib"/>
+    <property name="targetlogs" location="${target.build}/logs"/>
+    <property name="targetdocs" location="${target.build}/documentation"/>
+    <property name="targetdocsapi" location="${targetdocs}/api"/>
+    <property name="plugins" location="${target.build}/plugins"/>
+    <property name="bin" location="${target.build}/bin"/>
+    <property name="resources.dir" location="../src/resources"/>
+
+    <!-- Installer Ant Script -->
+
+    <property name="installer.dest.dir" value="${target}/installer"/>
+    <property name="installer.install4j.srcfile" value="installer/spark.install4j"/>
+    <property name="installer.app_name" value="Spark"/>
+    <property name="installer.app_short_name" value="Spark"/>
+    <property name="installer.product_name" value="Spark"/>
+    <property name="installer.publisher" value="Jive Software"/>
+    <property name="installer.publisher_url" value="www.jivesoftware.com"/>
+    <property name="installer.file_prefix" value="${installer.app_short_name}"/>
+    <property name="installer.release_root_path" value="${target.build}"/>
+
+    <property name="mac.build.dir" value="${target}/Spark_${version.underscore}"/>
+    <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
+    <property name="mac.dmg.file" value="${target}/Spark_${version.underscore}.dmg"/>
+
+    <!-- Define Default Library Archives -->
+    <path id="agent.dependencies">
+        <fileset dir="${dist.libs.dir}" includes="*.jar"/>
+        <fileset dir="${merge.libs.dir}" includes="*.jar"/>
+        <fileset dir="${libs.windows.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+
+    <!-- clean =================================================================================== -->
+    <target name="clean" description="Deletes files generated during the build.">
+        <!--Delete created directory trees-->
+        <delete dir="${target}"/>
+    </target>
+
+    <!-- init =================================================================================== -->
+    <target name="init">
+        <!-- Check for min build requirements -->
+        <condition property="ant.not.ok" value="true">
+            <not>
+                <contains string="${ant.version}" substring="1.6"/>
+            </not>
+        </condition>
+        <fail if="ant.not.ok" message="Must use Ant 1.6.x to build Spark"/>
+        <!--
+     <condition property="java.not.ok" value="true">
+         <not>
+             <contains string="${ant.java.version}" substring="1.4"/>
+         </not>
+     </condition>
+
+     <fail if="java.not.ok" message="Must use JDK 1.4.x to build Spark"/>
+     -->
+
+        <!-- Platform-specific initializations -->
+        <condition property="windows">
+            <os family="windows"/>
+        </condition>
+        <condition property="unix">
+            <os family="unix"/>
+        </condition>
+        <condition property="solaris">
+            <os name="SunOS"/>
+        </condition>
+        <condition property="linux">
+            <os name="Linux"/>
+        </condition>
+        <condition property="mac">
+            <os name="Mac OS X"/>
+        </condition>
+
+        <!--creates the build directory-->
+        <mkdir dir="${target}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${target.build}"/>
+        <mkdir dir="${target.resources}"/>
+        <mkdir dir="${targetlib}"/>
+        <mkdir dir="${targetlogs}"/>
+        <mkdir dir="${targetdocs}"/>
+        <mkdir dir="${plugins}"/>
+        <mkdir dir="${bin}"/>
+    </target>
+
+    <!-- resources =================================================================================== -->
+    <target name="resources">
+        <copy todir="${classes}">
+            <fileset dir="${resources.dir}">
+                <include name="**/*"/>
+            </fileset>
+            <fileset dir="../src/java">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${target.resources}">
+            <fileset dir="${resources.dir}">
+                <exclude name="*.bat"/>
+                <exclude name="settings.xml"/>
+                <include name="*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${target.resources}/sounds">
+            <fileset dir="${resources.dir}/sounds">
+                <include name="*.*"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <!-- build =================================================================================== -->
+    <target name="build" depends="init, resources, base">
+        <!--Compiles the java code from ${src} directory into ${classes} directory-->
+        <javac destdir="${classes}"
+               debug="on"
+               source="1.5"
+               target="1.5"
+                >
+            <classpath>
+                <path refid="agent.dependencies"/>
+            </classpath>
+            <src path="${src}"/>
+        </javac>
+        <touch file="${targetlogs}/error.log"/>
+        <copy todir="${targetdocs}">
+            <fileset dir="../documentation" includes="**/*" excludes="changes.*">
+            </fileset>
+        </copy>
+        <copy todir="${targetlib}/windows">
+            <fileset dir="${libs.windows.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${targetlib}/linux">
+            <fileset dir="${libs.linux.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${targetlib}">
+            <fileset dir="${dist.libs.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${bin}">
+            <fileset dir="${resources.dir}">
+                <include name="startup.bat"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- jar =================================================================================== -->
+    <target name="jar" depends="build">
+        <!--Put everything in ${classes} into the MyProject-${DSTAMP}.jar file-->
+        <tstamp/>
+        <jar jarfile="${targetlib}/spark.jar" basedir="${classes}"/>
+    </target>
+
+    <!-- javadocs =================================================================================== -->
+    <target name="release.javadocs" depends="jar, javadocs"
+            description="creates javadocs version for developer source builds">
+    </target>
+
+    <!-- base =================================================================================== -->
+    <target name="base" depends="init" description="Produces Base Jars For Jive Spark">
+        <mkdir dir="${targetlib}"/>
+        <!-- Make main Messenger jar -->
+        <jar jarfile="${targetlib}/base.jar" index="true">
+            <zipgroupfileset dir="${merge.libs.dir}" includes="*.jar"/>
+            <manifest>
+                <attribute name="Built-By" value="Jive Software (www.jivesoftware.com)"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- javadocs =================================================================================== -->
+    <target name="javadocs" depends="init">
+        <mkdir dir="${targetdocsapi}"/>
+        <javadoc destdir="${targetdocsapi}" author="true" version="true" use="true" windowtitle="API for Agent">
+            <classpath>
+                <path refid="agent.dependencies"/>
+            </classpath>
+            <fileset dir="${src}" defaultexcludes="yes">
+                <exclude name="**/*.properties"/>
+                <exclude name="**/*.html"/>
+            </fileset>
+        </javadoc>
+    </target>
+
+    <!-- changelog =============================================================================== -->
+    <target name="changelog"
+            description="Generates an incremental changelog file based upon the XML/RSS feed from JIRA">
+        <xslt in="../documentation/changes.xml" out="../target/changes.html" style="../documentation/changes.xsl"/>
+    </target>
+
+
+    <!-- tests =================================================================================== -->
+    <target name="build_tests" depends="init">
+
+    </target>
+
+    <target name="run_tests" depends="build, build_tests">
+
+    </target>
+
+    <target name="report" depends="run_tests">
+        <!--
+        <junitreport todir="${reports}">
+            <fileset dir="${reports}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" todir="${htmlreports}"/>
+        </junitreport>
+        -->
+    </target>
+
+    <target name="development" depends="clean, jar, javadocs"
+            description="Creates a development environment for Sparkplugs">
+        <mkdir dir="${sparkplugs.build}"/>
+        <mkdir dir="${sparkplugs.build}/spark"/>
+        <mkdir dir="${sparkplugs.build}/builder"/>
+        <mkdir dir="${sparkplugs.build}/images"/>
+        <mkdir dir="${sparkplugs.build}/api"/>
+
+        <copy todir="${sparkplugs.build}/spark">
+            <fileset file="${target.resources}" includes="**/*"/>
+            <fileset file="${targetlib}" includes="**/*"/>
+            <fileset file="${plugins}" includes="**/*"/>
+            <fileset file="${bin}" includes="**/*"/>
+        </copy>
+
+        <copy todir="${sparkplugs.build}">
+            <fileset file="${targetdocs}/plugin_development_guide.html"/>
+            <fileset file="${targetdocs}/style.css"/>
+            <fileset file="${targetdocs}/examples.jar"/>
+        </copy>
+
+        <copy todir="${sparkplugs.build}/images">
+            <fileset file="${target.build}/documentation/images/*.*"/>
+        </copy>
+        <copy todir="${sparkplugs.build}/api">
+            <fileset file="${target.build}/documentation/api/**"/>
+        </copy>
+
+        <copy todir="${sparkplugs.build}/builder">
+            <fileset file="${basedir}/builder/**"/>
+        </copy>
+    </target>
+
+    <!-- installers ============================================================================= -->
+
+    <target name="installer.win" depends="jar"
+            description="build Install4J release executable and docs dirs for Windows">
+
+        <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
+        <condition property="install4j.not.ok" value="true">
+            <not>
+                <available file="${installer.install4j.home}/bin/install4j.jar"/>
+            </not>
+        </condition>
+        <fail if="install4j.not.ok" message="Path to Install4j not set, see build.properties.template file."/>
+
+        <taskdef name="install4j"
+                 classname="com.install4j.Install4JTask"
+                 classpath="${installer.install4j.home}/bin/install4j.jar"/>
+
+        <mkdir dir="${installer.dest.dir}"/>
+
+        <install4j projectfile="${installer.install4j.srcfile}" destination="${installer.dest.dir}">
+            <variable name="VERSION_MAJOR" value="${version.major}"/>
+            <variable name="VERSION_MINOR" value="${version.minor}"/>
+            <variable name="VERSION_REVISION" value="${version.revision}"/>
+            <variable name="APP_NAME" value="${installer.app_name}"/>
+            <variable name="APP_SHORT_NAME" value="${installer.app_short_name}"/>
+            <variable name="PRODUCT_NAME" value="${installer.product_name}"/>
+            <variable name="PUBLISHER" value="${installer.publisher}"/>
+            <variable name="PUBLISHER_URL" value="${installer.publisher_url}"/>
+            <variable name="FILE_PREFIX" value="${installer.app_short_name}"/>
+            <variable name="RELEASE_ROOT_PATH" value="${installer.release_root_path}"/>
+        </install4j>
+
+    </target>
+
+    <target name="mac.clean">
+        <delete dir="${mac.build.dir}"/>
+        <delete file="${target}/tmp.dmg"/>
+        <delete file="${mac.dmg.file}"/>
+    </target>
+
+    <target name="mac.build.plugin" depends="jar">
+        <!-- build the apple jar and place it in the plugins -->
+        <ant antfile="../src/plugins/apple/build.xml" inheritall="no" target="clean"/>
+        <ant antfile="../src/plugins/apple/build.xml" inheritall="no" target="jar"/>
+
+        <!-- build the growl jar and place it in the plugins -->
+        <ant antfile="../src/plugins/growl/build.xml" inheritall="no" target="clean"/>
+        <ant antfile="../src/plugins/growl/build.xml" inheritall="no" target="jar"/>
+    </target>
+
+    <target name="mac.app" depends="mac.clean,mac.build.plugin">
+
+        <!-- http://www.loomcom.com/jarbundler/ -->
+        <taskdef name="jarbundler"
+                 classpath="${basedir}/lib/jarbundler-1.4.jar"
+                 classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
+
+        <mkdir dir="${mac.build.dir}"/>
+
+        <jarbundler dir="${mac.build.dir}"
+                    name="Spark"
+                    mainclass="org.jivesoftware.Spark"
+                    icon="${target}/classes/images/message.icns"
+                    version="${version.period}"
+                    infostring="Spark ${version.period}, (c) Jive Software 2005"
+                    aboutmenuname="Spark"
+                    bundleid="com.jivesoftware.SparkBundle"
+                    developmentregion="English"
+                    jvmversion="1.4+"
+                    smalltabs="true"
+                    antialiasedgraphics="true"
+                    antialiasedtext="true"
+                    liveresize="true"
+                    growbox="true"
+                    growboxintrudes="false"
+                    screenmenu="true"
+                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources"
+                    workingdirectory="$APP_PACKAGE/Contents/Resources"
+                    extraclasspath="/System/Library/Java">
+            <jarfileset dir="${target.build}/lib">
+                <include name="**/*.jar"/>
+                <exclude name="**/windows/"/>
+            </jarfileset>
+            <jarfileset dir="${target.build}/lib/windows">
+                <include name="jdic.jar"/>
+            </jarfileset>
+            <jarfileset dir="${basedir}/lib">
+                <include name="i4jruntime.jar"/>
+            </jarfileset>
+        </jarbundler>
+
+        <copy todir="${mac.app.file}/Contents/Resources">
+            <fileset dir="${target.build}">
+                <exclude name="**/lib/"/>
+                <exclude name="**/jniwrap.*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="installer.mac" depends="mac.app" description="build Install4J release dmg file for the Macintosh">
+        <fileset file="*.dmg"/>
+        <exec executable="hdiutil" failonerror="true">
+            <arg value="create"/>
+            <arg value="-srcfolder"/>
+            <arg value="${mac.build.dir}"/>
+            <arg value="-fs"/>
+            <arg value="HFS+"/>
+            <arg value="${target}/tmp.dmg"/>
+        </exec>
+        <exec executable="hdiutil" failonerror="true">
+            <arg line="convert ${target}/tmp.dmg -format UDZO -o ${mac.dmg.file}"/>
+        </exec>
+        <delete file="${target}/tmp.dmg"/>
+        <exec executable="hdiutil" failonerror="true">
+            <arg value="internet-enable"/>
+            <arg value="-yes"/>
+            <arg value="${mac.dmg.file}"/>
+        </exec>
+    </target>
+
+</project>
+

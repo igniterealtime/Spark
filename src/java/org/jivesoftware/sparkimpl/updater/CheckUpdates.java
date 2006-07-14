@@ -1,0 +1,546 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.sparkimpl.updater;
+
+import com.thoughtworks.xstream.XStream;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PacketCollector;
+import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketIDFilter;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.ConfirmDialog;
+import org.jivesoftware.spark.component.ConfirmDialog.ConfirmListener;
+import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.ByteFormat;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
+
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimerTask;
+
+public class CheckUpdates {
+    private String mainUpdateURL;
+    private JProgressBar bar;
+    private TitlePanel titlePanel;
+    private boolean downloadComplete = false;
+    private boolean cancel = false;
+    public static boolean UPDATING = false;
+    private boolean sparkPluginInstalled;
+    private XStream xstream = new XStream();
+    private String sizeText;
+
+
+    public CheckUpdates() {
+        // Set the Jabber IQ Provider for Jabber:iq:spark
+        ProviderManager.addIQProvider("query", "jabber:iq:spark", new SparkVersion.Provider());
+
+        // For simplicity, use an alias for the root xml tag
+        xstream.alias("Version", SparkVersion.class);
+
+        // Specify the main update url for JiveSoftware
+        this.mainUpdateURL = "http://www.jivesoftware.org/updater/updater";
+
+        sparkPluginInstalled = isSparkPluginInstalled(SparkManager.getConnection());
+    }
+
+    public SparkVersion newBuildAvailable() {
+        if (!sparkPluginInstalled && !Spark.isCustomBuild()) {
+            // Handle Jivesoftware.org update
+            return isNewBuildAvailableFromJivesoftware();
+        }
+        else if (sparkPluginInstalled) {
+            try {
+                SparkVersion serverVersion = getLatestVersion(SparkManager.getConnection());
+                if (isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
+                    return serverVersion;
+                }
+            }
+            catch (XMPPException e) {
+            }
+
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Returns true if there is a new build available for download.
+     *
+     * @return true if there is a new build available for download.
+     */
+    public SparkVersion isNewBuildAvailableFromJivesoftware() {
+        PostMethod post = new PostMethod(mainUpdateURL);
+        if (Spark.isWindows()) {
+            post.addParameter("os", "windows");
+        }
+        else if (Spark.isMac()) {
+            post.addParameter("os", "mac");
+        }
+        else {
+            post.addParameter("os", "linux");
+        }
+
+        Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
+        HttpClient httpclient = new HttpClient();
+        String proxyHost = System.getProperty("http.proxyHost");
+        String proxyPort = System.getProperty("http.proxyPort");
+        if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
+            try {
+                httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
+            }
+            catch (NumberFormatException e) {
+                Log.error(e);
+            }
+        }
+        try {
+            int result = httpclient.executeMethod(post);
+            if (result != 200) {
+                return null;
+            }
+
+
+            String xml = post.getResponseBodyAsString();
+
+            // Server Version
+            SparkVersion serverVersion = (SparkVersion)xstream.fromXML(xml);
+            if (isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
+                return serverVersion;
+            }
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+        return null;
+    }
+
+
+    public void downloadUpdate(final File downloadedFile, final SparkVersion version) {
+        final java.util.Timer timer = new java.util.Timer();
+
+        // Prepare HTTP post
+        final GetMethod post = new GetMethod(version.getDownloadURL());
+
+        // Get HTTP client
+        Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
+        final HttpClient httpclient = new HttpClient();
+        String proxyHost = System.getProperty("http.proxyHost");
+        String proxyPort = System.getProperty("http.proxyPort");
+        if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
+            try {
+                httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
+            }
+            catch (NumberFormatException e) {
+                Log.error(e);
+            }
+        }
+
+        // Execute request
+
+        try {
+            int result = httpclient.executeMethod(post);
+            if (result != 200) {
+                return;
+            }
+
+            long length = post.getResponseContentLength();
+            int contentLength = (int)length;
+
+            bar = new JProgressBar(0, contentLength);
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+
+        final JFrame frame = new JFrame("Downloading IM Client");
+
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
+
+        titlePanel = new TitlePanel("Upgrading Client", "Version: " + version.getVersion(), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
+
+        final Thread thread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    InputStream stream = post.getResponseBodyAsStream();
+                    long size = post.getResponseContentLength();
+                    ByteFormat formater = new ByteFormat();
+                    sizeText = formater.format(size);
+                    titlePanel.setDescription("Version: " + version.getVersion() + " \nFile Size: " + sizeText);
+
+
+                    downloadedFile.getParentFile().mkdirs();
+
+                    FileOutputStream out = new FileOutputStream(downloadedFile);
+                    copy(stream, out);
+                    out.close();
+
+                    if (!cancel) {
+                        downloadComplete = true;
+
+
+                        ConfirmDialog confirm = new ConfirmDialog();
+                        confirm.showConfirmDialog(SparkManager.getMainWindow(), "Download Complete",
+                                "You will need to shut down the client to \n" +
+                                        "install the new version. Would you like to do that now?", "Yes", "No",
+                                null);
+                        confirm.setConfirmListener(new ConfirmListener() {
+                            public void yesOption() {
+                                try {
+                                    if (Spark.isWindows()) {
+                                        Runtime.getRuntime().exec(downloadedFile.getAbsolutePath());
+                                    }
+                                    else if (Spark.isMac()) {
+                                        Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
+                                    }
+                                }
+                                catch (IOException e) {
+                                    Log.error(e);
+                                }
+                                SparkManager.getMainWindow().shutdown();
+                            }
+
+                            public void noOption() {
+
+                            }
+                        });
+                    }
+
+
+                    UPDATING = false;
+                    frame.dispose();
+                }
+                catch (Exception ex) {
+
+                }
+                finally {
+                    timer.cancel();
+                    // Release current connection to the connection pool once you are done
+                    post.releaseConnection();
+                }
+            }
+        });
+
+
+        frame.getContentPane().setLayout(new GridBagLayout());
+        frame.getContentPane().add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        frame.getContentPane().add(bar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        JEditorPane pane = new JEditorPane();
+        boolean displayContentPane = version.getChangeLogURL() != null || version.getDisplayMessage() != null;
+
+        try {
+            pane.setEditable(false);
+            if (version.getChangeLogURL() != null) {
+                pane.setEditorKit(new HTMLEditorKit());
+                pane.setPage(version.getChangeLogURL());
+            }
+            else if (version.getDisplayMessage() != null) {
+                pane.setText(version.getDisplayMessage());
+            }
+
+            if (displayContentPane) {
+                frame.getContentPane().add(new JScrollPane(pane), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+            }
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+
+        frame.getContentPane().setBackground(Color.WHITE);
+        frame.pack();
+        if (displayContentPane) {
+            frame.setSize(600, 400);
+        }
+        else {
+            frame.setSize(400, 100);
+        }
+        frame.setLocationRelativeTo(SparkManager.getMainWindow());
+        GraphicUtils.centerWindowOnScreen(frame);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent) {
+                thread.interrupt();
+                cancel = true;
+
+                UPDATING = false;
+
+                if (!downloadComplete) {
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Updating has been cancelled.", "Update Canceled", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+        });
+        frame.setVisible(true);
+        thread.start();
+
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            int seconds = 1;
+
+            public void run() {
+                ByteFormat formatter = new ByteFormat();
+                long value = bar.getValue();
+                long average = value / seconds;
+                String text = formatter.format(average) + "/Sec";
+
+                String total = formatter.format(value);
+                titlePanel.setDescription("Version: " + version.getVersion() + " \nFile Size: " + sizeText + "\nTransfer Rate: " + text + "\nTotal Downloaded: " + total);
+                seconds++;
+            }
+        }, 1000, 1000);
+    }
+
+    /**
+     * Common code for copy routines.  By convention, the streams are
+     * closed in the same method in which they were opened.  Thus,
+     * this method does not close the streams when the copying is done.
+     */
+    private void copy(final InputStream in, final OutputStream out) {
+        int read = 0;
+
+        try {
+            final byte[] buffer = new byte[4096];
+            while (!cancel) {
+                int bytesRead = in.read(buffer);
+                if (bytesRead < 0) {
+                    break;
+                }
+                out.write(buffer, 0, bytesRead);
+                read += bytesRead;
+                bar.setValue(read);
+            }
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+    }
+
+    public void checkForUpdate(boolean forced) throws Exception {
+        if (UPDATING) {
+            return;
+        }
+
+        UPDATING = true;
+
+        LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+
+        Date lastChecked = localPreferences.getLastCheckForUpdates();
+        if (lastChecked == null) {
+            lastChecked = new Date();
+            // This is the first invocation of Communicator
+            localPreferences.setLastCheckForUpdates(lastChecked);
+            SettingsManager.saveSettings();
+        }
+
+        // Check to see if it has been a week
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new java.util.Date());
+        calendar.add(Calendar.DATE, -1);
+
+        final Date weekAgo = calendar.getTime();
+
+        boolean dayOrLonger = weekAgo.getTime() >= lastChecked.getTime();
+
+
+        if (dayOrLonger || forced || sparkPluginInstalled) {
+            // Check version on server.
+            lastChecked = new Date();
+            localPreferences.setLastCheckForUpdates(lastChecked);
+            SettingsManager.saveSettings();
+
+            final SparkVersion serverVersion = newBuildAvailable();
+            if (serverVersion == null) {
+                UPDATING = false;
+
+                if (forced) {
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "There are no updates.", "No Updates", JOptionPane.INFORMATION_MESSAGE);
+                }
+                return;
+            }
+
+            // Otherwise updates are available
+            String downloadURL = serverVersion.getDownloadURL();
+            String filename = downloadURL.substring(downloadURL.lastIndexOf("/") + 1);
+
+            if (filename.indexOf('=') != -1) {
+                filename = filename.substring(filename.indexOf('=') + 1);
+            }
+
+            final File downloadFile = new File(Spark.getBinDirectory(), filename);
+            if (downloadFile.exists()) {
+                downloadFile.delete();
+            }
+
+            ConfirmDialog confirm = new ConfirmDialog();
+            confirm.showConfirmDialog(SparkManager.getMainWindow(), "New Version Available",
+                    filename + " is now available.\nWould you like to install?", "Yes", "No",
+                    null);
+            confirm.setDialogSize(400, 300);
+            confirm.setConfirmListener(new ConfirmListener() {
+                public void yesOption() {
+                    SwingWorker worker = new SwingWorker() {
+                        public Object construct() {
+                            try {
+                                Thread.sleep(50);
+                            }
+                            catch (InterruptedException e) {
+                                Log.error(e);
+                            }
+                            return "ok";
+                        }
+
+                        public void finished() {
+                            if (Spark.isWindows()) {
+                                downloadUpdate(downloadFile, serverVersion);
+                            }
+                            else {
+                                // Launch browser to download page.
+                                try {
+                                    if (sparkPluginInstalled) {
+                                        BrowserLauncher.openURL(serverVersion.getDownloadURL());
+                                    }
+                                    else {
+                                        BrowserLauncher.openURL("http://www.jivesoftware.org/downloads.jsp#spark");
+                                    }
+                                }
+
+                                catch (IOException e) {
+                                    Log.error(e);
+                                }
+                                UPDATING = false;
+                            }
+                        }
+
+                    };
+                    worker.start();
+                }
+
+                public void noOption() {
+                    UPDATING = false;
+                }
+            });
+        }
+        else {
+            UPDATING = false;
+        }
+
+    }
+
+
+    /**
+     * Returns true if the first version number is greater than the second.
+     *
+     * @param version1 the first version number.
+     * @param version2 the second version number.
+     * @return returns true if the first version is greater than the second.
+     */
+    public boolean isGreater(String version1, String version2) {
+        List list = new ArrayList();
+        list.add(version1);
+        list.add(version2);
+
+        Collections.sort(list);
+
+        if (version1.equals(version2)) {
+            return false;
+        }
+
+        String topVersion = (String)list.get(1);
+        return topVersion.equals(version1);
+    }
+
+    public static SparkVersion getLatestVersion(XMPPConnection connection) throws XMPPException {
+        SparkVersion request = new SparkVersion();
+        request.setType(IQ.Type.GET);
+        request.setTo("updater." + connection.getServiceName());
+
+        PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(request.getPacketID()));
+        connection.sendPacket(request);
+
+
+        SparkVersion response = (SparkVersion)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
+
+        // Cancel the collector.
+        collector.cancel();
+        if (response == null) {
+            throw new XMPPException("No response from server.");
+        }
+        if (response.getError() != null) {
+            throw new XMPPException(response.getError());
+        }
+        return response;
+    }
+
+    public static boolean isSparkPluginInstalled(XMPPConnection con) {
+        if (!con.isConnected()) {
+            return false;
+        }
+
+        ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(con);
+        try {
+            DiscoverItems items = disco.discoverItems(con.getServiceName());
+            Iterator iter = items.getItems();
+            while (iter.hasNext()) {
+                DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+                if ("Spark Updater".equals(item.getName())) {
+                    return true;
+                }
+            }
+        }
+        catch (XMPPException e) {
+            Log.error(e);
+        }
+
+        return false;
+
+    }
+
+
+}

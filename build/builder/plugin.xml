@@ -1,0 +1,11 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>My Plugin</name>
+    <version>1.0</version>
+    <author>You</author>
+    <homePage>http://www.jivesoftware.org</homePage>
+    <email>foo@foo.com</email>
+    <description>Sample Plugin</description>
+    <class>com.jivesoftware.plugin.MyPlugin</class>
+</plugin>
+

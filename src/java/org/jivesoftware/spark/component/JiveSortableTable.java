@@ -1,0 +1,443 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.spark.component;
+
+import org.jdesktop.swingx.JXTable;
+import org.jivesoftware.spark.util.GraphicUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <code>JiveTable</code> class can be used to maintain quality look and feel
+ * throughout the product. This is mainly from the rendering capabilities.
+ *
+ * @version 1.0, 03/12/14
+ */
+public abstract class JiveSortableTable extends JXTable {
+    private Table.JiveTableModel tableModel;
+
+    /**
+     * Define the color of row and column selections.
+     */
+    public static final Color SELECTION_COLOR = new Color(166, 202, 240);
+
+    /**
+     * Define the color used in the tooltips.
+     */
+    public static final Color TOOLTIP_COLOR = new Color(166, 202, 240);
+
+    private final Map objectMap = new HashMap();
+
+    /**
+     * Empty Constructor.
+     */
+    protected JiveSortableTable() {
+    }
+
+    public String getToolTipText(MouseEvent e) {
+        int r = rowAtPoint(e.getPoint());
+        int c = columnAtPoint(e.getPoint());
+        Object value = null;
+        try {
+            value = getValueAt(r, c);
+        }
+        catch (Exception e1) {
+            // If we encounter a row that should not actually exist and therefore
+            // has a null value. Just return an empty string for the tooltip.
+            return "";
+        }
+
+        String tooltipValue = null;
+
+        if (value instanceof JLabel) {
+            tooltipValue = ((JLabel)value).getToolTipText();
+        }
+
+        if (value instanceof JLabel && tooltipValue == null) {
+            tooltipValue = ((JLabel)value).getText();
+        }
+        else if (value != null && tooltipValue == null) {
+            tooltipValue = value.toString();
+        }
+        else if (tooltipValue == null) {
+            tooltipValue = "";
+        }
+
+        return GraphicUtils.createToolTip(tooltipValue);
+    }
+
+    // Handle image rendering correctly
+    public TableCellRenderer getCellRenderer(int row, int column) {
+        Object o = getValueAt(row, column);
+        if (o != null) {
+            if (o instanceof JLabel) {
+                return new JLabelRenderer(false);
+            }
+        }
+        return super.getCellRenderer(row, column);
+    }
+
+    /**
+     * Creates a table using the specified table headers.
+     *
+     * @param headers the table headers to use.
+     */
+    protected JiveSortableTable(String[] headers) {
+        tableModel = new Table.JiveTableModel(headers, 0, false);
+
+
+        getTableHeader().setReorderingAllowed(false);
+        setGridColor(Color.white);
+        setRowHeight(20);
+        getColumnModel().setColumnMargin(0);
+        setSelectionBackground(SELECTION_COLOR);
+        setSelectionForeground(Color.black);
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        this.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    e.consume();
+                    enterPressed();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+            }
+
+            public void keyTyped(KeyEvent e) {
+
+            }
+        });
+    }
+
+    /**
+     * Adds a list to the table model.
+     *
+     * @param list the list to add to the model.
+     */
+    public void add(List list) {
+        final Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+            Object[] newRow = (Object[])iter.next();
+            tableModel.addRow(newRow);
+        }
+    }
+
+    /**
+     * Get the object array of a row.
+     *
+     * @return the object array of a row.
+     */
+    public Object[] getSelectedRowObject() {
+        return getRowObject(getSelectedRow());
+    }
+
+    /**
+     * Returns the object[] of a row.
+     *
+     * @param selectedRow the row to retrieve.
+     * @return the object[] of a row.
+     */
+    public Object[] getRowObject(int selectedRow) {
+        if (selectedRow < 0) {
+            return null;
+        }
+
+        int columnCount = getColumnCount();
+
+        Object[] obj = new Object[columnCount];
+        for (int j = 0; j < columnCount; j++) {
+            obj[j] = tableModel.getValueAt(selectedRow, j);
+        }
+
+        return obj;
+    }
+
+    /**
+     * Removes all columns and rows from table.
+     */
+    public void clearTable() {
+        int rowCount = getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            getTableModel().removeRow(0);
+        }
+    }
+
+    /**
+     * The internal Table Model.
+     */
+    public static class JiveTableModel extends DefaultTableModel {
+        private boolean isEditable;
+
+        /**
+         * Use the JiveTableModel in order to better handle the table. This allows
+         * for consistency throughout the product.
+         *
+         * @param columnNames - String array of columnNames
+         * @param numRows     - initial number of rows
+         * @param isEditable  - true if the cells are editable, false otherwise.
+         */
+        public JiveTableModel(Object[] columnNames, int numRows, boolean isEditable) {
+            super(columnNames, numRows);
+            this.isEditable = isEditable;
+        }
+
+        /**
+         * Returns true if cell is editable.
+         *
+         * @param row    the row to check.
+         * @param column the column to check.
+         * @return true if the cell is editable.
+         */
+        public boolean isCellEditable(int row, int column) {
+            return isEditable;
+        }
+    }
+
+    /**
+     * A swing renderer used to display labels within a table.
+     */
+    public class JLabelRenderer extends JLabel implements TableCellRenderer {
+        Border unselectedBorder;
+        Border selectedBorder;
+        boolean isBordered = true;
+
+        /**
+         * JLabelConstructor to build ui.
+         *
+         * @param isBordered true if the border should be shown.
+         */
+        public JLabelRenderer(boolean isBordered) {
+            setOpaque(true);
+            this.isBordered = isBordered;
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+            final String text = ((JLabel)color).getText();
+            if (text != null) {
+                setText(" " + text);
+            }
+            final Icon icon = ((JLabel)color).getIcon();
+            setIcon(icon);
+
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            }
+            else {
+                setForeground(Color.black);
+                setBackground(Color.white);
+                if (row % 2 == 0) {
+                    //setBackground( new Color( 156, 207, 255 ) );
+                }
+            }
+
+            if (isBordered) {
+                if (isSelected) {
+                    if (selectedBorder == null) {
+                        selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5,
+                                table.getSelectionBackground());
+                    }
+                    setBorder(selectedBorder);
+                }
+                else {
+                    if (unselectedBorder == null) {
+                        unselectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5,
+                                table.getBackground());
+                    }
+                    setBorder(unselectedBorder);
+                }
+            }
+            return this;
+        }
+    }
+
+    /**
+     * A swing renderer to dispaly Textareas within a table.
+     */
+    public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
+
+        /**
+         * Create new renderer with font.
+         *
+         * @param font the font to use in the renderer.
+         */
+        public TextAreaCellRenderer(Font font) {
+            setLineWrap(true);
+            setWrapStyleWord(true);
+            setFont(font);
+        }
+
+        public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
+            // set color & border here
+            setText(obj == null ? "" : obj.toString());
+            setSize(jTable.getColumnModel().getColumn(column).getWidth(),
+                    getPreferredSize().height);
+            if (jTable.getRowHeight(row) != getPreferredSize().height) {
+                jTable.setRowHeight(row, getPreferredSize().height);
+            }
+            return this;
+        }
+    }
+
+    /**
+     * A swing renderer used to display Buttons within a table.
+     */
+    public class JButtonRenderer extends JButton implements TableCellRenderer {
+        Border unselectedBorder;
+        Border selectedBorder;
+        boolean isBordered = true;
+
+        /**
+         * Empty Constructor.
+         */
+        public JButtonRenderer() {
+        }
+
+
+        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+            final String text = ((JButton)color).getText();
+            setText(text);
+
+            final Icon icon = ((JButton)color).getIcon();
+            setIcon(icon);
+
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            }
+            else {
+                setForeground(Color.black);
+                setBackground(Color.white);
+                if (row % 2 == 0) {
+                    //setBackground( new Color( 156, 207, 255 ) );
+                }
+            }
+
+            if (isBordered) {
+                if (isSelected) {
+                    if (selectedBorder == null) {
+                        selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5,
+                                table.getSelectionBackground());
+                    }
+                    setBorder(selectedBorder);
+                }
+                else {
+                    if (unselectedBorder == null) {
+                        unselectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5,
+                                table.getBackground());
+                    }
+                    setBorder(unselectedBorder);
+                }
+            }
+            return this;
+        }
+    }
+
+    public class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+        public ComboBoxRenderer() {
+
+        }
+
+        public ComboBoxRenderer(String[] items) {
+            super(items);
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                super.setBackground(table.getSelectionBackground());
+            }
+            else {
+                setForeground(table.getForeground());
+                setBackground(table.getBackground());
+            }
+
+            // Select the current value
+            setSelectedItem(value);
+            return this;
+        }
+    }
+
+    public class MyComboBoxEditor extends DefaultCellEditor {
+        public MyComboBoxEditor(String[] items) {
+            super(new JComboBox(items));
+        }
+    }
+
+    /**
+     * Returns the table model.
+     *
+     * @return the table model.
+     */
+    public Table.JiveTableModel getTableModel() {
+        return tableModel;
+    }
+
+    /**
+     * Clears all objects from map.
+     */
+    public void clearObjectMap() {
+        objectMap.clear();
+    }
+
+    /**
+     * Associate an object with a row.
+     *
+     * @param row    - the current row
+     * @param object - the object to associate with the row.
+     */
+    public void addObject(int row, Object object) {
+        objectMap.put(new Integer(row), object);
+    }
+
+    /**
+     * Returns the associated row object.
+     *
+     * @param row - the row associated with the object.
+     * @return The object associated with the row.
+     */
+    public Object getObject(int row) {
+        return objectMap.get(new Integer(row));
+    }
+
+    /**
+     * Override to handle when enter is pressed.
+     */
+    public void enterPressed() {
+    }
+
+}

@@ -1,0 +1,7 @@
+hessian.jar -- hessian-3.0.8.jar
+xpp3.jar -- xpp3-1.1.3.4d_b4_min.jar
+xstream.jar -- xstream-1.1.jar
+looks.jar -- looks-1.3.jar
+
+agent/jniwrap.jar -- jniwrap-2.7.1.jar
+agent/winlaf.jar -- winlaf-0.5.jar
