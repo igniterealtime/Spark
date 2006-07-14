@@ -1,0 +1,1 @@
+All plugins contained within this directory are built using commercial products licensed by Jive Software. 
