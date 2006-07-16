@@ -455,7 +455,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         dlg.requestFocus();
     }
 
-    private final class RoomList extends JiveSortableTable {
+    private final class RoomList extends Table {
         public RoomList() {
             super(new String[]{" ", "Name", "Address", "Occupants"});
             getColumnModel().setColumnMargin(0);
@@ -465,7 +465,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
             setSelectionBackground(Table.SELECTION_COLOR);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             setRowSelectionAllowed(true);
-            setSortable(true);
+//            setSortable(true);
 
             addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {

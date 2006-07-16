@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * @version 1.0, 03/12/14
  */
-public abstract class JiveSortableTable extends JXTable {
+public abstract class JiveSortableTable extends Table {
     private Table.JiveTableModel tableModel;
 
     /**
