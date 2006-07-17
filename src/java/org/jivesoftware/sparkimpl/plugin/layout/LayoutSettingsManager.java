@@ -10,27 +10,23 @@
 
 package org.jivesoftware.sparkimpl.plugin.layout;
 
-import com.thoughtworks.xstream.XStream;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Responsbile for the loading and persisting of LocalSettings.
  */
+@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
 public class LayoutSettingsManager {
     private static LayoutSettings layoutSettings;
-    private static XStream xstream = new XStream();
 
     private LayoutSettingsManager() {
-    }
-
-    static {
-        xstream.alias("layout", LayoutSettings.class);
     }
 
     /**
@@ -46,22 +42,7 @@ public class LayoutSettingsManager {
         if (layoutSettings == null) {
             // Do Initial Load from FileSystem.
             File settingsFile = getSettingsFile();
-            try {
-                FileReader reader = new FileReader(settingsFile);
-                layoutSettings = (LayoutSettings)xstream.fromXML(reader);
-            }
-            catch (Exception e) {
-                xstream.alias("com.jivesoftware.settings.layout.LayoutSettings", LayoutSettings.class);
-                try {
-                    FileReader reader = new FileReader(settingsFile);
-                    layoutSettings = (LayoutSettings)xstream.fromXML(reader);
-                }
-                catch (FileNotFoundException e1) {
-                    Log.error("Error loading LayoutSettings.", e);
-                    layoutSettings = new LayoutSettings();
-                }
-            }
-            xstream.alias("layout", LayoutSettings.class);
+            layoutSettings = load(settingsFile);
         }
         return layoutSettings;
     }
@@ -70,10 +51,28 @@ public class LayoutSettingsManager {
      * Persists the settings to the local file system.
      */
     public static void saveLayoutSettings() {
+        final Properties props = new Properties();
+
+        String mainWindowX = Integer.toString(layoutSettings.getMainWindowX());
+        String mainWindowY = Integer.toString(layoutSettings.getMainWindowY());
+        String mainWindowHeight = Integer.toString(layoutSettings.getMainWindowHeight());
+        String mainWindowWidth = Integer.toString(layoutSettings.getMainWindowWidth());
+        String chatFrameX = Integer.toString(layoutSettings.getChatFrameX());
+        String chatFrameY = Integer.toString(layoutSettings.getChatFrameY());
+        String chatFrameWidth = Integer.toString(layoutSettings.getChatFrameWidth());
+        String chatFrameHeight = Integer.toString(layoutSettings.getChatFrameHeight());
+
+        props.setProperty("mainWindowX", mainWindowX);
+        props.setProperty("mainWindowY", mainWindowY);
+        props.setProperty("mainWindowHeight", mainWindowHeight);
+        props.setProperty("mainWindowWidth", mainWindowWidth);
+        props.setProperty("chatFrameX", chatFrameX);
+        props.setProperty("chatFrameY", chatFrameY);
+        props.setProperty("chatFrameWidth", chatFrameWidth);
+        props.setProperty("chatFrameHeight", chatFrameHeight);
 
         try {
-            FileWriter writer = new FileWriter(getSettingsFile());
-            xstream.toXML(layoutSettings, writer);
+            props.store(new FileOutputStream(getSettingsFile()), "Storing Spark Layout Settings");
         }
         catch (Exception e) {
             Log.error("Error saving settings.", e);
@@ -99,6 +98,39 @@ public class LayoutSettingsManager {
         if (!file.exists()) {
             file.mkdirs();
         }
-        return new File(file, "layout-settings.xml");
+        return new File(file, "layout.settings");
     }
+
+    private static LayoutSettings load(File file) {
+        final Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(file));
+        }
+        catch (IOException e) {
+            Log.error(e);
+            return new LayoutSettings();
+        }
+
+        String mainWindowX = props.getProperty("mainWindowX");
+        String mainWindowY = props.getProperty("mainWindowY");
+        String mainWindowHeight = props.getProperty("mainWindowHeight");
+        String mainWindowWidth = props.getProperty("mainWindowWidth");
+        String chatFrameX = props.getProperty("chatFrameX");
+        String chatFrameY = props.getProperty("chatFrameY");
+        String chatFrameWidth = props.getProperty("chatFrameWidth");
+        String chatFrameHeight = props.getProperty("chatFrameHeight");
+
+        LayoutSettings settings = new LayoutSettings();
+        settings.setMainWindowX(Integer.parseInt(mainWindowX));
+        settings.setMainWindowY(Integer.parseInt(mainWindowY));
+        settings.setMainWindowHeight(Integer.parseInt(mainWindowHeight));
+        settings.setMainWindowWidth(Integer.parseInt(mainWindowWidth));
+        settings.setChatFrameX(Integer.parseInt(chatFrameX));
+        settings.setChatFrameY(Integer.parseInt(chatFrameY));
+        settings.setChatFrameWidth(Integer.parseInt(chatFrameWidth));
+        settings.setChatFrameHeight(Integer.parseInt(chatFrameHeight));
+
+        return settings;
+    }
+
 }
