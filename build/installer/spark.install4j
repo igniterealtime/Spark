@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="3.2.1">
-  <directoryPresets config="../../docs" />
+  <directoryPresets config="../../documentation" />
   <application name="%APP_NAME%" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_%VERSION%" compression="6" lzmaCompression="true" keepModificationTimes="false" shortName="%APP_SHORT_NAME%" publisher="%PUBLISHER%" publisherWeb="%PUBLISHER_URL%" version="%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_REVISION%" allPathsRelative="true" backupOnSave="false" autoSave="false" macSignature="????" javaMinVersion="1.4" javaMaxVersion="1.5" allowBetaVM="false">
     <searchSequence>
       <registry />
@@ -36,8 +36,8 @@
     <components />
   </files>
   <launchers>
-    <launcher name="Spark" id="4" external="false" excludeFromMenu="false" menuName="" icnsFile="../../resources/images/message.icns" pngIcon16File="../../resources/images/message.png" pngIcon32File="../../resources/images/message-32x32.png" macServiceDependencies="" allowUserChangeServiceStartType="true">
-      <executable name="Spark" type="1" iconSet="true" iconFile="../../resources/images/message.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" redirectStdout="true" stdoutFile="logs/output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="">
+    <launcher name="Spark" id="4" external="false" excludeFromMenu="false" menuName="" icnsFile="../../src/resources/images/message.icns" pngIcon16File="../../src/resources/images/message.png" pngIcon32File="../../src/resources/images/message-32x32.png" macServiceDependencies="" allowUserChangeServiceStartType="true">
+      <executable name="Spark" type="1" iconSet="true" iconFile="../../src/resources/images/message.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" redirectStdout="true" stdoutFile="logs/output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="">
         <versionInfo include="true" fileVersion="%VERSION%" companyName="" fileDescription="Spark" legalCopyright="Jive Software" productVersion="" internalName="%PRODUCT_NAME%" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="">
@@ -46,7 +46,7 @@
           <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="com.jivesoftware.Spark" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot;" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
+      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot;" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
         <searchSequence>
           <registry />
           <envVar name="JAVA_HOME" />
@@ -65,12 +65,12 @@
     </launcher>
   </launchers>
   <installerGui installerType="1" runUninstallerOnUpdate="true" addOnAppId="" suggestPreviousLocations="true" allowUnattendedInstall="true" useCustomHeaderImage="false" customHeaderImage="" customSize="false" customWidth="500" customHeight="390">
-    <customCode preAction="false" preActionClass="" postAction="true" postActionClass="com.jivesoftware.Installer" preUninstallAction="false" preUninstallActionClass="" postUninstallAction="true" postUninstallActionClass="com.jivesoftware.Uninstaller" initHandler="false" initHandlerClass="" directoryValidator="false" directoryValidatorClass="" installationHandler="false" installationHandlerClass="">
+    <customCode preAction="false" preActionClass="" postAction="true" postActionClass="org.jivesoftware.Installer" preUninstallAction="false" preUninstallActionClass="" postUninstallAction="true" postUninstallActionClass="org.jivesoftware.Uninstaller" initHandler="false" initHandlerClass="" directoryValidator="false" directoryValidatorClass="" installationHandler="false" installationHandlerClass="">
       <archive location="../../target/build/lib/spark.jar" />
     </customCode>
     <standardScreens>
       <screen id="welcome" enabled="true" useCustomBanner="false" bannerImageFile="" background="255,255,255" />
-      <screen id="license" enabled="true" file="../../docs/LICENSE.html" />
+      <screen id="license" enabled="true" file="../../documentation/LICENSE.html" />
       <screen id="location" enabled="true" showSpace="true" suggestAppDir="true" />
       <screen id="components" enabled="true" allSelected="true" firstMandatory="true">
         <selectedComponents />
