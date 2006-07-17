@@ -10,65 +10,29 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Properties;
 
 
 /**
  * Represents the LocalPreference Model for this system.
  */
 public class LocalPreferences {
-    private int xmppPort = 5222;
-    private int timeOut = 40;
-    private String password;
-    private String username;
-    private String server;
-    private boolean autoLogin;
-    private boolean savePassword;
-    private boolean idleOn = true;
-    private int secondIdleTime = 30;
-    private Set folderList = new HashSet();
-    private boolean newInstall = true;
-    private boolean indexing;
-    private boolean SSL;
-    private boolean prompted = true;
-    private String downloadDir;
-
-    private String xmppHost;
-    private boolean hostAndPortConfigured;
-
-    private String resource = "Spark";
 
 
-    // Handle proxy info
-    private boolean proxyEnabled;
-    private String protocol;
-    private String host;
-    private String port;
-    private String proxyUsername;
-    private String proxyPassword;
+    private Properties props;
 
-    // Handle Chat settings
-    private String defaultNickname;
 
-    // Handle updates
-    private Date lastCheckForUpdates;
-    private boolean timeDisplayedInChat = true;
+    public LocalPreferences(Properties props) {
+        this.props = props;
+    }
 
-    // Start In System Tray
-    private boolean startedHidden;
-    private boolean spellCheckerDisable;
-    private boolean chatRoomNotificationsOff;
-
-    private boolean hideChatHistory;
-    private boolean emptyGroupsShown;
-
-    /**
-     * Empty Constructor.
-     */
     public LocalPreferences() {
+        this.props = new Properties();
+    }
+
+    public Properties getProperties() {
+        return props;
     }
 
     /**
@@ -77,7 +41,7 @@ public class LocalPreferences {
      * @return the XMPP Port to communicate on. Default is 5222.
      */
     public int getXmppPort() {
-        return xmppPort;
+        return Integer.parseInt(props.getProperty("xmppPort", "5222"));
     }
 
     /**
@@ -86,7 +50,7 @@ public class LocalPreferences {
      * @param xmppPort the XMPP Port to communicate on. Default is 5222.
      */
     public void setXmppPort(int xmppPort) {
-        this.xmppPort = xmppPort;
+        props.setProperty("xmppPort", Integer.toString(xmppPort));
     }
 
     /**
@@ -95,7 +59,7 @@ public class LocalPreferences {
      * @return the smack timeout for requests.
      */
     public int getTimeOut() {
-        return timeOut;
+        return Integer.parseInt(props.getProperty("timeout", "5"));
     }
 
     /**
@@ -105,7 +69,7 @@ public class LocalPreferences {
      * @param timeOut the smack timeout.
      */
     public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
+        props.setProperty("timeout", Integer.toString(timeOut));
     }
 
     /**
@@ -114,7 +78,7 @@ public class LocalPreferences {
      * @return the encoded password.
      */
     public String getPassword() {
-        return password;
+        return props.getProperty("password");
     }
 
     /**
@@ -123,7 +87,7 @@ public class LocalPreferences {
      * @param password the encoded password.
      */
     public void setPassword(String password) {
-        this.password = password;
+        props.setProperty("password", password);
     }
 
     /**
@@ -133,7 +97,7 @@ public class LocalPreferences {
      * @return true if IDLE is on.
      */
     public boolean isIdleOn() {
-        return idleOn;
+        return Boolean.parseBoolean(props.getProperty("idleOn", "true"));
     }
 
     /**
@@ -143,7 +107,7 @@ public class LocalPreferences {
      * @param idleOn true to turn idle on.
      */
     public void setIdleOn(boolean idleOn) {
-        this.idleOn = idleOn;
+        props.setProperty("idleOn", Boolean.toString(idleOn));
     }
 
     /**
@@ -152,8 +116,8 @@ public class LocalPreferences {
      *
      * @return the number of minutes before checking for IDLE computer.
      */
-    public int getSecondIdleTime() {
-        return secondIdleTime;
+    public int getIdleTime() {
+        return Integer.parseInt(props.getProperty("idleTime", "1"));
     }
 
     /**
@@ -162,8 +126,8 @@ public class LocalPreferences {
      *
      * @param secondIdleTime the number of minutes.
      */
-    public void setSecondIdleTime(int secondIdleTime) {
-        this.secondIdleTime = secondIdleTime;
+    public void setIdleTime(int secondIdleTime) {
+        props.setProperty("idleTime", Integer.toString(secondIdleTime));
     }
 
     /**
@@ -172,7 +136,7 @@ public class LocalPreferences {
      * @return true if Auto Login is on.
      */
     public boolean isAutoLogin() {
-        return autoLogin;
+        return Boolean.parseBoolean(props.getProperty("autoLoginEnabled", "false"));
     }
 
     /**
@@ -182,7 +146,7 @@ public class LocalPreferences {
      * @param autoLogin true if Auto Login should be on.
      */
     public void setAutoLogin(boolean autoLogin) {
-        this.autoLogin = autoLogin;
+        props.setProperty("autoLoginEnabled", Boolean.toString(autoLogin));
     }
 
     /**
@@ -191,7 +155,7 @@ public class LocalPreferences {
      * @return true if the password is encoded and persisted.
      */
     public boolean isSavePassword() {
-        return savePassword;
+        return Boolean.parseBoolean(props.getProperty("passwordSaved", "false"));
     }
 
     /**
@@ -201,25 +165,7 @@ public class LocalPreferences {
      * @param savePassword true if the password should be saved.
      */
     public void setSavePassword(boolean savePassword) {
-        this.savePassword = savePassword;
-    }
-
-    /**
-     * Add an email folder for future parsing.
-     *
-     * @param folder folder to add.
-     */
-    public void addFolder(String folder) {
-        folderList.add(folder);
-    }
-
-    /**
-     * Returns a Collection of all Email folders.
-     *
-     * @return a Collection of all Email Folders.
-     */
-    public Collection getFolderList() {
-        return folderList;
+        props.setProperty("passwordSaved", Boolean.toString(savePassword));
     }
 
     /**
@@ -228,7 +174,7 @@ public class LocalPreferences {
      * @return the username of the agent.
      */
     public String getUsername() {
-        return username;
+        return props.getProperty("username");
     }
 
     /**
@@ -237,7 +183,7 @@ public class LocalPreferences {
      * @param username the agents username.
      */
     public void setUsername(String username) {
-        this.username = username;
+        props.setProperty("username", username);
     }
 
     /**
@@ -246,7 +192,7 @@ public class LocalPreferences {
      * @return the last Server accessed.
      */
     public String getServer() {
-        return server;
+        return props.getProperty("server");
     }
 
     /**
@@ -255,7 +201,7 @@ public class LocalPreferences {
      * @param server the last Server accessed.
      */
     public void setServer(String server) {
-        this.server = server;
+        props.setProperty("server", server);
     }
 
     /**
@@ -264,7 +210,7 @@ public class LocalPreferences {
      * @return true if a fresh install.
      */
     public boolean isNewInstall() {
-        return newInstall;
+        return Boolean.parseBoolean(props.getProperty("newInstall", "false"));
     }
 
     /**
@@ -273,26 +219,9 @@ public class LocalPreferences {
      * @param newInstall true if this is a fresh install.
      */
     public void setNewInstall(boolean newInstall) {
-        this.newInstall = newInstall;
+        props.setProperty("newInstall", Boolean.toString(newInstall));
     }
 
-    /**
-     * Returns true if indexing is turned on.
-     *
-     * @return true if indexing is turned on.
-     */
-    public boolean isIndexing() {
-        return indexing;
-    }
-
-    /**
-     * Set to true if indexing is turned on.
-     *
-     * @param indexing true if indexing is turned on.
-     */
-    public void setIndexing(boolean indexing) {
-        this.indexing = indexing;
-    }
 
     /**
      * Returns true to use SSL.
@@ -300,169 +229,178 @@ public class LocalPreferences {
      * @return true if we should connect via SSL.
      */
     public boolean isSSL() {
-        return SSL;
+        return Boolean.parseBoolean(props.getProperty("sslEnabled", "false"));
     }
 
     /**
      * Sets if the agent should use SSL for connecting.
      *
-     * @param SSL true if we should be using SSL.
+     * @param ssl true if we should be using SSL.
      */
-    public void setSSL(boolean SSL) {
-        this.SSL = SSL;
-    }
-
-
-    public boolean isPrompted() {
-        return prompted;
-    }
-
-    public void setPrompted(boolean prompted) {
-        this.prompted = prompted;
+    public void setSSL(boolean ssl) {
+        props.setProperty("sslEnabled", Boolean.toString(ssl));
     }
 
     public String getDownloadDir() {
-        return downloadDir;
+        return props.getProperty("downloadDirectory");
     }
 
     public void setDownloadDir(String downloadDir) {
-        this.downloadDir = downloadDir;
+        props.setProperty("downloadDirectory", downloadDir);
     }
 
     public boolean isProxyEnabled() {
-        return proxyEnabled;
+        return getBoolean("proxyEnabled", false);
     }
 
     public void setProxyEnabled(boolean proxyEnabled) {
-        this.proxyEnabled = proxyEnabled;
+        setBoolean("proxyEnabled", proxyEnabled);
     }
 
     public String getHost() {
-        return host;
+        return props.getProperty("host");
     }
 
     public void setHost(String host) {
-        this.host = host;
+        props.setProperty("host", host);
     }
 
     public String getPort() {
-        return port;
+        return props.getProperty("port");
     }
 
     public void setPort(String port) {
-        this.port = port;
+        props.setProperty("port", port);
     }
 
     public String getProxyUsername() {
-        return proxyUsername;
+        return props.getProperty("proxyUsername");
     }
 
     public void setProxyUsername(String proxyUsername) {
-        this.proxyUsername = proxyUsername;
+        props.setProperty("proxyUsername", proxyUsername);
     }
 
     public String getProxyPassword() {
-        return proxyPassword;
+        return props.getProperty("proxyPassword");
     }
 
     public void setProxyPassword(String proxyPassword) {
-        this.proxyPassword = proxyPassword;
+        props.setProperty("proxyPassword", proxyPassword);
     }
 
     public String getProtocol() {
-        return protocol;
+        return props.getProperty("protocol");
     }
 
     public void setProtocol(String protocol) {
-        this.protocol = protocol;
+        props.setProperty("protocol", protocol);
     }
 
     public String getDefaultNickname() {
-        return defaultNickname;
+        return props.getProperty("defaultNickname");
     }
 
     public void setDefaultNickname(String defaultNickname) {
-        this.defaultNickname = defaultNickname;
+        props.setProperty("defaultNickname", defaultNickname);
     }
 
 
     public Date getLastCheckForUpdates() {
-        return lastCheckForUpdates;
+        String date = props.getProperty("lastUpdateCheck");
+        if (date == null) {
+            return null;
+        }
+
+        // Convert to long
+        long time = Long.parseLong(date);
+        return new Date(time);
     }
 
     public void setLastCheckForUpdates(Date lastCheckForUpdates) {
-        this.lastCheckForUpdates = lastCheckForUpdates;
+        String time = Long.toString(lastCheckForUpdates.getTime());
+        props.setProperty("lastUpdateCheck", time);
     }
 
     public String getXmppHost() {
-        return xmppHost;
+        return props.getProperty("xmppHost");
     }
 
     public void setXmppHost(String xmppHost) {
-        this.xmppHost = xmppHost;
+        props.setProperty("xmppHost", xmppHost);
     }
 
     public boolean isHostAndPortConfigured() {
-        return hostAndPortConfigured;
+        return getBoolean("hostAndPort", false);
     }
 
-    public void setHostAndPortConfigured(boolean hostAndPortConfigured) {
-        this.hostAndPortConfigured = hostAndPortConfigured;
+    public void setHostAndPortConfigured(boolean configured) {
+        setBoolean("hostAndPort", configured);
     }
 
     public String getResource() {
-        return resource;
+        return props.getProperty("resource", "spark");
     }
 
     public void setResource(String resource) {
-        this.resource = resource;
+        props.setProperty("resource", resource);
     }
 
     public boolean isStartedHidden() {
-        return startedHidden;
+        return getBoolean("startHidden", false);
     }
 
     public void setStartedHidden(boolean startedHidden) {
-        this.startedHidden = startedHidden;
+        setBoolean("startHidden", startedHidden);
     }
 
     public boolean isTimeDisplayedInChat() {
-        return timeDisplayedInChat;
+        return getBoolean("timeDisplayed", true);
     }
 
     public void setTimeDisplayedInChat(boolean timeDisplayedInChat) {
-        this.timeDisplayedInChat = timeDisplayedInChat;
+        setBoolean("timeDisplayed", timeDisplayedInChat);
     }
 
-    public boolean isSpellCheckerDisable() {
-        return spellCheckerDisable;
+    public boolean isSpellCheckerEnabled() {
+        return getBoolean("spellCheckerEnabled", true);
     }
 
-    public void setSpellCheckerDisable(boolean spellCheckerDisable) {
-        this.spellCheckerDisable = spellCheckerDisable;
+    public void setSpellCheckerEnabled(boolean enabled) {
+        setBoolean("spellCheckerEnabled", enabled);
     }
 
-    public boolean isChatRoomNotificationsOff() {
-        return chatRoomNotificationsOff;
+    public boolean isChatRoomNotificationsOn() {
+        return getBoolean("chatNotificationOn", true);
     }
 
-    public void setChatRoomNotificationsOff(boolean chatRoomNotificationsOff) {
-        this.chatRoomNotificationsOff = chatRoomNotificationsOff;
+    public void setChatRoomNotifications(boolean on) {
+        setBoolean("chatNotificationOn", on);
     }
 
     public boolean isHideChatHistory() {
-        return hideChatHistory;
+        return getBoolean("showHistory", true);
     }
 
     public void setHideChatHistory(boolean hideChatHistory) {
-        this.hideChatHistory = hideChatHistory;
+        setBoolean("showHistory", hideChatHistory);
     }
 
     public boolean isEmptyGroupsShown() {
-        return emptyGroupsShown;
+        return getBoolean("showEmptyGroups", false);
     }
 
     public void setEmptyGroupsShown(boolean shown) {
-        this.emptyGroupsShown = shown;
+        setBoolean("showEmptyGroups", shown);
     }
+
+    private boolean getBoolean(String property, boolean defaultValue) {
+        return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
+    }
+
+    private void setBoolean(String property, boolean value) {
+        props.setProperty(property, Boolean.toString(value));
+    }
+
+
 }

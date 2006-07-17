@@ -85,7 +85,7 @@ public final class SessionManager implements ConnectionListener {
         LocalPreferences localPref = SettingsManager.getLocalPreferences();
         // Start Idle listener
         if (localPref.isIdleOn()) {
-            int delay = localPref.getSecondIdleTime() * 60000;
+            int delay = localPref.getIdleTime() * 60000;
             if (Spark.isWindows()) {
                 setIdleListener(delay);
             }

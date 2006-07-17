@@ -842,7 +842,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                         makeTabRed(room);
                     }
 
-                    boolean invokeFlash = !SettingsManager.getLocalPreferences().isChatRoomNotificationsOff() || !(room instanceof GroupChatRoom);
+                    boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
 
                     if (!chatFrame.isFocused() && invokeFlash) {
                         SparkManager.getAlertManager().flashWindow(chatFrame);
@@ -859,7 +859,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    boolean invokeFlash = !SettingsManager.getLocalPreferences().isChatRoomNotificationsOff() || !(room instanceof GroupChatRoom);
+                    boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
 
                     if (!chatFrame.isFocused() && invokeFlash) {
                         SparkManager.getAlertManager().flashWindow(chatFrame);

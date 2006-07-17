@@ -84,7 +84,7 @@ public class LocalPreferencePanel extends JPanel {
         });
 
         idleBox.setSelected(localPref.isIdleOn());
-        idleField.setText(Integer.toString(localPref.getSecondIdleTime()));
+        idleField.setText(Integer.toString(localPref.getIdleTime()));
 
         final JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());

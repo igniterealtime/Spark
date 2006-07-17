@@ -77,8 +77,8 @@ public class ChatPreference implements Preference {
                 }
 
                 boolean showTime = pref.isTimeDisplayedInChat();
-                boolean spellCheckerOn = !pref.isSpellCheckerDisable();
-                boolean notificationsOn = !pref.isChatRoomNotificationsOff();
+                boolean spellCheckerOn = pref.isSpellCheckerEnabled();
+                boolean notificationsOn = pref.isChatRoomNotificationsOn();
                 boolean chatHistoryHidden = pref.isHideChatHistory();
                 panel.setShowTime(showTime);
                 panel.setSpellCheckerOn(spellCheckerOn);
@@ -94,8 +94,8 @@ public class ChatPreference implements Preference {
     public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setTimeDisplayedInChat(panel.getShowTime());
-        pref.setSpellCheckerDisable(!panel.isSpellCheckerOn());
-        pref.setChatRoomNotificationsOff(!panel.isGroupChatNotificationsOn());
+        pref.setSpellCheckerEnabled(!panel.isSpellCheckerOn());
+        pref.setChatRoomNotifications(!panel.isGroupChatNotificationsOn());
         pref.setHideChatHistory(panel.isChatHistoryHidden());
 
         SettingsManager.saveSettings();

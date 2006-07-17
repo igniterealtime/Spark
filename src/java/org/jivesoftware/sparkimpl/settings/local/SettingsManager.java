@@ -10,13 +10,14 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import com.thoughtworks.xstream.XStream;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 
 /**
@@ -24,13 +25,8 @@ import java.io.FileWriter;
  */
 public class SettingsManager {
     private static LocalPreferences localPreferences;
-    private static XStream xstream = new XStream();
 
     private SettingsManager() {
-    }
-
-    static {
-        xstream.alias("settings", LocalPreferences.class);
     }
 
     /**
@@ -47,24 +43,7 @@ public class SettingsManager {
         if (localPreferences == null) {
             // Do Initial Load from FileSystem.
             File settingsFile = getSettingsFile();
-            FileReader reader = null;
-
-            try {
-                reader = new FileReader(settingsFile);
-                localPreferences = (LocalPreferences)xstream.fromXML(reader);
-            }
-            catch (Exception e) {
-                xstream.alias("com.jivesoftware.settings.local.LocalPreferences", LocalPreferences.class);
-                try {
-                    reader = new FileReader(settingsFile);
-                    localPreferences = (LocalPreferences)xstream.fromXML(reader);
-                }
-                catch (Exception e1) {
-                    Log.error("Error loading LocalPreferences.", e);
-                    localPreferences = new LocalPreferences();
-                }
-            }
-            xstream.alias("settings", LocalPreferences.class);
+            localPreferences = load();
         }
 
 
@@ -75,9 +54,10 @@ public class SettingsManager {
      * Persists the settings to the local file system.
      */
     public static void saveSettings() {
+        final Properties props = localPreferences.getProperties();
+
         try {
-            FileWriter writer = new FileWriter(getSettingsFile());
-            xstream.toXML(localPreferences, writer);
+            props.store(new FileOutputStream(getSettingsFile()), "Saving Spark Settings");
         }
         catch (Exception e) {
             Log.error("Error saving settings.", e);
@@ -103,6 +83,20 @@ public class SettingsManager {
         if (!file.exists()) {
             file.mkdirs();
         }
-        return new File(file, "settings.xml");
+        return new File(file, "spark-settings.xml");
+    }
+
+
+    private static LocalPreferences load() {
+        final Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(getSettingsFile()));
+        }
+        catch (IOException e) {
+            Log.error(e);
+            return new LocalPreferences();
+        }
+
+        return new LocalPreferences(props);
     }
 }

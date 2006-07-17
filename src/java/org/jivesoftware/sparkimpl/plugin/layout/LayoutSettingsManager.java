@@ -16,13 +16,11 @@ import org.jivesoftware.spark.util.log.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 /**
  * Responsbile for the loading and persisting of LocalSettings.
  */
-@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
 public class LayoutSettingsManager {
     private static LayoutSettings layoutSettings;
 
@@ -105,32 +103,33 @@ public class LayoutSettingsManager {
         final Properties props = new Properties();
         try {
             props.load(new FileInputStream(file));
+
+
+            LayoutSettings settings = null;
+            String mainWindowX = props.getProperty("mainWindowX");
+            String mainWindowY = props.getProperty("mainWindowY");
+            String mainWindowHeight = props.getProperty("mainWindowHeight");
+            String mainWindowWidth = props.getProperty("mainWindowWidth");
+            String chatFrameX = props.getProperty("chatFrameX");
+            String chatFrameY = props.getProperty("chatFrameY");
+            String chatFrameWidth = props.getProperty("chatFrameWidth");
+            String chatFrameHeight = props.getProperty("chatFrameHeight");
+
+            settings = new LayoutSettings();
+            settings.setMainWindowX(Integer.parseInt(mainWindowX));
+            settings.setMainWindowY(Integer.parseInt(mainWindowY));
+            settings.setMainWindowHeight(Integer.parseInt(mainWindowHeight));
+            settings.setMainWindowWidth(Integer.parseInt(mainWindowWidth));
+            settings.setChatFrameX(Integer.parseInt(chatFrameX));
+            settings.setChatFrameY(Integer.parseInt(chatFrameY));
+            settings.setChatFrameWidth(Integer.parseInt(chatFrameWidth));
+            settings.setChatFrameHeight(Integer.parseInt(chatFrameHeight));
+            return settings;
         }
-        catch (IOException e) {
+        catch (Exception e) {
             Log.error(e);
             return new LayoutSettings();
         }
-
-        String mainWindowX = props.getProperty("mainWindowX");
-        String mainWindowY = props.getProperty("mainWindowY");
-        String mainWindowHeight = props.getProperty("mainWindowHeight");
-        String mainWindowWidth = props.getProperty("mainWindowWidth");
-        String chatFrameX = props.getProperty("chatFrameX");
-        String chatFrameY = props.getProperty("chatFrameY");
-        String chatFrameWidth = props.getProperty("chatFrameWidth");
-        String chatFrameHeight = props.getProperty("chatFrameHeight");
-
-        LayoutSettings settings = new LayoutSettings();
-        settings.setMainWindowX(Integer.parseInt(mainWindowX));
-        settings.setMainWindowY(Integer.parseInt(mainWindowY));
-        settings.setMainWindowHeight(Integer.parseInt(mainWindowHeight));
-        settings.setMainWindowWidth(Integer.parseInt(mainWindowWidth));
-        settings.setChatFrameX(Integer.parseInt(chatFrameX));
-        settings.setChatFrameY(Integer.parseInt(chatFrameY));
-        settings.setChatFrameWidth(Integer.parseInt(chatFrameWidth));
-        settings.setChatFrameHeight(Integer.parseInt(chatFrameHeight));
-
-        return settings;
     }
 
 }

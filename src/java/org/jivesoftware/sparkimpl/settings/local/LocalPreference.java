@@ -62,7 +62,7 @@ public class LocalPreference implements Preference {
         preferences.setXmppPort(Integer.parseInt(panel.getPort()));
         preferences.setSavePassword(panel.isSavePassword());
         preferences.setIdleOn(panel.isIdleOn());
-        preferences.setSecondIdleTime(Integer.parseInt(panel.getIdleTime()));
+        preferences.setIdleTime(Integer.parseInt(panel.getIdleTime()));
         preferences.setStartedHidden(panel.startInSystemTray());
 
         return preferences;
