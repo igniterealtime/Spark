@@ -447,10 +447,10 @@ public class VCardManager {
                         String firstName = vcard.getFirstName();
                         String lastName = vcard.getLastName();
                         if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                            SparkManager.getWorkspace().getStatusBar().setNickname(firstName + " " + lastName);
+                            SparkManager.getMainWindow().setNickname(firstName + " " + lastName);
                         }
                         else if (ModelUtil.hasLength(firstName)) {
-                            SparkManager.getWorkspace().getStatusBar().setNickname(firstName);
+                            SparkManager.getMainWindow().setNickname(firstName);
                         }
                     }
                 }

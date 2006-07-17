@@ -13,7 +13,6 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.BrowserLauncher;
@@ -77,6 +76,8 @@ public final class MainWindow extends JFrame implements ActionListener {
     private static MainWindow singleton;
     private static final Object LOCK = new Object();
 
+    private String title;
+
     /**
      * Returns the singleton instance of <CODE>MainWindow</CODE>,
      * creating it if necessary.
@@ -106,6 +107,8 @@ public final class MainWindow extends JFrame implements ActionListener {
      * @param icon  the icon used in the frame.
      */
     private MainWindow(String title, ImageIcon icon) {
+        this.title = title;
+
         // Initialize and dock the menus
         configureMenu();
 
@@ -116,7 +119,8 @@ public final class MainWindow extends JFrame implements ActionListener {
         this.setJMenuBar(mainWindowBar);
         this.getContentPane().add(topBar, BorderLayout.NORTH);
 
-        setTitle(title + " - " + StringUtils.parseName(SparkManager.getConnection().getUser()));
+        setTitle(title);
+
         setIconImage(icon.getImage());
 
         // Setup WindowListener to be the proxy to the actual window listener
@@ -484,6 +488,17 @@ public final class MainWindow extends JFrame implements ActionListener {
         catch (Exception e) {
             Log.warning("Error updating.", e);
         }
+    }
+
+    public String getMainWindowTitle() {
+        return title;
+    }
+
+
+    public void setNickname(String nickname) {
+        String mainWindowTitle = getMainWindowTitle();
+        String newWindowTitle = mainWindowTitle + " - " + nickname;
+        setTitle(newWindowTitle);
     }
 
     /**
