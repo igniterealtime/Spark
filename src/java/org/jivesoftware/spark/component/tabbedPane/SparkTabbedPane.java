@@ -14,12 +14,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -41,6 +35,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 /**
  *
  */
@@ -61,16 +62,28 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     private Map<Component, JFrame> framesMap = new HashMap<Component, JFrame>();
 
 
+    private int tabPlacement = JTabbedPane.TOP;
+
     /**
      * Listeners
      */
     private List<SparkTabbedPaneListener> listeners = new ArrayList<SparkTabbedPaneListener>();
 
     public SparkTabbedPane() {
+        createUI();
+    }
+
+    public SparkTabbedPane(int placement) {
+        this.tabPlacement = placement;
+
+        createUI();
+    }
+
+    private void createUI() {
         setLayout(new BorderLayout());
 
         tabs = new JPanel(new
-                FlowLayout(FlowLayout.LEFT, 0, 0)) {
+            FlowLayout(FlowLayout.LEFT, 0, 0)) {
             public Dimension getPreferredSize() {
                 if (getParent() == null)
                     return getPreferredSize();
@@ -103,11 +116,18 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridBagLayout());
-        topPanel.add(tabs, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
-        topPanel.add(new JLabel(), new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
+        topPanel.add(new JLabel(), new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         topPanel.setOpaque(false);
+
         // Add Tabs panel to top of panel.
-        add(topPanel, BorderLayout.NORTH);
+        if (tabPlacement == JTabbedPane.TOP) {
+            topPanel.add(tabs, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+            add(topPanel, BorderLayout.NORTH);
+        }
+        else {
+            topPanel.add(tabs, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 0), 0, 0));
+            add(topPanel, BorderLayout.SOUTH);
+        }
 
         // Create mainPanel
         mainPanel = new JPanel(new CardLayout());
@@ -119,7 +139,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
         closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_DARK_X_IMAGE);
 
-        setBackground(Color.white);
+        setOpaque(false);
         tabs.setOpaque(false);
     }
 
@@ -132,6 +152,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     public SparkTab addTab(String text, Icon icon, final Component component) {
         final SparkTab tab = new SparkTab(icon, text);
+        tab.setTabPlacement(tabPlacement);
         //tabs.add(tab, new GridBagConstraints(tabs.getComponentCount(), 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 0, 0, 0), 0, 0));
 
         tabs.add(tab);
@@ -506,7 +527,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     public static void main(String args[]) {
         JFrame f = new JFrame();
-        SparkTabbedPane pane = new SparkTabbedPane();
+        SparkTabbedPane pane = new SparkTabbedPane(JTabbedPane.BOTTOM);
         pane.setCloseButtonEnabled(true);
         pane.setPopupAllowed(true);
         for (int i = 0; i < 3; i++) {

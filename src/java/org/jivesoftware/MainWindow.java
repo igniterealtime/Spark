@@ -114,7 +114,7 @@ public final class MainWindow extends JFrame implements ActionListener {
         this.setJMenuBar(mainWindowBar);
         this.getContentPane().add(topBar, BorderLayout.NORTH);
 
-        setTitle(title);
+        setTitle(title + " - " + SparkManager.getSessionManager().getUsername());
 
         setIconImage(icon.getImage());
 

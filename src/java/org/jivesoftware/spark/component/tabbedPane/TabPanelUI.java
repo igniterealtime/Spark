@@ -15,12 +15,6 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicPanelUI;
-
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -31,9 +25,20 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.util.StringTokenizer;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicPanelUI;
+
+/**
+ * Represents a single instance of a Tab Paint Component.
+ *
+ * @author Derek DeMoro
+ */
 public class TabPanelUI extends BasicPanelUI {
-    private Color backgroundColor1 = Color.white;//new Color(235, 247, 223);
-    private Color backgroundColor2 = Color.white;//new Color(214, 219, 191);
+    private Color backgroundColor1 = new Color(0,0,0,0);
+    private Color backgroundColor2 = new Color(0,0,0,0);
 
     private Color borderColor = new Color(86, 88, 72);
     private Color borderColorAlpha1 = new Color(86, 88, 72, 100);
@@ -59,8 +64,8 @@ public class TabPanelUI extends BasicPanelUI {
             backgroundColor2 = getSelectedEndColor();
         }
         else {
-            backgroundColor1 = Color.white;
-            backgroundColor2 = Color.white;
+            backgroundColor1 = new Color(0, 0, 0, 0);
+            backgroundColor2 = new Color(0, 0, 0, 0);
         }
 
         this.selected = selected;
@@ -83,6 +88,7 @@ public class TabPanelUI extends BasicPanelUI {
         int y = vInsets.top;
         int arc = 8;
 
+
         Shape vButtonShape = new RoundRectangle2D.Double((double)x, (double)y, (double)w, (double)h, (double)arc, (double)arc);
         Shape vOldClip = g.getClip();
 
@@ -96,22 +102,28 @@ public class TabPanelUI extends BasicPanelUI {
         GradientPaint vPaint = new GradientPaint(x, y, borderColor, x, y + h, borderHighlight);
         g2d.setPaint(vPaint);
 
-        if (selected) {
-            g2d.setColor(Color.lightGray);
-            g2d.drawRoundRect(x, y, w, h, arc, arc);
-        }
-
-        g2d.clipRect(x, y, w + 1, h - arc / 4);
-        g2d.setColor(borderColorAlpha1);
-
-        g2d.setClip(vOldClip);
-        g2d.setColor(borderColorAlpha2);
-
+        // Handle custom actions.
         if (placement == JTabbedPane.TOP) {
+            if (selected) {
+                g2d.setColor(Color.lightGray);
+                g2d.drawRoundRect(x, y, w, h, arc, arc);
+            }
+
+            g2d.clipRect(x, y, w + 1, h - arc / 4);
+            g2d.setColor(borderColorAlpha1);
+
+            g2d.setClip(vOldClip);
+            g2d.setColor(borderColorAlpha2);
+
+
             g2d.setColor(backgroundColor2);
             g2d.fillRect(x, h - 5, w, h);
         }
-
+        else {
+            // Make straight line.
+            g2d.setColor(backgroundColor2);
+            g2d.fillRect(x, y, w, 4);
+        }
 
         if (selected) {
 
@@ -121,7 +133,6 @@ public class TabPanelUI extends BasicPanelUI {
             g2d.setColor(Color.lightGray);
             g2d.drawLine(w - 1, 4, w - 1, h - 4);
         }
-
     }
 
 
@@ -176,7 +187,7 @@ public class TabPanelUI extends BasicPanelUI {
         return color;
     }
 
-    public void setPlacement(int placement){
+    public void setPlacement(int placement) {
         this.placement = placement;
     }
 }

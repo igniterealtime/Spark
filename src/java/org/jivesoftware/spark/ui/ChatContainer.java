@@ -64,7 +64,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Should be subclassed to track all available ChatRooms.
+ * Contains all <code>ChatRoom</code> objects within Spark.
+ * 
+ * @author Derek DeMoro
  */
 public class ChatContainer extends SparkTabbedPane implements MessageListener, ChangeListener {
     /**
@@ -113,6 +115,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         addKeyNavigation();
 
         this.setFocusable(false);
+
+        setOpaque(true);
+        setBackground(Color.white);
     }
 
     /**

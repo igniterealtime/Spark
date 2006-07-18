@@ -31,6 +31,7 @@ import org.jivesoftware.spark.ui.conferences.Conferences;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
@@ -70,7 +71,7 @@ import java.util.TimerTask;
  * <li>Retrieve the ContactList.
  */
 public class Workspace extends JPanel implements PacketListener {
-    private JTabbedPane workspacePane;
+    private SparkTabbedPane workspacePane;
     private final StatusBar statusBox = new StatusBar();
     private ContactList contactList;
     private Conferences conferences;
@@ -132,7 +133,7 @@ public class Workspace extends JPanel implements PacketListener {
         });
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
-        workspacePane = new JTabbedPane(JTabbedPane.BOTTOM);
+        workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
         //workspacePane.setBoldActiveTab(true);
         //workspacePane.setHideOneTab(true);
 
@@ -391,7 +392,7 @@ public class Workspace extends JPanel implements PacketListener {
      *
      * @return the workspace JideTabbedPane
      */
-    public JTabbedPane getWorkspacePane() {
+    public SparkTabbedPane getWorkspacePane() {
         return workspacePane;
     }
 
