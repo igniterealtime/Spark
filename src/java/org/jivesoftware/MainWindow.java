@@ -23,16 +23,6 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,10 +32,19 @@ import java.awt.event.WindowFocusListener;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
 
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
@@ -76,8 +75,6 @@ public final class MainWindow extends JFrame implements ActionListener {
     private static MainWindow singleton;
     private static final Object LOCK = new Object();
 
-    private String title;
-
     /**
      * Returns the singleton instance of <CODE>MainWindow</CODE>,
      * creating it if necessary.
@@ -107,8 +104,6 @@ public final class MainWindow extends JFrame implements ActionListener {
      * @param icon  the icon used in the frame.
      */
     private MainWindow(String title, ImageIcon icon) {
-        this.title = title;
-
         // Initialize and dock the menus
         configureMenu();
 
@@ -167,7 +162,7 @@ public final class MainWindow extends JFrame implements ActionListener {
             }
         });
 
-        this.addWindowFocusListener(new Focuser());
+        this.addWindowFocusListener(new MainWindowFocusListener());
     }
 
     /**
@@ -195,10 +190,10 @@ public final class MainWindow extends JFrame implements ActionListener {
      * has been activated.
      */
     private void fireWindowActivated() {
-        final Iterator iter = listeners.iterator();
-        while (iter.hasNext()) {
-            ((MainWindowListener)iter.next()).mainWindowActivated();
+        for (MainWindowListener listener : listeners) {
+            listener.mainWindowActivated();
         }
+
         if (Spark.isMac()) {
             setJMenuBar(mainWindowBar);
         }
@@ -209,9 +204,8 @@ public final class MainWindow extends JFrame implements ActionListener {
      * is shutting down.
      */
     private void fireWindowShutdown() {
-        final Iterator iter = listeners.iterator();
-        while (iter.hasNext()) {
-            ((MainWindowListener)iter.next()).shutdown();
+        for (MainWindowListener listener : listeners) {
+            listener.shutdown();
         }
     }
 
@@ -381,8 +375,8 @@ public final class MainWindow extends JFrame implements ActionListener {
             }
         });
 
-        int numberOfMillisecondsInTheFuture = 15000; // 15 sec
-        Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
+        int delay = 15000; // 15 sec
+        Date timeToRun = new Date(System.currentTimeMillis() + delay);
         Timer timer = new Timer();
 
         timer.schedule(new TimerTask() {
@@ -432,8 +426,7 @@ public final class MainWindow extends JFrame implements ActionListener {
         return focused;
     }
 
-    private class Focuser implements WindowFocusListener {
-        long timer;
+    private class MainWindowFocusListener implements WindowFocusListener {
 
         public void windowGainedFocus(WindowEvent e) {
             focused = true;
@@ -490,17 +483,12 @@ public final class MainWindow extends JFrame implements ActionListener {
         }
     }
 
-    public String getMainWindowTitle() {
-        return title;
-    }
-
-
     /**
      * Displays the About Box for Spark.
      */
-    public void showAboutBox() {
+    private static void showAboutBox() {
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion(),
-                "About", JOptionPane.INFORMATION_MESSAGE);
+            "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }

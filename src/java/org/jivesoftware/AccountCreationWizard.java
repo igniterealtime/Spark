@@ -58,8 +58,8 @@ public class AccountCreationWizard extends JPanel {
     private JDialog dialog;
 
     private boolean registered;
-    private XMPPConnection con = null;
-    private JProgressBar bar;
+    private XMPPConnection connection = null;
+    private JProgressBar progressBar;
 
 
     public AccountCreationWizard() {
@@ -85,11 +85,11 @@ public class AccountCreationWizard extends JPanel {
         add(serverLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(serverField, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        bar = new JProgressBar();
+        progressBar = new JProgressBar();
 
 
-        add(bar, new GridBagConstraints(1, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        bar.setVisible(false);
+        add(progressBar, new GridBagConstraints(1, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        progressBar.setVisible(false);
         add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
@@ -126,7 +126,7 @@ public class AccountCreationWizard extends JPanel {
         return serverField.getText();
     }
 
-    public boolean passwordsMatch() {
+    public boolean isPasswordValid() {
         return getPassword().equals(getConfirmPassword());
     }
 
@@ -151,7 +151,7 @@ public class AccountCreationWizard extends JPanel {
             errors = true;
             errorMessage = "Please specify the server to create the account on.";
         }
-        else if (!passwordsMatch()) {
+        else if (!isPasswordValid()) {
             errors = true;
             errorMessage = "The passwords do not match. Please confirm passwords.";
         }
@@ -162,10 +162,10 @@ public class AccountCreationWizard extends JPanel {
         }
 
         final Component ui = this;
-        bar.setIndeterminate(true);
-        bar.setStringPainted(true);
-        bar.setString("Registering with " + getServer() + ". Please wait...");
-        bar.setVisible(true);
+        progressBar.setIndeterminate(true);
+        progressBar.setStringPainted(true);
+        progressBar.setString("Registering with " + getServer() + ". Please wait...");
+        progressBar.setVisible(true);
         final SwingWorker worker = new SwingWorker() {
             int errorCode;
 
@@ -173,13 +173,13 @@ public class AccountCreationWizard extends JPanel {
             public Object construct() {
                 try {
                     createAccountButton.setEnabled(false);
-                    con = getConnection();
+                    connection = getConnection();
                 }
                 catch (XMPPException e) {
                     return e;
                 }
                 try {
-                    final AccountManager accountManager = new AccountManager(con);
+                    final AccountManager accountManager = new AccountManager(connection);
                     accountManager.createAccount(getUsername(), getPassword());
                 }
                 catch (XMPPException e) {
@@ -189,8 +189,8 @@ public class AccountCreationWizard extends JPanel {
             }
 
             public void finished() {
-                bar.setVisible(false);
-                if (con == null) {
+                progressBar.setVisible(false);
+                if (connection == null) {
                     if (ui.isShowing()) {
                         createAccountButton.setEnabled(true);
                         JOptionPane.showMessageDialog(ui, "Unable to connect to " + getServer() + ".", "Account Creation Problem", JOptionPane.ERROR_MESSAGE);
@@ -243,7 +243,7 @@ public class AccountCreationWizard extends JPanel {
 
     private XMPPConnection getConnection() throws XMPPException {
         LocalPreferences localPref = SettingsManager.getLocalPreferences();
-        XMPPConnection con = null;
+        XMPPConnection con;
 
         // Get connection
 
@@ -256,7 +256,7 @@ public class AccountCreationWizard extends JPanel {
             String portString = serverName.substring(checkForPort + 1);
             if (ModelUtil.hasLength(portString)) {
                 // Set new port.
-                port = Integer.valueOf(portString).intValue();
+                port = Integer.valueOf(portString);
             }
         }
 

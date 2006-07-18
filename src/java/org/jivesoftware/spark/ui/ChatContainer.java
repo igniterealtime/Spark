@@ -71,7 +71,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * List of all ChatRoom Listeners.
      */
     private final List chatRoomListeners = new ArrayList();
-    private final List chatRoomList = new ArrayList();
+    private final List<ChatRoom> chatRoomList = new ArrayList<ChatRoom>();
     private final Map presenceMap = new HashMap();
 
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
@@ -994,7 +994,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     }
 
-    public Collection getChatRooms() {
+    public Collection<ChatRoom> getChatRooms() {
         return chatRoomList;
     }
 
