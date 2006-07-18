@@ -40,5 +40,9 @@ public class TabPanel extends JPanel {
     public void showBorder(boolean show) {
         ui.setHideBorder(!show);
     }
+
+    protected void setTabPlacement(int placement){
+        ui.setPlacement(placement);
+    }
 }
 

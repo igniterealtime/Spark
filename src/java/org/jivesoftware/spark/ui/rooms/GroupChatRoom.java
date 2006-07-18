@@ -268,7 +268,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message.getBody());
+            getTranscriptWindow().insertMessage(getNickname(), message);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -309,7 +309,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message.getBody());
+            getTranscriptWindow().insertMessage(getNickname(), message);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -551,8 +551,7 @@ public final class GroupChatRoom extends ChatRoom {
                         return;
                     }
 
-                    String body = message.getBody().replaceAll("/me", from);
-                    getTranscriptWindow().insertOthersMessage(from, body, sentDate);
+                    getTranscriptWindow().insertOthersMessage(from, message);
                 }
 
                 if (typingTimer != null) {

@@ -265,7 +265,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message.getBody());
+            getTranscriptWindow().insertMessage(getNickname(), message);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -504,7 +504,7 @@ public class ChatRoomImpl extends ChatRoom {
         // Debug info
         super.insertMessage(message);
 
-        getTranscriptWindow().insertOthersMessage(participantNickname, message.getBody(), null);
+        getTranscriptWindow().insertOthersMessage(participantNickname, message);
 
         // Set the participant jid to their full JID.
         participantJID = message.getFrom();

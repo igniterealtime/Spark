@@ -17,6 +17,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicPanelUI;
 
@@ -41,6 +42,8 @@ public class TabPanelUI extends BasicPanelUI {
 
     private boolean selected;
     private boolean hideBorder;
+
+    private int placement = JTabbedPane.TOP;
 
     // ------------------------------------------------------------------------------------------------------------------
     //  Custom installation methods
@@ -100,16 +103,16 @@ public class TabPanelUI extends BasicPanelUI {
 
         g2d.clipRect(x, y, w + 1, h - arc / 4);
         g2d.setColor(borderColorAlpha1);
-        //   g2d.drawLine(x, y + h, w, h - 1);
 
         g2d.setClip(vOldClip);
         g2d.setColor(borderColorAlpha2);
 
-        //    g2d.drawRoundRect(x + 1, y + 2, w - 2, h - 3, arc, arc - 2);
+        if (placement == JTabbedPane.TOP) {
+            g2d.setColor(backgroundColor2);
+            g2d.fillRect(x, h - 5, w, h);
+        }
 
 
-        g2d.setColor(backgroundColor2);
-        g2d.fillRect(x, h - 5, w, h);
         if (selected) {
 
         }
@@ -171,6 +174,10 @@ public class TabPanelUI extends BasicPanelUI {
             return Color.white;
         }
         return color;
+    }
+
+    public void setPlacement(int placement){
+        this.placement = placement;
     }
 }
 

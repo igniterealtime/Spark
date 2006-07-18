@@ -14,6 +14,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.preference.PreferenceManager;
@@ -153,10 +154,11 @@ public class TranscriptWindow extends ChatArea {
     /**
      * Create and insert a message from the current user.
      *
-     * @param userid  the userid of the current agent.
-     * @param message the agents message to insert.
+     * @param userid  the userid of the current user.
+     * @param message the message to insert.
      */
-    public void insertMessage(String userid, String message) {
+    public void insertMessage(String userid, Message message) {
+        String body = message.getBody();
 
         try {
             String date = getDate(null);
@@ -172,7 +174,7 @@ public class TranscriptWindow extends ChatArea {
 
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
-            setText(message);
+            setText(body);
             insertText("\n");
         }
         catch (BadLocationException e) {
@@ -180,36 +182,6 @@ public class TranscriptWindow extends ChatArea {
         }
     }
 
-    /**
-     * Create and insert a message from the current user.
-     *
-     * @param userid     the userid of the current agent.
-     * @param message    the agents message to insert.
-     * @param datePosted the date the message was posted.
-     */
-    public void insertMessage(String userid, String message, Date datePosted) {
-
-        try {
-            String date = getDate(datePosted);
-
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), date + userid + ": ", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setText(message);
-            insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
-        }
-    }
 
     public void insertCustomMessage(String prefix, String message) {
         try {
@@ -258,11 +230,23 @@ public class TranscriptWindow extends ChatArea {
      *
      * @param userid  the userid of the customer.
      * @param message the message from the customer.
-     * @param date    the date the message was posted, can be null.
      */
-    public void insertOthersMessage(String userid, String message, Date date) {
+    public void insertOthersMessage(String userid, Message message) {
+        String body = message.getBody();
+
         try {
-            String theDate = getDate(date);
+            DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+            Date sentDate = null;
+            if (inf != null) {
+                sentDate = inf.getStamp();
+
+                body = "(Offline) " + body;
+            }
+            else {
+                sentDate = new Date();
+            }
+
+            String theDate = getDate(sentDate);
 
             StyleConstants.setBold(styles, false);
             StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
@@ -273,7 +257,7 @@ public class TranscriptWindow extends ChatArea {
             doc.insertString(doc.getLength(), theDate + userid + ": ", styles);
 
             StyleConstants.setBold(styles, false);
-            setText(message);
+            setText(body);
             insertText("\n");
         }
         catch (BadLocationException ex) {
