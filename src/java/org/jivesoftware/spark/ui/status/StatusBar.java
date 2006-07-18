@@ -91,7 +91,7 @@ public class StatusBar extends JPanel {
 
         add(imageLabel, new GridBagConstraints(0, 0, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
-        //add(nicknameLabel, new GridBagConstraints(1, 0, 2, 2, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(1, 0, 2, 2, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 0, 0));
         add(statusPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
 
         // Add Command Panel. We want adding command buttons to be simple.
@@ -141,6 +141,10 @@ public class StatusBar extends JPanel {
         imageLabel.setIcon(icon);
         invalidate();
         validateTree();
+    }
+
+    public void setNickname(String nickname){
+        nicknameLabel.setText(nickname);
     }
 
     /**
@@ -414,19 +418,19 @@ public class StatusBar extends JPanel {
             String firstName = vCard.getFirstName();
             String lastName = vCard.getLastName();
             if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                SparkManager.getMainWindow().setNickname(firstName + " " + lastName);
+                setNickname(firstName + " " + lastName);
             }
             else if (ModelUtil.hasLength(firstName)) {
-                SparkManager.getMainWindow().setNickname(firstName);
+                setNickname(firstName);
             }
             else {
                 String nickname = SparkManager.getSessionManager().getUsername();
-                SparkManager.getMainWindow().setNickname(nickname);
+                setNickname(nickname);
             }
         }
         else {
             String nickname = SparkManager.getSessionManager().getUsername();
-            SparkManager.getMainWindow().setNickname(nickname);
+            setNickname(nickname);
             return;
         }
 

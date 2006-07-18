@@ -495,12 +495,6 @@ public final class MainWindow extends JFrame implements ActionListener {
     }
 
 
-    public void setNickname(String nickname) {
-        String mainWindowTitle = getMainWindowTitle();
-        String newWindowTitle = mainWindowTitle + " - " + nickname;
-        setTitle(newWindowTitle);
-    }
-
     /**
      * Displays the About Box for Spark.
      */

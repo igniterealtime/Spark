@@ -22,6 +22,7 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -446,11 +447,12 @@ public class VCardManager {
                     else {
                         String firstName = vcard.getFirstName();
                         String lastName = vcard.getLastName();
+                        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
                         if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                            SparkManager.getMainWindow().setNickname(firstName + " " + lastName);
+                            statusBar.setNickname(firstName + " " + lastName);
                         }
                         else if (ModelUtil.hasLength(firstName)) {
-                            SparkManager.getMainWindow().setNickname(firstName);
+                            statusBar.setNickname(firstName);
                         }
                     }
                 }
