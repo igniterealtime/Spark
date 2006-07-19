@@ -501,7 +501,7 @@ public class SparkTransferManager {
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
 
-        SendMessage sendMessageGUI = new SendMessage();
+        SendMessage sendingUI = new SendMessage();
         try {
             transfer.sendFile(file, "Sending file");
         }
@@ -535,8 +535,8 @@ public class SparkTransferManager {
             }
         });
 
-        sendMessageGUI.sendFile(transfer, bareJID, contactItem.getNickname());
-        StyleConstants.setComponent(style, sendMessageGUI);
+        sendingUI.sendFile(transfer, transferManager, presence.getFrom(), contactItem.getNickname());
+        StyleConstants.setComponent(style, sendingUI);
 
         // Insert the image at the end of the text
         try {

@@ -14,8 +14,10 @@ import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -25,6 +27,21 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -32,19 +49,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class SendMessage extends JPanel {
     private JLabel imageLabel = new JLabel();
@@ -56,6 +60,12 @@ public class SendMessage extends JPanel {
     private File fileToSend;
     private OutgoingFileTransfer transfer;
 
+
+    private TransferButton retryButton = new TransferButton();
+
+    private FileTransferManager transferManager;
+    private String fullJID;
+    private String nickname;
 
     public SendMessage() {
         setLayout(new GridBagLayout());
@@ -69,20 +79,46 @@ public class SendMessage extends JPanel {
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         cancelButton.setText("Cancel");
+        retryButton.setText("Retry");
 
         add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(retryButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        retryButton.setVisible(false);
 
+        retryButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    File file = new File(transfer.getFilePath());
+                    transfer = transferManager.createOutgoingFileTransfer(fullJID);
+                    transfer.sendFile(file, "Sending");
+                }
+                catch (XMPPException e1) {
+                    e1.printStackTrace();
+                }
+                sendFile(transfer, transferManager, fullJID, nickname);
+            }
+        });
 
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Verdana", Font.BOLD, 10));
-
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+
+        retryButton.setForeground(new Color(73, 113, 196));
+        retryButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        retryButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
     }
 
-    public void sendFile(final OutgoingFileTransfer transfer, final String jid, final String nickname) {
+    public void sendFile(final OutgoingFileTransfer transfer, FileTransferManager transferManager, final String jid, final String nickname) {
+        this.transferManager = transferManager;
+
+        cancelButton.setVisible(true);
+        retryButton.setVisible(false);
+        this.fullJID = jid;
+        this.nickname = nickname;
+
         this.transfer = transfer;
         String fileName = transfer.getFileName();
         long fileSize = transfer.getFileSize();
@@ -146,8 +182,8 @@ public class SendMessage extends JPanel {
                         Thread.sleep(10);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == Status.ERROR ||
-                                status == Status.COMPLETE || status == Status.CANCLED ||
-                                status == Status.REFUSED) {
+                            status == Status.COMPLETE || status == Status.CANCLED ||
+                            status == Status.REFUSED) {
                             break;
                         }
                         updateBar(transfer, nickname);
@@ -221,6 +257,7 @@ public class SendMessage extends JPanel {
             progressBar.setVisible(false);
             titleLabel.setText("You were unable to send the file to  " + nickname);
             cancelButton.setVisible(false);
+            retryButton.setVisible(true);
             showAlert(true);
         }
         else if (status == Status.IN_PROGRESS) {
@@ -245,12 +282,14 @@ public class SendMessage extends JPanel {
             progressBar.setVisible(false);
             titleLabel.setText("You have cancelled the file transfer.");
             cancelButton.setVisible(false);
+            retryButton.setVisible(true);
             showAlert(true);
         }
         else if (status == Status.REFUSED) {
             progressBar.setVisible(false);
             titleLabel.setText(nickname + " did not accept the file transfer.");
             cancelButton.setVisible(false);
+            retryButton.setVisible(true);
             showAlert(true);
         }
 
