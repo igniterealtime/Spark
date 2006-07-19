@@ -38,9 +38,11 @@ import java.util.List;
  * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
  */
 public class ChatManager {
-    private List messageFilters = new ArrayList();
+    private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
+
+    private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
+
     private final ChatContainer chatContainer;
-    private List invitationListeners = new ArrayList();
     private String conferenceService;
 
     /**
@@ -213,21 +215,21 @@ public class ChatManager {
         return messageFilters;
     }
 
-    public void filterIncomingMessage(Message message) {
+    public void filterIncomingMessage(ChatRoom room, Message message) {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
         while (filters.hasNext()) {
-            ((MessageFilter)filters.next()).filterIncoming(message);
+            ((MessageFilter)filters.next()).filterIncoming(room, message);
         }
     }
 
-    public void filterOutgoingMessage(Message message) {
+    public void filterOutgoingMessage(ChatRoom room, Message message) {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
         while (filters.hasNext()) {
-            ((MessageFilter)filters.next()).filterOutgoing(message);
+            ((MessageFilter)filters.next()).filterOutgoing(room, message);
         }
     }
 

@@ -8,11 +8,15 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.smack.packet.Message;
+
 /**
  *
  */
 public interface TranscriptWindowInterceptor {
 
+    boolean handleInsertMessage(String userid, Message message);
 
-
+    boolean handleOtherMessage(String userid, Message message);
+    
 }

@@ -30,14 +30,14 @@ public interface MessageFilter {
      *
      * @param message the message to update.
      */
-    void filterOutgoing(Message message);
+    void filterOutgoing(ChatRoom room, Message message);
 
     /**
      * Updates the body of an incoming message.
      *
      * @param message the message to update.
      */
-    void filterIncoming(Message message);
+    void filterIncoming(ChatRoom room, Message message);
 
 
 }

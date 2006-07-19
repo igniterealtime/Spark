@@ -244,7 +244,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // Fire Message Filters
-        SparkManager.getChatManager().filterOutgoingMessage(message);
+        SparkManager.getChatManager().filterOutgoingMessage(this, message);
 
         sendMessage(message);
 

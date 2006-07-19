@@ -309,7 +309,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void insertMessage(Message message) {
         // Fire Message Filters
-        SparkManager.getChatManager().filterIncomingMessage(message);
+        SparkManager.getChatManager().filterIncomingMessage(this, message);
 
         addToTranscript(message, true);
 

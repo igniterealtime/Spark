@@ -42,16 +42,6 @@ import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -62,6 +52,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -168,6 +168,7 @@ public final class GroupChatRoom extends ChatRoom {
                                 chat.changeSubject(newSubject);
                             }
                             catch (XMPPException e) {
+                                Log.error(e);
                             }
                         }
                     }
@@ -260,6 +261,9 @@ public final class GroupChatRoom extends ChatRoom {
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
             // Add packetID to list
             addPacketID(message.getPacketID());
+
+            // Fire Message Filters
+            SparkManager.getChatManager().filterOutgoingMessage(this, message);
 
             chat.sendMessage(message);
         }
