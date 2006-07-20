@@ -178,7 +178,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         setCursor(HAND_CURSOR);
 
         // Make sure the message is not null.
-        message = message.trim();
+      //  message = message.trim();
         message = message.replaceAll("/\"", "");
         if (ModelUtil.hasLength(message)) {
             try {
@@ -225,11 +225,11 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         boolean underlined = false;
 
 
-        StringTokenizer t = new StringTokenizer(text, " \n", true);
-        while (t.hasMoreTokens()) {
-            String textFound = t.nextToken();
+        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \tokenizer", true);
+        while (tokenizer.hasMoreTokens()) {
+            String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
                 insertLink(textFound);
             }
             else if (!insertImage(textFound)) {
