@@ -80,7 +80,7 @@ public class SparkTab extends TabPanel {
         super.setSelected(selected);
         this.selected = selected;
 
-        if (boldWhenActive) {
+        if (boldWhenActive && selected) {
             textLabel.setFont(textLabel.getFont().deriveFont(Font.BOLD));
         }
         else {
