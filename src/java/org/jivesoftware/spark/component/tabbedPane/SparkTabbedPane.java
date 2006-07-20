@@ -387,10 +387,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource() instanceof SparkTab) {
-            SparkTab tab = (SparkTab)e.getSource();
-            setSelectedTab(tab);
-        }
+
     }
 
     public void setSelectedTab(SparkTab tab) {
@@ -404,6 +401,10 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
+        if (e.getSource() instanceof SparkTab) {
+            SparkTab tab = (SparkTab)e.getSource();
+            setSelectedTab(tab);
+        }
     }
 
     public void mouseReleased(MouseEvent e) {
