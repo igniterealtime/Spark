@@ -225,7 +225,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         boolean underlined = false;
 
 
-        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \tokenizer", true);
+        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
