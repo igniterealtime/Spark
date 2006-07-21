@@ -19,14 +19,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +28,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+/**
+ * Preferences to handle Sounds played within Spark.
+ *
+ * @author Derek DeMoro
+ */
 public class SoundPreference implements Preference {
 
     private XStream xstream = new XStream();
@@ -162,7 +167,7 @@ public class SoundPreference implements Preference {
         final JCheckBox userOfflineCheckbox = new JCheckBox();
         final JTextField userOfflineField = new JTextField();
         final JButton offlineBrowseButton = new JButton();
-        final JFileChooser fc = new JFileChooser();
+        private JFileChooser fc;
 
 
         public SoundPanel() {
@@ -210,9 +215,7 @@ public class SoundPreference implements Preference {
                 }
             });
 
-            if (Spark.isWindows()) {
-                fc.setFileSystemView(new WindowsFileSystemView());
-            }
+
         }
 
         public void setIncomingMessageSound(String path) {
@@ -265,6 +268,12 @@ public class SoundPreference implements Preference {
         }
 
         private void pickFile(String title, JTextField field) {
+            if (fc == null) {
+                fc = new JFileChooser();
+                if (Spark.isWindows()) {
+                    fc.setFileSystemView(new WindowsFileSystemView());
+                }
+            }
             fc.setDialogTitle(title);
             int returnVal = fc.showOpenDialog(this);
 
