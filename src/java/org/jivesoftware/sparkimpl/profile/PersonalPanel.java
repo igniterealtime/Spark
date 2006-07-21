@@ -28,6 +28,9 @@ public class PersonalPanel extends JPanel {
     private JTextField lastNameField;
     private JTextField nicknameField;
     private JTextField emailAddressField;
+    private JTextField jidField;
+    private JLabel jidLabel = new JLabel();
+    
 
     public PersonalPanel() {
         setLayout(new GridBagLayout());
@@ -67,6 +70,16 @@ public class PersonalPanel extends JPanel {
         ResourceUtils.resLabel(emaiAddressLabel, emailAddressField, "&Email Address:");
         add(emaiAddressLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emailAddressField, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+
+        jidField = new JTextField();
+        ResourceUtils.resLabel(jidLabel, jidField, "&JID:");
+        add(jidLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(jidField, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        jidLabel.setVisible(false);
+        jidField.setVisible(false);
+
     }
 
     public String getFirstName() {
@@ -112,6 +125,15 @@ public class PersonalPanel extends JPanel {
 
     public void focus() {
         firstNameField.requestFocus();
+    }
+
+    public void setJID(String jid) {
+        jidField.setText(jid);
+    }
+
+    public void showJID(boolean show) {
+        jidLabel.setVisible(show);
+        jidField.setVisible(show);
     }
 
     public void allowEditing(boolean allowEditing) {

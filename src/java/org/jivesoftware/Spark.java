@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -96,7 +97,12 @@ public final class Spark {
             BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
             LOG_DIRECTORY = new File(USER_HOME, "/Spark/logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
-            buf.append(RESOURCE_DIRECTORY.getAbsolutePath()).append(";");
+            try {
+                buf.append(RESOURCE_DIRECTORY.getCanonicalPath()).append(";");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 

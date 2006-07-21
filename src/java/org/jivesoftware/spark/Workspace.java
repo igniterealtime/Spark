@@ -21,6 +21,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -31,7 +32,6 @@ import org.jivesoftware.spark.ui.conferences.Conferences;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
@@ -42,6 +42,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -79,6 +80,12 @@ public class Workspace extends JPanel implements PacketListener {
     private static Workspace singleton;
     private static final Object LOCK = new Object();
     private List offlineMessages = new ArrayList();
+
+
+    private JPanel cardPanel;
+    private CardLayout cardLayout;
+
+    final public static String WORKSPACE_PANE = "WORKSPACE_PANE";
 
 
     /**
@@ -134,12 +141,17 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
         workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
-        //workspacePane.setBoldActiveTab(true);
-        //workspacePane.setHideOneTab(true);
+        workspacePane.setActiveButtonBold(true);
+
+        // Add Panels.
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+        cardPanel.setOpaque(false);
+        cardPanel.add(WORKSPACE_PANE, workspacePane);
 
         // Build default workspace
         this.setLayout(new GridBagLayout());
-        add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
+        add(cardPanel, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
         add(statusBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
 
 
@@ -155,7 +167,7 @@ public class Workspace extends JPanel implements PacketListener {
         Color menuBarColor = new Color(235, 233, 237);
         setBackground(menuBarColor);
 
-        workspacePane.setActiveButtonBold(true);
+
     }
 
     /**
@@ -406,5 +418,13 @@ public class Workspace extends JPanel implements PacketListener {
      */
     public ContactList getContactList() {
         return contactList;
+    }
+
+    public void changeCardLayout(String layout) {
+        cardLayout.show(cardPanel, layout);
+    }
+
+    public JPanel getCardPanel() {
+        return cardPanel;
     }
 }

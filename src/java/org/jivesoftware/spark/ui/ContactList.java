@@ -74,7 +74,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -140,8 +139,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private LocalPreferences localPreferences;
 
 
-    final private static String ROSTER_PANEL = "ROSTER_PANEL";
-    final private static String RETRY_PANEL = "RETRY_PANEL";
+    public final static String RETRY_PANEL = "RETRY_PANEL";
 
 
     // Command Bar
@@ -150,6 +148,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private RetryPanel retryPanel;
     private RetryPanel.ReconnectListener reconnectListener;
+
+    private Workspace workspace;
 
     public ContactList() {
         // Load Local Preferences
@@ -172,7 +172,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         renameMenu.addActionListener(this);
 
 
-        setLayout(new CardLayout());
+        setLayout(new BorderLayout());
 
         addingGroupButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.ADD_CONTACT_IMAGE));
 
@@ -189,10 +189,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         treeScroller.getVerticalScrollBar().setBlockIncrement(50);
         treeScroller.getVerticalScrollBar().setUnitIncrement(20);
 
-        add(treeScroller, ROSTER_PANEL);
-
         retryPanel = new RetryPanel();
-        add(retryPanel, RETRY_PANEL);
+
+        workspace = SparkManager.getWorkspace();
+
+        workspace.getCardPanel().add(RETRY_PANEL, retryPanel);
+
+
+        add(mainPanel, BorderLayout.CENTER);
 
         // Load Properties file
         props = new Properties();
@@ -1971,9 +1975,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             retryPanel.addReconnectionListener(reconnectListener);
         }
 
-        // Show reconnect panel
-        CardLayout cl = (CardLayout)getLayout();
-        cl.show(this, RETRY_PANEL);
+        workspace.changeCardLayout(RETRY_PANEL);
 
         retryPanel.setDisconnectReason(message);
 
@@ -1989,8 +1991,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private void removeAllUsers() {
         // Show reconnect panel
-        CardLayout cardLayout = (CardLayout)getLayout();
-        cardLayout.show(this, ROSTER_PANEL);
+        workspace.changeCardLayout(RETRY_PANEL);
 
         // Behind the scenes, move everyone to the offline group.
         Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
@@ -2020,8 +2021,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         }
 
-        CardLayout cl = (CardLayout)getLayout();
-        cl.show(this, ROSTER_PANEL);
+        workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
     }
 
     public void connectionClosedOnError(final Exception ex) {

@@ -22,9 +22,9 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.borders.PartialLineBorder;
+import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -114,6 +114,8 @@ public class VCardManager {
         final JTabbedPane tabbedPane = new JTabbedPane();
 
         personalPanel = new PersonalPanel();
+        personalPanel.showJID(false);
+
         tabbedPane.addTab("Personal", personalPanel);
 
         businessPanel = new BusinessPanel();
@@ -214,6 +216,8 @@ public class VCardManager {
         final JTabbedPane tabbedPane = new JTabbedPane();
 
         personalPanel = new PersonalPanel();
+        personalPanel.showJID(true);
+        
         tabbedPane.addTab("Personal", personalPanel);
 
         businessPanel = new BusinessPanel();
@@ -485,6 +489,7 @@ public class VCardManager {
         personalPanel.setLastName(vcard.getLastName());
         personalPanel.setEmailAddress(vcard.getEmailHome());
         personalPanel.setNickname(vcard.getNickName());
+        personalPanel.setJID(vcard.getJabberId());
 
         businessPanel.setCompany(vcard.getOrganization());
         businessPanel.setDepartment(vcard.getOrganizationUnit());
