@@ -89,13 +89,15 @@ public final class Spark {
                 System.exit(1);
             }
         }
+        // This is the Spark.exe or Spark.dmg installed executable.
+
         else {
             // This is the installed executable.
             File workingDir = new File(workingDirectory);
 
             RESOURCE_DIRECTORY = new File(workingDir, "resources").getAbsoluteFile();
             BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
-            LOG_DIRECTORY = new File(USER_HOME, "/Spark/logs").getAbsoluteFile();
+            LOG_DIRECTORY = new File(workingDir, "logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
             try {
                 buf.append(RESOURCE_DIRECTORY.getCanonicalPath()).append(";");

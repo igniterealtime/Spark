@@ -16,12 +16,6 @@ import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -42,6 +36,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -123,16 +123,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         // Allow for mouse events to take place on the title bar
         getTitlePane().addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    checkPopup(e);
-                }
+                checkPopup(e);
             }
 
             public void mouseReleased(MouseEvent e) {
                 checkPopup(e);
-            }
-
-            public void mouseClicked(MouseEvent e) {
             }
 
             public void checkPopup(MouseEvent e) {
