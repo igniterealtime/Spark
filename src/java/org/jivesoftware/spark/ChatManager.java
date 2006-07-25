@@ -12,6 +12,7 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ui.ChatContainer;
@@ -19,6 +20,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
@@ -44,6 +46,8 @@ public class ChatManager {
 
     private final ChatContainer chatContainer;
     private String conferenceService;
+
+    private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
 
     /**
      * Create a new instance of ChatManager.
@@ -259,5 +263,33 @@ public class ChatManager {
         }
 
         return conferenceService;
+    }
+
+    public void addContactItemHandler(ContactItemHandler handler) {
+        contactItemHandlers.add(handler);
+    }
+
+    public void removeContactItemHandler(ContactItemHandler handler) {
+        contactItemHandlers.remove(handler);
+    }
+
+    public boolean fireContactItemPresenceChanged(ContactItem item, Presence presence) {
+        for (ContactItemHandler handler : contactItemHandlers) {
+            if (handler.handlePresence(item, presence)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean fireContactItemDoubleClicked(ContactItem item) {
+        for (ContactItemHandler handler : contactItemHandlers) {
+            if (handler.handleDoubleClick(item)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -23,12 +23,12 @@ public interface ContactItemHandler {
      *
      * @param presence the users new presence.
      */
-    boolean handlePresence(Presence presence);
+    boolean handlePresence(ContactItem item, Presence presence);
 
     /**
      * The <code>ContactItem</code> has been double-clicked by the user.
      *
      * @return true if you wish to handle the double-click event.
      */
-    boolean handleDoubleClick();
+    boolean handleDoubleClick(ContactItem item);
 }

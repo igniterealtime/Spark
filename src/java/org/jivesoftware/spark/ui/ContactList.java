@@ -147,6 +147,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private Workspace workspace;
 
+
     public ContactList() {
         // Load Local Preferences
         localPreferences = SettingsManager.getLocalPreferences();
@@ -240,7 +241,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         JPanel commandPanel = statusBar.getCommandPanel();
 
 
-
         final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
         commandPanel.add(addContactButton);
         addContactButton.addActionListener(new ActionListener() {
@@ -303,18 +303,16 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     item.setPresence(null);
 
                     // Check for ContactItemHandler.
-                    if (item.getHandler() == null || !item.getHandler().handlePresence(presence)) {
-                        group.removeContactItem(item);
-                        checkGroup(group);
 
-                        if (offlineGroup.getContactItemByJID(item.getFullJID()) == null) {
-                            offlineGroup.addContactItem(item);
-                            offlineGroup.fireContactGroupUpdated();
-                        }
+                    group.removeContactItem(item);
+                    checkGroup(group);
+
+                    if (offlineGroup.getContactItemByJID(item.getFullJID()) == null) {
+                        offlineGroup.addContactItem(item);
+                        offlineGroup.fireContactGroupUpdated();
                     }
-                    else {
-                        group.fireContactGroupUpdated();
-                    }
+
+                    group.fireContactGroupUpdated();
                 }
             }
         }
@@ -1088,10 +1086,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     public void contactItemDoubleClicked(ContactItem item) {
         activeItem = item;
 
-        boolean handled = false;
-        if (item.getHandler() != null) {
-            handled = item.getHandler().handleDoubleClick();
-        }
+        ChatManager chatManager = SparkManager.getChatManager();
+        boolean handled = chatManager.fireContactItemDoubleClicked(item);
 
         if (!handled) {
             activateChat(item.getContactJID(), item.getNickname());
@@ -2024,6 +2020,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         reconnect(errorMessage, conflictError);
     }
+
 
 }
 

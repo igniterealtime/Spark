@@ -18,6 +18,7 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -70,7 +71,6 @@ public class ContactItem extends JPanel {
     private List presenceHistory = new ArrayList();
     private File contactsDir = null;
 
-    private ContactItemHandler handler;
     private JLabel sideIcon;
 
     public ContactItem(String nickname, String fullJID) {
@@ -357,11 +357,11 @@ public class ContactItem extends JPanel {
     }
 
     private void updatePresenceIcon(Presence presence) {
-        if (handler != null) {
-            handler.handlePresence(presence);
+        ChatManager chatManager = SparkManager.getChatManager();
+        boolean handled = chatManager.fireContactItemPresenceChanged(this, presence);
+        if (handled) {
             return;
         }
-
 
         String status = presence != null ? presence.getStatus() : null;
         Icon statusIcon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
@@ -459,16 +459,84 @@ public class ContactItem extends JPanel {
         setAvailable(true);
     }
 
-    public void setHandler(ContactItemHandler handler) {
-        this.handler = handler;
-    }
+    public void updatePresenceStatus(Presence presence){
+        String status = presence != null ? presence.getStatus() : null;
+        boolean isAvailable = false;
+        if (status == null && presence != null) {
+            Presence.Mode mode = presence.getMode();
+            if (mode == Presence.Mode.AVAILABLE) {
+                status = "Available";
+                isAvailable = true;
+            }
+            else if (mode == Presence.Mode.AWAY) {
+                status = "I'm away";
+            }
+            else if (mode == Presence.Mode.CHAT) {
+                status = "I'm free to chat";
+            }
+            else if (mode == Presence.Mode.DO_NOT_DISTURB) {
+                status = "Do not disturb";
+            }
+            else if (mode == Presence.Mode.EXTENDED_AWAY) {
+                status = "Extended away";
+            }
+        }
+        else if (presence != null && presence.getType() == Presence.Type.AVAILABLE) {
+            isAvailable = true;
+        }
+        else if (presence == null) {
+            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+            getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-    public ContactItemHandler getHandler() {
-        return handler;
-    }
+            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getFullJID());
+            if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                // Do not move out of group.
+                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+                setStatusText("Pending");
+            }
+            else {
+                setFont(new Font("Dialog", Font.PLAIN, 11));
+                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+                setAvailable(false);
+                setStatusText("");
+            }
 
-    public void removeHandler() {
-        this.handler = null;
+            setAvailable(false);
+            return;
+        }
+
+        StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
+        if (statusItem != null) {
+        }
+        else {
+        }
+        if (status != null) {
+            setStatus(status);
+        }
+
+        // Always change nickname label to black.
+        getNicknameLabel().setForeground((Color)UIManager.get("ContactItemNickname.foreground"));
+
+
+        if (isAvailable) {
+            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+            if ("Online".equals(status) || "Available".equalsIgnoreCase(status)) {
+                setStatusText("");
+            }
+            else {
+                setStatusText(status);
+            }
+
+        }
+        else if (presence != null) {
+            getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, 11));
+            if (status != null) {
+                setStatusText(status);
+            }
+        }
+
+        setAvailable(true);
     }
 
     public void setStatusText(String status) {

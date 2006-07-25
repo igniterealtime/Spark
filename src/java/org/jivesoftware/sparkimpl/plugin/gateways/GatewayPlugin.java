@@ -16,14 +16,18 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverInfo.Identity;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverItems.Item;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -71,25 +75,9 @@ public class GatewayPlugin implements Plugin {
                 if (!b) {
                     return;
                 }
-                SparkManager.getConnection().addPacketListener(new PacketListener() {
-                    public void processPacket(Packet packet) {
-                        Presence presence = (Presence)packet;
-                        Transport transport = TransportManager.getTransport(packet.getFrom());
-                        if (transport != null) {
-                            boolean registered = presence != null && presence.getMode() != null;
-                            if (presence.getType() == Presence.Type.UNAVAILABLE) {
-                                registered = false;
-                            }
-                            RolloverButton button = uiMap.get(transport);
-                            if (!registered) {
-                                button.setIcon(transport.getInactiveIcon());
-                            }
-                            else {
-                                button.setIcon(transport.getIcon());
-                            }
-                        }
-                    }
-                }, new PacketTypeFilter(Presence.class));
+
+                // Register presences.
+                registerPresences();
 
             }
         };
@@ -189,5 +177,60 @@ public class GatewayPlugin implements Plugin {
         statusBar.invalidate();
         statusBar.validate();
         statusBar.repaint();
+    }
+
+
+    private void registerPresences() {
+        SparkManager.getConnection().addPacketListener(new PacketListener() {
+            public void processPacket(Packet packet) {
+                Presence presence = (Presence)packet;
+                Transport transport = TransportManager.getTransport(packet.getFrom());
+                if (transport != null) {
+                    boolean registered = presence != null && presence.getMode() != null;
+                    if (presence.getType() == Presence.Type.UNAVAILABLE) {
+                        registered = false;
+                    }
+                    RolloverButton button = uiMap.get(transport);
+                    if (!registered) {
+                        button.setIcon(transport.getInactiveIcon());
+                    }
+                    else {
+                        button.setIcon(transport.getIcon());
+                    }
+                }
+
+
+            }
+        }, new PacketTypeFilter(Presence.class));
+
+
+        ChatManager chatManager = SparkManager.getChatManager();
+        chatManager.addContactItemHandler(new ContactItemHandler() {
+            public boolean handlePresence(ContactItem item, Presence presence) {
+                if (presence != null) {
+                    String domain = StringUtils.parseServer(presence.getFrom());
+                    Transport transport = TransportManager.getTransport(domain);
+                    if(transport != null){
+                        if(presence.getType() == Presence.Type.AVAILABLE){
+                            item.setIcon(transport.getIcon());
+                        }
+                        else {
+                            item.setIcon(transport.getInactiveIcon());
+                        }
+
+                        item.updatePresenceStatus(presence);
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            public boolean handleDoubleClick(ContactItem item) {
+                return false;
+            }
+        });
+
     }
 }
