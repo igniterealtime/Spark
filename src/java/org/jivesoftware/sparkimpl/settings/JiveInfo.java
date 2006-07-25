@@ -17,7 +17,7 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "1.1.9.3";
+        return "1.1.9.4";
     }
 
     public static String getOS() {
