@@ -10,28 +10,21 @@
 
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportFactory;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -49,9 +42,6 @@ public class Transports extends JPanel {
     private DefaultListModel model = new DefaultListModel();
 
 
-    private RegistrationDialog registrationDialog;
-
-
     public Transports(final XMPPConnection con) {
         setLayout(new GridBagLayout());
 
@@ -60,8 +50,6 @@ public class Transports extends JPanel {
         // Use JPanel Renderer
         list.setCellRenderer(new JPanelRenderer());
 
-
-        registrationDialog = new RegistrationDialog();
 
         TitlePanel titlePanel = new TitlePanel("Available Transports", "Register with these available transports.", null, true);
         add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -79,7 +67,7 @@ public class Transports extends JPanel {
                         int confirm = JOptionPane.showConfirmDialog(item, "Would you like to disable this active transport?", "Disable Transport", JOptionPane.YES_NO_OPTION);
                         if (confirm == JOptionPane.YES_OPTION) {
                             try {
-                                unregister(con, item.getTransport().getServiceName());
+                                TransportManager.unregister(con, item.getTransport().getServiceName());
                             }
                             catch (XMPPException e1) {
                                 e1.printStackTrace();
@@ -87,42 +75,19 @@ public class Transports extends JPanel {
                         }
                     }
                     else {
-                        registrationDialog.registerWithService(con, item.getTransport().getServiceName());
+                        // registrationDialog.registerWithService(con, item.getTransport().getServiceName());
                     }
                 }
             }
         });
 
 
-        for (Transport transport : TransportFactory.getTransports()) {
-            final TransportItem transportItem = new TransportItem(transport, TransportFactory.isRegistered(con, transport), transport.getServiceName());
+        for (Transport transport : TransportManager.getTransports()) {
+            final TransportItem transportItem = new TransportItem(transport, TransportManager.isRegistered(con, transport), transport.getServiceName());
             model.addElement(transportItem);
         }
     }
 
-
-    private void unregister(XMPPConnection con, String gatewayDomain) throws XMPPException {
-        Registration registration = new Registration();
-        registration.setType(IQ.Type.SET);
-        registration.setTo(gatewayDomain);
-        Map map = new HashMap();
-        map.put("remove", "");
-        registration.setAttributes(map);
-
-
-        PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
-
-        IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
-        collector.cancel();
-        if (response == null) {
-            throw new XMPPException("Server timed out");
-        }
-        if (response.getType() == IQ.Type.ERROR) {
-            throw new XMPPException("Error registering user", response.getError());
-        }
-
-    }
 
     public void showTransports() {
         final JFrame frame = new JFrame("Transports");

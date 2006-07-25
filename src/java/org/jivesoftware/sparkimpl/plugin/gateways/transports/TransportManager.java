@@ -8,7 +8,7 @@
  * a copy of which is included in this distribution.
  */
 
-package org.jivesoftware.sparkimpl.plugin.gateways;
+package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -16,31 +16,61 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportFactory;
+import org.jivesoftware.sparkimpl.plugin.gateways.TransportRegistrationPanel;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
  *
  */
-public class RegistrationDialog {
+public class TransportManager {
+
+    private static Map<String, Transport> transports = new HashMap<String, Transport>();
 
 
-    public void registerWithService(final XMPPConnection con, final String serviceName) {
+    private TransportManager() {
+
+    }
+
+    public static Transport getTransport(String serviceName) {
+        // Return transport.
+        if (transports.containsKey(serviceName)) {
+            return transports.get(serviceName);
+        }
+
+        return null;
+    }
+
+    public static void addTransport(String serviceName, Transport transport) {
+        transports.put(serviceName, transport);
+    }
+
+    public static Collection<Transport> getTransports() {
+        return transports.values();
+    }
+
+    public static boolean isRegistered(XMPPConnection con, Transport transport) {
+        Presence presence = con.getRoster().getPresence(transport.getServiceName());
+        boolean registered = presence != null && presence.getMode() != null;
+        return registered;
+    }
+
+    public static void registerWithService(final XMPPConnection con, final String serviceName) {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
@@ -58,10 +88,11 @@ public class RegistrationDialog {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Create Dialog
-        Transport transport = TransportFactory.getTransport(serviceName);
-        final JDialog dialog = new JDialog(new JFrame(), transport.getTitle(), true);
+        Transport transport = TransportManager.getTransport(serviceName);
+        final JDialog dialog = new JDialog(SparkManager.getMainWindow(), transport.getTitle(), true);
         dialog.add(mainPanel);
         dialog.pack();
+        dialog.setLocationRelativeTo(SparkManager.getMainWindow());
         dialog.setSize(400, 200);
 
 
@@ -76,6 +107,9 @@ public class RegistrationDialog {
 
                 try {
                     registerUser(con, serviceName, username, password);
+
+                    // Send updated presence.
+                    
                 }
                 catch (XMPPException e1) {
                     JOptionPane.showMessageDialog(mainPanel, "Unable to register with Transport.", "Registration Error", JOptionPane.ERROR_MESSAGE);
@@ -95,7 +129,7 @@ public class RegistrationDialog {
     }
 
 
-    private void registerUser(XMPPConnection con, String gatewayDomain, String username, String password) throws XMPPException {
+    public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password) throws XMPPException {
         Registration registration = new Registration();
         registration.setType(IQ.Type.SET);
         registration.setTo(gatewayDomain);
@@ -119,7 +153,27 @@ public class RegistrationDialog {
 
     }
 
+    public static void unregister(XMPPConnection con, String gatewayDomain) throws XMPPException {
+        Registration registration = new Registration();
+        registration.setType(IQ.Type.SET);
+        registration.setTo(gatewayDomain);
+        Map map = new HashMap();
+        map.put("remove", "");
+        registration.setAttributes(map);
 
 
+        PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
+        con.sendPacket(registration);
+
+        IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
+        collector.cancel();
+        if (response == null) {
+            throw new XMPPException("Server timed out");
+        }
+        if (response.getType() == IQ.Type.ERROR) {
+            throw new XMPPException("Error registering user", response.getError());
+        }
+
+    }
 
 }

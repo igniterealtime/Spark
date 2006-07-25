@@ -10,32 +10,41 @@
 
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverInfo.Identity;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportFactory;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
  */
 public class GatewayPlugin implements Plugin {
     public static final String GATEWAY = "gateway";
+    private Map<Transport, RolloverButton> uiMap = new HashMap<Transport, RolloverButton>();
 
 
     public void initialize() {
@@ -46,18 +55,28 @@ public class GatewayPlugin implements Plugin {
             return;
         }
 
-        // Add to Menu Item
-        // Register with action menu
-        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName("Actions");
-        JMenuItem transportsMenu = new JMenuItem("Transports", SparkRes.getImageIcon(SparkRes.AIM_TRANSPORT_ACTIVE_IMAGE));
-        ResourceUtils.resButton(transportsMenu, "&Transports");
-        actionsMenu.add(transportsMenu);
-        transportsMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final Transports transports = new Transports(SparkManager.getConnection());
-                transports.showTransports();
+
+        for (final Transport transport : TransportManager.getTransports()) {
+            addTransport(transport);
+        }
+
+        SparkManager.getConnection().addPacketListener(new PacketListener() {
+            public void processPacket(Packet packet) {
+                Presence presence = (Presence)packet;
+                Transport transport = TransportManager.getTransport(packet.getFrom());
+                if (transport != null) {
+                    boolean registered = presence != null && presence.getMode() != null;
+                    RolloverButton button = uiMap.get(transport);
+                    if (!registered) {
+                        button.setIcon(transport.getInactiveIcon());
+                    }
+                    else {
+                        button.setIcon(transport.getIcon());
+                    }
+                }
             }
-        });
+        }, new PacketTypeFilter(Presence.class));
+
     }
 
     public void shutdown() {
@@ -90,15 +109,64 @@ public class GatewayPlugin implements Plugin {
                 if (identity.getCategory().equalsIgnoreCase(GATEWAY)) {
                     if (item.getEntityID().startsWith("aim.")) {
                         AIMTransport aim = new AIMTransport(item.getEntityID());
-                        TransportFactory.addTransport(item.getEntityID(), aim);
+                        TransportManager.addTransport(item.getEntityID(), aim);
                     }
                     else if (item.getEntityID().startsWith("msn.")) {
                         MSNTransport msn = new MSNTransport(item.getEntityID());
-                        TransportFactory.addTransport(item.getEntityID(), msn);
+                        TransportManager.addTransport(item.getEntityID(), msn);
                     }
                 }
             }
         }
 
+    }
+
+    private void addTransport(final Transport transport) {
+        final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+        final JPanel commandPanel = statusBar.getCommandPanel();
+
+
+        final boolean isRegistered = TransportManager.isRegistered(SparkManager.getConnection(), transport);
+        final RolloverButton button = new RolloverButton();
+        if (!isRegistered) {
+            button.setIcon(transport.getInactiveIcon());
+        }
+        else {
+            button.setIcon(transport.getIcon());
+        }
+
+        button.setToolTipText(transport.getInstructions());
+
+        commandPanel.add(button);
+
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!isRegistered) {
+                    TransportManager.registerWithService(SparkManager.getConnection(), transport.getServiceName());
+
+                    // Send Presence
+                    Presence presence = statusBar.getPresence();
+                    statusBar.changeAvailability(presence);
+                }
+                else {
+                    int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), "Would you like to disable this active transport?", "Disable Transport", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            TransportManager.unregister(SparkManager.getConnection(), transport.getServiceName());
+                        }
+                        catch (XMPPException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+                }
+
+            }
+        });
+        uiMap.put(transport, button);
+
+        statusBar.invalidate();
+        statusBar.validate();
+        statusBar.repaint();
     }
 }

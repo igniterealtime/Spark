@@ -12,9 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.Registration;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportFactory;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 
 import java.awt.Font;
@@ -40,7 +38,7 @@ public class TransportRegistrationPanel extends JPanel {
     public TransportRegistrationPanel(String serviceName) {
         setLayout(new GridBagLayout());
 
-        final Transport transport = TransportFactory.getTransport(serviceName);
+        final Transport transport = TransportManager.getTransport(serviceName);
 
         titlePanel = new TitlePanel("AIM Registration", transport.getTitle(), transport.getIcon(), true);
 
