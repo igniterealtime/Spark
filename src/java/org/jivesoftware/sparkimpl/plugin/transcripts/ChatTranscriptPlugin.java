@@ -143,7 +143,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     public void chatRoomOpened(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if (pref.isHideChatHistory()) {
+        if (!pref.isChatHistoryEnabled()) {
             return;
         }
 
@@ -267,7 +267,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     private void persistChatRoom(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if (pref.isHideChatHistory()) {
+        if (!pref.isChatHistoryEnabled()) {
             return;
         }
 
@@ -317,7 +317,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         SwingWorker transcriptLoader = new SwingWorker() {
             public Object construct() {
-                return ChatTranscripts.getChatTranscript(jid);
+                String bareJID = StringUtils.parseBareAddress(jid);
+                return ChatTranscripts.getChatTranscript(bareJID);
             }
 
             public void finished() {
@@ -338,7 +339,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                 ChatTranscript transcript = (ChatTranscript)get();
                 List<HistoryMessage> list = transcript.getMessages();
-                Collections.sort(list, dateComparator);
+                //Collections.sort(list, dateComparator);
 
                 for (HistoryMessage message : list) {
                     String from = message.getFrom();

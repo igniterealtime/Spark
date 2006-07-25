@@ -20,8 +20,13 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.plugin.gateways.TransportRegistrationPanel;
+
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -30,10 +35,6 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  *
@@ -67,6 +68,9 @@ public class TransportManager {
     public static boolean isRegistered(XMPPConnection con, Transport transport) {
         Presence presence = con.getRoster().getPresence(transport.getServiceName());
         boolean registered = presence != null && presence.getMode() != null;
+        if (presence == null || presence.getType() == Presence.Type.UNAVAILABLE) {
+            registered = false;
+        }
         return registered;
     }
 
@@ -92,8 +96,9 @@ public class TransportManager {
         final JDialog dialog = new JDialog(SparkManager.getMainWindow(), transport.getTitle(), true);
         dialog.add(mainPanel);
         dialog.pack();
-        dialog.setLocationRelativeTo(SparkManager.getMainWindow());
         dialog.setSize(400, 200);
+
+        GraphicUtils.centerWindowOnComponent(dialog, SparkManager.getMainWindow());
 
 
         registerButton.addActionListener(new ActionListener() {
@@ -109,7 +114,7 @@ public class TransportManager {
                     registerUser(con, serviceName, username, password);
 
                     // Send updated presence.
-                    
+
                 }
                 catch (XMPPException e1) {
                     JOptionPane.showMessageDialog(mainPanel, "Unable to register with Transport.", "Registration Error", JOptionPane.ERROR_MESSAGE);

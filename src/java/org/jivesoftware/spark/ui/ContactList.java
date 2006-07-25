@@ -142,10 +142,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     public final static String RETRY_PANEL = "RETRY_PANEL";
 
 
-    // Command Bar
-    private RolloverButton viewOnline;
-
-
     private RetryPanel retryPanel;
     private RetryPanel.ReconnectListener reconnectListener;
 
@@ -196,7 +192,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         workspace.getCardPanel().add(RETRY_PANEL, retryPanel);
 
 
-        add(mainPanel, BorderLayout.CENTER);
+        add(treeScroller, BorderLayout.CENTER);
 
         // Load Properties file
         props = new Properties();
@@ -243,13 +239,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         JPanel commandPanel = statusBar.getCommandPanel();
 
-        viewOnline = new RolloverButton(SparkRes.getImageIcon(SparkRes.VIEW_IMAGE));
-        commandPanel.add(viewOnline);
-        viewOnline.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showEmptyGroups(!showHideMenu.isSelected());
-            }
-        });
+
 
         final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
         commandPanel.add(addContactButton);
@@ -1648,15 +1638,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         localPreferences.setEmptyGroupsShown(show);
         showHideMenu.setSelected(show);
-        viewOnline.setSelected(show);
-
-        if (showHideMenu.isSelected()) {
-            viewOnline.setToolTipText("Hide Empty Groups");
-        }
-        else {
-            viewOnline.setToolTipText("Show Empty Groups");
-        }
-
     }
 
     /**

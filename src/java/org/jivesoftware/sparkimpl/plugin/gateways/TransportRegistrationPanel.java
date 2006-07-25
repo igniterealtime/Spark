@@ -40,7 +40,7 @@ public class TransportRegistrationPanel extends JPanel {
 
         final Transport transport = TransportManager.getTransport(serviceName);
 
-        titlePanel = new TitlePanel("AIM Registration", transport.getTitle(), transport.getIcon(), true);
+        titlePanel = new TitlePanel(transport.getTitle(), transport.getInstructions(), transport.getIcon(), true);
 
         add(titlePanel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 

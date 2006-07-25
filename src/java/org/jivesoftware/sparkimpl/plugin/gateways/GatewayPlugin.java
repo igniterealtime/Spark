@@ -25,19 +25,21 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.status.StatusBar;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  *
@@ -48,35 +50,51 @@ public class GatewayPlugin implements Plugin {
 
 
     public void initialize() {
-        try {
-            populateTransports(SparkManager.getConnection());
-        }
-        catch (Exception e) {
-            return;
-        }
-
-
-        for (final Transport transport : TransportManager.getTransports()) {
-            addTransport(transport);
-        }
-
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                Transport transport = TransportManager.getTransport(packet.getFrom());
-                if (transport != null) {
-                    boolean registered = presence != null && presence.getMode() != null;
-                    RolloverButton button = uiMap.get(transport);
-                    if (!registered) {
-                        button.setIcon(transport.getInactiveIcon());
-                    }
-                    else {
-                        button.setIcon(transport.getIcon());
+        SwingWorker thread = new SwingWorker() {
+            public Object construct() {
+                try {
+                    populateTransports(SparkManager.getConnection());
+                    for (final Transport transport : TransportManager.getTransports()) {
+                        addTransport(transport);
                     }
                 }
-            }
-        }, new PacketTypeFilter(Presence.class));
+                catch (Exception e) {
+                    Log.error(e);
+                    return false;
+                }
 
+                return true;
+            }
+
+            public void finished() {
+                Boolean b = (Boolean)get();
+                if (!b) {
+                    return;
+                }
+                SparkManager.getConnection().addPacketListener(new PacketListener() {
+                    public void processPacket(Packet packet) {
+                        Presence presence = (Presence)packet;
+                        Transport transport = TransportManager.getTransport(packet.getFrom());
+                        if (transport != null) {
+                            boolean registered = presence != null && presence.getMode() != null;
+                            if (presence.getType() == Presence.Type.UNAVAILABLE) {
+                                registered = false;
+                            }
+                            RolloverButton button = uiMap.get(transport);
+                            if (!registered) {
+                                button.setIcon(transport.getInactiveIcon());
+                            }
+                            else {
+                                button.setIcon(transport.getIcon());
+                            }
+                        }
+                    }
+                }, new PacketTypeFilter(Presence.class));
+
+            }
+        };
+
+        thread.start();
     }
 
     public void shutdown() {
@@ -140,8 +158,11 @@ public class GatewayPlugin implements Plugin {
         commandPanel.add(button);
 
         button.addActionListener(new ActionListener() {
+
+
             public void actionPerformed(ActionEvent e) {
-                if (!isRegistered) {
+                boolean reg = TransportManager.isRegistered(SparkManager.getConnection(), transport);
+                if (!reg) {
                     TransportManager.registerWithService(SparkManager.getConnection(), transport.getServiceName());
 
                     // Send Presence

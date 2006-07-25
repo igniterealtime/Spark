@@ -378,11 +378,11 @@ public class LocalPreferences {
         setBoolean("chatNotificationOn", on);
     }
 
-    public boolean isHideChatHistory() {
+    public boolean isChatHistoryEnabled() {
         return getBoolean("showHistory", true);
     }
 
-    public void setHideChatHistory(boolean hideChatHistory) {
+    public void setChatHistoryEnabled(boolean hideChatHistory) {
         setBoolean("showHistory", hideChatHistory);
     }
 
