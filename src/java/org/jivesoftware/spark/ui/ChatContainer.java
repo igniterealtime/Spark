@@ -65,7 +65,7 @@ import java.util.Map;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
- * 
+ *
  * @author Derek DeMoro
  */
 public class ChatContainer extends SparkTabbedPane implements MessageListener, ChangeListener {
@@ -298,6 +298,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             }
 
+            Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(p);
+            if (icon != null) {
+                tabIcon = icon;
+            }
             int tabLoc = indexOfComponent(chatRoom);
             if (tabLoc != -1) {
                 getTabAt(tabLoc).setIcon(tabIcon);

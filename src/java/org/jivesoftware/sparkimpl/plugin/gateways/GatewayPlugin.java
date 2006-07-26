@@ -35,7 +35,9 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
 
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -104,13 +106,13 @@ public class GatewayPlugin implements Plugin {
         DiscoverInfo info;
         DiscoverInfo.Identity identity;
 
-        Iterator it = discoItems.getItems();
-        while (it.hasNext()) {
-            item = (Item)it.next();
+        Iterator items = discoItems.getItems();
+        while (items.hasNext()) {
+            item = (Item)items.next();
             info = manager.discoverInfo(item.getEntityID());
-            Iterator itx = info.getIdentities();
-            while (itx.hasNext()) {
-                identity = (Identity)itx.next();
+            Iterator identities = info.getIdentities();
+            while (identities.hasNext()) {
+                identity = (Identity)identities.next();
 
                 if (identity.getCategory().equalsIgnoreCase(GATEWAY)) {
                     if (item.getEntityID().startsWith("aim.")) {
@@ -120,6 +122,10 @@ public class GatewayPlugin implements Plugin {
                     else if (item.getEntityID().startsWith("msn.")) {
                         MSNTransport msn = new MSNTransport(item.getEntityID());
                         TransportManager.addTransport(item.getEntityID(), msn);
+                    }
+                    else if (item.getEntityID().startsWith("yahoo.")) {
+                        YahooTransport yahoo = new YahooTransport(item.getEntityID());
+                        TransportManager.addTransport(item.getEntityID(), yahoo);
                     }
                 }
             }
@@ -155,7 +161,8 @@ public class GatewayPlugin implements Plugin {
 
                     // Send Presence
                     Presence presence = statusBar.getPresence();
-                    statusBar.changeAvailability(presence);
+                    presence.setTo(transport.getServiceName());
+                    SparkManager.getConnection().sendPacket(presence);
                 }
                 else {
                     int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), "Would you like to disable this active transport?", "Disable Transport", JOptionPane.YES_NO_OPTION);
@@ -164,7 +171,7 @@ public class GatewayPlugin implements Plugin {
                             TransportManager.unregister(SparkManager.getConnection(), transport.getServiceName());
                         }
                         catch (XMPPException e1) {
-                            e1.printStackTrace();
+                            Log.error(e1);
                         }
                     }
 
@@ -210,8 +217,8 @@ public class GatewayPlugin implements Plugin {
                 if (presence != null) {
                     String domain = StringUtils.parseServer(presence.getFrom());
                     Transport transport = TransportManager.getTransport(domain);
-                    if(transport != null){
-                        if(presence.getType() == Presence.Type.AVAILABLE){
+                    if (transport != null) {
+                        if (presence.getType() == Presence.Type.AVAILABLE) {
                             item.setIcon(transport.getIcon());
                         }
                         else {
@@ -230,6 +237,22 @@ public class GatewayPlugin implements Plugin {
             public boolean handleDoubleClick(ContactItem item) {
                 return false;
             }
+
+            public Icon useIcon(Presence presence) {
+                String domain = StringUtils.parseServer(presence.getFrom());
+                Transport transport = TransportManager.getTransport(domain);
+                if (transport != null) {
+                    if (presence.getType() == Presence.Type.AVAILABLE) {
+                        return transport.getIcon();
+                    }
+                    else {
+                        return transport.getInactiveIcon();
+                    }
+                }
+                return null;
+            }
+
+
         });
 
     }

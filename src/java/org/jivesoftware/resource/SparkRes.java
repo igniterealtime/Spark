@@ -243,6 +243,8 @@ public class SparkRes {
     public static final String AIM_TRANSPORT_INACTIVE_IMAGE = "AIM_TRANSPORT_INACTIVE_IMAGE";
     public static final String MSN_TRANSPORT_ACTIVE_IMAGE = "MSN_TRANSPORT_ACTIVE_IMAGE";
     public static final String MSN_TRANSPORT_INACTIVE_IMAGE = "MSN_TRANSPORT_INACTIVE_IMAGE";
+    public static final String YAHOO_TRANSPORT_ACTIVE_IMAGE  = "YAHOO_TRANSPORT_ACTIVE_IMAGE";
+    public static final String YAHOO_TRANSPORT_INACTIVE_IMAGE = "YAHOO_TRANSPORT_INACTIVE_IMAGE";
 
 
     static ClassLoader cl = SparkRes.class.getClassLoader();

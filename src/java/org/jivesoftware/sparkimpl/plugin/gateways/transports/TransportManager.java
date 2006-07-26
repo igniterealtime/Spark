@@ -22,6 +22,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.TransportRegistrationPanel;
 
 import javax.swing.JDialog;
@@ -86,7 +87,11 @@ public class TransportManager {
         final RolloverButton registerButton = new RolloverButton("Register", null);
         final RolloverButton cancelButton = new RolloverButton("Cancel", null);
 
+        ResourceUtils.resButton(registerButton, "&Register");
+        ResourceUtils.resButton(cancelButton, "&Cancel");
+
         buttonPanel.add(registerButton);
+        registerButton.requestFocus();
         buttonPanel.add(cancelButton);
 
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);

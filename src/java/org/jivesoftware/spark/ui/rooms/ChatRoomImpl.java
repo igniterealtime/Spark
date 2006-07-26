@@ -127,6 +127,7 @@ public class ChatRoomImpl extends ChatRoom {
         roster = SparkManager.getConnection().getRoster();
         presence = roster.getPresence(participantJID);
         StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
+
         RosterEntry entry = roster.getEntry(participantJID);
 
         if (statusItem == null) {
@@ -140,6 +141,11 @@ public class ChatRoomImpl extends ChatRoom {
             else {
                 tabIcon = statusItem.getIcon();
             }
+        }
+
+        Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(presence);
+        if (icon != null) {
+            tabIcon = icon;
         }
 
         PacketFilter filter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));

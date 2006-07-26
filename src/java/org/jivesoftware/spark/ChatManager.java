@@ -30,6 +30,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
 
+import javax.swing.Icon;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -291,5 +293,16 @@ public class ChatManager {
         }
 
         return false;
+    }
+
+    public Icon getPresenceIconForContactHandler(Presence presence) {
+        for (ContactItemHandler handler : contactItemHandlers) {
+            Icon icon = handler.useIcon(presence);
+            if (icon != null) {
+                return icon;
+            }
+        }
+
+        return null;
     }
 }

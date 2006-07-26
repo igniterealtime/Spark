@@ -12,6 +12,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.smack.packet.Presence;
 
+import javax.swing.Icon;
+
 /**
  * The ContactItemHandler allows users to customize the actions that take place within
  * a <code>ContactItem</code> within a users presence changes or the item is double clicked.
@@ -24,6 +26,8 @@ public interface ContactItemHandler {
      * @param presence the users new presence.
      */
     boolean handlePresence(ContactItem item, Presence presence);
+
+    Icon useIcon(Presence presence);
 
     /**
      * The <code>ContactItem</code> has been double-clicked by the user.
