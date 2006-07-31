@@ -1104,9 +1104,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         final JPopupMenu popup = new JPopupMenu();
-        if (!group.isSharedGroup()) {
-            popup.add(addContactMenu);
-        }
+        popup.add(addContactMenu);
         popup.add(addContactGroupMenu);
         popup.addSeparator();
 
@@ -1956,7 +1954,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         retryPanel.setDisconnectReason(message);
 
-        if (!conflict) {
+        if (false) {
             retryPanel.startTimer();
         }
         else {

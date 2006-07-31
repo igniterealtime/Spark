@@ -81,7 +81,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        ResourceUtils.resButton(startConversationtMenu, "&Start Conversation");
+        ResourceUtils.resButton(startConversationtMenu, "&Start Chat");
         actionsMenu.add(startConversationtMenu);
         startConversationtMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -94,7 +94,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                     selectedUser = contactItem.getFullJID();
                 }
 
-                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), "Enter Address", "Start Conversation", JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
+                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), "Enter Address", "Start Chat", JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
                 if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
                     if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                         // Append server address
