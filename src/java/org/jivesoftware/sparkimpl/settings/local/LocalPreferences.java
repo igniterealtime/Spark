@@ -394,6 +394,14 @@ public class LocalPreferences {
         setBoolean("showEmptyGroups", shown);
     }
 
+    public int getFileTransferTimeout() {
+        return Integer.parseInt(props.getProperty("fileTransferTimeout", "1"));
+    }
+
+    public void setFileTransferTimeout(int minutes) {
+        props.setProperty("fileTransferTimeout", Integer.toString(minutes));
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
@@ -401,6 +409,4 @@ public class LocalPreferences {
     private void setBoolean(String property, boolean value) {
         props.setProperty(property, Boolean.toString(value));
     }
-
-
 }

@@ -13,6 +13,7 @@ package org.jivesoftware.sparkimpl.preference.chat;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.ModelUtil;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -20,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -45,6 +47,9 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private JLabel passwordLabel = new JLabel();
     private JLabel confirmationPasswordLabel = new JLabel();
     private JCheckBox hideChatHistory = new JCheckBox();
+
+    private JTextField fileTransferTimeoutField = new JTextField();
+
 
 
     /**
@@ -80,6 +85,13 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(spellCheckBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+
+        final JLabel label = new JLabel();
+        ResourceUtils.resLabel(label, fileTransferTimeoutField, "&Transfer Timeout(min):");
+
+        chatWindowPanel.add(label, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(fileTransferTimeoutField, new GridBagConstraints(1, 4, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 100, 0));
 
 
         generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -150,6 +162,19 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     public boolean isChatHistoryHidden() {
         return hideChatHistory.isSelected();
     }
+
+    public void setFileTransferTimeout(int timeout){
+        fileTransferTimeoutField.setText(Integer.toString(timeout));
+    }
+
+    /*
+    public int getFileTransferTimeout(){
+        String value =  fileTransferTimeoutField.getText();
+        if(ModelUtil.hasLength(value)){
+
+        }
+    }
+    */
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (hideChatHistory.isSelected()) {

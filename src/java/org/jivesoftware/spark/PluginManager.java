@@ -22,8 +22,6 @@ import org.jivesoftware.spark.plugin.PublicPlugin;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.SwingUtilities;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -42,6 +40,8 @@ import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
+
+import javax.swing.SwingUtilities;
 
 /**
  * This manager is responsible for the loading of all Plugins and Workspaces within Spark environment.
@@ -83,12 +83,48 @@ public class PluginManager implements MainWindowListener {
     }
 
     private PluginManager() {
+        try {
+            PLUGINS_DIRECTORY = new File(Spark.getBinDirectory().getParentFile(), "plugins").getCanonicalFile();
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+
+        // Copy Files over if not on Windows. This is a workaround for installation issues.
+        if (!Spark.isWindows()) {
+            copyFiles();
+        }
+
         SparkManager.getMainWindow().addMainWindowListener(this);
 
         // Create the extension directory if one does not exist.
         if (!PLUGINS_DIRECTORY.exists()) {
             PLUGINS_DIRECTORY.mkdirs();
         }
+    }
+
+    private void copyFiles() {
+        // Current Plugin directory
+        File newPlugins = new File(Spark.getLogDirectory().getParentFile(), "plugins").getAbsoluteFile();
+        newPlugins.mkdirs();
+
+        File[] files = PLUGINS_DIRECTORY.listFiles();
+        final int no = files != null ? files.length : 0;
+        for (int i = 0; i < no; i++) {
+            File file = files[i];
+            if (file.isFile()) {
+                // Copy over
+                File newFile = new File(newPlugins, file.getName());
+                try {
+                    URLFileSystem.copy(file.toURL(), newFile);
+                }
+                catch (IOException e) {
+                    Log.error(e);
+                }
+            }
+        }
+
+        PLUGINS_DIRECTORY = newPlugins;
     }
 
     /**

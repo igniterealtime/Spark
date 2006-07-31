@@ -63,23 +63,23 @@ public class ChatPreference implements Preference {
 
     public void load() {
         SwingWorker thread = new SwingWorker() {
-            LocalPreferences pref;
+            LocalPreferences localPreferences;
 
             public Object construct() {
-                pref = SettingsManager.getLocalPreferences();
-                return pref;
+                localPreferences = SettingsManager.getLocalPreferences();
+                return localPreferences;
             }
 
             public void finished() {
-                String nickname = pref.getDefaultNickname();
+                String nickname = localPreferences.getDefaultNickname();
                 if (nickname == null) {
                     nickname = SparkManager.getSessionManager().getUsername();
                 }
 
-                boolean showTime = pref.isTimeDisplayedInChat();
-                boolean spellCheckerOn = pref.isSpellCheckerEnabled();
-                boolean notificationsOn = pref.isChatRoomNotificationsOn();
-                boolean chatHistoryHidden = !pref.isChatHistoryEnabled();
+                boolean showTime = localPreferences.isTimeDisplayedInChat();
+                boolean spellCheckerOn = localPreferences.isSpellCheckerEnabled();
+                boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
+                boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
                 panel.setShowTime(showTime);
                 panel.setSpellCheckerOn(spellCheckerOn);
                 panel.setGroupChatNotificationsOn(notificationsOn);
