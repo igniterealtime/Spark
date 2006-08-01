@@ -10,6 +10,9 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.jivesoftware.spark.SparkManager;
+
+import java.io.File;
 import java.util.Date;
 import java.util.Properties;
 
@@ -242,7 +245,9 @@ public class LocalPreferences {
     }
 
     public String getDownloadDir() {
-        return props.getProperty("downloadDirectory");
+        File downloadedDir = new File(SparkManager.getUserDirectory(), "downloads");
+
+        return props.getProperty("downloadDirectory", downloadedDir.getAbsolutePath());
     }
 
     public void setDownloadDir(String downloadDir) {

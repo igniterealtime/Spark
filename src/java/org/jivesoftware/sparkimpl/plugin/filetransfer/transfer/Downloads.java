@@ -23,15 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -40,6 +31,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class Downloads {
     final JPanel mainPanel = new JPanel();
@@ -50,6 +50,8 @@ public class Downloads {
     private static final Object LOCK = new Object();
     private JDialog dlg;
     private JFileChooser chooser;
+
+    private LocalPreferences pref;
 
     /**
      * Returns the singleton instance of <CODE>Downloads</CODE>,
@@ -82,8 +84,8 @@ public class Downloads {
 
         dlg.setLocationRelativeTo(frame);
 
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
-        downloadedDir = new File(SparkManager.getUserDirectory(), "downloads");
+        pref = SettingsManager.getLocalPreferences();
+        downloadedDir = new File(pref.getDownloadDir());
         downloadedDir.mkdirs();
         pref.setDownloadDir(downloadedDir.getAbsolutePath());
 
@@ -180,7 +182,7 @@ public class Downloads {
     }
 
     public void showDownloadsDirectory() {
-        downloadedDir = new File(SparkManager.getUserDirectory(), "downloads");
+        downloadedDir = new File(pref.getDownloadDir());
         if (!downloadedDir.exists()) {
             downloadedDir.mkdirs();
         }

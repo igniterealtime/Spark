@@ -63,7 +63,7 @@ public class RetryPanel extends JPanel {
         descriptionLabel = new WrappedLabel();
 
         retryButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-        cancelButton = new RolloverButton("Log Out", SparkRes.getImageIcon(SparkRes.SMALL_CIRCLE_DELETE));
+        cancelButton = new RolloverButton("Login", SparkRes.getImageIcon(SparkRes.SMALL_CIRCLE_DELETE));
 
         layoutComponents();
 

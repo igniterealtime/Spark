@@ -83,7 +83,7 @@ public class SettingsManager {
         if (!file.exists()) {
             file.mkdirs();
         }
-        return new File(file, "spark-settings.xml");
+        return new File(file, "spark.properties");
     }
 
 

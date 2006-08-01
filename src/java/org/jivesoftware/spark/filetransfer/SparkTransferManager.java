@@ -28,6 +28,8 @@ import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
+import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -48,20 +50,8 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.AWTException;
 import java.awt.Component;
@@ -84,6 +74,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -125,6 +129,10 @@ public class SparkTransferManager {
         if (!enabled) {
             return;
         }
+
+        // Register Preferences
+        PreferenceManager prefManager = SparkManager.getPreferenceManager();
+        prefManager.addPreference(new FileTransferPreference());
 
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName("Actions");
         JMenuItem downloadsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
