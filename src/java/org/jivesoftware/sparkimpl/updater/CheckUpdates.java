@@ -40,13 +40,6 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.text.html.HTMLEditorKit;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -58,13 +51,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.TimerTask;
+
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
 
 public class CheckUpdates {
     private String mainUpdateURL;
@@ -224,33 +221,12 @@ public class CheckUpdates {
 
                     if (!cancel) {
                         downloadComplete = true;
-
-
-                        ConfirmDialog confirm = new ConfirmDialog();
-                        confirm.showConfirmDialog(SparkManager.getMainWindow(), "Download Complete",
-                                "You will need to shut down the client to \n" +
-                                        "install the new version. Would you like to do that now?", "Yes", "No",
-                                null);
-                        confirm.setConfirmListener(new ConfirmListener() {
-                            public void yesOption() {
-                                try {
-                                    if (Spark.isWindows()) {
-                                        Runtime.getRuntime().exec(downloadedFile.getAbsolutePath());
-                                    }
-                                    else if (Spark.isMac()) {
-                                        Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
-                                    }
-                                }
-                                catch (IOException e) {
-                                    Log.error(e);
-                                }
-                                SparkManager.getMainWindow().shutdown();
-                            }
-
-                            public void noOption() {
-
-                            }
-                        });
+                        promptForInstallation(downloadedFile, "Download Complete", "You will need to shut down the client to \n" +
+                            "install the new version. Would you like to do that now?");
+                    }
+                    else {
+                        out.close();
+                        downloadedFile.delete();
                     }
 
 
@@ -362,12 +338,22 @@ public class CheckUpdates {
         }
     }
 
-    public void checkForUpdate(boolean forced) throws Exception {
+    /**
+     * Checks Spark Manager and/or Jive Software for the latest version of Spark.
+     *
+     * @param explicit true if the user explicitly asks for the latest version.
+     * @throws Exception
+     */
+    public void checkForUpdate(boolean explicit) throws Exception {
         if (UPDATING) {
             return;
         }
 
         UPDATING = true;
+
+        if (isLocalBuildAvailable()) {
+            return;
+        }
 
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
 
@@ -389,7 +375,7 @@ public class CheckUpdates {
         boolean dayOrLonger = weekAgo.getTime() >= lastChecked.getTime();
 
 
-        if (dayOrLonger || forced || sparkPluginInstalled) {
+        if (dayOrLonger || explicit || sparkPluginInstalled) {
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);
@@ -399,7 +385,7 @@ public class CheckUpdates {
             if (serverVersion == null) {
                 UPDATING = false;
 
-                if (forced) {
+                if (explicit) {
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "There are no updates.", "No Updates", JOptionPane.INFORMATION_MESSAGE);
                 }
                 return;
@@ -420,8 +406,8 @@ public class CheckUpdates {
 
             ConfirmDialog confirm = new ConfirmDialog();
             confirm.showConfirmDialog(SparkManager.getMainWindow(), "New Version Available",
-                    filename + " is now available.\nWould you like to install?", "Yes", "No",
-                    null);
+                filename + " is now available.\nWould you like to install?", "Yes", "No",
+                null);
             confirm.setDialogSize(400, 300);
             confirm.setConfirmListener(new ConfirmListener() {
                 public void yesOption() {
@@ -482,20 +468,16 @@ public class CheckUpdates {
      * @return returns true if the first version is greater than the second.
      */
     public boolean isGreater(String version1, String version2) {
-        List list = new ArrayList();
-        list.add(version1);
-        list.add(version2);
-
-        Collections.sort(list);
-
-        if (version1.equals(version2)) {
-            return false;
-        }
-
-        String topVersion = (String)list.get(1);
-        return topVersion.equals(version1);
+        return version1.compareTo(version2) >= 1;
     }
 
+    /**
+     * Returns the latest version of Spark available via Spark Manager or Jive Software.
+     *
+     * @param connection the XMPPConnection to use.
+     * @return the information for about the latest Spark Client.
+     * @throws XMPPException
+     */
     public static SparkVersion getLatestVersion(XMPPConnection connection) throws XMPPException {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.GET);
@@ -518,6 +500,13 @@ public class CheckUpdates {
         return response;
     }
 
+    /**
+     * Does a service discvery on the server to see if a Spark Manager
+     * is enabled.
+     *
+     * @param con the XMPPConnection to use.
+     * @return true if Spark Manager is available.
+     */
     public static boolean isSparkPluginInstalled(XMPPConnection con) {
         if (!con.isConnected()) {
             return false;
@@ -540,6 +529,82 @@ public class CheckUpdates {
 
         return false;
 
+    }
+
+    /**
+     * Prompts the user to install the latest Spark.
+     *
+     * @param downloadedFile the location of the latest downloaded client.
+     * @param title          the title
+     * @param message        the message
+     */
+    private void promptForInstallation(final File downloadedFile, String title, String message) {
+        ConfirmDialog confirm = new ConfirmDialog();
+        confirm.showConfirmDialog(SparkManager.getMainWindow(), title,
+            message, "Yes", "No",
+            null);
+        confirm.setConfirmListener(new ConfirmListener() {
+            public void yesOption() {
+                try {
+                    if (Spark.isWindows()) {
+                        Runtime.getRuntime().exec(downloadedFile.getAbsolutePath());
+                    }
+                    else if (Spark.isMac()) {
+                        Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
+                    }
+                }
+                catch (IOException e) {
+                    Log.error(e);
+                }
+                SparkManager.getMainWindow().shutdown();
+            }
+
+            public void noOption() {
+
+            }
+        });
+    }
+
+    /**
+     * Checks to see if a new version of Spark has already been downloaded by not installed.
+     *
+     * @return true if a newer version exists.
+     */
+    private boolean isLocalBuildAvailable() {
+        // Check the bin directory for previous downloads. If there is a
+        // newer version of Spark, ask if they wish to install.
+        if (Spark.isWindows()) {
+            File binDirectory = Spark.getBinDirectory();
+            File[] files = binDirectory.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                String fileName = file.getName();
+                if (fileName.endsWith(".exe")) {
+                    int index = fileName.indexOf("_");
+
+                    // Add version number
+                    String versionNumber = fileName.substring(index + 1);
+                    int indexOfPeriod = versionNumber.indexOf(".");
+
+                    versionNumber = versionNumber.substring(0, indexOfPeriod);
+                    versionNumber = versionNumber.replaceAll("_", ".");
+
+                    boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
+                    if (isGreater) {
+                        // Prompt
+                        promptForInstallation(file, "New Client Available", "You will need to shut down the client to \n" +
+                            "install the new version.\n\n Would you like to do that now?");
+                        return true;
+                    }
+                    else {
+                        file.delete();
+                    }
+
+                }
+            }
+        }
+
+        return false;
     }
 
 

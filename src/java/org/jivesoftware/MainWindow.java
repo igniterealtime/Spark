@@ -13,12 +13,14 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
@@ -240,37 +242,74 @@ public final class MainWindow extends JFrame implements ActionListener {
      * setting the Agent to be offline.
      */
     public void logout() {
-        // Set auto-login to false;
+        final XMPPConnection con = SparkManager.getConnection();
+
+
+        if (con.isConnected()) {
+            final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
+            String status = inputTextDialog.getInput("Status Message", "Let others know your current status or activity.",
+                SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
+
+            if (status != null) {
+                Presence presence = new Presence(Presence.Type.UNAVAILABLE);
+                presence.setStatus(status);
+                con.sendPacket(presence);
+            }
+        }
+
+        // Set auto-login to false
         SettingsManager.getLocalPreferences().setAutoLogin(false);
 
         // Notify all MainWindowListeners
         try {
             fireWindowShutdown();
-
-            final XMPPConnection con = SparkManager.getConnection();
-            if (con.isConnected()) {
-                con.close();
-            }
+            setVisible(false);
         }
         finally {
 
-            try {
-                String command = "";
-                if (Spark.isWindows()) {
-                    command = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\Spark.exe";
-                }
-                else if (Spark.isMac()) {
-                    command = "open -a Spark";
+            final SwingWorker shutdownThread = new SwingWorker() {
+                public Object construct() {
+                    try {
+                        Thread.sleep(10);
+                    }
+                    catch (InterruptedException e) {
+                        Log.error(e);
+                    }
+                    return true;
                 }
 
-                Runtime.getRuntime().exec(command);
-            }
-            catch (IOException e) {
-                Log.error("Error starting Spark", e);
-            }
+                public void finished() {
+                    closeConnectionAndInvoke();
+                }
+            };
 
-            System.exit(1);
+            shutdownThread.start();
+
         }
+    }
+
+    private void closeConnectionAndInvoke() {
+        final XMPPConnection con = SparkManager.getConnection();
+        if (con.isConnected()) {
+            con.close();
+        }
+
+        try {
+            String command = "";
+            if (Spark.isWindows()) {
+                command = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\Spark.exe";
+            }
+            else if (Spark.isMac()) {
+                command = "open -a Spark";
+            }
+
+            Runtime.getRuntime().exec(command);
+        }
+        catch (IOException e) {
+            Log.error("Error starting Spark", e);
+        }
+
+        System.exit(1);
     }
 
     /**

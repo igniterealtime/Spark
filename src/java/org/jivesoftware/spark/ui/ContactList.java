@@ -1925,7 +1925,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
     public void connectionClosed() {
-        reconnect("The connection was closed.", false);
+       // No reason to reconnect.
     }
 
     private void reconnect(final String message, final boolean conflict) {

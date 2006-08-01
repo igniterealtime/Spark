@@ -34,11 +34,13 @@ import java.beans.PropertyChangeListener;
 
 
 /**
- * <code>BroadcastDialog</code> class is used to create broadcast messages to be sent.
+ * <code>InputTextAreaDialog</code> class can be used for any input required that a simple text field could
+ * not handle.
  *
+ * @author Derek DeMoro
  * @version 1.0, 06/28/2005
  */
-public final class BroadcastDialog implements PropertyChangeListener {
+public final class InputTextAreaDialog implements PropertyChangeListener {
     private JTextArea textArea;
     private JTextField subjectField;
     private JOptionPane optionPane;
@@ -51,7 +53,7 @@ public final class BroadcastDialog implements PropertyChangeListener {
     /**
      * Empty Constructor.
      */
-    public BroadcastDialog() {
+    public InputTextAreaDialog() {
     }
 
     /**

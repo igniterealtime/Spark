@@ -60,6 +60,7 @@ public class ConfirmDialog extends BackgroundPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (listener != null) {
                     listener.yesOption();
+                    listener = null;
                 }
                 dialog.dispose();
             }

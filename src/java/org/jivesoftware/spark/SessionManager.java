@@ -30,14 +30,14 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.SwingUtilities;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.SwingUtilities;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
@@ -61,6 +61,8 @@ public final class SessionManager implements ConnectionListener {
     private String userBareAddress;
     private boolean unavaliable = false;
     private DiscoverItems discoverItems;
+
+    private int previousPriority = -1;
 
 
     public SessionManager() {
@@ -309,6 +311,10 @@ public final class SessionManager implements ConnectionListener {
                             else {
                                 p.setStatus("Away due to idle.");
                             }
+
+                            previousPriority = presence.getPriority();
+
+                            p.setPriority(0);
                             SparkManager.getSessionManager().changePresence(p);
                         }
                     }
@@ -337,6 +343,10 @@ public final class SessionManager implements ConnectionListener {
         Workspace workspace = SparkManager.getWorkspace();
         if (workspace != null) {
             Presence presence = workspace.getStatusBar().getStatusItem("Online").getPresence();
+            if (previousPriority != -1) {
+                presence.setPriority(previousPriority);
+            }
+
             SparkManager.getSessionManager().changePresence(presence);
             unavaliable = false;
         }
