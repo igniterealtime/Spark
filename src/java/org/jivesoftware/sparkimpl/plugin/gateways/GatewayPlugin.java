@@ -239,6 +239,9 @@ public class GatewayPlugin implements Plugin {
             }
 
             public Icon useIcon(Presence presence) {
+                if(presence == null){
+                    return null;
+                }
                 String domain = StringUtils.parseServer(presence.getFrom());
                 Transport transport = TransportManager.getTransport(domain);
                 if (transport != null) {
