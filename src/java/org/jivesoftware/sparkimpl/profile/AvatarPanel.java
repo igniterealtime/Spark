@@ -11,22 +11,10 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -38,6 +26,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 public class AvatarPanel extends JPanel implements ActionListener {
     private JLabel avatar;
@@ -73,7 +73,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         avatar.setText("No avatar was configured by the user.");
 
         GraphicUtils.makeSameSize(new JComponent[]{browseButton, clearButton});
-        avatar.setBorder(new PartialLineBorder(Color.lightGray, 1));
+        avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
 
 
         Thread thread = new Thread(new Runnable() {
@@ -183,11 +183,11 @@ public class AvatarPanel extends JPanel implements ActionListener {
             String extension = getExtension(f);
             if (extension != null) {
                 if (
-                        extension.equals(gif) ||
-                                extension.equals(jpeg) ||
-                                extension.equals(jpg) ||
-                                extension.equals(png)
-                        ) {
+                    extension.equals(gif) ||
+                        extension.equals(jpeg) ||
+                        extension.equals(jpg) ||
+                        extension.equals(png)
+                    ) {
                     return true;
                 }
                 else {

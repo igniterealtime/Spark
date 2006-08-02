@@ -18,7 +18,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -449,7 +448,7 @@ public class StatusBar extends JPanel {
                 ImageIcon avatarIcon = new ImageIcon(avatarBytes);
                 avatarIcon = VCardManager.scale(avatarIcon);
                 imageLabel.setIcon(avatarIcon);
-                imageLabel.setBorder(new PartialLineBorder(Color.LIGHT_GRAY, 1));
+                imageLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
                 imageLabel.invalidate();
                 imageLabel.validate();
                 imageLabel.repaint();

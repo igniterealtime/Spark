@@ -51,28 +51,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -103,6 +81,28 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -207,6 +207,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         // Add ActionListener(s) to menus
+        addContactGroup(unfiledGroup);
         addContactGroup(offlineGroup);
 
         showHideMenu.setSelected(false);
@@ -241,8 +242,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         JPanel commandPanel = statusBar.getCommandPanel();
 
 
-        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
         commandPanel.add(addContactButton);
+        addContactButton.setToolTipText("Add a contact");
         addContactButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new RosterDialog().showRosterDialog();
@@ -268,7 +270,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
 
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
@@ -409,8 +411,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         final Iterator rosterGroups = roster.getGroups();
         while (rosterGroups.hasNext()) {
             RosterGroup group = (RosterGroup)rosterGroups.next();
-            ContactGroup contactGroup = new ContactGroup(group.getName());
-            addContactGroup(contactGroup);
+            ContactGroup contactGroup = addContactGroup(group.getName());
 
             Iterator entries = group.getEntries();
             while (entries.hasNext()) {
@@ -423,7 +424,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 ContactItem contactItem = new ContactItem(name, entry.getUser());
                 contactItem.setPresence(null);
                 if ((entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                     // Add to contact group.
                     contactGroup.addContactItem(contactItem);
                     contactGroup.setVisible(true);
@@ -438,7 +439,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         // Add Unfiled Group
-        addContactGroup(unfiledGroup);
+        // addContactGroup(unfiledGroup);
         final Iterator unfiledEntries = roster.getUnfiledEntries();
         while (unfiledEntries.hasNext()) {
             RosterEntry entry = (RosterEntry)unfiledEntries.next();
@@ -498,8 +499,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 final RosterGroup group = (RosterGroup)groups.next();
                 ContactGroup contactGroup = getContactGroup(group.getName());
                 if (contactGroup == null) {
-                    contactGroup = new ContactGroup(group.getName());
-                    addContactGroup(contactGroup);
+                    contactGroup = addContactGroup(group.getName());
                 }
                 contactGroup.addContactItem(newContactItem);
             }
@@ -553,9 +553,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             // Handle if this is a new Entry in a new Group.
                             if (getContactGroup(group.getName()) == null) {
                                 // Create group.
-                                ContactGroup contactGroup = new ContactGroup(group.getName());
+                                ContactGroup contactGroup = addContactGroup(group.getName());
                                 contactGroup.setVisible(false);
-                                addContactGroup(contactGroup);
                                 contactGroup = getContactGroup(group.getName());
                                 String name = rosterEntry.getName();
                                 if (name == null) {
@@ -635,7 +634,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             ContactItem offlineItem = offlineGroup.getContactItemByJID(jid);
                             if (offlineItem != null) {
                                 if ((rosterEntry.getType() == RosterPacket.ItemType.NONE || rosterEntry.getType() == RosterPacket.ItemType.FROM)
-                                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
+                                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
                                     // Remove from offlineItem and add to unfiledItem.
                                     offlineGroup.removeContactItem(offlineItem);
                                     unfiledGroup.addContactItem(offlineItem);
@@ -709,9 +708,34 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         return null;
     }
 
+    private void addContactGroup(ContactGroup group) {
+        groupList.add(group);
 
-    private void addContactGroup(ContactGroup contactGroup) {
-        String groupName = contactGroup.getGroupName();
+        try {
+            mainPanel.add(group, groupList.size() - 1);
+
+        }
+        catch (Exception e) {
+            System.out.println("Unable to add Contact Group" + group.getGroupName());
+            Log.error(e);
+        }
+
+        group.addContactGroupListener(this);
+
+
+        fireContactGroupAdded(group);
+
+        // Check state
+
+        String prop = props.getProperty(group.getGroupName());
+        if (prop != null) {
+            boolean isCollapsed = Boolean.valueOf(prop).booleanValue();
+            group.setCollapsed(isCollapsed);
+        }
+    }
+
+
+    private ContactGroup addContactGroup(String groupName) {
         StringTokenizer tkn = new StringTokenizer(groupName, "::");
 
         ContactGroup rootGroup = null;
@@ -731,16 +755,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 name = name.substring(0, name.length() - 2);
             }
 
-            ContactGroup newContactGroup = null;
-            if (contactGroup == offlineGroup) {
-                newContactGroup = offlineGroup;
-            }
-            else if (contactGroup == unfiledGroup) {
-                newContactGroup = unfiledGroup;
-            }
-            else {
-                newContactGroup = getContactGroup(name);
-            }
+            ContactGroup newContactGroup = getContactGroup(name);
+
 
             if (newContactGroup == null) {
                 newContactGroup = new ContactGroup(group);
@@ -797,7 +813,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         if (!groupAdded) {
-            return;
+            return getContactGroup(groupName);
         }
 
 
@@ -831,6 +847,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             System.out.println("Unable to add Contact Group" + rootGroup.getGroupName());
             Log.error(e);
         }
+
+        return getContactGroup(groupName);
 
     }
 
@@ -1288,8 +1306,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 }
                 pane.setText(buf.toString());
                 MessageDialog.showComponent("Presence History", "History of user activity while online.",
-                        SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE), new JScrollPane(pane),
-                        getGUI(), 400, 400, false);
+                    SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE), new JScrollPane(pane),
+                    getGUI(), 400, 400, false);
 
             }
         };
@@ -1575,7 +1593,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Add To Contacts Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName("Contacts");
-        JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
         ResourceUtils.resButton(addContactsMenu, "&Add Contact");
         ResourceUtils.resButton(addContactGroupMenu, "Add Contact &Group");
 
@@ -1594,8 +1612,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 if (ModelUtil.hasLength(groupName)) {
                     ContactGroup contactGroup = getContactGroup(groupName);
                     if (contactGroup == null) {
-                        contactGroup = new ContactGroup(groupName);
-                        addContactGroup(contactGroup);
+                        contactGroup = addContactGroup(groupName);
                     }
                 }
             }
@@ -1925,7 +1942,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
     public void connectionClosed() {
-       // No reason to reconnect.
+        // No reason to reconnect.
     }
 
     private void reconnect(final String message, final boolean conflict) {

@@ -45,6 +45,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.BorderFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -238,7 +239,7 @@ public class VCardManager {
 
         avatarLabel = new JLabel();
         avatarLabel.setHorizontalAlignment(JButton.RIGHT);
-        avatarLabel.setBorder(new PartialLineBorder(Color.gray, 1));
+        avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

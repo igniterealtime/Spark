@@ -31,6 +31,7 @@ import java.awt.Insets;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.BorderFactory;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -74,7 +75,7 @@ public class VCardPanel extends JPanel {
                         icon = VCardManager.scale(icon);
                         if (icon.getIconWidth() > 0) {
                             avatarImage.setIcon(icon);
-                            avatarImage.setBorder(new PartialLineBorder(Color.LIGHT_GRAY, 1));
+                            avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
                         }
                         setupUI(vcard);
                     }

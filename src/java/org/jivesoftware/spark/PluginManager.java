@@ -207,6 +207,7 @@ public class PluginManager implements MainWindowListener {
                     minSparkVersion = plugin.selectSingleNode("minSparkVersion").getText();
                 }
                 catch (Exception e) {
+                    Log.error(e);
                     return null;
                 }
 
