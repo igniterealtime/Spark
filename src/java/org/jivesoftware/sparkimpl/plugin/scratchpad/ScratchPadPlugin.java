@@ -128,6 +128,9 @@ public class ScratchPadPlugin implements Plugin {
         Iterator taskIter = tasks.getTasks().iterator();
         while (taskIter.hasNext()) {
             Task task = (Task)taskIter.next();
+            if(task.isCompleted()){
+                continue;
+            }
             final JCheckBox box = new JCheckBox();
             box.setOpaque(false);
             box.setText(task.getTitle());
@@ -140,7 +143,9 @@ public class ScratchPadPlugin implements Plugin {
             box.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     mainPanel.remove(box);
-                    map.remove(box);
+
+                    Task task = (Task)map.get(box);
+                    task.setCompleted(true);
                     mainPanel.invalidate();
                     mainPanel.validate();
                     mainPanel.repaint();

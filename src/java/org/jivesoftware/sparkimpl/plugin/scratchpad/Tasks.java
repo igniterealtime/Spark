@@ -16,6 +16,7 @@ import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.packet.PrivateData;
 import org.jivesoftware.smackx.provider.PrivateDataProvider;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
@@ -82,6 +83,9 @@ public class Tasks implements PrivateData {
             Task task = (Task)iter.next();
             buf.append("<task>");
             buf.append("<title>").append(task.getTitle()).append("</title>");
+            if(task.isCompleted()){
+                buf.append("<completed>true</completed>");
+            }
             buf.append("</task>");
         }
 
@@ -135,6 +139,12 @@ public class Tasks implements PrivateData {
             if (eventType == XmlPullParser.START_TAG && "title".equals(parser.getName())) {
                 task.setTitle(parser.nextText());
             }
+            if (eventType == XmlPullParser.START_TAG && "completed".equals(parser.getName())) {
+                String completed = parser.nextText();
+                if(ModelUtil.hasLength(completed)){
+                    task.setCompleted(Boolean.parseBoolean(completed));
+                }
+            }
 
             else if (eventType == XmlPullParser.END_TAG) {
                 if ("task".equals(parser.getName())) {
@@ -187,6 +197,7 @@ public class Tasks implements PrivateData {
 
         Task task = new Task();
         task.setTitle("Hi");
+        task.setCompleted(true);
         tasks.addTask(task);
 
         saveTasks(tasks, con);

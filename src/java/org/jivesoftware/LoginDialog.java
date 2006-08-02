@@ -124,7 +124,12 @@ public final class LoginDialog {
      */
     public void invoke(JFrame parentFrame) {
         // Before creating any connections. Update proxy if needed.
-        updateProxyConfig();
+        try {
+            updateProxyConfig();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
 
         LoginPanel loginPanel = new LoginPanel();
 
@@ -740,7 +745,7 @@ public final class LoginDialog {
         workspace.buildLayout();
     }
 
-    private void updateProxyConfig() {
+    private void updateProxyConfig() throws Exception {
         if (ModelUtil.hasLength(Default.getString(Default.PROXY_PORT)) && ModelUtil.hasLength(Default.getString(Default.PROXY_HOST))) {
             String port = Default.getString(Default.PROXY_PORT);
             String host = Default.getString(Default.PROXY_HOST);

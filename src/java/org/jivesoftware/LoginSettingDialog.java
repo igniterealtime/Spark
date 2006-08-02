@@ -18,6 +18,17 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Properties;
+
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -30,17 +41,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Properties;
 
 /**
  * Allows users to configure startup options.
@@ -159,7 +159,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         // The user should only be able to close this dialog.
         Object[] options = {"Ok", "Cancel", "Use Default"};
         optionPane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-                JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
@@ -202,7 +202,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             catch (NumberFormatException numberFormatException) {
                 JOptionPane.showMessageDialog(optionsDialog, "You must supply a valid Time out value.",
-                        "Invalid Time Out", JOptionPane.ERROR_MESSAGE);
+                    "Invalid Time Out", JOptionPane.ERROR_MESSAGE);
                 timeOutField.requestFocus();
                 errors = true;
             }
@@ -212,14 +212,14 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             catch (NumberFormatException numberFormatException) {
                 JOptionPane.showMessageDialog(optionsDialog, "You must supply a valid Port.",
-                        "Invalid Port", JOptionPane.ERROR_MESSAGE);
+                    "Invalid Port", JOptionPane.ERROR_MESSAGE);
                 portField.requestFocus();
                 errors = true;
             }
 
             if (!ModelUtil.hasLength(resource)) {
                 JOptionPane.showMessageDialog(optionsDialog, "You must supply a resource",
-                        "Invalid Resource", JOptionPane.ERROR_MESSAGE);
+                    "Invalid Resource", JOptionPane.ERROR_MESSAGE);
                 resourceField.requestFocus();
                 errors = true;
             }
@@ -397,18 +397,23 @@ public class LoginSettingDialog implements PropertyChangeListener {
             else {
                 String host = localPreferences.getHost();
                 String port = localPreferences.getPort();
-                String username = localPreferences.getProxyUsername();
-                String password = localPreferences.getProxyPassword();
                 String protocol = localPreferences.getProtocol();
 
-                if (protocol.equals("SOCKS")) {
-                    System.setProperty("socksProxyHost", host);
-                    System.setProperty("socksProxyPort", port);
+                boolean isValid = ModelUtil.hasLength(host) && ModelUtil.hasLength(port);
+
+                if (isValid) {
+                    if (protocol.equals("SOCKS")) {
+                        System.setProperty("socksProxyHost", host);
+                        System.setProperty("socksProxyPort", port);
+                    }
+                    else {
+                        System.setProperty("http.proxySet", "true");
+                        System.setProperty("http.proxyHost", host);
+                        System.setProperty("http.proxyPort", port);
+                    }
                 }
                 else {
-                    System.setProperty("http.proxySet", "true");
-                    System.setProperty("http.proxyHost", host);
-                    System.setProperty("http.proxyPort", port);
+                    localPreferences.setProxyEnabled(false);
                 }
             }
 
