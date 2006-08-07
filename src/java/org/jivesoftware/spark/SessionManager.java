@@ -89,7 +89,12 @@ public final class SessionManager implements ConnectionListener {
         if (localPref.isIdleOn()) {
             int delay = localPref.getIdleTime() * 60000;
             if (Spark.isWindows()) {
-                setIdleListener(delay);
+                try {
+                    setIdleListener(delay);
+                }
+                catch (Exception e) {
+                    Log.error(e);
+                }
             }
         }
 
@@ -283,7 +288,7 @@ public final class SessionManager implements ConnectionListener {
      *
      * @param mill the timeout value in milliseconds.
      */
-    private void setIdleListener(final long mill) {
+    private void setIdleListener(final long mill) throws Exception {
 
         final Timer timer = new Timer();
 

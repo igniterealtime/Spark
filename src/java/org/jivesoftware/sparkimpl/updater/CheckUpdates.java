@@ -40,6 +40,13 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -55,13 +62,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TimerTask;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.text.html.HTMLEditorKit;
 
 public class CheckUpdates {
     private String mainUpdateURL;
@@ -222,7 +222,7 @@ public class CheckUpdates {
                     if (!cancel) {
                         downloadComplete = true;
                         promptForInstallation(downloadedFile, "Download Complete", "You will need to shut down the client to \n" +
-                            "install the new version. Would you like to do that now?");
+                                "install the new version. Would you like to do that now?");
                     }
                     else {
                         out.close();
@@ -406,8 +406,8 @@ public class CheckUpdates {
 
             ConfirmDialog confirm = new ConfirmDialog();
             confirm.showConfirmDialog(SparkManager.getMainWindow(), "New Version Available",
-                filename + " is now available.\nWould you like to install?", "Yes", "No",
-                null);
+                    filename + " is now available.\nWould you like to install?", "Yes", "No",
+                    null);
             confirm.setDialogSize(400, 300);
             confirm.setConfirmListener(new ConfirmListener() {
                 public void yesOption() {
@@ -541,8 +541,8 @@ public class CheckUpdates {
     private void promptForInstallation(final File downloadedFile, String title, String message) {
         ConfirmDialog confirm = new ConfirmDialog();
         confirm.showConfirmDialog(SparkManager.getMainWindow(), title,
-            message, "Yes", "No",
-            null);
+                message, "Yes", "No",
+                null);
         confirm.setConfirmListener(new ConfirmListener() {
             public void yesOption() {
                 try {
@@ -576,7 +576,8 @@ public class CheckUpdates {
         if (Spark.isWindows()) {
             File binDirectory = Spark.getBinDirectory();
             File[] files = binDirectory.listFiles();
-            for (int i = 0; i < files.length; i++) {
+            int no = files != null ? files.length : 0;
+            for (int i = 0; i < no; i++) {
                 File file = files[i];
                 String fileName = file.getName();
                 if (fileName.endsWith(".exe")) {
@@ -593,7 +594,7 @@ public class CheckUpdates {
                     if (isGreater) {
                         // Prompt
                         promptForInstallation(file, "New Client Available", "You will need to shut down the client to \n" +
-                            "install the new version.\n\n Would you like to do that now?");
+                                "install the new version.\n\n Would you like to do that now?");
                         return true;
                     }
                     else {

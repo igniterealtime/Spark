@@ -919,6 +919,7 @@ public final class GroupChatRoom extends ChatRoom {
                         String isTypingText = nickname + " is typing a message...";
                         getNotificationLabel().setText(isTypingText);
                         getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                        typingTimer.restart();
                     }
                 }
             });
