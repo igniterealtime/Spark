@@ -16,22 +16,21 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.packet.Time;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.BorderFactory;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -45,6 +44,7 @@ public class VCardPanel extends JPanel {
 
     /**
      * Generate a VCard Panel using the specified jid.
+     *
      * @param jid the jid to use when retrieving the vcard information.
      */
     public VCardPanel(final String jid) {
@@ -87,6 +87,30 @@ public class VCardPanel extends JPanel {
         };
 
         worker.start();
+    }
+
+    public VCardPanel(VCard vcard, String jid) {
+        setLayout(new GridBagLayout());
+        setOpaque(false);
+
+        this.jid = jid;
+        avatarImage = new JLabel();
+
+        byte[] bytes = vcard.getAvatar();
+        if (bytes != null) {
+            try {
+                ImageIcon icon = new ImageIcon(bytes);
+                icon = VCardManager.scale(icon);
+                if (icon.getIconWidth() > 0) {
+                    avatarImage.setIcon(icon);
+                    avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+                }
+                setupUI(vcard);
+            }
+            catch (Exception e) {
+                Log.error(e);
+            }
+        }
     }
 
     private void setupUI(VCard vcard) {

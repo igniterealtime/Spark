@@ -25,6 +25,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.MessageEventRequestListener;
+import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -35,6 +36,7 @@ import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
@@ -213,9 +215,48 @@ public class ChatRoomImpl extends ChatRoom {
         messageEventRequestListener = new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().addMessageEventRequestListener(messageEventRequestListener);
 
-        // Add VCard Panel
-        final VCardPanel vcardPanel = new VCardPanel(getParticipantJID());
-        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                return SparkManager.getVCardManager().getVCard(participantJID);
+            }
+
+            public void finished() {
+                final VCard vcard = (VCard)get();
+                if (vcard == null) {
+                    // Do nothing.
+                    return;
+                }
+
+                // Add VCard Panel
+                final VCardPanel vcardPanel = new VCardPanel(vcard, participantJID);
+                getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+                scrollOnTimer();
+            }
+        };
+
+        worker.start();
+    }
+
+    private void scrollOnTimer() {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }
+
+            public void finished() {
+                scrollToBottom();
+            }
+        };
+
+        worker.start();
     }
 
     public void closeChatRoom() {

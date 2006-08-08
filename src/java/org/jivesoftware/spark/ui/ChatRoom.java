@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -354,6 +355,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         int chatLength = transcriptWindow.getDocument().getLength();
         transcriptWindow.setCaretPosition(chatLength);
+
+        JScrollBar sb = textScroller.getVerticalScrollBar();
+        sb.setValue(sb.getMaximum());
     }
 
 
