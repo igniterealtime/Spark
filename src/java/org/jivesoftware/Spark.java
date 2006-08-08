@@ -59,9 +59,10 @@ public final class Spark {
      * @param args - Will receive arguments from Java Web Start.
      */
     public static void main(final String[] args) {
-        /*EnhancedDebuggerWindow.PERSISTED_DEBUGGER = true;
-        EnhancedDebuggerWindow.MAX_TABLE_ROWS = 10;
-        XMPPConnection.DEBUG_ENABLED = true;
+        /*
+        * EnhancedDebuggerWindow.PERSISTED_DEBUGGER = true;
+        * EnhancedDebuggerWindow.MAX_TABLE_ROWS = 10;
+        * XMPPConnection.DEBUG_ENABLED = true;
         */
 
         String current = System.getProperty("java.library.path");

@@ -198,7 +198,7 @@ public class VCardManager {
             }
 
             public void finished() {
-                if (userVCard.getError() != null) {
+                if (userVCard.getError() != null || userVCard == null) {
                     // Show vcard not found
                     JOptionPane.showMessageDialog(parent, "Unable to locate a profile for " + jid, "Profile Not Found", JOptionPane.ERROR_MESSAGE);
                     return;

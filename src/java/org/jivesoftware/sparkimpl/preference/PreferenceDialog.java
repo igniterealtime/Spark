@@ -37,7 +37,7 @@ public class PreferenceDialog implements PropertyChangeListener {
         // Construct Dialog
         preferenceDialog = new JDialog(parentFrame,
                 "Preferences",
-                true);
+                false);
 
         Object[] options = {"Close"};
         pane = new JOptionPane(contentPane, JOptionPane.PLAIN_MESSAGE,

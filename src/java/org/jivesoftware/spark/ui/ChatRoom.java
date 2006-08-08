@@ -707,7 +707,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             setLayout(new GridBagLayout());
 
             buttonPanel.setOpaque(false);
-            add(buttonPanel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            add(buttonPanel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             setOpaque(false);
         }
 

@@ -166,7 +166,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 final Message message = (Message)packet;
                 boolean broadcast = message.getProperty("broadcast") != null;
 
-                if ((broadcast || message.getType() == Message.Type.NORMAL) && message.getBody() != null) {
+                if ((broadcast || (message.getType() == Message.Type.NORMAL) || message.getType() == Message.Type.HEADLINE) && message.getBody() != null) {
                     showAlert((Message)packet);
                 }
                 else {
