@@ -165,7 +165,7 @@ public class PluginViewer extends JPanel implements Plugin {
             boolean deleted = pluginJAR.delete();
 
             JOptionPane.showMessageDialog(this, "You will need to restart Spark to have the changes take place.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
-            PluginManager.getInstance().removePlugin(plugin);
+            PluginManager.getInstance().removePublicPlugin(plugin);
             return true;
         }
 
@@ -232,6 +232,7 @@ public class PluginViewer extends JPanel implements Plugin {
             }
 
             public void finished() {
+                final PluginManager pluginManager = PluginManager.getInstance();
                 if (pluginList == null) {
                     availablePanel.removeAll();
                     availablePanel.invalidate();
@@ -246,7 +247,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
                 while (plugs.hasNext()) {
                     PublicPlugin plugin = (PublicPlugin)plugs.next();
-                    if (!PluginManager.isInstalled(plugin)) {
+                    if (!pluginManager.isInstalled(plugin)) {
                         SparkPlugUI ui = new SparkPlugUI(plugin);
                         availablePanel.add(ui);
                         addSparkPlugUIListener(ui);
@@ -518,9 +519,11 @@ public class PluginViewer extends JPanel implements Plugin {
                 }
 
                 ui.setSelected(true);
+
+                final PluginManager pluginManager = PluginManager.getInstance();
                 ui.getInstallButton().addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
-                        boolean isInstalled = PluginManager.isInstalled(ui.getPlugin());
+                        boolean isInstalled = pluginManager.isInstalled(ui.getPlugin());
                         if (isInstalled) {
                             boolean uninstalled = uninstall(ui.getPlugin());
                             if (uninstalled) {

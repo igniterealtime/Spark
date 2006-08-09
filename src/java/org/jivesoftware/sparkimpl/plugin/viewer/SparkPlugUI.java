@@ -18,14 +18,6 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -40,11 +32,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 public class SparkPlugUI extends JPanel {
     private PublicPlugin plugin;
     private final JButton installButton = new JButton();
     private JLabel imageIcon = new JLabel();
-
 
     public SparkPlugUI(PublicPlugin plugin) {
         this.plugin = plugin;
@@ -137,7 +136,8 @@ public class SparkPlugUI extends JPanel {
     }
 
     public void showOperationButton() {
-        if (!PluginManager.isInstalled(plugin)) {
+        final PluginManager pluginManager = PluginManager.getInstance();
+        if (!pluginManager.isInstalled(plugin)) {
             installButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
         }
         else {

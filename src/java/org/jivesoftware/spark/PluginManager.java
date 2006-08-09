@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
@@ -49,8 +48,9 @@ import javax.swing.SwingUtilities;
  * @author Derek DeMoro
  */
 public class PluginManager implements MainWindowListener {
-    private final List plugins = new LinkedList();
-    private final List publicPlugins = new ArrayList();
+    private final List<Plugin> plugins = new ArrayList<Plugin>();
+
+    private final List<PublicPlugin> publicPlugins = new ArrayList<PublicPlugin>();
     private static PluginManager singleton;
     private static final Object LOCK = new Object();
 
@@ -202,18 +202,17 @@ public class PluginManager implements MainWindowListener {
             try {
                 Element plugin = (Element)iter.next();
 
-                String minSparkVersion = null;
+                name = plugin.selectSingleNode("name").getText();
+                clazz = plugin.selectSingleNode("class").getText();
+
                 try {
-                    minSparkVersion = plugin.selectSingleNode("minSparkVersion").getText();
+                    plugin.selectSingleNode("minSparkVersion").getText();
                 }
                 catch (Exception e) {
-                    Log.error(e);
+                    Log.error("Unable to load plugin " + name + " due to no minSparkVersion.");
                     return null;
                 }
 
-
-                name = plugin.selectSingleNode("name").getText();
-                clazz = plugin.selectSingleNode("class").getText();
                 publicPlugin.setPluginClass(clazz);
                 publicPlugin.setName(name);
 
@@ -574,7 +573,7 @@ public class PluginManager implements MainWindowListener {
      *
      * @return the collection of public plugins.
      */
-    public List getPublicPlugins() {
+    public List<PublicPlugin> getPublicPlugins() {
         return publicPlugins;
     }
 
@@ -606,14 +605,10 @@ public class PluginManager implements MainWindowListener {
      *
      * @param plugin the plugin to uninstall.
      */
-    public void removePlugin(PublicPlugin plugin) {
-        PluginManager pluginManager = PluginManager.getInstance();
-        List plugins = pluginManager.getPublicPlugins();
-        Iterator iter = new ArrayList(plugins).iterator();
-        while (iter.hasNext()) {
-            PublicPlugin installedPlugin = (PublicPlugin)iter.next();
-            if (plugin.getName().equals(installedPlugin.getName())) {
-                plugins.remove(installedPlugin);
+    public void removePublicPlugin(PublicPlugin plugin) {
+        for (PublicPlugin publicPlugin : getPublicPlugins()) {
+            if (plugin.getName().equals(publicPlugin.getName())) {
+                publicPlugins.remove(plugin);
             }
         }
     }
@@ -621,21 +616,19 @@ public class PluginManager implements MainWindowListener {
     /**
      * Returns true if the specified plugin is installed.
      *
-     * @param plugin the plugin to check.
+     * @param plugin the <code>PublicPlugin</code> plugin to check.
      * @return true if installed.
      */
-    public static boolean isInstalled(PublicPlugin plugin) {
-        PluginManager pluginManager = PluginManager.getInstance();
-        List plugins = pluginManager.getPublicPlugins();
-        Iterator iter = plugins.iterator();
-        while (iter.hasNext()) {
-            PublicPlugin installedPlugin = (PublicPlugin)iter.next();
-            if (plugin.getName().equals(installedPlugin.getName())) {
+    public boolean isInstalled(PublicPlugin plugin) {
+        for(PublicPlugin publicPlugin : getPublicPlugins()){
+            if (plugin.getName().equals(publicPlugin.getName())) {
                 return true;
             }
         }
+
         return false;
     }
+
 
 
 }
