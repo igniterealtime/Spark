@@ -13,7 +13,6 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.SSLXMPPConnection;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -591,10 +590,10 @@ public final class LoginDialog {
 
                     if (useSSL) {
                         if (!hostPortConfigured) {
-                            connection = new SSLXMPPConnection(serverName);
+                            connection = new XMPPConnection(serverName);
                         }
                         else {
-                            connection = new SSLXMPPConnection(localPref.getXmppHost(), port, serverName);
+                            connection = new XMPPConnection(localPref.getXmppHost(), port, serverName);
                         }
                     }
                     else {
@@ -614,7 +613,7 @@ public final class LoginDialog {
 
                     // Subscriptions are always manual
                     Roster roster = connection.getRoster();
-                    roster.setSubscriptionMode(Roster.SUBSCRIPTION_MANUAL);
+                    roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getUsername(), getPassword());

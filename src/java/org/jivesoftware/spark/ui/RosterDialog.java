@@ -295,10 +295,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
         boolean isSubscribed = true;
         if (userEntry != null) {
-            Iterator iter = userEntry.getGroups();
-            if (iter.hasNext()) {
-                isSubscribed = false;
-            }
+            isSubscribed = userEntry.getGroups().size() == 0;
         }
 
         if (isSubscribed) {

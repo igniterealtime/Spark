@@ -407,13 +407,13 @@ public class ChatRoomImpl extends ChatRoom {
                     final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
                     String time = formatter.format(new Date());
 
-                    if (presence.getType() == Presence.Type.UNAVAILABLE && contactItem != null) {
+                    if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
                         if (isOnline) {
                             getTranscriptWindow().insertNotificationMessage("*** " + participantNickname + " went offline at " + time + ".");
                         }
                         isOnline = false;
                     }
-                    else if (presence.getType() == Presence.Type.AVAILABLE) {
+                    else if (presence.getType() == Presence.Type.available) {
                         if (!isOnline) {
                             getTranscriptWindow().insertNotificationMessage("*** " + participantNickname + " is online at " + time + ".");
                         }

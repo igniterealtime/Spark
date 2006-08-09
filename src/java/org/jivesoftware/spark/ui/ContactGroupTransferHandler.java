@@ -233,10 +233,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
                 Roster roster = SparkManager.getConnection().getRoster();
                 RosterEntry entry = roster.getEntry(item.getFullJID());
 
-                Iterator iter = roster.getGroups();
                 RosterGroup groupFound = null;
-                while (iter.hasNext()) {
-                    RosterGroup group = (RosterGroup)iter.next();
+
+                for(RosterGroup group : roster.getGroups()){
                     if (group.getName().equals(contactGroup.getGroupName())) {
                         try {
                             groupFound = group;
@@ -287,10 +286,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
         Roster roster = SparkManager.getConnection().getRoster();
         RosterEntry entry = roster.getEntry(item.getFullJID());
 
-        Iterator groups = roster.getGroups();
         RosterGroup rosterGroup = null;
-        while (groups.hasNext()) {
-            RosterGroup group = (RosterGroup)groups.next();
+
+        for(RosterGroup group : roster.getGroups()){
             if (group.getName().equals(contactGroup.getGroupName())) {
                 try {
                     rosterGroup = group;

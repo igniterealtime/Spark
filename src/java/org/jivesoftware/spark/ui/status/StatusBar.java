@@ -104,7 +104,7 @@ public class StatusBar extends JPanel {
 
 
         setStatus("Online");
-        currentPresence = new Presence(Presence.Type.AVAILABLE, "Online", -1, Presence.Mode.AVAILABLE);
+        currentPresence = new Presence(Presence.Type.available, "Online", -1, Presence.Mode.available);
 
 
         setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
@@ -330,11 +330,11 @@ public class StatusBar extends JPanel {
         final ImageIcon awayIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
         final ImageIcon dndIcon = SparkRes.getImageIcon(SparkRes.IM_DND);
 
-        StatusItem online = new StatusItem(new Presence(Presence.Type.AVAILABLE, "Online", -1, Presence.Mode.AVAILABLE), availableIcon);
-        StatusItem freeToChat = new StatusItem(new Presence(Presence.Type.AVAILABLE, "Free To Chat", -1, Presence.Mode.CHAT), SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE));
-        StatusItem away = new StatusItem(new Presence(Presence.Type.AVAILABLE, "Away", -1, Presence.Mode.AWAY), awayIcon);
-        StatusItem dnd = new StatusItem(new Presence(Presence.Type.AVAILABLE, "Do Not Disturb", -1, Presence.Mode.DO_NOT_DISTURB), dndIcon);
-        StatusItem extendedAway = new StatusItem(new Presence(Presence.Type.AVAILABLE, "Extended Away", -1, Presence.Mode.EXTENDED_AWAY), awayIcon);
+        StatusItem online = new StatusItem(new Presence(Presence.Type.available, "Online", -1, Presence.Mode.available), availableIcon);
+        StatusItem freeToChat = new StatusItem(new Presence(Presence.Type.available, "Free To Chat", -1, Presence.Mode.chat), SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE));
+        StatusItem away = new StatusItem(new Presence(Presence.Type.available, "Away", -1, Presence.Mode.away), awayIcon);
+        StatusItem dnd = new StatusItem(new Presence(Presence.Type.available, "Do Not Disturb", -1, Presence.Mode.dnd), dndIcon);
+        StatusItem extendedAway = new StatusItem(new Presence(Presence.Type.available, "Extended Away", -1, Presence.Mode.xa), awayIcon);
 
         dndList.add(freeToChat);
         dndList.add(online);

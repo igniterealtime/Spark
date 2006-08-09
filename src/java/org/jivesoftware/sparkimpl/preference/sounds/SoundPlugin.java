@@ -36,7 +36,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence != null && presence.getType() == Presence.Type.UNAVAILABLE) {
+                if (presence != null && presence.getType() == Presence.Type.unavailable) {
                     SoundPreferences preferences = soundPreference.getPreferences();
                     if (preferences != null && preferences.isPlayOfflineSound()) {
                         String offline = preferences.getOfflineSound();

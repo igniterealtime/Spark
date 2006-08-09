@@ -306,7 +306,7 @@ public final class SessionManager implements ConnectionListener {
                         // Change Status
                         Workspace workspace = SparkManager.getWorkspace();
                         Presence presence = workspace.getStatusBar().getPresence();
-                        if (workspace != null && presence.getMode() == Presence.Mode.AVAILABLE) {
+                        if (workspace != null && presence.getMode() == Presence.Mode.available) {
                             unavaliable = true;
                             StatusItem away = workspace.getStatusBar().getStatusItem("Away");
                             Presence p = away.getPresence();

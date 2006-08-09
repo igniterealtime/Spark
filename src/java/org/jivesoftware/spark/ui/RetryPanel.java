@@ -69,7 +69,7 @@ public class RetryPanel extends JPanel {
 
         retryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                attemptReconnect();
+                //attemptReconnect();
             }
         });
 
@@ -120,7 +120,7 @@ public class RetryPanel extends JPanel {
                     countdown--;
                 }
                 else {
-                    attemptReconnect();
+                    //attemptReconnect();
                 }
             }
         };
@@ -136,6 +136,7 @@ public class RetryPanel extends JPanel {
         retryButton.setVisible(false);
     }
 
+    /*
     private void attemptReconnect() {
         retryButton.setText("Attempting....");
         timer.stop();
@@ -171,6 +172,7 @@ public class RetryPanel extends JPanel {
 
 
     }
+    */
 
     /**
      * Adds a <code>ReconnectListener</code>.

@@ -70,7 +70,7 @@ public class PresenceChangePlugin implements Plugin {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
-                    if (item.getPresence() == null || (item.getPresence().getMode() != Presence.Mode.AVAILABLE && item.getPresence().getMode() != Presence.Mode.CHAT)) {
+                    if (item.getPresence() == null || (item.getPresence().getMode() != Presence.Mode.available && item.getPresence().getMode() != Presence.Mode.chat)) {
                         if (contacts.contains(item)) {
                             popup.add(removeAction);
                         }
@@ -94,7 +94,7 @@ public class PresenceChangePlugin implements Plugin {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence == null || (presence.getMode() != Presence.Mode.AVAILABLE && presence.getMode() != Presence.Mode.CHAT)) {
+                if (presence == null || (presence.getMode() != Presence.Mode.available && presence.getMode() != Presence.Mode.chat)) {
                     return;
                 }
                 String from = presence.getFrom();

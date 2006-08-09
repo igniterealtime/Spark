@@ -194,7 +194,7 @@ public class GatewayPlugin implements Plugin {
                 Transport transport = TransportManager.getTransport(packet.getFrom());
                 if (transport != null) {
                     boolean registered = presence != null && presence.getMode() != null;
-                    if (presence.getType() == Presence.Type.UNAVAILABLE) {
+                    if (presence.getType() == Presence.Type.unavailable) {
                         registered = false;
                     }
                     RolloverButton button = uiMap.get(transport);
@@ -218,7 +218,7 @@ public class GatewayPlugin implements Plugin {
                     String domain = StringUtils.parseServer(presence.getFrom());
                     Transport transport = TransportManager.getTransport(domain);
                     if (transport != null) {
-                        if (presence.getType() == Presence.Type.AVAILABLE) {
+                        if (presence.getType() == Presence.Type.available) {
                             item.setIcon(transport.getIcon());
                         }
                         else {
@@ -245,7 +245,7 @@ public class GatewayPlugin implements Plugin {
                 String domain = StringUtils.parseServer(presence.getFrom());
                 Transport transport = TransportManager.getTransport(domain);
                 if (transport != null) {
-                    if (presence.getType() == Presence.Type.AVAILABLE) {
+                    if (presence.getType() == Presence.Type.available) {
                         return transport.getIcon();
                     }
                     else {

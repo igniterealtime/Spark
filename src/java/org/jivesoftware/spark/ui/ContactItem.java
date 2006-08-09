@@ -258,7 +258,7 @@ public class ContactItem extends JPanel {
         String date = formatter.format(new Date());
 
         if (presence == null) {
-            if (this.presence != null && (this.presence.getMode() == Presence.Mode.AVAILABLE || this.presence.getMode() == Presence.Mode.CHAT)) {
+            if (this.presence != null && (this.presence.getMode() == Presence.Mode.available || this.presence.getMode() == Presence.Mode.chat)) {
                 awayTime = new Date();
                 presenceHistory.add("Signed out at " + date);
             }
@@ -266,10 +266,10 @@ public class ContactItem extends JPanel {
         }
 
         // Add away time.
-        if (presence.getMode() == Presence.Mode.AVAILABLE || presence.getMode() == Presence.Mode.CHAT) {
+        if (presence.getMode() == Presence.Mode.available || presence.getMode() == Presence.Mode.chat) {
             awayTime = null;
 
-            if (this.presence == null || (this.presence.getMode() != Presence.Mode.AVAILABLE || this.presence.getMode() != Presence.Mode.CHAT)) {
+            if (this.presence == null || (this.presence.getMode() != Presence.Mode.available || this.presence.getMode() != Presence.Mode.chat)) {
                 String status = presence.getStatus();
                 if (!ModelUtil.hasLength(status)) {
                     status = "Available";
@@ -278,8 +278,8 @@ public class ContactItem extends JPanel {
                 presenceHistory.add(status + " at " + date);
             }
         }
-        else if (this.presence != null && (this.presence.getMode() == Presence.Mode.AVAILABLE || this.presence.getMode() == Presence.Mode.CHAT)) {
-            if (presence != null && presence.getMode() != Presence.Mode.AVAILABLE && presence.getMode() != Presence.Mode.CHAT) {
+        else if (this.presence != null && (this.presence.getMode() == Presence.Mode.available || this.presence.getMode() == Presence.Mode.chat)) {
+            if (presence != null && presence.getMode() != Presence.Mode.available && presence.getMode() != Presence.Mode.chat) {
                 awayTime = new Date();
                 String status = presence.getStatus();
                 if (!ModelUtil.hasLength(status)) {
@@ -315,30 +315,30 @@ public class ContactItem extends JPanel {
         boolean isAvailable = false;
         if (status == null && presence != null) {
             Presence.Mode mode = presence.getMode();
-            if (mode == Presence.Mode.AVAILABLE) {
+            if (mode == Presence.Mode.available) {
                 status = "Available";
                 isAvailable = true;
             }
-            else if (mode == Presence.Mode.AWAY) {
+            else if (mode == Presence.Mode.away) {
                 status = "I'm away";
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
-            else if (mode == Presence.Mode.CHAT) {
+            else if (mode == Presence.Mode.chat) {
                 status = "I'm free to chat";
             }
-            else if (mode == Presence.Mode.DO_NOT_DISTURB) {
+            else if (mode == Presence.Mode.dnd) {
                 status = "Do not disturb";
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
-            else if (mode == Presence.Mode.EXTENDED_AWAY) {
+            else if (mode == Presence.Mode.xa) {
                 status = "Extended away";
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
         }
-        else if (presence != null && (presence.getMode() == Presence.Mode.DO_NOT_DISTURB || presence.getMode() == Presence.Mode.AWAY || presence.getMode() == Presence.Mode.EXTENDED_AWAY)) {
+        else if (presence != null && (presence.getMode() == Presence.Mode.dnd || presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa)) {
             statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
         }
-        else if (presence != null && presence.getType() == Presence.Type.AVAILABLE) {
+        else if (presence != null && presence.getType() == Presence.Type.available) {
             isAvailable = true;
         }
         else if (presence == null) {
@@ -411,24 +411,24 @@ public class ContactItem extends JPanel {
         boolean isAvailable = false;
         if (status == null && presence != null) {
             Presence.Mode mode = presence.getMode();
-            if (mode == Presence.Mode.AVAILABLE) {
+            if (mode == Presence.Mode.available) {
                 status = "Available";
                 isAvailable = true;
             }
-            else if (mode == Presence.Mode.AWAY) {
+            else if (mode == Presence.Mode.away) {
                 status = "I'm away";
             }
-            else if (mode == Presence.Mode.CHAT) {
+            else if (mode == Presence.Mode.chat) {
                 status = "I'm free to chat";
             }
-            else if (mode == Presence.Mode.DO_NOT_DISTURB) {
+            else if (mode == Presence.Mode.dnd) {
                 status = "Do not disturb";
             }
-            else if (mode == Presence.Mode.EXTENDED_AWAY) {
+            else if (mode == Presence.Mode.xa) {
                 status = "Extended away";
             }
         }
-        else if (presence != null && presence.getType() == Presence.Type.AVAILABLE) {
+        else if (presence != null && presence.getType() == Presence.Type.available) {
             isAvailable = true;
         }
         else if (presence == null) {

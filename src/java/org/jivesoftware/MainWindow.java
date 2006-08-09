@@ -251,7 +251,7 @@ public final class MainWindow extends JFrame implements ActionListener {
                 SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
 
             if (status != null) {
-                Presence presence = new Presence(Presence.Type.UNAVAILABLE);
+                Presence presence = new Presence(Presence.Type.unavailable);
                 presence.setStatus(status);
                 con.sendPacket(presence);
             }

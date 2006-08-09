@@ -151,10 +151,10 @@ public final class Notifications implements ActionListener, MainWindowListener {
             return;
         }
 
-        if (presence.getMode() == Presence.Mode.AVAILABLE || presence.getMode() == Presence.Mode.CHAT) {
+        if (presence.getMode() == Presence.Mode.available || presence.getMode() == Presence.Mode.chat) {
             trayIcon.setIcon(availableIcon);
         }
-        else if (presence.getMode() == Presence.Mode.AWAY || presence.getMode() == Presence.Mode.EXTENDED_AWAY) {
+        else if (presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa) {
             trayIcon.setIcon(unavaliableIcon);
         }
         else {
@@ -275,7 +275,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
 
         StatusBar statusBox = workspace.getStatusBar();
         Presence presence = statusBox.getPresence();
-        if (presence.getMode() != Presence.Mode.AVAILABLE) {
+        if (presence.getMode() != Presence.Mode.available) {
             SparkManager.getSessionManager().changePresence(presence);
         }
 

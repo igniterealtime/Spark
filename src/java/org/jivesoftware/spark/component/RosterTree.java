@@ -100,26 +100,20 @@ public final class RosterTree extends JPanel {
 
             public void presenceChanged(String user) {
                 Presence presence = roster.getPresence(user);
-                changePresence(user, presence != null && presence.getMode() == Presence.Mode.AVAILABLE);
+                changePresence(user, presence != null && presence.getMode() == Presence.Mode.available);
 
             }
         });
 
 
-        final Iterator iter = roster.getGroups();
-        while (iter.hasNext()) {
-            final RosterGroup group = (RosterGroup)iter.next();
-
-
+        for(RosterGroup group : roster.getGroups()){
             final JiveTreeNode groupNode = new JiveTreeNode(group.getName(), true);
             groupNode.setAllowsChildren(true);
             if (group.getEntryCount() > 0) {
                 rootNode.add(groupNode);
             }
 
-            Iterator entries = group.getEntries();
-            while (entries.hasNext()) {
-                final RosterEntry entry = (RosterEntry)entries.next();
+            for(RosterEntry entry : group.getEntries()){
                 String name = entry.getName();
                 if (name == null) {
                     name = entry.getUser();
@@ -129,10 +123,10 @@ public final class RosterTree extends JPanel {
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
                 final Presence p = roster.getPresence(entry.getUser());
                 addressMap.put(entryNode, entry.getUser());
-                if (p != null && p.getType() == Presence.Type.AVAILABLE && p.getMode() == Presence.Mode.AVAILABLE) {
+                if (p != null && p.getType() == Presence.Type.available && p.getMode() == Presence.Mode.available) {
                     groupNode.add(entryNode);
                 }
-                else if ((p == null || p.getType() == Presence.Type.UNAVAILABLE) && showUnavailableAgents) {
+                else if ((p == null || p.getType() == Presence.Type.unavailable) && showUnavailableAgents) {
                     groupNode.add(entryNode);
                 }
 

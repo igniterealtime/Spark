@@ -145,7 +145,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
                         String nickname = StringUtils.parseResource(userid);
                         userMap.put(nickname, userid);
 
-                        if (p.getType() == Presence.Type.AVAILABLE) {
+                        if (p.getType() == Presence.Type.available) {
                             addParticipant(userid, p);
                             agentInfoPanel.setVisible(true);
                         }

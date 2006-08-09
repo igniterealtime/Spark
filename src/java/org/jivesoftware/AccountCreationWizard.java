@@ -11,7 +11,6 @@
 package org.jivesoftware;
 
 import org.jivesoftware.smack.AccountManager;
-import org.jivesoftware.smack.SSLXMPPConnection;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -265,10 +264,10 @@ public class AccountCreationWizard extends JPanel {
 
         if (useSSL) {
             if (!hostPortConfigured) {
-                con = new SSLXMPPConnection(serverName);
+                con = new XMPPConnection(serverName);
             }
             else {
-                con = new SSLXMPPConnection(localPref.getXmppHost(), port, serverName);
+                con = new XMPPConnection(localPref.getXmppHost(), port, serverName);
             }
         }
         else {

@@ -277,7 +277,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
         // belong to.
-        if (presence.getType() == Presence.Type.AVAILABLE && offlineGroup.getContactItemByJID(bareJID) != null) {
+        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null) {
             changeOfflineToOnline(bareJID, entry, presence);
         }
         else if (presence.getFrom().indexOf("workgroup.") != -1) {
@@ -285,7 +285,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         // If online, but not in offline group, update presence.
-        else if (presence.getType() == Presence.Type.AVAILABLE) {
+        else if (presence.getType() == Presence.Type.available) {
             final Iterator groupIterator = groupList.iterator();
             while (groupIterator.hasNext()) {
                 ContactGroup group = (ContactGroup)groupIterator.next();
@@ -298,7 +298,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         // If not available, move to offline group.
-        else if (presence.getType() == Presence.Type.UNAVAILABLE && !isPending) {
+        else if (presence.getType() == Presence.Type.unavailable && !isPending) {
             moveToOfflineGroup(bareJID);
         }
 
@@ -347,11 +347,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         offlineGroup.removeContactItem(offlineItem);
 
         // Add To all groups it belongs to.
-        Iterator groups = entry.getGroups();
-        boolean isFiled = groups.hasNext();
-
-        while (groups.hasNext()) {
-            final RosterGroup rosterGroup = (RosterGroup)groups.next();
+        boolean isFiled = false;
+        for(RosterGroup rosterGroup : entry.getGroups()){
+            isFiled = true;
             ContactGroup contactGroup = getContactGroup(rosterGroup.getName());
             if (contactGroup != null) {
                 String name = entry.getName();
@@ -415,14 +413,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         roster.addRosterListener(this);
 
-        final Iterator rosterGroups = roster.getGroups();
-        while (rosterGroups.hasNext()) {
-            RosterGroup group = (RosterGroup)rosterGroups.next();
+        for(RosterGroup group : roster.getGroups()){
             ContactGroup contactGroup = addContactGroup(group.getName());
 
-            Iterator entries = group.getEntries();
-            while (entries.hasNext()) {
-                RosterEntry entry = (RosterEntry)entries.next();
+            for(RosterEntry entry : group.getEntries()){
                 String name = entry.getName();
                 if (name == null) {
                     name = entry.getUser();
@@ -447,9 +441,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Add Unfiled Group
         // addContactGroup(unfiledGroup);
-        final Iterator unfiledEntries = roster.getUnfiledEntries();
-        while (unfiledEntries.hasNext()) {
-            RosterEntry entry = (RosterEntry)unfiledEntries.next();
+        for(RosterEntry entry : roster.getUnfiledEntries()){
             String name = entry.getName();
             if (name == null) {
                 name = entry.getUser();
@@ -501,9 +493,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)) {
             // Ignore, since the new user is pending to be added.
-            final Iterator groups = entry.getGroups();
-            while (groups.hasNext()) {
-                final RosterGroup group = (RosterGroup)groups.next();
+            for(RosterGroup group : entry.getGroups()){
                 ContactGroup contactGroup = getContactGroup(group.getName());
                 if (contactGroup == null) {
                     contactGroup = addContactGroup(group.getName());
@@ -550,12 +540,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     RosterEntry rosterEntry = roster.getEntry(jid);
                     if (rosterEntry != null) {
                         // Check for new Roster Groups and add them if they do not exist.
-                        Iterator rosterGroups = rosterEntry.getGroups();
-
-                        boolean isUnfiled = true;
-                        while (rosterGroups.hasNext()) {
+                         boolean isUnfiled = true;
+                        for(RosterGroup group : rosterEntry.getGroups()){
                             isUnfiled = false;
-                            RosterGroup group = (RosterGroup)rosterGroups.next();
 
                             // Handle if this is a new Entry in a new Group.
                             if (getContactGroup(group.getName()) == null) {
@@ -612,9 +599,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         while (jids.hasNext()) {
                             jid = (String)jids.next();
                             rosterEntry = roster.getEntry(jid);
-                            Iterator groups = rosterEntry.getGroups();
-                            while (groups.hasNext()) {
-                                RosterGroup g = (RosterGroup)groups.next();
+
+                            for(RosterGroup g : rosterEntry.getGroups()){
                                 groupSet.add(g.getName());
                             }
 
@@ -1200,9 +1186,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                     RosterGroup rosterGroup = roster.getGroup(groupName);
                     if (rosterGroup != null) {
-                        Iterator entries = rosterGroup.getEntries();
-                        while (entries.hasNext()) {
-                            RosterEntry entry = (RosterEntry)entries.next();
+                        for(RosterEntry entry : rosterGroup.getEntries()){
                             try {
                                 rosterGroup.removeEntry(entry);
                             }
@@ -1289,12 +1273,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             Roster roster = SparkManager.getConnection().getRoster();
             RosterEntry entry = roster.getEntry(item.getFullJID());
             if (entry != null) {
-                int groupCount = 0;
-                Iterator groups = entry.getGroups();
-                while (groups.hasNext()) {
-                    groups.next();
-                    groupCount++;
-                }
+                int groupCount = entry.getGroups().size();
 
                 if (groupCount > 1) {
                     popup.add(removeContactFromGroupMenu);
@@ -1397,7 +1376,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         Action subscribeAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 String jid = item.getFullJID();
-                Presence response = new Presence(Presence.Type.SUBSCRIBE);
+                Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);
 
                 SparkManager.getConnection().sendPacket(response);
@@ -1538,14 +1517,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         PacketListener subscribeListener = new PacketListener() {
             public void processPacket(Packet packet) {
                 final Presence presence = (Presence)packet;
-                if (presence != null && presence.getType() == Presence.Type.SUBSCRIBE) {
+                if (presence != null && presence.getType() == Presence.Type.subscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             subscriptionRequest(presence.getFrom());
                         }
                     });
                 }
-                else if (presence != null && presence.getType() == Presence.Type.UNSUBSCRIBE) {
+                else if (presence != null && presence.getType() == Presence.Type.unsubscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             Roster roster = SparkManager.getConnection().getRoster();
@@ -1556,7 +1535,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     roster.removeEntry(entry);
                                 }
                                 catch (XMPPException e) {
-                                    Presence unsub = new Presence(Presence.Type.UNSUBSCRIBED);
+                                    Presence unsub = new Presence(Presence.Type.unsubscribed);
                                     unsub.setTo(presence.getFrom());
                                     SparkManager.getConnection().sendPacket(unsub);
                                     Log.error(e);
@@ -1567,7 +1546,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
                 }
-                else if (presence != null && presence.getType() == Presence.Type.SUBSCRIBED) {
+                else if (presence != null && presence.getType() == Presence.Type.subscribe) {
                     // Find Contact in Contact List
                     String jid = StringUtils.parseBareAddress(presence.getFrom());
                     ContactItem item = getContactItemByJID(jid);
@@ -1587,7 +1566,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         }
                     }
                 }
-                else if (presence != null && presence.getType() == Presence.Type.UNSUBSCRIBED) {
+                else if (presence != null && presence.getType() == Presence.Type.unsubscribed) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             Roster roster = SparkManager.getConnection().getRoster();
@@ -1730,7 +1709,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         final Roster roster = SparkManager.getConnection().getRoster();
         RosterEntry entry = roster.getEntry(jid);
         if (entry != null && entry.getType() == RosterPacket.ItemType.TO) {
-            Presence response = new Presence(Presence.Type.SUBSCRIBED);
+            Presence response = new Presence(Presence.Type.subscribed);
             response.setTo(jid);
 
             SparkManager.getConnection().sendPacket(response);
@@ -1760,7 +1739,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             public void actionPerformed(ActionEvent e) {
                 dialog.dispose();
 
-                Presence response = new Presence(Presence.Type.SUBSCRIBED);
+                Presence response = new Presence(Presence.Type.subscribed);
                 response.setTo(jid);
 
                 SparkManager.getConnection().sendPacket(response);
@@ -1777,7 +1756,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         denyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Send subscribed
-                Presence response = new Presence(Presence.Type.UNSUBSCRIBE);
+                Presence response = new Presence(Presence.Type.unsubscribe);
                 response.setTo(jid);
                 SparkManager.getConnection().sendPacket(response);
                 dialog.dispose();
@@ -2061,9 +2040,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             SparkManager.getSessionManager().changePresence(presence);
             final Roster roster = con.getRoster();
 
-            final Iterator rosterEntries = roster.getEntries();
-            while (rosterEntries.hasNext()) {
-                RosterEntry entry = (RosterEntry)rosterEntries.next();
+            for(RosterEntry entry : roster.getEntries()){
                 updateUserPresence(roster.getPresence(entry.getUser()));
             }
         }

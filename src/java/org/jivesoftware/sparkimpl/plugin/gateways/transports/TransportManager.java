@@ -69,7 +69,7 @@ public class TransportManager {
     public static boolean isRegistered(XMPPConnection con, Transport transport) {
         Presence presence = con.getRoster().getPresence(transport.getServiceName());
         boolean registered = presence != null && presence.getMode() != null;
-        if (presence == null || presence.getType() == Presence.Type.UNAVAILABLE) {
+        if (presence == null || presence.getType() == Presence.Type.unavailable) {
             registered = false;
         }
         return registered;

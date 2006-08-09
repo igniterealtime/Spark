@@ -78,9 +78,7 @@ public class NewRoster extends JPanel implements RosterListener {
 
         roster.addRosterListener(this);
 
-        final Iterator rosterGroups = roster.getGroups();
-        while (rosterGroups.hasNext()) {
-            RosterGroup group = (RosterGroup)rosterGroups.next();
+        for(RosterGroup group : roster.getGroups()){
 
             // Create Group node.
             final RosterNode groupNode = new RosterNode(group.getName(), true);
@@ -88,10 +86,7 @@ public class NewRoster extends JPanel implements RosterListener {
                 rootNode.add(groupNode);
             }
 
-
-            Iterator entries = group.getEntries();
-            while (entries.hasNext()) {
-                RosterEntry entry = (RosterEntry)entries.next();
+            for(RosterEntry entry : group.getEntries()){
                 String nickname = entry.getName();
                 if (nickname == null) {
                     nickname = entry.getUser();
@@ -110,9 +105,7 @@ public class NewRoster extends JPanel implements RosterListener {
         rootNode.add(unfiledGroup);
 
         // Add Unfiled Group
-        final Iterator unfiledEntries = roster.getUnfiledEntries();
-        while (unfiledEntries.hasNext()) {
-            RosterEntry entry = (RosterEntry)unfiledEntries.next();
+        for(RosterEntry entry : roster.getUnfiledEntries()){
             String name = entry.getName();
             if (name == null) {
                 name = entry.getUser();

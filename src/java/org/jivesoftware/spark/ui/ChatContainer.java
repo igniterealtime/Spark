@@ -267,10 +267,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         final String userid = StringUtils.parseResource(p.getFrom());
-        if (p.getType() == Presence.Type.UNAVAILABLE) {
+        if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
         }
-        else if (p.getType() == Presence.Type.AVAILABLE) {
+        else if (p.getType() == Presence.Type.available) {
             fireUserHasJoined(chatRoom, userid);
         }
 
@@ -282,7 +282,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             if (statusItem == null && p == null) {
                 tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
             }
-            else if (statusItem == null && p != null && p.getType() == Presence.Type.AVAILABLE) {
+            else if (statusItem == null && p != null && p.getType() == Presence.Type.available) {
                 tabIcon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
             }
             else {

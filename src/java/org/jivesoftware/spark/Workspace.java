@@ -213,10 +213,10 @@ public class Workspace extends JPanel implements PacketListener {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
                 if (presence != null && presence.getProperty("anonymous") != null) {
-                    boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.AVAILABLE;
-                    Presence reply = new Presence(Presence.Type.AVAILABLE);
+                    boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
+                    Presence reply = new Presence(Presence.Type.available);
                     if (!isAvailable) {
-                        reply.setType(Presence.Type.UNAVAILABLE);
+                        reply.setType(Presence.Type.unavailable);
                     }
                     reply.setTo(presence.getFrom());
                     SparkManager.getSessionManager().getConnection().sendPacket(reply);

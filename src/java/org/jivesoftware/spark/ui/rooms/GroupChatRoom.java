@@ -621,7 +621,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
 
-        if (presence.getType() == Presence.Type.UNAVAILABLE && !"303".equals(code)) {
+        if (presence.getType() == Presence.Type.unavailable && !"303".equals(code)) {
             if (currentUserList.contains(from)) {
                 if (showPresenceMessages) {
                     getTranscriptWindow().insertNotificationMessage(nickname + " has left the room.");
