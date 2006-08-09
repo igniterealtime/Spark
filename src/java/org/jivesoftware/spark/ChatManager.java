@@ -10,10 +10,16 @@
 
 package org.jivesoftware.spark;
 
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -31,17 +37,20 @@ import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
 
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
  * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
  */
-public class ChatManager {
+public class ChatManager implements MessageEventNotificationListener {
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
 
     private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
@@ -51,11 +60,26 @@ public class ChatManager {
 
     private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
 
+    private Set<String> customList = new HashSet<String>();
+
+
     /**
      * Create a new instance of ChatManager.
      */
     public ChatManager() {
         chatContainer = new ChatContainer();
+
+        // Add a Message Handler
+
+        SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
+
+        SparkManager.getConnection().addPacketListener(new PacketListener() {
+            public void processPacket(final Packet packet) {
+                if (customList.contains(StringUtils.parseBareAddress(packet.getFrom()))) {
+                    cancelledNotification(packet.getFrom(), "");
+                }
+            }
+        }, new PacketTypeFilter(Message.class));
     }
 
 
@@ -163,7 +187,6 @@ public class ChatManager {
 
         return chatRoom;
     }
-
 
     /**
      * Creates a new public Conference Room.
@@ -305,4 +328,60 @@ public class ChatManager {
 
         return null;
     }
+
+    // Implemenation of MessageEventListener
+
+    public void deliveredNotification(String from, String packetID) {
+
+    }
+
+    public void displayedNotification(String from, String packetID) {
+    }
+
+    public void composingNotification(final String from, String packetID) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+                ChatRoom chatRoom = null;
+                try {
+                    chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                        ((ChatRoomImpl)chatRoom).showTyping(true);
+                    }
+                }
+                catch (ChatRoomNotFoundException e) {
+                }
+
+                contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                customList.add(StringUtils.parseBareAddress(from));
+            }
+        });
+    }
+
+    public void offlineNotification(String from, String packetID) {
+    }
+
+    public void cancelledNotification(final String from, String packetID) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+                ChatRoom chatRoom = null;
+                try {
+                    chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                        ((ChatRoomImpl)chatRoom).showTyping(false);
+                    }
+                }
+                catch (ChatRoomNotFoundException e) {
+                }
+
+                contactList.useDefaults(from);
+                customList.remove(StringUtils.parseBareAddress(from));
+            }
+        });
+    }
+
+
 }

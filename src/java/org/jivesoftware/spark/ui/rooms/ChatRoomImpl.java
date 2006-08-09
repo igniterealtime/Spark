@@ -23,7 +23,6 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.MessageEventRequestListener;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -69,7 +68,6 @@ public class ChatRoomImpl extends ChatRoom {
     private String tabTitle;
     private String participantJID;
     private String participantNickname;
-    private ChatRoomMessageManager messageManager;
     private MessageEventRequestListener messageEventRequestListener;
 
     boolean isOnline = true;
@@ -122,9 +120,6 @@ public class ChatRoomImpl extends ChatRoom {
         this.getSplitPane().setRightComponent(null);
         getSplitPane().setDividerSize(0);
 
-        messageManager = new ChatRoomMessageManager();
-
-        SparkManager.getMessageEventManager().addMessageEventNotificationListener(messageManager);
 
         roster = SparkManager.getConnection().getRoster();
         presence = roster.getPresence(participantJID);
@@ -263,8 +258,6 @@ public class ChatRoomImpl extends ChatRoom {
         super.closeChatRoom();
 
         SparkManager.getChatManager().removeChat(this);
-
-        SparkManager.getMessageEventManager().removeMessageEventNotificationListener(messageManager);
 
         SparkManager.getConnection().removePacketListener(this);
     }
@@ -431,7 +424,6 @@ public class ChatRoomImpl extends ChatRoom {
                     // Do something with the incoming packet here.
                     final Message message = (Message)packet;
                     if (message.getError() != null) {
-                        SparkManager.getMessageEventManager().removeMessageEventNotificationListener(messageManager);
                         return;
                     }
 
@@ -464,7 +456,7 @@ public class ChatRoomImpl extends ChatRoom {
                         participantJID = message.getFrom();
                         insertMessage(message);
 
-                        clearTypingNotification();
+                        showTyping(false);
                     }
                 }
             }
@@ -481,52 +473,6 @@ public class ChatRoomImpl extends ChatRoom {
         return participantNickname;
     }
 
-
-    /**
-     * Private implementation of the MessageEventNotificationListener.
-     */
-    private class ChatRoomMessageManager implements MessageEventNotificationListener {
-
-        ChatRoomMessageManager() {
-
-        }
-
-        public void deliveredNotification(String from, String packetID) {
-        }
-
-        public void displayedNotification(String from, String packetID) {
-        }
-
-        public void composingNotification(final String from, String packetID) {
-            if (!from.startsWith(participantJID)) {
-                return;
-            }
-
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    String isTypingText = participantNickname + " is typing a message...";
-                    getNotificationLabel().setText(isTypingText);
-                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-                    showTyping(true);
-                }
-            });
-        }
-
-        public void offlineNotification(String from, String packetID) {
-        }
-
-        public void cancelledNotification(String from, String packetID) {
-            clearTypingNotification();
-        }
-    }
-
-
-    private void clearTypingNotification() {
-        // Remove is typing text.
-        getNotificationLabel().setText("");
-        getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-        showTyping(false);
-    }
 
     /**
      * The current SendField has been updated somehow.
@@ -611,14 +557,16 @@ public class ChatRoomImpl extends ChatRoom {
         }
     }
 
-    private void showTyping(boolean typing) {
-        final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
+    public void showTyping(boolean typing) {
         if (typing) {
-            contactList.setIconFor(getParticipantJID(), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+            String isTypingText = participantNickname + " is typing a message...";
+            getNotificationLabel().setText(isTypingText);
+            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
         }
         else {
-            contactList.useDefaults(getParticipantJID());
+            // Remove is typing text.
+            getNotificationLabel().setText("");
+            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
         }
 
     }
