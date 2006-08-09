@@ -11,7 +11,6 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.PacketExtension;
@@ -23,7 +22,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
@@ -39,7 +37,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -72,6 +69,10 @@ public class ContactItem extends JPanel {
     private File contactsDir = null;
 
     private JLabel sideIcon;
+
+    private static Font DEFAULT_ONLINE_FONT = new Font("Dialog", Font.PLAIN, 11);
+    private static Font DEFAULT_AWAY_FONT = new Font("Dialog", Font.ITALIC, 11);
+
 
     public ContactItem(String nickname, String fullJID) {
         setLayout(new GridBagLayout());
@@ -144,61 +145,6 @@ public class ContactItem extends JPanel {
     }
 
 
-    public String getToolTipText(MouseEvent e) {
-        if (true) {
-            return null;
-        }
-        if (getFullJID() == null) {
-            return nicknameLabel.getText();
-        }
-
-        URL imageURL = null;
-        String fileLocation = "";
-        try {
-            imageURL = getAvatarURL();
-            if (imageURL != null) {
-                fileLocation = imageURL.toExternalForm();
-            }
-        }
-        catch (MalformedURLException ee) {
-            Log.error(ee);
-        }
-
-        String jid = getFullJID();
-        if (getPresence() != null) {
-            jid = getPresence().getFrom();
-        }
-
-        if (status == null) {
-            status = "Offline";
-        }
-
-        Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(getFullJID());
-        String subscriptionStatus = "";
-        if (entry != null && !entry.getType().toString().equals("both")) {
-            subscriptionStatus = "<tr><td><b>Subscription:</b></td><td>" + entry.getType().toString() + "</td></tr>";
-        }
-
-        String imageHTML = "<td><img src=\"" + fileLocation + "\"></td>";
-        if (imageURL == null || URLFileSystem.url2File(imageURL).isDirectory()) {
-            imageHTML = "";
-        }
-
-        String awayText = "";
-        if (awayTime != null) {
-            Date now = new Date();
-            long time = now.getTime() - awayTime.getTime();
-            awayText = "<tr><td><b>Away since:</b></td><td>" + ModelUtil.getTimeFromLong(time) + "</td></tr>";
-        }
-
-        return "<html><body><table><tr valign=top height=2>" + imageHTML + "<td><font size=5>" + getNickname() + "</font></td></tr>" +
-                "<tr><td><b>JID:</b></td><td>" + jid + "</td></tr>" +
-                "<tr><td><b>Status:</b></td><td>" + status + "</td></tr>" + subscriptionStatus + awayText +
-                "</table></body></html>";
-    }
-
-
     public String getGroupName() {
         return groupName;
     }
@@ -247,6 +193,7 @@ public class ContactItem extends JPanel {
                 }
             }
         }
+
 
         updatePresenceIcon(presence);
     }
@@ -356,7 +303,7 @@ public class ContactItem extends JPanel {
         return presenceHistory;
     }
 
-    private void updatePresenceIcon(Presence presence) {
+    public void updatePresenceIcon(Presence presence) {
         ChatManager chatManager = SparkManager.getChatManager();
         boolean handled = chatManager.fireContactItemPresenceChanged(this, presence);
         if (handled) {
@@ -459,7 +406,7 @@ public class ContactItem extends JPanel {
         setAvailable(true);
     }
 
-    public void updatePresenceStatus(Presence presence){
+    public void updatePresenceStatus(Presence presence) {
         String status = presence != null ? presence.getStatus() : null;
         boolean isAvailable = false;
         if (status == null && presence != null) {
@@ -549,5 +496,18 @@ public class ContactItem extends JPanel {
             getDescriptionLabel().setText("");
         }
     }
+
+    public void showUserComingOnline() {
+        // Change Font
+        getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));
+        getNicknameLabel().setForeground(new Color(255, 118, 6));
+    }
+
+    public void showUserGoingOfflineOnline() {
+        // Change Font
+        getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));
+        getNicknameLabel().setForeground(Color.red);
+    }
+
 
 }

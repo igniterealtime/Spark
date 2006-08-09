@@ -464,9 +464,7 @@ public class ChatRoomImpl extends ChatRoom {
                         participantJID = message.getFrom();
                         insertMessage(message);
 
-                        // Clear typing
-                        getNotificationLabel().setText("");
-                        getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+                        clearTypingNotification();
                     }
                 }
             }
@@ -509,6 +507,7 @@ public class ChatRoomImpl extends ChatRoom {
                     String isTypingText = participantNickname + " is typing a message...";
                     getNotificationLabel().setText(isTypingText);
                     getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                    showTyping(true);
                 }
             });
         }
@@ -517,10 +516,16 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         public void cancelledNotification(String from, String packetID) {
-            // Remove is typing text.
-            getNotificationLabel().setText("");
-            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+            clearTypingNotification();
         }
+    }
+
+
+    private void clearTypingNotification() {
+        // Remove is typing text.
+        getNotificationLabel().setText("");
+        getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+        showTyping(false);
     }
 
     /**
@@ -604,6 +609,18 @@ public class ChatRoomImpl extends ChatRoom {
         public void offlineNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
             // The XMPP server should take care of this request. Do nothing.
         }
+    }
+
+    private void showTyping(boolean typing) {
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+        if (typing) {
+            contactList.setIconFor(getParticipantJID(), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+        }
+        else {
+            contactList.useDefaults(getParticipantJID());
+        }
+
     }
 
 
