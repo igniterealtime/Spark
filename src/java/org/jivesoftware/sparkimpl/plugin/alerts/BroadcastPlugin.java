@@ -53,7 +53,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -241,13 +240,9 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         final String messageText = dialog.getInput("Broadcast Message", "Enter message to broadcast to your entire roster list.", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
-            List list = contactList.getContactGroups();
-            Iterator iter = list.iterator();
-            while (iter.hasNext()) {
-                ContactGroup contactGroup = (ContactGroup)iter.next();
+            for (ContactGroup contactGroup : contactList.getContactGroups()) {
                 Iterator items = contactGroup.getContactItems().iterator();
-                while (items.hasNext()) {
-                    ContactItem item = (ContactItem)items.next();
+                for (ContactItem item : contactGroup.getContactItems()) {
                     if (item != null && item.getFullJID() != null) {
                         final Message message = new Message();
                         message.setTo(item.getFullJID());
@@ -274,9 +269,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput("Broadcast Message", "Enter message to broadcast to " + group.getGroupName(), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
-            Iterator items = group.getContactItems().iterator();
-            while (items.hasNext()) {
-                ContactItem item = (ContactItem)items.next();
+            for(ContactItem item : group.getContactItems()){
                 final Message message = new Message();
                 message.setTo(item.getFullJID());
                 message.setProperty("broadcast", true);

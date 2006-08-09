@@ -47,7 +47,7 @@ import javax.swing.JWindow;
  * Container representing a RosterGroup within the Contact List.
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
-    private List contactItems = new ArrayList();
+    private List<ContactItem> contactItems = new ArrayList<ContactItem>();
     private String groupName;
     private List listeners = new ArrayList();
     private DefaultListModel model = new DefaultListModel();
@@ -318,7 +318,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @return all ContactItems.
      */
-    public List getContactItems() {
+    public List<ContactItem> getContactItems() {
         return contactItems;
     }
 
