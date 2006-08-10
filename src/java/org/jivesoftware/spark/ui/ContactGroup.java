@@ -48,8 +48,10 @@ import javax.swing.JWindow;
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
     private List<ContactItem> contactItems = new ArrayList<ContactItem>();
+    private List<ContactGroup> contactGroups = new ArrayList<ContactGroup>();
+    private List<ContactGroupListener> listeners = new ArrayList<ContactGroupListener>();
+
     private String groupName;
-    private List listeners = new ArrayList();
     private DefaultListModel model = new DefaultListModel();
     private JList list;
     private boolean sharedGroup;
@@ -60,7 +62,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private JWindow window = new JWindow();
 
-    private List contactGroups = new ArrayList();
 
     /**
      * Create a new ContactGroup.
@@ -168,7 +169,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @param item the ContactItem.
      */
-    public void addContactItem(ContactItem item) {
+    public synchronized void addContactItem(ContactItem item) {
         if (model.getSize() == 1 && model.getElementAt(0) == noContacts) {
             model.remove(0);
         }
@@ -181,7 +182,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         item.setGroupName(getGroupName());
         contactItems.add(item);
 
+
         Collections.sort(contactItems, itemComparator);
+
 
         int index = contactItems.indexOf(item);
 
@@ -319,7 +322,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return all ContactItems.
      */
     public List<ContactItem> getContactItems() {
-        return contactItems;
+        return new ArrayList<ContactItem>(contactItems);
     }
 
     /**
@@ -556,7 +559,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     /**
      * Sorts ContactItems.
      */
-    final Comparator itemComparator = new Comparator() {
+    final Comparator<ContactItem> itemComparator = new Comparator() {
         public int compare(Object contactItemOne, Object contactItemTwo) {
             final ContactItem item1 = (ContactItem)contactItemOne;
             final ContactItem item2 = (ContactItem)contactItemTwo;

@@ -500,7 +500,7 @@ public class ContactItem extends JPanel {
     public void showUserComingOnline() {
         // Change Font
         getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));
-        getNicknameLabel().setForeground(new Color(255, 118, 6));
+        getNicknameLabel().setForeground(new Color(255, 128, 0));
     }
 
     public void showUserGoingOfflineOnline() {

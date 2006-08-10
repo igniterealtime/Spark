@@ -165,9 +165,7 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Set background
         Color menuBarColor = new Color(235, 233, 237);
-        setBackground(menuBarColor);
-
-
+        setBackground(Color.white);
     }
 
     /**
