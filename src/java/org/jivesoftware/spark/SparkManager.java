@@ -169,7 +169,7 @@ public final class SparkManager {
      */
     public static ChatManager getChatManager() {
         if (chatManager == null) {
-            chatManager = new ChatManager();
+            chatManager = ChatManager.getInstance();
         }
         return chatManager;
     }

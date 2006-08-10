@@ -21,6 +21,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
@@ -35,16 +36,23 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -62,11 +70,34 @@ public class ChatManager implements MessageEventNotificationListener {
 
     private Set<String> customList = new HashSet<String>();
 
+    private static ChatManager singleton;
+    private static final Object LOCK = new Object();
+
+    /**
+     * Returns the singleton instance of <CODE>ChatManager</CODE>,
+     * creating it if necessary.
+     * <p/>
+     *
+     * @return the singleton instance of <Code>ChatManager</CODE>
+     */
+    public static ChatManager getInstance() {
+        // Synchronize on LOCK to ensure that we don't end up creating
+        // two singletons.
+        synchronized (LOCK) {
+            if (null == singleton) {
+                ChatManager controller = new ChatManager();
+                singleton = controller;
+                return controller;
+            }
+        }
+        return singleton;
+    }
+
 
     /**
      * Create a new instance of ChatManager.
      */
-    public ChatManager() {
+    private ChatManager() {
         chatContainer = new ChatContainer();
 
         // Add a Message Handler
@@ -80,6 +111,9 @@ public class ChatManager implements MessageEventNotificationListener {
                 }
             }
         }, new PacketTypeFilter(Message.class));
+
+        // Start timeout
+        checkRoomsForTimeout();
     }
 
 
@@ -383,5 +417,51 @@ public class ChatManager implements MessageEventNotificationListener {
         });
     }
 
+    /**
+     * Checks every room every 30 seconds to see if it's timed out.
+     */
+    private void checkRoomsForTimeout() {
+        int delay = 30000;   // delay for 5 sec.
+        int period = 30000;  // repeat every sec.
+        Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
+                    long lastActivity = chatRoom.getLastActivity();
+                    long currentTime = System.currentTimeMillis();
+
+                    long diff = currentTime - lastActivity;
+                    int minutes = (int)(diff / (60 * 1000F));
+
+                    LocalPreferences pref = SettingsManager.getLocalPreferences();
+                    int timeoutMinutes = pref.getChatLengthDefaultTimeout();
+
+                    try {
+                        ChatRoom activeChatRoom = getChatContainer().getActiveChatRoom();
+                        if(activeChatRoom == chatRoom){
+                            continue;
+                        }
+                    }
+                    catch (ChatRoomNotFoundException e) {
+                    }
+
+                    if (timeoutMinutes <= minutes) {
+                        // Turn tab gray
+                        int index = getChatContainer().indexOfComponent(chatRoom);
+                        SparkTab tab = getChatContainer().getTabAt(index);
+
+                        final JLabel titleLabel = tab.getTitleLabel();
+                        Font oldFont = titleLabel.getFont();
+                        Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
+                        titleLabel.setFont(newFont);
+                        titleLabel.setForeground(Color.gray);
+                        titleLabel.validate();
+                        titleLabel.repaint();
+                    }
+                }
+            }
+        }, delay, period);
+    }
 
 }

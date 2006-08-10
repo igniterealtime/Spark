@@ -84,6 +84,8 @@ public class ChatPreference implements Preference {
                 panel.setSpellCheckerOn(spellCheckerOn);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
+                panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
+
             }
         };
 
@@ -97,6 +99,7 @@ public class ChatPreference implements Preference {
         pref.setSpellCheckerEnabled(panel.isSpellCheckerOn());
         pref.setChatRoomNotifications(panel.isGroupChatNotificationsOn());
         pref.setChatHistoryEnabled(!panel.isChatHistoryHidden());
+        pref.setChatLengthDefaultTimeout(panel.getChatTimeoutTime());
 
         SettingsManager.saveSettings();
 
@@ -107,7 +110,7 @@ public class ChatPreference implements Preference {
             }
             catch (XMPPException passwordEx) {
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to change password. Please see your server admin.",
-                        "Password Change Error", JOptionPane.ERROR_MESSAGE);
+                    "Password Change Error", JOptionPane.ERROR_MESSAGE);
                 Log.error("Unable to change password", passwordEx);
             }
         }

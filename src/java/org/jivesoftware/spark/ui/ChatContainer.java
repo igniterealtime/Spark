@@ -34,18 +34,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -63,6 +51,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
  *
@@ -72,9 +72,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * List of all ChatRoom Listeners.
      */
-    private final List chatRoomListeners = new ArrayList();
+    private final List<ChatRoomListener> chatRoomListeners = new ArrayList<ChatRoomListener>();
+
     private final List<ChatRoom> chatRoomList = new ArrayList<ChatRoom>();
-    private final Map presenceMap = new HashMap();
+
+    private final Map<String, PacketListener> presenceMap = new HashMap<String, PacketListener>();
 
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
 
@@ -277,7 +279,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Change tab icon
         if (chatRoom instanceof ChatRoomImpl) {
             StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(p);
-            Roster roster = SparkManager.getConnection().getRoster();
             Icon tabIcon = null;
             if (statusItem == null && p == null) {
                 tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
@@ -690,7 +691,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), message,
-                "Confirmation", JOptionPane.YES_NO_OPTION);
+            "Confirmation", JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.OK_OPTION) {
             room.closeChatRoom();
             return;
@@ -885,10 +886,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final int index = indexOfComponent(room);
         if (index != -1) {
             SparkTab tab = getTabAt(index);
-            Font font = tab.getTitleLabel().getFont();
-
             final JLabel titleLabel = tab.getTitleLabel();
-            Font newFont = font.deriveFont(Font.BOLD);
+            Font oldFont = titleLabel.getFont();
+            Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
             titleLabel.setFont(newFont);
             titleLabel.setForeground(Color.red);
         }

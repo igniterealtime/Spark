@@ -88,6 +88,8 @@ public final class GroupChatRoom extends ChatRoom {
 
     private ConferenceRoomInfo roomInfo;
 
+    private long lastActivity;
+
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
      *
@@ -219,6 +221,9 @@ public final class GroupChatRoom extends ChatRoom {
 
 
         messageManager = new ChatRoomMessageManager();
+
+        // set last activity to be right now
+        lastActivity = System.currentTimeMillis();
     }
 
     /**
@@ -291,6 +296,8 @@ public final class GroupChatRoom extends ChatRoom {
         getChatInputEditor().setCaretPosition(0);
         getChatInputEditor().requestFocusInWindow();
         scrollToBottom();
+
+        lastActivity = System.currentTimeMillis();
     }
 
     /**
@@ -329,6 +336,8 @@ public final class GroupChatRoom extends ChatRoom {
         getChatInputEditor().setCaretPosition(0);
         getChatInputEditor().requestFocusInWindow();
         scrollToBottom();
+
+        lastActivity = System.currentTimeMillis();
     }
 
     /**
@@ -497,6 +506,9 @@ public final class GroupChatRoom extends ChatRoom {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     handleMessagePacket(packet);
+
+                    // Set last activity
+                    lastActivity = System.currentTimeMillis();
                 }
             });
 
@@ -966,5 +978,9 @@ public final class GroupChatRoom extends ChatRoom {
 
     public ConferenceRoomInfo getConferenceRoomInfo() {
         return roomInfo;
+    }
+
+    public long getLastActivity(){
+        return lastActivity;
     }
 }

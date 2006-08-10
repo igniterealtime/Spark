@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /**
  * The Preference UI used to handle changing of Chat Preferences.
@@ -45,6 +46,8 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private JLabel passwordLabel = new JLabel();
     private JLabel confirmationPasswordLabel = new JLabel();
     private JCheckBox hideChatHistory = new JCheckBox();
+    private JTextField chatTimeoutField = new JTextField();
+
 
     /**
      * Constructor invokes UI setup.
@@ -79,6 +82,12 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(spellCheckBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        JLabel chatTimeoutLabel = new JLabel();
+        ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, "&Inactive chats expire after (min):");
+        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -148,6 +157,19 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     public boolean isChatHistoryHidden() {
         return hideChatHistory.isSelected();
+    }
+
+    public void setChatTimeoutTime(int time) {
+        chatTimeoutField.setText(Integer.toString(time));
+    }
+
+    public int getChatTimeoutTime() {
+        try {
+            return Integer.parseInt(chatTimeoutField.getText());
+        }
+        catch (NumberFormatException e) {
+            return 15;
+        }
     }
 
     public void actionPerformed(ActionEvent actionEvent) {

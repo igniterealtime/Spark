@@ -39,11 +39,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -54,6 +49,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -84,6 +84,8 @@ public class ChatRoomImpl extends ChatRoom {
     private Timer typingTimer;
     private boolean sendTypingNotification;
     private String threadID;
+
+    private long lastActivity;
 
 
     /**
@@ -231,6 +233,8 @@ public class ChatRoomImpl extends ChatRoom {
         };
 
         worker.start();
+
+        lastActivity = System.currentTimeMillis();
     }
 
     private void scrollOnTimer() {
@@ -341,6 +345,8 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
+
+        lastActivity = System.currentTimeMillis();
     }
 
     public String getRoomname() {
@@ -421,6 +427,8 @@ public class ChatRoomImpl extends ChatRoom {
                     }
                 }
                 else if (packet instanceof Message) {
+                    lastActivity = System.currentTimeMillis();
+
                     // Do something with the incoming packet here.
                     final Message message = (Message)packet;
                     if (message.getError() != null) {
@@ -569,6 +577,10 @@ public class ChatRoomImpl extends ChatRoom {
             getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
         }
 
+    }
+
+    public long getLastActivity() {
+        return lastActivity;
     }
 
 

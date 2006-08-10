@@ -179,7 +179,8 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:/code/spark/plugins/fastpath/Fastpath.iml" filepath="C:/code/spark/plugins/fastpath/Fastpath.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../plugins/fastpath/Fastpath.iml" filepath="$PROJECT_DIR$/../../plugins/fastpath/Fastpath.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Spark/Spark.iml" filepath="$PROJECT_DIR$/Spark/Spark.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark/Spark.iml" filepath="$PROJECT_DIR$/Spark/Spark.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
     </modules>

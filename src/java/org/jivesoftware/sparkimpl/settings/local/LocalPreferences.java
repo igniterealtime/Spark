@@ -407,6 +407,14 @@ public class LocalPreferences {
         props.setProperty("fileTransferTimeout", Integer.toString(minutes));
     }
 
+     public void setChatLengthDefaultTimeout(int minutes) {
+        props.setProperty("defaultChatLengthTimeout", Integer.toString(minutes));
+    }
+
+    public int getChatLengthDefaultTimeout() {
+        return Integer.parseInt(props.getProperty("defaultChatLengthTimeout", "15"));
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }

@@ -25,6 +25,25 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -44,25 +63,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -248,7 +248,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
             public void actionPerformed(ActionEvent evt) {
                 final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), "Would you like to close this chat?",
-                        "Confirmation", JOptionPane.YES_NO_OPTION);
+                    "Confirmation", JOptionPane.YES_NO_OPTION);
                 if (ok == JOptionPane.OK_OPTION) {
                     // Leave this chat.
                     closeChatRoom();
@@ -424,7 +424,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private void checkForEnter(KeyEvent e) {
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
         if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) &&
-                e.getKeyChar() == KeyEvent.VK_ENTER) {
+            e.getKeyChar() == KeyEvent.VK_ENTER) {
             e.consume();
             sendMessage();
             getChatInputEditor().setText("");
@@ -869,6 +869,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public JSplitPane getVerticalSlipPane() {
         return verticalSplit;
     }
+
+    /**
+     * Implementation of this method should return the last time this chat room
+     * sent or recieved a message.
+     *
+     * @return the last time (in system milliseconds) that the room last recieved a message.
+     */
+    public abstract long getLastActivity();
 }
 
 
