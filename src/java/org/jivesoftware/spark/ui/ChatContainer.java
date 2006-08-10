@@ -14,7 +14,6 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -32,6 +31,7 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
@@ -41,6 +41,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -52,12 +54,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -215,8 +219,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         // Create ChatRoom UI and dock
-        addTab(room.getTabTitle(), room.getTabIcon(), room, tooltip);
+        SparkTab tab = addTab(room.getTabTitle(), room.getTabIcon(), room, tooltip);
+        tab.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
+                checkTabPopup(e);
+            }
 
+            public void mousePressed(MouseEvent e) {
+                checkTabPopup(e);
+            }
+        });
 
         room.addMessageListener(this);
 
@@ -891,6 +903,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
             titleLabel.setFont(newFont);
             titleLabel.setForeground(Color.red);
+            titleLabel.validate();
+            titleLabel.repaint();
         }
     }
 
@@ -898,11 +912,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final int index = indexOfComponent(room);
         if (index != -1) {
             SparkTab tab = getTabAt(index);
-            Font font = tab.getTitleLabel().getFont();
-            tab.getTitleLabel().setForeground(Color.black);
+
+            final JLabel titleLabel = tab.getTitleLabel();
+
+            Font font = titleLabel.getFont();
+            titleLabel.setForeground(Color.black);
 
             Font newFont = font.deriveFont(Font.PLAIN);
-            tab.getTitleLabel().setFont(newFont);
+            titleLabel.setFont(newFont);
+            titleLabel.validate();
+            titleLabel.repaint();
         }
     }
 
@@ -1004,7 +1023,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public Collection<ChatRoom> getChatRooms() {
-        return chatRoomList;
+        final List<ChatRoom> list = new ArrayList<ChatRoom>(chatRoomList);
+        return list;
     }
 
     public ChatFrame getChatFrame() {
@@ -1036,5 +1056,94 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
     }
 
+    /**
+     * Returns a Collection of stale chat rooms.
+     *
+     * @return a collection of stale chat rooms.
+     */
+    public Collection<ChatRoom> getStaleChatRooms() {
+        final List<ChatRoom> staleRooms = new ArrayList<ChatRoom>();
+        for (ChatRoom chatRoom : getChatRooms()) {
+            long lastActivity = chatRoom.getLastActivity();
+            long currentTime = System.currentTimeMillis();
+
+            long diff = currentTime - lastActivity;
+            int minutes = (int)(diff / (60 * 1000F));
+
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            int timeoutMinutes = pref.getChatLengthDefaultTimeout();
+
+            try {
+                ChatRoom activeChatRoom = getActiveChatRoom();
+                if (activeChatRoom == chatRoom) {
+                    continue;
+                }
+            }
+            catch (ChatRoomNotFoundException e) {
+            }
+
+            if (timeoutMinutes <= minutes) {
+                staleRooms.add(chatRoom);
+            }
+        }
+
+        return staleRooms;
+    }
+
+    private void checkTabPopup(MouseEvent e) {
+        final SparkTab tab = (SparkTab)e.getSource();
+        if (!e.isPopupTrigger()) {
+            return;
+        }
+
+        final JPopupMenu popup = new JPopupMenu();
+
+        // Handle closing this room.
+        Action closeThisAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                ChatRoom chatRoom = (ChatRoom)getComponentInTab(tab);
+                if (chatRoom != null) {
+                    closeTab(chatRoom);
+                }
+            }
+        };
+        closeThisAction.putValue(Action.NAME, "Close this room");
+        popup.add(closeThisAction);
+
+
+        if (getChatRooms().size() > 1) {
+            // Handle closing other rooms.
+            Action closeOthersAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent e) {
+                    ChatRoom chatRoom = (ChatRoom)getComponentInTab(tab);
+                    if (chatRoom != null) {
+                        for (ChatRoom cRoom : getChatRooms()) {
+                            if (chatRoom != cRoom) {
+                                closeTab(cRoom);
+                            }
+                        }
+                    }
+                }
+            };
+
+            closeOthersAction.putValue(Action.NAME, "Close all other rooms");
+            popup.add(closeOthersAction);
+
+            Action closeOldAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent e) {
+                    for(ChatRoom rooms : getStaleChatRooms()){
+                        closeTab(rooms);
+                    }
+                }
+            };
+            closeOldAction.putValue(Action.NAME, "Close stale rooms");
+            popup.add(closeOldAction);
+
+        }
+
+
+        popup.show(tab, e.getX(), e.getY());
+
+    }
 
 }

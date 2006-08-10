@@ -36,8 +36,6 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -421,44 +419,24 @@ public class ChatManager implements MessageEventNotificationListener {
      * Checks every room every 30 seconds to see if it's timed out.
      */
     private void checkRoomsForTimeout() {
-        int delay = 30000;   // delay for 5 sec.
+        int delay = 60000;   // delay for 5 sec.
         int period = 30000;  // repeat every sec.
         Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
-                    long lastActivity = chatRoom.getLastActivity();
-                    long currentTime = System.currentTimeMillis();
+                for (ChatRoom chatRoom : getChatContainer().getStaleChatRooms()) {
+                    // Turn tab gray
+                    int index = getChatContainer().indexOfComponent(chatRoom);
+                    SparkTab tab = getChatContainer().getTabAt(index);
 
-                    long diff = currentTime - lastActivity;
-                    int minutes = (int)(diff / (60 * 1000F));
-
-                    LocalPreferences pref = SettingsManager.getLocalPreferences();
-                    int timeoutMinutes = pref.getChatLengthDefaultTimeout();
-
-                    try {
-                        ChatRoom activeChatRoom = getChatContainer().getActiveChatRoom();
-                        if(activeChatRoom == chatRoom){
-                            continue;
-                        }
-                    }
-                    catch (ChatRoomNotFoundException e) {
-                    }
-
-                    if (timeoutMinutes <= minutes) {
-                        // Turn tab gray
-                        int index = getChatContainer().indexOfComponent(chatRoom);
-                        SparkTab tab = getChatContainer().getTabAt(index);
-
-                        final JLabel titleLabel = tab.getTitleLabel();
-                        Font oldFont = titleLabel.getFont();
-                        Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
-                        titleLabel.setFont(newFont);
-                        titleLabel.setForeground(Color.gray);
-                        titleLabel.validate();
-                        titleLabel.repaint();
-                    }
+                    final JLabel titleLabel = tab.getTitleLabel();
+                    Font oldFont = titleLabel.getFont();
+                    Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
+                    titleLabel.setFont(newFont);
+                    titleLabel.setForeground(Color.gray);
+                    titleLabel.validate();
+                    titleLabel.repaint();
                 }
             }
         }, delay, period);

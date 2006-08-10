@@ -85,7 +85,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         JLabel chatTimeoutLabel = new JLabel();
-        ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, "&Inactive chats expire after (min):");
+        ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, "&Minutes before an inactive room becomes stale:");
         chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
