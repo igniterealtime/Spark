@@ -182,11 +182,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         item.setGroupName(getGroupName());
         contactItems.add(item);
 
+        List<ContactItem> tempItems = getContactItems();
 
-        Collections.sort(contactItems, itemComparator);
+
+        Collections.sort(tempItems, itemComparator);
 
 
-        int index = contactItems.indexOf(item);
+        int index = tempItems.indexOf(item);
 
 
         Object[] objs = list.getSelectedValues();
@@ -226,6 +228,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactGroups.add(contactGroup);
     }
 
+    /**
+     * Removes a child ContactGroup.
+     *
+     * @param contactGroup the contact group to remove.
+     */
     public void removeContactGroup(ContactGroup contactGroup) {
         Component[] comps = listPanel.getComponents();
         for (int i = 0; i < comps.length; i++) {
@@ -256,6 +263,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     }
 
+    /**
+     * Returns a ContactGroup based on it's name.
+     *
+     * @param groupName the name of the group.
+     * @return the ContactGroup.
+     */
     public ContactGroup getContactGroup(String groupName) {
         final Iterator groups = new ArrayList(contactGroups).iterator();
         while (groups.hasNext()) {
