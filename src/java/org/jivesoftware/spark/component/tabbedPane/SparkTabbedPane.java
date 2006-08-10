@@ -413,6 +413,10 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
+        if(e.isPopupTrigger()){
+            return;
+        }
+        
         if (e.getSource() instanceof SparkTab) {
             SparkTab tab = (SparkTab)e.getSource();
             setSelectedTab(tab);

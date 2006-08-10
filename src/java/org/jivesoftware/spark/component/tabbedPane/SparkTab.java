@@ -10,16 +10,16 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 /**
  *
@@ -83,8 +83,11 @@ public class SparkTab extends TabPanel {
         if (boldWhenActive && selected) {
             textLabel.setFont(textLabel.getFont().deriveFont(Font.BOLD));
         }
-        else {
-           // textLabel.setFont(defaultFont);
+        else if (!selected && boldWhenActive) {
+            textLabel.setFont(defaultFont);
+        }
+        else if(selected){
+            textLabel.setFont(defaultFont);
         }
 
         invalidate();
