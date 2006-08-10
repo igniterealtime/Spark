@@ -431,9 +431,6 @@ public class ChatManager implements MessageEventNotificationListener {
                     SparkTab tab = getChatContainer().getTabAt(index);
 
                     final JLabel titleLabel = tab.getTitleLabel();
-                    Font oldFont = titleLabel.getFont();
-                    Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
-                    titleLabel.setFont(newFont);
                     titleLabel.setForeground(Color.gray);
                     titleLabel.validate();
                     titleLabel.repaint();

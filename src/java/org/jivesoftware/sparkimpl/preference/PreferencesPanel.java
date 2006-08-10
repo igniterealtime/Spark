@@ -28,6 +28,9 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.util.Iterator;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
@@ -39,15 +42,16 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     private Preference currentPreference;
 
     public PreferencesPanel(Iterator preferences) {
-        this.setLayout(new BorderLayout());
+        this.setLayout(new GridBagLayout());
+
         titleLabel.setText("Spark Preferences");
         titleLabel.setFont(new Font("Verdana", Font.BOLD, 15));
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize(new Dimension(125, 0));
-        this.add(scrollPane, BorderLayout.WEST);
         list.setFixedCellHeight(70);
 
-        this.add(flowPanel, BorderLayout.CENTER);
+        add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(flowPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
 
         list.setCellRenderer(new JLabelIconRenderer());

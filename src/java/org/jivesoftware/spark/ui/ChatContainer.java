@@ -1106,7 +1106,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             }
         };
-        closeThisAction.putValue(Action.NAME, "Close this room");
+        closeThisAction.putValue(Action.NAME, "Close this chat");
         popup.add(closeThisAction);
 
 
@@ -1125,7 +1125,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             };
 
-            closeOthersAction.putValue(Action.NAME, "Close all other rooms");
+            closeOthersAction.putValue(Action.NAME, "Close all other chats");
             popup.add(closeOthersAction);
 
             Action closeOldAction = new AbstractAction() {
@@ -1135,7 +1135,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     }
                 }
             };
-            closeOldAction.putValue(Action.NAME, "Close stale rooms");
+            closeOldAction.putValue(Action.NAME, "Close stale chats");
             popup.add(closeOldAction);
 
         }
