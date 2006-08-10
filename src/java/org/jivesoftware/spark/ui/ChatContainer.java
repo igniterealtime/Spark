@@ -374,14 +374,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room the room to remove.
      */
     private void cleanupChatRoom(ChatRoom room) {
-        fireChatRoomClosed(room);
-        room.removeMessageListener(this);
-
-
         final PacketListener listener = (PacketListener)presenceMap.get(room.getRoomname());
         if (listener != null) {
             SparkManager.getConnection().removePacketListener(listener);
         }
+
+        fireChatRoomClosed(room);
+        room.removeMessageListener(this);
 
         // Remove mappings
         presenceMap.remove(room.getRoomname());

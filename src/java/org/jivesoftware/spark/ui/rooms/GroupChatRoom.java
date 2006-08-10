@@ -68,7 +68,12 @@ import javax.swing.event.DocumentEvent;
  */
 public final class GroupChatRoom extends ChatRoom {
     private final MultiUserChat chat;
+
+    // Define Listeners
     private final AndFilter chatFilter;
+    private final AndFilter presenceFilter;
+
+
     private final String roomname;
     private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     private String tabTitle;
@@ -101,11 +106,12 @@ public final class GroupChatRoom extends ChatRoom {
         // making sure to filter by room
         chatFilter = new AndFilter(new PacketTypeFilter(Message.class), new FromContainsFilter(chat.getRoom()));
         // We only want to listen to the presence in this room, no other.
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(chat.getRoom()));
-        // Register PacketListeners
+        presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(chat.getRoom()));
 
+        // Register PacketListeners
         SparkManager.getConnection().addPacketListener(this, chatFilter);
         SparkManager.getConnection().addPacketListener(this, presenceFilter);
+
         // Thie Room Name is the same as the ChatRoom name
         roomname = chat.getRoom();
         roomTitle = roomname;
@@ -248,6 +254,9 @@ public final class GroupChatRoom extends ChatRoom {
     public void closeChatRoom() {
         // Specify the end time.
         super.closeChatRoom();
+
+        // Remove Listener
+        SparkManager.getConnection().removePacketListener(this);
 
         ChatContainer container = SparkManager.getChatManager().getChatContainer();
         container.leaveChatRoom(this);
@@ -980,7 +989,7 @@ public final class GroupChatRoom extends ChatRoom {
         return roomInfo;
     }
 
-    public long getLastActivity(){
+    public long getLastActivity() {
         return lastActivity;
     }
 }
