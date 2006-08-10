@@ -84,7 +84,7 @@ public class SparkTab extends TabPanel {
             textLabel.setFont(textLabel.getFont().deriveFont(Font.BOLD));
         }
         else {
-            textLabel.setFont(defaultFont);
+           // textLabel.setFont(defaultFont);
         }
 
         invalidate();

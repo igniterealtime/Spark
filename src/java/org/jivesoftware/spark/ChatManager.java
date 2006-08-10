@@ -419,8 +419,8 @@ public class ChatManager implements MessageEventNotificationListener {
      * Checks every room every 30 seconds to see if it's timed out.
      */
     private void checkRoomsForTimeout() {
-        int delay = 60000;   // delay for 5 sec.
-        int period = 30000;  // repeat every sec.
+        int delay = 60000;   // delay for 1 minute
+        int period = 30000;  // repeat every 30 seconds.
         Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
