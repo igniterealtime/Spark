@@ -21,7 +21,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
@@ -37,20 +36,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
 
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -109,9 +103,6 @@ public class ChatManager implements MessageEventNotificationListener {
                 }
             }
         }, new PacketTypeFilter(Message.class));
-
-        // Start timeout
-        checkRoomsForTimeout();
     }
 
 
@@ -414,29 +405,4 @@ public class ChatManager implements MessageEventNotificationListener {
             }
         });
     }
-
-    /**
-     * Checks every room every 30 seconds to see if it's timed out.
-     */
-    private void checkRoomsForTimeout() {
-        int delay = 60000;   // delay for 1 minute
-        int period = 30000;  // repeat every 30 seconds.
-        Timer timer = new Timer();
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                for (ChatRoom chatRoom : getChatContainer().getStaleChatRooms()) {
-                    // Turn tab gray
-                    int index = getChatContainer().indexOfComponent(chatRoom);
-                    SparkTab tab = getChatContainer().getTabAt(index);
-
-                    final JLabel titleLabel = tab.getTitleLabel();
-                    titleLabel.setForeground(Color.gray);
-                    titleLabel.validate();
-                    titleLabel.repaint();
-                }
-            }
-        }, delay, period);
-    }
-
 }

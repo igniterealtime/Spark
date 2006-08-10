@@ -14,6 +14,13 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -33,13 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 /**
  *
@@ -82,7 +82,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         setLayout(new BorderLayout());
 
         tabs = new JPanel(new
-            FlowLayout(FlowLayout.LEFT, 0, 0)) {
+                FlowLayout(FlowLayout.LEFT, 0, 0)) {
             public Dimension getPreferredSize() {
                 if (getParent() == null)
                     return getPreferredSize();
@@ -399,7 +399,10 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent e) {
-
+        if (e.getSource() instanceof SparkTab) {
+            SparkTab tab = (SparkTab)e.getSource();
+            setSelectedTab(tab);
+        }
     }
 
     public void setSelectedTab(SparkTab tab) {
@@ -413,14 +416,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
-        if(e.isPopupTrigger()){
-            return;
-        }
-        
-        if (e.getSource() instanceof SparkTab) {
-            SparkTab tab = (SparkTab)e.getSource();
-            setSelectedTab(tab);
-        }
+
     }
 
     public void mouseReleased(MouseEvent e) {

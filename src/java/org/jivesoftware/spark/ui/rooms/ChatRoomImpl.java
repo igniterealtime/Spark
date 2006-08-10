@@ -301,6 +301,8 @@ public class ChatRoomImpl extends ChatRoom {
      * @param message the message to send.
      */
     public void sendMessage(Message message) {
+        lastActivity = System.currentTimeMillis();
+        
         // Check to see if the user is online to recieve this message.
         RosterEntry entry = roster.getEntry(participantJID);
         if (presence == null && !offlineSent && entry != null) {
@@ -345,8 +347,6 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
-
-        lastActivity = System.currentTimeMillis();
     }
 
     public String getRoomname() {

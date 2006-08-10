@@ -83,15 +83,16 @@ public class SparkTab extends TabPanel {
         if (boldWhenActive && selected) {
             textLabel.setFont(textLabel.getFont().deriveFont(Font.BOLD));
         }
-        else if (!selected && boldWhenActive) {
-            textLabel.setFont(defaultFont);
-        }
-        else if(selected){
+        else if(boldWhenActive && !selected){
             textLabel.setFont(defaultFont);
         }
 
         invalidate();
         repaint();
+    }
+
+    public Font getDefaultFont(){
+        return defaultFont;
     }
 
     public JLabel getTitleLabel() {
