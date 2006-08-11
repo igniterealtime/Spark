@@ -15,6 +15,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -34,13 +35,14 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -144,6 +146,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public void chatRoomOpened(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
+            final String jid = room.getRoomname();
+            loadUserInformation(room, jid);
             return;
         }
 
@@ -180,7 +184,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     private void insertHistory(final ChatRoom room, final TranscriptWindow roomWindow) {
         final StringBuffer buf = new StringBuffer();
-
+        final String jid = room.getRoomname();
 
         if (room.getChatType() == Message.Type.CHAT) {
             SwingWorker worker = new SwingWorker() {
@@ -191,7 +195,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     catch (InterruptedException e) {
                         Log.error("Exception in Chat Transcript Loading.", e);
                     }
-                    final String jid = room.getRoomname();
+
 
                     ChatTranscript transcript = ChatTranscripts.getChatTranscript(jid);
 
@@ -240,7 +244,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                         }
                     }
 
-                    room.scrollToBottom();
+                    loadUserInformation(room, jid);
                 }
             };
             worker.start();
@@ -401,5 +405,49 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         }
     };
+
+    private void loadUserInformation(final ChatRoom room, final String participantJID) {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                return SparkManager.getVCardManager().getVCard(participantJID);
+            }
+
+            public void finished() {
+                final VCard vcard = (VCard)get();
+                if (vcard == null) {
+                    // Do nothing.
+                    return;
+                }
+
+                // Add VCard Panel
+                final VCardPanel vcardPanel = new VCardPanel(vcard, participantJID);
+                room.getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+                scrollOnTimer(room);
+            }
+        };
+
+        worker.start();
+    }
+
+    private void scrollOnTimer(final ChatRoom room) {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }
+
+            public void finished() {
+                room.scrollToBottom();
+            }
+        };
+
+        worker.start();
+    }
 
 }

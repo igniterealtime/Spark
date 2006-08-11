@@ -63,7 +63,7 @@ public class RetryPanel extends JPanel {
         descriptionLabel = new WrappedLabel();
 
         retryButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-        cancelButton = new RolloverButton("Login", SparkRes.getImageIcon(SparkRes.SMALL_CIRCLE_DELETE));
+        cancelButton = new RolloverButton("Reconnect", SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
 
         layoutComponents();
 
@@ -92,6 +92,9 @@ public class RetryPanel extends JPanel {
      * @param reason the reason the user was disconnected from the server.
      */
     public void setDisconnectReason(String reason) {
+        if(!ModelUtil.hasLength(reason)){
+            reason = "You have lost your connection to the server. To login again, click on the Reconnect button below.";
+        }
         descriptionLabel.setText(reason);
     }
 

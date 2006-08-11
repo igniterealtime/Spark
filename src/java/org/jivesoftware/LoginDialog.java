@@ -713,7 +713,7 @@ public final class LoginDialog {
         Workspace workspace = Workspace.getInstance();
 
 
-        mainWindow.getContentPane().add(workspace, BorderLayout.CENTER);
+        mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
 
         mainWindow.pack();
 

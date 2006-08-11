@@ -213,50 +213,10 @@ public class ChatRoomImpl extends ChatRoom {
         SparkManager.getMessageEventManager().addMessageEventRequestListener(messageEventRequestListener);
 
 
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                return SparkManager.getVCardManager().getVCard(participantJID);
-            }
-
-            public void finished() {
-                final VCard vcard = (VCard)get();
-                if (vcard == null) {
-                    // Do nothing.
-                    return;
-                }
-
-                // Add VCard Panel
-                final VCardPanel vcardPanel = new VCardPanel(vcard, participantJID);
-                getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-                scrollOnTimer();
-            }
-        };
-
-        worker.start();
-
         lastActivity = System.currentTimeMillis();
     }
 
-    private void scrollOnTimer() {
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
-                return true;
-            }
-
-            public void finished() {
-                scrollToBottom();
-            }
-        };
-
-        worker.start();
-    }
 
     public void closeChatRoom() {
         super.closeChatRoom();
