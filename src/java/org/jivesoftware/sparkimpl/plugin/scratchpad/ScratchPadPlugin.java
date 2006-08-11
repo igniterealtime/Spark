@@ -211,7 +211,7 @@ public class ScratchPadPlugin implements Plugin {
 
         pane.setOpaque(false);
 
-        final JScrollPane scrollPane = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        final JScrollPane scrollPane = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
@@ -261,7 +261,7 @@ public class ScratchPadPlugin implements Plugin {
 
         GraphicUtils.centerWindowOnComponent(frame, SparkManager.getMainWindow());
         frame.setVisible(true);
-
+        pane.setCaretPosition(0);
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {

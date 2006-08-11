@@ -562,7 +562,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             Log.error(e1);
         }
 
-        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 60000)) {
+        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || !chatFrame.isInFocus())) {
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
             startFlashing(chatRoom);

@@ -348,7 +348,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Add To all groups it belongs to.
         boolean isFiled = false;
-        for(RosterGroup rosterGroup : entry.getGroups()){
+        for (RosterGroup rosterGroup : entry.getGroups()) {
             isFiled = true;
             ContactGroup contactGroup = getContactGroup(rosterGroup.getName());
             if (contactGroup != null) {
@@ -413,10 +413,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         roster.addRosterListener(this);
 
-        for(RosterGroup group : roster.getGroups()){
+        for (RosterGroup group : roster.getGroups()) {
             ContactGroup contactGroup = addContactGroup(group.getName());
 
-            for(RosterEntry entry : group.getEntries()){
+            for (RosterEntry entry : group.getEntries()) {
                 String name = entry.getName();
                 if (name == null) {
                     name = entry.getUser();
@@ -441,7 +441,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Add Unfiled Group
         // addContactGroup(unfiledGroup);
-        for(RosterEntry entry : roster.getUnfiledEntries()){
+        for (RosterEntry entry : roster.getUnfiledEntries()) {
             String name = entry.getName();
             if (name == null) {
                 name = entry.getUser();
@@ -493,7 +493,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)) {
             // Ignore, since the new user is pending to be added.
-            for(RosterGroup group : entry.getGroups()){
+            for (RosterGroup group : entry.getGroups()) {
                 ContactGroup contactGroup = getContactGroup(group.getName());
                 if (contactGroup == null) {
                     contactGroup = addContactGroup(group.getName());
@@ -540,8 +540,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     RosterEntry rosterEntry = roster.getEntry(jid);
                     if (rosterEntry != null) {
                         // Check for new Roster Groups and add them if they do not exist.
-                         boolean isUnfiled = true;
-                        for(RosterGroup group : rosterEntry.getGroups()){
+                        boolean isUnfiled = true;
+                        for (RosterGroup group : rosterEntry.getGroups()) {
                             isUnfiled = false;
 
                             // Handle if this is a new Entry in a new Group.
@@ -600,7 +600,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             jid = (String)jids.next();
                             rosterEntry = roster.getEntry(jid);
 
-                            for(RosterGroup g : rosterEntry.getGroups()){
+                            for (RosterGroup g : rosterEntry.getGroups()) {
                                 groupSet.add(g.getName());
                             }
 
@@ -1186,7 +1186,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                     RosterGroup rosterGroup = roster.getGroup(groupName);
                     if (rosterGroup != null) {
-                        for(RosterEntry entry : rosterGroup.getEntries()){
+                        for (RosterEntry entry : rosterGroup.getEntries()) {
                             try {
                                 rosterGroup.removeEntry(entry);
                             }
@@ -1641,12 +1641,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         addContactGroupMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 String groupName = JOptionPane.showInputDialog(getGUI(), "Name of Group:", "Add New Group", JOptionPane.QUESTION_MESSAGE);
                 if (ModelUtil.hasLength(groupName)) {
                     ContactGroup contactGroup = getContactGroup(groupName);
                     if (contactGroup == null) {
                         contactGroup = addContactGroup(groupName);
+                        contactGroup.setVisible(true);
+                        validateTree();
+                        repaint();
                     }
                 }
             }
@@ -2040,7 +2042,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             SparkManager.getSessionManager().changePresence(presence);
             final Roster roster = con.getRoster();
 
-            for(RosterEntry entry : roster.getEntries()){
+            for (RosterEntry entry : roster.getEntries()) {
                 updateUserPresence(roster.getPresence(entry.getUser()));
             }
         }

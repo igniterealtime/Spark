@@ -55,7 +55,7 @@ public class SparkTab extends TabPanel {
         add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 2, 3, 2), 0, 0));
 
         // add text label
-        add(textLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 2, 3, 5), 0, 0));
+        add(textLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 2, 3, 10), 0, 0));
 
         // Set fonts
         defaultFont = new Font("Dialog", Font.PLAIN, 11);
