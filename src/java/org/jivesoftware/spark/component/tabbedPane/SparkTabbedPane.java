@@ -410,8 +410,8 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         cl.show(mainPanel, tab.getActualText());
         tab.setBoldWhenActive(isActiveButtonBold());
         tab.setSelected(true);
-        deselectAllTabsExcept(tab);
 
+        deselectAllTabsExcept(tab);
         fireTabSelected(tab, getSelectedComponent(), getIndex(tab));
     }
 
