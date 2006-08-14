@@ -20,7 +20,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.InputDialog;
-import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -209,14 +208,15 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         p.add(window, BorderLayout.CENTER);
         p.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
-        if (host.equalsIgnoreCase(from) || message.getFrom() == null) {
-            SparkToaster toaster = new SparkToaster();
-            toaster.setDisplayTime(30000);
-            toaster.setTitle(host);
-            toaster.setBorder(BorderFactory.createBevelBorder(0));
-            toaster.showToaster(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE), buf.toString());
-        }
-        else {
+
+        SparkToaster toaster = new SparkToaster();
+        toaster.setDisplayTime(30000);
+        toaster.setBorder(BorderFactory.createBevelBorder(0));
+
+
+        String title = host;
+
+        if (message.getFrom() != null) {
             VCard vcard = SparkManager.getVCardManager().getVCard(StringUtils.parseBareAddress(message.getFrom()));
             ImageIcon icon = null;
             if (vcard != null && vcard.getAvatar() != null) {
@@ -224,11 +224,20 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
             }
             else if (icon == null || icon.getIconWidth() == -1) {
-                icon = SparkRes.getImageIcon(SparkRes.USER_HEADSET_24x24);
+                icon = SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE);
             }
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-            MessageDialog.showComponent("Broadcast from " + nickname, "", icon, p, SparkManager.getMainWindow(), 400, 400, false);
+            title = nickname;
+            toaster.setTitle(title);
+            toaster.setToasterHeight(250);
+            toaster.setToasterWidth(250);
+            toaster.showToaster(icon, buf.toString());
         }
+        else {
+            toaster.setTitle(title);
+            toaster.showToaster(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE), buf.toString());
+        }
+
 
     }
 
@@ -269,7 +278,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput("Broadcast Message", "Enter message to broadcast to " + group.getGroupName(), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
-            for(ContactItem item : group.getContactItems()){
+            for (ContactItem item : group.getContactItems()) {
                 final Message message = new Message();
                 message.setTo(item.getFullJID());
                 message.setProperty("broadcast", true);

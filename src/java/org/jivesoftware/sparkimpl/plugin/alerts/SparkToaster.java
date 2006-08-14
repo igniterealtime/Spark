@@ -33,8 +33,11 @@ import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
@@ -118,6 +121,9 @@ public class SparkToaster {
 
     private Border border;
 
+
+    private Action customAction;
+
     /**
      * Constructor to initialized toaster component...
      */
@@ -163,8 +169,6 @@ public class SparkToaster {
             BackgroundPanel mainPanel = new BackgroundPanel();
             message.setOpaque(false);
             mainPanel.setLayout(new GridBagLayout());
-            mainPanel.setBackground(getToasterColor());
-            message.setBackground(getToasterColor());
             message.setMargin(new Insets(2, 2, 2, 2));
             message.setLineWrap(true);
             message.setWrapStyleWord(true);
@@ -196,14 +200,23 @@ public class SparkToaster {
 
             message.setForeground(Color.BLACK);
 
+            JScrollPane pane = new JScrollPane(message);
+            pane.setBorder(BorderFactory.createEmptyBorder());
+            pane.setOpaque(false);
+            message.setOpaque(false);
 
-            mainPanel.add(message, new GridBagConstraints(1, 2, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
+            pane.getViewport().setOpaque(false);
+            mainPanel.add(pane, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
 
             getContentPane().add(mainPanel);
 
 
             message.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
+                    if (customAction != null) {
+                        customAction.actionPerformed(null);
+                    }
+                    
                     setVisible(false);
                     dispose();
                 }
@@ -345,6 +358,7 @@ public class SparkToaster {
             singleToaster.iconLabel.setIcon(icon);
         }
         singleToaster.message.setText(msg);
+        singleToaster.message.setCaretPosition(0);
         singleToaster.animate();
     }
 
@@ -528,6 +542,10 @@ public class SparkToaster {
 
     public void setBorder(Border border) {
         this.border = border;
+    }
+
+    public void setCustomAction(Action action) {
+        this.customAction = action;
     }
 
     /**

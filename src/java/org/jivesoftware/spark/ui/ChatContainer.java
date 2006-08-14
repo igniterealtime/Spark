@@ -31,8 +31,23 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -54,20 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -705,7 +706,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), message,
-            "Confirmation", JOptionPane.YES_NO_OPTION);
+                "Confirmation", JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.OK_OPTION) {
             room.closeChatRoom();
             return;
@@ -863,6 +864,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                         SparkTab tab = getTabAt(index);
                         tab.getTitleLabel().setText(room.getTabTitle() + appendedMessage);
 
+                        // Check notifications.
+                        if (room instanceof ChatRoomImpl) {
+                            checkNotificationPreferences(room);
+                        }
+
+
                         makeTabRed(room);
                     }
 
@@ -924,8 +931,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             final JLabel titleLabel = tab.getTitleLabel();
 
-            if(room instanceof ChatRoomImpl){
-                Icon icon = ((ChatRoomImpl)room).getTabIcon();
+            if (room instanceof ChatRoomImpl) {
+                Icon icon = room.getTabIcon();
                 tab.setIcon(icon);
             }
 
@@ -958,6 +965,46 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 SparkManager.getAlertManager().stopFlashing(chatFrame);
             }
         });
+    }
+
+    /**
+     * Handles Notification preferences for incoming messages and rooms.
+     *
+     * @param room the chat room.
+     */
+    private void checkNotificationPreferences(final ChatRoom room) {
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        if (pref.getWindowTakesFocus()) {
+            chatFrame.setState(Frame.NORMAL);
+            chatFrame.setVisible(true);
+            int tabLocation = indexOfComponent(room);
+            setSelectedIndex(tabLocation);
+        }
+
+        if (pref.getShowToasterPopup()) {
+            SparkToaster toaster = new SparkToaster();
+            toaster.setCustomAction(new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    chatFrame.setState(Frame.NORMAL);
+                    chatFrame.setVisible(true);
+                    int tabLocation = indexOfComponent(room);
+                    setSelectedIndex(tabLocation);
+                }
+            });
+
+            toaster.setDisplayTime(5000);
+            toaster.setBorder(BorderFactory.createBevelBorder(0));
+
+            String nickname = ((ChatRoomImpl)room).getParticipantNickname();
+            toaster.setTitle(nickname);
+            toaster.setToasterHeight(150);
+            toaster.setToasterWidth(200);
+
+            int size = room.getTranscripts().size();
+            Message message = (Message)room.getTranscripts().get(size - 1);
+
+            toaster.showToaster(room.getTabIcon(), message.getBody());
+        }
     }
 
     public void setChatRoomTitle(ChatRoom room, String title) {

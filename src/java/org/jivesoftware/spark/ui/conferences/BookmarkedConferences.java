@@ -153,7 +153,7 @@ public class BookmarkedConferences extends JPanel {
         );
         // Set background
         Color menuBarColor = new Color(235, 233, 237);
-        setBackground(menuBarColor);
+        setBackground(Color.white);
 
         // Add closing listener
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
@@ -445,7 +445,7 @@ public class BookmarkedConferences extends JPanel {
                                 addButton.setEnabled(true);
                             }
                             else {
-                                JOptionPane.showMessageDialog(null, "Service could not be located.", "Unavailable Service", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to locate the conference service.", "Service Not Available", JOptionPane.ERROR_MESSAGE);
                                 serviceField.setText("");
                                 serviceField.setEnabled(true);
                                 addButton.setEnabled(true);
