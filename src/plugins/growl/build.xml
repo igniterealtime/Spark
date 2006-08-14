@@ -1,7 +1,7 @@
 <project name="growl" default="jar" basedir=".">
 
     <property name="client.dir" value="../../.."/>
-    <property name="client.lib.dir" value="${client.dir}/target/build/libs"/>
+    <property name="client.lib.dir" value="${client.dir}/target/build/lib"/>
     <property name="client.classes.dir" value="${client.dir}/target/classes"/>
     <property name="apple.plugin.classes" value="../apple/classes"/>
 

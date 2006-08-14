@@ -115,7 +115,7 @@ public class GrowlMessageListener implements MessageListener {
             in.close();
             out.close();
         } catch (IOException e) {
-            Logger.logError(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
         }
 
         NSData data = new NSData(out.toByteArray());
