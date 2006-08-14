@@ -18,6 +18,7 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.*;
 import java.io.InputStream;
@@ -83,7 +84,7 @@ public class GrowlMessageListener implements MessageListener {
 
                     }
                     catch (Exception e) {
-                        Logger.logError(e.getMessage(), e);
+                        Log.error(e.getMessage(), e);
                     }
 
                 }
