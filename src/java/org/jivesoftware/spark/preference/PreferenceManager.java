@@ -14,6 +14,7 @@ import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
+import org.jivesoftware.sparkimpl.preference.notifications.NotificationsPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 
@@ -35,10 +36,14 @@ public class PreferenceManager {
         addPreference(chatPreferences);
         chatPreferences.load();
 
-
         LocalPreference localPreferences = new LocalPreference();
         addPreference(localPreferences);
         localPreferences.load();
+
+        NotificationsPreference notifications = new NotificationsPreference();
+        addPreference(notifications);
+        notifications.load();
+
 
         getPreferences();
 

@@ -423,6 +423,22 @@ public class LocalPreferences {
         return props.getProperty("nickname", SparkManager.getUserManager().getNickname());
     }
 
+    public void setShowToasterPopup(boolean show) {
+        setBoolean("toasterPopup", show);
+    }
+
+    public boolean getShowToasterPopup() {
+        return getBoolean("toasterPopup", false);
+    }
+
+    public void setWindowTakesFocus(boolean focus) {
+        setBoolean("windowTakesFocus", focus);
+    }
+
+    public boolean getWindowTakesFocus() {
+        return getBoolean("windowTakesFocus", false);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
