@@ -34,20 +34,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -68,6 +54,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -705,7 +705,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), message,
-                "Confirmation", JOptionPane.YES_NO_OPTION);
+            "Confirmation", JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.OK_OPTION) {
             room.closeChatRoom();
             return;
@@ -924,6 +924,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             final JLabel titleLabel = tab.getTitleLabel();
 
+            if(room instanceof ChatRoomImpl){
+                Icon icon = ((ChatRoomImpl)room).getTabIcon();
+                tab.setIcon(icon);
+            }
+
             titleLabel.setForeground(Color.black);
             titleLabel.setFont(defaultFont);
         }
@@ -997,7 +1002,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
 
         // Start timer
-        checkRoomsForTimeout();
+        checkForStaleRooms();
     }
 
 
@@ -1147,7 +1152,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * Checks every room every 30 seconds to see if it's timed out.
      */
-    private void checkRoomsForTimeout() {
+    private void checkForStaleRooms() {
         int delay = 1000;   // delay for 1 minute
         int period = 60000;  // repeat every 30 seconds.
         Timer timer = new Timer();
@@ -1162,6 +1167,32 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     final JLabel titleLabel = tab.getTitleLabel();
                     titleLabel.setForeground(Color.gray);
                     titleLabel.setFont(tab.getDefaultFont());
+
+                    String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
+                    Presence presence = SparkManager.getConnection().getRoster().getPresence(jid);
+
+                    if (presence == null || presence.getType() == Presence.Type.unavailable) {
+                        tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_UNAVAILABLE_STALE_IMAGE));
+                    }
+                    else if (presence != null) {
+                        Presence.Mode mode = presence.getMode();
+                        if (mode == Presence.Mode.available) {
+                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AVAILABLE_STALE_IMAGE));
+                        }
+                        else if (mode == Presence.Mode.away) {
+                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AWAY_STALE_IMAGE));
+                        }
+                        else if (mode == Presence.Mode.chat) {
+                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_FREE_CHAT_STALE_IMAGE));
+                        }
+                        else if (mode == Presence.Mode.dnd) {
+                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
+                        }
+                        else if (mode == Presence.Mode.xa) {
+                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
+                        }
+                    }
+
                     titleLabel.validate();
                     titleLabel.repaint();
                 }
