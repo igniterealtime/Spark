@@ -30,6 +30,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
 import javax.swing.AbstractAction;
@@ -393,6 +394,16 @@ public class PluginViewer extends JPanel implements Plugin {
             try {
                 Element plugin = (Element)iter.next();
 
+                try {
+                    String version = plugin.selectSingleNode("minSparkVersion").getText();
+                    if (version.compareTo(JiveInfo.getVersion()) < 1) {
+                        continue;
+                    }
+                }
+                catch (Exception e) {
+                    Log.error("Unable to load plugin " + name + " due to no minSparkVersion.");
+                    continue;
+                }
 
                 name = plugin.selectSingleNode("name").getText();
                 clazz = plugin.selectSingleNode("class").getText();
