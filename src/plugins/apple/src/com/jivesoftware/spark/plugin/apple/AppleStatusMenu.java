@@ -98,7 +98,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
         Workspace workspace = SparkManager.getWorkspace();
         Presence presence = workspace.getStatusBar().getPresence();
         if (workspace != null) {
-            if (Presence.Mode.CHAT.equals(presence.getMode())) {
+            if (Presence.Mode.chat.equals(presence.getMode())) {
                 freeToChatItem.setState(NSCell.OnState);
                 availableItem.setState(NSCell.OffState);
                 awayItem.setState(NSCell.OffState);
@@ -106,7 +106,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 doNotDisturbItem.setState(NSCell.OffState);
 
             }
-            else if (Presence.Mode.AVAILABLE.equals(presence.getMode())) {
+            else if (Presence.Mode.available.equals(presence.getMode())) {
                 freeToChatItem.setState(NSCell.OffState);
                 availableItem.setState(NSCell.OnState);
                 awayItem.setState(NSCell.OffState);
@@ -114,21 +114,21 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 doNotDisturbItem.setState(NSCell.OffState);
 
             }
-            else if (Presence.Mode.AWAY.equals(presence.getMode())) {
+            else if (Presence.Mode.away.equals(presence.getMode())) {
                 freeToChatItem.setState(NSCell.OffState);
                 availableItem.setState(NSCell.OffState);
                 awayItem.setState(NSCell.OnState);
                 extendedAwayItem.setState(NSCell.OffState);
                 doNotDisturbItem.setState(NSCell.OffState);
             }
-            else if (Presence.Mode.EXTENDED_AWAY.equals(presence.getMode())) {
+            else if (Presence.Mode.xa.equals(presence.getMode())) {
                 freeToChatItem.setState(NSCell.OffState);
                 availableItem.setState(NSCell.OffState);
                 awayItem.setState(NSCell.OffState);
                 extendedAwayItem.setState(NSCell.OnState);
                 doNotDisturbItem.setState(NSCell.OffState);
             }
-            else if (Presence.Mode.DO_NOT_DISTURB.equals(presence.getMode())) {
+            else if (Presence.Mode.dnd.equals(presence.getMode())) {
                 freeToChatItem.setState(NSCell.OffState);
                 availableItem.setState(NSCell.OffState);
                 awayItem.setState(NSCell.OffState);
@@ -200,12 +200,12 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 Presence presence = roster.getPresence(user);
 
                 if (presence != null) {
-                    if (Presence.Mode.AWAY.equals(presence.getMode())) {
+                    if (Presence.Mode.away.equals(presence.getMode())) {
                         RosterEntry entry = roster.getEntry(user);
                         removeEntry(entry);
                     }
-                    else if (Presence.Mode.AVAILABLE.equals(presence.getMode()) ||
-                            Presence.Mode.CHAT.equals(presence.getMode())) {
+                    else if (Presence.Mode.available.equals(presence.getMode()) ||
+                            Presence.Mode.chat.equals(presence.getMode())) {
                         RosterEntry entry = roster.getEntry(user);
                         addEntry(entry);
                     }
@@ -219,7 +219,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (Presence.Mode.CHAT.equals(presence.getMode())) {
+                if (Presence.Mode.chat.equals(presence.getMode())) {
                     freeToChatItem.setState(NSCell.OnState);
                     availableItem.setState(NSCell.OffState);
                     awayItem.setState(NSCell.OffState);
@@ -227,7 +227,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                     doNotDisturbItem.setState(NSCell.OffState);
 
                 }
-                else if (Presence.Mode.AVAILABLE.equals(presence.getMode())) {
+                else if (Presence.Mode.available.equals(presence.getMode())) {
                     freeToChatItem.setState(NSCell.OffState);
                     availableItem.setState(NSCell.OnState);
                     awayItem.setState(NSCell.OffState);
@@ -235,21 +235,21 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                     doNotDisturbItem.setState(NSCell.OffState);
 
                 }
-                else if (Presence.Mode.AWAY.equals(presence.getMode())) {
+                else if (Presence.Mode.away.equals(presence.getMode())) {
                     freeToChatItem.setState(NSCell.OffState);
                     availableItem.setState(NSCell.OffState);
                     awayItem.setState(NSCell.OnState);
                     extendedAwayItem.setState(NSCell.OffState);
                     doNotDisturbItem.setState(NSCell.OffState);
                 }
-                else if (Presence.Mode.EXTENDED_AWAY.equals(presence.getMode())) {
+                else if (Presence.Mode.xa.equals(presence.getMode())) {
                     freeToChatItem.setState(NSCell.OffState);
                     availableItem.setState(NSCell.OffState);
                     awayItem.setState(NSCell.OffState);
                     extendedAwayItem.setState(NSCell.OnState);
                     doNotDisturbItem.setState(NSCell.OffState);
                 }
-                else if (Presence.Mode.DO_NOT_DISTURB.equals(presence.getMode())) {
+                else if (Presence.Mode.dnd.equals(presence.getMode())) {
                     freeToChatItem.setState(NSCell.OffState);
                     availableItem.setState(NSCell.OffState);
                     awayItem.setState(NSCell.OffState);
@@ -377,10 +377,9 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
         item.setEnabled(false);
         contactMenu.addItem(item);
 
-        for (Iterator i = roster.getEntries(); i.hasNext();) {
-            RosterEntry entry = (RosterEntry) i.next();
+        for (RosterEntry entry : roster.getEntries()){
             final Presence p = roster.getPresence(entry.getUser());
-            if (p != null && (Presence.Mode.AVAILABLE.equals(p.getMode()) || Presence.Mode.CHAT.equals(p.getMode()))) {
+            if (p != null && (Presence.Mode.available.equals(p.getMode()) || Presence.Mode.chat.equals(p.getMode()))) {
                 addEntry(entry);
             }
 
