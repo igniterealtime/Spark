@@ -22,8 +22,8 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -88,7 +88,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private boolean mousePressed;
 
-    private ChatPreferences chatPreferences;
     private List closingListeners = new ArrayList();
 
 
@@ -195,9 +194,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         verticalSplit.setBorder(null);
         splitPane.setLeftComponent(verticalSplit);
 
-        // Load Preferences for this instance
-        chatPreferences = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
-
         textScroller.setAutoscrolls(true);
 
         // Speed up scrolling. It was way too slow.
@@ -297,7 +293,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @return the nickname of the agent.
      */
     public String getNickname() {
-        return chatPreferences.getNickname();
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        return pref.getNickname();
     }
 
 

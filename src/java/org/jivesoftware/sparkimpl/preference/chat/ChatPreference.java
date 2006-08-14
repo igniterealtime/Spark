@@ -30,20 +30,12 @@ import javax.swing.JOptionPane;
  */
 public class ChatPreference implements Preference {
     private ChatPreferencePanel panel = new ChatPreferencePanel();
-    private ChatPreferences preferences;
     private String errorMessage = "Error";
 
     /**
      * Define the Namespace used for this preference.
      */
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark/chatwindow";
-
-    /**
-     * Initialize ChatPreference.
-     */
-    public ChatPreference() {
-        preferences = new ChatPreferences();
-    }
 
     public String getTitle() {
         return "General Chat Settings";
@@ -124,9 +116,7 @@ public class ChatPreference implements Preference {
         }
 
         boolean showTime = pref.isTimeDisplayedInChat();
-
-        preferences.showDatesInChat(showTime);
-        return preferences;
+        return pref;
     }
 
     public String getErrorMessage() {

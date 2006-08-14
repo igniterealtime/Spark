@@ -15,15 +15,8 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -31,6 +24,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 final class JoinConferenceRoomDialog extends JPanel {
     private JLabel roomNameLabel = new JLabel();
@@ -59,7 +59,7 @@ final class JoinConferenceRoomDialog extends JPanel {
     }
 
     public void joinRoom(final String roomJID, final String roomName) {
-        final ChatPreferences pref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         // Set default nickname
         nicknameField.setText(pref.getNickname());

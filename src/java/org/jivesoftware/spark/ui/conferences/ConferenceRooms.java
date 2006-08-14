@@ -19,7 +19,6 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.JiveSortableTable;
 import org.jivesoftware.spark.component.JiveTreeNode;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.Table;
@@ -30,25 +29,8 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -66,6 +48,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 /**
  * A UI that handles all Group Rooms contained in an XMPP Messenger server.  This handles
@@ -568,7 +567,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
     private void createRoom() {
         ConferenceCreator mucRoomDialog = new ConferenceCreator();
         final MultiUserChat groupChat = mucRoomDialog.createGroupChat(SparkManager.getMainWindow(), serviceName);
-        final ChatPreferences pref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         if (null != groupChat) {
 
@@ -683,7 +682,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         }
 
         public Component getTableCellRendererComponent(
-                JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             return this;
         }

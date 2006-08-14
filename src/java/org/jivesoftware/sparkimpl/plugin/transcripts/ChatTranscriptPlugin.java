@@ -407,7 +407,11 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     };
 
     private void loadUserInformation(final ChatRoom room, final String participantJID) {
-        SwingWorker worker = new SwingWorker() {
+        if (!(room instanceof ChatRoomImpl)) {
+            return;
+        }
+
+        final SwingWorker userLoadingThread = new SwingWorker() {
             public Object construct() {
                 return SparkManager.getVCardManager().getVCard(participantJID);
             }
@@ -426,7 +430,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             }
         };
 
-        worker.start();
+        userLoadingThread.start();
     }
 
     private void scrollOnTimer(final ChatRoom room) {

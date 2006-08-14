@@ -20,8 +20,8 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -63,7 +63,7 @@ public class TranscriptWindow extends ChatArea {
 
     private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
 
-    private ChatPreferences chatPref;
+
     private Date lastUpdated;
 
     /**
@@ -80,7 +80,6 @@ public class TranscriptWindow extends ChatArea {
 
         /* Load Preferences for this instance */
         PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
-        chatPref = (ChatPreferences)preferenceManager.getPreferenceData(ChatPreference.NAMESPACE);
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -383,7 +382,7 @@ public class TranscriptWindow extends ChatArea {
      * @return the formatted date.
      */
     private String getDate(Date insertDate) {
-        chatPref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         if (insertDate == null) {
             insertDate = new Date();
@@ -392,7 +391,7 @@ public class TranscriptWindow extends ChatArea {
         StyleConstants.setFontFamily(styles, font.getFontName());
         StyleConstants.setFontSize(styles, font.getSize());
 
-        if (chatPref.showDatesInChat()) {
+        if (pref.isTimeDisplayedInChat()) {
             final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
             final String date = formatter.format(insertDate);
 
@@ -471,6 +470,8 @@ public class TranscriptWindow extends ChatArea {
      * @see ChatRoom#getTranscripts()
      */
     public void saveTranscript(String fileName, List transcript, String headerData) {
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+
         try {
             SimpleDateFormat formatter;
 
@@ -495,7 +496,7 @@ public class TranscriptWindow extends ChatArea {
                     final Message message = (Message)transcripts.next();
                     String from = message.getFrom();
                     if (from == null) {
-                        from = chatPref.getNickname();
+                        from = pref.getNickname();
                     }
 
                     if (Message.Type.GROUP_CHAT == message.getType()) {

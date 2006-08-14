@@ -33,11 +33,8 @@ import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +42,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -224,8 +224,8 @@ public class ChatManager implements MessageEventNotificationListener {
         final GroupChatRoom room = new GroupChatRoom(chatRoom);
 
         try {
-            ChatPreferences chatPref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
-            chatRoom.create(chatPref.getNickname());
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            chatRoom.create(pref.getNickname());
 
             // Send an empty room configuration form which indicates that we want
             // an instant room

@@ -407,12 +407,20 @@ public class LocalPreferences {
         props.setProperty("fileTransferTimeout", Integer.toString(minutes));
     }
 
-     public void setChatLengthDefaultTimeout(int minutes) {
+    public void setChatLengthDefaultTimeout(int minutes) {
         props.setProperty("defaultChatLengthTimeout", Integer.toString(minutes));
     }
 
     public int getChatLengthDefaultTimeout() {
         return Integer.parseInt(props.getProperty("defaultChatLengthTimeout", "15"));
+    }
+
+    public void setNickname(String nickname) {
+        props.setProperty("nickname", nickname);
+    }
+
+    public String getNickname() {
+        return props.getProperty("nickname", SparkManager.getUserManager().getNickname());
     }
 
     private boolean getBoolean(String property, boolean defaultValue) {

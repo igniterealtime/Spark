@@ -25,8 +25,8 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
-import org.jivesoftware.sparkimpl.preference.chat.ChatPreferences;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.JOptionPane;
 
@@ -107,8 +107,8 @@ public class ConferenceUtils {
         ChatManager chatManager = SparkManager.getChatManager();
 
         final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
-        ChatPreferences chatPref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
-        final String nickname = chatPref.getNickname().trim();
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        final String nickname = pref.getNickname().trim();
 
 
         try {
@@ -400,8 +400,8 @@ public class ConferenceUtils {
         final GroupChatRoom room = new GroupChatRoom(chatRoom);
 
         try {
-            ChatPreferences chatPref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
-            chatRoom.create(chatPref.getNickname());
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            chatRoom.create(pref.getNickname());
 
             // Since this is a private room, make the room not public and set user as owner of the room.
             Form submitForm = chatRoom.getConfigurationForm().createAnswerForm();
@@ -443,8 +443,9 @@ public class ConferenceUtils {
         ChatManager chatManager = SparkManager.getChatManager();
 
         final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
-        ChatPreferences chatPref = (ChatPreferences)SparkManager.getPreferenceManager().getPreferenceData(ChatPreference.NAMESPACE);
-        final String nickname = chatPref.getNickname().trim();
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+
+        final String nickname = pref.getNickname().trim();
 
 
         try {
