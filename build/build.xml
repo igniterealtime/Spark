@@ -44,9 +44,9 @@
     <property name="installer.file_prefix" value="${installer.app_short_name}"/>
     <property name="installer.release_root_path" value="${target.build}"/>
 
-    <property name="mac.build.dir" value="${target}/Spark_${version.underscore}"/>
+    <property name="mac.build.dir" value="${target}/spark_${version.underscore}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
-    <property name="mac.dmg.file" value="${target}/Spark_${version.underscore}.dmg"/>
+    <property name="mac.dmg.file" value="${target}/spark_${version.underscore}.dmg"/>
 
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
