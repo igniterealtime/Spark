@@ -5,6 +5,6 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <email>andrew@jivesoftware.com</email>
     <description>Provides Growl notifications on Mac OS X.(http://growl.info)</description>
-    <class>org.jivesoftware.spark.plugin.growl.GrowlPlugin</class>
+    <class>com.jivesoftware.spark.plugin.growl.GrowlPlugin</class>
     <minSparkVersion>2.0.0.1</minSparkVersion>
 </plugin>

@@ -17,6 +17,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.InputDialog;
@@ -162,6 +163,13 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 final Message message = (Message)packet;
+
+                // Do not handle errors or offline messages
+                final DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+                if (offlineInformation != null || message.getError() != null) {
+                    return;
+                }
+
                 boolean broadcast = message.getProperty("broadcast") != null;
 
                 if ((broadcast || (message.getType() == Message.Type.NORMAL) || message.getType() == Message.Type.HEADLINE) && message.getBody() != null) {

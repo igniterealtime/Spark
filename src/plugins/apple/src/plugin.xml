@@ -6,7 +6,7 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <email>andrew@jivesoftware.com</email>
     <description>Gives Spark mac notification capabilities and other enhancements.</description>
-    <class>org.jivesoftware.spark.plugin.apple.ApplePlugin</class>
+    <class>com.jivesoftware.spark.plugin.apple.ApplePlugin</class>
     <minSparkVersion>2.0.0.1</minSparkVersion>
 </plugin>
 

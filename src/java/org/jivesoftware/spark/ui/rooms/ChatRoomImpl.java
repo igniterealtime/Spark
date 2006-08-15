@@ -116,7 +116,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         // The name of the room will be the node of the user jid + conversation.
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
-        this.roomTitle = participantNickname + " - Started " + formatter.format(new Date());
+        this.roomTitle = participantNickname;
 
         // Add RoomInfo
         this.getSplitPane().setRightComponent(null);
