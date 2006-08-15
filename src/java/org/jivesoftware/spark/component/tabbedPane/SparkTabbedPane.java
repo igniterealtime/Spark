@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
 
 import java.awt.BorderLayout;
@@ -23,8 +23,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -160,23 +158,24 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         // Add Close Button
         if (isCloseButtonEnabled()) {
-            final RolloverButton closeButton = new RolloverButton(closeInactiveButtonIcon);
+            final JLabel closeButton = new JLabel(closeInactiveButtonIcon);
             tab.addComponent(closeButton);
             closeButton.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent mouseEvent) {
-                    closeButton.setIcon(closeActiveButtonIcon);
+                    if (Spark.isWindows())
+                        closeButton.setIcon(closeActiveButtonIcon);
                 }
 
                 public void mouseExited(MouseEvent mouseEvent) {
-                    closeButton.setIcon(closeInactiveButtonIcon);
-                }
-            });
-            closeButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    close(tab, component);
+                    if (Spark.isWindows())
+                        closeButton.setIcon(closeInactiveButtonIcon);
                 }
 
+                public void mouseClicked(MouseEvent mouseEvent) {
+                    close(tab, component);
+                }
             });
+
         }
 
         /*
