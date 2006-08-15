@@ -174,9 +174,9 @@ public class SoundPreference implements Preference {
             setLayout(new GridBagLayout());
 
             // Add ResourceUtils
-            ResourceUtils.resButton(incomingMessageBox, "&Play sound when new message arrives");
-            ResourceUtils.resButton(outgoingMessageBox, "&Play sound when a message is sent");
-            ResourceUtils.resButton(userOfflineCheckbox, "&Play sound when user goes offline");
+            ResourceUtils.resButton(incomingMessageBox, "Play sound when new message &arrives");
+            ResourceUtils.resButton(outgoingMessageBox, "Play sound when a message is &sent");
+            ResourceUtils.resButton(userOfflineCheckbox, "Play sound when user goes &offline");
             ResourceUtils.resButton(incomingBrowseButton, "&Browse");
             ResourceUtils.resButton(outgoingBrowseButton, "B&rowse");
             ResourceUtils.resButton(offlineBrowseButton, "Br&owse");
