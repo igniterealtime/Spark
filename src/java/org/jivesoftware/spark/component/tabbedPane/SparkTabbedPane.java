@@ -14,13 +14,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -40,6 +33,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 /**
  *
@@ -81,8 +81,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     private void createUI() {
         setLayout(new BorderLayout());
 
-        tabs = new JPanel(new
-                FlowLayout(FlowLayout.LEFT, 0, 0)) {
+        tabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0)) {
             public Dimension getPreferredSize() {
                 if (getParent() == null)
                     return getPreferredSize();
