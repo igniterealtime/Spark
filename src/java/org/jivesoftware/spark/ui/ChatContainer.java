@@ -1001,9 +1001,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             toaster.setToasterWidth(200);
 
             int size = room.getTranscripts().size();
-            Message message = (Message)room.getTranscripts().get(size - 1);
+            if (size > 0) {
+                Message message = (Message)room.getTranscripts().get(size - 1);
 
-            toaster.showToaster(room.getTabIcon(), message.getBody());
+                toaster.showToaster(room.getTabIcon(), message.getBody());
+            }
         }
     }
 

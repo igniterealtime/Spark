@@ -8,9 +8,9 @@
       <envVar name="JDK_HOME" />
     </searchSequence>
     <variables>
-      <variable name="VERSION_MAJOR" value="1" />
-      <variable name="VERSION_MINOR" value="1" />
-      <variable name="VERSION_REVISION" value="9" />
+      <variable name="VERSION_MAJOR" value="2" />
+      <variable name="VERSION_MINOR" value="0" />
+      <variable name="VERSION_REVISION" value="0" />
       <variable name="APP_NAME" value="Spark" />
       <variable name="APP_SHORT_NAME" value="Spark" />
       <variable name="PUBLISHER" value="Jive Software" />
