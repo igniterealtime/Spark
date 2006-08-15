@@ -346,7 +346,7 @@
                     aboutmenuname="Spark"
                     bundleid="com.jivesoftware.SparkBundle"
                     developmentregion="English"
-                    jvmversion="1.4+"
+                    jvmversion="1.5+"
                     smalltabs="true"
                     antialiasedgraphics="true"
                     antialiasedtext="true"
@@ -354,7 +354,7 @@
                     growbox="true"
                     growboxintrudes="false"
                     screenmenu="true"
-                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources"
+                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true"
                     workingdirectory="$APP_PACKAGE/Contents/Resources"
                     extraclasspath="/System/Library/Java">
             <jarfileset dir="${target.build}/lib">
