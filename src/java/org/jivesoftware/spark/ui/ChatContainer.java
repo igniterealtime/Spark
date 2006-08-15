@@ -1134,7 +1134,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             LocalPreferences pref = SettingsManager.getLocalPreferences();
             int timeoutMinutes = pref.getChatLengthDefaultTimeout();
 
-            if (timeoutMinutes <= minutes) {
+            int unreadCount = chatRoom.getUnreadMessageCount();
+
+            if (timeoutMinutes <= minutes && unreadCount == 0) {
                 staleRooms.add(chatRoom);
             }
         }
