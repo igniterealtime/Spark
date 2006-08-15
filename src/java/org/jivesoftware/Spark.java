@@ -13,19 +13,18 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Insets;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -97,7 +96,13 @@ public final class Spark {
 
             RESOURCE_DIRECTORY = new File(workingDir, "resources").getAbsoluteFile();
             BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
-            LOG_DIRECTORY = new File(workingDir, "logs").getAbsoluteFile();
+
+            if (!Spark.isWindows()) {
+                LOG_DIRECTORY = new File(USER_HOME, "/Spark/logs").getAbsoluteFile();
+            }
+            else {
+                LOG_DIRECTORY = new File(workingDir, "logs").getAbsoluteFile();
+            }
             LOG_DIRECTORY.mkdirs();
             try {
                 buf.append(RESOURCE_DIRECTORY.getCanonicalPath()).append(";");
