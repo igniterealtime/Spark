@@ -85,78 +85,11 @@ public class UserSearchResults extends JPanel {
                 }
 
                 public void mouseReleased(MouseEvent e) {
-                    if (!e.isPopupTrigger()) {
-                        return;
-                    }
-                    // Get agent
-                    final int row = resultsTable.rowAtPoint(e.getPoint());
-
-                    final JPopupMenu menu = new JPopupMenu();
-
-                    Action addContactAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            RosterDialog dialog = new RosterDialog();
-                            String jid = (String)resultsTable.getValueAt(row, 0);
-
-                            TableColumn column = null;
-                            try {
-                                column = resultsTable.getColumn("Username");
-                            }
-                            catch (Exception ex) {
-                                try {
-                                    column = resultsTable.getColumn("nick");
-                                }
-                                catch (Exception e1) {
-                                }
-                            }
-                            if (column != null) {
-                                int col = column.getModelIndex();
-                                String nickname = (String)resultsTable.getValueAt(row, col);
-                                if (!ModelUtil.hasLength(nickname)) {
-                                    nickname = StringUtils.parseName(jid);
-                                }
-                                dialog.setDefaultNickname(nickname);
-                            }
-
-                            dialog.setDefaultJID(jid);
-                            dialog.showRosterDialog();
-                        }
-                    };
-
-                    Action chatAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            openChatRoom(row);
-                        }
-                    };
-
-                    Action profileAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            VCardManager vcardSupport = SparkManager.getVCardManager();
-                            String jid = (String)resultsTable.getValueAt(row, 0);
-                            vcardSupport.viewProfile(jid, resultsTable);
-                        }
-                    };
-
-                    final JMenuItem addAsContact = new JMenuItem(addContactAction);
-                    addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
-                    addContactAction.putValue(Action.NAME, "Add as Contact");
-                    menu.add(addAsContact);
-
-                    final JMenuItem chatMenu = new JMenuItem(chatAction);
-                    chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-                    chatAction.putValue(Action.NAME, "Chat");
-                    menu.add(chatMenu);
-
-                    final JMenuItem viewProfileMenu = new JMenuItem(profileAction);
-                    profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
-                    profileAction.putValue(Action.NAME, "View Profile");
-                    menu.add(viewProfileMenu);
-
-
-                    menu.show(resultsTable, e.getX(), e.getY());
+                    checkPopup(e);
                 }
 
                 public void mousePressed(MouseEvent e) {
+                    checkPopup(e);
                 }
             });
         }
@@ -189,6 +122,77 @@ public class UserSearchResults extends JPanel {
         }
     }
 
+    private void checkPopup(MouseEvent e) {
+        if (!e.isPopupTrigger()) {
+            return;
+        }
+        // Get agent
+        final int row = resultsTable.rowAtPoint(e.getPoint());
+
+        final JPopupMenu menu = new JPopupMenu();
+
+        Action addContactAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                RosterDialog dialog = new RosterDialog();
+                String jid = (String)resultsTable.getValueAt(row, 0);
+
+                TableColumn column = null;
+                try {
+                    column = resultsTable.getColumn("Username");
+                }
+                catch (Exception ex) {
+                    try {
+                        column = resultsTable.getColumn("nick");
+                    }
+                    catch (Exception e1) {
+                    }
+                }
+                if (column != null) {
+                    int col = column.getModelIndex();
+                    String nickname = (String)resultsTable.getValueAt(row, col);
+                    if (!ModelUtil.hasLength(nickname)) {
+                        nickname = StringUtils.parseName(jid);
+                    }
+                    dialog.setDefaultNickname(nickname);
+                }
+
+                dialog.setDefaultJID(jid);
+                dialog.showRosterDialog();
+            }
+        };
+
+        Action chatAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                openChatRoom(row);
+            }
+        };
+
+        Action profileAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                VCardManager vcardSupport = SparkManager.getVCardManager();
+                String jid = (String)resultsTable.getValueAt(row, 0);
+                vcardSupport.viewProfile(jid, resultsTable);
+            }
+        };
+
+        final JMenuItem addAsContact = new JMenuItem(addContactAction);
+        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        addContactAction.putValue(Action.NAME, "Add as Contact");
+        menu.add(addAsContact);
+
+        final JMenuItem chatMenu = new JMenuItem(chatAction);
+        chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        chatAction.putValue(Action.NAME, "Chat");
+        menu.add(chatMenu);
+
+        final JMenuItem viewProfileMenu = new JMenuItem(profileAction);
+        profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
+        profileAction.putValue(Action.NAME, "View Profile");
+        menu.add(viewProfileMenu);
+
+
+        menu.show(resultsTable, e.getX(), e.getY());
+    }
 
     private final class UsersInfoTable extends Table {
         UsersInfoTable(String[] headers) {

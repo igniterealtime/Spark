@@ -591,6 +591,26 @@ public final class GraphicUtils {
         return new ImageIcon(img);
     }
 
+
+    /**
+     * Returns a scaled down image if the height or width is smaller than
+     * the image size.
+     *
+     * @param icon      the image icon.
+     * @param newHeight the preferred height.
+     * @param newWidth  the preferred width.
+     * @return the icon.
+     */
+    public static ImageIcon scale(ImageIcon icon, int newHeight, int newWidth) {
+        Image img = icon.getImage();
+        int height = icon.getIconHeight();
+        int width = icon.getIconWidth();
+        height = newHeight;
+        width = newWidth;
+        img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+
     /**
      * Returns the native icon, if one exists for the filetype, otherwise
      * returns a default document icon.
