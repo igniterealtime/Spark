@@ -46,7 +46,7 @@
           <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
+      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot; -Xms16m -XX:PermSize=12m -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
         <searchSequence>
           <registry />
           <envVar name="JAVA_HOME" />
