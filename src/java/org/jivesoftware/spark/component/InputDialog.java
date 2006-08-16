@@ -118,6 +118,7 @@ public final class InputDialog implements PropertyChangeListener {
         });
 
         textArea.requestFocus();
+        textArea.setWrapStyleWord(true);
 
 
         dialog.setVisible(true);

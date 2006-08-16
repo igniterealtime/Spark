@@ -25,6 +25,7 @@ public class PublicPlugin {
     private boolean readMeAvailable;
     private boolean smallIconAvailable;
     private boolean largeIconAvailable;
+    private String minVersion;
 
     private File pluginDir;
 
@@ -130,5 +131,13 @@ public class PublicPlugin {
 
     public void setLargeIconAvailable(boolean largeIconAvailable) {
         this.largeIconAvailable = largeIconAvailable;
+    }
+
+    public String getMinVersion() {
+        return minVersion;
+    }
+
+    public void setMinVersion(String minVersion) {
+        this.minVersion = minVersion;
     }
 }

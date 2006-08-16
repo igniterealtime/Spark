@@ -54,6 +54,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -178,6 +179,19 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 closeActiveRoom();
             }
         });
+
+
+        KeyStroke appleStroke = KeyStroke.getKeyStroke(Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), 0);
+        String appleString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(appleStroke);
+
+        // Handle Apple Key W
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(appleString + "w"), "appleStroke");
+        this.getActionMap().put("appleStroke", new AbstractAction("appleStroke") {
+            public void actionPerformed(ActionEvent evt) {
+                closeActiveRoom();
+            }
+        });
+
 
     }
 
@@ -1213,6 +1227,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 for (ChatRoom chatRoom : getStaleChatRooms()) {
                     // Turn tab gray
                     int index = indexOfComponent(chatRoom);
+                    if (index == -1) {
+                        return;
+                    }
+
                     SparkTab tab = getTabAt(index);
 
                     final JLabel titleLabel = tab.getTitleLabel();
