@@ -7,6 +7,7 @@
  * This software is the proprietary information of Jive Software.
  * Use is subject to license terms.
  */
+
 package com.jivesoftware.spark.plugin.growl;
 
 import com.apple.cocoa.application.NSImage;
@@ -15,15 +16,18 @@ import com.growl.Growl;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.ui.MessageListener;
-import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.*;
-import java.io.InputStream;
+import javax.swing.SwingUtilities;
+
+import java.awt.Frame;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Andrew Wright
@@ -38,58 +42,91 @@ public class GrowlMessageListener implements MessageListener {
         growl.register();
     }
 
-    public void messageReceived(final ChatRoom room, final Message message) {
-        if (!SparkManager.getMainWindow().isFocused()) {
+    public void messageReceived(final ChatRoom chatRoom, final Message message) {
+        final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
-            SwingUtilities.invokeLater(new Runnable() {
+        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || !chatFrame.isInFocus())) {
+            startFlashing(message);
+            return;
+        }
 
-                public void run() {
+        if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
+
+        }
+        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
+            startFlashing(message);
+        }
+        else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
+            startFlashing(message);
+        }
+
+        // Handle when chat frame is visible but the Contact List is not.
+        else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
+            startFlashing(message);
+        }
+        else if (!chatFrame.isVisible()) {
+            // If the ContactList is in the tray, we need better notification by flashing
+            // the chatframe.
+            if (!SparkManager.getMainWindow().isVisible()) {
+                startFlashing(message);
+            }
+            else if (chatFrame.getState() == Frame.ICONIFIED) {
+                startFlashing(message);
+            }
+
+        }
+
+    }
+
+    private void startFlashing(final Message message) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                try {
+                    String name = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+
+                    // Since it looks the method can return null do this in case
+                    if (name == null) {
+                        name = StringUtils.parseName(message.getFrom());
+                    }
+
+                    VCard vCard = null;
+
                     try {
-                        String name = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-
-                        // Since it looks the method can return null do this in case
-                        if (name == null) {
-                            name = StringUtils.parseName(message.getFrom());
-                        }
-
-                        VCard vCard = null;
-
-                        try {
-                            vCard = SparkManager.getVCardManager().getVCard(
-                                    StringUtils.parseBareAddress(message.getFrom()));
-                        }
-                        catch (Exception e) {
-                            // vcard can time out so ignore
-                        }
-
-                        NSImage image = null;
-                        if (vCard != null) {
-                            byte[] bytes = vCard.getAvatar();
-                            if (bytes != null) {
-                                try {
-                                    NSData data = new NSData(bytes);
-                                    image = new NSImage(data);
-                                }
-                                catch (Exception e) {
-                                    // just incase there is an error i didn't intend
-                                }
-                            }
-                        }
-
-                        if (image == null) {
-                            image = getImage("/images/message-32x32.png");
-                        }
-
-                        growl.notifyGrowlOf("Message Received", image, name, message.getBody(), null);
-
+                        vCard = SparkManager.getVCardManager().getVCard(
+                                StringUtils.parseBareAddress(message.getFrom()));
                     }
                     catch (Exception e) {
-                        Log.error(e.getMessage(), e);
+                        // vcard can time out so ignore
                     }
 
+                    NSImage image = null;
+                    if (vCard != null) {
+                        byte[] bytes = vCard.getAvatar();
+                        if (bytes != null) {
+                            try {
+                                NSData data = new NSData(bytes);
+                                image = new NSImage(data);
+                            }
+                            catch (Exception e) {
+                                // just incase there is an error i didn't intend
+                            }
+                        }
+                    }
+
+                    if (image == null) {
+                        image = getImage("/images/message-32x32.png");
+                    }
+
+                    growl.notifyGrowlOf("Message Received", image, name, message.getBody(), null);
+
                 }
-            });
-        }
+                catch (Exception e) {
+                    Log.error(e.getMessage(), e);
+                }
+
+            }
+        });
     }
 
     public void messageSent(ChatRoom room, Message message) {
@@ -114,7 +151,8 @@ public class GrowlMessageListener implements MessageListener {
             }
             in.close();
             out.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Log.error(e.getMessage(), e);
         }
 
