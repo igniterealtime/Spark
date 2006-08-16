@@ -297,7 +297,10 @@ public final class MainWindow extends JFrame implements ActionListener {
         try {
             String command = "";
             if (Spark.isWindows()) {
-                command = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\Spark.exe";
+                String sparkExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\Spark.exe";
+                String starterExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\starter.exe";
+
+                command = starterExe + " \"" + sparkExe + "\"";
             }
             else if (Spark.isMac()) {
                 command = "open -a Spark";
