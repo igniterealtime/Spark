@@ -46,6 +46,23 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
                 Log.error(e);
             }
         }
+        else if (string.indexOf("?") == -1) {
+            // Then use the direct jid
+            int index = string.indexOf(":");
+            if (index != -1) {
+                String jid = string.substring(index + 1);
+
+                UserManager userManager = SparkManager.getUserManager();
+                String nickname = userManager.getUserNicknameFromJID(jid);
+                if (nickname == null) {
+                    nickname = jid;
+                }
+
+                ChatManager chatManager = SparkManager.getChatManager();
+                ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
+                chatManager.getChatContainer().activateChatRoom(chatRoom);
+            }
+        }
 
     }
 

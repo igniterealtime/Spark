@@ -63,6 +63,29 @@
       </java>
       <includedFiles />
     </launcher>
+    <launcher name="starter" id="21" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="" pngIcon32File="" macServiceDependencies="" allowUserChangeServiceStartType="true">
+      <executable name="starter" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="">
+        <versionInfo include="false" fileVersion="" companyName="" fileDescription="" legalCopyright="" productVersion="" internalName="" />
+      </executable>
+      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="">
+        <text>
+          <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+          <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+        </text>
+      </splashScreen>
+      <java mainClass="org.jivesoftware.Restarter" vmParameters="" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="" allowBetaVM="false" jdkOnly="false">
+        <searchSequence>
+          <registry />
+          <envVar name="JAVA_HOME" />
+          <envVar name="JDK_HOME" />
+        </searchSequence>
+        <classPath>
+          <scanDirectory location="lib" failOnError="false" />
+        </classPath>
+        <nativeLibraryDirectories />
+      </java>
+      <includedFiles />
+    </launcher>
   </launchers>
   <installerGui installerType="1" runUninstallerOnUpdate="true" addOnAppId="" suggestPreviousLocations="true" allowUnattendedInstall="true" useCustomHeaderImage="false" customHeaderImage="" customSize="false" customWidth="500" customHeight="390">
     <customCode preAction="false" preActionClass="" postAction="true" postActionClass="org.jivesoftware.Installer" preUninstallAction="false" preUninstallActionClass="" postUninstallAction="true" postUninstallActionClass="org.jivesoftware.Uninstaller" initHandler="false" initHandlerClass="" directoryValidator="false" directoryValidatorClass="" installationHandler="false" installationHandlerClass="">
