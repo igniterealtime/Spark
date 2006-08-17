@@ -1002,7 +1002,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     chatFrame.setState(Frame.NORMAL);
                     chatFrame.setVisible(true);
                     int tabLocation = indexOfComponent(room);
-                    setSelectedIndex(tabLocation);
+                    if (tabLocation != -1) {
+                        setSelectedIndex(tabLocation);
+                    }
                 }
             });
 
@@ -1237,28 +1239,30 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     titleLabel.setForeground(Color.gray);
                     titleLabel.setFont(tab.getDefaultFont());
 
-                    String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
-                    Presence presence = SparkManager.getConnection().getRoster().getPresence(jid);
+                    if (chatRoom instanceof ChatRoomImpl) {
+                        String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
+                        Presence presence = SparkManager.getConnection().getRoster().getPresence(jid);
 
-                    if (presence == null || presence.getType() == Presence.Type.unavailable) {
-                        tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_UNAVAILABLE_STALE_IMAGE));
-                    }
-                    else if (presence != null) {
-                        Presence.Mode mode = presence.getMode();
-                        if (mode == Presence.Mode.available) {
-                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AVAILABLE_STALE_IMAGE));
+                        if (presence == null || presence.getType() == Presence.Type.unavailable) {
+                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_UNAVAILABLE_STALE_IMAGE));
                         }
-                        else if (mode == Presence.Mode.away) {
-                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AWAY_STALE_IMAGE));
-                        }
-                        else if (mode == Presence.Mode.chat) {
-                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_FREE_CHAT_STALE_IMAGE));
-                        }
-                        else if (mode == Presence.Mode.dnd) {
-                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
-                        }
-                        else if (mode == Presence.Mode.xa) {
-                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
+                        else if (presence != null) {
+                            Presence.Mode mode = presence.getMode();
+                            if (mode == Presence.Mode.available) {
+                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AVAILABLE_STALE_IMAGE));
+                            }
+                            else if (mode == Presence.Mode.away) {
+                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AWAY_STALE_IMAGE));
+                            }
+                            else if (mode == Presence.Mode.chat) {
+                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_FREE_CHAT_STALE_IMAGE));
+                            }
+                            else if (mode == Presence.Mode.dnd) {
+                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
+                            }
+                            else if (mode == Presence.Mode.xa) {
+                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
+                            }
                         }
                     }
 
