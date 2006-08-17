@@ -15,7 +15,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -33,21 +32,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -58,6 +42,19 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -146,8 +143,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public void chatRoomOpened(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
-            final String jid = room.getRoomname();
-            loadUserInformation(room, jid);
             return;
         }
 
@@ -218,6 +213,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                 buf.append("\n");
                             }
                             catch (Exception e) {
+                                Log.error(e);
                                 break;
                             }
                         }
@@ -243,8 +239,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                             Log.error(e);
                         }
                     }
-
-                    loadUserInformation(room, jid);
                 }
             };
             worker.start();
@@ -406,52 +400,5 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
     };
 
-    private void loadUserInformation(final ChatRoom room, final String participantJID) {
-        if (!(room instanceof ChatRoomImpl)) {
-            return;
-        }
-
-        final SwingWorker userLoadingThread = new SwingWorker() {
-            public Object construct() {
-                return SparkManager.getVCardManager().getVCard(participantJID);
-            }
-
-            public void finished() {
-                final VCard vcard = (VCard)get();
-                if (vcard == null) {
-                    // Do nothing.
-                    return;
-                }
-
-                // Add VCard Panel
-                final VCardPanel vcardPanel = new VCardPanel(vcard, participantJID);
-                room.getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-                scrollOnTimer(room);
-            }
-        };
-
-        userLoadingThread.start();
-    }
-
-    private void scrollOnTimer(final ChatRoom room) {
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                return true;
-            }
-
-            public void finished() {
-                room.scrollToBottom();
-            }
-        };
-
-        worker.start();
-    }
 
 }

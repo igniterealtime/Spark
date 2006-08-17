@@ -12,9 +12,9 @@ package org.jivesoftware;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
+import org.jivesoftware.smack.XMPPConnection;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -63,6 +63,7 @@ public final class Spark {
         EnhancedDebuggerWindow.PERSISTED_DEBUGGER = true;
         EnhancedDebuggerWindow.MAX_TABLE_ROWS = 10;
         XMPPConnection.DEBUG_ENABLED = true;
+
 
         String current = System.getProperty("java.library.path");
         String classPath = System.getProperty("java.class.path");

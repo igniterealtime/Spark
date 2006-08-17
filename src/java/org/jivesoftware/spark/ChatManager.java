@@ -36,15 +36,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -98,8 +98,13 @@ public class ChatManager implements MessageEventNotificationListener {
 
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(final Packet packet) {
-                if (customList.contains(StringUtils.parseBareAddress(packet.getFrom()))) {
-                    cancelledNotification(packet.getFrom(), "");
+                try {
+                    if (customList.contains(StringUtils.parseBareAddress(packet.getFrom()))) {
+                        cancelledNotification(packet.getFrom(), "");
+                    }
+                }
+                catch (Exception e) {
+                    Log.error(e);
                 }
             }
         }, new PacketTypeFilter(Message.class));

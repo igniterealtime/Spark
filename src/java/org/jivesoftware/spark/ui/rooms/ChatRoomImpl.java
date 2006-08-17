@@ -24,7 +24,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventRequestListener;
-import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -35,9 +34,13 @@ import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -49,11 +52,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -214,8 +212,11 @@ public class ChatRoomImpl extends ChatRoom {
 
 
         lastActivity = System.currentTimeMillis();
-    }
 
+        // Add VCard Panel
+        final VCardPanel vcardPanel = new VCardPanel(participantJID);
+        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+    }
 
 
     public void closeChatRoom() {
@@ -262,7 +263,7 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public void sendMessage(Message message) {
         lastActivity = System.currentTimeMillis();
-        
+
         // Check to see if the user is online to recieve this message.
         RosterEntry entry = roster.getEntry(participantJID);
         if (presence == null && !offlineSent && entry != null) {

@@ -74,45 +74,12 @@ public final class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    // private TrayIcon trayIcon;
-    // private SystemTray tray;
 
     /**
      * Empty Constructor
      */
     public LoginDialog() {
         localPref = SettingsManager.getLocalPreferences();
-
-        // Remove all Spark Tray issues on startup. This will increase timeouts of spark.
-
-        /*
-        if (Spark.isWindows()) {
-            try {
-                tray = SystemTray.getDefaultSystemTray();
-                trayIcon = new TrayIcon(LaRes.getImageIcon(LaRes.MAIN_IMAGE));
-                trayIcon.setToolTip(Default.getString(Default.APPLICATION_NAME));
-                trayIcon.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (loginDialog != null) {
-                            if (loginDialog.isVisible()) {
-                                loginDialog.setVisible(false);
-                            }
-                            else {
-                                loginDialog.setVisible(true);
-                            }
-                        }
-                    }
-                });
-
-                if (localPref.isStartedHidden() || localPref.isAutoLogin()) {
-                    tray.addTrayIcon(trayIcon);
-                }
-            }
-            catch (Exception e) {
-                Log.error(e);
-            }
-        }
-        */
     }
 
     /**

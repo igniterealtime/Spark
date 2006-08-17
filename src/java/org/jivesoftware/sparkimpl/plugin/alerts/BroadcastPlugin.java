@@ -33,6 +33,7 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.AbstractAction;
@@ -162,25 +163,30 @@ public class BroadcastPlugin implements Plugin, PacketListener {
     public void processPacket(final Packet packet) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final Message message = (Message)packet;
+                try {
+                    final Message message = (Message)packet;
 
-                // Do not handle errors or offline messages
-                final DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
-                if (offlineInformation != null || message.getError() != null) {
-                    return;
-                }
+                    // Do not handle errors or offline messages
+                    final DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+                    if (offlineInformation != null || message.getError() != null) {
+                        return;
+                    }
 
-                boolean broadcast = message.getProperty("broadcast") != null;
+                    boolean broadcast = message.getProperty("broadcast") != null;
 
-                if ((broadcast || (message.getType() == Message.Type.NORMAL) || message.getType() == Message.Type.HEADLINE) && message.getBody() != null) {
-                    showAlert((Message)packet);
-                }
-                else {
-                    String host = SparkManager.getSessionManager().getServerAddress();
-                    String from = packet.getFrom() != null ? packet.getFrom() : "";
-                    if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
+                    if ((broadcast || (message.getType() == Message.Type.NORMAL) || message.getType() == Message.Type.HEADLINE) && message.getBody() != null) {
                         showAlert((Message)packet);
                     }
+                    else {
+                        String host = SparkManager.getSessionManager().getServerAddress();
+                        String from = packet.getFrom() != null ? packet.getFrom() : "";
+                        if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
+                            showAlert((Message)packet);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    Log.error(e);
                 }
             }
         });
