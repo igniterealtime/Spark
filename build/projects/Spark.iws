@@ -14,7 +14,9 @@
     <option name="CHANGE_BEFORE" value="" />
     <option name="CHANGE_AFTER" value="" />
   </component>
-  <component name="CheckinPanelState" />
+  <component name="CheckinPanelState">
+    <Excluded key="C:\spark\build\projects\Spark.iws" />
+  </component>
   <component name="Commander">
     <leftPanel />
     <rightPanel />
@@ -118,62 +120,7 @@
     <option name="myCurrentFavoritesList" value="Spark" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="ChatContainer.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ChatContainer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1084" column="16" selection-start="35520" selection-end="35520" vertical-scroll-proportion="0.49514562">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SparkTab.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/component/tabbedPane/SparkTab.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="32" selection-start="586" selection-end="586" vertical-scroll-proportion="0.33252427">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TabPanel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/component/tabbedPane/TabPanel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="47" selection-start="143" selection-end="143" vertical-scroll-proportion="0.10965435">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChatPreferencePanel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/sparkimpl/preference/chat/ChatPreferencePanel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="114" selection-start="3894" selection-end="3894" vertical-scroll-proportion="0.4975728">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SparkTabbedPane.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/component/tabbedPane/SparkTabbedPane.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="395" column="17" selection-start="11918" selection-end="11918" vertical-scroll-proportion="0.82402915">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChatManager.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ChatManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="422" column="23" selection-start="13960" selection-end="13960" vertical-scroll-proportion="0.4223301">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -212,6 +159,24 @@
       <PATH_ELEMENT>
         <option name="myItemId" value="Spark.ipr" />
         <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Libraries" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewLibrariesNode" />
+      </PATH_ELEMENT>
+    </PATH>
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark.ipr" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
       </PATH_ELEMENT>
     </PATH>
   </component>
@@ -276,7 +241,43 @@
         <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
       </PATH_ELEMENT>
       <PATH_ELEMENT>
-        <option name="myItemId" value="PsiDirectory:C:\code\spark" />
+        <option name="myItemId" value="PsiDirectory:C:\spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="PsiDirectory:C:\spark\src" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+      </PATH_ELEMENT>
+    </PATH>
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark.ipr" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="PsiDirectory:C:\spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+      </PATH_ELEMENT>
+    </PATH>
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark.ipr" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="Spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="PsiDirectory:C:\spark" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="PsiDirectory:C:\spark\build" />
         <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
       </PATH_ELEMENT>
     </PATH>
@@ -285,8 +286,8 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" splitterProportion="0.5">
-      <flattenPackages ProjectPane="false" />
+    <navigator currentView="PackagesPane" splitterProportion="0.5">
+      <flattenPackages ProjectPane="true" />
       <showMembers />
       <showModules />
       <showLibraryContents />
@@ -319,7 +320,7 @@
     <property name="RunManagerConfig.compileBeforeRunning" value="false" />
     <property name="cvs_file_history_flatOrder0" value="0" />
     <property name="cvs_file_history_treeOrder3" value="3" />
-    <property name="last_opened_file_path" value="C:\code\spark\plugins\spelling\build" />
+    <property name="last_opened_file_path" value="C:\spark\src\resources" />
     <property name="cvs_file_history_treeOrder2" value="2" />
     <property name="cvs_file_history_treeWidth3" value="459" />
     <property name="cvs_file_history_flatWidth0" value="460" />
@@ -333,44 +334,6 @@
   <component name="RestoreUpdateTree" />
   <component name="RunManager">
     <activeType name="Application" />
-    <tempConfiguration selected="false" default="false" name="SparkTabbedPane" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <module name="Spark" />
-      <RunnerSettings RunnerId="Run" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="3399" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-    </tempConfiguration>
-    <configuration selected="false" default="true" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <module name="" />
-    </configuration>
-    <configuration selected="false" default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-    </configuration>
     <configuration selected="false" default="true" type="JUnit" factoryName="JUnit">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -387,6 +350,15 @@
         <value defaultName="wholeProject" />
       </option>
     </configuration>
+    <configuration selected="false" default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <module name="" />
+    </configuration>
     <configuration selected="false" default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -394,9 +366,21 @@
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
     </configuration>
+    <configuration selected="false" default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+    </configuration>
     <configuration selected="true" default="false" name="Spark" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.jivesoftware.Spark" />
-      <option name="VM_PARAMETERS" value="-Dswing.aatext=true" />
+      <option name="VM_PARAMETERS" value="-Dswing.aatext=true -XX:TargetSurvivorRatio=1 -Xverify:none -XX:PermSize=20M -Xmx96m -Xms96m" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -409,83 +393,6 @@
         <option name="LOCAL" value="true" />
       </RunnerSettings>
       <ConfigurationWrapper RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-    </configuration>
-    <configuration selected="false" default="false" name="SparkToaster" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.jivesoftware.sparkimpl.plugin.alerts.SparkToaster" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <module name="Spark" />
-      <RunnerSettings RunnerId="Run" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="1238" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-    </configuration>
-    <configuration selected="false" default="false" name="NightMode" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.jivesoftware.Spark" />
-      <option name="VM_PARAMETERS" value="-Dplugin=C:\code\spark\client\plugins\nightmode\plugin.xml" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <module name="nightmode" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="1478" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
-    </configuration>
-    <configuration selected="false" default="false" name="JNIWrapper" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.jivesoftware.Spark" />
-      <option name="VM_PARAMETERS" value="-Dplugin=C:\code\spark\client\plugins\jniwrapper\plugin.xml" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <module name="JNIWrapper" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="3634" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
-    </configuration>
-    <configuration selected="false" default="false" name="Spelling" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.jivesoftware.Spark" />
-      <option name="VM_PARAMETERS" value="-Dplugin=C:\code\spark\client\plugins\spelling\plugin.xml" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <module name="Spelling" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="3635" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
-    </configuration>
-    <configuration selected="false" default="false" name="Fastpath" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="org.jivesoftware.Spark" />
-      <option name="VM_PARAMETERS" value="-Dplugin=C:\code\spark\plugins\fastpath\plugin.xml" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <module name="Fastpath" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="3636" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
       <ConfigurationWrapper RunnerId="Debug" />
     </configuration>
   </component>
@@ -532,26 +439,26 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="995" extended-state="0" />
-    <editor active="true" />
+    <frame x="-4" y="-4" width="1928" height="1178" extended-state="0" />
+    <editor active="false" />
     <layout>
       <window_info id="CVS" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="8" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.3298731" order="7" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.2019544" order="0" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.3194925" order="1" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.21588486" order="0" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.31809524" order="1" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.25" order="1" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.32036614" order="8" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.31904763" order="8" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.3990476" order="6" />
       <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="3" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="8" />
       <window_info id="Favorites" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.32980457" order="3" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.25" order="1" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.26761904" order="2" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.2657143" order="2" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.2496" order="2" />
       <window_info id="File View" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="3" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.37716264" order="4" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.31333333" order="4" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="sliding" type="sliding" visible="false" weight="0.4" order="0" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.27142859" order="8" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.2704762" order="8" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.25" order="2" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="0" />
       <window_info id="EJB" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.25" order="3" />
@@ -581,16 +488,16 @@
     <option name="UPDATE_GROUP_BY_PACKAGES" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="1) Fixed history.&#10;2) Updating gateway support." />
-    <MESSAGE value="Added better support for Gateway icons." />
-    <MESSAGE value="Fixing Fastpath bug with Spark OS." />
-    <MESSAGE value="1) Added Yahoo transport support." />
-    <MESSAGE value="Allow users to add contacts to Shared Groups." />
-    <MESSAGE value="Updating Fastpath UI." />
-    <MESSAGE value="Fixing ChatRoom scroll issue." />
-    <MESSAGE value="Fixed broadcasting issue with HEADLINE." />
-    <MESSAGE value="Update ContactList with subtle actions." />
-    <MESSAGE value="Added Timeout on Chat Rooms." />
+    <MESSAGE value="Adding Debugger back." />
+    <MESSAGE value="Fixed npe in File Transfer." />
+    <MESSAGE value="Made messages waiting rooms not capable of becoming stale." />
+    <MESSAGE value="SPARK-315  &#9; More intelligent Growl support. (right now it gives you a growl notification for every message, whereas other clients tend to only give you notifications on conversations that you are not currently looking at)" />
+    <MESSAGE value="SPARK-208 Need to Fix VM params for 3D" />
+    <MESSAGE value="Fix NPE in ChatRoom" />
+    <MESSAGE value="Adding i18n." />
+    <MESSAGE value="Checking for beta 3." />
+    <MESSAGE value="Small Fastpath Fixes." />
+    <MESSAGE value="Fixed deadlock in file transfer." />
   </component>
   <component name="VssConfiguration">
     <option name="CLIENT_PATH" value="" />
@@ -631,107 +538,107 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/util/StringUtils.java">
+    <entry file="file://C:/code/spark/plugins/fastpath/src/java/com/jivesoftware/fastpath/workspace/search/ChatSearch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="21" selection-start="607" selection-end="611" vertical-scroll-proportion="0.5731707">
+        <state line="82" column="0" selection-start="2682" selection-end="2682" vertical-scroll-proportion="0.40606654">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/SessionManager.java">
+    <entry file="file://C:/code/liveassistant/workgroup/source/com/jivesoftware/smack/workgroup/agent/AgentSession.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="19" selection-start="1755" selection-end="1755" vertical-scroll-proportion="0.08138101">
+        <state line="525" column="0" selection-start="21630" selection-end="21630" vertical-scroll-proportion="0.21624266">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ContactList.java">
+    <entry file="file://C:/code/liveassistant/workgroup/source/com/jivesoftware/smack/workgroup/agent/TranscriptSearchManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="330" column="0" selection-start="12210" selection-end="12210" vertical-scroll-proportion="0.19800748">
+        <state line="88" column="14" selection-start="3468" selection-end="3468" vertical-scroll-proportion="0.6888454">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/SparkManager.java">
+    <entry file="file://C:/code/liveassistant/workgroup/source/com/jivesoftware/smack/workgroup/packet/TranscriptSearch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="171" column="52" selection-start="5584" selection-end="5584" vertical-scroll-proportion="0.21882641">
+        <state line="51" column="47" selection-start="1531" selection-end="1531" vertical-scroll-proportion="0.45107633">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/PluginManager.java">
+    <entry file="jar://$PROJECT_DIR$/../lib/dist/smack.jar!/org/jivesoftware/smack/util/StringUtils.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="52" selection-start="1599" selection-end="1694" vertical-scroll-proportion="0.25305623">
+        <state line="28" column="0" selection-start="1179" selection-end="1179" vertical-scroll-proportion="0.46575344">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/rooms/ChatRoomImpl.java">
+    <entry file="jar://C:/code/spark/plugins/fastpath/build/lib/dist/workgroup.jar!/com/jivesoftware/smack/workgroup/agent/AgentSession.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="582" column="28" selection-start="20487" selection-end="20487" vertical-scroll-proportion="0.82316315">
+        <state line="57" column="0" selection-start="3162" selection-end="3162" vertical-scroll-proportion="0.016881827">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/rooms/GroupChatRoom.java">
+    <entry file="file://C:/code/spark/plugins/fastpath/src/java/com/jivesoftware/fastpath/workspace/panes/QueueItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="509" column="40" selection-start="17242" selection-end="17242" vertical-scroll-proportion="0.23785803">
+        <state line="34" column="13" selection-start="835" selection-end="835" vertical-scroll-proportion="0.01663405">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ChatRoom.java">
+    <entry file="file://C:/code/spark/plugins/fastpath/src/java/com/jivesoftware/fastpath/workspace/panes/QueueActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="454" column="0" selection-start="15832" selection-end="15832" vertical-scroll-proportion="-0.01494396">
+        <state line="53" column="41" selection-start="1444" selection-end="1444" vertical-scroll-proportion="0.01663405">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ContactGroup.java">
+    <entry file="file://C:/code/spark/plugins/fastpath/src/java/com/jivesoftware/fastpath/FastpathUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="194" column="9" selection-start="6426" selection-end="6426" vertical-scroll-proportion="0.4252734">
+        <state line="49" column="24" selection-start="1508" selection-end="1508" vertical-scroll-proportion="0.56751466">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/component/tabbedPane/SparkTabbedPane.java">
+    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ContactItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="395" column="17" selection-start="11918" selection-end="11918" vertical-scroll-proportion="0.82402915">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/sparkimpl/preference/chat/ChatPreferencePanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="114" selection-start="3894" selection-end="3894" vertical-scroll-proportion="0.4975728">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/component/tabbedPane/TabPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="47" selection-start="143" selection-end="143" vertical-scroll-proportion="0.10965435">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/component/tabbedPane/SparkTab.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="32" selection-start="586" selection-end="586" vertical-scroll-proportion="0.33252427">
+        <state line="221" column="63" selection-start="6317" selection-end="6317" vertical-scroll-proportion="0.18297456">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ChatContainer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1084" column="16" selection-start="35520" selection-end="35520" vertical-scroll-proportion="0.49514562">
+        <state line="216" column="19" selection-start="7774" selection-end="7961" vertical-scroll-proportion="0.39921722">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ChatManager.java">
+    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/filetransfer/SparkTransferManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="422" column="23" selection-start="13960" selection-end="13960" vertical-scroll-proportion="0.4223301">
+        <state line="142" column="51" selection-start="5604" selection-end="5604" vertical-scroll-proportion="0.2847358">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/ChatRoom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="313" column="8" selection-start="11318" selection-end="11318" vertical-scroll-proportion="0.4217221">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../src/java/org/jivesoftware/spark/ui/MessageListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="0" selection-start="915" selection-end="915" vertical-scroll-proportion="0.5156556">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="108" column="33" selection-start="4945" selection-end="4945" vertical-scroll-proportion="0.79843444">
           <folding />
         </state>
       </provider>
