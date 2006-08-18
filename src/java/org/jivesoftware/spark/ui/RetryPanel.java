@@ -214,7 +214,7 @@ public class RetryPanel extends JPanel {
 
     private void logout() {
         SparkManager.getMainWindow().setVisible(false);
-        SparkManager.getMainWindow().logout();
+        SparkManager.getMainWindow().logout(false);
     }
 
     /**

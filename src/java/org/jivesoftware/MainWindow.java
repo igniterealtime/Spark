@@ -241,11 +241,11 @@ public final class MainWindow extends JFrame implements ActionListener {
      * Prepares Spark for shutting down by first calling all {@link MainWindowListener}s and
      * setting the Agent to be offline.
      */
-    public void logout() {
+    public void logout(boolean sendStatus) {
         final XMPPConnection con = SparkManager.getConnection();
 
 
-        if (con.isConnected()) {
+        if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
             String status = inputTextDialog.getInput("Status Message", "Let others know your current status or activity.",
                 SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
@@ -348,12 +348,25 @@ public final class MainWindow extends JFrame implements ActionListener {
         ResourceUtils.resButton(logoutMenuItem, "L&og Out");
         logoutMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                logout();
+                logout(false);
             }
         });
 
+        JMenuItem logoutWithStatus = new JMenuItem("Log Out");
+        ResourceUtils.resButton(logoutWithStatus, "Log out with status");
+        logoutWithStatus.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logout(true);
+            }
+        });
+
+
+
+
+
         if (Spark.isWindows()) {
             connectMenu.add(logoutMenuItem);
+            connectMenu.add(logoutWithStatus);
         }
 
         connectMenu.addSeparator();

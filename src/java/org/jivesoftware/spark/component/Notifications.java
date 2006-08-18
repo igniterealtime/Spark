@@ -115,7 +115,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
 
         Action logoutAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
-                SparkManager.getMainWindow().logout();
+                SparkManager.getMainWindow().logout(false);
             }
         };
 
