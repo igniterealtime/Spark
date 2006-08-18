@@ -50,8 +50,21 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import java.awt.AWTException;
 import java.awt.Component;
@@ -74,20 +87,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -151,55 +150,12 @@ public class SparkTransferManager {
 
         // Create the listener
         transferManager.addFileTransferListener(new org.jivesoftware.smackx.filetransfer.FileTransferListener() {
-            public void fileTransferRequest(FileTransferRequest request) {
-
-                // Check if a listener handled this request
-                if (fireTransferListeners(request)) {
-                    return;
-                }
-                String requestor = request.getRequestor();
-                String bareJID = StringUtils.parseBareAddress(requestor);
-
-
-                ContactItem contactItem = contactList.getContactItemByJID(bareJID);
-
-                ChatRoom chatRoom;
-                if (contactItem != null) {
-                    chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getNickname(), contactItem.getNickname());
-                }
-                else {
-                    chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, bareJID, bareJID);
-                }
-
-                TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-                StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
-
-                // The image must first be wrapped in a style
-                Style style = doc.addStyle("StyleName", null);
-
-                final ReceiveMessage receivingMessageUI = new ReceiveMessage();
-                receivingMessageUI.acceptFileTransfer(request);
-
-                chatRoom.addClosingListener(new ChatRoomClosingListener() {
-                    public void closing() {
-                        receivingMessageUI.cancelTransfer();
+            public void fileTransferRequest(final FileTransferRequest request) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        handleTransferRequest(request, contactList);
                     }
                 });
-
-                StyleConstants.setComponent(style, receivingMessageUI);
-
-                // Insert the image at the end of the text
-                try {
-                    doc.insertString(doc.getLength(), "ignored text", style);
-                    doc.insertString(doc.getLength(), "\n", null);
-                }
-                catch (BadLocationException e) {
-                    Log.error(e);
-                }
-
-                chatRoom.scrollToBottom();
-
-                SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
             }
         });
 
@@ -244,6 +200,57 @@ public class SparkTransferManager {
                 downloads.showDownloadsDirectory();
             }
         });
+    }
+
+    private void handleTransferRequest(FileTransferRequest request, ContactList contactList) {
+        // Check if a listener handled this request
+        if (fireTransferListeners(request)) {
+            return;
+        }
+
+        String requestor = request.getRequestor();
+        String bareJID = StringUtils.parseBareAddress(requestor);
+
+
+        ContactItem contactItem = contactList.getContactItemByJID(bareJID);
+
+        ChatRoom chatRoom;
+        if (contactItem != null) {
+            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getNickname(), contactItem.getNickname());
+        }
+        else {
+            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, bareJID, bareJID);
+        }
+
+        TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+
+        // The image must first be wrapped in a style
+        Style style = doc.addStyle("StyleName", null);
+
+        final ReceiveMessage receivingMessageUI = new ReceiveMessage();
+        receivingMessageUI.acceptFileTransfer(request);
+
+        chatRoom.addClosingListener(new ChatRoomClosingListener() {
+            public void closing() {
+                receivingMessageUI.cancelTransfer();
+            }
+        });
+
+        StyleConstants.setComponent(style, receivingMessageUI);
+
+        // Insert the image at the end of the text
+        try {
+            doc.insertString(doc.getLength(), "ignored text", style);
+            doc.insertString(doc.getLength(), "\n", null);
+        }
+        catch (BadLocationException e) {
+            Log.error(e);
+        }
+
+        chatRoom.scrollToBottom();
+
+        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
     }
 
 
