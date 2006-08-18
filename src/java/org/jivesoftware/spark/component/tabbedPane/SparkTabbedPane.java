@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -552,18 +551,13 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         this.activeButtonBold = activeButtonBold;
     }
 
-    public static void main(String args[]) {
-        JFrame f = new JFrame();
-        SparkTabbedPane pane = new SparkTabbedPane(JTabbedPane.BOTTOM);
-        pane.setCloseButtonEnabled(true);
-        pane.setPopupAllowed(true);
-        for (int i = 0; i < 3; i++) {
-            pane.addTab("Hello" + i, SparkRes.getImageIcon(SparkRes.SMALL_AGENT_IMAGE), new JButton("BUTTON" + i));
-        }
 
-
-        f.add(pane);
-        f.pack();
-        f.setVisible(true);
+    /**
+     * Returns the main panel used as the UI container for the card panel.
+     *
+     * @return the UI Container.
+     */
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 }
