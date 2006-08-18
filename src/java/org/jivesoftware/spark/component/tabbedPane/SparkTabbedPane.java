@@ -317,12 +317,9 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void removeComponent(Component comp) {
-        Component[] comps = mainPanel.getComponents();
-        for (int i = 0; i < comps.length; i++) {
-            Component c = comps[i];
-            if (c == comp) {
-
-            }
+        int index = indexOfComponent(comp);
+        if (index != -1) {
+            removeTabAt(index);
         }
     }
 
