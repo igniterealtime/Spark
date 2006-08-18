@@ -353,7 +353,7 @@ public final class MainWindow extends JFrame implements ActionListener {
         });
 
         JMenuItem logoutWithStatus = new JMenuItem("Log Out");
-        ResourceUtils.resButton(logoutWithStatus, "Log out with status");
+        ResourceUtils.resButton(logoutWithStatus, "Log Out with &status");
         logoutWithStatus.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logout(true);
