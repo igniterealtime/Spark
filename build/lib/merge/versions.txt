@@ -1,7 +1,13 @@
-hessian.jar -- hessian-3.0.8.jar
-xpp3.jar -- xpp3-1.1.3.4d_b4_min.jar
-xstream.jar -- xstream-1.1.jar
-looks.jar -- looks-1.3.jar
-
-agent/jniwrap.jar -- jniwrap-2.7.1.jar
-agent/winlaf.jar -- winlaf-0.5.jar
+Name                   | Version
+------------------------------------
+asterisk-im-client.jar | 1.2.0
+jtoaster.jar           | 1.0.4
+commons-code.jar       | 
+commons-httpclient.jar | 
+commons-logging.jar    | 
+jaxen.jar              |
+jniwrap.jar            |
+looks.jar              |
+swingx.jar             |
+systeminfo.jar         | 
+updater.jar            |         

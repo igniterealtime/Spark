@@ -111,15 +111,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/merge/jtoaster-1.0.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/merge/asterisk-im-client.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -202,6 +193,15 @@
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../src/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/merge/jtoaster.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
