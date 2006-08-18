@@ -198,7 +198,7 @@ public final class Spark {
 
         installBaseUIProperties();
 
-        com.install4j.api.launcher.StartupNotification.registerStartupListener(new SparkStartupListener());
+        //com.install4j.api.launcher.StartupNotification.registerStartupListener(new SparkStartupListener());
     }
 
     /**
