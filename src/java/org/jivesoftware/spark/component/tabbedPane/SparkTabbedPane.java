@@ -152,7 +152,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         tabs.add(tab);
         // Add Component to main panel
-        mainPanel.add(tab.getActualText(), component);
+        mainPanel.add(Integer.toString(component.hashCode()), component);
         tab.addMouseListener(this);
 
         // Add Close Button
@@ -401,7 +401,8 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     public void setSelectedTab(SparkTab tab) {
         CardLayout cl = (CardLayout)mainPanel.getLayout();
-        cl.show(mainPanel, tab.getActualText());
+        Component comp = getComponentInTab(tab);
+        cl.show(mainPanel, Integer.toString(comp.hashCode()));
         tab.setBoldWhenActive(isActiveButtonBold());
 
         deselectAllTabsExcept(tab);
