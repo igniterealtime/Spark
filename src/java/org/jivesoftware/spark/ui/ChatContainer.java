@@ -35,20 +35,6 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -70,6 +56,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -707,24 +707,21 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         // Confirm end session
         boolean isGroupChat = room.getChatType() == Message.Type.GROUP_CHAT;
-        String message = "Would you like to end this session?";
-        if (true) {
-            room.closeChatRoom();
-            return;
-        }
-        else {
-            if (!room.isActive()) {
+        if (isGroupChat) {
+            String message = "Would you like to end this session?";
+            final int ok = JOptionPane.showConfirmDialog(chatFrame, message,
+                "Confirmation", JOptionPane.YES_NO_OPTION);
+            if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
             }
         }
-
-        final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), message,
-                "Confirmation", JOptionPane.YES_NO_OPTION);
-        if (ok == JOptionPane.OK_OPTION) {
+        else {
             room.closeChatRoom();
             return;
         }
+
+
     }
 
     public String toString() {
