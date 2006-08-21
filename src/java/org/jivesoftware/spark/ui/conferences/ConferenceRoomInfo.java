@@ -77,6 +77,8 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     private PacketListener listener = null;
 
 
+    private boolean allowNicknameChange = true;
+
     /**
      * Creates a new RoomInfo instance using the specified ChatRoom.  The RoomInfo
      * component is responsible for monitoring all activity in the ChatRoom.
@@ -522,7 +524,10 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
             changeNicknameAction.putValue(Action.NAME, "Change Nickname");
             changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
-            popup.add(changeNicknameAction);
+
+            if (allowNicknameChange) {
+                popup.add(changeNicknameAction);
+            }
         }
 
         Action chatAction = new AbstractAction() {
@@ -682,6 +687,10 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
 
         popup.show(list, evt.getX(), evt.getY());
+    }
+
+    public void setNicknameChangeAllowed(boolean allowed) {
+        allowNicknameChange = allowed;
     }
 }
 
