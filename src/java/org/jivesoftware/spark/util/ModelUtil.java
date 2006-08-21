@@ -260,6 +260,11 @@ public final class ModelUtil {
         long numMilliseconds = diff;
 
         StringBuffer buf = new StringBuffer();
+
+        if(numDays > 0){
+            buf.append(numDays + " d, ");
+        }
+
         if (numHours > 0) {
             buf.append(numHours + " " + HOURS + ", ");
         }
