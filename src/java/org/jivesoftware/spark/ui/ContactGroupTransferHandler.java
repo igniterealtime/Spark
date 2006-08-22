@@ -235,7 +235,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
                 RosterGroup groupFound = null;
 
-                for(RosterGroup group : roster.getGroups()){
+                for (RosterGroup group : roster.getGroups()) {
                     if (group.getName().equals(contactGroup.getGroupName())) {
                         try {
                             groupFound = group;
@@ -243,6 +243,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                         }
                         catch (XMPPException e1) {
                             Log.error(e1);
+                            return false;
                         }
                     }
                 }
@@ -257,12 +258,14 @@ public class ContactGroupTransferHandler extends TransferHandler {
                         Log.error(e);
                     }
                 }
-                return "ok";
+                return true;
             }
 
             public void finished() {
-                // Now try and remove the group from the old one.
-                removeContactItem(oldGroup, item);
+                if ((Boolean)get()) {
+                    // Now try and remove the group from the old one.
+                    removeContactItem(oldGroup, item);
+                }
             }
 
         };
@@ -288,7 +291,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
         RosterGroup rosterGroup = null;
 
-        for(RosterGroup group : roster.getGroups()){
+        for (RosterGroup group : roster.getGroups()) {
             if (group.getName().equals(contactGroup.getGroupName())) {
                 try {
                     rosterGroup = group;
