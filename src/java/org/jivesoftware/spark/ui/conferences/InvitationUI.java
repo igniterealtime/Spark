@@ -17,20 +17,18 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.WrappedLabel;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import java.awt.FlowLayout;
+import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,10 +64,10 @@ public class InvitationUI extends JPanel implements ActionListener {
         final JLabel dateLabel = new JLabel();
         final JLabel dateLabelValue = new JLabel();
 
-        add(description, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 2, 5), 0, 0));
-        add(titleLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+        add(description, new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 2, 5), 0, 0));
+        add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
         add(dateLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
-        add(dateLabelValue, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+        add(dateLabelValue, new GridBagConstraints(1, 2, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
 
 
         titleLabel.setFont(new Font("dialog", Font.BOLD, 11));
@@ -89,16 +87,15 @@ public class InvitationUI extends JPanel implements ActionListener {
         joinButton = new RolloverButton("Join", null);
         declineButton = new RolloverButton("Decline", null);
 
-        // Add Button Panel
-        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-        buttonPanel.add(joinButton);
-        buttonPanel.add(declineButton);
-        add(buttonPanel, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        add(joinButton, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
+        add(declineButton, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
 
 
         joinButton.addActionListener(this);
         declineButton.addActionListener(this);
+
+        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
+        setBackground(Color.white);
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
@@ -114,10 +111,5 @@ public class InvitationUI extends JPanel implements ActionListener {
         SparkManager.getWorkspace().removeAlert(this);
     }
 
-    public void paintComponent(Graphics g) {
-        double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-        double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
-        AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        ((Graphics2D)g).drawImage(backgroundImage, xform, this);
-    }
+
 }
