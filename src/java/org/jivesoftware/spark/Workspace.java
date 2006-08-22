@@ -21,6 +21,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
@@ -41,9 +43,11 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -81,11 +85,13 @@ public class Workspace extends JPanel implements PacketListener {
     private static final Object LOCK = new Object();
     private List offlineMessages = new ArrayList();
 
-
     private JPanel cardPanel;
     private CardLayout cardLayout;
 
     final public static String WORKSPACE_PANE = "WORKSPACE_PANE";
+
+    private final CollapsiblePane alerts = new CollapsiblePane();
+    private final JPanel alertPanel = new JPanel();
 
 
     /**
@@ -149,10 +155,18 @@ public class Workspace extends JPanel implements PacketListener {
         cardPanel.setOpaque(false);
         cardPanel.add(WORKSPACE_PANE, this);
 
+        // Setup alert Panel
+        alertPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
+        alertPanel.setBackground((Color)UIManager.get("List.background"));
+
+        alerts.setContentPane(alertPanel);
+        alerts.getTitlePane().setVisible(false);
+
         // Build default workspace
         this.setLayout(new GridBagLayout());
         add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
         add(statusBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
+        add(alerts, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
 
 
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
@@ -164,7 +178,6 @@ public class Workspace extends JPanel implements PacketListener {
         });
 
         // Set background
-        Color menuBarColor = new Color(235, 233, 237);
         setBackground(Color.white);
     }
 
@@ -397,6 +410,34 @@ public class Workspace extends JPanel implements PacketListener {
         chatRoom.getChatInputEditor().requestFocusInWindow();
     }
 
+    public void addAlert(Component comp) {
+        alertPanel.add(comp);
+
+        int comps = alertPanel.getComponentCount();
+        alerts.getTitlePane().setVisible(true);
+        alerts.setTitle("Alerts (" + comps + ")");
+
+        alertPanel.invalidate();
+        alertPanel.validate();
+        alertPanel.repaint();
+    }
+
+    public void removeAlert(Component comp) {
+        alertPanel.remove(comp);
+
+        int comps = alertPanel.getComponentCount();
+        if (comps == 0) {
+            alerts.getTitlePane().setVisible(false);
+        }
+        else {
+            alerts.setTitle("Alerts (" + comps + ")");
+        }
+
+        invalidate();
+        validate();
+        repaint();
+    }
+
 
     /**
      * Returns the Workspace TabbedPane. If you wish to add your
@@ -424,5 +465,9 @@ public class Workspace extends JPanel implements PacketListener {
 
     public JPanel getCardPanel() {
         return cardPanel;
+    }
+
+    public JPanel getAlertPanel() {
+        return alertPanel;
     }
 }

@@ -115,8 +115,11 @@ public class Conferences {
                         }
 
                         // If no listeners handled the invitation, default to generic invite.
-                        final InvitationDialog inviteDialog = new InvitationDialog();
-                        inviteDialog.invitationReceived(conn, room, inviter, reason, password, message);
+                        final InvitationUI inviteDialog = new InvitationUI(conn, room, inviter, reason, password, message);
+                        SparkManager.getWorkspace().addAlert(inviteDialog);
+
+                        // Alert if necessary
+                        SparkManager.getAlertManager().flashWindow(SparkManager.getMainWindow());
                     }
                 });
 

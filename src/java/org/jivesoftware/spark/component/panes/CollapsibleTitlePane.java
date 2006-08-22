@@ -110,6 +110,15 @@ public class CollapsibleTitlePane extends JPanel {
 
     }
 
+    public void setStartColor(Color color) {
+        // Initialize color
+        startColor = color;
+    }
+
+    public void setEndColor(Color color) {
+        endColor = color;
+    }
+
     public void setIcon(Icon icon) {
         titleLabel.setIcon(icon);
     }
