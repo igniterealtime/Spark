@@ -442,7 +442,7 @@ public class ConferenceUtils {
     public static GroupChatRoom enterRoomOnSameThread(final String roomName, String roomJID, String password) {
         ChatManager chatManager = SparkManager.getChatManager();
 
-        final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         final String nickname = pref.getNickname().trim();
@@ -459,6 +459,9 @@ public class ConferenceUtils {
         }
         catch (ChatRoomNotFoundException e) {
         }
+
+        final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+
 
         final GroupChatRoom room = new GroupChatRoom(groupChat);
         room.setTabTitle(roomName);

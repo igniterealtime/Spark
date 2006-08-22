@@ -251,7 +251,7 @@ public class UserManager {
             return item.getNickname();
         }
 
-        return null;
+        return jid;
     }
 
     /**
