@@ -123,27 +123,11 @@ public class ChatRoomImpl extends ChatRoom {
 
         roster = SparkManager.getConnection().getRoster();
         presence = roster.getPresence(participantJID);
-        StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
+
 
         RosterEntry entry = roster.getEntry(participantJID);
 
-        if (statusItem == null) {
-            tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
-        }
-        else {
-            String status = presence.getStatus();
-            if (status != null && status.indexOf("phone") != -1) {
-                tabIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
-            }
-            else {
-                tabIcon = statusItem.getIcon();
-            }
-        }
-
-        Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(presence);
-        if (icon != null) {
-            tabIcon = icon;
-        }
+        tabIcon = SparkManager.getUserManager().getIconFromPresence(presence);
 
         PacketFilter filter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
         SparkManager.getConnection().addPacketListener(new PacketListener() {
@@ -526,6 +510,11 @@ public class ChatRoomImpl extends ChatRoom {
         }
     }
 
+    /**
+     * Show the typing notification.
+     *
+     * @param typing true if the typing notification should show, otherwise hide it.
+     */
     public void showTyping(boolean typing) {
         if (typing) {
             String isTypingText = participantNickname + " is typing a message...";
@@ -540,8 +529,22 @@ public class ChatRoomImpl extends ChatRoom {
 
     }
 
+    /**
+     * The last time this chat room sent or receieved a message.
+     *
+     * @return the last time this chat room sent or receieved a message.
+     */
     public long getLastActivity() {
         return lastActivity;
+    }
+
+    /**
+     * Returns the current presence of the client this room was created for.
+     *
+     * @return the presence
+     */
+    public Presence getPresence() {
+        return presence;
     }
 
 

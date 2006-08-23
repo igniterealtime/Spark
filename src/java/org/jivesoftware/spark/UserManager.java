@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark;
 
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.Occupant;
@@ -18,9 +19,12 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+
+import javax.swing.Icon;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -286,5 +290,36 @@ public class UserManager {
 
         return null;
 
+    }
+
+    /**
+     * Returns the Icon associated with the presence.
+     *
+     * @param presence the presence.
+     * @return the icon.
+     */
+    public Icon getIconFromPresence(Presence presence) {
+        StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
+        Icon tabIcon = null;
+
+        if (statusItem == null) {
+            tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
+        }
+        else {
+            String status = presence.getStatus();
+            if (status != null && status.indexOf("phone") != -1) {
+                tabIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
+            }
+            else {
+                tabIcon = statusItem.getIcon();
+            }
+        }
+
+        Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(presence);
+        if (icon != null) {
+            tabIcon = icon;
+        }
+
+        return tabIcon;
     }
 }
