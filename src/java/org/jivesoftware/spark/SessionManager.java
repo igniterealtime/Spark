@@ -293,6 +293,9 @@ public final class SessionManager implements ConnectionListener {
                 if (localPref.isIdleOn()) {
                     delay = localPref.getIdleTime() * 60000;
                 }
+                else {
+                    return;
+                }
 
                 long idleTime = SystemInfo.getSessionIdleTime();
                 boolean isLocked = SystemInfo.isSessionLocked();
