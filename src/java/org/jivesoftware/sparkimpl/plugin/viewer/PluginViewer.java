@@ -397,6 +397,7 @@ public class PluginViewer extends JPanel implements Plugin {
                 try {
                     String version = plugin.selectSingleNode("minSparkVersion").getText();
                     if (version.compareTo(JiveInfo.getVersion()) < 1) {
+                        Log.error("Unable to load plugin " + name + " due to min version incompatibility.");
                         continue;
                     }
                 }
