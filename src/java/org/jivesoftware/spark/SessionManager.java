@@ -84,17 +84,13 @@ public final class SessionManager implements ConnectionListener {
         // create workgroup session
         personalDataManager = new PrivateDataManager(getConnection());
 
-        LocalPreferences localPref = SettingsManager.getLocalPreferences();
-        // Start Idle listener
-        if (localPref.isIdleOn()) {
-            int delay = localPref.getIdleTime() * 60000;
-            if (Spark.isWindows()) {
-                try {
-                    setIdleListener(delay);
-                }
-                catch (Exception e) {
-                    Log.error(e);
-                }
+
+        if (Spark.isWindows()) {
+            try {
+                setIdleListener();
+            }
+            catch (Exception e) {
+                Log.error(e);
             }
         }
 
@@ -285,18 +281,22 @@ public final class SessionManager implements ConnectionListener {
 
     /**
      * Sets the Idle Timeout for this instance of Spark.
-     *
-     * @param mill the timeout value in milliseconds.
      */
-    private void setIdleListener(final long mill) throws Exception {
+    private void setIdleListener() throws Exception {
 
         final Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
+                LocalPreferences localPref = SettingsManager.getLocalPreferences();
+                int delay = 0;
+                if (localPref.isIdleOn()) {
+                    delay = localPref.getIdleTime() * 60000;
+                }
+
                 long idleTime = SystemInfo.getSessionIdleTime();
                 boolean isLocked = SystemInfo.isSessionLocked();
-                if (idleTime > mill) {
+                if (idleTime > delay) {
                     try {
                         // Handle if spark is not connected to the server.
                         if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
