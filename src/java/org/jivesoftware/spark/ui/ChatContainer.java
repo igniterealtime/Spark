@@ -994,8 +994,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (pref.getWindowTakesFocus()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
-            int tabLocation = indexOfComponent(room);
-            setSelectedIndex(tabLocation);
         }
 
         if (pref.getShowToasterPopup()) {
