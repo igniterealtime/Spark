@@ -32,7 +32,6 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
-import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
@@ -248,13 +247,6 @@ public class ChatRoomImpl extends ChatRoom {
     public void sendMessage(Message message) {
         lastActivity = System.currentTimeMillis();
 
-        // Check to see if the user is online to recieve this message.
-        RosterEntry entry = roster.getEntry(participantJID);
-        if (presence == null && !offlineSent && entry != null) {
-            getTranscriptWindow().insertErrorMessage("The user is offline and will receive the message on their next login.");
-            offlineSent = true;
-        }
-
         try {
             getTranscriptWindow().insertMessage(getNickname(), message);
             getChatInputEditor().selectAll();
@@ -377,7 +369,22 @@ public class ChatRoomImpl extends ChatRoom {
                     // Do something with the incoming packet here.
                     final Message message = (Message)packet;
                     if (message.getError() != null) {
+                        if (message.getError().getCode() == 404) {
+                            // Check to see if the user is online to recieve this message.
+                            RosterEntry entry = roster.getEntry(participantJID);
+                            if (presence == null && !offlineSent && entry != null) {
+                                getTranscriptWindow().insertErrorMessage("The user will be unable to receive offline messages.");
+                                offlineSent = true;
+                            }
+                        }
                         return;
+                    }
+
+                    // Check to see if the user is online to recieve this message.
+                    RosterEntry entry = roster.getEntry(participantJID);
+                    if (presence == null && !offlineSent && entry != null) {
+                        getTranscriptWindow().insertErrorMessage("The user is offline and will receive the message on their next login.");
+                        offlineSent = true;
                     }
 
                     if (threadID == null) {
