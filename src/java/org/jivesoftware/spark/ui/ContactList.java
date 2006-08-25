@@ -55,12 +55,10 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -530,6 +528,28 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param addresses
      */
     public void entriesUpdated(final Collection addresses) {
+        handleEntriesUpdated(addresses);
+    }
+
+    /**
+     * Called when users are removed from the roster.
+     *
+     * @param addresses the addresses removed from the roster.
+     */
+    public void entriesDeleted(final Collection addresses) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                Iterator jids = addresses.iterator();
+                while (jids.hasNext()) {
+                    String jid = (String)jids.next();
+                    removeContactItem(jid);
+                }
+            }
+        });
+
+    }
+
+    private synchronized void handleEntriesUpdated(final Collection addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Roster roster = SparkManager.getConnection().getRoster();
@@ -565,8 +585,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             }
                             else {
                                 ContactGroup contactGroup = getContactGroup(group.getName());
-                                ContactItem item = contactGroup.getContactItemByJID(jid);
-
+                                ContactItem item = offlineGroup.getContactItemByJID(jid);
+                                if (item == null) {
+                                    item = contactGroup.getContactItemByJID(jid);
+                                }
                                 // Check to see if this entry is new to a pre-existing group.
                                 if (item == null) {
                                     String name = rosterEntry.getName();
@@ -579,6 +601,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     if (presence != null) {
                                         contactGroup.addContactItem(item);
                                         contactGroup.fireContactGroupUpdated();
+                                    }
+                                    else {
+                                        offlineGroup.addContactItem(item);
+                                        offlineGroup.fireContactGroupUpdated();
                                     }
                                 }
 
@@ -594,7 +620,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                         // Now check to see if groups have been modified or removed. This is used
                         // to check if Contact Groups have been renamed or removed.
-                        Set groupSet = new HashSet();
+                        final Set<String> groupSet = new HashSet<String>();
                         jids = addresses.iterator();
                         while (jids.hasNext()) {
                             jid = (String)jids.next();
@@ -640,25 +666,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 }
             }
         });
-
-    }
-
-    /**
-     * Called when users are removed from the roster.
-     *
-     * @param addresses the addresses removed from the roster.
-     */
-    public void entriesDeleted(final Collection addresses) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Iterator jids = addresses.iterator();
-                while (jids.hasNext()) {
-                    String jid = (String)jids.next();
-                    removeContactItem(jid);
-                }
-            }
-        });
-
     }
 
     public void presenceChanged(final String user) {
@@ -1721,26 +1728,24 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         String message = jid + " would like to see your online presence and add you to their roster. Do you accept?";
 
-        final JFrame dialog = new JFrame("Subscription Request");
-        dialog.setIconImage(SparkManager.getMainWindow().getIconImage());
-        JPanel layoutPanel = new JPanel();
+        final JPanel layoutPanel = new JPanel();
+        layoutPanel.setBackground(Color.white);
         layoutPanel.setLayout(new GridBagLayout());
 
         WrappedLabel messageLabel = new WrappedLabel();
         messageLabel.setText(message);
         layoutPanel.add(messageLabel, new GridBagConstraints(0, 0, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        JButton acceptButton = new JButton("Accept");
-        JButton viewInfoButton = new JButton("Profile");
-        JButton denyButton = new JButton("Deny");
+        RolloverButton acceptButton = new RolloverButton("Accept");
+        RolloverButton viewInfoButton = new RolloverButton("Profile");
+        RolloverButton denyButton = new RolloverButton("Deny");
         layoutPanel.add(acceptButton, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         layoutPanel.add(viewInfoButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         layoutPanel.add(denyButton, new GridBagConstraints(4, 1, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         acceptButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-
+                SparkManager.getWorkspace().removeAlert(layoutPanel);
                 Presence response = new Presence(Presence.Type.subscribed);
                 response.setTo(jid);
 
@@ -1752,16 +1757,18 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     rosterDialog.setDefaultJID(jid);
                     rosterDialog.showRosterDialog();
                 }
+
             }
         });
 
         denyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                SparkManager.getWorkspace().removeAlert(layoutPanel);
+
                 // Send subscribed
                 Presence response = new Presence(Presence.Type.unsubscribe);
                 response.setTo(jid);
                 SparkManager.getConnection().sendPacket(response);
-                dialog.dispose();
             }
         });
 
@@ -1772,12 +1779,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         });
 
         // show dialog
-        dialog.getContentPane().add(layoutPanel);
-        dialog.pack();
-        dialog.setSize(450, 125);
-        dialog.setLocationRelativeTo(SparkManager.getMainWindow());
-        SparkManager.getChatManager().getChatContainer().blinkFrameIfNecessary(dialog);
-
+        SparkManager.getWorkspace().addAlert(layoutPanel);
+        SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
     }
 
     private void searchContacts(String contact) {

@@ -29,6 +29,11 @@ public class RolloverButton extends JButton {
         decorate();
     }
 
+    public RolloverButton(String text) {
+        super(text);
+        decorate();
+    }
+
     /**
      * Create a new RolloverButton.
      *
