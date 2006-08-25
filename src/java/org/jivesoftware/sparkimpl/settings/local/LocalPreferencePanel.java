@@ -10,20 +10,21 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 /**
@@ -53,12 +54,12 @@ public class LocalPreferencePanel extends JPanel {
         setLayout(new VerticalFlowLayout());
 
         // Load local localPref
-        LocalPreferences localPref = SettingsManager.getLocalPreferences();
-        portField.setText(Integer.toString(localPref.getXmppPort()));
-        timeOutField.setText(Integer.toString(localPref.getTimeOut()));
-        autoLoginBox.setSelected(localPref.isAutoLogin());
-        savePasswordBox.setSelected(localPref.isSavePassword());
-        startMinimizedBox.setSelected(localPref.isStartedHidden());
+        LocalPreferences preferences = SettingsManager.getLocalPreferences();
+        portField.setText(Integer.toString(preferences.getXmppPort()));
+        timeOutField.setText(Integer.toString(preferences.getTimeOut()));
+        autoLoginBox.setSelected(preferences.isAutoLogin());
+        savePasswordBox.setSelected(preferences.isSavePassword());
+        startMinimizedBox.setSelected(preferences.isStartedHidden());
 
         savePasswordBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -83,8 +84,8 @@ public class LocalPreferencePanel extends JPanel {
             }
         });
 
-        idleBox.setSelected(localPref.isIdleOn());
-        idleField.setText(Integer.toString(localPref.getIdleTime()));
+        idleBox.setSelected(preferences.isIdleOn());
+        idleField.setText(Integer.toString(preferences.getIdleTime()));
 
         final JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
@@ -110,17 +111,18 @@ public class LocalPreferencePanel extends JPanel {
         inputPanel.add(savePasswordBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
         inputPanel.add(autoLoginBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 
-        /*
+
         if (Spark.isWindows()) {
             inputPanel.add(launchOnStartupBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-            checkRegistry();
             launchOnStartupBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    launchOnStartup(launchOnStartupBox.isSelected());
+                    setStartOnStartup(launchOnStartupBox.isSelected());
                 }
             });
+
+            launchOnStartupBox.setSelected(preferences.getStartOnStartup());
         }
-        */
+
 
         inputPanel.add(startMinimizedBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
         inputPanel.add(new JLabel(), new GridBagConstraints(0, 8, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 50, 0));
@@ -244,6 +246,14 @@ public class LocalPreferencePanel extends JPanel {
 
     public boolean startInSystemTray() {
         return startMinimizedBox.isSelected();
+    }
+
+    public boolean startOnStartup() {
+        return launchOnStartupBox.isSelected();
+    }
+
+    public void setStartOnStartup(boolean startup) {
+        launchOnStartupBox.setSelected(startup);
     }
 
     /*

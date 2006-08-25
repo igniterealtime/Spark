@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -25,6 +27,8 @@ import java.util.Properties;
  */
 public class SettingsManager {
     private static LocalPreferences localPreferences;
+
+    private static List<PreferenceListener> listeners = new ArrayList<PreferenceListener>();
 
     private SettingsManager() {
     }
@@ -57,11 +61,13 @@ public class SettingsManager {
         final Properties props = localPreferences.getProperties();
 
         try {
-            props.store(new FileOutputStream(getSettingsFile()), "Saving Spark Settings");
+            props.store(new FileOutputStream(getSettingsFile()), "Spark Settings");
         }
         catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
+
+        fireListeners(localPreferences);
     }
 
     /**
@@ -98,5 +104,19 @@ public class SettingsManager {
         }
 
         return new LocalPreferences(props);
+    }
+
+    public static void addPreferenceListener(PreferenceListener listener) {
+        listeners.add(listener);
+    }
+
+    public static void removePreferenceListener(PreferenceListener listener) {
+        listeners.remove(listener);
+    }
+
+    private static void fireListeners(LocalPreferences pref) {
+        for (PreferenceListener listener : listeners) {
+            listener.preferencesChanged(pref);
+        }
     }
 }

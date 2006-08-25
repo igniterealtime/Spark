@@ -439,6 +439,14 @@ public class LocalPreferences {
         return getBoolean("windowTakesFocus", false);
     }
 
+    public void setStartOnStartup(boolean startup) {
+        setBoolean("startOnStartup", startup);
+    }
+
+    public boolean getStartOnStartup() {
+        return getBoolean("startOnStartup", false);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
@@ -446,4 +454,5 @@ public class LocalPreferences {
     private void setBoolean(String property, boolean value) {
         props.setProperty(property, Boolean.toString(value));
     }
+
 }
