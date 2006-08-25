@@ -255,41 +255,4 @@ public class LocalPreferencePanel extends JPanel {
     public void setStartOnStartup(boolean startup) {
         launchOnStartupBox.setSelected(startup);
     }
-
-    /*
-    private void checkRegistry() {
-        try {
-            RegistryKeyValues values = RegistryKey.CURRENT_USER.openSubKey("Software").openSubKey("Microsoft").openSubKey("Windows").openSubKey("CurrentVersion").openSubKey("Run").values();
-            for (Iterator iterator = values.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry)iterator.next();
-                String key = (String)entry.getKey();
-                if (key.equals("Spark")) {
-                    launchOnStartupBox.setSelected(true);
-                }
-            }
-        }
-        catch (Exception e) {
-            Log.error("Unable to retrieve registry settings.", e);
-        }
-    }
-
-    private void launchOnStartup(boolean launch) {
-        try {
-            if (launch) {
-                // Add to Registery
-                RegistryKeyValues values = RegistryKey.CURRENT_USER.openSubKey("Software").openSubKey("Microsoft").openSubKey("Windows").openSubKey("CurrentVersion").openSubKey("Run", true).values();
-                File starter = new File(Spark.getBinDirectory().getParentFile(), "Spark.exe");
-                values.put("Spark", starter.getAbsolutePath());
-            }
-            else {
-                // Add to Registery
-                RegistryKey key = RegistryKey.CURRENT_USER.openSubKey("Software").openSubKey("Microsoft").openSubKey("Windows").openSubKey("CurrentVersion").openSubKey("Run", true);
-                key.values().remove("Spark");
-            }
-        }
-        catch (Exception e) {
-            Log.error("Unable to retrieve registry settings.", e);
-        }
-    }
-    */
 }
