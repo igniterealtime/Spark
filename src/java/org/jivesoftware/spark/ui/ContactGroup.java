@@ -15,6 +15,7 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -385,10 +386,17 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     public void mouseExited(MouseEvent e) {
         window.setVisible(false);
 
-        int loc = list.locationToIndex(e.getPoint());
+        Object o = null;
+        try {
+            int loc = list.locationToIndex(e.getPoint());
 
-        Object o = model.getElementAt(loc);
-        if (!(o instanceof ContactItem)) {
+            o = model.getElementAt(loc);
+            if (!(o instanceof ContactItem)) {
+                return;
+            }
+        }
+        catch (Exception e1) {
+            Log.error(e1);
             return;
         }
 

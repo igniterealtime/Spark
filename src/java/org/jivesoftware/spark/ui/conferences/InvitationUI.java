@@ -64,31 +64,46 @@ public class InvitationUI extends JPanel implements ActionListener {
         final JLabel dateLabel = new JLabel();
         final JLabel dateLabelValue = new JLabel();
 
-        add(description, new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 2, 5), 0, 0));
-        add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
-        add(dateLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
-        add(dateLabelValue, new GridBagConstraints(1, 2, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+        final JLabel inviterLabel = new JLabel("From:");
 
+        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(inviter);
+        final JLabel inviterValueLabel = new JLabel(nickname);
+
+
+        add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+
+        add(description, new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 2, 5), 0, 0));
+
+        add(inviterLabel, new GridBagConstraints(0, 2, 4, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+        add(inviterValueLabel, new GridBagConstraints(1, 2, 4, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+
+        add(dateLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+        add(dateLabelValue, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
+
+
+        inviterLabel.setFont(new Font("dialog", Font.BOLD, 11));
+        inviterValueLabel.setFont(new Font("dialog", Font.PLAIN, 11));
 
         titleLabel.setFont(new Font("dialog", Font.BOLD, 11));
-        description.setFont(new Font("dialog", 0, 10));
+        description.setFont(new Font("dialog", 0, 11));
 
-        titleLabel.setText("Conference Invitation from " + inviter);
+        titleLabel.setText("Conference Invitation");
         description.setText(reason);
 
         // Set Date Label
         dateLabel.setFont(new Font("dialog", Font.BOLD, 11));
-        dateLabel.setText("Received:");
+        dateLabel.setText("Date:");
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
+        dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 11));
 
         // Add accept and reject buttons
         joinButton = new RolloverButton("Join", null);
         declineButton = new RolloverButton("Decline", null);
 
-        add(joinButton, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
-        add(declineButton, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
+        add(joinButton, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
+        add(declineButton, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
 
 
         joinButton.addActionListener(this);
