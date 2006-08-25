@@ -119,7 +119,7 @@ public class Conferences {
                         SparkManager.getWorkspace().addAlert(inviteDialog);
 
                         // Alert if necessary
-                        SparkManager.getAlertManager().flashWindow(SparkManager.getMainWindow());
+                        SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
                     }
                 });
 
