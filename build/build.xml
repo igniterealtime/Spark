@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Spark" default="jar" basedir=".">
 
+
     <!-- Optional add this file to override any of the properties below -->
     <property file="${basedir}/build.properties"/>
     <property name="version.major" value="2"/>
@@ -47,6 +48,18 @@
     <property name="mac.build.dir" value="${target}/spark_${version.underscore}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/spark_${version.underscore}.dmg"/>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib.dir}/ant-contrib.jar"/>
+        </classpath>
+    </taskdef>
+
+    <taskdef name="pack200" classname="com.sun.tools.apache.ant.pack200.Pack200Task">
+        <classpath>
+            <pathelement location="${lib.dir}/pack200task.jar"/>
+        </classpath>
+    </taskdef>
 
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
@@ -185,6 +198,35 @@
         <!--Put everything in ${classes} into the MyProject-${DSTAMP}.jar file-->
         <tstamp/>
         <jar jarfile="${targetlib}/spark.jar" basedir="${classes}"/>
+        <!--
+         <for param="jar">
+            <path>
+                <fileset dir="${targetlib}" includes="*.jar" />
+            </path>
+            <sequential>
+                <delete file="@{jar}.pack" />
+                <pack200 src="@{jar}"
+                    destfile="@{jar}.pack"
+                    gzipoutput="false"
+                />
+                <delete file="@{jar}" />
+            </sequential>
+        </for>
+
+         <for param="jar">
+            <path>
+                <fileset dir="${commercial.plugin.dir}" includes="*.jar" />
+            </path>
+            <sequential>
+                <delete file="@{jar}.pack" />
+                <pack200 src="@{jar}"
+                    destfile="@{jar}.pack"
+                    gzipoutput="false"
+                />
+                <delete file="@{jar}" />
+            </sequential>
+        </for>
+        -->
     </target>
 
     <!-- javadocs =================================================================================== -->

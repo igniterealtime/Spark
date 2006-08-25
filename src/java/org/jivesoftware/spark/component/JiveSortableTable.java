@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.component;
 
-import org.jdesktop.swingx.JXTable;
 import org.jivesoftware.spark.util.GraphicUtils;
 
 import javax.swing.BorderFactory;
