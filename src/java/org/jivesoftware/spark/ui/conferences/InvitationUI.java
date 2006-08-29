@@ -9,13 +9,19 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.WrappedLabel;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -45,7 +51,7 @@ public class InvitationUI extends JPanel implements ActionListener {
     private String inviter;
 
     private Image backgroundImage;
-
+    private GroupChatRoom room = null;
 
     public InvitationUI(XMPPConnection conn, final String roomName, final String inviter, String reason, final String password, Message message) {
         this.roomName = roomName;
@@ -81,49 +87,112 @@ public class InvitationUI extends JPanel implements ActionListener {
         add(dateLabelValue, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
 
 
-        inviterLabel.setFont(new Font("dialog", Font.BOLD, 11));
-        inviterValueLabel.setFont(new Font("dialog", Font.PLAIN, 11));
+        inviterLabel.setFont(new Font("dialog", Font.BOLD, 12));
+        inviterValueLabel.setFont(new Font("dialog", Font.PLAIN, 12));
 
-        titleLabel.setFont(new Font("dialog", Font.BOLD, 11));
-        description.setFont(new Font("dialog", 0, 11));
+        titleLabel.setFont(new Font("dialog", Font.BOLD, 12));
+        description.setFont(new Font("dialog", 0, 12));
 
         titleLabel.setText("Conference Invitation");
         description.setText(reason);
 
         // Set Date Label
-        dateLabel.setFont(new Font("dialog", Font.BOLD, 11));
+        dateLabel.setFont(new Font("dialog", Font.BOLD, 12));
         dateLabel.setText("Date:");
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
-        dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 11));
+        dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 12));
 
         // Add accept and reject buttons
-        joinButton = new RolloverButton("Join", null);
-        declineButton = new RolloverButton("Decline", null);
+        joinButton = new RolloverButton("Join", SparkRes.getImageIcon(SparkRes.CIRCLE_CHECK_IMAGE));
+        declineButton = new RolloverButton("Decline", SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
         add(joinButton, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
         add(declineButton, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
+
+
+        add(new JLabel(), new GridBagConstraints(0, 4, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 5, 2, 5), 0, 0));
 
 
         joinButton.addActionListener(this);
         declineButton.addActionListener(this);
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
-        setBackground(new Color(195, 217, 255));
+        setBackground(Color.white);
+
+        // Add to Chat window
+        ChatManager chatManager = SparkManager.getChatManager();
+
+        try {
+            room = chatManager.getGroupChat(roomName);
+        }
+        catch (ChatNotFoundException e) {
+            MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), roomName);
+            room = new GroupChatRoom(chat);
+        }
+
+        room.setTabTitle("Conference Invitation");
+        room.setTabIcon(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        room.getChatWindowPanel().add(this, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(1, 0, 1, 0), 0, 0));
+
+        // set invisible
+        room.getSplitPane().getRightComponent().setVisible(false);
+        room.getBottomPanel().setVisible(false);
+        room.getScrollPaneForTranscriptWindow().setVisible(false);
+
+        SparkManager.getChatManager().getChatContainer().addChatRoom(room);
+        SparkManager.getChatManager().getChatContainer().makeTabRed(room);
     }
+
 
     public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
+            room.getSplitPane().getRightComponent().setVisible(true);
+            room.getBottomPanel().setVisible(true);
+
+            room.getScrollPaneForTranscriptWindow().setVisible(true);
+            room.getSendFieldToolbar().setVisible(true);
+            room.getChatInputEditor().setEnabled(true);
+            room.getToolBar().setVisible(true);
+            room.getVerticalSlipPane().setDividerLocation(0.8);
+            room.getSplitPane().setDividerLocation(0.8);
+            this.setVisible(false);
+
             String name = StringUtils.parseName(roomName);
-            ConferenceUtils.autoJoinConferenceRoom(name, roomName, password);
+
+            GroupChatRoom groupChatRoom = null;
+            try {
+                groupChatRoom = (GroupChatRoom)SparkManager.getChatManager().getChatRoom(roomName);
+                groupChatRoom.setTabTitle(roomName);
+                groupChatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
+
+                groupChatRoom.getToolBar().setVisible(true);
+                groupChatRoom.getSendFieldToolbar().setVisible(true);
+                groupChatRoom.getChatInputEditor().setEnabled(true);
+
+                ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
+                chatContainer.setChatRoomTitle(groupChatRoom, roomName);
+                if (chatContainer.getActiveChatRoom() == groupChatRoom) {
+                    chatContainer.getChatFrame().setTitle(roomName);
+                }
+
+            }
+            catch (Exception e) {
+                Log.error(e);
+            }
+
+            ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
         }
         else {
             MultiUserChat.decline(SparkManager.getConnection(), roomName, inviter, "No thank you");
+            // Add to Chat window
+            ChatManager chatManager = SparkManager.getChatManager();
+            chatManager.removeChat(room);
         }
 
-        SparkManager.getWorkspace().removeAlert(this);
+
     }
 
 
