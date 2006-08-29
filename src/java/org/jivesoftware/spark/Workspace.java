@@ -37,14 +37,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -58,6 +50,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 
 /**
@@ -268,11 +268,15 @@ public class Workspace extends JPanel implements PacketListener {
 
         timer.schedule(new TimerTask() {
             public void run() {
-                final Iterator offlineMessage = offlineMessages.iterator();
-                while (offlineMessage.hasNext()) {
-                    Message offline = (Message)offlineMessage.next();
-                    handleOfflineMessage(offline);
-                }
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        final Iterator offlineMessage = offlineMessages.iterator();
+                        while (offlineMessage.hasNext()) {
+                            Message offline = (Message)offlineMessage.next();
+                            handleOfflineMessage(offline);
+                        }
+                    }
+                });
             }
         }, timeToRun);
 

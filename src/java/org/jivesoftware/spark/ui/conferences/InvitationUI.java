@@ -110,7 +110,7 @@ public class InvitationUI extends JPanel implements ActionListener {
         declineButton.addActionListener(this);
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
-        setBackground(Color.white);
+        setBackground(new Color(195, 217, 255));
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
