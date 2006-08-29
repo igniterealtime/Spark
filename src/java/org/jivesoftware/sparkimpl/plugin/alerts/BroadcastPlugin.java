@@ -18,24 +18,38 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.AlertUI;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,17 +58,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Iterator;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -231,29 +234,91 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
         String title = host;
 
-        if (message.getFrom() != null) {
-            VCard vcard = SparkManager.getVCardManager().getVCard(StringUtils.parseBareAddress(message.getFrom()));
-            ImageIcon icon = null;
-            if (vcard != null && vcard.getAvatar() != null) {
-                icon = new ImageIcon(vcard.getAvatar());
-                icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
-            }
-            else if (icon == null || icon.getIconWidth() == -1) {
-                icon = SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE);
-            }
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-            title = nickname;
-            toaster.setTitle(title);
-            toaster.setToasterHeight(250);
-            toaster.setToasterWidth(250);
-            toaster.showToaster(icon, buf.toString());
-        }
-        else {
-            toaster.setTitle(title);
-            toaster.showToaster(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE), buf.toString());
-        }
 
-        new AlertUI("Broadcast", buf.toString());
+        if (!from.contains("@")) {
+            ChatManager chatManager = SparkManager.getChatManager();
+            ChatContainer container = chatManager.getChatContainer();
+
+            ChatRoomImpl chatRoom = null;
+            try {
+                chatRoom = (ChatRoomImpl)container.getChatRoom(from);
+            }
+            catch (ChatRoomNotFoundException e) {
+                chatRoom = new ChatRoomImpl(from, from, "Broadcast from " + from);
+                chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                chatRoom.setIconHandler(true);
+                chatRoom.getBottomPanel().setVisible(false);
+                chatRoom.getToolBar().setVisible(false);
+                SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
+            }
+
+
+            chatRoom.insertMessage(message);
+            container.makeTabRed(chatRoom);
+
+        }
+        else if (message.getFrom() != null) {
+            String jid = StringUtils.parseBareAddress(from);
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+            ChatManager chatManager = SparkManager.getChatManager();
+            ChatContainer container = chatManager.getChatContainer();
+
+            ChatRoomImpl chatRoom = null;
+            try {
+                chatRoom = (ChatRoomImpl)container.getChatRoom(from);
+            }
+            catch (ChatRoomNotFoundException e) {
+                chatRoom = new ChatRoomImpl(jid, nickname, "Broadcast from " + nickname);
+                chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                chatRoom.setIconHandler(true);
+                SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
+            }
+
+            chatRoom.insertMessage(message);
+            container.makeTabRed(chatRoom);
+
+            chatRoom.addMessageListener(new MessageListener() {
+                boolean waiting = true;
+
+                public void messageReceived(ChatRoom room, Message message) {
+                    if (waiting) {
+                        useDefaultRoomSettings((ChatRoomImpl)room);
+                        waiting = false;
+                    }
+
+                }
+
+                public void messageSent(ChatRoom room, Message message) {
+                    if (waiting) {
+                        useDefaultRoomSettings((ChatRoomImpl)room);
+                        waiting = false;
+                    }
+                }
+            });
+        }
+    }
+
+    private void useDefaultRoomSettings(ChatRoomImpl room) {
+        try {
+            room.setIconHandler(false);
+
+            String jid = StringUtils.parseBareAddress(room.getParticipantJID());
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+
+            Icon icon = SparkManager.getUserManager().getIconFromPresence(room.getPresence());
+            room.setTabIcon(icon);
+            room.setTabTitle(nickname);
+
+            int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(room);
+            if (index != -1) {
+                SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
+                tab.getTitleLabel().setText(nickname);
+                tab.setIcon(icon);
+            }
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     /**

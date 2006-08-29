@@ -948,9 +948,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             if (room instanceof ChatRoomImpl) {
                 final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
-                Presence presence = chatRoomImpl.getPresence();
-                Icon icon = SparkManager.getUserManager().getIconFromPresence(presence);
-                tab.setIcon(icon);
+                if (!chatRoomImpl.isIconHandler()) {
+                    Presence presence = chatRoomImpl.getPresence();
+                    Icon icon = SparkManager.getUserManager().getIconFromPresence(presence);
+                    tab.setIcon(icon);
+                }
             }
 
             titleLabel.setForeground(Color.black);
@@ -1241,6 +1243,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     titleLabel.setFont(tab.getDefaultFont());
 
                     if (chatRoom instanceof ChatRoomImpl) {
+                        ChatRoomImpl impl = (ChatRoomImpl)chatRoom;
+                        if(impl.isIconHandler()){
+                            return;
+                        }
+                        
                         String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
                         Presence presence = SparkManager.getConnection().getRoster().getPresence(jid);
 

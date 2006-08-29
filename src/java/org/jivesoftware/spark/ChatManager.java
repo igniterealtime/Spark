@@ -207,9 +207,15 @@ public class ChatManager implements MessageEventNotificationListener {
         catch (ChatRoomNotFoundException e) {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             ContactItem item = contactList.getContactItemByJID(jid);
+            if (item != null) {
+                String nickname = item.getNickname();
+                chatRoom = new ChatRoomImpl(jid, nickname, nickname);
+            }
+            else {
+                chatRoom = new ChatRoomImpl(jid, jid, jid);
+            }
 
-            String nickname = item.getNickname();
-            chatRoom = new ChatRoomImpl(jid, nickname, nickname);
+
             getChatContainer().addChatRoom(chatRoom);
         }
 

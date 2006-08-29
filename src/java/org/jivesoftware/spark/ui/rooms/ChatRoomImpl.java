@@ -84,6 +84,8 @@ public class ChatRoomImpl extends ChatRoom {
 
     private long lastActivity;
 
+    private boolean iconHandler;
+
 
     /**
      * Constructs a 1-to-1 ChatRoom.
@@ -295,8 +297,20 @@ public class ChatRoomImpl extends ChatRoom {
         return tabIcon;
     }
 
+    public void setTabIcon(Icon icon) {
+        this.tabIcon = icon;
+    }
+
     public String getTabTitle() {
         return tabTitle;
+    }
+
+    public void setTabTitle(String tabTitle) {
+        this.tabTitle = tabTitle;
+    }
+
+    public void setRoomTitle(String roomTitle) {
+        this.roomTitle = roomTitle;
     }
 
     public String getRoomTitle() {
@@ -552,6 +566,14 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public Presence getPresence() {
         return presence;
+    }
+
+    public boolean isIconHandler() {
+        return iconHandler;
+    }
+
+    public void setIconHandler(boolean iconHandler) {
+        this.iconHandler = iconHandler;
     }
 
 

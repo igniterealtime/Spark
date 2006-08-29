@@ -92,6 +92,7 @@ public class AlertUI extends JPanel implements ActionListener {
 
         SparkManager.getWorkspace().addAlert(this);
         SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
+        setBackground(new Color(195, 217, 255));
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
