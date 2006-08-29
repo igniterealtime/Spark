@@ -32,6 +32,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,6 +99,8 @@ public class VCardPanel extends JPanel {
                         Log.error(e);
                     }
                 }
+
+                vcard.setJabberId(jid);
                 setupUI(vcard);
             }
         };
@@ -128,8 +132,16 @@ public class VCardPanel extends JPanel {
         }
     }
 
-    private void setupUI(VCard vcard) {
+    private void setupUI(final VCard vcard) {
         add(avatarImage, new GridBagConstraints(0, 0, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+
+        avatarImage.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+                if(mouseEvent.getClickCount() == 2){
+                    SparkManager.getVCardManager().viewProfile(vcard.getJabberId(), avatarImage);
+                }
+            }
+        });
 
         String city = vcard.getField("CITY");
         String state = vcard.getField("STATE");
