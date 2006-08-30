@@ -1982,6 +1982,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     public void connectionClosed() {
         // No reason to reconnect.
+        connectionClosedOnError(null);
     }
 
     private void reconnect(final String message, final boolean conflict) {
@@ -2054,10 +2055,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void connectionClosedOnError(final Exception ex) {
-        String errorMessage = "";
-
+        String errorMessage = "Your connection was closed due to an error.";
         boolean conflictError = false;
-        if (ex instanceof XMPPException) {
+
+        if (ex != null && ex instanceof XMPPException) {
             XMPPException xmppEx = (XMPPException)ex;
             StreamError error = xmppEx.getStreamError();
             String reason = error.getCode();
@@ -2070,7 +2071,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         }
 
-        reconnect(errorMessage, conflictError);
+        final String message = errorMessage;
+        final boolean conflicted = conflictError;
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                reconnect(message, conflicted);
+            }
+        });
+
     }
 
 

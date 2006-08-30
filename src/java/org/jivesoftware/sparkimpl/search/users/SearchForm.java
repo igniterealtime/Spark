@@ -17,6 +17,7 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.AbstractAction;
@@ -107,17 +108,34 @@ public class SearchForm extends JPanel {
     public void performSearch() {
         searchResults.clearTable();
 
-        Form answerForm = questionForm.getFilledForm();
-        try {
-            ReportedData data = searchManager.getSearchResults(answerForm, serviceName);
-            if (data != null) {
-                searchResults.showUsersFound(data);
+        SwingWorker worker = new SwingWorker() {
+            ReportedData data;
+
+            public Object construct() {
+                try {
+                    Form answerForm = questionForm.getFilledForm();
+                    data = searchManager.getSearchResults(answerForm, serviceName);
+                }
+                catch (XMPPException e) {
+                    Log.error("Unable to load search service.", e);
+                }
+
+                return data;
             }
-        }
-        catch (XMPPException e1) {
-            Log.error("Unable to load search service.", e1);
-            JOptionPane.showMessageDialog(searchResults, "No results found!", "No Results", JOptionPane.ERROR_MESSAGE);
-        }
+
+            public void finished() {
+                if (data != null) {
+                    searchResults.showUsersFound(data);
+                }
+                else {
+                    JOptionPane.showMessageDialog(searchResults, "No results found!", "No Results", JOptionPane.ERROR_MESSAGE);
+
+                }
+            }
+        };
+
+        worker.start();
+
 
         searchResults.invalidate();
         searchResults.validate();
