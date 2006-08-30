@@ -35,20 +35,6 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -70,6 +56,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -293,7 +293,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatRoom = getChatRoom(roomname);
         }
         catch (ChatRoomNotFoundException e1) {
-            Log.error("Could not locate chat room.", e1);
+            Log.debug("Could not locate chat room " + roomname);
             return;
         }
 
@@ -714,7 +714,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (isGroupChat) {
             String message = "Would you like to end this session?";
             final int ok = JOptionPane.showConfirmDialog(chatFrame, message,
-                    "Confirmation", JOptionPane.YES_NO_OPTION);
+                "Confirmation", JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
@@ -1244,10 +1244,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
                     if (chatRoom instanceof ChatRoomImpl) {
                         ChatRoomImpl impl = (ChatRoomImpl)chatRoom;
-                        if(impl.isIconHandler()){
+                        if (impl.isIconHandler()) {
                             return;
                         }
-                        
+
                         String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
                         Presence presence = SparkManager.getConnection().getRoster().getPresence(jid);
 
