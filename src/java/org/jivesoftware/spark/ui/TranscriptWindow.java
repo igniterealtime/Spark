@@ -428,7 +428,7 @@ public class TranscriptWindow extends ChatArea {
 
             // Agent color is always blue
             StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, Color.LIGHT_GRAY);
+            StyleConstants.setForeground(styles, Color.GRAY);
             final Document doc = getDocument();
             styles.removeAttribute("link");
 
@@ -437,7 +437,7 @@ public class TranscriptWindow extends ChatArea {
 
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
-            setForeground(Color.LIGHT_GRAY);
+            setForeground(Color.gray);
             setText(message);
             setForeground(Color.BLACK);
             insertText("\n");

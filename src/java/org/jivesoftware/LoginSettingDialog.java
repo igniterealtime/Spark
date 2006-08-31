@@ -11,23 +11,13 @@
 package org.jivesoftware;
 
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -42,8 +32,21 @@ import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Properties;
+
 /**
  * Allows users to configure startup options.
+ *
+ * @author Derek DeMoro
  */
 public class LoginSettingDialog implements PropertyChangeListener {
     private JOptionPane optionPane;
@@ -104,17 +107,17 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
 
         final JPanel inputPanel = new JPanel();
-        tabbedPane.addTab("General", inputPanel);
-        tabbedPane.addTab("Proxy", proxyPanel);
+        tabbedPane.addTab(Res.getString("tab.general"), inputPanel);
+        tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
         inputPanel.setLayout(new GridBagLayout());
 
-        ResourceUtils.resLabel(portLabel, portField, "&Port:");
-        ResourceUtils.resLabel(timeOutLabel, timeOutField, "&Response Timeout (sec):");
-        ResourceUtils.resButton(autoLoginBox, "&Auto Login");
-        ResourceUtils.resLabel(sslLabel, useSSLBox, "&Use OLD SSL port method");
-        ResourceUtils.resLabel(xmppHostLabel, xmppHostField, "&Host:");
-        ResourceUtils.resButton(autoDiscoverBox, "&Automatically discover host and port");
-        ResourceUtils.resLabel(resourceLabel, resourceField, "&Resource:");
+        ResourceUtils.resLabel(portLabel, portField, Res.getString("label.port"));
+        ResourceUtils.resLabel(timeOutLabel, timeOutField, Res.getString("label.response.timeout"));
+        ResourceUtils.resButton(autoLoginBox, Res.getString("label.auto.login"));
+        ResourceUtils.resLabel(sslLabel, useSSLBox, Res.getString("label.old.ssl"));
+        ResourceUtils.resLabel(xmppHostLabel, xmppHostField, Res.getString("label.host"));
+        ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
+        ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
 
         inputPanel.add(autoDiscoverBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -129,7 +132,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
         final JPanel connectionPanel = new JPanel();
         connectionPanel.setLayout(new GridBagLayout());
-        connectionPanel.setBorder(BorderFactory.createTitledBorder("Connection"));
+        connectionPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.connection")));
 
         connectionPanel.add(xmppHostLabel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         connectionPanel.add(xmppHostField, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 200, 0));
@@ -157,13 +160,13 @@ public class LoginSettingDialog implements PropertyChangeListener {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Ok", "Cancel", "Use Default"};
+        Object[] options = {Res.getString("ok"), Res.getString("cancel"), Res.getString("use.default")};
         optionPane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+                JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
-        optionsDialog = new JDialog(owner, "Preference Window", true);
+        optionsDialog = new JDialog(owner, Res.getString("title.preferences"), true);
         optionsDialog.setContentPane(mainPanel);
         optionsDialog.pack();
 
@@ -187,10 +190,10 @@ public class LoginSettingDialog implements PropertyChangeListener {
      */
     public void propertyChange(PropertyChangeEvent e) {
         String value = (String)optionPane.getValue();
-        if ("Cancel".equals(value)) {
+        if (Res.getString("cancel").equals(value)) {
             optionsDialog.setVisible(false);
         }
-        else if ("Ok".equals(value)) {
+        else if (Res.getString("ok").equals(value)) {
             String timeOut = timeOutField.getText();
             String port = portField.getText();
             String resource = resourceField.getText();
@@ -201,8 +204,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 Integer.valueOf(timeOut);
             }
             catch (NumberFormatException numberFormatException) {
-                JOptionPane.showMessageDialog(optionsDialog, "You must supply a valid Time out value.",
-                    "Invalid Time Out", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.timeout"),
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 timeOutField.requestFocus();
                 errors = true;
             }
@@ -211,15 +214,15 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 Integer.valueOf(port);
             }
             catch (NumberFormatException numberFormatException) {
-                JOptionPane.showMessageDialog(optionsDialog, "You must supply a valid Port.",
-                    "Invalid Port", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.port"),
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 portField.requestFocus();
                 errors = true;
             }
 
             if (!ModelUtil.hasLength(resource)) {
-                JOptionPane.showMessageDialog(optionsDialog, "You must supply a resource",
-                    "Invalid Resource", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.resource"),
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 resourceField.requestFocus();
                 errors = true;
             }
@@ -269,12 +272,12 @@ public class LoginSettingDialog implements PropertyChangeListener {
             protocolBox.addItem("HTTP");
 
             // Add ResourceUtils
-            ResourceUtils.resButton(useProxyBox, "&Use Proxy Server");
-            ResourceUtils.resLabel(protocolLabel, protocolBox, "&Protocol:");
-            ResourceUtils.resLabel(hostLabel, hostField, "&Host:");
-            ResourceUtils.resLabel(portLabel, portField, "P&ort:");
-            ResourceUtils.resLabel(usernameLabel, usernameField, "&Username:");
-            ResourceUtils.resLabel(passwordLabel, passwordField, "P&assword:");
+            ResourceUtils.resButton(useProxyBox, Res.getString("checkbox.use.proxy.server"));
+            ResourceUtils.resLabel(protocolLabel, protocolBox, Res.getString("label.protocol"));
+            ResourceUtils.resLabel(hostLabel, hostField, Res.getString("label.host"));
+            ResourceUtils.resLabel(portLabel, portField, Res.getString("label.port"));
+            ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username"));
+            ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password"));
 
             setLayout(new GridBagLayout());
             add(useProxyBox, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));

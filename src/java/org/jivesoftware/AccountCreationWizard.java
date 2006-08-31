@@ -10,6 +10,7 @@
 
 package org.jivesoftware;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -63,11 +64,11 @@ public class AccountCreationWizard extends JPanel {
 
     public AccountCreationWizard() {
         // Associate Mnemonics
-        ResourceUtils.resLabel(usernameLabel, usernameField, "&Username:");
-        ResourceUtils.resLabel(passwordLabel, passwordField, "&Password:");
-        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, "&Confirm Password:");
-        ResourceUtils.resLabel(serverLabel, serverField, "&Server:");
-        ResourceUtils.resButton(createAccountButton, "&Create Account");
+        ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username") + ":");
+        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
+        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+        ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server") + ":");
+        ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
 
         setLayout(new GridBagLayout());
 
@@ -92,7 +93,7 @@ public class AccountCreationWizard extends JPanel {
         add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        ResourceUtils.resButton(closeButton, "&Close");
+        ResourceUtils.resButton(closeButton, Res.getString("button.close"));
         add(closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
@@ -136,34 +137,34 @@ public class AccountCreationWizard extends JPanel {
         if (!ModelUtil.hasLength(getUsername())) {
             errors = true;
             usernameField.requestFocus();
-            errorMessage = "Please specify a username for the account.";
+            errorMessage = Res.getString("message.username.error");
         }
         else if (!ModelUtil.hasLength(getPassword())) {
             errors = true;
-            errorMessage = "Please specify a password for this account.";
+            errorMessage = Res.getString("message.password.error");
         }
         else if (!ModelUtil.hasLength(getConfirmPassword())) {
             errors = true;
-            errorMessage = "Please specify a confirmation password.";
+            errorMessage = Res.getString("message.confirmation.password.error");
         }
         else if (!ModelUtil.hasLength(getServer())) {
             errors = true;
-            errorMessage = "Please specify the server to create the account on.";
+            errorMessage = Res.getString("message.account.error");
         }
         else if (!isPasswordValid()) {
             errors = true;
-            errorMessage = "The passwords do not match. Please confirm passwords.";
+            errorMessage = Res.getString("message.confirmation.password.error");
         }
 
         if (errors) {
-            JOptionPane.showMessageDialog(this, errorMessage, "Account Creation Problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         final Component ui = this;
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
-        progressBar.setString("Registering with " + getServer() + ". Please wait...");
+        progressBar.setString(Res.getString("message.registering", getServer()));
         progressBar.setVisible(true);
         final SwingWorker worker = new SwingWorker() {
             int errorCode;
@@ -192,7 +193,7 @@ public class AccountCreationWizard extends JPanel {
                 if (connection == null) {
                     if (ui.isShowing()) {
                         createAccountButton.setEnabled(true);
-                        JOptionPane.showMessageDialog(ui, "Unable to connect to " + getServer() + ".", "Account Creation Problem", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer()), Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
                         createAccountButton.setEnabled(true);
                     }
                     return;
@@ -211,26 +212,26 @@ public class AccountCreationWizard extends JPanel {
     }
 
     private void accountCreationFailed(int errorCode) {
-        String message = "Unable to create account.";
+        String message = Res.getString("message.create.account");
         if (errorCode == 409) {
-            message = "Account already exists. Please specify different username.";
+            message = Res.getString("message.already.exists");
             usernameField.setText("");
             usernameField.requestFocus();
         }
-        JOptionPane.showMessageDialog(this, message, "Account Creation Problem", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
         createAccountButton.setEnabled(true);
     }
 
     private void accountCreationSuccessful() {
         registered = true;
-        JOptionPane.showMessageDialog(this, "New Account has been created.", "Account Created", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, Res.getString("message.account.created"), Res.getString("title.account.created"), JOptionPane.INFORMATION_MESSAGE);
         dialog.dispose();
     }
 
     public void invoke(JFrame parent) {
-        dialog = new JDialog(parent, "Create New Account", true);
+        dialog = new JDialog(parent, Res.getString("title.create.new.account"), true);
 
-        TitlePanel titlePanel = new TitlePanel("Account Registration", "Register a new account to chat", null, true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.account.create.registration"), Res.getString("message.account.create"), null, true);
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.getContentPane().add(titlePanel, BorderLayout.NORTH);
         dialog.getContentPane().add(this, BorderLayout.CENTER);

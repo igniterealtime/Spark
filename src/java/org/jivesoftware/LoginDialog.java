@@ -11,6 +11,7 @@
 package org.jivesoftware;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -191,10 +192,10 @@ public final class LoginDialog {
 
         LoginPanel() {
             //setBorder(BorderFactory.createTitledBorder("Sign In Now"));
-            ResourceUtils.resButton(savePasswordBox, "Save &Password");
-            ResourceUtils.resButton(autoLoginBox, "&Auto Login");
-            ResourceUtils.resLabel(serverLabel, serverField, "&Server:");
-            ResourceUtils.resButton(createAccountButton, "&Accounts");
+            ResourceUtils.resButton(savePasswordBox, Res.getString("checkbox.save.password"));
+            ResourceUtils.resButton(autoLoginBox, Res.getString("checkbox.auto.login"));
+            ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
+            ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
 
             savePasswordBox.setOpaque(false);
             autoLoginBox.setOpaque(false);
@@ -294,7 +295,7 @@ public final class LoginDialog {
             ResourceUtils.resLabel(passwordLabel, passwordField, SparkRes.getString(SparkRes.LOGIN_DIALOG_PASSWORD));
             ResourceUtils.resButton(quitButton, SparkRes.getString(SparkRes.LOGIN_DIALOG_QUIT));
             ResourceUtils.resButton(loginButton, SparkRes.getString(SparkRes.LOGIN_DIALOG_LOGIN));
-            ResourceUtils.resButton(connectionButton, "Ad&vanced");
+            ResourceUtils.resButton(connectionButton, Res.getString("button.advanced"));
 
             // Load previous instances
             String userProp = localPref.getUsername();
@@ -484,7 +485,7 @@ public final class LoginDialog {
 
                     boolean loginSuccessfull = login();
                     if (loginSuccessfull) {
-                        progressBar.setText("Connecting. Please wait...");
+                        progressBar.setText(Res.getString("message.connecting.please.wait"));
 
                         // Startup Spark
                         startSpark();
