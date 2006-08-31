@@ -13,7 +13,7 @@ package org.jivesoftware.spark;
 import java.awt.Window;
 
 /**
- * Implementations of this interface define alert mechanisims based on the Operating System
+ * Implementations of this interface define alert mechanisms based on the Operating System
  * Spark is running on.
  *
  * @author Derek DeMoro

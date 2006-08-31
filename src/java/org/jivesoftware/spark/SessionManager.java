@@ -12,6 +12,7 @@ package org.jivesoftware.spark;
 
 import org.jdesktop.jdic.systeminfo.SystemInfo;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -163,14 +164,14 @@ public final class SessionManager implements ConnectionListener {
             public void run() {
                 Log.error("Connection closed on error.", ex);
 
-                String message = "Your connection was closed due to an error.";
+                String message = Res.getString("message.disconnected.error");
 
                 if (ex instanceof XMPPException) {
                     XMPPException xmppEx = (XMPPException)ex;
                     StreamError error = xmppEx.getStreamError();
                     String reason = error.getCode();
                     if ("conflict".equals(reason)) {
-                        message = "Your connection was closed due to the same user logging in from another location.";
+                        message = Res.getString("message.disconnected.conflict.error");
                     }
                 }
 
@@ -314,10 +315,10 @@ public final class SessionManager implements ConnectionListener {
                             StatusItem away = workspace.getStatusBar().getStatusItem("Away");
                             Presence p = away.getPresence();
                             if (isLocked) {
-                                p.setStatus("User has locked their workstation.");
+                                p.setStatus(Res.getString("message.locked.workstation"));
                             }
                             else {
-                                p.setStatus("Away due to idle.");
+                                p.setStatus(Res.getString("message.away.idle"));
                             }
 
                             previousPriority = presence.getPriority();

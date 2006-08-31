@@ -12,6 +12,7 @@ package org.jivesoftware;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
@@ -107,7 +108,7 @@ public final class MainWindow extends JFrame implements ActionListener {
      */
     private MainWindow(String title, ImageIcon icon) {
         // Initialize and dock the menus
-        configureMenu();
+        buildMenu();
 
         // Add Workspace Container
         getContentPane().setLayout(new BorderLayout());
@@ -247,7 +248,7 @@ public final class MainWindow extends JFrame implements ActionListener {
 
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
-            String status = inputTextDialog.getInput("Status Message", "Let others know your current status or activity.",
+            String status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
                 SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
 
             if (status != null) {
@@ -318,16 +319,16 @@ public final class MainWindow extends JFrame implements ActionListener {
     /**
      * Setup the Main Toolbar with File, Tools and Help.
      */
-    private void configureMenu() {
+    private void buildMenu() {
         // setup file menu
-        JMenuItem exitMenuItem = new JMenuItem("Exit");
+        JMenuItem exitMenuItem = new JMenuItem();
 
         // Setup ResourceUtils
         ResourceUtils.resButton(connectMenu, "&" + Default.getString(Default.APPLICATION_NAME));
-        ResourceUtils.resButton(contactsMenu, "Con&tacts");
-        ResourceUtils.resButton(actionsMenu, "&Actions");
-        ResourceUtils.resButton(exitMenuItem, "&Exit");
-        ResourceUtils.resButton(pluginsMenu, "&Plugins");
+        ResourceUtils.resButton(contactsMenu, Res.getString("menuitem.contacts"));
+        ResourceUtils.resButton(actionsMenu, Res.getString("menuitem.actions"));
+        ResourceUtils.resButton(exitMenuItem, Res.getString("menuitem.exit"));
+        ResourceUtils.resButton(pluginsMenu, Res.getString("menuitem.plugins"));
 
         exitMenuItem.setIcon(null);
 
@@ -339,21 +340,21 @@ public final class MainWindow extends JFrame implements ActionListener {
 
 
         preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.PREFERENCES_IMAGE));
-        preferenceMenuItem.setText("Spark Preferences");
+        preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
         preferenceMenuItem.addActionListener(this);
         connectMenu.add(preferenceMenuItem);
         connectMenu.addSeparator();
 
-        JMenuItem logoutMenuItem = new JMenuItem("Log Out");
-        ResourceUtils.resButton(logoutMenuItem, "L&og Out");
+        JMenuItem logoutMenuItem = new JMenuItem();
+        ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
         logoutMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logout(false);
             }
         });
 
-        JMenuItem logoutWithStatus = new JMenuItem("Log Out");
-        ResourceUtils.resButton(logoutWithStatus, "Log Out with &status");
+        JMenuItem logoutWithStatus = new JMenuItem();
+        ResourceUtils.resButton(logoutWithStatus, Res.getString("menuitem.logout.with.status"));
         logoutWithStatus.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logout(true);
@@ -379,20 +380,19 @@ public final class MainWindow extends JFrame implements ActionListener {
                 window.setVisible(true);
             }
         };
-        showTrafficAction.putValue(Action.NAME, "Show Traffic Window");
+        showTrafficAction.putValue(Action.NAME, Res.getString("menuitem.show.traffic"));
         showTrafficAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.TRAFFIC_LIGHT_IMAGE));
 
         Action updateAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
-                checkUpdate(true);
+                checkForUpdates(true);
             }
         };
 
-        updateAction.putValue(Action.NAME, "Check For Updates");
+        updateAction.putValue(Action.NAME, Res.getString("menuitem.check.for.updates"));
         updateAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
 
         // Build Help Menu
-        helpMenu.setText("Help");
         //s helpMenu.add(helpMenuItem);
         helpMenu.add(showTrafficAction);
         helpMenu.add(updateAction);
@@ -400,10 +400,10 @@ public final class MainWindow extends JFrame implements ActionListener {
         helpMenu.add(menuAbout);
 
         // ResourceUtils - Adds mnemonics
-        ResourceUtils.resButton(preferenceMenuItem, "&Preferences");
-        ResourceUtils.resButton(helpMenu, "&Help");
-        ResourceUtils.resButton(menuAbout, "&About");
-        ResourceUtils.resButton(helpMenuItem, "&Online Help");
+        ResourceUtils.resButton(preferenceMenuItem, Res.getString("menuitem.preferences"));
+        ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
+        ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
+        ResourceUtils.resButton(helpMenuItem, Res.getString("menuitem.online.help"));
 
         // Register shutdown with the exit menu.
         exitMenuItem.addActionListener(new AbstractAction() {
@@ -436,7 +436,7 @@ public final class MainWindow extends JFrame implements ActionListener {
 
         timer.schedule(new TimerTask() {
             public void run() {
-                checkUpdate(false);
+                checkForUpdates(false);
             }
         }, timeToRun);
 
@@ -506,7 +506,7 @@ public final class MainWindow extends JFrame implements ActionListener {
      *
      * @param forced true if you want to bypass the normal checking security.
      */
-    private void checkUpdate(final boolean forced) {
+    private void checkForUpdates(final boolean forced) {
         final CheckUpdates updater = new CheckUpdates();
         try {
             SwingWorker stopWorker = new SwingWorker() {
