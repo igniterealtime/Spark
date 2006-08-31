@@ -39,7 +39,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 /**
+ * Jive Software imlementation of a TabbedPane.
  *
+ * @author Derek DeMoro
  */
 public class SparkTabbedPane extends JPanel implements MouseListener {
     private JPanel tabs;

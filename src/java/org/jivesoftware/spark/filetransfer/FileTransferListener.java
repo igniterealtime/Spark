@@ -15,6 +15,8 @@ import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 /**
  * Implementation of the <code>TransferListener</code> interface allows for
  * handling of file transfers externally of the default behaviour.
+ *
+ * @author Derek DeMoro
  */
 public interface FileTransferListener {
 

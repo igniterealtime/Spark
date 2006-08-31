@@ -15,7 +15,7 @@ package org.jivesoftware.spark.component.browser;
  * Implementation of <code>BrowserListener</code> allows for handling when documents
  * have been downloaded via a <code>BrowserViewer</code> implementation.
  *
- * @authro Derek DeMoro
+ * @author Derek DeMoro
  */
 public interface BrowserListener {
 

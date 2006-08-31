@@ -10,10 +10,6 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -21,8 +17,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
 /**
+ * Represent one tab in a SparkTabbedPane.
  *
+ * @author Derek DeMoro
  */
 public class SparkTab extends TabPanel {
     private JLabel iconLabel;

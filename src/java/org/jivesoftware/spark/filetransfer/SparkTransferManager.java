@@ -12,6 +12,7 @@ package org.jivesoftware.spark.filetransfer;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
@@ -91,6 +92,8 @@ import java.util.Map;
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
  * for sending of images, files, multiple files and adding your own transfer listeners for plugin work.
+ *
+ * @author Derek DeMoro
  */
 public class SparkTransferManager {
 
@@ -133,9 +136,9 @@ public class SparkTransferManager {
         PreferenceManager prefManager = SparkManager.getPreferenceManager();
         prefManager.addPreference(new FileTransferPreference());
 
-        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName("Actions");
+        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
         JMenuItem downloadsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
-        ResourceUtils.resButton(downloadsMenu, "&View Downloads");
+        ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.add(downloadsMenu);
         downloadsMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -192,7 +195,7 @@ public class SparkTransferManager {
         JPanel commandPanel = statusBar.getCommandPanel();
 
         RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
-        viewDownloads.setToolTipText("View Downloads");
+        viewDownloads.setToolTipText(Res.getString("menuitem.view.downloads"));
         commandPanel.add(viewDownloads);
         viewDownloads.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -256,7 +259,7 @@ public class SparkTransferManager {
 
     public void sendFileTo(ContactItem item) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        getFileChooser().setDialogTitle("Select the file to send");
+        getFileChooser().setDialogTitle(Res.getString("title.select.file.to.send"));
         int ok = getFileChooser().showOpenDialog(contactList);
         if (ok != JFileChooser.APPROVE_OPTION) {
             return;
@@ -327,12 +330,12 @@ public class SparkTransferManager {
 
 
                 ChatRoomButton sendFileButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24));
-                sendFileButton.setToolTipText("Send file(s) to this user");
+                sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
 
                 room.getToolBar().addChatRoomButton(sendFileButton);
 
                 final ChatRoomButton sendScreenShotButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PHOTO_IMAGE));
-                sendScreenShotButton.setToolTipText("Send a picture of your desktop");
+                sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
                 room.getToolBar().addChatRoomButton(sendScreenShotButton);
 
                 sendScreenShotButton.addActionListener(new ActionListener() {
@@ -351,13 +354,13 @@ public class SparkTransferManager {
                                 catch (InterruptedException e1) {
                                     Log.error(e1);
                                 }
-                                return "delay";
+                                return true;
                             }
 
                             public void finished() {
                                 ChatRoomImpl roomImpl = (ChatRoomImpl)room;
 
-                                getFileChooser().setDialogTitle("Select File(s) to send");
+                                getFileChooser().setDialogTitle(Res.getString("title.select.file.to.send"));
                                 getFileChooser().setMultiSelectionEnabled(true);
                                 int ok = getFileChooser().showOpenDialog(roomImpl);
                                 if (ok != JFileChooser.APPROVE_OPTION) {
@@ -446,7 +449,7 @@ public class SparkTransferManager {
 
                         if (room != null) {
                             Message message = new Message();
-                            message.setBody("You have just been sent offline file(s).");
+                            message.setBody(Res.getString("message.sent.offline.files"));
                             room.sendMessage(message);
                         }
                     }

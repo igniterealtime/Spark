@@ -12,11 +12,6 @@ package org.jivesoftware.spark.component.panes;
 
 import org.jivesoftware.spark.util.ModelUtil;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -24,6 +19,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.JPanel;
 
 /**
  * CollapsiblePane provides a component which can collapse or expand its content area
@@ -64,15 +62,23 @@ public class CollapsiblePane extends JPanel {
         });
     }
 
+    /**
+     * Creates a CollapsiblePane.
+     * @param title the title to use.
+     */
     public CollapsiblePane(String title) {
         this();
         setTitle(title);
     }
 
+    /**
+     * Set the title of the Collapsible Pane.
+     * @param title the collapsible pane title.
+     */
     public void setTitle(String title) {
         titlePane.setTitle(title);
     }
-
+    
     public void setIcon(Icon icon) {
         titlePane.setIcon(icon);
     }
@@ -133,22 +139,4 @@ public class CollapsiblePane extends JPanel {
 
         titlePane.setSubPane(subPane);
     }
-
-    public static void main(String args[]) {
-        JFrame frame = new JFrame();
-
-
-        CollapsiblePane pane = new CollapsiblePane();
-        pane.setTitle("Jive Software");
-        pane.setSubPane(true);
-
-        pane.setContentPane(new JButton("HELLO"));
-
-        frame.add(pane);
-        frame.pack();
-        frame.setVisible(true);
-
-    }
-
-
 }
