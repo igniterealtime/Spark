@@ -94,9 +94,7 @@ public abstract class Table extends JTable {
             tooltipValue = "";
         }
 
-        String tooltip = GraphicUtils.createToolTip(tooltipValue);
-
-        return tooltip;
+        return GraphicUtils.createToolTip(tooltipValue);
     }
 
     // Handle image rendering correctly

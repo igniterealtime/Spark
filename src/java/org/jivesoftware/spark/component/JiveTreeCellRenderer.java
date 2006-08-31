@@ -21,7 +21,7 @@ import java.awt.Font;
  * <code>JiveTreeCellRenderer</code> class is a bare bone
  * TreeCellRenderer to easily add icons and not much else.
  *
- * @version 1.0, 03/12/14
+ * @author Derek DeMoro
  */
 public class JiveTreeCellRenderer extends DefaultTreeCellRenderer {
     private Object value;

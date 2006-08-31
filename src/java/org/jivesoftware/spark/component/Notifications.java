@@ -14,6 +14,7 @@ import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
@@ -21,17 +22,6 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -49,6 +39,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
 /**
  * Handles tray icon operations inside of Spark. Use to display incoming chat requests, incoming messages
  * and general notifications.
@@ -62,12 +63,12 @@ public final class Notifications implements ActionListener, MainWindowListener {
     private WrappedLabel messageLabel = new WrappedLabel();
 
 
-    private final JMenuItem openMenu = new JMenuItem("Open");
-    private final JMenuItem hideMenu = new JMenuItem("Hide");
-    private final JMenuItem exitMenu = new JMenuItem("Exit");
+    private final JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
+    private final JMenuItem hideMenu = new JMenuItem(Res.getString("menuitem.hide"));
+    private final JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
 
     // Define DND MenuItems
-    private final JMenu statusMenu = new JMenu("Status");
+    private final JMenu statusMenu = new JMenu(Res.getString("menuitem.status"));
 
     private boolean isDisposed;
     private ImageTitlePanel headerLabel = new ImageTitlePanel();
@@ -90,9 +91,9 @@ public final class Notifications implements ActionListener, MainWindowListener {
         unavaliableIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_AWAY);
         busyIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_DND);
         trayIcon = new TrayIcon(availableIcon);
-        trayIcon.setToolTip("Spark");
+        trayIcon.setToolTip("Spark"); // NORES
 
-        JPopupMenu popupMenu = new JPopupMenu("Tray Information");
+        JPopupMenu popupMenu = new JPopupMenu(Res.getString("title.tray.information"));
 
         // Add DND Menus
         addStatusMenuItems();
@@ -119,7 +120,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
             }
         };
 
-        logoutAction.putValue(Action.NAME, "Logout");
+        logoutAction.putValue(Action.NAME, Res.getString("menuitem.logout.no.status"));
 
         if (Spark.isWindows()) {
             popupMenu.add(logoutAction);
@@ -177,7 +178,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
                 return;
             }
             trayIcon.getLocationOnScreen();
-            showNotificationDialog("New message from " + from, message);
+            showNotificationDialog(Res.getString("message.new.message", from), message);
         }
         catch (Exception e) {
         }
@@ -342,7 +343,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
         // JButton okButton = new JButton("Ok");
         mainPanel.setPreferredSize(new Dimension(200, 150));
 
-        headerLabel.setTitle("Jive Spark");
+        headerLabel.setTitle("Spark"); // NORES
         headerLabel.setTitleFont(new Font("Dialog", Font.BOLD, 10));
 
         messageLabel.setFont(new Font("Dialog", Font.PLAIN, 11));

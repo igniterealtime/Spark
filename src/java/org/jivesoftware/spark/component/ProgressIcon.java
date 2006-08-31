@@ -18,6 +18,8 @@ import java.awt.Graphics;
 
 /**
  * Displays a bar graph based on a percentage or relevance up to 100%.
+ *
+ * @author Derek DeMoro
  */
 public class ProgressIcon implements Icon {
     private int percent;

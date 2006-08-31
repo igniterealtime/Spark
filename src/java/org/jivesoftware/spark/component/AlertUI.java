@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.component;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -32,10 +33,17 @@ import javax.swing.JPanel;
 
 /**
  * Simple notification UI within Spark.
+ *
+ * @author Derek DeMoro
  */
 public class AlertUI extends JPanel implements ActionListener {
 
-
+    /**
+     * Buidls an AlertUI
+     *
+     * @param message
+     * @param description
+     */
     public AlertUI(final String message, final String description) {
         final RolloverButton closeButton;
 
@@ -61,7 +69,7 @@ public class AlertUI extends JPanel implements ActionListener {
         descriptionLabel.setForeground(Color.gray);
 
         // Set Date Label
-        dateLabel.setText("Received:");
+        dateLabel.setText(Res.getString("label.received") + ":");
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
@@ -83,7 +91,7 @@ public class AlertUI extends JPanel implements ActionListener {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     // Show message in dialog
-                    MessageDialog.showAlert(description, "Alert", null);
+                    MessageDialog.showAlert(description, Res.getString("title.alert"), null);
                 }
             }
         });

@@ -32,12 +32,12 @@ import java.util.List;
  * @version 1.0, 03/12/14
  */
 public class JiveTable extends JTable {
-    private JiveTable.JiveTableModel _tableModel;
+    private JiveTable.JiveTableModel tableModel;
 
 
     public JiveTable(String[] headers, Integer[] columnsToUseRenderer) {
-        _tableModel = new JiveTable.JiveTableModel(headers, 0, false);
-        this.setModel(_tableModel);
+        tableModel = new JiveTable.JiveTableModel(headers, 0, false);
+        this.setModel(tableModel);
 
         getTableHeader().setReorderingAllowed(false);
         setGridColor(java.awt.Color.white);
@@ -66,7 +66,7 @@ public class JiveTable extends JTable {
         final Iterator iter = list.iterator();
         while (iter.hasNext()) {
             Object[] newRow = (Object[])iter.next();
-            _tableModel.addRow(newRow);
+            tableModel.addRow(newRow);
         }
     }
 
@@ -80,7 +80,7 @@ public class JiveTable extends JTable {
 
         Object[] obj = new Object[columnCount];
         for (int j = 0; j < columnCount; j++) {
-            Object objs = _tableModel.getValueAt(selectedRow, j);
+            Object objs = tableModel.getValueAt(selectedRow, j);
             obj[j] = objs;
         }
 
@@ -211,7 +211,7 @@ public class JiveTable extends JTable {
     }
 
     public JiveTable.JiveTableModel getTableModel() {
-        return _tableModel;
+        return tableModel;
     }
 
 }

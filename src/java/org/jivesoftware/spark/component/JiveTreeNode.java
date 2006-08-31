@@ -25,7 +25,7 @@ import java.io.IOException;
  * DefaultMutableTree node. This allows better searching of children/parents as well
  * as handling of icons and drag and drop events.
  *
- * @version 1.0, 01/01/2006
+ * @author Derek DeMoro
  */
 
 public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable {

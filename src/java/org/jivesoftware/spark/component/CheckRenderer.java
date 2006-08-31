@@ -10,6 +10,11 @@
 
 package org.jivesoftware.spark.component;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,14 +24,11 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.TreeCellRenderer;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
 
 /**
  * Swing Renderer for <code>CheckNode</code>.
+ *
+ * @author Derek DeMoro
  */
 public class CheckRenderer extends JPanel implements TreeCellRenderer {
     private JCheckBox check;
@@ -47,7 +49,7 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
                                                   boolean isSelected, boolean expanded,
                                                   boolean leaf, int row, boolean hasFocus) {
         String stringValue = tree.convertValueToText(value, isSelected,
-                expanded, leaf, row, hasFocus);
+            expanded, leaf, row, hasFocus);
         setEnabled(tree.isEnabled());
         check.setSelected(((CheckNode)value).isSelected());
         label.setFont(tree.getFont());
@@ -67,10 +69,10 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
     }
 
     public Dimension getPreferredSize() {
-        Dimension d_check = new Dimension(30, 30);//check.getPreferredSize();
+        Dimension d_check = new Dimension(30, 30);
         Dimension d_label = label.getPreferredSize();
         return new Dimension(d_check.width + d_label.width,
-                d_check.height < d_label.height ? d_label.height : d_check.height);
+            d_check.height < d_label.height ? d_label.height : d_check.height);
     }
 
     public void doLayout() {
@@ -147,7 +149,7 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
             Dimension retDimension = super.getPreferredSize();
             if (retDimension != null) {
                 retDimension = new Dimension(retDimension.width + 3,
-                        retDimension.height);
+                    retDimension.height);
             }
             return retDimension;
         }

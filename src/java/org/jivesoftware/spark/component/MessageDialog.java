@@ -11,16 +11,9 @@
 package org.jivesoftware.spark.component;
 
 import org.jivesoftware.MainWindow;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -33,6 +26,14 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 
 
 /**
@@ -62,7 +63,7 @@ public final class MessageDialog {
         String message = getStackTrace(throwable);
         textPane.setText(message);
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("An error has been detected. Please report to support@jivesoftware.com.", null, SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
+        titlePanel = new TitlePanel(Res.getString("message.default.error"), null, SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -70,13 +71,13 @@ public final class MessageDialog {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         MainWindow mainWindow = SparkManager.getMainWindow();
-        dlg = new JDialog(mainWindow, "Spark Error", false);
+        dlg = new JDialog(mainWindow, Res.getString("title.error"), false);
         dlg.pack();
         dlg.setSize(600, 400);
         dlg.setContentPane(mainPanel);
@@ -85,7 +86,7 @@ public final class MessageDialog {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                 }
             }
@@ -125,13 +126,13 @@ public final class MessageDialog {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         MainWindow mainWindow = SparkManager.getMainWindow();
-        dlg = new JDialog(mainWindow, "Broadcast Message", false);
+        dlg = new JDialog(mainWindow, Res.getString("title.broadcast.message"), false);
         dlg.pack();
         dlg.setSize(300, 300);
         dlg.setContentPane(mainPanel);
@@ -140,7 +141,7 @@ public final class MessageDialog {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                 }
             }
@@ -181,7 +182,7 @@ public final class MessageDialog {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(comp, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
@@ -199,7 +200,7 @@ public final class MessageDialog {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                 }
             }

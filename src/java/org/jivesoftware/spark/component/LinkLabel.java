@@ -29,6 +29,7 @@ import java.io.IOException;
  * @author Derek DeMoro
  */
 final public class LinkLabel extends JLabel implements MouseListener {
+    
     // cursors used in url-link related displays and default display
     private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);

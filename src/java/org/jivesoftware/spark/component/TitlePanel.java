@@ -34,7 +34,7 @@ import javax.swing.JPanel;
  * should be used to identify the application to users using a title, brief description,
  * and the company's logo.
  *
- * @version 1.0, 03/12/14
+ * @author Derek DeMoro
  */
 public final class TitlePanel extends JPanel {
     private final JLabel titleLabel = new JLabel();

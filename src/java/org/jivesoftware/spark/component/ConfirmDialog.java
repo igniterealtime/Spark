@@ -30,6 +30,8 @@ import java.awt.event.WindowEvent;
 /**
  * Implementation of a Confirm Dialog to replace the modal JOptionPane.confirm.  This is intended
  * for use as a yes - no dialog.
+ *
+ * @author Derek DeMoro
  */
 public class ConfirmDialog extends BackgroundPanel {
     private JLabel message;

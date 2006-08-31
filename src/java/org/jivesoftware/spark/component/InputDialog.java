@@ -10,7 +10,16 @@
 
 package org.jivesoftware.spark.component;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -21,19 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 
 /**
  * <code>InputDialog</code> class is used to retrieve information from a user.
  *
- * @version 1.0, 06/03/2005
+ * @author Derek DeMoro
  */
 public final class InputDialog implements PropertyChangeListener {
     private JTextArea textArea;
@@ -88,13 +89,13 @@ public final class InputDialog implements PropertyChangeListener {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        final Object[] options = {"Ok", "Cancel"};
+        final Object[] options = {Res.getString("ok"), Res.getString("cancel")};
         optionPane = new JOptionPane(new JScrollPane(textArea), JOptionPane.PLAIN_MESSAGE,
-                JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
-        // Let's make sure that the dialog is modal. Cannot risk people
+        // Lets make sure that the dialog is modal. Cannot risk people
         // losing this dialog.
         JOptionPane p = new JOptionPane();
         dialog = p.createDialog(parent, title);
@@ -145,11 +146,11 @@ public final class InputDialog implements PropertyChangeListener {
 
     public void propertyChange(PropertyChangeEvent e) {
         String value = (String)optionPane.getValue();
-        if ("Cancel".equals(value)) {
+        if (Res.getString("cancel").equals(value)) {
             stringValue = null;
             dialog.setVisible(false);
         }
-        else if ("Ok".equals(value)) {
+        else if (Res.getString("ok").equals(value)) {
             stringValue = textArea.getText();
             if (stringValue.trim().length() == 0) {
                 stringValue = null;

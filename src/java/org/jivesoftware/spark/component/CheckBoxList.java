@@ -10,10 +10,6 @@
 
 package org.jivesoftware.spark.component;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,11 +17,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 /**
  * Constructs a selection list with Checkboxes.
+ *
+ * @author Derek DeMoro
  */
 public class CheckBoxList extends JPanel {
-    private Map valueMap = new HashMap();
+    private Map<JCheckBox, String> valueMap = new HashMap<JCheckBox, String>();
     private JPanel internalPanel = new JPanel();
 
     /**
@@ -54,7 +56,7 @@ public class CheckBoxList extends JPanel {
      * @return list of selected checkbox values.
      */
     public List getSelectedValues() {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         Iterator iter = valueMap.keySet().iterator();
         while (iter.hasNext()) {
             JCheckBox checkbox = (JCheckBox)iter.next();

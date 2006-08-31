@@ -10,15 +10,17 @@
 
 package org.jivesoftware.spark.component;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+
 /**
  * Button UI for handling of rollover buttons.
+ *
+ * @author Derek DeMoro
  */
 public class RolloverButton extends JButton {
 

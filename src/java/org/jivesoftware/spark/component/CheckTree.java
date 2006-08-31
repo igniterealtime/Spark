@@ -10,6 +10,13 @@
 
 package org.jivesoftware.spark.component;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Enumeration;
+
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
@@ -18,15 +25,10 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-
 /**
  * UI to show CheckBox trees.
+ *
+ * @author Derek DeMoro
  */
 public class CheckTree extends JPanel {
     private JTree tree;
