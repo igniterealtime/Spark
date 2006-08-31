@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
@@ -137,7 +138,7 @@ public class VCardPanel extends JPanel {
 
         avatarImage.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
-                if(mouseEvent.getClickCount() == 2){
+                if (mouseEvent.getClickCount() == 2) {
                     SparkManager.getVCardManager().viewProfile(vcard.getJabberId(), avatarImage);
                 }
             }
@@ -234,7 +235,7 @@ public class VCardPanel extends JPanel {
                         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
 
 
-                        localTime.setText("Time: " + formatter.format(date));
+                        localTime.setText(Res.getString("label.time", formatter.format(date)));
                     }
                     catch (ParseException e) {
                         Log.error(e);
