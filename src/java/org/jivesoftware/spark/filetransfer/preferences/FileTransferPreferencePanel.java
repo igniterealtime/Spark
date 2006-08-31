@@ -11,8 +11,15 @@
 package org.jivesoftware.spark.filetransfer.preferences;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,14 +28,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 /**
+ * FileTransferPreferencePanel is the UI for handling File Transfer Preferences.
  *
+ * @author Derek DeMoro
  */
 public class FileTransferPreferencePanel extends JPanel {
 
@@ -47,8 +50,8 @@ public class FileTransferPreferencePanel extends JPanel {
         JLabel timeoutLabel = new JLabel();
         JLabel downloadDirectoryLabel = new JLabel();
 
-        ResourceUtils.resLabel(timeoutLabel, timeoutField, "&Transfer Timeout(min):");
-        ResourceUtils.resLabel(downloadDirectoryLabel, downloadDirectoryField, "&Download Directory:");
+        ResourceUtils.resLabel(timeoutLabel, timeoutField, Res.getString("label.transfer.timeout"));
+        ResourceUtils.resLabel(downloadDirectoryLabel, downloadDirectoryField, Res.getString("label.transfer.download.directory"));
 
         add(timeoutLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(timeoutField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
@@ -57,12 +60,12 @@ public class FileTransferPreferencePanel extends JPanel {
         add(downloadDirectoryField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         final JButton button = new JButton();
-        ResourceUtils.resButton(button, "&Browse...");
+        ResourceUtils.resButton(button, Res.getString("button.browse"));
         add(button, new GridBagConstraints(2, 1, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                pickFile("Choose Directory", downloadDirectoryField);
+                pickFile(Res.getString("title.choose.directory"), downloadDirectoryField);
             }
         });
 
@@ -98,9 +101,6 @@ public class FileTransferPreferencePanel extends JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             field.setText(file.getAbsolutePath());
-        }
-        else {
-
         }
     }
 

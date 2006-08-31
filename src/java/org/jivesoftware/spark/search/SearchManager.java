@@ -24,7 +24,7 @@ import java.util.List;
  * find area of the bottom of Spark.
  */
 public class SearchManager {
-    private List searchServices = new ArrayList();
+    private List<Searchable> searchServices = new ArrayList<Searchable>();
     private SearchService ui;
 
     private static SearchManager singleton;
@@ -55,7 +55,7 @@ public class SearchManager {
 
         // By default, the user search is first.
         SwingWorker worker = new SwingWorker() {
-            UserSearchService searchWizard = null;
+            UserSearchService searchWizard;
 
             public Object construct() {
                 searchWizard = new UserSearchService();

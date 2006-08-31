@@ -26,8 +26,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Usage of the PreferenceManager to handle loading of preferences within Spark.
+ *
+ * @author Derek DeMoro
+ */
 public class PreferenceManager {
-    private Map map = new LinkedHashMap();
+    private Map<String, Preference> map = new LinkedHashMap<String, Preference>();
     private PreferenceDialog preferenceDialog;
 
     public PreferenceManager() {

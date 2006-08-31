@@ -13,7 +13,6 @@ package org.jivesoftware.spark.plugin;
 /**
  * The Invokable interface can be used to identify a class as being capable
  * of being "invoked".
- * <p/>
  *
  * @author Derek DeMoro
  */
@@ -25,5 +24,5 @@ public interface Invokable {
      * @param params optional arguments from the invoker.
      * @return true if the invocation was successful, false if it failed, or was aborted.
      */
-    boolean invoke(Object[] params);
+    boolean invoke(Object... params);
 }

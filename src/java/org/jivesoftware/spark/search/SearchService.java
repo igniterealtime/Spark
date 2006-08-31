@@ -13,6 +13,7 @@ package org.jivesoftware.spark.search;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.IconTextField;
@@ -60,7 +61,7 @@ public class SearchService extends JPanel {
 
         final JLabel findLabel = new JLabel();
 
-        ResourceUtils.resLabel(findLabel, findField, "&Find");
+        ResourceUtils.resLabel(findLabel, findField, Res.getString("label.find"));
 
         // add(findLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -77,10 +78,10 @@ public class SearchService extends JPanel {
             lockLabel.setHorizontalTextPosition(JLabel.LEFT);
             lockLabel.setIcon(SparkRes.getImageIcon(SparkRes.LOCK_16x16));
             add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
-            lockLabel.setToolTipText("Spark is running in secure mode.");
+            lockLabel.setToolTipText(Res.getString("message.spark.secure"));
         }
 
-        findField.setToolTipText("Search for Contacts");
+        findField.setToolTipText(Res.getString("message.search.for.contacts"));
 
         findField.getTextComponent().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
@@ -98,7 +99,7 @@ public class SearchService extends JPanel {
                     SwingWorker worker = new SwingWorker() {
                         public Object construct() {
                             activeSearchable.search(findField.getText());
-                            return "ok";
+                            return true;
                         }
 
                         public void finished() {
