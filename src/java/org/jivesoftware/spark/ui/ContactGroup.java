@@ -10,12 +10,19 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -37,12 +44,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -628,10 +629,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     protected void setSharedGroup(boolean sharedGroup) {
         this.sharedGroup = sharedGroup;
         if (sharedGroup) {
-            //setIcon(LaRes.getImageIcon(LaRes.SMALL_ALL_AGENTS_IMAGE));
-            // Allow for mouse events to take place on the title bar
-            setToolTipText(getGroupName() + " is a Shared Group");
-            //setHorizontalTextPosition(JLabel.LEFT);
+            setToolTipText(Res.getString("message.is.shared.group", getGroupName()));
         }
     }
 

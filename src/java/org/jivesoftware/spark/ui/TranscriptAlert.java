@@ -37,7 +37,7 @@ public class TranscriptAlert extends JPanel {
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        titleLabel.setFont(new Font("Verdana", Font.BOLD, 11));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
 
         add(yesButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
@@ -46,8 +46,8 @@ public class TranscriptAlert extends JPanel {
         yesButton.setForeground(new Color(73, 113, 196));
         cancelButton.setForeground(new Color(73, 113, 196));
 
-        cancelButton.setFont(new Font("Verdana", Font.BOLD, 10));
-        yesButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        cancelButton.setFont(new Font("Dialog", Font.BOLD, 10));
+        yesButton.setFont(new Font("Dialog", Font.BOLD, 10));
 
         yesButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));

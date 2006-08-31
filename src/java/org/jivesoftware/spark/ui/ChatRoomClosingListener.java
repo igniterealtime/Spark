@@ -18,5 +18,8 @@ package org.jivesoftware.spark.ui;
  */
 public interface ChatRoomClosingListener {
 
+    /**
+     * Notifies users that the room is closing.
+     */
     void closing();
 }

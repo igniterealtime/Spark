@@ -10,15 +10,13 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -63,7 +61,9 @@ public class RetryPanel extends JPanel {
         descriptionLabel = new WrappedLabel();
 
         retryButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-        cancelButton = new RolloverButton("Reconnect", SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
+        cancelButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
+
+        ResourceUtils.resButton(cancelButton, Res.getString("button.reconnect"));
 
         layoutComponents();
 
@@ -92,8 +92,8 @@ public class RetryPanel extends JPanel {
      * @param reason the reason the user was disconnected from the server.
      */
     public void setDisconnectReason(String reason) {
-        if(!ModelUtil.hasLength(reason)){
-            reason = "You have lost your connection to the server. To login again, click on the Reconnect button below.";
+        if (!ModelUtil.hasLength(reason)) {
+            reason = Res.getString("message.generic.reconnect.message");
         }
         descriptionLabel.setText(reason);
     }

@@ -125,7 +125,7 @@ public final class LoginDialog {
                             new Insets(0, 0, 2, 0), 0, 0));
 
         }
-        imagePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
+       // imagePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
 
         loginPanel.setOpaque(false);
         mainPanel.add(loginPanel,
@@ -229,10 +229,10 @@ public final class LoginDialog {
 
 
             add(savePasswordBox,
-                    new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
+                    new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
             add(autoLoginBox,
-                    new GridBagConstraints(0, 6, 2, 1, 1.0, 0.0,
+                    new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
 
             // Add button but disable the login button initially

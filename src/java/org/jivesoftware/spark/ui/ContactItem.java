@@ -65,7 +65,6 @@ public class ContactItem extends JPanel {
     private String hash = "";
 
     private Date awayTime;
-    private List presenceHistory = new ArrayList();
     private File contactsDir = null;
 
     private JLabel sideIcon;
@@ -260,7 +259,6 @@ public class ContactItem extends JPanel {
         if (presence == null) {
             if (this.presence != null && (this.presence.getMode() == Presence.Mode.available || this.presence.getMode() == Presence.Mode.chat)) {
                 awayTime = new Date();
-                presenceHistory.add("Signed out at " + date);
             }
             return;
         }
@@ -274,8 +272,6 @@ public class ContactItem extends JPanel {
                 if (!ModelUtil.hasLength(status)) {
                     status = "Available";
                 }
-
-                presenceHistory.add(status + " at " + date);
             }
         }
         else if (this.presence != null && (this.presence.getMode() == Presence.Mode.available || this.presence.getMode() == Presence.Mode.chat)) {
@@ -285,22 +281,14 @@ public class ContactItem extends JPanel {
                 if (!ModelUtil.hasLength(status)) {
                     status = "Away";
                 }
-
-                presenceHistory.add(status + " at " + date);
             }
             else {
                 awayTime = null;
                 if (!ModelUtil.hasLength(status)) {
                     status = "Away";
                 }
-
-                presenceHistory.add(status + " at " + date);
             }
         }
-    }
-
-    public Collection getPresenceHistory() {
-        return presenceHistory;
     }
 
     public void updatePresenceIcon(Presence presence) {

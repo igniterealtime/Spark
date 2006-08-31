@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
@@ -243,8 +244,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
             public void actionPerformed(ActionEvent evt) {
-                final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), "Would you like to close this chat?",
-                        "Confirmation", JOptionPane.YES_NO_OPTION);
+                final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.end.chat"),
+                        Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
                 if (ok == JOptionPane.OK_OPTION) {
                     // Leave this chat.
                     closeChatRoom();
@@ -336,7 +337,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         if (updateDate && transcriptWindow.getLastUpdated() != null) {
             // Set new label date
             notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
-            notificationLabel.setText("Last message received on " + SparkManager.DATE_SECOND_FORMATTER.format(transcriptWindow.getLastUpdated()));
+            notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(transcriptWindow.getLastUpdated())));
         }
 
         scrollToBottom();

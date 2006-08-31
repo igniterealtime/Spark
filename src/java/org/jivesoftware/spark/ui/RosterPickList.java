@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
@@ -35,7 +36,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,7 +57,7 @@ public class RosterPickList extends JPanel {
         this.add(rosterLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(new JScrollPane(rosterList), new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        ResourceUtils.resLabel(rosterLabel, rosterList, "&Available users in Roster");
+        ResourceUtils.resLabel(rosterLabel, rosterList, Res.getString("label.available.users.in.roster"));
     }
 
     /**
@@ -69,7 +69,7 @@ public class RosterPickList extends JPanel {
     public Collection showRoster(JDialog parent) {
         // Populate Invite Panel with Available users.
         Roster roster = SparkManager.getConnection().getRoster();
-        for(RosterEntry entry : roster.getEntries()){
+        for (RosterEntry entry : roster.getEntries()) {
             Presence presence = roster.getPresence(entry.getUser());
             if (presence != null) {
                 ContactItem item = new ContactItem(entry.getName(), entry.getUser());
@@ -83,7 +83,7 @@ public class RosterPickList extends JPanel {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("Roster", "Select one ore more users in your Roster.", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        titlePanel = new TitlePanel(Res.getString("title.roster"), Res.getString("message.select.one.or.more"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -91,14 +91,14 @@ public class RosterPickList extends JPanel {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Ok", "Cancel"};
+        Object[] options = {Res.getString("ok"), Res.getString("cancel")};
         pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
 
-        final JDialog dlg = p.createDialog(parent, "Roster");
+        final JDialog dlg = p.createDialog(parent, Res.getString("title.roster"));
         dlg.setModal(true);
 
         dlg.pack();
@@ -110,12 +110,12 @@ public class RosterPickList extends JPanel {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Cancel".equals(value)) {
+                if (Res.getString("cancel").equals(value)) {
                     rosterList.clearSelection();
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     dlg.dispose();
                 }
-                else if ("Ok".equals(value)) {
+                else if (Res.getString("ok").equals(value)) {
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     dlg.dispose();
                 }

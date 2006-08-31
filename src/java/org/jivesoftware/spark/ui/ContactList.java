@@ -12,6 +12,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -35,7 +36,6 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
-import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.WrappedLabel;
@@ -58,7 +58,6 @@ import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -156,12 +155,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
-        addContactMenu = new JMenuItem("Add Contact", SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
-        addContactGroupMenu = new JMenuItem("Add Contact Group", SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
+        addContactGroupMenu = new JMenuItem(Res.getString("menuitem.add.contact.group"), SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
 
-        removeContactFromGroupMenu = new JMenuItem("Remove from Group", SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
-        chatMenu = new JMenuItem("Start a Chat", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        renameMenu = new JMenuItem("Rename", SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+        removeContactFromGroupMenu = new JMenuItem(Res.getString("menuitem.remove.from.group"), SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        chatMenu = new JMenuItem(Res.getString("menuitem.start.a.chat"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        renameMenu = new JMenuItem(Res.getString("menuitem.rename"), SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
 
         addContactMenu.addActionListener(this);
         removeContactFromGroupMenu.addActionListener(this);
@@ -244,7 +243,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
         commandPanel.add(addContactButton);
-        addContactButton.setToolTipText("Add a contact");
+        addContactButton.setToolTipText(Res.getString("message.add.a.contact"));
         addContactButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new RosterDialog().showRosterDialog();
@@ -454,7 +453,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     /**
      * Called when NEW entries are added.
      *
-     * @param addresses the addressss added.
+     * @param addresses the address added.
      */
     public void entriesAdded(final Collection addresses) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -1018,7 +1017,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
 
             String oldNickname = activeItem.getNickname();
-            String newNickname = JOptionPane.showInputDialog(this, "Rename to:", oldNickname);
+            String newNickname = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldNickname);
             if (ModelUtil.hasLength(newNickname)) {
                 String address = activeItem.getFullJID();
                 ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
@@ -1176,8 +1175,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         fireContextMenuListenerPopup(popup, group);
 
-        JMenuItem delete = new JMenuItem("Delete");
-        JMenuItem rename = new JMenuItem("Rename");
+        JMenuItem delete = new JMenuItem(Res.getString("menuitem.delete"));
+        JMenuItem rename = new JMenuItem(Res.getString("menuitem.rename"));
         if (!group.isSharedGroup()) {
             popup.addSeparator();
             popup.add(delete);
@@ -1186,7 +1185,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int ok = JOptionPane.showConfirmDialog(group, "Are you sure you want to delete \"" + group.getGroupName() + "\"", "Delete Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int ok = JOptionPane.showConfirmDialog(group, Res.getString("message.delete.confirmation", group.getGroupName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.YES_OPTION) {
                     String groupName = group.getGroupName();
                     Roster roster = SparkManager.getConnection().getRoster();
@@ -1215,7 +1214,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         rename.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String newName = JOptionPane.showInputDialog(group, "Rename Roster Group", "Rename to:", JOptionPane.QUESTION_MESSAGE);
+                String newName = JOptionPane.showInputDialog(group, Res.getString("title.rename.roster.group"), Res.getString("label.rename.to") + ":", JOptionPane.QUESTION_MESSAGE);
                 if (!ModelUtil.hasLength(newName)) {
                     return;
                 }
@@ -1263,7 +1262,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         };
 
         sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
-        sendAction.putValue(Action.NAME, "Send a File");
+        sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
 
         if (item.getPresence() != null) {
             popup.add(sendAction);
@@ -1296,7 +1295,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         };
 
-        removeAction.putValue(Action.NAME, "Remove from Roster");
+        removeAction.putValue(Action.NAME, Res.getString("menuitem.remove.from.roster"));
         removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_CIRCLE_DELETE));
 
         // Check if user is in shared group.
@@ -1328,36 +1327,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         };
         viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
-        viewProfile.putValue(Action.NAME, "View Profile");
+        viewProfile.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
 
         popup.add(viewProfile);
 
 
         popup.addSeparator();
-
-        Action viewPresenceAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                JEditorPane pane = new JEditorPane();
-                StringBuffer buf = new StringBuffer();
-                Collection col = item.getPresenceHistory();
-                Iterator iter = col.iterator();
-                while (iter.hasNext()) {
-                    String history = (String)iter.next();
-                    buf.append(history + "\n");
-                }
-                pane.setText(buf.toString());
-                MessageDialog.showComponent("Presence History", "History of user activity while online.",
-                        SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE), new JScrollPane(pane),
-                        getGUI(), 400, 400, false);
-
-            }
-        };
-
-        /*
-        viewPresenceAction.putValue(Action.NAME, "View Presence History");
-        viewPresenceAction.putValue(Action.SMALL_ICON, LaRes.getImageIcon(LaRes.VIEW_IMAGE));
-        popup.add(viewPresenceAction);
-        */
 
         Action lastActivityAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -1365,7 +1340,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     LastActivity activity = LastActivity.getLastActivity(SparkManager.getConnection(), item.getFullJID());
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
-                    JOptionPane.showMessageDialog(getGUI(), "Idle for " + time, "Last Activity", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
                 }
                 catch (XMPPException e1) {
                 }
@@ -1373,7 +1348,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         };
 
-        lastActivityAction.putValue(Action.NAME, "View Last Activity");
+        lastActivityAction.putValue(Action.NAME, Res.getString("menuitem.view.last.activity"));
         lastActivityAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_STOPWATCH));
 
         if (contactGroup == offlineGroup) {
@@ -1391,7 +1366,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         };
 
         subscribeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION));
-        subscribeAction.putValue(Action.NAME, "Subscribe To");
+        subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
         Roster roster = SparkManager.getConnection().getRoster();
         RosterEntry entry = roster.getEntry(item.getFullJID());
@@ -1417,7 +1392,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         final JPopupMenu popup = new JPopupMenu();
-        final JMenuItem sendMessagesMenu = new JMenuItem("Send a Message...", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        final JMenuItem sendMessagesMenu = new JMenuItem(Res.getString("menuitem.send.a.message"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
 
 
         fireContextMenuListenerPopup(popup, items);
@@ -1452,7 +1427,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private void sendMessages(Collection items) {
         InputDialog dialog = new InputDialog();
-        final String messageText = dialog.getInput("Broadcast Message", "Enter message to broadcast to selected users.", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
+        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
             Iterator contacts = items.iterator();
             while (contacts.hasNext()) {
@@ -1648,7 +1623,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         addContactGroupMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String groupName = JOptionPane.showInputDialog(getGUI(), "Name of Group:", "Add New Group", JOptionPane.QUESTION_MESSAGE);
+                String groupName = JOptionPane.showInputDialog(getGUI(), Res.getString("message.name.of.group") + ":", Res.getString("title.add.new.group"), JOptionPane.QUESTION_MESSAGE);
                 if (ModelUtil.hasLength(groupName)) {
                     ContactGroup contactGroup = getContactGroup(groupName);
                     if (contactGroup == null) {
@@ -1662,7 +1637,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         });
 
         // Add Toggle Contacts Menu
-        ResourceUtils.resButton(showHideMenu, "&Show Empty Groups");
+        ResourceUtils.resButton(showHideMenu, Res.getString("menuitem.show.empty.groups"));
         contactsMenu.add(showHideMenu);
 
         showHideMenu.addActionListener(new ActionListener() {
@@ -1726,7 +1701,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
 
-        String message = jid + " would like to see your online presence and add you to their roster. Do you accept?";
+        String message = Res.getString("message.approve.subscription", jid);
 
         final JPanel layoutPanel = new JPanel();
         layoutPanel.setBackground(Color.white);
@@ -1736,9 +1711,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         messageLabel.setText(message);
         layoutPanel.add(messageLabel, new GridBagConstraints(0, 0, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        RolloverButton acceptButton = new RolloverButton("Accept");
-        RolloverButton viewInfoButton = new RolloverButton("Profile");
-        RolloverButton denyButton = new RolloverButton("Deny");
+        RolloverButton acceptButton = new RolloverButton(Res.getString("button.accept"));
+        RolloverButton viewInfoButton = new RolloverButton(Res.getString("button.profile"));
+        RolloverButton denyButton = new RolloverButton(Res.getString("button.deny"));
         layoutPanel.add(acceptButton, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         layoutPanel.add(viewInfoButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         layoutPanel.add(denyButton, new GridBagConstraints(4, 1, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -1751,7 +1726,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                 SparkManager.getConnection().sendPacket(response);
 
-                int ok = JOptionPane.showConfirmDialog(getGUI(), "Would you like to add the user to your roster?", "Add To Roster", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int ok = JOptionPane.showConfirmDialog(getGUI(), Res.getString("message.add.user"), Res.getString("message.add.to.roster"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.OK_OPTION) {
                     RosterDialog rosterDialog = new RosterDialog();
                     rosterDialog.setDefaultJID(jid);
@@ -1803,13 +1778,13 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         //ListDataIntelliHints hints = new ListDataIntelliHints(contactField, new ArrayList(contacts));
         //   hints.setCaseSensitive(false);
 
-        final JDialog frame = new JDialog(SparkManager.getMainWindow(), "Find Contacts", false);
+        final JDialog frame = new JDialog(SparkManager.getMainWindow(), Res.getString("title.find.contacts"), false);
 
         JPanel layoutPanel = new JPanel();
         layoutPanel.setLayout(new GridBagLayout());
         frame.getContentPane().setLayout(new BorderLayout());
-        JLabel enterLabel = new JLabel("Contact To Find?");
-        enterLabel.setFont(new Font("Verdana", Font.BOLD, 10));
+        JLabel enterLabel = new JLabel(Res.getString("label.contact.to.find"));
+        enterLabel.setFont(new Font("dialog", Font.BOLD, 10));
         layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 200, 0));
         layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
@@ -2055,7 +2030,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void connectionClosedOnError(final Exception ex) {
-        String errorMessage = "Your connection was closed due to an error.";
+        String errorMessage = Res.getString("message.disconnected.error");
         boolean conflictError = false;
 
         if (ex != null && ex instanceof XMPPException) {
@@ -2063,11 +2038,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             StreamError error = xmppEx.getStreamError();
             String reason = error.getCode();
             if ("conflict".equals(reason)) {
-                errorMessage = "A user with the same account has logged in from another location.";
+                errorMessage = Res.getString("message.disconnected.conflict.error");
                 conflictError = true;
             }
             else {
-                errorMessage = "You have lost your connection to the server.\n\nReason: " + reason;
+                errorMessage = Res.getString("message.general.error", reason);
             }
         }
 

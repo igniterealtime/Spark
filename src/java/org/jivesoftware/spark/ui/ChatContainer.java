@@ -13,6 +13,7 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -263,7 +264,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 catch (InterruptedException e1) {
                     Log.error(e1);
                 }
-                return "";
+                return true;
             }
 
             public void finished() {
@@ -581,7 +582,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             Log.error(e1);
         }
 
-        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || !chatFrame.isInFocus())) {
+        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 10000)) {
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
             startFlashing(chatRoom);
@@ -712,9 +713,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Confirm end session
         boolean isGroupChat = room.getChatType() == Message.Type.GROUP_CHAT;
         if (isGroupChat) {
-            String message = "Would you like to end this session?";
-            final int ok = JOptionPane.showConfirmDialog(chatFrame, message,
-                "Confirmation", JOptionPane.YES_NO_OPTION);
+            final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
+                Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
@@ -1180,7 +1180,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             }
         };
-        closeThisAction.putValue(Action.NAME, "Close this chat");
+        closeThisAction.putValue(Action.NAME, Res.getString("message.close.this.chat"));
         popup.add(closeThisAction);
 
 
@@ -1199,7 +1199,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             };
 
-            closeOthersAction.putValue(Action.NAME, "Close all other chats");
+            closeOthersAction.putValue(Action.NAME, Res.getString("message.close.other.chats"));
             popup.add(closeOthersAction);
 
             Action closeOldAction = new AbstractAction() {
@@ -1209,7 +1209,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     }
                 }
             };
-            closeOldAction.putValue(Action.NAME, "Close stale chats");
+            closeOldAction.putValue(Action.NAME, Res.getString("message.close.stale.chats"));
             popup.add(closeOldAction);
 
         }
