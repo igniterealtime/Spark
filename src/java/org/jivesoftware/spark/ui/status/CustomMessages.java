@@ -19,6 +19,7 @@ import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.component.renderer.ListIconRenderer;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -141,7 +142,7 @@ public class CustomMessages {
 
         final JScrollPane pane = new JScrollPane(tree);
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         final JOptionPane optionPane = new JOptionPane(pane, JOptionPane.PLAIN_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
@@ -149,7 +150,7 @@ public class CustomMessages {
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
-        final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), "Edit Custom Messages", true);
+        final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), Res.getString("title.edit.custom.message"), true);
         optionsDialog.setContentPane(mainPanel);
         optionsDialog.pack();
         optionsDialog.setLocationRelativeTo(SparkManager.getMainWindow());
@@ -157,7 +158,7 @@ public class CustomMessages {
         optionPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String value = (String)optionPane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     optionsDialog.setVisible(false);
                     return;
                 }
@@ -203,7 +204,7 @@ public class CustomMessages {
                         }
                     };
 
-                    addAction.putValue(Action.NAME, "Add");
+                    addAction.putValue(Action.NAME, Res.getString("menuitem.add"));
                     popup.add(addAction);
                     popup.show(tree, event.getX(), event.getY());
                     return;
@@ -236,7 +237,7 @@ public class CustomMessages {
                             save(list);
                         }
                     };
-                    deleteAction.putValue(Action.NAME, "Delete");
+                    deleteAction.putValue(Action.NAME, Res.getString("menuitem.delete"));
                     popup.add(deleteAction);
 
 
@@ -260,7 +261,7 @@ public class CustomMessages {
                         }
                     };
 
-                    editAction.putValue(Action.NAME, "Edit");
+                    editAction.putValue(Action.NAME, Res.getString("menuitem.edit"));
                     popup.add(editAction);
                     popup.show(tree, event.getX(), event.getY());
                 }
@@ -320,10 +321,10 @@ public class CustomMessages {
             StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
 
             // Add Mnemonics
-            ResourceUtils.resLabel(typeLabel, typeBox, "&Presence:");
-            ResourceUtils.resLabel(statusLabel, statusField, "&Message:");
-            ResourceUtils.resLabel(priorityLabel, priorityField, "P&riority:");
-            ResourceUtils.resButton(persistBox, "&Save for future use");
+            ResourceUtils.resLabel(typeLabel, typeBox, Res.getString("label.presence"));
+            ResourceUtils.resLabel(statusLabel, statusField, Res.getString("label.message"));
+            ResourceUtils.resLabel(priorityLabel, priorityField, Res.getString("label.priority"));
+            ResourceUtils.resButton(persistBox, Res.getString("button.save.for.future.use"));
 
             setLayout(new GridBagLayout());
 
@@ -381,13 +382,13 @@ public class CustomMessages {
             mainPanel.setLayout(new BorderLayout());
 
             // The user should only be able to close this dialog.
-            Object[] options = {"Ok", "Cancel"};
+            Object[] options = {Res.getString("ok"), Res.getString("cancel")};
             final JOptionPane optionPane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
                     JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
             mainPanel.add(optionPane, BorderLayout.CENTER);
 
-            final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), "Edit Custom Message", true);
+            final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), Res.getString("title.edit.custom.message"), true);
             optionsDialog.setContentPane(mainPanel);
             optionsDialog.pack();
 
@@ -410,11 +411,11 @@ public class CustomMessages {
             optionPane.addPropertyChangeListener(new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                     String value = (String)optionPane.getValue();
-                    if ("Cancel".equals(value)) {
+                    if (Res.getString("cancel").equals(value)) {
                         optionsDialog.setVisible(false);
                         return;
                     }
-                    else if ("Ok".equals(value)) {
+                    else if (Res.getString("ok").equals(value)) {
                         List list = load();
                         Iterator iter = list.iterator();
 
@@ -472,13 +473,13 @@ public class CustomMessages {
             mainPanel.setLayout(new BorderLayout());
 
             // The user should only be able to close this dialog.
-            Object[] options = {"Ok", "Cancel"};
+            Object[] options = {Res.getString("ok"), Res.getString("cancel")};
             final JOptionPane optionPane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
                     JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
             mainPanel.add(optionPane, BorderLayout.CENTER);
 
-            final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), "Set Status Message", true);
+            final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), Res.getString("title.set.status.message "), true);
             optionsDialog.setContentPane(mainPanel);
             optionsDialog.pack();
 
@@ -499,10 +500,10 @@ public class CustomMessages {
             optionPane.addPropertyChangeListener(new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                     String value = (String)optionPane.getValue();
-                    if ("Cancel".equals(value)) {
+                    if (Res.getString("cancel").equals(value)) {
                         optionsDialog.setVisible(false);
                     }
-                    else if ("Ok".equals(value)) {
+                    else if (Res.getString("ok").equals(value)) {
 
                         if (!persistBox.isSelected()) {
                             // Change presence and quit.

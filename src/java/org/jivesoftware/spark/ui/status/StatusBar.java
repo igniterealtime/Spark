@@ -12,6 +12,7 @@ package org.jivesoftware.spark.ui.status;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
@@ -267,7 +268,7 @@ public class StatusBar extends JPanel {
         }
 
         // Add change message
-        final JMenuItem changeStatusMenu = new JMenuItem("Set status message...", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+        final JMenuItem changeStatusMenu = new JMenuItem(Res.getString("menuitem.set.status.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
         popup.addSeparator();
 
 
@@ -285,7 +286,7 @@ public class StatusBar extends JPanel {
             }
         };
 
-        editMessagesAction.putValue(Action.NAME, "Edit custom status messages...");
+        editMessagesAction.putValue(Action.NAME, Res.getString("menuitem.edit.status.message"));
         popup.add(editMessagesAction);
 
         popup.show(statusPanel, 0, statusPanel.getHeight());
