@@ -385,7 +385,7 @@ public class BookmarkedConferences extends JPanel {
         servicePanel.add(addButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 2, 5), 0, 0));
 
         // Add resource utils
-        ResourceUtils.resLabel(serviceLabel, serviceField, Res.getString("label.add.conference.service");
+        ResourceUtils.resLabel(serviceLabel, serviceField, Res.getString("label.add.conference.service"));
 
         final Action conferenceAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -396,7 +396,7 @@ public class BookmarkedConferences extends JPanel {
                 }
                 else {
                     final List serviceList = new ArrayList();
-                    serviceField.setText(Res.getString("message.searching.please.wait");
+                    serviceField.setText(Res.getString("message.searching.please.wait"));
                     serviceField.setEnabled(false);
                     addButton.setEnabled(false);
                     SwingWorker worker = new SwingWorker() {
