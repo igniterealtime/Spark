@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.ui.rooms;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
@@ -139,7 +140,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Create toolbar buttons.
         ChatRoomButton infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
-        infoButton.setToolTipText("View information about this user");
+        infoButton.setToolTipText(Res.getString("message.view.information.about.this.user"));
 
         // Create basic toolbar.
         getToolBar().addChatRoomButton(infoButton);
@@ -147,7 +148,7 @@ public class ChatRoomImpl extends ChatRoom {
         // If the user is not in the roster, then allow user to add them.
         if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
             ChatRoomButton addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
-            addToRosterButton.setToolTipText("Add this user to your roster.");
+            addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
             getToolBar().addChatRoomButton(addToRosterButton);
             addToRosterButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -366,13 +367,13 @@ public class ChatRoomImpl extends ChatRoom {
 
                     if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
                         if (isOnline) {
-                            getTranscriptWindow().insertNotificationMessage("*** " + participantNickname + " went offline at " + time + ".");
+                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time));
                         }
                         isOnline = false;
                     }
                     else if (presence.getType() == Presence.Type.available) {
                         if (!isOnline) {
-                            getTranscriptWindow().insertNotificationMessage("*** " + participantNickname + " is online at " + time + ".");
+                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time));
                         }
                         isOnline = true;
                     }
@@ -387,7 +388,7 @@ public class ChatRoomImpl extends ChatRoom {
                             // Check to see if the user is online to recieve this message.
                             RosterEntry entry = roster.getEntry(participantJID);
                             if (presence == null && !offlineSent && entry != null) {
-                                getTranscriptWindow().insertErrorMessage("The user will be unable to receive offline messages.");
+                                getTranscriptWindow().insertErrorMessage(Res.getString("message.offline.error"));
                                 offlineSent = true;
                             }
                         }
@@ -397,7 +398,7 @@ public class ChatRoomImpl extends ChatRoom {
                     // Check to see if the user is online to recieve this message.
                     RosterEntry entry = roster.getEntry(participantJID);
                     if (presence == null && !offlineSent && entry != null) {
-                        getTranscriptWindow().insertErrorMessage("The user is offline and will receive the message on their next login.");
+                        getTranscriptWindow().insertErrorMessage(Res.getString("message.offline"));
                         offlineSent = true;
                     }
 
@@ -538,7 +539,7 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public void showTyping(boolean typing) {
         if (typing) {
-            String isTypingText = participantNickname + " is typing a message...";
+            String isTypingText = Res.getString("message.is.typing.a.message", participantNickname);
             getNotificationLabel().setText(isTypingText);
             getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
         }

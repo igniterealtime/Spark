@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.rooms;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -143,7 +144,7 @@ public final class GroupChatRoom extends ChatRoom {
                     }
                 };
 
-                inviteAction.putValue(Action.NAME, "Invite Users");
+                inviteAction.putValue(Action.NAME, Res.getString("menuitem.invite.users"));
                 inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
 
                 popup.add(inviteAction);
@@ -162,7 +163,7 @@ public final class GroupChatRoom extends ChatRoom {
                     }
                 };
 
-                configureAction.putValue(Action.NAME, "Configure Room");
+                configureAction.putValue(Action.NAME, Res.getString("title.configure.room"));
                 configureAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ALL_AGENTS_IMAGE));
                 if (SparkManager.getUserManager().isOwner((GroupChatRoom)getChatRoom(), chat.getNickname())) {
                     popup.add(configureAction);
@@ -170,7 +171,7 @@ public final class GroupChatRoom extends ChatRoom {
 
                 Action subjectAction = new AbstractAction() {
                     public void actionPerformed(ActionEvent actionEvent) {
-                        String newSubject = JOptionPane.showInputDialog(getChatRoom(), "Enter New Subject?", "Change Subject", JOptionPane.QUESTION_MESSAGE);
+                        String newSubject = JOptionPane.showInputDialog(getChatRoom(), Res.getString("message.enter.new.subject") + ":", Res.getString("title.change.subject"), JOptionPane.QUESTION_MESSAGE);
                         if (ModelUtil.hasLength(newSubject)) {
                             try {
                                 chat.changeSubject(newSubject);
@@ -182,19 +183,19 @@ public final class GroupChatRoom extends ChatRoom {
                     }
                 };
 
-                subjectAction.putValue(Action.NAME, "Change subject");
+                subjectAction.putValue(Action.NAME, Res.getString("menuitem.change.subject"));
                 subjectAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
                 popup.add(subjectAction);
 
                 // Define actions to modify/view room information
                 Action destroyRoomAction = new AbstractAction() {
                     public void actionPerformed(ActionEvent e) {
-                        int ok = JOptionPane.showConfirmDialog(getChatRoom(), "Destroying the room removes all users from the room. Continue?", "Destroy Room Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        int ok = JOptionPane.showConfirmDialog(getChatRoom(), Res.getString("message.confirm.destruction.of.room"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (ok == JOptionPane.NO_OPTION) {
                             return;
                         }
 
-                        String reason = JOptionPane.showInputDialog(getChatRoom(), "Reason for destroying the room?", "Enter Reason", JOptionPane.QUESTION_MESSAGE);
+                        String reason = JOptionPane.showInputDialog(getChatRoom(), Res.getString("message.room.destruction.reason"), Res.getString("title.enter.reason"), JOptionPane.QUESTION_MESSAGE);
                         if (ModelUtil.hasLength(reason)) {
                             try {
                                 chat.destroy(reason, null);
@@ -207,7 +208,7 @@ public final class GroupChatRoom extends ChatRoom {
                     }
                 };
 
-                destroyRoomAction.putValue(Action.NAME, "Destroy Room");
+                destroyRoomAction.putValue(Action.NAME, Res.getString("menuitem.destroy.room"));
                 destroyRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
                 if (SparkManager.getUserManager().isOwner((GroupChatRoom)getChatRoom(), getNickname())) {
                     popup.add(destroyRoomAction);
@@ -441,7 +442,7 @@ public final class GroupChatRoom extends ChatRoom {
         getToolBar().setVisible(false);
 
         // Update Room Notice To Inform Agent that he has left the chat.
-        getTranscriptWindow().insertNotificationMessage(getNickname() + " has left the room.");
+        getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", getNickname()));
 
         // Leave the Chat.
         try {
@@ -455,7 +456,7 @@ public final class GroupChatRoom extends ChatRoom {
         getTranscriptWindow().showDisabledWindowUI();
 
         // Update Notification Label
-        getNotificationLabel().setText("Chat session ended on " + SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date()));
+        getNotificationLabel().setText(Res.getString("message.chat.session.ended", SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date())));
         getNotificationLabel().setIcon(null);
         getNotificationLabel().setEnabled(false);
 
@@ -611,11 +612,11 @@ public final class GroupChatRoom extends ChatRoom {
             String errorMessage = "";
 
             if (message.getError().getCode() == 403 && message.getSubject() != null) {
-                errorMessage = "You are not allowed to change the subject of this room.";
+                errorMessage = Res.getString("message.subject.change.error");
             }
 
             else if (message.getError().getCode() == 403) {
-                errorMessage = "Received a forbidden error from the server.";
+                errorMessage = Res.getString("message.forbidden.error");
             }
 
             if (ModelUtil.hasLength(errorMessage)) {
@@ -637,7 +638,7 @@ public final class GroupChatRoom extends ChatRoom {
             Destroy destroy = mucUser.getDestroy();
             if (destroy != null) {
                 String reason = destroy.getReason();
-                JOptionPane.showMessageDialog(this, "This room has been destroyed.\nReason: " + reason, "Room Destroyed", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, Res.getString("message.room.destroyed", reason), Res.getString("title.room.destroyed"), JOptionPane.INFORMATION_MESSAGE);
                 leaveChatRoom();
                 return;
             }
@@ -647,7 +648,7 @@ public final class GroupChatRoom extends ChatRoom {
         if (presence.getType() == Presence.Type.unavailable && !"303".equals(code)) {
             if (currentUserList.contains(from)) {
                 if (showPresenceMessages) {
-                    getTranscriptWindow().insertNotificationMessage(nickname + " has left the room.");
+                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", nickname));
                     scrollToBottom();
                 }
                 currentUserList.remove(from);
@@ -658,7 +659,7 @@ public final class GroupChatRoom extends ChatRoom {
                 currentUserList.add(from);
                 getChatInputEditor().setEnabled(true);
                 if (showPresenceMessages) {
-                    getTranscriptWindow().insertNotificationMessage(nickname + " has joined the room.");
+                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.joined.room", nickname));
                     scrollToBottom();
                 }
             }
@@ -669,121 +670,123 @@ public final class GroupChatRoom extends ChatRoom {
         chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
             public void kicked(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been kicked out of the room.");
+                insertText(Res.getString("message.user.kicked.from.room", nickname));
             }
 
             public void voiceGranted(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been given a voice in this room.");
+                insertText(Res.getString("message.user.given.voice", nickname));
             }
 
             public void voiceRevoked(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + "'s voice has been revoked.");
+                insertText(Res.getString("message.user.voice.revoked", nickname));
             }
 
             public void banned(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been banned from this room.");
+                insertText(Res.getString("message.user.banned", nickname));
             }
 
             public void membershipGranted(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been given membership priviliges.");
+                insertText(Res.getString("message.user.granted.membership", nickname));
             }
 
             public void membershipRevoked(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + "'s membership has been revoked.");
+                insertText(Res.getString("message.user.revoked.membership", nickname));
             }
 
             public void moderatorGranted(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been granted moderator privileges.");
+                insertText(Res.getString("message.user.granted.moderator", nickname));
             }
 
             public void moderatorRevoked(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + "'s moderator privileges have been revoked.");
+                insertText(Res.getString("message.user.revoked.moderator", nickname));
             }
 
             public void ownershipGranted(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been granted owner privileges.");
+                insertText(Res.getString("message.user.granted.owner", nickname));
             }
 
             public void ownershipRevoked(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + "'s owner privileges have been revoked.");
+                insertText(Res.getString("message.user.revoked.owner", nickname));
             }
 
             public void adminGranted(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " has been granted administrator privileges.");
+                insertText(Res.getString("message.user.granted.admin", nickname));
             }
 
             public void adminRevoked(String participant) {
                 String nickname = StringUtils.parseResource(participant);
-                insertText(nickname + " administrator privileges have been revoked.");
+                insertText(Res.getString("message.user.revoked.admin", nickname));
             }
 
             public void nicknameChanged(String participant, String nickname) {
-                insertText(StringUtils.parseResource(participant) + " is now known as " + nickname);
+                insertText(Res.getString("message.user.nickname.changed", StringUtils.parseResource(participant), nickname));
             }
         });
 
+
+
         chat.addUserStatusListener(new DefaultUserStatusListener() {
             public void kicked(String s, String reason) {
-                insertText("You have been kicked by " + s);
+                insertText(Res.getString("message.your.kicked", s));
                 getChatInputEditor().setEnabled(false);
                 getSplitPane().setRightComponent(null);
                 leaveChatRoom();
             }
 
             public void voiceGranted() {
-                insertText("You have been given a voice in this chat.");
+                insertText(Res.getString("message.your.voice.revoked"));
                 getChatInputEditor().setEnabled(true);
             }
 
             public void voiceRevoked() {
-                insertText("Your voice has been revoked.");
+                insertText(Res.getString("message.your.voice.revoked"));
                 getChatInputEditor().setEnabled(false);
             }
 
             public void banned(String s, String reason) {
-                insertText("You have been banned from this room.");
+                insertText(Res.getString("message.your.banned"));
             }
 
             public void membershipGranted() {
-                insertText("You have been granted membership privileges.");
+                insertText(Res.getString("message.your.membership.granted"));
             }
 
             public void membershipRevoked() {
-                insertText("Your membership has been revoked.");
+                insertText(Res.getString("message.your.membership.revoked"));
             }
 
             public void moderatorGranted() {
-                insertText("You have been granted moderator privileges.");
+                insertText(Res.getString("message.your.moderator.granted"));
             }
 
             public void moderatorRevoked() {
-                insertText("Your moderator privileges have been revoked.");
+                insertText(Res.getString("message.your.moderator.revoked"));
             }
 
             public void ownershipGranted() {
-                insertText("You have been granted owner privileges.");
+                insertText(Res.getString("message.your.ownership.granted"));
             }
 
             public void ownershipRevoked() {
-                insertText("Your owner privileges have been revoked.");
+                insertText(Res.getString("message.your.ownership.revoked"));
             }
 
             public void adminGranted() {
-                insertText("You have been granted administrator privileges.");
+                insertText(Res.getString("message.your.admin.granted"));
             }
 
             public void adminRevoked() {
-                insertText("Your admin privileges have been revoked.");
+                insertText(Res.getString("message.your.revoked.granted"));
             }
         });
 
@@ -805,12 +808,12 @@ public final class GroupChatRoom extends ChatRoom {
     private class SubjectListener implements SubjectUpdatedListener {
 
         public void subjectUpdated(String subject, String by) {
-            subjectLabel.setText("Subject: " + subject);
+            subjectLabel.setText(Res.getString("subject") + ": " + subject);
             subjectLabel.setToolTipText(subject);
 
             String nickname = StringUtils.parseResource(by);
 
-            String insertMessage = "The subject has been changed to: " + subject;
+            String insertMessage = Res.getString("message.subject.has.been.changed.to", subject);
             getTranscriptWindow().insertNotificationMessage(insertMessage);
 
         }
@@ -939,7 +942,7 @@ public final class GroupChatRoom extends ChatRoom {
 
                     if (bareAddress.equals(getRoomname())) {
                         String nickname = StringUtils.parseResource(from);
-                        String isTypingText = nickname + " is typing a message...";
+                        String isTypingText = Res.getString("message.is.typing.a.message", nickname);
                         getNotificationLabel().setText(isTypingText);
                         getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
                         typingTimer.restart();
