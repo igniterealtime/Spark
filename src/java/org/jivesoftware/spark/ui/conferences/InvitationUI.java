@@ -10,6 +10,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
@@ -22,6 +23,7 @@ import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -70,7 +72,7 @@ public class InvitationUI extends JPanel implements ActionListener {
         final JLabel dateLabel = new JLabel();
         final JLabel dateLabelValue = new JLabel();
 
-        final JLabel inviterLabel = new JLabel("From:");
+        final JLabel inviterLabel = new JLabel(Res.getString("from") + ":");
 
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(inviter);
         final JLabel inviterValueLabel = new JLabel(nickname);
@@ -93,20 +95,23 @@ public class InvitationUI extends JPanel implements ActionListener {
         titleLabel.setFont(new Font("dialog", Font.BOLD, 12));
         description.setFont(new Font("dialog", 0, 12));
 
-        titleLabel.setText("Conference Invitation");
+        titleLabel.setText(Res.getString("title.conference.invitation"));
         description.setText(reason);
 
         // Set Date Label
         dateLabel.setFont(new Font("dialog", Font.BOLD, 12));
-        dateLabel.setText("Date:");
+        dateLabel.setText(Res.getString("date") + ":");
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
         dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 12));
 
         // Add accept and reject buttons
-        joinButton = new RolloverButton("Join", SparkRes.getImageIcon(SparkRes.CIRCLE_CHECK_IMAGE));
-        declineButton = new RolloverButton("Decline", SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        joinButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.CIRCLE_CHECK_IMAGE));
+        declineButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        ResourceUtils.resButton(joinButton, Res.getString("button.join"));
+        ResourceUtils.resButton(declineButton, Res.getString("button.decline"));
+
 
         add(joinButton, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
         add(declineButton, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
@@ -132,7 +137,7 @@ public class InvitationUI extends JPanel implements ActionListener {
             room = new GroupChatRoom(chat);
         }
 
-        room.setTabTitle("Conference Invitation");
+        room.setTabTitle(Res.getString("title.conference.invitation"));
         room.setTabIcon(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
         room.getChatWindowPanel().add(this, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(1, 0, 1, 0), 0, 0));
 

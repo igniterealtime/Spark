@@ -17,7 +17,9 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -58,7 +60,7 @@ public class DataFormDialog extends JPanel {
 
     public DataFormDialog(JFrame parent, final MultiUserChat chat, final Form submitForm) {
         dialog = new JDialog(parent, true);
-        dialog.setTitle("Configure Chat Room");
+        dialog.setTitle(Res.getString("title.configure.chat.room"));
 
         this.setLayout(new GridBagLayout());
         Form form = null;
@@ -146,7 +148,8 @@ public class DataFormDialog extends JPanel {
         }
 
 
-        JButton button = new JButton("Update");
+        JButton button = new JButton();
+        ResourceUtils.resButton(button, Res.getString("button.update"));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dialog.dispose();
@@ -165,7 +168,8 @@ public class DataFormDialog extends JPanel {
         bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         bottomPanel.add(button);
 
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton();
+        ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 dialog.dispose();
@@ -239,12 +243,12 @@ public class DataFormDialog extends JPanel {
 
         if (!(comp instanceof JCheckBox)) {
             JLabel formLabel = new JLabel(label);
-            formLabel.setFont(new Font("Verdana", Font.BOLD, 10));
+            formLabel.setFont(new Font("dialog", Font.BOLD, 10));
             this.add(formLabel, new GridBagConstraints(0, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         }
         if (comp instanceof JTextArea) {
             JScrollPane pane = new JScrollPane(comp);
-            pane.setBorder(BorderFactory.createTitledBorder("Comma Delimited"));
+            pane.setBorder(BorderFactory.createTitledBorder(Res.getString("group.comma.delimited")));
             this.add(pane, new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 50));
         }
         else if (comp instanceof JCheckBox) {

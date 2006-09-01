@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
@@ -53,10 +54,10 @@ public class RoomBrowser extends JPanel {
     private Tree tree;
 
     public RoomBrowser() {
-        descriptionLabel.setText("Description:");
-        subjectLabel.setText("Subject:");
-        occupantsLabel.setText("Occupants:");
-        roomNameLabel.setText("Room Name:");
+        descriptionLabel.setText(Res.getString("description") + ":");
+        subjectLabel.setText(Res.getString("subject") + ":");
+        occupantsLabel.setText(Res.getString("occupants") + ":");
+        roomNameLabel.setText(Res.getString("room.name") + ":");
 
         // Add labels to UI
         setLayout(new GridBagLayout());
@@ -73,7 +74,7 @@ public class RoomBrowser extends JPanel {
         add(roomNameValue, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        rootNode = new JiveTreeNode("Users In Room", true);
+        rootNode = new JiveTreeNode(Res.getString("tree.users.in.room"), true);
         tree = new Tree(rootNode);
 
         add(tree, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
@@ -111,8 +112,8 @@ public class RoomBrowser extends JPanel {
     }
 
     private void setupRoomInformationUI(String roomJID, final RoomInfo roomInfo, final DiscoverItems items) {
-        descriptionValue.setText("No description available");
-        subjectValue.setText("No subject available");
+        descriptionValue.setText(Res.getString("message.no.description.available"));
+        subjectValue.setText(Res.getString("message.no.subject.available"));
         occupantsValue.setText("n/a");
         roomNameValue.setText("n/a");
         try {
@@ -142,7 +143,7 @@ public class RoomBrowser extends JPanel {
         final JOptionPane pane;
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel("View Room Information", "Room information for " + roomJID, SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.view.room.information"), Res.getString("message.room.information.for ", roomJID), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -150,14 +151,14 @@ public class RoomBrowser extends JPanel {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
 
-        final JDialog dlg = p.createDialog(SparkManager.getMainWindow(), "Room Information");
+        final JDialog dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.view.room.information"));
         dlg.setModal(false);
 
         dlg.pack();
@@ -169,7 +170,7 @@ public class RoomBrowser extends JPanel {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     dlg.dispose();
                 }
