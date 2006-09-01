@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
@@ -65,7 +66,7 @@ import java.util.Map;
  */
 public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener {
     private GroupChatRoom groupChatRoom;
-    private final ImageTitlePanel agentInfoPanel = new ImageTitlePanel("Participants in Room");
+    private final ImageTitlePanel agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
     private ChatManager chatManager;
     private MultiUserChat chat;
 
@@ -381,7 +382,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     public String getTabTitle() {
-        return "Room Information";
+        return Res.getString("title.room.information");
     }
 
     public Icon getTabIcon() {
@@ -389,7 +390,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     public String getTabToolTip() {
-        return "Room Information";
+        return Res.getString("title.room.information");
     }
 
     public JComponent getGUI() {
@@ -403,10 +404,10 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     /*                     MUC Functions                                */
     private void kickUser(String nickname) {
         try {
-            chat.kickParticipant(nickname, "You have been kicked");
+            chat.kickParticipant(nickname, Res.getString("message.you.have.been.kicked"));
         }
         catch (XMPPException e) {
-            groupChatRoom.insertText("You are unable to kick " + nickname + ".");
+            groupChatRoom.insertText(Res.getString("message.kicked.error", nickname));
         }
     }
 
@@ -415,7 +416,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             Occupant occupant = chat.getOccupant((String)userMap.get(nickname));
             if (occupant != null) {
                 String bareJID = StringUtils.parseBareAddress(occupant.getJid());
-                chat.banUser(bareJID, "You have been banned");
+                chat.banUser(bareJID, Res.getString("message.you.have.been.banned"));
             }
         }
         catch (XMPPException e) {
@@ -503,7 +504,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         if (isMe) {
             Action changeNicknameAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                    String newNickname = JOptionPane.showInputDialog(groupChatRoom, "New Nickname:", "Change Nickname", JOptionPane.QUESTION_MESSAGE);
+                    String newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("label.new.nickname") +":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
                     if (ModelUtil.hasLength(newNickname)) {
                         while (true) {
                             newNickname = newNickname.trim();
@@ -512,7 +513,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
                                 break;
                             }
                             catch (XMPPException e1) {
-                                newNickname = JOptionPane.showInputDialog(groupChatRoom, "Nickname in use. Please specify another Nickname:", "Change Nickname", JOptionPane.QUESTION_MESSAGE);
+                                newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("message.nickname.in.use") + ":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
                                 if (!ModelUtil.hasLength(newNickname)) {
                                     break;
                                 }
@@ -522,7 +523,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
                 }
             };
 
-            changeNicknameAction.putValue(Action.NAME, "Change Nickname");
+            changeNicknameAction.putValue(Action.NAME, Res.getString("menuitem.change.nickname"));
             changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
 
             if (allowNicknameChange) {
@@ -537,7 +538,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             }
         };
 
-        chatAction.putValue(Action.NAME, "Start Chat");
+        chatAction.putValue(Action.NAME, Res.getString("menuitem.start.a.chat"));
         chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         if (!isMe) {
             popup.add(chatAction);
@@ -561,11 +562,11 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             }
         };
 
-        blockAction.putValue(Action.NAME, "Block User");
+        blockAction.putValue(Action.NAME, Res.getString("menuitem.block.user"));
         blockAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
         if (!isMe) {
             if (groupChatRoom.isBlocked(groupJID)) {
-                blockAction.putValue(Action.NAME, "Unblock User");
+                blockAction.putValue(Action.NAME, Res.getString("menuitem.unblock.user"));
             }
             popup.add(blockAction);
         }
@@ -577,7 +578,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             }
         };
 
-        kickAction.putValue(Action.NAME, "Kick User");
+        kickAction.putValue(Action.NAME, Res.getString("menuitem.kick.user"));
         kickAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
         if (moderator && !userIsAdmin && !isMe) {
             popup.add(kickAction);
@@ -596,14 +597,14 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             }
         };
 
-        voiceAction.putValue(Action.NAME, "Voice");
+        voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
         voiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         if (moderator && !userIsModerator && !isMe) {
             if (userManager.hasVoice(groupChatRoom, selectedUser)) {
-                voiceAction.putValue(Action.NAME, "Revoke Voice");
+                voiceAction.putValue(Action.NAME, Res.getString("menuitem.revoke.voice"));
             }
             else {
-                voiceAction.putValue(Action.NAME, "Grant Voice");
+                voiceAction.putValue(Action.NAME, Res.getString("menuitem.grant.voice"));
             }
             popup.add(voiceAction);
         }
@@ -614,7 +615,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
                 banUser(selectedUser);
             }
         };
-        banAction.putValue(Action.NAME, "Ban User");
+        banAction.putValue(Action.NAME, Res.getString("menuitem.ban.user"));
         banAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.RED_FLAG_16x16));
         if (admin && !userIsModerator && !isMe) {
             popup.add(banAction);
@@ -634,11 +635,11 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
         moderatorAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE));
         if (admin && !userIsModerator) {
-            moderatorAction.putValue(Action.NAME, "Grant Moderator");
+            moderatorAction.putValue(Action.NAME, Res.getString("menuitem.grant.moderator"));
             popup.add(moderatorAction);
         }
         else if (admin && userIsModerator && !isMe) {
-            moderatorAction.putValue(Action.NAME, "Revoke Moderator");
+            moderatorAction.putValue(Action.NAME, Res.getString("menuitem.revoke.moderator"));
             popup.add(moderatorAction);
         }
 
@@ -651,7 +652,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         };
 
         if (admin) {
-            JMenu unbanMenu = new JMenu("Unban");
+            JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
             Iterator bannedUsers = null;
             try {
                 bannedUsers = chat.getOutcasts().iterator();
@@ -680,7 +681,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             }
         };
 
-        inviteAction.putValue(Action.NAME, "Invite Users");
+        inviteAction.putValue(Action.NAME, Res.getString("menuitem.invite.users"));
         inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
         popup.addSeparator();
         popup.add(inviteAction);

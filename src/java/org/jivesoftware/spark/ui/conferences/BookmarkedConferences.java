@@ -19,6 +19,7 @@ import org.dom4j.io.XMLWriter;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -202,7 +203,7 @@ public class BookmarkedConferences extends JPanel {
                     browseRooms(node.toString());
                 }
             };
-            browseAction.putValue(Action.NAME, "Browse Service");
+            browseAction.putValue(Action.NAME, Res.getString("menuitem.browse.service"));
             browseAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
 
             Action removeServiceAction = new AbstractAction() {
@@ -211,7 +212,7 @@ public class BookmarkedConferences extends JPanel {
                     treeModel.removeNodeFromParent(node);
                 }
             };
-            removeServiceAction.putValue(Action.NAME, "Remove Service");
+            removeServiceAction.putValue(Action.NAME, Res.getString("menuitem.remove.service"));
             removeServiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
             JMenuItem browseServiceMenu = new JMenuItem(browseAction);
@@ -226,7 +227,7 @@ public class BookmarkedConferences extends JPanel {
                 }
             };
 
-            joinRoomAction.putValue(Action.NAME, "Join Room");
+            joinRoomAction.putValue(Action.NAME, Res.getString("menuitem.join.room"));
             joinRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER_ENTER));
 
             Action removeRoomAction = new AbstractAction() {
@@ -237,7 +238,7 @@ public class BookmarkedConferences extends JPanel {
                     autoJoinRooms.remove(roomJID);
                 }
             };
-            removeRoomAction.putValue(Action.NAME, "Remove Bookmark");
+            removeRoomAction.putValue(Action.NAME, Res.getString("menuitem.remove.bookmark"));
             removeRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
 
 
@@ -266,7 +267,7 @@ public class BookmarkedConferences extends JPanel {
                     }
                 };
 
-                autoJoin.putValue(Action.NAME, "Join on startup");
+                autoJoin.putValue(Action.NAME, Res.getString("menuitem.join.on.startup"));
 
                 JCheckBoxMenuItem item = new JCheckBoxMenuItem(autoJoin);
                 String roomJID = node.getAssociatedObject().toString();
@@ -282,7 +283,7 @@ public class BookmarkedConferences extends JPanel {
                     }
                 };
 
-                roomInfoAction.putValue(Action.NAME, "View Room Info");
+                roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
                 roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
                 popupMenu.add(roomInfoAction);
             }
@@ -376,7 +377,7 @@ public class BookmarkedConferences extends JPanel {
 
         final JLabel serviceLabel = new JLabel();
         final RolloverButton addButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
-        addButton.setToolTipText("Add conference service.");
+        addButton.setToolTipText(Res.getString("message.add.conference.service"));
 
         final JTextField serviceField = new JTextField();
         servicePanel.add(serviceLabel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 5), 0, 0));
@@ -384,18 +385,18 @@ public class BookmarkedConferences extends JPanel {
         servicePanel.add(addButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 2, 5), 0, 0));
 
         // Add resource utils
-        ResourceUtils.resLabel(serviceLabel, serviceField, "&Add Conference Service");
+        ResourceUtils.resLabel(serviceLabel, serviceField, Res.getString("label.add.conference.service");
 
         final Action conferenceAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 final String conferenceService = serviceField.getText();
                 if (hasService(conferenceService)) {
-                    JOptionPane.showMessageDialog(null, "Service is already in your service list.", "Service Exists", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, Res.getString("message.service.already.exists"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     serviceField.setText("");
                 }
                 else {
                     final List serviceList = new ArrayList();
-                    serviceField.setText("Searching. Please wait...");
+                    serviceField.setText(Res.getString("message.searching.please.wait");
                     serviceField.setEnabled(false);
                     addButton.setEnabled(false);
                     SwingWorker worker = new SwingWorker() {
@@ -431,7 +432,7 @@ public class BookmarkedConferences extends JPanel {
                             catch (XMPPException e1) {
                                 Log.error("Error in disco discovery.", e1);
                             }
-                            return "ok";
+                            return true;
                         }
 
                         public void finished() {
@@ -445,7 +446,7 @@ public class BookmarkedConferences extends JPanel {
                                 addButton.setEnabled(true);
                             }
                             else {
-                                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to locate the conference service.", "Service Not Available", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.conference.service.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                                 serviceField.setText("");
                                 serviceField.setEnabled(true);
                                 addButton.setEnabled(true);

@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -43,7 +44,7 @@ public class BannedUsers extends JPanel {
 
     private DefaultListModel listModel = new DefaultListModel();
     private JList list = new JList(listModel);
-    private JMenuItem unBanMenuItem = new JMenuItem("Unban");
+    private JMenuItem unBanMenuItem = new JMenuItem(Res.getString("menuitem.unban"));
 
     /**
      * Construct UI

@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
@@ -73,10 +74,10 @@ import javax.swing.tree.TreePath;
  */
 public class ConferenceRooms extends JPanel implements ActionListener {
     private final RoomList roomsTable;
-    private final RolloverButton createButton = new RolloverButton("Create Room", SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
-    private final RolloverButton joinRoomButton = new RolloverButton("Join Room", SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
-    private final RolloverButton refreshButton = new RolloverButton("Refresh", SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
-    private final RolloverButton addRoomButton = new RolloverButton("Bookmark Room", SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+    private final RolloverButton createButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
+    private final RolloverButton joinRoomButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
+    private final RolloverButton refreshButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+    private final RolloverButton addRoomButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
 
     private ChatManager chatManager;
 
@@ -113,14 +114,14 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         joinRoomButton.addActionListener(this);
         refreshButton.addActionListener(this);
 
-        ResourceUtils.resButton(createButton, "&Create or Join Room");
-        ResourceUtils.resButton(joinRoomButton, "&Join Selected Room");
-        ResourceUtils.resButton(refreshButton, "&Refresh");
-        ResourceUtils.resButton(addRoomButton, "&Bookmark Room");
+        ResourceUtils.resButton(createButton, Res.getString("button.create.room"));
+        ResourceUtils.resButton(joinRoomButton, Res.getString("button.join.room"));
+        ResourceUtils.resButton(refreshButton, Res.getString("button.refresh"));
+        ResourceUtils.resButton(addRoomButton, Res.getString("button.bookmark.room"));
 
-        refreshButton.setToolTipText("Update Room List");
-        joinRoomButton.setToolTipText("Join Conference Room");
-        createButton.setToolTipText("Create or Join a conference room");
+        refreshButton.setToolTipText(Res.getString("message.update.room.list"));
+        joinRoomButton.setToolTipText(Res.getString("message.join.conference.room"));
+        createButton.setToolTipText(Res.getString("message.create.or.join.room"));
 
         // Add Group Chat Table
         roomsTable = new RoomList();
@@ -241,7 +242,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
     private void bookmarkRoom(String serviceName, Tree serviceTree) {
         int selectedRow = roomsTable.getSelectedRow();
         if (-1 == selectedRow) {
-            JOptionPane.showMessageDialog(dlg, "Please select a room to add to your service list.", "Group Chat", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.select.add.room.to.add"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -252,7 +253,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         try {
             final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
             if (!roomInfo.isPersistent()) {
-                JOptionPane.showMessageDialog(dlg, "You cannot bookmark temporary rooms.", "Group Chat Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dlg, Res.getString("message.bookmark.temporary.room.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -297,7 +298,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
     private void joinSelectedRoom() {
         int selectedRow = roomsTable.getSelectedRow();
         if (-1 == selectedRow) {
-            JOptionPane.showMessageDialog(dlg, "Please select a room to join.", "Group Chat", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.select.room.to.join"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         enterRoom();
@@ -351,7 +352,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
 
             public void finished() {
                 if (rooms == null) {
-                    JOptionPane.showMessageDialog(serviceTree, "Unable to retrieve conference information. Please try back later.", "Service Not Reachable", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(serviceTree, Res.getString("message.conference.info.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     if (dlg != null) {
                         dlg.dispose();
                     }
@@ -401,7 +402,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("Join or Bookmark Room", "Add room to favorites list or join directly.", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        titlePanel = new TitlePanel(Res.getString("title.create.or.bookmark.room"), Res.getString("message.add.favorite.room"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -409,14 +410,14 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
 
-        dlg = p.createDialog(SparkManager.getMainWindow(), "Browse Conference Rooms - " + serviceName);
+        dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.browse.room.service ", serviceName));
         dlg.setModal(false);
 
         dlg.pack();
@@ -428,12 +429,11 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
                 }
-                else if ("Add".equals(value)) {
-
+                else if (Res.getString("close").equals(value)) {
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 }
             }
@@ -456,7 +456,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
 
     private final class RoomList extends Table {
         public RoomList() {
-            super(new String[]{" ", "Name", "Address", "Occupants"});
+            super(new String[]{" ", Res.getString("title.name"), Res.getString("title.address"), Res.getString("title.occupants")});
             getColumnModel().setColumnMargin(0);
             getColumnModel().getColumn(0).setMaxWidth(30);
             getColumnModel().getColumn(3).setMaxWidth(80);
@@ -515,7 +515,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
                     }
                 };
 
-                roomInfoAction.putValue(Action.NAME, "View Room Info");
+                roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
                 roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
 
                 popupMenu.add(roomInfoAction);
@@ -535,7 +535,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
     private void enterRoom() {
         int selectedRow = roomsTable.getSelectedRow();
         if (-1 == selectedRow) {
-            JOptionPane.showMessageDialog(dlg, "You must select a room to enter.", "Group Chat", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.select.room.to.enter"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         final String roomJID = (String)roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
@@ -664,11 +664,11 @@ public class ConferenceRooms extends JPanel implements ActionListener {
      */
     private void addBookmarkUI(boolean addBookmark) {
         if (!addBookmark) {
-            addRoomButton.setText("Remove Bookmark");
+            addRoomButton.setText(Res.getString("button.remove.bookmark"));
             addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
         }
         else {
-            addRoomButton.setText("Bookmark Room");
+            addRoomButton.setText(Res.getString("button.bookmark.room"));
             addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
         }
     }

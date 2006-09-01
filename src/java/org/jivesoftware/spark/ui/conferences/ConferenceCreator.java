@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.SparkManager;
@@ -60,12 +61,6 @@ public class ConferenceCreator extends JPanel {
 
     private void jbInit() throws Exception {
         this.setLayout(gridBagLayout1);
-        nameLabel.setText("Name:");
-        topicLabel.setText("Topic:");
-        passwordLabel.setText("Password:");
-        confirmPasswordLabel.setText("Confirm Password:");
-        permanentCheckBox.setText("Permanent");
-        privateCheckbox.setText("Private Room");
         this.add(confirmPasswordField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(passwordField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -77,12 +72,12 @@ public class ConferenceCreator extends JPanel {
         this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 5, 0));
         this.add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        ResourceUtils.resLabel(nameLabel, nameField, "Room &Name:");
-        ResourceUtils.resLabel(topicLabel, topicField, "Room &Topic:");
-        ResourceUtils.resLabel(passwordLabel, passwordField, "&Password:");
-        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, "&Confirm Password:");
-        ResourceUtils.resButton(permanentCheckBox, "&Room is permanent");
-        ResourceUtils.resButton(privateCheckbox, "Room &is private");
+        ResourceUtils.resLabel(nameLabel, nameField, Res.getString("label.room.name"));
+        ResourceUtils.resLabel(topicLabel, topicField, Res.getString("label.room.topic") + ":");
+        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
+        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+        ResourceUtils.resButton(permanentCheckBox, Res.getString("checkbox.permanent"));
+        ResourceUtils.resButton(privateCheckbox, Res.getString("checkbox.private.room"));
     }
 
     public MultiUserChat createGroupChat(Component parent, final String serviceName) {
@@ -92,7 +87,7 @@ public class ConferenceCreator extends JPanel {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("Create/Join Room", "Create or join a conference chat room", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
+        titlePanel = new TitlePanel(Res.getString("title.create.or.join"), Res.getString("message.create.or.join.room"), SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -100,13 +95,13 @@ public class ConferenceCreator extends JPanel {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Create", "Close"};
+        Object[] options = {Res.getString("create"), Res.getString("close")};
         pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, "Conference Rooms");
+        dlg = p.createDialog(parent, Res.getString("title.conference.rooms"));
         dlg.pack();
         dlg.setSize(400, 350);
         dlg.setContentPane(mainPanel);
@@ -122,11 +117,11 @@ public class ConferenceCreator extends JPanel {
                 }
 
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                     return;
                 }
-                else if ("Create".equals(value)) {
+                else if (Res.getString("create").equals(value)) {
                     boolean isValid = validatePanel();
                     if (isValid) {
                         String room = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
@@ -181,26 +176,26 @@ public class ConferenceCreator extends JPanel {
 
         // Check for valid information
         if (!ModelUtil.hasLength(roomName)) {
-            showError("You must specify a valid name.");
+            showError(Res.getString("message.specify.name.error"));
             nameField.requestFocus();
             return false;
         }
 
         if (isPrivate) {
             if (!ModelUtil.hasLength(password)) {
-                showError("Please specify a password for the private room.");
+                showError(Res.getString("message.password.private.room.error"));
                 passwordField.requestFocus();
                 return false;
             }
 
             if (!ModelUtil.hasLength(confirmPassword)) {
-                showError("Please confirm the private room password.");
+                showError(Res.getString("message.confirmation.password.error"));
                 confirmPasswordField.requestFocus();
                 return false;
             }
 
             if (!ModelUtil.areEqual(password, confirmPassword)) {
-                showError("Passwords to not match. Please verify passwords.");
+                showError(Res.getString("message.passwords.no.match"));
                 passwordField.requestFocus();
                 return false;
             }
@@ -218,7 +213,7 @@ public class ConferenceCreator extends JPanel {
 
 
     private void showError(String errorMessage) {
-        JOptionPane.showMessageDialog(this, errorMessage, "Room Creation Problem", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
     }
 
     public boolean isPrivate() {

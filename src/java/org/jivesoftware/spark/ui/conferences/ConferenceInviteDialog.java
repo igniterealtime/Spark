@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -84,9 +85,9 @@ final class ConferenceInviteDialog extends JPanel {
         final JTextField jidField = new JTextField();
         JButton addJIDButton = new JButton();
         JButton browseButton = new JButton();
-        ResourceUtils.resButton(addJIDButton, "&Add");
-        ResourceUtils.resButton(browseButton, "&Roster...");
-        ResourceUtils.resLabel(jidLabel, jidField, "&Add JID");
+        ResourceUtils.resButton(addJIDButton, Res.getString("button.add"));
+        ResourceUtils.resButton(browseButton, Res.getString("button.roster"));
+        ResourceUtils.resLabel(jidLabel, jidField, Res.getString("label.add.jid"));
 
         add(jidLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(jidField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -98,7 +99,7 @@ final class ConferenceInviteDialog extends JPanel {
                 String jid = jidField.getText();
                 String server = StringUtils.parseBareAddress(jid);
                 if (server == null || server.indexOf("@") == -1) {
-                    JOptionPane.showMessageDialog(dlg, "Please enter a valid Jabber ID", "Invalid JID", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(dlg, Res.getString("message.enter.valid.jid"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     jidField.setText("");
                     jidField.requestFocus();
                     return;
@@ -133,11 +134,11 @@ final class ConferenceInviteDialog extends JPanel {
         add(new JScrollPane(invitedUserList), new GridBagConstraints(1, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Resource Utils
-        ResourceUtils.resLabel(messageLabel, messageField, "&Message:");
-        ResourceUtils.resLabel(roomsLabel, roomsField, "&Room:");
-        inviteLabel.setText("Invited Users");
+        ResourceUtils.resLabel(messageLabel, messageField, Res.getString("label.message") + ":");
+        ResourceUtils.resLabel(roomsLabel, roomsField, Res.getString("label.room") + ":");
+        inviteLabel.setText(Res.getString("label.invited.users"));
 
-        messageField.setText("Please join me in a conference.");
+        messageField.setText(Res.getString("message.please.join.in.conference"));
 
         // Add Listener to list
         invitedUserList.addMouseListener(new MouseAdapter() {
@@ -165,7 +166,7 @@ final class ConferenceInviteDialog extends JPanel {
             }
         };
 
-        removeAction.putValue(Action.NAME, "Remove");
+        removeAction.putValue(Action.NAME, Res.getString("menuitem.remove"));
         removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
         popup.add(removeAction);
@@ -197,7 +198,7 @@ final class ConferenceInviteDialog extends JPanel {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("Invite To Conference", "Invite users to a conference room.", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -205,14 +206,14 @@ final class ConferenceInviteDialog extends JPanel {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Invite", "Cancel"};
+        Object[] options = {Res.getString("invite"), Res.getString("cancel")};
         pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
 
-        dlg = p.createDialog(parent, "Conference Rooms");
+        dlg = p.createDialog(parent, Res.getString("title.conference.rooms"));
         dlg.setModal(false);
 
         dlg.pack();
@@ -225,22 +226,22 @@ final class ConferenceInviteDialog extends JPanel {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Cancel".equals(value)) {
+                if (Res.getString("cancel").equals(value)) {
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     dlg.dispose();
                 }
-                else if ("Invite".equals(value)) {
+                else if (Res.getString("invite").equals(value)) {
                     final String roomTitle = roomsField.getText();
                     int size = invitedUserList.getModel().getSize();
 
                     if (size == 0) {
-                        JOptionPane.showMessageDialog(dlg, "Please specify users to join this conference room.", "No Invitees Specified", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(dlg, Res.getString("message.specify.users.to.join.conference"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                         return;
                     }
 
                     if (!ModelUtil.hasLength(roomTitle)) {
-                        JOptionPane.showMessageDialog(dlg, "No room to join.", "Invalid Room Name", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(dlg, Res.getString("message.no.room.to.join.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                         return;
                     }
@@ -260,7 +261,7 @@ final class ConferenceInviteDialog extends JPanel {
                         }
                     }
                     String message = messageField.getText();
-                    final String messageText = message != null ? message : "Please join me in a conference";
+                    final String messageText = message != null ? message : Res.getString("message.please.join.in.conference");
 
                     if (invitedUsers.getSize() > 0) {
                         invitedUserList.setSelectionInterval(0, invitedUsers.getSize() - 1);
@@ -309,7 +310,7 @@ final class ConferenceInviteDialog extends JPanel {
                     final int no = values != null ? values.length : 0;
                     for (int i = 0; i < no; i++) {
                         String jid = (String)values[i];
-                        chatRoom.getMultiUserChat().invite(jid, message != null ? message : "Please join me in a conference");
+                        chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
                     }
 
                 }

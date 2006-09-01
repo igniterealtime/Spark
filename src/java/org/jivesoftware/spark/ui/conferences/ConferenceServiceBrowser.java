@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
@@ -53,8 +54,8 @@ public class ConferenceServiceBrowser {
         final JTextField serverAddress = new JTextField();
         final RolloverButton findButton = new RolloverButton();
 
-        ResourceUtils.resLabel(serverAddressLabel, serverAddress, "&Server Address:");
-        ResourceUtils.resButton(findButton, "&Find");
+        ResourceUtils.resLabel(serverAddressLabel, serverAddress, Res.getString("label.server.address"));
+        ResourceUtils.resButton(findButton, Res.getString("button.find"));
 
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
@@ -62,14 +63,14 @@ public class ConferenceServiceBrowser {
         mainPanel.add(serverAddressLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         mainPanel.add(serverAddress, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         mainPanel.add(findButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        mainPanel.add(new JLabel("ex. jabber.org"), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        mainPanel.add(new JLabel("ex. jivesoftware.com"), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         // Add Empty CheckBox List
         final DefaultListModel model = new DefaultListModel();
         final JList list = new JList(model);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Conference Services Found"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder(Res.getString("group.conferences.found")));
         mainPanel.add(scrollPane, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Listener to find button
@@ -94,18 +95,18 @@ public class ConferenceServiceBrowser {
         });
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Ok", "Close"};
+        Object[] options = {Res.getString("ok"), Res.getString("close")};
         final JOptionPane pane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
-        TitlePanel titlePanel = new TitlePanel("Browse Conference Services", "Find conference services in server", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.browse.conference.services"), Res.getString("message.find.conference.services"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
         topPanel.add(titlePanel, BorderLayout.NORTH);
         topPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
 
-        final JDialog dlg = p.createDialog(SparkManager.getMainWindow(), "Find Conference Service");
+        final JDialog dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.find.conference.service"));
         dlg.setModal(true);
 
         dlg.pack();

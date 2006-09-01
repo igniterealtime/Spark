@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -84,7 +85,7 @@ public class Conferences {
             JPanel commandPanel = statusBar.getCommandPanel();
 
             RolloverButton joinConference = new RolloverButton(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
-            joinConference.setToolTipText("Join a conference");
+            joinConference.setToolTipText(Res.getString("message.join.conference.room"));
             commandPanel.add(joinConference);
             joinConference.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -209,7 +210,7 @@ public class Conferences {
 
                     // Add Conference Invite Button.
                     ChatRoomButton inviteButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
-                    inviteButton.setToolTipText("Invite this user to a conference");
+                    inviteButton.setToolTipText(Res.getString("title.invite.to.conference"));
 
                     room.getToolBar().addChatRoomButton(inviteButton);
 
@@ -236,7 +237,7 @@ public class Conferences {
                                     }
 
                                     public void finished() {
-                                        ConferenceUtils.createPrivateConference(serviceName, "Please join me in a conference.", roomName, jids);
+                                        ConferenceUtils.createPrivateConference(serviceName, Res.getString("message.please.join.in.conference"), roomName, jids);
                                     }
                                 };
                                 worker.start();
@@ -299,7 +300,7 @@ public class Conferences {
             }
         };
 
-        inviteAllAction.putValue(Action.NAME, "Invite group to conference");
+        inviteAllAction.putValue(Action.NAME, Res.getString("menuitem.invite.group.to.conference"));
         inviteAllAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
 
 
@@ -310,7 +311,7 @@ public class Conferences {
             }
         };
 
-        conferenceAction.putValue(Action.NAME, "Start a Conference...");
+        conferenceAction.putValue(Action.NAME, Res.getString("menuitem.start.a.conference"));
         conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_WORKGROUP_QUEUE_IMAGE));
 
 
@@ -335,7 +336,7 @@ public class Conferences {
         });
 
         // Add to Actions Menu
-        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName("Actions");
+        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
         actionsMenu.add(conferenceAction);
     }
 
