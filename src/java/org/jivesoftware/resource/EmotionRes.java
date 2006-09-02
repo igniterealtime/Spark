@@ -18,35 +18,35 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class EmotionRes {
-    private static final Map emotionMap = new LinkedHashMap();
+    private static final Map<String,String> emotionMap = new LinkedHashMap<String,String>();
     static ClassLoader cl = EmotionRes.class.getClassLoader();
 
     static {
-        emotionMap.put(":)", "images/emoticons/happy.gif");
-        emotionMap.put(":-)", "images/emoticons/happy.gif");
-        emotionMap.put(":(", "images/emoticons/sad.gif");
-        emotionMap.put(":D", "images/emoticons/grin.gif");
-        emotionMap.put(":x", "images/emoticons/love.gif");
-        emotionMap.put(";\\", "images/emoticons/mischief.gif");
-        emotionMap.put("B-)", "images/emoticons/cool.gif");
-        emotionMap.put("]:)", "images/emoticons/devil.gif");
-        emotionMap.put(":p", "images/emoticons/silly.gif");
-        emotionMap.put("X-(", "images/emoticons/angry.gif");
-        emotionMap.put(":^0", "images/emoticons/laugh.gif");
-        emotionMap.put(";)", "images/emoticons/wink.gif");
-        emotionMap.put(";-)", "images/emoticons/wink.gif");
-        emotionMap.put(":8}", "images/emoticons/blush.gif");
-        emotionMap.put(":_|", "images/emoticons/cry.gif");
-        emotionMap.put("?:|", "images/emoticons/confused.gif");
-        emotionMap.put(":0", "images/emoticons/shocked.gif");
-        emotionMap.put(":|", "images/emoticons/plain.gif");
+        emotionMap.put(":)", "images/emoticons/happy.png");
+        emotionMap.put(":-)", "images/emoticons/happy.png");
+        emotionMap.put(":(", "images/emoticons/sad.png");
+        emotionMap.put(":D", "images/emoticons/grin.png");
+        emotionMap.put(":x", "images/emoticons/love.png");
+        emotionMap.put(";\\", "images/emoticons/mischief.png");
+        emotionMap.put("B-)", "images/emoticons/cool.png");
+        emotionMap.put("]:)", "images/emoticons/devil.png");
+        emotionMap.put(":p", "images/emoticons/silly.png");
+        emotionMap.put("X-(", "images/emoticons/angry.png");
+        emotionMap.put(":^0", "images/emoticons/laugh.png");
+        emotionMap.put(";)", "images/emoticons/wink.png");
+        emotionMap.put(";-)", "images/emoticons/wink.png");
+        emotionMap.put(":8}", "images/emoticons/blush.png");
+        emotionMap.put(":_|", "images/emoticons/cry.png");
+        emotionMap.put("?:|", "images/emoticons/confused.png");
+        emotionMap.put(":0", "images/emoticons/shocked.png");
+        emotionMap.put(":|", "images/emoticons/plain.png");
         emotionMap.put("8-)", "images/emoticons/eyeRoll.gif");
         emotionMap.put("|-)", "images/emoticons/sleepy.gif");
         emotionMap.put("<:o)", "images/emoticons/party.gif");
     }
 
-    public static final ImageIcon getImageIcon(String face) {
-        final String value = (String)emotionMap.get(face);
+    public static ImageIcon getImageIcon(String face) {
+        final String value = emotionMap.get(face);
         if (value != null) {
             final URL url = cl.getResource(value);
             if (url != null) {
@@ -56,8 +56,8 @@ public class EmotionRes {
         return null;
     }
 
-    public static final URL getURL(String face) {
-        final String value = (String)emotionMap.get(face);
+    public static URL getURL(String face) {
+        final String value = emotionMap.get(face);
         if (value != null) {
             final URL url = cl.getResource(value);
             if (url != null) {
@@ -68,7 +68,7 @@ public class EmotionRes {
     }
 
     public static Map getEmoticonMap() {
-        Map newMap = new HashMap(emotionMap);
+        Map<String,String> newMap = new HashMap<String,String>(emotionMap);
         newMap.remove("8-)");
         newMap.remove("|-)");
         newMap.remove("<:o)");
