@@ -98,8 +98,8 @@ public class ReceiveMessage extends JPanel {
 
         acceptLabel.setForeground(new Color(73, 113, 196));
         declineLabel.setForeground(new Color(73, 113, 196));
-        declineLabel.setFont(new Font("Dialog", Font.BOLD, 10));
-        acceptLabel.setFont(new Font("Dialog", Font.BOLD, 10));
+        declineLabel.setFont(new Font("Dialog", Font.BOLD, 11));
+        acceptLabel.setFont(new Font("Dialog", Font.BOLD, 11));
 
         acceptLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         declineLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
@@ -421,11 +421,11 @@ public class ReceiveMessage extends JPanel {
 
         openFileButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         openFileButton.setForeground(new Color(73, 113, 196));
-        openFileButton.setFont(new Font("Dialog", Font.BOLD, 10));
+        openFileButton.setFont(new Font("Dialog", Font.BOLD, 11));
 
         openFolderButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         openFolderButton.setForeground(new Color(73, 113, 196));
-        openFolderButton.setFont(new Font("Dialog", Font.BOLD, 10));
+        openFolderButton.setFont(new Font("Dialog", Font.BOLD, 11));
 
 
         imageLabel.setIcon(GraphicUtils.getIcon(downloadedFile));
@@ -573,7 +573,7 @@ public class ReceiveMessage extends JPanel {
         ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         cancelButton.setForeground(new Color(73, 113, 196));
-        cancelButton.setFont(new Font("Dialog", Font.BOLD, 10));
+        cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
 
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

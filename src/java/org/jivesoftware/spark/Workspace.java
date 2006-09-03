@@ -262,7 +262,7 @@ public class Workspace extends JPanel implements PacketListener {
         worker.start();
 
 
-        int numberOfMillisecondsInTheFuture = 5000; // 5 sec
+        int numberOfMillisecondsInTheFuture = 10000; // 5 sec
         Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
         Timer timer = new Timer();
 

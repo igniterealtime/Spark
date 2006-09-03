@@ -94,18 +94,18 @@ public class SendMessage extends JPanel {
                     transfer.sendFile(file, "Sending");
                 }
                 catch (XMPPException e1) {
-                    e1.printStackTrace();
+                    Log.error(e1);
                 }
                 sendFile(transfer, transferManager, fullJID, nickname);
             }
         });
 
         cancelButton.setForeground(new Color(73, 113, 196));
-        cancelButton.setFont(new Font("Dialog", Font.BOLD, 10));
+        cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
         retryButton.setForeground(new Color(73, 113, 196));
-        retryButton.setFont(new Font("Dialog", Font.BOLD, 10));
+        retryButton.setFont(new Font("Dialog", Font.BOLD, 11));
         retryButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
 
