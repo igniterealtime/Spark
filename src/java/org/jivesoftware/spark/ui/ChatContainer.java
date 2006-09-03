@@ -12,8 +12,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -574,6 +574,14 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void fireNotifyOnMessage(final ChatRoom chatRoom) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                handleMessageNotification(chatRoom);
+            }
+        });
+    }
+
+    private void handleMessageNotification(final ChatRoom chatRoom) {
         ChatRoom activeChatRoom = null;
         try {
             activeChatRoom = getActiveChatRoom();
@@ -634,7 +642,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         else if (chatRoom != activeChatRoom) {
             startFlashing(chatRoom);
         }
-
     }
 
     public void messageSent(ChatRoom room, Message message) {
