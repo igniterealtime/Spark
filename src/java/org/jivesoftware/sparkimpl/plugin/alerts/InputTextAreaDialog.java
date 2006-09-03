@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -98,7 +99,7 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
         final JPanel centerPanel = new JPanel(new GridBagLayout());
 
         // The user should only be able to close this dialog.
-        final Object[] options = {"Ok", "Cancel"};
+        final Object[] options = {Res.getString("ok"), Res.getString("cancel")};
         optionPane = new JOptionPane(new JScrollPane(textArea), JOptionPane.PLAIN_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 

@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Date;
 
 public class PresenceChangePlugin implements Plugin {
 
@@ -52,7 +54,7 @@ public class PresenceChangePlugin implements Plugin {
             }
         };
 
-        listenAction.putValue(Action.NAME, "Notify when available");
+        listenAction.putValue(Action.NAME, Res.getString("menuitem.alert.when.online"));
         listenAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ALARM_CLOCK));
 
         final Action removeAction = new AbstractAction() {
@@ -62,7 +64,7 @@ public class PresenceChangePlugin implements Plugin {
             }
         };
 
-        removeAction.putValue(Action.NAME, "Remove notification when available");
+        removeAction.putValue(Action.NAME, Res.getString("menuitem.remove.alert.when.online"));
         removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
 
@@ -108,7 +110,10 @@ public class PresenceChangePlugin implements Plugin {
                         ChatManager chatManager = SparkManager.getChatManager();
                         ChatRoom chatRoom = chatManager.createChatRoom(item.getFullJID(), item.getNickname(), item.getFullJID());
 
-                        String infoText = "**" + item.getNickname() + " is now available to chat. **";
+
+                        String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
+
+                        String infoText = Res.getString("message.user.now.available.to.chat", item.getNickname(), time);
                         chatRoom.getTranscriptWindow().insertNotificationMessage(infoText);
                         Message message = new Message();
                         message.setFrom(item.getFullJID());

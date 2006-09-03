@@ -13,6 +13,7 @@ package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
@@ -74,12 +75,12 @@ public class SendMessage extends JPanel {
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        titleLabel.setFont(new Font("Verdana", Font.BOLD, 11));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
-        cancelButton.setText("Cancel");
-        retryButton.setText("Retry");
+        cancelButton.setText(Res.getString("cancel"));
+        retryButton.setText(Res.getString("retry"));
 
         add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(retryButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
@@ -100,11 +101,11 @@ public class SendMessage extends JPanel {
         });
 
         cancelButton.setForeground(new Color(73, 113, 196));
-        cancelButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        cancelButton.setFont(new Font("Dialog", Font.BOLD, 10));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
         retryButton.setForeground(new Color(73, 113, 196));
-        retryButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        retryButton.setFont(new Font("Dialog", Font.BOLD, 10));
         retryButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
 
@@ -132,7 +133,7 @@ public class SendMessage extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
-        titleLabel.setText("Waiting for " + contactItem.getNickname() + " to accept file transfer.");
+        titleLabel.setText(Res.getString("message.transfer.waiting.on.user", contactItem.getNickname()));
 
         if (isImage(fileName)) {
             try {
@@ -181,9 +182,9 @@ public class SendMessage extends JPanel {
                     try {
                         Thread.sleep(10);
                         FileTransfer.Status status = transfer.getStatus();
-                        if (status == Status.ERROR ||
-                            status == Status.COMPLETE || status == Status.CANCLED ||
-                            status == Status.REFUSED) {
+                        if (status == Status.error ||
+                            status == Status.complete || status == Status.cancelled ||
+                            status == Status.refused) {
                             break;
                         }
                         updateBar(transfer, nickname);
@@ -208,7 +209,7 @@ public class SendMessage extends JPanel {
     }
 
     private void makeClickable(final JLabel label) {
-        label.setToolTipText("Click to open");
+        label.setToolTipText(Res.getString("message.click.to.open"));
 
         label.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -247,21 +248,21 @@ public class SendMessage extends JPanel {
 
     private void updateBar(final OutgoingFileTransfer transfer, String nickname) {
         FileTransfer.Status status = transfer.getStatus();
-        if (status == Status.NEGOTIATING_STREAM) {
-            titleLabel.setText("Negotiating file transfer with " + nickname + ". Please wait...");
+        if (status == Status.negotiating_stream) {
+            titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
         }
-        else if (status == Status.ERROR) {
+        else if (status == Status.error) {
             if (transfer.getException() != null) {
                 Log.error("Error occured during file transfer.", transfer.getException());
             }
             progressBar.setVisible(false);
-            titleLabel.setText("You were unable to send the file to  " + nickname);
+            titleLabel.setText(Res.getString("message.unable.to.send.file", nickname));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
             showAlert(true);
         }
-        else if (status == Status.IN_PROGRESS) {
-            titleLabel.setText("Sending a file to " + nickname);
+        else if (status == Status.in_progress) {
+            titleLabel.setText(Res.getString("message.sending.file.to", nickname));
             showAlert(false);
             if (!progressBar.isVisible()) {
                 progressBar.setVisible(true);
@@ -272,22 +273,22 @@ public class SendMessage extends JPanel {
             String bytesSent = format.format(transfer.getBytesSent());
             progressBar.setString(bytesSent + " sent");
         }
-        else if (status == Status.COMPLETE) {
+        else if (status == Status.complete) {
             progressBar.setVisible(false);
-            titleLabel.setText("You have sent a file to " + nickname + ".");
+            titleLabel.setText(Res.getString("message.you.have.sent", nickname));
             cancelButton.setVisible(false);
             showAlert(true);
         }
-        else if (status == Status.CANCLED) {
+        else if (status == Status.cancelled) {
             progressBar.setVisible(false);
-            titleLabel.setText("You have cancelled the file transfer.");
+            titleLabel.setText(Res.getString("message.file.transfer.canceled"));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
             showAlert(true);
         }
-        else if (status == Status.REFUSED) {
+        else if (status == Status.refused) {
             progressBar.setVisible(false);
-            titleLabel.setText(nickname + " did not accept the file transfer.");
+            titleLabel.setText(Res.getString("message.file.transfer.rejected", nickname));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
             showAlert(true);

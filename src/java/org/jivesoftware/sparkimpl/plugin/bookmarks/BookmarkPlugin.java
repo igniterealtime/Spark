@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.bookmark.BookmarkedConference;
@@ -73,7 +74,7 @@ public class BookmarkPlugin implements Plugin {
                         }
                     });
 
-                    bookmarkButton.setToolTipText("View Bookmarks");
+                    bookmarkButton.setToolTipText(Res.getString("title.view.bookmarks"));
                     commandPanel.add(bookmarkButton);
                     SparkManager.getWorkspace().getStatusBar().invalidate();
                     SparkManager.getWorkspace().getStatusBar().validate();

@@ -14,6 +14,7 @@ import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
@@ -79,7 +80,7 @@ public class ReceiveMessage extends JPanel {
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        titleLabel.setFont(new Font("Verdana", Font.BOLD, 11));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
@@ -88,8 +89,8 @@ public class ReceiveMessage extends JPanel {
         add(declineLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 
-        ResourceUtils.resButton(acceptLabel, "Accept");
-        ResourceUtils.resButton(declineLabel, "Reject");
+        ResourceUtils.resButton(acceptLabel, Res.getString("accept"));
+        ResourceUtils.resButton(declineLabel, Res.getString("reject"));
 
         // Decorate Cancel Button
         decorateCancelButton();
@@ -97,8 +98,8 @@ public class ReceiveMessage extends JPanel {
 
         acceptLabel.setForeground(new Color(73, 113, 196));
         declineLabel.setForeground(new Color(73, 113, 196));
-        declineLabel.setFont(new Font("Verdana", Font.BOLD, 10));
-        acceptLabel.setFont(new Font("Verdana", Font.BOLD, 10));
+        declineLabel.setFont(new Font("Dialog", Font.BOLD, 10));
+        acceptLabel.setFont(new Font("Dialog", Font.BOLD, 10));
 
         acceptLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         declineLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
@@ -142,7 +143,7 @@ public class ReceiveMessage extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
-        titleLabel.setText(contactItem.getNickname() + " is sending you a file.");
+        titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", contactItem.getNickname()));
 
         File tempFile = new File(Spark.getUserHome(), "Spark/tmp");
         try {
@@ -188,7 +189,7 @@ public class ReceiveMessage extends JPanel {
         acceptLabel.setText("");
         declineLabel.setText("");
         fileLabel.setText("");
-        titleLabel.setText("You have cancelled the file transfer.");
+        titleLabel.setText(Res.getString("message.file.transfer.canceled"));
         titleLabel.setForeground(new Color(65, 139, 179));
 
         invalidate();
@@ -206,7 +207,7 @@ public class ReceiveMessage extends JPanel {
         setBackground(new Color(239, 245, 250));
         acceptLabel.setText("");
         declineLabel.setText("");
-        titleLabel.setText("Negotiating file transfer. Please wait...");
+        titleLabel.setText(Res.getString("message.negotiate.file.transfer"));
         titleLabel.setForeground(new Color(65, 139, 179));
 
 
@@ -252,16 +253,16 @@ public class ReceiveMessage extends JPanel {
 
                         progressBar.setValue((int)bytesRead);
                         FileTransfer.Status status = transfer.getStatus();
-                        if (status == FileTransfer.Status.ERROR ||
-                                status == FileTransfer.Status.COMPLETE || status == FileTransfer.Status.CANCLED ||
-                                status == FileTransfer.Status.REFUSED) {
+                        if (status == FileTransfer.Status.error ||
+                                status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
+                                status == FileTransfer.Status.refused) {
                             break;
                         }
-                        else if (status == FileTransfer.Status.NEGOTIATING_STREAM) {
-                            titleLabel.setText("Negotiating connection stream. Please wait...");
+                        else if (status == FileTransfer.Status.negotiating_stream) {
+                            titleLabel.setText(Res.getString("message.negotiate.stream"));
                         }
-                        else if (status == FileTransfer.Status.IN_PROGRESS) {
-                            titleLabel.setText("You are receiving a file from " + contactItem.getNickname());
+                        else if (status == FileTransfer.Status.in_progress) {
+                            titleLabel.setText(Res.getString("message.receiving.file", contactItem.getNickname()));
                         }
                     }
 
@@ -272,8 +273,8 @@ public class ReceiveMessage extends JPanel {
                     if (transfer.getAmountWritten() >= request.getFileSize()) {
                         transferDone(request, transfer);
 
-                        imageLabel.setToolTipText("Click to open");
-                        titleLabel.setToolTipText("Click to open");
+                        imageLabel.setToolTipText(Res.getString("message.click.to.open"));
+                        titleLabel.setToolTipText(Res.getString("message.click.to.open"));
 
                         imageLabel.addMouseListener(new MouseAdapter() {
                             public void mouseClicked(MouseEvent e) {
@@ -322,18 +323,18 @@ public class ReceiveMessage extends JPanel {
                     }
 
                     String transferMessage = "";
-                    if (transfer.getStatus() == FileTransfer.Status.ERROR) {
+                    if (transfer.getStatus() == FileTransfer.Status.error) {
                         if (transfer.getException() != null) {
                             Log.error("There was an error during file transfer.", transfer.getException());
                         }
-                        transferMessage = "There was an error during file transfer.";
+                        transferMessage = Res.getString("message.error.during.file.transfer");
                     }
-                    else if (transfer.getStatus() == FileTransfer.Status.REFUSED) {
-                        transferMessage = "The file transfer was refused.";
+                    else if (transfer.getStatus() == FileTransfer.Status.refused) {
+                        transferMessage = Res.getString("message.transfer.refused");
                     }
-                    else if (transfer.getStatus() == FileTransfer.Status.CANCLED ||
+                    else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
                             transfer.getAmountWritten() < request.getFileSize()) {
-                        transferMessage = "The file transfer was cancelled.";
+                        transferMessage = Res.getString("message.transfer.cancelled");
                     }
 
                     setFinishedText(transferMessage);
@@ -374,7 +375,7 @@ public class ReceiveMessage extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
-        titleLabel.setText("You have received a file from " + contactItem.getNickname() + ".");
+        titleLabel.setText(Res.getString("message.received.file", contactItem.getNickname()));
         fileLabel.setText(request.getFileName());
 
         remove(acceptLabel);
@@ -415,16 +416,16 @@ public class ReceiveMessage extends JPanel {
 
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
-        ResourceUtils.resButton(openFileButton, "Open");
-        ResourceUtils.resButton(openFolderButton, "Open Folder");
+        ResourceUtils.resButton(openFileButton, Res.getString("open"));
+        ResourceUtils.resButton(openFolderButton, Res.getString("open.folder"));
 
         openFileButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         openFileButton.setForeground(new Color(73, 113, 196));
-        openFileButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        openFileButton.setFont(new Font("Dialog", Font.BOLD, 10));
 
         openFolderButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         openFolderButton.setForeground(new Color(73, 113, 196));
-        openFolderButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        openFolderButton.setFont(new Font("Dialog", Font.BOLD, 10));
 
 
         imageLabel.setIcon(GraphicUtils.getIcon(downloadedFile));
@@ -569,10 +570,10 @@ public class ReceiveMessage extends JPanel {
      */
     private void decorateCancelButton() {
         cancelButton.setVisible(false);
-        ResourceUtils.resButton(cancelButton, "Cancel");
+        ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         cancelButton.setForeground(new Color(73, 113, 196));
-        cancelButton.setFont(new Font("Verdana", Font.BOLD, 10));
+        cancelButton.setFont(new Font("Dialog", Font.BOLD, 10));
 
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -615,7 +616,7 @@ public class ReceiveMessage extends JPanel {
                         File file = chooser.getSelectedFile();
                         try {
                             if (file.exists()) {
-                                int confirm = JOptionPane.showConfirmDialog(ui, "The file already exists. Overwrite?", "File Exists", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                                int confirm = JOptionPane.showConfirmDialog(ui, Res.getString("message.file.exists.question"), Res.getString("title.file.exists"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                                 if (confirm == JOptionPane.NO_OPTION) {
                                     return;
                                 }
@@ -629,7 +630,7 @@ public class ReceiveMessage extends JPanel {
                 }
             };
 
-            saveAsAction.putValue(Action.NAME, "Save As...");
+            saveAsAction.putValue(Action.NAME, Res.getString("menuitem.save.as"));
             popup.add(saveAsAction);
             popup.show(this, e.getX(), e.getY());
         }

@@ -14,6 +14,7 @@ import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -76,7 +77,7 @@ public class Downloads {
 
     private Downloads() {
         ChatFrame frame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-        dlg = new JDialog(SparkManager.getMainWindow(), "Downloads", false);
+        dlg = new JDialog(SparkManager.getMainWindow(), Res.getString("title.downloads"), false);
         dlg.setContentPane(mainPanel);
         dlg.pack();
         dlg.setSize(400, 400);
