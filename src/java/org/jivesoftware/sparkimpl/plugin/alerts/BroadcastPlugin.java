@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketFilter;
@@ -73,9 +74,9 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         SparkManager.getConnection().addPacketListener(this, serverFilter);
 
         // Register with action menu
-        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName("Actions");
-        JMenuItem broadcastMenu = new JMenuItem("Broadcast Message", SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
-        ResourceUtils.resButton(broadcastMenu, "&Broadcast Message");
+        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+        JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+        ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
         actionsMenu.add(broadcastMenu);
         broadcastMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -85,7 +86,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        ResourceUtils.resButton(startConversationtMenu, "&Start Chat");
+        ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
         actionsMenu.add(startConversationtMenu);
         startConversationtMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -98,7 +99,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                     selectedUser = contactItem.getFullJID();
                 }
 
-                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), "Enter Address", "Start Chat", JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
+                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("label.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
                 if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
                     if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                         // Append server address
@@ -123,7 +124,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                         }
                     };
 
-                    broadcastMessageAction.putValue(Action.NAME, "Broadcast message to group");
+                    broadcastMessageAction.putValue(Action.NAME, Res.getString("menuitem.broadcast.to.group"));
                     broadcastMessageAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
                     popup.add(broadcastMessageAction);
                 }
@@ -143,7 +144,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         JPanel commandPanel = statusBar.getCommandPanel();
 
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
-        broadcastToRosterButton.setToolTipText("Send a broadcast");
+        broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));
         commandPanel.add(broadcastToRosterButton);
         statusBar.invalidate();
         statusBar.validate();
@@ -208,7 +209,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
         StringBuffer buf = new StringBuffer();
         if (subject != null) {
-            buf.append("Subject: ").append(subject);
+            buf.append(Res.getString("subject") + ": ").append(subject);
             buf.append("\n\n");
         }
 
@@ -244,7 +245,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 chatRoom = (ChatRoomImpl)container.getChatRoom(from);
             }
             catch (ChatRoomNotFoundException e) {
-                chatRoom = new ChatRoomImpl(from, from, "Broadcast from " + from);
+                chatRoom = new ChatRoomImpl(from, from, Res.getString("message.broadcast.from", from));
                 chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
                 chatRoom.setIconHandler(true);
                 chatRoom.getBottomPanel().setVisible(false);
@@ -268,7 +269,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 chatRoom = (ChatRoomImpl)container.getChatRoom(from);
             }
             catch (ChatRoomNotFoundException e) {
-                chatRoom = new ChatRoomImpl(jid, nickname, "Broadcast from " + nickname);
+                chatRoom = new ChatRoomImpl(jid, nickname, Res.getString("message.broadcast.from", nickname));
                 chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
                 chatRoom.setIconHandler(true);
                 SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
@@ -326,7 +327,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
      */
     private void broadcastToRoster() {
         InputDialog dialog = new InputDialog();
-        final String messageText = dialog.getInput("Broadcast Message", "Enter message to broadcast to your entire roster list.", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
+        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.message.to.broadcast"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             for (ContactGroup contactGroup : contactList.getContactGroups()) {
@@ -342,7 +343,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 }
 
             }
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "The broadcast message has been sent.", "Message Broadcasted", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcast.message.sent"), Res.getString("title.broadcast.message"), JOptionPane.INFORMATION_MESSAGE);
 
         }
 
@@ -356,7 +357,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
     private void broadcastToGroup(ContactGroup group) {
         StringBuffer buf = new StringBuffer();
         InputDialog dialog = new InputDialog();
-        final String messageText = dialog.getInput("Broadcast Message", "Enter message to broadcast to " + group.getGroupName(), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
+        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.broadcast.to", group.getGroupName()), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
             for (ContactItem item : group.getContactItems()) {
                 final Message message = new Message();
