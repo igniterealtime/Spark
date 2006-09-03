@@ -36,10 +36,7 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
-
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import org.jivesoftware.resource.Res;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,8 +44,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 /**
+ * Handles Gateways/Transports in Spark.
  *
+ * @author Derek DeMoro
  */
 public class GatewayPlugin implements Plugin {
     public static final String GATEWAY = "gateway";
@@ -165,7 +168,7 @@ public class GatewayPlugin implements Plugin {
                     SparkManager.getConnection().sendPacket(presence);
                 }
                 else {
-                    int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), "Would you like to disable this active transport?", "Disable Transport", JOptionPane.YES_NO_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         try {
                             TransportManager.unregister(SparkManager.getConnection(), transport.getServiceName());
@@ -239,7 +242,7 @@ public class GatewayPlugin implements Plugin {
             }
 
             public Icon useIcon(Presence presence) {
-                if(presence == null){
+                if (presence == null) {
                     return null;
                 }
                 String domain = StringUtils.parseServer(presence.getFrom());

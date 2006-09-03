@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
 
@@ -26,11 +27,11 @@ public class MSNTransport implements Transport {
     }
 
     public String getTitle() {
-        return "MSN Registration";
+        return Res.getString("title.msn.registration");
     }
 
     public String getInstructions() {
-        return "Enter your MSN Screen Name and password below.";
+        return Res.getString("message.enter.msn");
     }
 
     public Icon getIcon() {

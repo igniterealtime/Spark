@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
+import org.jivesoftware.resource.Res;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -57,11 +58,11 @@ public class TransportItem extends JPanel {
         activeLabel.setFont(new Font("Dialog", Font.PLAIN, 10));
 
         if (active) {
-            activeLabel.setText("Active");
+            activeLabel.setText(Res.getString("active"));
             activeLabel.setForeground(Color.green);
         }
         else {
-            activeLabel.setText("Not Registered");
+            activeLabel.setText(Res.getString("not.registered"));
             activeLabel.setForeground(Color.GRAY);
         }
 

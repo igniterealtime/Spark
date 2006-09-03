@@ -24,6 +24,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.TransportRegistrationPanel;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -84,11 +85,11 @@ public class TransportManager {
 
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        final RolloverButton registerButton = new RolloverButton("Register", null);
-        final RolloverButton cancelButton = new RolloverButton("Cancel", null);
+        final RolloverButton registerButton = new RolloverButton("", null);
+        final RolloverButton cancelButton = new RolloverButton("", null);
 
-        ResourceUtils.resButton(registerButton, "&Register");
-        ResourceUtils.resButton(cancelButton, "&Cancel");
+        ResourceUtils.resButton(registerButton, Res.getString("button.register"));
+        ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
 
         buttonPanel.add(registerButton);
         registerButton.requestFocus();
@@ -111,7 +112,7 @@ public class TransportManager {
                 String username = regPanel.getScreenName();
                 String password = regPanel.getPassword();
                 if (!ModelUtil.hasLength(username) || !ModelUtil.hasLength(password)) {
-                    JOptionPane.showMessageDialog(mainPanel, "Username and/or Password need to be supplied.", "Registration Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(mainPanel, Res.getString("message.username.password.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -122,7 +123,7 @@ public class TransportManager {
 
                 }
                 catch (XMPPException e1) {
-                    JOptionPane.showMessageDialog(mainPanel, "Unable to register with Transport.", "Registration Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(mainPanel, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
                 }
 
                 dialog.dispose();

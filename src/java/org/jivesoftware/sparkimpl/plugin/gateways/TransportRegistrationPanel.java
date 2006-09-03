@@ -14,6 +14,7 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
+import org.jivesoftware.resource.Res;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -46,13 +47,13 @@ public class TransportRegistrationPanel extends JPanel {
 
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-        ResourceUtils.resLabel(usernameLabel, usernameField, "&Username:");
+        ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username") + ":");
         add(usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(usernameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         final JLabel passwordLabel = new JLabel();
         passwordLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-        ResourceUtils.resLabel(passwordLabel, passwordField, "&Password:");
+        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
         add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
     }

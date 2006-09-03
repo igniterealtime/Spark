@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
@@ -51,7 +52,7 @@ public class Transports extends JPanel {
         list.setCellRenderer(new JPanelRenderer());
 
 
-        TitlePanel titlePanel = new TitlePanel("Available Transports", "Register with these available transports.", null, true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.available.transports"), Res.getString("message.register.transports"), null, true);
         add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         final JScrollPane pane = new JScrollPane(list);
@@ -64,7 +65,7 @@ public class Transports extends JPanel {
                     Presence presence = con.getRoster().getPresence(item.getTransport().getServiceName());
                     boolean registered = presence != null && presence.getMode() != null;
                     if (registered) {
-                        int confirm = JOptionPane.showConfirmDialog(item, "Would you like to disable this active transport?", "Disable Transport", JOptionPane.YES_NO_OPTION);
+                        int confirm = JOptionPane.showConfirmDialog(item, Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                         if (confirm == JOptionPane.YES_OPTION) {
                             try {
                                 TransportManager.unregister(con, item.getTransport().getServiceName());
@@ -90,7 +91,7 @@ public class Transports extends JPanel {
 
 
     public void showTransports() {
-        final JFrame frame = new JFrame("Transports");
+        final JFrame frame = new JFrame(Res.getString("transports"));
 
         Transports panel = new Transports(SparkManager.getConnection());
 

@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
 
@@ -26,11 +27,11 @@ public class AIMTransport implements Transport {
     }
 
     public String getTitle(){
-        return "AIM Registration";
+        return Res.getString("title.aim.registration");
     }
 
     public String getInstructions() {
-        return "Enter your AIM Screen Name and password below.";
+        return Res.getString("message.enter.aim");
     }
 
     public Icon getIcon() {

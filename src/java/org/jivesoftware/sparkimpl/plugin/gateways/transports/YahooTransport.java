@@ -9,6 +9,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
 
@@ -24,11 +25,11 @@ public class YahooTransport implements Transport {
     }
 
     public String getTitle() {
-        return "Yahoo Registration";
+        return Res.getString("title.yahoo.registration");
     }
 
     public String getInstructions() {
-        return "Enter your Screen Name and password to connect to Yahoo.";
+        return Res.getString("message.enter.yahoo");
     }
 
     public Icon getIcon() {
