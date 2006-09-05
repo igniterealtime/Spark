@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.search.users;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
@@ -20,6 +21,13 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,13 +35,6 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class SearchForm extends JPanel {
     private UserSearchResults searchResults;
@@ -55,19 +56,19 @@ public class SearchForm extends JPanel {
         }
         catch (XMPPException e) {
             Log.error("Unable to load search services.", e);
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to contact search service.", "Search Service Not Available", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         searchManager = new UserSearchManager(SparkManager.getConnection());
         questionForm = new DataFormUI(searchForm);
-        questionForm.setBorder(BorderFactory.createTitledBorder("Search Form"));
+        questionForm.setBorder(BorderFactory.createTitledBorder(Res.getString("group.search.form")));
 
         add(questionForm, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add User DataForm
         final JButton searchButton = new JButton();
-        ResourceUtils.resButton(searchButton, "&Search");
+        ResourceUtils.resButton(searchButton, Res.getString("button.search"));
         add(searchButton, new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         searchButton.addActionListener(new ActionListener() {
@@ -90,7 +91,7 @@ public class SearchForm extends JPanel {
 
         // Add searchResults
         searchResults = new UserSearchResults();
-        searchResults.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        searchResults.setBorder(BorderFactory.createTitledBorder(Res.getString("group.search.results")));
         add(searchResults, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
     }
 
@@ -128,7 +129,7 @@ public class SearchForm extends JPanel {
                     searchResults.showUsersFound(data);
                 }
                 else {
-                    JOptionPane.showMessageDialog(searchResults, "No results found!", "No Results", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(searchResults, Res.getString("message.no.results.found"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
 
                 }
             }

@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.search.UserSearchManager;
@@ -94,16 +95,17 @@ public class UserSearchForm extends JPanel {
         add(titlePanel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         // Add Search Service ComboBox
-        final JLabel serviceLabel = new JLabel("Search Service:");
+        final JLabel serviceLabel = new JLabel("");
+        ResourceUtils.resLabel(serviceLabel, servicesBox, Res.getString("label.search.service") + ":");
         add(serviceLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(servicesBox, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 150, 0));
 
         final JButton addService = new JButton();
-        ResourceUtils.resButton(addService, "&Add Service");
+        ResourceUtils.resButton(addService, Res.getString("button.add.service"));
         add(addService, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         addService.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                final String serviceName = JOptionPane.showInputDialog(getRootPane(), "Name of search service?", "Add Search Service", JOptionPane.QUESTION_MESSAGE);
+                final String serviceName = JOptionPane.showInputDialog(getRootPane(), Res.getString("message.name.of.search.service.question"), Res.getString("title.add.search.service"), JOptionPane.QUESTION_MESSAGE);
                 if (ModelUtil.hasLength(serviceName)) {
 
                     SwingWorker findServiceThread = new SwingWorker() {
@@ -120,7 +122,7 @@ public class UserSearchForm extends JPanel {
 
                         public void finished() {
                             if (newForm == null) {
-                                JOptionPane.showMessageDialog(getGUI(), "Unable to contact search service.", "Search Service Not Available", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
                                 return;
                             }
                             else {

@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
@@ -37,7 +38,7 @@ public class UserSearchService implements Searchable {
 
     public void search(String query) {
         if (searchServices == null) {
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to locate a search service.", "Search Service Not Available", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -48,7 +49,7 @@ public class UserSearchService implements Searchable {
             dataFormUI = searchForm.getQuestionForm();
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to contact search service.", "Search Service Not Available", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -76,7 +77,7 @@ public class UserSearchService implements Searchable {
 
         JFrame frame = new JFrame();
         frame.setIconImage(SparkRes.getImageIcon(SparkRes.VIEW_IMAGE).getImage());
-        final JDialog dialog = new JDialog(frame, "User Search", false);
+        final JDialog dialog = new JDialog(frame, Res.getString("title.person.search"), false);
         dialog.getContentPane().add(searchForm);
         dialog.pack();
         dialog.setSize(500, 500);
@@ -108,15 +109,15 @@ public class UserSearchService implements Searchable {
     }
 
     public String getToolTip() {
-        return "Search for other people on the server.";
+        return Res.getString("message.search.for.other.people");
     }
 
     public String getDefaultText() {
-        return "Search for other people.";
+        return Res.getString("message.search.for.other.people");
     }
 
     public String getName() {
-        return "User Search";
+        return Res.getString("title.person.search");
     }
 
     public Icon getIcon() {

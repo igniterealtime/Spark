@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.spark.ChatManager;
@@ -177,17 +178,17 @@ public class UserSearchResults extends JPanel {
 
         final JMenuItem addAsContact = new JMenuItem(addContactAction);
         addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
-        addContactAction.putValue(Action.NAME, "Add as Contact");
+        addContactAction.putValue(Action.NAME, Res.getString("menuitem.add.as.contact"));
         menu.add(addAsContact);
 
         final JMenuItem chatMenu = new JMenuItem(chatAction);
         chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        chatAction.putValue(Action.NAME, "Chat");
+        chatAction.putValue(Action.NAME, Res.getString("menuitem.chat"));
         menu.add(chatMenu);
 
         final JMenuItem viewProfileMenu = new JMenuItem(profileAction);
         profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
-        profileAction.putValue(Action.NAME, "View Profile");
+        profileAction.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
         menu.add(viewProfileMenu);
 
 
