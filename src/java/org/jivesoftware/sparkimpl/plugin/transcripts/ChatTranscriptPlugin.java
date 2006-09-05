@@ -82,7 +82,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             }
         };
 
-        viewHistoryAction.putValue(Action.NAME, Res.getString("menuitem.view.contact.history "));
+        viewHistoryAction.putValue(Action.NAME, Res.getString("menuitem.view.contact.history"));
         viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
 
         contactList.addContextMenuListener(new ContextMenuListener() {
