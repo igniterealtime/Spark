@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.preference.notifications;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -30,14 +31,14 @@ public class NotificationsUI extends JPanel {
     public NotificationsUI() {
         setLayout(new VerticalFlowLayout());
 
-        setBorder(BorderFactory.createTitledBorder("Notification Options"));
+        setBorder(BorderFactory.createTitledBorder(Res.getString("group.notification.options")));
 
         toasterBox = new JCheckBox();
-        ResourceUtils.resButton(toasterBox, "Show a &Toast Popup");
+        ResourceUtils.resButton(toasterBox, Res.getString("checkbox.show.toaster"));
         add(toasterBox);
 
         windowFocusBox = new JCheckBox();
-        ResourceUtils.resButton(windowFocusBox, "&Bring window to front");
+        ResourceUtils.resButton(windowFocusBox, Res.getString("checkbox.window.to.front"));
         add(windowFocusBox);
     }
 

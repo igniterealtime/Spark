@@ -13,6 +13,7 @@ package org.jivesoftware.sparkimpl.preference.sounds;
 import com.thoughtworks.xstream.XStream;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -55,7 +56,7 @@ public class SoundPreference implements Preference {
 
 
     public String getTitle() {
-        return "Sound Preferences";
+        return Res.getString("title.sound.preferences");
     }
 
     public Icon getIcon() {
@@ -63,11 +64,11 @@ public class SoundPreference implements Preference {
     }
 
     public String getTooltip() {
-        return "Sounds";
+        return Res.getString("title.sounds");
     }
 
     public String getListName() {
-        return "Sounds";
+      return Res.getString("title.sounds");
     }
 
     public String getNamespace() {
@@ -174,12 +175,12 @@ public class SoundPreference implements Preference {
             setLayout(new GridBagLayout());
 
             // Add ResourceUtils
-            ResourceUtils.resButton(incomingMessageBox, "Play sound when new message &arrives");
-            ResourceUtils.resButton(outgoingMessageBox, "Play sound when a message is &sent");
-            ResourceUtils.resButton(userOfflineCheckbox, "Play sound when user goes &offline");
-            ResourceUtils.resButton(incomingBrowseButton, "&Browse");
-            ResourceUtils.resButton(outgoingBrowseButton, "B&rowse");
-            ResourceUtils.resButton(offlineBrowseButton, "Br&owse");
+            ResourceUtils.resButton(incomingMessageBox, Res.getString("checkbox.play.sound.on.new.message"));
+            ResourceUtils.resButton(outgoingMessageBox, Res.getString("checkbox.play.sound.on.outgoing.message"));
+            ResourceUtils.resButton(userOfflineCheckbox, Res.getString("checkbox.play.sound.when.offline"));
+            ResourceUtils.resButton(incomingBrowseButton, Res.getString("button.browse"));
+            ResourceUtils.resButton(outgoingBrowseButton, Res.getString("button.browse2"));
+            ResourceUtils.resButton(offlineBrowseButton, Res.getString("button.browse3"));
 
             // Handle incoming sounds
             add(incomingMessageBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -198,20 +199,20 @@ public class SoundPreference implements Preference {
 
             incomingBrowseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    pickFile("Choose Incoming Sound File", incomingMessageSound);
+                    pickFile(Res.getString("title.choose.incoming.sound"), incomingMessageSound);
                 }
             });
 
 
             outgoingBrowseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    pickFile("Choose Outgoing Sound File", outgoingMessageSound);
+                    pickFile(Res.getString("title.choose.outgoing.sound"), outgoingMessageSound);
                 }
             });
 
             offlineBrowseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    pickFile("Choose Offline Sound File", userOfflineField);
+                    pickFile(Res.getString("title.choose.offline.sound"), userOfflineField);
                 }
             });
 

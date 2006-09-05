@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.preference.notifications;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -34,15 +35,15 @@ public class NotificationsPreference implements Preference {
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark/notifications";
 
     public String getTitle() {
-        return "Notifications";
+        return Res.getString("title.notifications");
     }
 
     public String getListName() {
-        return "Notifications";
+        return Res.getString("title.notifications");
     }
 
     public String getTooltip() {
-        return "Notification preferences for incoming chats.";
+        return Res.getString("tooltip.notifications");
     }
 
     public Icon getIcon() {

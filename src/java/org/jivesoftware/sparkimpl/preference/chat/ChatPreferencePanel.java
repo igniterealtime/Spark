@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.preference.chat;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -61,15 +62,15 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         setLayout(new VerticalFlowLayout());
 
         // Setup Mnemonics
-        ResourceUtils.resButton(showTimeBox, "&Show time in chat window");
-        ResourceUtils.resLabel(passwordLabel, passwordField, "&Change Password To:");
-        ResourceUtils.resLabel(confirmationPasswordLabel, confirmationPasswordField, "Confirm &Password:");
-        ResourceUtils.resButton(spellCheckBox, "&Perform spell checking in background");
-        ResourceUtils.resButton(groupChatNotificationBox, "&Show notifications in conference rooms");
-        ResourceUtils.resButton(hideChatHistory, "&Disable Chat History");
+        ResourceUtils.resButton(showTimeBox, Res.getString("checkbox.show.time.in.chat.window"));
+        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.change.password.to") + ":");
+        ResourceUtils.resLabel(confirmationPasswordLabel, confirmationPasswordField, Res.getString("label.confirm.password") + ":");
+        ResourceUtils.resButton(spellCheckBox, Res.getString("checkbox.perform.spell.check"));
+        ResourceUtils.resButton(groupChatNotificationBox, Res.getString("checkbox.show.notifications.in.conference"));
+        ResourceUtils.resButton(hideChatHistory, Res.getString("checkbox.disable.chat.history"));
 
-        generalPanel.setBorder(BorderFactory.createTitledBorder("General Information"));
-        chatWindowPanel.setBorder(BorderFactory.createTitledBorder("Chat Window Information"));
+        generalPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.general.information")));
+        chatWindowPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.chat.window.information")));
 
         add(generalPanel);
         add(chatWindowPanel);
@@ -85,7 +86,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         JLabel chatTimeoutLabel = new JLabel();
-        ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, "&Minutes before an inactive room becomes stale:");
+        ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, Res.getString("label.minutes.before.stale.chat") + ":");
         chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
@@ -174,7 +175,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (hideChatHistory.isSelected()) {
-            int ok = JOptionPane.showConfirmDialog(this, "Delete all previous history?", "Delete Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            int ok = JOptionPane.showConfirmDialog(this, Res.getString("message.delete.all.history"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
                 File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
                 File[] files = transcriptDir.listFiles();

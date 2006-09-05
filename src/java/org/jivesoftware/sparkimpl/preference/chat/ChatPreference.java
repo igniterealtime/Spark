@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.preference.chat;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
@@ -38,15 +39,15 @@ public class ChatPreference implements Preference {
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark/chatwindow";
 
     public String getTitle() {
-        return "General Chat Settings";
+        return Res.getString("title.general.chat.settings");
     }
 
     public String getListName() {
-        return "Chat";
+        return Res.getString("title.chat");
     }
 
     public String getTooltip() {
-        return "General Chat Settings";
+          return Res.getString("title.general.chat.settings");
     }
 
     public Icon getIcon() {
@@ -101,8 +102,8 @@ public class ChatPreference implements Preference {
                 SparkManager.getConnection().getAccountManager().changePassword(panel.getPassword());
             }
             catch (XMPPException passwordEx) {
-                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to change password. Please see your server admin.",
-                    "Password Change Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.unable.to.save.password"),
+                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 Log.error("Unable to change password", passwordEx);
             }
         }
@@ -128,7 +129,7 @@ public class ChatPreference implements Preference {
         boolean dataIsValid = true;
         if (ModelUtil.hasLength(panel.getPassword()) && ModelUtil.hasLength(panel.getConfirmationPassword())) {
             if (!panel.getPassword().equals(panel.getConfirmationPassword())) {
-                errorMessage = "The passwords do not match. Please re-enter your password";
+                errorMessage = Res.getString("message.passwords.no.match");
                 dataIsValid = false;
             }
         }
