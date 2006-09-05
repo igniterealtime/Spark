@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -40,13 +41,6 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.text.html.HTMLEditorKit;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -62,6 +56,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TimerTask;
+
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
 
 public class CheckUpdates {
     private String mainUpdateURL;
@@ -197,11 +198,11 @@ public class CheckUpdates {
             Log.error(e);
         }
 
-        final JFrame frame = new JFrame("Downloading IM Client");
+        final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
 
         frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
 
-        titlePanel = new TitlePanel("Upgrading Client", "Version: " + version.getVersion(), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
+        titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version ", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
 
         final Thread thread = new Thread(new Runnable() {
             public void run() {
@@ -210,7 +211,7 @@ public class CheckUpdates {
                     long size = post.getResponseContentLength();
                     ByteFormat formater = new ByteFormat();
                     sizeText = formater.format(size);
-                    titlePanel.setDescription("Version: " + version.getVersion() + " \nFile Size: " + sizeText);
+                    titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText));
 
 
                     downloadedFile.getParentFile().mkdirs();
@@ -221,8 +222,7 @@ public class CheckUpdates {
 
                     if (!cancel) {
                         downloadComplete = true;
-                        promptForInstallation(downloadedFile, "Download Complete", "You will need to shut down the client to \n" +
-                                "install the new version. Would you like to do that now?");
+                        promptForInstallation(downloadedFile, "Download Complete", Res.getString("message.restart.spark"));
                     }
                     else {
                         out.close();
@@ -288,7 +288,7 @@ public class CheckUpdates {
                 UPDATING = false;
 
                 if (!downloadComplete) {
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Updating has been cancelled.", "Update Canceled", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
                 }
 
             }
@@ -307,7 +307,7 @@ public class CheckUpdates {
                 String text = formatter.format(average) + "/Sec";
 
                 String total = formatter.format(value);
-                titlePanel.setDescription("Version: " + version.getVersion() + " \nFile Size: " + sizeText + "\nTransfer Rate: " + text + "\nTotal Downloaded: " + total);
+                titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText) + "\n" + Res.getString("message.transfer.rate") + ": " + text + "\n" + Res.getString("message.total.downloaded") + ": " + total);
                 seconds++;
             }
         }, 1000, 1000);
@@ -405,9 +405,9 @@ public class CheckUpdates {
             }
 
             ConfirmDialog confirm = new ConfirmDialog();
-            confirm.showConfirmDialog(SparkManager.getMainWindow(), "New Version Available",
-                    filename + " is now available.\nWould you like to install?", "Yes", "No",
-                    null);
+            confirm.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("title.new.version.available"),
+                Res.getString("message.new.spark.available", filename), Res.getString("yes"), Res.getString("no"),
+                null);
             confirm.setDialogSize(400, 300);
             confirm.setConfirmListener(new ConfirmListener() {
                 public void yesOption() {
@@ -541,8 +541,8 @@ public class CheckUpdates {
     private void promptForInstallation(final File downloadedFile, String title, String message) {
         ConfirmDialog confirm = new ConfirmDialog();
         confirm.showConfirmDialog(SparkManager.getMainWindow(), title,
-                message, "Yes", "No",
-                null);
+            message, Res.getString("yes"), Res.getString("no"),
+            null);
         confirm.setConfirmListener(new ConfirmListener() {
             public void yesOption() {
                 try {
@@ -593,8 +593,7 @@ public class CheckUpdates {
                     boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
                     if (isGreater) {
                         // Prompt
-                        promptForInstallation(file, "New Client Available", "You will need to shut down the client to \n" +
-                                "install the new version.\n\n Would you like to do that now?");
+                        promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
                         return true;
                     }
                     else {
