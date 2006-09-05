@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.settings.local;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.preference.Preference;
 
 import javax.swing.Icon;
@@ -32,15 +33,15 @@ public class LocalPreference implements Preference {
     }
 
     public String getTitle() {
-        return "Login Settings";
+        return Res.getString("title.login.settings");
     }
 
     public String getListName() {
-        return "Login";
+        return Res.getString("title.login");
     }
 
     public String getTooltip() {
-        return "Spark Login Settings";
+         return Res.getString("title.login.settings");
     }
 
     public Icon getIcon() {
@@ -83,13 +84,13 @@ public class LocalPreference implements Preference {
             Integer.parseInt(panel.getIdleTime());
         }
         catch (Exception ex) {
-            errorMessage = "You must specify a valid timeout and port.";
+            errorMessage = Res.getString("message.specify.valid.time.error");
             return false;
         }
 
         int timeOut = Integer.parseInt(panel.getTimeout());
         if (timeOut < 5) {
-            errorMessage = "The timeout must be 5 seconds or greater.";
+            errorMessage = Res.getString("message.timeout.error");
             return false;
         }
 

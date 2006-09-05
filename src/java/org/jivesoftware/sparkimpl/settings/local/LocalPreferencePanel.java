@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.settings.local;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 
@@ -89,16 +90,16 @@ public class LocalPreferencePanel extends JPanel {
 
         final JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
-        inputPanel.setBorder(BorderFactory.createTitledBorder("Login Information"));
+        inputPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.login.information")));
 
-        ResourceUtils.resLabel(portLabel, portField, "&XMPP Port:");
-        ResourceUtils.resLabel(timeOutLabel, timeOutField, "&Response Time Out(sec):");
-        ResourceUtils.resButton(autoLoginBox, "&Auto Login");
-        ResourceUtils.resButton(savePasswordBox, "&Save Password");
-        ResourceUtils.resLabel(idleLabel, idleField, "&Time till Idle(minutes):");
-        ResourceUtils.resButton(idleBox, "&Idle enabled");
-        ResourceUtils.resButton(launchOnStartupBox, "&Launch on Startup");
-        ResourceUtils.resButton(startMinimizedBox, "&Start in System Tray");
+        ResourceUtils.resLabel(portLabel, portField, Res.getString("label.xmpp.port") + ":");
+        ResourceUtils.resLabel(timeOutLabel, timeOutField, Res.getString("label.response.timeout") + ":");
+        ResourceUtils.resButton(autoLoginBox, Res.getString("checkbox.auto.login"));
+        ResourceUtils.resButton(savePasswordBox, Res.getString("checkbox.save.password"));
+        ResourceUtils.resLabel(idleLabel, idleField, Res.getString("label.time.till.idle") + ":");
+        ResourceUtils.resButton(idleBox, Res.getString("checkbox.idle.enabled"));
+        ResourceUtils.resButton(launchOnStartupBox, Res.getString("checkbox.launch.on.startup"));
+        ResourceUtils.resButton(startMinimizedBox, Res.getString("checkbox.start.in.tray"));
 
         inputPanel.add(portLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         inputPanel.add(portField, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
