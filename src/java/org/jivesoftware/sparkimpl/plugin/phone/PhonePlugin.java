@@ -18,6 +18,7 @@ import org.jivesoftware.phone.client.PhoneClient;
 import org.jivesoftware.phone.client.RingEvent;
 import org.jivesoftware.phone.client.action.PhoneActionIQProvider;
 import org.jivesoftware.phone.client.event.PhoneEventPacketExtensionProvider;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -36,18 +37,18 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
 public class PhonePlugin implements Plugin {
     public static PhoneClient phoneClient;
@@ -88,9 +89,9 @@ public class PhonePlugin implements Plugin {
 
     private void setupPhoneSystem() {
         // Add Dial Menu
-        final JMenu viewMenu = SparkManager.getMainWindow().getMenuByName("Actions");
-        JMenuItem dialNumberMenu = new JMenuItem("Dial Number", SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
-        ResourceUtils.resButton(dialNumberMenu, "&Dial Number");
+        final JMenu viewMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+        JMenuItem dialNumberMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+        ResourceUtils.resButton(dialNumberMenu, Res.getString("button.dial.number"));
 
         // Add Listener
         dialNumberMenu.addActionListener(new ActionListener() {
@@ -100,7 +101,7 @@ public class PhonePlugin implements Plugin {
                     public void actionPerformed(ActionEvent e) {
                         String number = dialPanel.getNumberToDial();
                         if (ModelUtil.hasLength(number)) {
-                            dialPanel.setText("Calling " + number);
+                            dialPanel.setText(Res.getString("message.calling", number));
                             dialPanel.changeToRinging();
                             callExtension(number);
 
@@ -109,7 +110,7 @@ public class PhonePlugin implements Plugin {
                     }
                 });
 
-                dialDialog = PhoneDialog.invoke(dialPanel, "Dial Phone", "Insert number to call", null);
+                dialDialog = PhoneDialog.invoke(dialPanel, Res.getString("title.dial.phone"), Res.getString("message.number.to.call"), null);
                 dialPanel.getDialField().requestFocusInWindow();
 
                 dialPanel.getDialField().addKeyListener(new KeyAdapter() {
@@ -118,7 +119,7 @@ public class PhonePlugin implements Plugin {
                             try {
                                 String number = dialPanel.getNumberToDial();
                                 if (ModelUtil.hasLength(number)) {
-                                    dialPanel.setText("Calling " + number);
+                                    dialPanel.setText(Res.getString("message.calling", number));
                                     dialPanel.changeToRinging();
                                     callExtension(number);
 
@@ -126,7 +127,7 @@ public class PhonePlugin implements Plugin {
                                 e.consume();
                             }
                             catch (Exception ex) {
-                                Log.error("Error performing search.", ex);
+                                Log.error(ex);
                             }
                         }
                     }
@@ -141,7 +142,7 @@ public class PhonePlugin implements Plugin {
             public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
                     final ChatRoomButton callButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.TELEPHONE_24x24));
-                    callButton.setToolTipText("Make a call.");
+                    callButton.setToolTipText(Res.getString("tooltip.place.a.call"));
                     final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
                     boolean phoneEnabled = false;
                     try {
@@ -243,7 +244,7 @@ public class PhonePlugin implements Plugin {
             }
 
             if (!idExists) {
-                incomingCall.setCallerName("No caller ID available.");
+                incomingCall.setCallerName(Res.getString("message.no.caller.id"));
             }
 
             //incomingDialog = SparkManager.getNotificationsEngine().showWindow(incomingCall, 500000000);

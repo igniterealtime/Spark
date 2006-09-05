@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -23,17 +24,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -46,6 +36,17 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 public class JabberBrowser implements Plugin {
     private JLabel addressLabel = new JLabel();
@@ -65,7 +66,7 @@ public class JabberBrowser implements Plugin {
         mainPanel.setLayout(new GridBagLayout());
 
         // Setup resource
-        ResourceUtils.resLabel(addressLabel, addressField, "&Jabber Address:");
+        ResourceUtils.resLabel(addressLabel, addressField, Res.getString("label.jabber.address") + ":");
 
         RolloverButton backButton = new RolloverButton();
         backButton.setIcon(SparkRes.getImageIcon(SparkRes.LEFT_ARROW_IMAGE));
@@ -84,7 +85,8 @@ public class JabberBrowser implements Plugin {
         mainPanel.add(addressField, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        JButton browseButton = new JButton("Browse");
+        JButton browseButton = new JButton("");
+        ResourceUtils.resButton(browseButton, Res.getString("button.browse"));
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String serviceName = (String)addressField.getSelectedItem();
@@ -108,7 +110,7 @@ public class JabberBrowser implements Plugin {
         JFrame frame = new JFrame();
         frame.setIconImage(SparkRes.getImageIcon(SparkRes.FIND_IMAGE).getImage());
 
-        JDialog dialog = new JDialog(frame, "Jabber Browser");
+        JDialog dialog = new JDialog(frame, Res.getString("title.jabber.browser"));
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.getContentPane().add(mainPanel, BorderLayout.CENTER);
         dialog.pack();

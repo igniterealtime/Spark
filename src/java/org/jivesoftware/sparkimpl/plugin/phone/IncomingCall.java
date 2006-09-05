@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.phone;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,7 +45,7 @@ public class IncomingCall extends JPanel {
         phoneImage.setHorizontalAlignment(JLabel.CENTER);
         phoneImage.setVerticalTextPosition(JLabel.BOTTOM);
         phoneImage.setHorizontalTextPosition(JLabel.CENTER);
-        phoneImage.setText("Incoming Call");
+        phoneImage.setText(Res.getString("title.incoming.call"));
         phoneImage.setFont(new Font("Dialog", Font.BOLD, 16));
 
 
@@ -81,19 +82,4 @@ public class IncomingCall extends JPanel {
 
         callerNumberLabel.setText(buf.toString());
     }
-
-    public static void main(String args[]) {
-        final JFrame frame = new JFrame();
-        IncomingCall call = new IncomingCall();
-
-
-        call.setCallerName("Matt Tucker");
-        call.setCallerNumber("5036356383");
-
-        frame.getContentPane().add(call);
-
-        frame.pack();
-        frame.setVisible(true);
-    }
-
 }

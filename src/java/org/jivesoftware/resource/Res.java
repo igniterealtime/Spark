@@ -8,6 +8,8 @@
 
 package org.jivesoftware.resource;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -31,7 +33,14 @@ public class Res {
     }
 
     public static final String getString(String propertyName) {
-        return prb.getString(propertyName);
+        try {
+            return prb.getString(propertyName);
+        }
+        catch (Exception e) {
+            Log.error(e);
+            return propertyName;
+        }
+
     }
 
     public static final String getString(String propertyName, Object... obj) {
@@ -39,7 +48,6 @@ public class Res {
         if (str == null) {
             return null;
         }
-
 
 
         return MessageFormat.format(str, obj);

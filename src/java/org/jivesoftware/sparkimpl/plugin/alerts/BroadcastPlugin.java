@@ -99,14 +99,16 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                     selectedUser = contactItem.getFullJID();
                 }
 
-                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("label.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
+                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
                 if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
                     if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                         // Append server address
                         jid = jid + "@" + SparkManager.getConnection().getServiceName();
                     }
 
-                    ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(jid, jid, jid);
+                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+
+                    ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(jid, nickname, nickname);
                     SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
                 }
             }

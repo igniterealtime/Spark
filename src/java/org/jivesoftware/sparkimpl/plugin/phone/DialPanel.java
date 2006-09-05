@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.phone;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.JButton;
@@ -45,27 +46,27 @@ public class DialPanel extends JPanel {
         iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
         iconLabel.setHorizontalTextPosition(JLabel.CENTER);
         imagePanel.add(iconLabel, BorderLayout.CENTER);
-        iconLabel.setFont(new Font("Verdana", Font.BOLD, 14));
+        iconLabel.setFont(new Font("Dialog", Font.BOLD, 14));
 
 
         dialPanel.setLayout(new GridBagLayout());
 
-        JLabel dialLabel = new JLabel("Number:");
+        JLabel dialLabel = new JLabel();
         dialPanel.add(dialLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.WEST, new Insets(5, 5, 5, 5), 0, 0));
 
         dialField = new JTextField();
         dialPanel.add(dialField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        dialButton = new JButton("Dial");
+        dialButton = new JButton("");
         dialPanel.add(dialButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.WEST, new Insets(5, 5, 5, 5), 0, 0));
 
         add(imagePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(dialPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        iconLabel.setText("Waiting to place call");
+        iconLabel.setText(Res.getString("title.waiting.to.call"));
 
-        ResourceUtils.resButton(dialButton, "&Dial");
-        ResourceUtils.resLabel(dialLabel, dialField, "&Number:");
+        ResourceUtils.resButton(dialButton, Res.getString("label.dial"));
+        ResourceUtils.resLabel(dialLabel, dialField, Res.getString("label.number") + ":");
     }
 
     public void changeToRinging() {
@@ -74,7 +75,7 @@ public class DialPanel extends JPanel {
     }
 
     public void showDialog(String number) {
-        iconLabel.setText("Calling " + number);
+        iconLabel.setText(Res.getString("message.calling", number));
     }
 
     public void setText(String text) {

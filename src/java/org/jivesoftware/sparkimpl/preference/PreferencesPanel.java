@@ -45,7 +45,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         this.setLayout(new GridBagLayout());
 
         titleLabel.setText("Spark Preferences");
-        titleLabel.setFont(new Font("Verdana", Font.BOLD, 15));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize(new Dimension(125, 0));
         list.setFixedCellHeight(70);

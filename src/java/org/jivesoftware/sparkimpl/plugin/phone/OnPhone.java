@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.phone;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.TimeTrackingLabel;
 
 import javax.swing.JLabel;
@@ -42,15 +43,15 @@ public class OnPhone extends JPanel {
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
         iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
         iconLabel.setHorizontalTextPosition(JLabel.CENTER);
-        iconLabel.setFont(new Font("Verdana", Font.BOLD, 14));
-        iconLabel.setText("On the phone");
+        iconLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+        iconLabel.setText(Res.getString("title.on.the.phone"));
 
         // Handle Time Tracker
         timeLabel = new TimeTrackingLabel(new Date(), this);
         timeLabel.setOpaque(false);
         timeLabel.setHorizontalAlignment(JLabel.CENTER);
         timeLabel.setHorizontalTextPosition(JLabel.CENTER);
-        timeLabel.setFont(new Font("Verdana", Font.BOLD, 14));
+        timeLabel.setFont(new Font("Dialog", Font.BOLD, 14));
 
         // Add Icon Label
         imagePanel.add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.7, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

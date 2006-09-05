@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.filter.PacketIDFilter;
@@ -21,13 +22,13 @@ import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class VersionViewer {
 
@@ -50,10 +51,10 @@ public class VersionViewer {
         final JTextField osField = new JTextField();
 
         // Add resources
-        ResourceUtils.resLabel(timeLabel, timeField, "&Local Time:");
-        ResourceUtils.resLabel(softwareLabel, softwareField, "&Software:");
-        ResourceUtils.resLabel(versionLabel, versionField, "&Version:");
-        ResourceUtils.resLabel(osLabel, osField, "&Operating System:");
+        ResourceUtils.resLabel(timeLabel, timeField, Res.getString("label.local.time") + ":");
+        ResourceUtils.resLabel(softwareLabel, softwareField, Res.getString("label.software") + ":");
+        ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.version") + ":");
+        ResourceUtils.resLabel(osLabel, osField, Res.getString("label.os") + ":");
 
         // Add Time Label
         panel.add(timeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -129,8 +130,7 @@ public class VersionViewer {
         versionField.setEditable(false);
         softwareField.setEditable(false);
         timeField.setEditable(false);
-        MessageDialog.showComponent("Version and Time", "Client information for " + jid, SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
-
+        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", jid), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
     }
 
 }

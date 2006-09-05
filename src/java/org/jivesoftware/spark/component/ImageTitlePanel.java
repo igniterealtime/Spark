@@ -49,7 +49,7 @@ public class ImageTitlePanel extends JPanel {
 
         titleLabel.setText(title);
         titleLabel.setForeground(Color.white);
-        titleLabel.setFont(new Font("Verdana", Font.BOLD, 11));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
     }
 
     /**

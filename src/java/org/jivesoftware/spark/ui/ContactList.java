@@ -1214,7 +1214,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         rename.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String newName = JOptionPane.showInputDialog(group, Res.getString("title.rename.roster.group"), Res.getString("label.rename.to") + ":", JOptionPane.QUESTION_MESSAGE);
+                String newName = JOptionPane.showInputDialog(group, Res.getString("label.rename.to") + ":", Res.getString("title.rename.roster.group"), JOptionPane.QUESTION_MESSAGE);
                 if (!ModelUtil.hasLength(newName)) {
                     return;
                 }

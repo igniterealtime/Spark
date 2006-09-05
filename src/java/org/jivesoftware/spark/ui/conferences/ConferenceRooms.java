@@ -417,7 +417,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
 
         final JOptionPane p = new JOptionPane();
 
-        dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.browse.room.service ", serviceName));
+        dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.browse.room.service", serviceName));
         dlg.setModal(false);
 
         dlg.pack();
@@ -668,7 +668,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
             addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
         }
         else {
-            addRoomButton.setText(Res.getString("button.bookmark.room"));
+            ResourceUtils.resButton(addRoomButton, Res.getString("button.bookmark.room"));
             addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
         }
     }

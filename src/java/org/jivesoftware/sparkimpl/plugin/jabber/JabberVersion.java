@@ -25,6 +25,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -92,7 +93,7 @@ public class JabberVersion implements Plugin {
                     }
                 };
 
-                versionRequest.putValue(Action.NAME, "View Client Version");
+                versionRequest.putValue(Action.NAME, Res.getString("menuitem.view.client.version"));
                 popup.add(versionRequest);
             }
 
