@@ -11,9 +11,11 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
+import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
@@ -43,8 +45,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
     private JLabel avatar;
     private byte[] bytes;
     private File avatarFile;
-    final JButton browseButton = new JButton("Browse");
-    final JButton clearButton = new JButton("Clear");
+    final JButton browseButton = new JButton();
+    final JButton clearButton = new JButton();
     private JFileChooser fc;
 
     public AvatarPanel() {
@@ -62,6 +64,10 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
         browseButton.addActionListener(this);
 
+        // Add ResourceUtils
+        ResourceUtils.resButton(browseButton, Res.getString("button.browse"));
+        ResourceUtils.resButton(clearButton, Res.getString("button.clear"));
+
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 avatar.setIcon(null);
@@ -70,7 +76,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
             }
         });
 
-        avatar.setText("No avatar was configured by the user.");
+        avatar.setText(Res.getString("message.no.avatar.found"));
 
         GraphicUtils.makeSameSize(new JComponent[]{browseButton, clearButton});
         avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
@@ -155,7 +161,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
                         if (actualSize > 16) {
                             // Do not allow
-                            JOptionPane.showMessageDialog(parent, "This image is too large to use. Please specify an image 16k or smaller.");
+                            JOptionPane.showMessageDialog(parent, Res.getString("message.image.too.large"));
                             return;
                         }
 

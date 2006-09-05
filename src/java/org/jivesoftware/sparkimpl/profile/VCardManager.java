@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.profile;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketInterceptor;
 import org.jivesoftware.smack.XMPPException;
@@ -23,7 +24,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -33,19 +33,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.BorderFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -63,6 +50,19 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 public class VCardManager {
     private BusinessPanel businessPanel;
@@ -117,16 +117,16 @@ public class VCardManager {
         personalPanel = new PersonalPanel();
         personalPanel.showJID(false);
 
-        tabbedPane.addTab("Personal", personalPanel);
+        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
         businessPanel = new BusinessPanel();
-        tabbedPane.addTab("Business", businessPanel);
+        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
 
         homePanel = new HomePanel();
-        tabbedPane.addTab("Home", homePanel);
+        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
         avatarPanel = new AvatarPanel();
-        tabbedPane.addTab("Avatar", avatarPanel);
+        tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 
         loadVCard(SparkManager.getSessionManager().getJID());
 
@@ -141,7 +141,7 @@ public class VCardManager {
         }
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("Edit Profile Information", "To save changes to your profile, click Save.", icon, true);
+        titlePanel = new TitlePanel(Res.getString("title.edit.profile"), Res.getString("message.save.profile"), icon, true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -149,13 +149,13 @@ public class VCardManager {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Save", "Cancel"};
+        Object[] options = {Res.getString("save"), Res.getString("cancel")};
         pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
         JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, "Profile Information");
+        dlg = p.createDialog(parent, Res.getString("title.profile.information"));
         dlg.setModal(false);
 
         dlg.pack();
@@ -167,11 +167,11 @@ public class VCardManager {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
-                if ("Cancel".equals(value)) {
+                if (Res.getString("cancel").equals(value)) {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
                 }
-                else if ("Save".equals(value)) {
+                else if (Res.getString("save").equals(value)) {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
                     saveVCard();
@@ -200,7 +200,7 @@ public class VCardManager {
             public void finished() {
                 if (userVCard.getError() != null || userVCard == null) {
                     // Show vcard not found
-                    JOptionPane.showMessageDialog(parent, "Unable to locate a profile for " + jid, "Profile Not Found", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 else {
@@ -218,14 +218,14 @@ public class VCardManager {
 
         personalPanel = new PersonalPanel();
         personalPanel.showJID(true);
-        
-        tabbedPane.addTab("Personal", personalPanel);
+
+        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
         businessPanel = new BusinessPanel();
-        tabbedPane.addTab("Business", businessPanel);
+        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
 
         homePanel = new HomePanel();
-        tabbedPane.addTab("Home", homePanel);
+        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
         avatarPanel = new AvatarPanel();
         avatarPanel.setEditable(false);
@@ -247,12 +247,12 @@ public class VCardManager {
         mainPanel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
 
         // The user should only be able to close this dialog.
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
-        dlg = new JFrame("Viewing Profile For " + jid);
+        dlg = new JFrame(Res.getString("title.view.profile.for", jid));
         dlg.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE).getImage());
 
         dlg.pack();
@@ -269,7 +269,7 @@ public class VCardManager {
                     return;
                 }
                 String value = (String)pane.getValue();
-                if ("Close".equals(value)) {
+                if (Res.getString("close").equals(value)) {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
                 }
@@ -300,11 +300,11 @@ public class VCardManager {
         }
 
         // Add Actions Menu
-        final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName("Contacts");
+        final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
         final JMenu communicatorMenu = SparkManager.getMainWindow().getJMenuBar().getMenu(0);
 
-        JMenuItem editProfileMenu = new JMenuItem("Edit Profile...", SparkRes.getImageIcon(SparkRes.SMALL_BUSINESS_MAN_VIEW));
-        ResourceUtils.resButton(editProfileMenu, "&Edit My Profile...");
+        JMenuItem editProfileMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.SMALL_BUSINESS_MAN_VIEW));
+        ResourceUtils.resButton(editProfileMenu, Res.getString("menuitem.edit.my.profile"));
 
         int size = contactsMenu.getMenuComponentCount();
 
@@ -319,7 +319,7 @@ public class VCardManager {
                         catch (XMPPException e) {
                             Log.error("Error loading vcard information.", e);
                         }
-                        return "ok";
+                        return true;
                     }
 
                     public void finished() {
@@ -335,12 +335,12 @@ public class VCardManager {
         contactsMenu.insert(viewProfileMenu, size - 1);
         viewProfileMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), "Enter Jabber ID:", "Lookup Profile", JOptionPane.QUESTION_MESSAGE);
+                String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
                 if (ModelUtil.hasLength(jidToView) && jidToView.indexOf("@") != -1 && ModelUtil.hasLength(StringUtils.parseServer(jidToView))) {
                     viewProfile(jidToView, SparkManager.getWorkspace());
                 }
                 else if (ModelUtil.hasLength(jidToView)) {
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Not a valid Jabber ID", "Invalid JID", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.invalid.jabber.id"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -365,7 +365,7 @@ public class VCardManager {
                 }
                 catch (XMPPException e) {
                 }
-                return "ok";
+                return true;
             }
 
             public void finished() {
@@ -470,7 +470,7 @@ public class VCardManager {
 
             public void finished() {
                 if (!saved) {
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Server does not support VCards. Unable to save your VCard.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.vcard.not.supported"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 else {

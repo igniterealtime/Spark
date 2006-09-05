@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,20 +57,20 @@ public class BusinessPanel extends JPanel {
         this.setLayout(new GridBagLayout());
 
         // Setup Resources
-        ResourceUtils.resLabel(companyLabel, companyField, "&Company:");
-        ResourceUtils.resLabel(streetLabel, streetField, "&Street Address:");
-        ResourceUtils.resLabel(cityLabel, cityField, "&City:");
-        ResourceUtils.resLabel(stateLabel, stateField, "S&tate/Province:");
-        ResourceUtils.resLabel(zipCodeLabel, zipCodeField, "&Postal Code:");
-        ResourceUtils.resLabel(countryLabel, countryField, "C&ountry:");
+        ResourceUtils.resLabel(companyLabel, companyField,  Res.getString("label.company") + ":");
+        ResourceUtils.resLabel(streetLabel, streetField,  Res.getString("label.street.address") + ":");
+        ResourceUtils.resLabel(cityLabel, cityField,  Res.getString("label.city") + ":");
+        ResourceUtils.resLabel(stateLabel, stateField,  Res.getString("label.state.and.province") + ":");
+        ResourceUtils.resLabel(zipCodeLabel, zipCodeField, Res.getString("label.postal.code") + ":");
+        ResourceUtils.resLabel(countryLabel, countryField,  Res.getString("label.country") + ":");
 
-        ResourceUtils.resLabel(jobTitleLabel, jobTitleField, "&Job Title:");
-        ResourceUtils.resLabel(departmentLabel, departmentField, "&Department:");
-        ResourceUtils.resLabel(phoneLabel, phoneField, "&Phone:");
-        ResourceUtils.resLabel(faxLabel, faxField, "&Fax:");
-        ResourceUtils.resLabel(mobileLabel, mobileField, "&Mobile:");
-        ResourceUtils.resLabel(webPageLabel, webPageField, "&Web Page:");
-        ResourceUtils.resLabel(pagerLabel, pagerField, "&Pager:");
+        ResourceUtils.resLabel(jobTitleLabel, jobTitleField,  Res.getString("label.job.title") + ":");
+        ResourceUtils.resLabel(departmentLabel, departmentField,  Res.getString("label.department") + ":");
+        ResourceUtils.resLabel(phoneLabel, phoneField, Res.getString("label.phone") + ":");
+        ResourceUtils.resLabel(faxLabel, faxField,  Res.getString("label.fax") + ":");
+        ResourceUtils.resLabel(mobileLabel, mobileField,  Res.getString("label.mobile") + ":");
+        ResourceUtils.resLabel(webPageLabel, webPageField,  Res.getString("label.web.page") + ":");
+        ResourceUtils.resLabel(pagerLabel, pagerField,  Res.getString("label.pager") + ":");
 
         this.add(streetField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(countryField, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));

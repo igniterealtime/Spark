@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,7 +39,7 @@ public class PersonalPanel extends JPanel {
         // Handle First Name
         JLabel firstNameLabel = new JLabel();
         firstNameField = new JTextField();
-        ResourceUtils.resLabel(firstNameLabel, firstNameField, "&First Name:");
+        ResourceUtils.resLabel(firstNameLabel, firstNameField,  Res.getString("label.first.name") + ":");
 
         add(firstNameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(firstNameField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -46,34 +47,34 @@ public class PersonalPanel extends JPanel {
         // Handle Middle Name
         JLabel middleNameLabel = new JLabel();
         middleNameField = new JTextField();
-        ResourceUtils.resLabel(middleNameLabel, middleNameField, "&Middle Name:");
+        ResourceUtils.resLabel(middleNameLabel, middleNameField,  Res.getString("label.middle.name") + ":");
         add(middleNameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(middleNameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Handle Last Name
         JLabel lastNameLabel = new JLabel();
         lastNameField = new JTextField();
-        ResourceUtils.resLabel(lastNameLabel, lastNameField, "&Last Name:");
+        ResourceUtils.resLabel(lastNameLabel, lastNameField,  Res.getString("label.last.name") + ":");
         add(lastNameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(lastNameField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Handle Nickname
         JLabel nicknameLabel = new JLabel();
         nicknameField = new JTextField();
-        ResourceUtils.resLabel(nicknameLabel, nicknameField, "&Nickname:");
+        ResourceUtils.resLabel(nicknameLabel, nicknameField,  Res.getString("label.nickname") + ":");
         add(nicknameLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(nicknameField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Handle Email Address
         JLabel emaiAddressLabel = new JLabel();
         emailAddressField = new JTextField();
-        ResourceUtils.resLabel(emaiAddressLabel, emailAddressField, "&Email Address:");
+        ResourceUtils.resLabel(emaiAddressLabel, emailAddressField,  Res.getString("label.email.address") + ":");
         add(emaiAddressLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emailAddressField, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
         jidField = new JTextField();
-        ResourceUtils.resLabel(jidLabel, jidField, "&JID:");
+        ResourceUtils.resLabel(jidLabel, jidField,  Res.getString("label.jid") + ":");
         add(jidLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(jidField, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 

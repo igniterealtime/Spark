@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -49,16 +50,16 @@ public class HomePanel extends JPanel {
         this.setLayout(new GridBagLayout());
 
         // Setup Resources
-        ResourceUtils.resLabel(streetLabel, streetField, "&Street Address:");
-        ResourceUtils.resLabel(cityLabel, cityField, "&City:");
-        ResourceUtils.resLabel(stateLabel, stateField, "S&tate/Province:");
-        ResourceUtils.resLabel(zipCodeLabel, zipCodeField, "&Postal Code:");
-        ResourceUtils.resLabel(countryLabel, countryField, "C&ountry:");
+        ResourceUtils.resLabel(streetLabel, streetField,  Res.getString("label.street.address") + ":");
+        ResourceUtils.resLabel(cityLabel, cityField, Res.getString("label.city") + ":");
+        ResourceUtils.resLabel(stateLabel, stateField,  Res.getString("label.state.and.province") + ":");
+        ResourceUtils.resLabel(zipCodeLabel, zipCodeField,  Res.getString("label.postal.code") + ":");
+        ResourceUtils.resLabel(countryLabel, countryField,  Res.getString("label.country") + ":");
 
-        ResourceUtils.resLabel(phoneLabel, phoneField, "&Phone:");
-        ResourceUtils.resLabel(faxLabel, faxField, "&Fax:");
-        ResourceUtils.resLabel(mobileLabel, mobileField, "&Mobile:");
-        ResourceUtils.resLabel(pagerLabel, pagerField, "&Pager:");
+        ResourceUtils.resLabel(phoneLabel, phoneField, Res.getString("label.phone") + ":");
+        ResourceUtils.resLabel(faxLabel, faxField,  Res.getString("label.fax") + ":");
+        ResourceUtils.resLabel(mobileLabel, mobileField,  Res.getString("label.mobile") + ":");
+        ResourceUtils.resLabel(pagerLabel, pagerField, Res.getString("label.pager") + ":");
 
         this.add(streetLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(streetField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
