@@ -13,6 +13,7 @@ package org.jivesoftware.sparkimpl.preference;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -44,7 +45,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     public PreferencesPanel(Iterator preferences) {
         this.setLayout(new GridBagLayout());
 
-        titleLabel.setText("Spark Preferences");
+        titleLabel.setText(Res.getString("title.preferences"));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize(new Dimension(125, 0));
@@ -75,7 +76,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                 }
                 else {
                     JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
-                            "Preference Error", JOptionPane.ERROR_MESSAGE);
+                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     list.removeListSelectionListener(this);
                     list.setSelectedIndex(e.getLastIndex());
                     list.addListSelectionListener(this);
@@ -114,7 +115,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
             }
             else {
                 JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
-                        "Preference Error", JOptionPane.ERROR_MESSAGE);
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }

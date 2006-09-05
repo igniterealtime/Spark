@@ -18,6 +18,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.SparkManager;
@@ -32,23 +33,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -69,6 +53,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class PluginViewer extends JPanel implements Plugin {
 
@@ -102,8 +103,8 @@ public class PluginViewer extends JPanel implements Plugin {
         add(tabbedPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Tabs
-        tabbedPane.addTab("Installed", new JScrollPane(installedPanel));
-        tabbedPane.addTab("Available", new JScrollPane(availablePanel));
+        tabbedPane.addTab(Res.getString("tab.installed.plugins"), new JScrollPane(installedPanel));
+        tabbedPane.addTab(Res.getString("tab.available.plugins"), new JScrollPane(availablePanel));
 
 
         loadInstalledPlugins();
@@ -158,14 +159,14 @@ public class PluginViewer extends JPanel implements Plugin {
     }
 
     private boolean uninstall(PublicPlugin plugin) {
-        int ok = JOptionPane.showConfirmDialog(installedPanel, "Are you sure you want to uninstall \"" + plugin.getName() + "\"?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        int ok = JOptionPane.showConfirmDialog(installedPanel, Res.getString("message.prompt.plugin.uninstall", plugin.getName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.YES_OPTION) {
             // Delete main jar.
             File pluginDir = plugin.getPluginDir();
             File pluginJAR = new File(plugin.getPluginDir().getParentFile(), pluginDir.getName() + ".jar");
             boolean deleted = pluginJAR.delete();
 
-            JOptionPane.showMessageDialog(this, "You will need to restart Spark to have the changes take place.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
             PluginManager.getInstance().removePublicPlugin(plugin);
             return true;
         }
@@ -175,7 +176,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
     private void invokeViewer() {
         viewer = new PluginViewer();
-        MessageDialog.showComponent("Plugins", "Plugins available and installed.", null, viewer, SparkManager.getMainWindow(), 600, 600, false);
+        MessageDialog.showComponent(Res.getString("title.plugins"), "", null, viewer, SparkManager.getMainWindow(), 600, 600, false);
     }
 
     public void shutdown() {
@@ -192,7 +193,7 @@ public class PluginViewer extends JPanel implements Plugin {
         availablePanel.validate();
         availablePanel.repaint();
 
-        JLabel label = new JLabel("Loading. Please wait...");
+        JLabel label = new JLabel(Res.getString("message.loading.please.wait"));
         availablePanel.add(label);
 
 
@@ -240,7 +241,7 @@ public class PluginViewer extends JPanel implements Plugin {
                     availablePanel.validate();
                     availablePanel.repaint();
 
-                    JOptionPane.showMessageDialog(availablePanel, "Unable to contact the plugin repository.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(availablePanel, Res.getString("message.plugins.not.available"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 Iterator plugs = pluginList.iterator();
@@ -295,7 +296,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
             progressBar = new JProgressBar(0, contentLength);
 
-            final JFrame frame = new JFrame("Downloading " + plugin.getName());
+            final JFrame frame = new JFrame(Res.getString("message.downloading", plugin.getName()));
 
             frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
 
@@ -354,7 +355,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
 
             frame.getContentPane().setLayout(new GridBagLayout());
-            frame.getContentPane().add(new JLabel("Downloading Spark-Plug"), new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            frame.getContentPane().add(new JLabel(Res.getString("message.downloading.spark.plug")), new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
             frame.getContentPane().add(progressBar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
             frame.pack();
             frame.setSize(400, 100);

@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.MainWindowListener;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
@@ -32,17 +33,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -55,6 +45,17 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -81,7 +82,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             }
         };
 
-        viewHistoryAction.putValue(Action.NAME, "View Contact History");
+        viewHistoryAction.putValue(Action.NAME, Res.getString("menuitem.view.contact.history "));
         viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
 
         contactList.addContextMenuListener(new ContextMenuListener() {
@@ -167,7 +168,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             // Add History Button
             ChatRoomButton chatRoomButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE));
             room.getToolBar().addChatRoomButton(chatRoomButton);
-            chatRoomButton.setToolTipText("View history");
+            chatRoomButton.setToolTipText(Res.getString("tooltip.view.history"));
             chatRoomButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
                     ChatRoomImpl roomImpl = (ChatRoomImpl)room;
@@ -358,10 +359,10 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                 // Handle no history
                 if (transcript.getMessages().size() == 0) {
-                    window.setText("There is no current chat history.");
+                    window.setText(Res.getString("message.no.history.found"));
                 }
 
-                final JFrame frame = new JFrame("History For " + jid);
+                final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
                 frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16).getImage());
                 frame.getContentPane().setLayout(new BorderLayout());
 

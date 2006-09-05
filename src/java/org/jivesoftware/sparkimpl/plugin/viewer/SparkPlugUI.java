@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.PublicPlugin;
@@ -123,8 +124,8 @@ public class SparkPlugUI extends JPanel {
             buttonPanel.add(changeLogButton);
             buttonPanel.add(readMeButton);
 
-            changeLogButton.setToolTipText("View Change Log");
-            readMeButton.setToolTipText("View Readme");
+            changeLogButton.setToolTipText(Res.getString("tooltip.view.change.log"));
+            readMeButton.setToolTipText(Res.getString("tooltip.view.readme"));
             add(descriptionLabel, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
             add(buttonPanel, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         }

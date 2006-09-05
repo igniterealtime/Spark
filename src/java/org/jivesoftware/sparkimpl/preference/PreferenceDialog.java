@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.preference;
 
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -36,10 +37,10 @@ public class PreferenceDialog implements PropertyChangeListener {
 
         // Construct Dialog
         preferenceDialog = new JDialog(parentFrame,
-                "Preferences",
+                Res.getString("title.preferences"),
                 false);
 
-        Object[] options = {"Close"};
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(contentPane, JOptionPane.PLAIN_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
@@ -60,7 +61,7 @@ public class PreferenceDialog implements PropertyChangeListener {
             return;
         }
         String value = (String)pane.getValue();
-        if (value.equals("Close")) {
+        if (value.equals(Res.getString("close"))) {
             boolean okToClose = prefPanel.closing();
             if (okToClose) {
                 preferenceDialog.setVisible(false);
