@@ -1711,9 +1711,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         messageLabel.setText(message);
         layoutPanel.add(messageLabel, new GridBagConstraints(0, 0, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        RolloverButton acceptButton = new RolloverButton(Res.getString("button.accept"));
-        RolloverButton viewInfoButton = new RolloverButton(Res.getString("button.profile"));
-        RolloverButton denyButton = new RolloverButton(Res.getString("button.deny"));
+        RolloverButton acceptButton = new RolloverButton();
+        ResourceUtils.resButton(acceptButton, Res.getString("button.accept"));
+        RolloverButton viewInfoButton = new RolloverButton();
+        ResourceUtils.resButton(viewInfoButton, Res.getString("button.profile"));
+        RolloverButton denyButton = new RolloverButton();
+        ResourceUtils.resButton(denyButton, Res.getString("button.deny"));
         layoutPanel.add(acceptButton, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         layoutPanel.add(viewInfoButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         layoutPanel.add(denyButton, new GridBagConstraints(4, 1, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));

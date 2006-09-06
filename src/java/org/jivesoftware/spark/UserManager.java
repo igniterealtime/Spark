@@ -12,6 +12,7 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.packet.VCard;
@@ -255,7 +256,7 @@ public class UserManager {
             return item.getNickname();
         }
 
-        return jid;
+        return StringUtils.unescapeJID(jid);
     }
 
     /**

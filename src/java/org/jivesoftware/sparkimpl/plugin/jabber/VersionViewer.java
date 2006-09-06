@@ -13,6 +13,7 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketCollector;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.packet.Time;
@@ -130,7 +131,7 @@ public class VersionViewer {
         versionField.setEditable(false);
         softwareField.setEditable(false);
         timeField.setEditable(false);
-        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", jid), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
+        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", StringUtils.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
     }
 
 }
