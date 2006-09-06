@@ -12,8 +12,8 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -25,11 +25,11 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.Icon;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.swing.Icon;
 
 /**
  * Handles all users in the agent application. Each user or chatting user can be referenced from the User
@@ -60,7 +60,10 @@ public class UserManager {
         }
 
         // Default to node if nothing.
-        return SparkManager.getSessionManager().getUsername();
+        String username = SparkManager.getSessionManager().getUsername();
+        username = StringUtils.escapeNode(username);
+
+        return username;
     }
 
 

@@ -47,7 +47,7 @@ public class NotificationsPreference implements Preference {
     }
 
     public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24);
+        return SparkRes.getImageIcon(SparkRes.PROFILE_ICON);
     }
 
     public void load() {
