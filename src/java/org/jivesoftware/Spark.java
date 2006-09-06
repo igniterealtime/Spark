@@ -173,7 +173,7 @@ public final class Spark {
         UIManager.put("Tree.closedIcon", SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED));
         UIManager.put("Button.showMnemonics", Boolean.TRUE);
         UIManager.put("CollapsiblePane.titleFont", new Font("Dialog", Font.BOLD, 11));
-        UIManager.put("DockableFrameTitlePane.font", new Font("Verdana", Font.BOLD, 10));
+        UIManager.put("DockableFrameTitlePane.font", new Font("Dialog", Font.BOLD, 10));
         UIManager.put("DockableFrame.inactiveTitleForeground", Color.white);
         UIManager.put("DockableFrame.inactiveTitleBackground", new Color(180, 176, 160));
         UIManager.put("DockableFrame.activeTitleBackground", new Color(105, 132, 188));
@@ -198,7 +198,7 @@ public final class Spark {
 
         installBaseUIProperties();
 
-        //com.install4j.api.launcher.StartupNotification.registerStartupListener(new SparkStartupListener());
+        com.install4j.api.launcher.StartupNotification.registerStartupListener(new SparkStartupListener());
     }
 
     /**
@@ -325,6 +325,8 @@ public final class Spark {
         UIManager.put("ContactItemOffline.color", Color.gray);
         UIManager.put("Table.foreground", Color.black);
         UIManager.put("Table.background", Color.white);
+
+        UIManager.put("Label.font", new Font("Dialog", Font.PLAIN, 11));
 
         // Chat Area Text Settings
         UIManager.put("Link.foreground", Color.blue);
