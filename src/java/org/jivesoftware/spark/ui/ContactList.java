@@ -1605,13 +1605,13 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private void addContactListToWorkspace() {
         Workspace workspace = SparkManager.getWorkspace();
-        workspace.getWorkspacePane().addTab("Contacts", SparkRes.getImageIcon(SparkRes.SMALL_ALL_CHATS_IMAGE), this); //NOTRANS
+        workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.SMALL_ALL_CHATS_IMAGE), this); //NOTRANS
 
         // Add To Contacts Menu
-        final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName("Contacts");
+        final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
         JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
-        ResourceUtils.resButton(addContactsMenu, "&Add Contact");
-        ResourceUtils.resButton(addContactGroupMenu, "Add Contact &Group");
+        ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
+        ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 
         contactsMenu.add(addContactsMenu);
         contactsMenu.add(addContactGroupMenu);
