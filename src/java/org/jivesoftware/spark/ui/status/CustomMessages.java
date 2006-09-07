@@ -479,7 +479,7 @@ public class CustomMessages {
 
             mainPanel.add(optionPane, BorderLayout.CENTER);
 
-            final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), Res.getString("title.set.status.message "), true);
+            final JDialog optionsDialog = new JDialog(SparkManager.getMainWindow(), Res.getString("title.set.status.message"), true);
             optionsDialog.setContentPane(mainPanel);
             optionsDialog.pack();
 

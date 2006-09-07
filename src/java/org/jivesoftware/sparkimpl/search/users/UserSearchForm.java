@@ -10,8 +10,8 @@
 
 package org.jivesoftware.sparkimpl.search.users;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.search.UserSearchManager;
@@ -184,7 +184,7 @@ public class UserSearchForm extends JPanel {
         Form form = searchForm.getSearchForm();
         String title = form.getTitle();
         String description = form.getInstructions();
-        titlePanel.setTitle(title);
+        titlePanel.setTitle(Res.getString("title.person.search"));
         titlePanel.setDescription(description);
     }
 

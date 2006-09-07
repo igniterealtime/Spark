@@ -27,6 +27,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JOptionPane;
 
@@ -128,7 +129,7 @@ public class ConferenceUtils {
 
 
         if (requiresPassword(roomJID) && password == null) {
-            password = JOptionPane.showInputDialog(null, "Enter Room Password", "Need Password", JOptionPane.QUESTION_MESSAGE);
+            password = JOptionPane.showInputDialog(null, Res.getString("message.enter.room.password"), Res.getString("title.password"), JOptionPane.QUESTION_MESSAGE);
             if (!ModelUtil.hasLength(password)) {
                 return;
             }

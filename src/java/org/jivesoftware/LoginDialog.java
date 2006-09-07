@@ -291,10 +291,10 @@ public final class LoginDialog {
             //progressBar.setStringPainted(true);
 
             // Set Resources
-            ResourceUtils.resLabel(usernameLabel, usernameField, SparkRes.getString(SparkRes.LOGIN_DIALOG_USERNAME));
-            ResourceUtils.resLabel(passwordLabel, passwordField, SparkRes.getString(SparkRes.LOGIN_DIALOG_PASSWORD));
+            ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username"));
+            ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password"));
             ResourceUtils.resButton(quitButton, SparkRes.getString(SparkRes.LOGIN_DIALOG_QUIT));
-            ResourceUtils.resButton(loginButton, SparkRes.getString(SparkRes.LOGIN_DIALOG_LOGIN));
+            ResourceUtils.resButton(loginButton, Res.getString("title.login"));
             ResourceUtils.resButton(connectionButton, Res.getString("button.advanced"));
 
             // Load previous instances

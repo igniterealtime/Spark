@@ -330,8 +330,8 @@ public class VCardManager {
             }
         });
 
-        JMenuItem viewProfileMenu = new JMenuItem("Lookup Profile...", SparkRes.getImageIcon(SparkRes.FIND_TEXT_IMAGE));
-        ResourceUtils.resButton(viewProfileMenu, "&Lookup Profile...");
+        JMenuItem viewProfileMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.FIND_TEXT_IMAGE));
+        ResourceUtils.resButton(viewProfileMenu, Res.getString("menuitem.lookup.profile"));
         contactsMenu.insert(viewProfileMenu, size - 1);
         viewProfileMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
