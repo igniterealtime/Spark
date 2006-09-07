@@ -11,8 +11,8 @@
 package org.jivesoftware.spark.filetransfer;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
@@ -52,21 +52,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -88,6 +73,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -576,12 +576,14 @@ public class SparkTransferManager {
      * @param room  the ChatRoom of the user you wish to send the image to.
      */
     public void sendImage(final Image image, final ChatRoom room) {
-        File tmpDirectory = new File(Spark.getUserHome(), "Spark/tmp");
+        File tmpDirectory = new File(Spark.getUserHome(), "Spark/tempImages");
         tmpDirectory.mkdirs();
 
         String imageName = "image_" + StringUtils.randomString(2) + ".png";
         final File imageFile = new File(tmpDirectory, imageName);
         // Write image to system.
+
+        room.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
@@ -596,13 +598,14 @@ public class SparkTransferManager {
                 catch (IOException e) {
                     Log.error(e);
                 }
-                return "ok";
+                return true;
             }
 
             public void finished() {
                 ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                 sendFile(imageFile, roomImpl.getParticipantJID());
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
+                room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         };
         worker.start();
@@ -618,8 +621,7 @@ public class SparkTransferManager {
 
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                Image text = (Image)t.getTransferData(DataFlavor.imageFlavor);
-                return text;
+                return (Image)t.getTransferData(DataFlavor.imageFlavor);
             }
         }
         catch (UnsupportedFlavorException e) {
