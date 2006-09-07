@@ -33,8 +33,21 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -45,17 +58,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -328,7 +330,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final VCardPanel topPanel = new VCardPanel(jid);
                 mainPanel.add(topPanel, BorderLayout.NORTH);
 
-                final TranscriptWindow window = new TranscriptWindow();
+                final JTextArea window = new JTextArea();
+                window.setWrapStyleWord(true);
+                window.setFont(new Font("Dialog", Font.PLAIN, 12));
                 final JScrollPane pane = new JScrollPane(window);
                 pane.getVerticalScrollBar().setBlockIncrement(50);
                 pane.getVerticalScrollBar().setUnitIncrement(20);
@@ -340,6 +344,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 List<HistoryMessage> list = transcript.getMessages();
                 //Collections.sort(list, dateComparator);
 
+                StringBuffer buf = new StringBuffer();
                 for (HistoryMessage message : list) {
                     String from = message.getFrom();
                     String nickname = StringUtils.parseName(from);
@@ -349,13 +354,19 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     String prefix = nickname + " [" + date + "]";
 
                     if (from.equals(SparkManager.getSessionManager().getJID())) {
-                        window.insertCustomMessage(prefix, message.getBody());
+                        //   window.insertCustomMessage(prefix, message.getBody());
+                        buf.append(prefix + ": " + message.getBody());
+                        buf.append("\n");
                     }
                     else {
-                        window.insertCustomOtherMessage(prefix, message.getBody());
+                    buf.append(prefix + ": " + message.getBody());
+                        buf.append("\n");
+                        //    window.insertCustomOtherMessage(prefix, message.getBody());
                     }
 
                 }
+
+                window.setText(buf.toString());
 
                 // Handle no history
                 if (transcript.getMessages().size() == 0) {

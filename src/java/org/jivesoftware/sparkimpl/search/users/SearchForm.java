@@ -21,13 +21,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -35,6 +28,13 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class SearchForm extends JPanel {
     private UserSearchResults searchResults;
@@ -127,10 +127,12 @@ public class SearchForm extends JPanel {
             public void finished() {
                 if (data != null) {
                     searchResults.showUsersFound(data);
+                    searchResults.invalidate();
+                    searchResults.validate();
+                    searchResults.repaint();
                 }
                 else {
                     JOptionPane.showMessageDialog(searchResults, Res.getString("message.no.results.found"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
-
                 }
             }
         };
@@ -138,8 +140,5 @@ public class SearchForm extends JPanel {
         worker.start();
 
 
-        searchResults.invalidate();
-        searchResults.validate();
-        searchResults.repaint();
     }
 }
