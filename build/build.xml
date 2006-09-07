@@ -415,8 +415,11 @@
             <fileset dir="${target.build}">
                 <exclude name="**/lib/"/>
                 <exclude name="**/jniwrap.*"/>
+                <exclude name="**/jniwrapper.*" />
             </fileset>
         </copy>
+
+        <delete file="${plugins}/jniwrapper.jar"/>
     </target>
 
     <target name="installer.mac" depends="mac.app" description="build Install4J release dmg file for the Macintosh">
