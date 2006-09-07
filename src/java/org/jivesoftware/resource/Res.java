@@ -46,7 +46,7 @@ public class Res {
     public static final String getString(String propertyName, Object... obj) {
         String str = prb.getString(propertyName);
         if (str == null) {
-            return null;
+            return propertyName;
         }
 
 

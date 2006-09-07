@@ -202,7 +202,7 @@ public class CheckUpdates {
 
         frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
 
-        titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version ", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
+        titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
 
         final Thread thread = new Thread(new Runnable() {
             public void run() {
@@ -222,7 +222,7 @@ public class CheckUpdates {
 
                     if (!cancel) {
                         downloadComplete = true;
-                        promptForInstallation(downloadedFile, "Download Complete", Res.getString("message.restart.spark"));
+                        promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
                     }
                     else {
                         out.close();

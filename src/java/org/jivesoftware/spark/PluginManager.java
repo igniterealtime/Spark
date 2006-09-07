@@ -564,7 +564,7 @@ public class PluginManager implements MainWindowListener {
             zipFile = null;
         }
         catch (Exception e) {
-            Log.warning("Error unzipping plugin", e);
+            Log.error("Error unzipping plugin", e);
         }
     }
 
