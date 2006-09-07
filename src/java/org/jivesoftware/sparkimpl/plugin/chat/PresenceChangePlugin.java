@@ -108,7 +108,7 @@ public class PresenceChangePlugin implements Plugin {
                         contacts.remove(item);
 
                         ChatManager chatManager = SparkManager.getChatManager();
-                        ChatRoom chatRoom = chatManager.createChatRoom(item.getFullJID(), item.getNickname(), item.getFullJID());
+                        ChatRoom chatRoom = chatManager.createChatRoom(item.getFullJID(), item.getNickname(), item.getNickname());
 
 
                         String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
