@@ -69,7 +69,7 @@ public class ApplePlugin implements Plugin {
                     JMenuItem item = (JMenuItem) current;
 
                     if ("Preferences".equals(item.getText())) {
-                        //connectMenu.remove(item);
+                        connectMenu.remove(item);
                     } else if ("Log Out".equals(item.getText())) {
                         connectMenu.remove(item);
                     }
@@ -86,8 +86,8 @@ public class ApplePlugin implements Plugin {
             // register an application listener to show the about box
             Application application = Application.getApplication();
 
-           // application.setEnabledPreferencesMenu(true);
-          //  application.addPreferencesMenuItem();
+            application.setEnabledPreferencesMenu(true);
+            application.addPreferencesMenuItem();
             application.addApplicationListener(new ApplicationAdapter() {
 
                 public void handlePreferences(ApplicationEvent applicationEvent) {
