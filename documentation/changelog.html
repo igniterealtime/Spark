@@ -2,387 +2,252 @@
 
 <html>
 <head>
-    <title>Spark Changelog</title>
-    <style type="text/css">
-        BODY {
-            font-size: 100%;
-        }
+<title>Spark Changelog</title>
+<style type="text/css">
+/* global font and body settings */
+body {
+	font-size : 100%;
+	background-color : #d3d6d9;
+	padding: 0px;
+	margin: 0px 0px 30px 0px;
+}
+body, td, th {
+	font-family : arial, helvetica, sans-serif;
+	font-size : 10pt;
+}
+pre, tt, code {
+	font-family : courier new, monospaced;
+	font-size : 9pt;
+}
+#pageContainer {
+	display: block;
+	position: relative;
+	clear: both;
+	background-color: #fff;
+	border: 1px solid #999;
+	padding: 40px;
+	margin: 30px;
+	-moz-border-radius: 6px;
+}
+#pageHeader {
+	display: block;
+	position: relative;
+	height: 80px;
+	background-color: #e7eaee;
+	border: 1px solid #cccccc;
+	border-bottom: none;
+	-moz-border-radius: 5px 5px 0px 0px;
+	margin: 10px 0px 0px 0px;
+}
+#pageBody {
+	margin: 0px 18px 0px 20px;
+}
 
-        BODY, TD, TH {
-            font-family: tahoma, verdana, arial, helvetica, sans-serif;
-            font-size: 0.8em;
-        }
 
-        A:hover {
-            text-decoration: none;
-        }
 
-        .pageheader {
-            font-family: arial, helvetica, sans-serif;
-            font-size: 14pt;
-            font-weight: bold;
-        }
+/* anchors */
+a:link {
+	color: #11568c;
+}
+a:visited {
+	color: #571c8d;
+}
+a:hover {
+	color: #7a1d42;
+	text-decoration : underline;
+}
+a:active {
+	color: #7a1d42;
+}
 
-        H1 {
-            font-family: tahoma, arial, helvetica, sans-serif;
-            font-size: 1.4em;
-            font-weight: bold;
-            border-bottom: 1px #ccc solid;
-            padding-bottom: 2px;
-            display: inline;
-            padding-left: 5px;
-        }
 
-        H2 {
-            font-size: 10pt;
-            font-weight: bold;
-            padding-left: 1em;
-        }
 
-        TT {
-            font-family: courier new;
-            font-weight: bold;
-            color: #060;
-        }
+/* page header elements (logo and navigation) */
+.navigation {
+	display: block;
+	position: relative;
+	height: 20px;
+	background-color: #335588;
+	border: 1px solid #cccccc;
+	border-top: none;
+	color: #ffffff;
+	font-size: 11px;
+	line-height: 18px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 25px 0px;
+	overflow: hidden;
+}
+.navigation a {
+	margin: 0px 20px 0px 20px;
+}
+.navigation a:link { color: #ffffff; }
+.navigation a:visited { color: #ffffff; }
+.navigation a:hover { color: #ffffff; }
+.navigation a:active { color: #ffffff; }
 
-        PRE {
-            font-family: courier new;
-            font-size: 100%;
-        }
 
-        .footer {
-            font-size: 0.8em;
-            color: #666;
-            text-align: center;
-        }
-    </style>
+
+/* headings */
+h1 {
+	display: block;
+	position: relative;
+	font-size : 1.7em;
+	font-weight : bold;
+	color: #670e15;
+	padding: 0px;
+	margin: 30px 0px 0px 20px;
+}
+h2 {
+	font-size : 1.3em;
+	font-weight : bold;
+	margin: 40px 0px 6px 0px;
+	padding: 0px;
+	color: #335588;
+}
+h3 {
+	font-size : 1.0em;
+	font-weight : bold;
+	margin: 25px 0px 3px 0px;
+	padding: 0px;
+	color: #334466;
+}
+
+
+
+/* general elements */
+p {
+	margin: 0px 0px 15px 0px;
+}
+
+ul {
+	margin: 5px 0px 15px 35px;
+}
+li {
+	padding-bottom : 4px;
+}
+tt {
+	font-family : courier new;
+	font-weight : bold;
+	color : #060;
+}
+hr {
+	display: block;
+	height: 1px;
+	background-color: #999999;
+	border: none;
+	margin: 40px 0px 20px 0px;
+}
+
+.footer {
+	font-size : 8pt;
+	color : #666;
+	text-align : center;
+	margin-top : 2em;
+	padding-top : 0.5em;
+	border-top : 1px #CCC solid;
+}
+</style>
 </head>
-
 <body>
 
-
-<table border=0><tr>
-    <!--<td><img src="documentation/images/spark_logo.gif" width="59" height="40" alt="JC Logo"></td>-->
-    <td><h1>Spark Changelog</h1></td>
-</tr></table>
-<br><br>
-
-<b>2.0 Beta</b> -- June 20th, 2006
-<p>
-    <h2>New Feature</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-302'>SPARK-302</a>] - Added Nested Groups support to Spark</li>
-    </ul>
-
-    <h2>Bug</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-294'>SPARK-294</a>] - Need better logic around avatar handling</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-301'>SPARK-301</a>] - Offline messages are not saved in transcript history.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-303'>SPARK-303</a>] - Fixed Memory leak in ChatRoom.</li>
-    </ul>
-
-    <h2>Improvement</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-298'>SPARK-298</a>] - Presence updates should show timestamp.</li>
-    </ul>
-
-
-</p>
-
-<b>1.1.4</b> -- April 13, 2006</b>
-
-<p>
-
-    <h2>New Features</h2>
-
-    <h2>Bug</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-277'>SPARK-277</a>] - Losing a connection on Linux and Mac versions now prompts to close Spark.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-257'>SPARK-257</a>] - Right-click on misspelled words in input editor now shows popup on Linux.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-262'>SPARK-262</a>] - Group Chat history now displays users previous messages.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-264'>SPARK-264</a>] - Chat window blinks when contact window is minimized.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-269'>SPARK-269</a>] - ESC now closes the Conference Picker window.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-271'>SPARK-271</a>] - Drag and Drop works in the entire transcript window.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-272'>SPARK-272</a>] - Broadcast messages now make all urls clickable.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-273'>SPARK-273</a>] - MAC dmg shows the the correct version of Spark.</li>
-    </ul>
-
-    <h2>Improvements</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-259'>SPARK-259</a>] - Group Chat rooms now show the presence of the users.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-256'>SPARK-256</a>] - Added access to the API to allow for modifications of the BookmarkedConference UI.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-263'>SPARK-263</a>] - Chat History ui now displays previous message based on dates.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-265'>SPARK-265</a>] - Added a "Save As.." on right-click of file transfer documents.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-267'>SPARK-267</a>] - Added a tooltip on each Chat Room tab to display the full jid of the user you are talking with.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-274'>SPARK-274</a>] - Decreased memory consumption in Spark by 5 megs.</li>
-    </ul>
-
-    <b>1.1.3</b> -- March 15, 2006</b>
-
-<p>
-
-    <h2>Bug</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-242'>SPARK-242</a>] - Broadcasting messages now works fine with all clients.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-243'>SPARK-243</a>] - Changing nickname to " a " in a MUC room is now trimmed.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-244'>SPARK-244</a>] - Adding a pre-exisiting user to a new group now shows the user in that group.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-246'>SPARK-246</a>] - Failed registration re-enables the Create Button in "Account Creation"</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-248'>SPARK-248</a>] - Links are made with most types of URLs.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-249'>SPARK-249</a>] - The ChatFrame notifies the user that they have lost a connection. </li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-250'>SPARK-250</a>] - Loading preferences error has been fixed.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-25'>SPARK-25</a>] - API - VCard handling is now centralized.</li>
-    </ul>
-
-    <h2>Improvement</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-204'>SPARK-204</a>] - We now use the multi-select dialog box for file transfers.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-247'>SPARK-247</a>] - Improved icons for broadcasting to groups.</li>
-    </ul>
-
-
-    <b>1.1.2</b> -- March 9, 2006</b>
-
-<p>
-
-    <h2>New Features</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-110'>SPARK-110</a>] - Improved broadcasting UI to better determine between normal and broadcasted messages.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-151'>SPARK-151</a>] - Made network paths clickable links similiar like http links.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-226'>SPARK-226</a>] - Prompt user to have their history deleted when they check "Disable chat history is enabled".</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-228'>SPARK-228</a>] - Set Spark to away when workstation is locked.</li>
-    </ul>
-
-    <h2>Improvements</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-3'>SPARK-3</a>] - Added ability to broadcast messages to groups.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-107'>SPARK-107</a>] - Allow groups state to be persisted at logout.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-143'>SPARK-143</a>] - LocalPreferences now loads quicker.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-211'>SPARK-211</a>] - Made drag and drop of files into send area work.</li>
-    </ul>
-
-    <h2>Bug Fixes</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-140'>SPARK-140</a>] - Offline Messages no longer throw exceptions on startup.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-146'>SPARK-146</a>] - Exodus now responds to conference request.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-203'>SPARK-203</a>] - Auto-reply message from Trillian is now handled correctly.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-217'>SPARK-217</a>] - You can bookmark unlimited number of rooms on Macs.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-224'>SPARK-224</a>] - Removed unused documents in the docs directory.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-225'>SPARK-225</a>] - Update check and Plugins Repo now use http proxy settings.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-230'>SPARK-230</a>] - Chat notification tab now turns red in all cases.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-232'>SPARK-232</a>] - Fixed Ctrl+c in ChatInputArea.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-233'>SPARK-233</a>] - Sound settings no longer freeze Spark.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-236'>SPARK-236</a>] - Added support for spaces in nicknames while joining MUC rooms.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-241'>SPARK-241</a>] - Revoke/Grant Voice menu options now toggle correctly.</li>
-    </ul>
-
-    <br><br>
-
-    <b>1.1.1</b> -- February 16, 2006</b>
-
-<p>
-
-<p>
-    <h2>Bug Fixes</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-223'>SPARK-223</a>] - Spark now escapes passwords.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-216'>SPARK-216</a>] - Spark now remebers "Show Empty Groups".</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-215'>SPARK-215</a>] - Log out on Linux works correctly now.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-214'>SPARK-214</a>] - Offline messages now show previous chat history.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-213'>SPARK-213</a>] - Fixed bug when transferring 0 byte files.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-212'>SPARK-212</a>] - Plugin Viewer now shows proper error message.</li>
-    </ul>
-
-    <br><br>
-
-    <b>1.1.0</b> -- February 9, 2006</b>
-
-<p>
-
-    <p><h2>New Features</h2></p>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-199'>SPARK-199</a>] - Spark now has a Linux release.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-135'>SPARK-135</a>] - Added support for Sparkplugs -- includes a plugin viewer to install and uninstall plugins.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-115'>SPARK-115</a>] - Greatly improved file transfer feature.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-144'>SPARK-144</a>] - Spark now has an emoticon picker in the chat room.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-198'>SPARK-198</a>] - If a group is collapsed, that's now remembered between Spark restarts.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-142'>SPARK-142</a>] - ChatPreference is now part of the base Spark code.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-32'>SPARK-32</a>] - Added better disconnect information.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-153'>SPARK-153</a>] - Update icons to better match function.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-131'>SPARK-131</a>] - Users can disable chat history feature in spark.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-90'>SPARK-90</a>] - History messages are now displayed with the date and time the message was sent or received.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-186'>SPARK-186</a>] - Broadcasted messages now appear in their own dialog.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-165'>SPARK-165</a>] - When Spark is set to start minimized, login failures now result in periodic retries without notification.
-        </li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-195'>SPARK-195</a>] - Improved UI on the download upgrade dialog.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-50'>SPARK-50</a>] - Added notification of sent broadcast.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-34'>SPARK-34</a>] - Added "Place Call" on right-click of contacts.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-139'>SPARK-139</a>] - Refactored source for public API release.</li>
-    </ul>
-
-    <h2>Bug Fixes</h2>
-    <ul>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-9'>SPARK-9</a>] - 600+ Roster accounts caused Spark to slow down.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-51'>SPARK-51</a>] - Don't show "Invite" buttons and sub-menus if there is no default MUC service.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-52'>SPARK-52</a>] - Composing event was being sent with incorrect ID and even if the user didn't request it.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-56'>SPARK-56</a>] - Fixed issue that caused the dial phone pop-up stays open after the external call has completed.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-57'>SPARK-57</a>] - Drag-and drop of users between groups was failing on Macs.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-58'>SPARK-58</a>] - Call to user without asterisk account was ringing the wrong phone.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-60'>SPARK-60</a>] - Could not remove a contact that belongs to a shared group from a local group.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-61'>SPARK-61</a>] - Improved error handling when trying to change the subject of a room.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-70'>SPARK-70</a>] - Fixed error sending files between Exodus and Spark.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-73'>SPARK-73</a>] - There was no way to join a room that was not listed in the public directory.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-95'>SPARK-95</a>] - Clicking a URL in the chat history didn't work on Mac</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-145'>SPARK-145</a>] - Mac build was missing actions on conference participants.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-148'>SPARK-148</a>] - Fixed display of empty groups.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-168'>SPARK-168</a>] - Spark is now able to run as a limited user on Windows.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-170'>SPARK-170</a>] - Improved conference invitations UI.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-171'>SPARK-171</a>] - Creating accounts now works on ports other than just 5222.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-182'>SPARK-182</a>] - History settings are now being persisted with UTF-8 encoding.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-183'>SPARK-183</a>] - Adding and removing shared groups from the server was not showing properly in Spark.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-192'>SPARK-192</a>] - Resouces with space characters were not allowed.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-193'>SPARK-193</a>] - The default resource name be "Spark" instead of "spark".</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-194'>SPARK-194</a>] - The chat history was not being written during the update process.</li>
-        <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-196'>SPARK-196</a>] - Removed the unused "name" field under General Information</li>
-    </ul>
-
-    <br><br>
-
-    <b>1.0.4</b> -- January 23, 2006</b>
-
-<p>
-
-    <p><h2>New Features</h2></p>
-    <ul>
-        <li>[SPARK-157] - New Emoticon Picker has been added.</li>
-    </ul>
-
-    <p><h2>Bug Fixes</h2></p>
-    <ul>
-        <li>[SPARK-166] - Cancelling File Transfers on incoming transfer cancels transfer.</li>
-        <li>[SPARK-160] - Spark now resolves Domain using the service name.</li>
-        <li>[SPARK-159] - Spark no longer writes out bogus entries into warning.log file.</li>
-        <li>[SPARK-158] - File Transfer Open button now opens the file.</li>
-        <li>[SPARK-156] - File Transfer is now creating the appropriate port to send.</li>
-        <li>[SPARK-155] - Offline Messages now work in Spark.</li>
-
-    </ul>
-
-    <br><br>
-
-    <b>1.0.3</b> -- January 5, 2006</b>
-
-<p>
-
-    <p><h2>New Features</h2></p>
-    <ul>
-        <li>[SPARK-132] - Spark now comes with or without a JRE.</li>
-    </ul>
-
-    <p><h2>Bug Fixes</h2></p>
-    <ul>
-        <li>[SPARK-130] - Spark no longer ignores XHTML.</li>
-        <li>[SPARK-127] - Various enhancements to File Transfer.</li>
-        <li>[SPARK-138] - Spark now escapes invalid chars.</li>
-        <li>[SPARK-137] - Copying out of the chat history text area now works.</li>
-        <li>[SPARK-133] - "Is Typing" will not be displayed once a message is received.</li>
-        <li>[SPARK-129] - Clicking on the Refresh List no longer hangs Spark.</li>
-
-    </ul>
-
-    <br><br>
-
-    <b>1.0.2</b> -- December 15, 2005</b>
-
-<p>
-
-    <p><h2>New Features</h2></p>
-    <ul>
-        <li>[SPARK-124] - Can view entire chat history by right clicking on contact and selecting "View Entire History".</li>
-        <li>[SPARK-114] - Spark now comes with an optional silent install Mode. To silently install, just pass in -q after the install file, e.g. "spark.exe -q".</li>
-        <li>[SPARK-125] - Notifications have been added as a preference for Group Chat rooms.</li>
-        <li>[SPARK-120] - Log Out appears right above exit in system tray menu.</li>
-        <li>[SPARK-119] - "Create Account" button now appears on the login dialog.</li>
-        <li>[SPARK-109] - Spell checker can be turned on/off in preferences.</li>
-        <li>[SPARK-43] - Users can now specify their own resource to use before login.</li>
-        <li>[SPARK-39] - User Search Service now toggles to new UI based on search service.</li>
-        <li>[SPARK-1] - Display time/date can now be toggled via preferences.</li>
-
-    </ul>
-
-    <p><h2>Bug Fixes</h2></p>
-    <ul>
-        <li>[SPARK-116] - Spark now works with secure connections to Wildfire when updating.</li>
-        <li>[SPARK-122] - Fixed saving chat history on server disconnects.</li>
-        <li>[SPARK-66] - Users and group are removed from Spark when user is removed from Shared Group.</li>
-        <li>[SPARK-123] - Using &amp; or &lt; in a Contact Group is now escaped properly.</li>
-        <li>[SPARK-113] - Sounds are now distributed with the installer.</li>
-        <li>[SPARK-108] - Spark proprely changes back from away due to idle when computer is not idle.</li>
-        <li>[SPARK-106] - Spark allows for PNG files to be selected as an Avatar.</li>
-        <li>[SPARK-98] - Chat Frame no longer steals focus.</li>
-        <li>[SPARK-67] - Double-click will make contact list visible from system tray.</li>
-        <li>[SPARK-59] - Preferences now appear in correct location on Mac.</li>
-
-
-    </ul>
-
-    <br><br>
-
-    <b>1.0.1</b> -- December 1, 2005</b>
-
-<p>
-
-    <p><h2>New Features</h2></p>
-    <ul>
-        <li>[SPARK-74] - Added sounds for incoming and outgoing messages.</li>
-        <li>[SPARK-20] - Added sound notification when user goes offline.</li>
-        <li>[SPARK-83] - Added better visual queues of when a transfer is complete.</li>
-        <li>[SPARK-90] - History messages are now displayed with the date and time the message was sent or received.</li>
-        <li>[SPARK-79] - User directory for transcripts and custom settings are now in the user home to allow for a single binary / multiple user environment.</li>
-        <li>[SPARK-77] - Auto-detection and explicit setting of host and port are now part of advanced options.</li>
-        <li>[SPARK-23] - Free to chat uses a more intuitive icon.</li>
-        <li>[SPARK-93] - Typing notification sent based on new algorithim of typing speak and typing char count.</li>
-        <li>[SPARK-19] - Added preference to start Spark in system tray.</li>
-        <li>[SPARK-13] - Roster Window and Chat Frame now remember their location and size.</li>
-
-    </ul>
-
-    <p><h2>Bug Fixes</h2></p>
-    <ul>
-        <li>[SPARK-92] - Chat transcripts are now saved with to, from, date and body only.</li>
-        <li>[SPARK-91] - Check for updates adheres to the once a week check rule.</li>
-        <li>[SPARK-89] - Conference rooms created in Contact List are now private by default.</li>
-        <li>[SPARK-86] - Time now shows up with version request.</li>
-        <li>[SPARK-84] - Memory leak has been fixed with new sound plugin.</li>
-        <li>[SPARK-81] - Improved scrolling behavior in chat history window.</li>
-        <li>[SPARK-22] - Call button only calls user once.</li>
-        <li>[SPARK-21] - Room owners are now displayed in room configuration data form.</li>
-        <li>[SPARK-18] - Added option to change resource. Defaults to Spark instead of Jive.</li>
-        <li>[SPARK-17] - Spark is running notification UI is now fixed to fit image and not steal focus.</li>
-        <li>[SPARK-16] - Spark uses the port setting if specified in advanced options.</li>
-        <li>[SPARK-12] - The Cancel button in Configure Chat Room dialog does not send a config form.</li>
-        <li>[SPARK-11] - Unfiled entries are now displayed in Unfiled Group correctly.</li>
-        <li>[SPARK-10] - Users can join unpublished conference rooms.</li>
-        <li>[SPARK-8] - Spark now accepts 5 different arguments to either login automatically or start chat with person or join group chat.</li>
-        <li>[SPARK-7] - Right-Click on status message node now forces focus onto node.</li>
-        <li>[SPARK-6] - Status text in StatusManager UI will now be truncated if too long. Full text is now in tooltip.</li>
-        <li>[SPARK-4] - Invalid Conference rooms are now escaped.</li>
-
-    </ul>
-
-    <br><br>
-
-    <b>1.0.0</b> -- November 17, 2005</b>
-
-<p>
-
-    <ul>
-
-        <li>Initial release.
-
-    </ul>
-
+<div id="pageContainer">
+
+	<div id="pageHeader">
+		<h1>Spark Changelog</h1>
+	</div>
+	<div class="navigation">
+	<a href="README.html">Readme</a>|<a href="changelog.html"><strong>Changelog</strong></a>|<a href="LICENSE.html">License</a>
+	</div>
+
+	<div id="pageBody">
+
+
+
+<h2>2.0.0 -- <span style="font-weight: normal;">September 7, 2006</span></h2>
+
+<h3>New Features</h3>
+<ul>
+    <li><b>Initial release as an Open Source project!</b></li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-5'>SPARK-5</a>] - Added resource bundle support so that Spark can support translations.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-28'>SPARK-28</a>] - Added ability to send a file transfer to an offline contact (file is sent when they become available).</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-45'>SPARK-45</a>] - Added support for storing group chat bookmarks (JEP-0048).</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-78'>SPARK-78</a>] - Improved tab management.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-162'>SPARK-162</a>] - Improved UI of chat history when opening window.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-169'>SPARK-169</a>] - Spark now stacks chat tabs instead of scrolling them.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-177'>SPARK-177</a>] - Added XMPP URI Mapping to Spark</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-179'>SPARK-179</a>] - Added Pack200 support to minimize the installer size.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-181'>SPARK-181</a>] - Improved the Mac installer.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-290'>SPARK-290</a>] - Added ability to resend files when transfer fails.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-291'>SPARK-291</a>] - Add file transfer timeout setting to preferences.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-292'>SPARK-292</a>] - starting conversations with "user" (not really a JID) is possible, Spark could attach "@server.com" to make it "user@server"</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-298'>SPARK-298</a>] - Presence updates now show timestamp.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-299'>SPARK-299</a>] - Incremental scroll units should be moved to 150 instead of 50.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-302'>SPARK-302</a>] - Added nested groups support.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-314'>SPARK-314</a>] - Apple-W now closes a chat tab/window on Mac.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-315'>SPARK-315</a>] - Improved Growl support on Mac.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-324'>SPARK-324</a>] - It's now possible to logout with a reason.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-330'>SPARK-330</a>] - The preferences dialog is no longer modal.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-332'>SPARK-332</a>] - Added activity monitoring for users typing, going offline and online to contact list.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-333'>SPARK-333</a>] - Added support for gateways.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-335'>SPARK-335</a>] - Added new notification preferences.</li>
+</ul>
+
+<h3>Bug Fixes</h3>
+<ul>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-14'>SPARK-14</a>] - Spark should auto connect on disconnect and not uncheck the auto-login feature.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-72'>SPARK-72</a>] - Roster updates not propagated correctly between Communicator and Exodus</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-88'>SPARK-88</a>] - Updater should check for downloaded version of file in cases where the user does not want to restart.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-101'>SPARK-101</a>] - The chat window now has proper Mac OS X menus.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-208'>SPARK-208</a>] - Need to Fix VM params for 3D</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-218'>SPARK-218</a>] - Non-English characters not displayed in VCard with Spark</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-221'>SPARK-221</a>] - Sparkplugs not stick on restart on the Mac</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-238'>SPARK-238</a>] - Setting download directory in Spark is persisted on logout.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-240'>SPARK-240</a>] - Some commands should not be offered for workgroups in roster</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-245'>SPARK-245</a>] - 0 byte files should not crash Spark</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-253'>SPARK-253</a>] - GroupChatRoomInfo needs to support DBCS.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-279'>SPARK-279</a>] - Special Characters in Away Message Crash Spark </li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-280'>SPARK-280</a>] - Spark not showing avatars created in Google.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-281'>SPARK-281</a>] - Conference button hidden in chat room toolbar</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-282'>SPARK-282</a>] - Broadcast message functionallity should be dictated by the broadcast plugin in spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-283'>SPARK-283</a>] - In some cases, Spark does not start due to an exception in Tray handling.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-285'>SPARK-285</a>] - link-2-text filter matches too much URL's or text which looks like an URL</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-288'>SPARK-288</a>] - Spark is ignoring error messages in certain cases.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-293'>SPARK-293</a>] - Cancel of Spark Manager download does not actually close the inputstream.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-294'>SPARK-294</a>] - Improved logic around avatar handling.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-297'>SPARK-297</a>] - Mac/Linux - conference invites are never received.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-300'>SPARK-300</a>] - Unsubscribe Packet Triggers Unsubscribe Response</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-301'>SPARK-301</a>] - Offline messages were not saved in transcript history.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-303'>SPARK-303</a>] - Fixed memory leak in ChatRoom.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-304'>SPARK-304</a>] - Add Chat History to Chat Room Window</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-305'>SPARK-305</a>] - Add a preference option to specify a download folder.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-306'>SPARK-306</a>] -  : - ) should show a smiley.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-307'>SPARK-307</a>] - Chat History not showing this week.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-308'>SPARK-308</a>] - Reconnected clients throw exception in Chat Room with notification system.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-309'>SPARK-309</a>] - Reconnect Error on contact moves.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-310'>SPARK-310</a>] - Log out confirmation dialog needs UI improvment.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-317'>SPARK-317</a>] - Error when loading user history</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-318'>SPARK-318</a>] - No way to specify cleanly that a Sparkplug will fail when Spark API changes</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-321'>SPARK-321</a>] - Pending Presence subscription from other users are not showing up in Spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-322'>SPARK-322</a>] - Error retrieving VCard from dJabberd</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-323'>SPARK-323</a>] - auto-away should change presence priority to 0</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-325'>SPARK-325</a>] - Actions | Start Conversations no longer starts a chat.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-326'>SPARK-326</a>] - Double Clicking on a user search result does not start a chat conversation.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-327'>SPARK-327</a>] - Spark project needs the .iml file checked in for others to run within Intellj</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-328'>SPARK-328</a>] - Spark won't start due to Proxy config NPE.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-329'>SPARK-329</a>] - Room does not scroll all the way to the bottom when new message arrives.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-331'>SPARK-331</a>] - Message of type HEADLINE should popup a toaster.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-336'>SPARK-336</a>] - Broadcast to roster causes multiple broadcast windows.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-337'>SPARK-337</a>] - Launch at startup needs to be re-enabled.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-339'>SPARK-339</a>] - Spark should not set presence status for default options</li>
+</ul>
+
+	<div class="footer">
+	Copyright &copy; Jive Software, 2006
+	</div>
+
+
+	</div>
+</div>
 
 </body>
-
 </html>
-
