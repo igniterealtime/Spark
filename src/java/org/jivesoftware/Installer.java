@@ -30,8 +30,10 @@ public class Installer extends InstallAction {
     public boolean performAction(InstallerWizardContext installerWizardContext, ProgressInterface progressInterface) throws UserCanceledException {
         context = installerWizardContext;
 
-        final String osName = System.getProperty("os.name");
-        if (!osName.startsWith("Windows")) {
+        final String osName = System.getProperty("os.name").toLowerCase();
+        boolean isWindows = osName.startsWith("windows");
+
+        if (!isWindows) {
             return true;
         }
 

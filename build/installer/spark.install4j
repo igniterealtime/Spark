@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="3.2.4">
   <directoryPresets config="../../documentation" />
-  <application name="%APP_NAME%" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_%VERSION%" compression="6" lzmaCompression="true" keepModificationTimes="false" shortName="%APP_SHORT_NAME%" publisher="%PUBLISHER%" publisherWeb="%PUBLISHER_URL%" version="%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_REVISION%" allPathsRelative="true" backupOnSave="false" autoSave="false" macSignature="????" javaMinVersion="1.4" javaMaxVersion="1.5" allowBetaVM="false">
+  <application name="%APP_NAME%" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_%VERSION%" compression="6" lzmaCompression="true" keepModificationTimes="false" shortName="%APP_SHORT_NAME%" publisher="%PUBLISHER%" publisherWeb="%PUBLISHER_URL%" version="%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_REVISION%" allPathsRelative="true" backupOnSave="false" autoSave="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
     <searchSequence>
       <registry />
       <envVar name="JAVA_HOME" />
@@ -10,7 +10,7 @@
     <variables>
       <variable name="VERSION_MAJOR" value="2" />
       <variable name="VERSION_MINOR" value="0" />
-      <variable name="VERSION_REVISION" value="0" />
+      <variable name="VERSION_REVISION" value="1" />
       <variable name="APP_NAME" value="Spark" />
       <variable name="APP_SHORT_NAME" value="Spark" />
       <variable name="PUBLISHER" value="Jive Software" />

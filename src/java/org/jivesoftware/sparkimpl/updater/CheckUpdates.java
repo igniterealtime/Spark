@@ -588,6 +588,7 @@ public class CheckUpdates {
                     int indexOfPeriod = versionNumber.indexOf(".");
 
                     versionNumber = versionNumber.substring(0, indexOfPeriod);
+                    versionNumber = versionNumber.replaceAll("_online", "");
                     versionNumber = versionNumber.replaceAll("_", ".");
 
                     boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
