@@ -17,6 +17,7 @@ import com.install4j.api.UserCanceledException;
 import com.install4j.api.windows.WinRegistry;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Installer extends InstallAction {
 
@@ -43,16 +44,18 @@ public class Installer extends InstallAction {
 
     public void addStartup(File dir) {
         File jivec = new File(dir, "Spark.exe");
-        String path = jivec.getAbsolutePath();
-        WinRegistry.setValue(WinRegistry.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", path);
+        try {
+            String path = jivec.getCanonicalPath();
+            WinRegistry.setValue(WinRegistry.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", path);
 
-        addURIMapping(dir);
+            addURIMapping(dir, path);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void addURIMapping(File dir) {
-        File jivec = new File(dir, "Spark.exe");
-        String path = jivec.getAbsolutePath();
-
+    private void addURIMapping(File dir, String path) {
         boolean exists = WinRegistry.keyExists(WinRegistry.HKEY_CLASSES_ROOT, "xmpp");
         if (exists) {
         }
