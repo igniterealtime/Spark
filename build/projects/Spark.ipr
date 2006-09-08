@@ -2,13 +2,6 @@
 <project version="4" relativePaths="true">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
-    <buildFile url="file://$PROJECT_DIR$/../build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <properties />
-    </buildFile>
   </component>
   <component name="CodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS" />
@@ -186,6 +179,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://C:/code/spark/plugins/fastpath/Fastpath.iml" filepath="C:/code/spark/plugins/fastpath/Fastpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
     </modules>
   </component>

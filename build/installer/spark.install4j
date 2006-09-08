@@ -10,7 +10,7 @@
     <variables>
       <variable name="VERSION_MAJOR" value="2" />
       <variable name="VERSION_MINOR" value="0" />
-      <variable name="VERSION_REVISION" value="1" />
+      <variable name="VERSION_REVISION" value="0" />
       <variable name="APP_NAME" value="Spark" />
       <variable name="APP_SHORT_NAME" value="Spark" />
       <variable name="PUBLISHER" value="Jive Software" />
@@ -172,6 +172,8 @@
   </mediaSets>
   <buildIds buildAll="false">
     <mediaSet refId="2" />
+    <mediaSet refId="13" />
+    <mediaSet refId="19" />
   </buildIds>
 </install4j>
 
