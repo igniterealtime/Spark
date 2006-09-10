@@ -514,7 +514,7 @@ public class CustomMessages {
                             presence.setStatus(getStatus());
                             presence.setPriority(getPriority());
 
-                            statusBar.changeAvailability(presence);
+                            SparkManager.getSessionManager().changePresence(presence);
                             statusBar.setStatus(getStatus());
                             optionsDialog.setVisible(false);
 
@@ -552,7 +552,7 @@ public class CustomMessages {
                             presence.setStatus(getStatus());
                             presence.setPriority(getPriority());
 
-                            statusBar.changeAvailability(presence);
+                            SparkManager.getSessionManager().changePresence(presence);
                             statusBar.setStatus(getStatus());
 
                             // Persist new item.

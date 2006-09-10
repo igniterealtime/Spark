@@ -180,7 +180,7 @@ public class StatusBar extends JPanel {
 
                     SwingWorker worker = new SwingWorker() {
                         public Object construct() {
-                            changeAvailability(si.getPresence());
+                            SparkManager.getSessionManager().changePresence(si.getPresence());
                             return "ok";
                         }
 
@@ -239,7 +239,7 @@ public class StatusBar extends JPanel {
                                         Presence presence = copyPresence(oldPresence);
                                         presence.setStatus(customItem.getStatus());
                                         presence.setPriority(customItem.getPriority());
-                                        changeAvailability(presence);
+                                        SparkManager.getSessionManager().changePresence(presence);
                                         return "ok";
                                     }
 
@@ -316,7 +316,6 @@ public class StatusBar extends JPanel {
                 if (item != null) {
                     statusPanel.setIcon(item.getIcon());
                 }
-                SparkManager.getSessionManager().changePresence(presence);
             }
         };
 

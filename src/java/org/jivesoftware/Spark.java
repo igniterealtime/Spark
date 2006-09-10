@@ -319,7 +319,7 @@ public final class Spark {
         UIManager.put("ChatInput.SelectedTextColor", Color.white);
         UIManager.put("ChatInput.SelectionColor", new Color(209, 223, 242));
         UIManager.put("ContactItemNickname.foreground", Color.black);
-        UIManager.put("ContactItemDescription.foreground", Color.lightGray);
+        UIManager.put("ContactItemDescription.foreground", Color.gray);
         UIManager.put("ContactItem.background", Color.white);
         UIManager.put("ContactItem.border", BorderFactory.createLineBorder(Color.white));
         UIManager.put("ContactItemOffline.color", Color.gray);
