@@ -292,7 +292,7 @@ public final class SessionManager implements ConnectionListener {
                 LocalPreferences localPref = SettingsManager.getLocalPreferences();
                 int delay = 0;
                 if (localPref.isIdleOn()) {
-                    delay = localPref.getIdleTime() * 6000;
+                    delay = localPref.getIdleTime() * 60000;
                 }
                 else {
                     return;
