@@ -215,7 +215,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control N"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
-                searchContacts("");
+          //      searchContacts("");
             }
         });
 

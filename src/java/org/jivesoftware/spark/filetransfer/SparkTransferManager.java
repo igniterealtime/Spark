@@ -288,7 +288,7 @@ public class SparkTransferManager {
 
 
                 final ChatInputEditor chatSendField = room.getChatInputEditor();
-                chatSendField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control v"), "paste");
+                chatSendField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl v"), "paste");
 
                 chatSendField.getActionMap().put("paste", new AbstractAction("paste") {
                     public void actionPerformed(ActionEvent evt) {

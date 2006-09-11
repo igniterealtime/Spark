@@ -123,7 +123,7 @@ public class TranscriptWindow extends ChatArea {
         });
 
         // Make sure ctrl-c works
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control c"), "copy");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
             public void actionPerformed(ActionEvent evt) {

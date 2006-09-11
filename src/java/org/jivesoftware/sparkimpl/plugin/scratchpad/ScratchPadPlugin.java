@@ -64,7 +64,7 @@ public class ScratchPadPlugin implements Plugin {
 
     public void initialize() {
         contactList = SparkManager.getWorkspace().getContactList();
-        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
+        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl F6"), "viewNotes");
 
         contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
             public void actionPerformed(ActionEvent evt) {
@@ -73,7 +73,7 @@ public class ScratchPadPlugin implements Plugin {
             }
         });
 
-        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F5"), "viewTasks");
+        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl F5"), "viewTasks");
 
         contactList.getActionMap().put("viewTasks", new AbstractAction("viewTasks") {
             public void actionPerformed(ActionEvent evt) {

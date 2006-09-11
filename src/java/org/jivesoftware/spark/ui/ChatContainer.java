@@ -173,7 +173,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
 
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control W"), "escape");
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
 
         this.getActionMap().put("escape", new AbstractAction("escape") {
             public void actionPerformed(ActionEvent evt) {

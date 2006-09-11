@@ -149,7 +149,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         setFont(new Font("Dialog", Font.PLAIN, 12));
 
 
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control x"), "cut");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl x"), "cut");
 
         getActionMap().put("cut", new AbstractAction("cut") {
             public void actionPerformed(ActionEvent evt) {
@@ -157,7 +157,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             }
         });
 
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control c"), "copy");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
             public void actionPerformed(ActionEvent evt) {
