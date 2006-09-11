@@ -10,6 +10,10 @@
 
 package org.jivesoftware;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -33,7 +37,6 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -47,7 +50,6 @@ import javax.swing.text.JTextComponent;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -65,6 +67,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -81,6 +86,14 @@ public final class LoginDialog {
      */
     public LoginDialog() {
         localPref = SettingsManager.getLocalPreferences();
+
+        // Check if upgraded needed.
+        try {
+            checkForOldSettings();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     /**
@@ -125,7 +138,7 @@ public final class LoginDialog {
                             new Insets(0, 0, 2, 0), 0, 0));
 
         }
-       // imagePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
+        // imagePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
 
         loginPanel.setOpaque(false);
         mainPanel.add(loginPanel,
@@ -787,4 +800,45 @@ public final class LoginDialog {
         }
     }
 
+    private void checkForOldSettings() throws Exception {
+        // Check for old settings.xml
+        File settingsXML = new File(Spark.getUserHome(), "/Spark/settings.xml");
+        if (settingsXML.exists()) {
+            SAXReader saxReader = new SAXReader();
+            Document pluginXML = null;
+            try {
+                pluginXML = saxReader.read(settingsXML);
+            }
+            catch (DocumentException e) {
+                Log.error(e);
+                return;
+            }
+
+            List plugins = pluginXML.selectNodes("/settings");
+            Iterator iter = plugins.iterator();
+            while (iter.hasNext()) {
+                Element plugin = (Element)iter.next();
+
+                String password = plugin.selectSingleNode("password").getText();
+                localPref.setPassword(password);
+
+                String username = plugin.selectSingleNode("username").getText();
+                localPref.setUsername(username);
+
+                String server = plugin.selectSingleNode("server").getText();
+                localPref.setServer(server);
+
+                String autoLogin = plugin.selectSingleNode("autoLogin").getText();
+                localPref.setAutoLogin(Boolean.parseBoolean(autoLogin));
+
+                String savePassword = plugin.selectSingleNode("savePassword").getText();
+                localPref.setSavePassword(Boolean.parseBoolean(savePassword));
+            }
+
+            // Delete settings File
+            settingsXML.delete();
+        }
+
+
+    }
 }
