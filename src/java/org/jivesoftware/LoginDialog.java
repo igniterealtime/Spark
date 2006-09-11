@@ -293,7 +293,7 @@ public final class LoginDialog {
             // Set Resources
             ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username"));
             ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password"));
-            ResourceUtils.resButton(quitButton, SparkRes.getString(SparkRes.LOGIN_DIALOG_QUIT));
+            ResourceUtils.resButton(quitButton, Res.getString("button.quit"));
             ResourceUtils.resButton(loginButton, Res.getString("title.login"));
             ResourceUtils.resButton(connectionButton, Res.getString("button.advanced"));
 
