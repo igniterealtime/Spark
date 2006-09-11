@@ -11,8 +11,10 @@
 package org.jivesoftware.sparkimpl.preference.sounds;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
+import java.io.IOException;
 
 public class SoundPreferences {
 
@@ -26,9 +28,14 @@ public class SoundPreferences {
 
     public SoundPreferences() {
         // Set initial sounds
-        outgoingSound = new File(Spark.getResourceDirectory(), "sounds/outgoing.wav").getAbsolutePath();
-        incomingSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getAbsolutePath();
-        offlineSound = new File(Spark.getResourceDirectory(), "sounds/presence_changed.wav").getAbsolutePath();
+        try {
+            outgoingSound = new File(Spark.getResourceDirectory(), "sounds/outgoing.wav").getCanonicalPath();
+            incomingSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getCanonicalPath();
+            offlineSound = new File(Spark.getResourceDirectory(), "sounds/presence_changed.wav").getCanonicalPath();
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
     }
 
     public String getOutgoingSound() {

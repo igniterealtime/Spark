@@ -157,7 +157,7 @@ public final class Spark {
 
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
-                UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+                UIManager.setLookAndFeel(classname);
 
             }
             else {

@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -280,7 +281,12 @@ public class SoundPreference implements Preference {
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-                field.setText(file.getAbsolutePath());
+                try {
+                    field.setText(file.getCanonicalPath());
+                }
+                catch (IOException e) {
+                    Log.error(e);
+                }
             }
             else {
 
