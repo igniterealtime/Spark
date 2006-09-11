@@ -113,7 +113,13 @@ public class GatewayPlugin implements Plugin {
         Iterator items = discoItems.getItems();
         while (items.hasNext()) {
             item = (Item)items.next();
-            info = manager.discoverInfo(item.getEntityID());
+            try {
+                info = manager.discoverInfo(item.getEntityID());
+            }
+            catch (XMPPException e) {
+                Log.error(e);
+                continue;
+            }
             Iterator identities = info.getIdentities();
             while (identities.hasNext()) {
                 identity = (Identity)identities.next();
