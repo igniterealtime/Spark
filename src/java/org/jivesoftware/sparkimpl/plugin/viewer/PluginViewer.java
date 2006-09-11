@@ -166,7 +166,7 @@ public class PluginViewer extends JPanel implements Plugin {
             File pluginJAR = new File(plugin.getPluginDir().getParentFile(), pluginDir.getName() + ".jar");
             boolean deleted = pluginJAR.delete();
 
-            JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark.changes"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
             PluginManager.getInstance().removePublicPlugin(plugin);
             return true;
         }

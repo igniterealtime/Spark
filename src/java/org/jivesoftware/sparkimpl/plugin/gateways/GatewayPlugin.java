@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -32,11 +33,11 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.ICQTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
-import org.jivesoftware.resource.Res;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -129,6 +130,10 @@ public class GatewayPlugin implements Plugin {
                     else if (item.getEntityID().startsWith("yahoo.")) {
                         YahooTransport yahoo = new YahooTransport(item.getEntityID());
                         TransportManager.addTransport(item.getEntityID(), yahoo);
+                    }
+                    else if (item.getEntityID().startsWith("icq.")) {
+                        ICQTransport icq = new ICQTransport(item.getEntityID());
+                        TransportManager.addTransport(item.getEntityID(), icq);
                     }
                 }
             }

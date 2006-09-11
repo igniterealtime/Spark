@@ -36,6 +36,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
@@ -50,7 +51,7 @@ import javax.swing.SwingUtilities;
 public class PluginManager implements MainWindowListener {
     private final List<Plugin> plugins = new ArrayList<Plugin>();
 
-    private final List<PublicPlugin> publicPlugins = new ArrayList<PublicPlugin>();
+    private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<PublicPlugin>();
     private static PluginManager singleton;
     private static final Object LOCK = new Object();
 
@@ -620,7 +621,7 @@ public class PluginManager implements MainWindowListener {
      * @return true if installed.
      */
     public boolean isInstalled(PublicPlugin plugin) {
-        for(PublicPlugin publicPlugin : getPublicPlugins()){
+        for (PublicPlugin publicPlugin : getPublicPlugins()) {
             if (plugin.getName().equals(publicPlugin.getName())) {
                 return true;
             }
@@ -628,7 +629,6 @@ public class PluginManager implements MainWindowListener {
 
         return false;
     }
-
 
 
 }
