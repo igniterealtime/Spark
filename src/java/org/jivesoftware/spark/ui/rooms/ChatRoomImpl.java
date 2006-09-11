@@ -208,6 +208,8 @@ public class ChatRoomImpl extends ChatRoom {
     public void closeChatRoom() {
         super.closeChatRoom();
 
+        SparkManager.getMessageEventManager().removeMessageEventRequestListener(messageEventRequestListener);
+
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removePacketListener(this);
