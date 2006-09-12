@@ -393,7 +393,7 @@
                     antialiasedgraphics="true"
                     antialiasedtext="true"
                     liveresize="true"
-                    growbox="true"
+                    growbox="false"
                     growboxintrudes="false"
                     screenmenu="true"
                     vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true"
