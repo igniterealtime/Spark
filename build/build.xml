@@ -160,7 +160,7 @@
                debug="on"
                source="1.5"
                target="1.5"
-                >
+            >
             <classpath>
                 <path refid="agent.dependencies"/>
             </classpath>
@@ -186,6 +186,12 @@
                 <include name="**/*.*"/>
             </fileset>
         </copy>
+        <copy todir="${targetlib}">
+            <fileset dir="${basedir}/lib">
+                <include name="i4jruntime.jar"/>
+            </fileset>
+        </copy>
+
         <copy todir="${bin}">
             <fileset dir="${resources.dir}">
                 <include name="startup.bat"/>
@@ -415,7 +421,7 @@
             <fileset dir="${target.build}">
                 <exclude name="**/lib/"/>
                 <exclude name="**/jniwrap.*"/>
-                <exclude name="**/jniwrapper.*" />
+                <exclude name="**/jniwrapper.*"/>
             </fileset>
         </copy>
 
