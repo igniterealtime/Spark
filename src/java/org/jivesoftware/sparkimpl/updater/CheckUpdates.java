@@ -468,6 +468,7 @@ public class CheckUpdates {
      * @return returns true if the first version is greater than the second.
      */
     public boolean isGreater(String version1, String version2) {
+        version1 = version1.replaceAll(".online", "");
         return version1.compareTo(version2) >= 1;
     }
 
