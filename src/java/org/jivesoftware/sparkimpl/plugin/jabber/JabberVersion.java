@@ -80,7 +80,7 @@ public class JabberVersion implements Plugin {
         }, packetFilter);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl F11"), "viewClient");
+        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F11"), "viewClient");
         contactList.addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(final Object component, JPopupMenu popup) {
                 if (!(component instanceof ContactItem)) {
