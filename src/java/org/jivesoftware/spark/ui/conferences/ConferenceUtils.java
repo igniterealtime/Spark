@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
@@ -27,9 +28,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.resource.Res;
-
-import javax.swing.JOptionPane;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,6 +36,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 public class ConferenceUtils {
     private ConferenceUtils() {
@@ -129,7 +130,9 @@ public class ConferenceUtils {
 
 
         if (requiresPassword(roomJID) && password == null) {
-            password = JOptionPane.showInputDialog(null, Res.getString("message.enter.room.password"), Res.getString("title.password"), JOptionPane.QUESTION_MESSAGE);
+            JPasswordField field = new JPasswordField();
+            JOptionPane.showMessageDialog(null, field, Res.getString("title.password"), JOptionPane.QUESTION_MESSAGE);
+            password = new String(field.getPassword());
             if (!ModelUtil.hasLength(password)) {
                 return;
             }
