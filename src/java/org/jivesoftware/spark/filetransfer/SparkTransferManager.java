@@ -31,6 +31,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.PreferenceManager;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -39,6 +40,7 @@ import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.FileDropListener;
+import org.jivesoftware.spark.ui.ImageSelectionPanel;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
@@ -55,6 +57,8 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -64,6 +68,10 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +86,7 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -401,7 +410,7 @@ public class SparkTransferManager {
 
     private void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
         button.setEnabled(false);
-        room.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
         final SwingWorker worker = new SwingWorker() {
 
             public Object construct() {
@@ -417,13 +426,76 @@ public class SparkTransferManager {
             }
 
             public void finished() {
-                BufferedImage bufferedImage = (BufferedImage)get();
+                final JFrame frame = new JFrame();
+                frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+
+                final BufferedImage bufferedImage = (BufferedImage)get();
+                final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
+                mainPanel.addMouseListener(new MouseAdapter() {
+                    public void mouseReleased(MouseEvent e) {
+                        Rectangle clip = mainPanel.getClip();
+                        BufferedImage newImage = null;
+                        try {
+                            newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
+                        }
+                        catch (Exception e1) {
+
+                        }
+
+
+                        if (newImage != null) {
+                            sendImage(newImage, room);
+                        }
+
+                        frame.dispose();
+                        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                        SparkManager.getMainWindow().validate();
+                        ChatFrame f = SparkManager.getChatManager().getChatContainer().getChatFrame();
+                        if (f != null) {
+                            f.invalidate();
+                            f.validate();
+                            f.repaint();
+                        }
+                    }
+                });
+
+                frame.addKeyListener(new KeyAdapter() {
+                    public void keyTyped(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                            frame.dispose();
+                            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                            SparkManager.getMainWindow().validate();
+                            ChatFrame f = SparkManager.getChatManager().getChatContainer().getChatFrame();
+                            if (f != null) {
+                                f.invalidate();
+                                f.validate();
+                                f.repaint();
+                            }
+                        }
+                    }
+                });
+
+
                 if (bufferedImage != null) {
-                    sendImage(bufferedImage, room);
+
+                    frame.setUndecorated(true);
+                    frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
+                    frame.getContentPane().add(mainPanel);
+
+                    // Determine if full-screen mode is supported directly
+                    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                    GraphicsDevice gs = ge.getDefaultScreenDevice();
+                    if (gs.isFullScreenSupported()) {
+
+                        gs.setFullScreenWindow(frame);
+                    }
+                    else {
+                        // Full-screen mode will be simulated
+                    }
                 }
 
+
                 button.setEnabled(true);
-                room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         };
         worker.start();
