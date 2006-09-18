@@ -28,7 +28,7 @@ public class DockMessageListener implements MessageListener {
     public void messageReceived(ChatRoom room, Message message) {
 
         if (!SparkManager.getMainWindow().isFocused()) {
-            AppleUtils.bounceDockIcon(true);
+            AppleUtils.bounceDockIcon(false);
         }
 
     }
