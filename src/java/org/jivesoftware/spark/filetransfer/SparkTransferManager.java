@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.filetransfer;
 
+import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -54,7 +55,22 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import java.awt.AWTException;
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
@@ -81,22 +97,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -411,15 +411,29 @@ public class SparkTransferManager {
     private void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
         button.setEnabled(false);
 
-        final SwingWorker worker = new SwingWorker() {
+        final MainWindow mainWindow = SparkManager.getMainWindow();
+        final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
+        final boolean mainWindowVisible = mainWindow.isVisible();
+        final boolean chatFrameVisible = chatFrame.isVisible();
+
+        if (mainWindowVisible) {
+            mainWindow.setVisible(false);
+        }
+
+        if (chatFrameVisible) {
+            chatFrame.setVisible(false);
+        }
+
+        final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Robot robot = new Robot();
+                    Thread.sleep(1000);
+                    final Robot robot = new Robot();
                     Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
                     return robot.createScreenCapture(area);
                 }
-                catch (AWTException e) {
+                catch (Exception e) {
                     Log.error(e);
                 }
                 return null;
@@ -449,13 +463,15 @@ public class SparkTransferManager {
 
                         frame.dispose();
                         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                        SparkManager.getMainWindow().validate();
-                        ChatFrame f = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                        if (f != null) {
-                            f.invalidate();
-                            f.validate();
-                            f.repaint();
+
+                        if (mainWindowVisible) {
+                            mainWindow.setVisible(false);
                         }
+
+                        if (chatFrameVisible) {
+                            chatFrame.setVisible(false);
+                        }
+
                     }
                 });
 
@@ -464,12 +480,12 @@ public class SparkTransferManager {
                         if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                             frame.dispose();
                             frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                            SparkManager.getMainWindow().validate();
-                            ChatFrame f = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                            if (f != null) {
-                                f.invalidate();
-                                f.validate();
-                                f.repaint();
+                            if (mainWindowVisible) {
+                                mainWindow.setVisible(false);
+                            }
+
+                            if (chatFrameVisible) {
+                                chatFrame.setVisible(false);
                             }
                         }
                     }
