@@ -187,7 +187,7 @@ public final class LoginDialog {
         private final JCheckBox savePasswordBox = new JCheckBox();
         private final JCheckBox autoLoginBox = new JCheckBox();
         private final RolloverButton loginButton = new RolloverButton();
-        private final RolloverButton connectionButton = new RolloverButton();
+        private final RolloverButton advancedButton = new RolloverButton();
         private final RolloverButton quitButton = new RolloverButton();
 
         private final RolloverButton createAccountButton = new RolloverButton();
@@ -262,12 +262,12 @@ public final class LoginDialog {
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
             }
-            buttonPanel.add(connectionButton,
+            buttonPanel.add(advancedButton,
                     new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
             buttonPanel.add(loginButton,
-                    new GridBagConstraints(3, 0, 4, 1, 0.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
+                    new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
 
             cardPanel.add(buttonPanel, BUTTON_PANEL);
 
@@ -295,7 +295,7 @@ public final class LoginDialog {
             // Add ActionListener
             quitButton.addActionListener(this);
             loginButton.addActionListener(this);
-            connectionButton.addActionListener(this);
+            advancedButton.addActionListener(this);
 
             // Make same size
             GraphicUtils.makeSameSize(new JComponent[]{usernameField, passwordField});
@@ -309,7 +309,7 @@ public final class LoginDialog {
             ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password"));
             ResourceUtils.resButton(quitButton, Res.getString("button.quit"));
             ResourceUtils.resButton(loginButton, Res.getString("title.login"));
-            ResourceUtils.resButton(connectionButton, Res.getString("button.advanced"));
+            ResourceUtils.resButton(advancedButton, Res.getString("button.advanced"));
 
             // Load previous instances
             String userProp = localPref.getUsername();
@@ -375,7 +375,7 @@ public final class LoginDialog {
         }
 
         private String getPassword() {
-            return new String(passwordField.getPassword()).trim();
+            return new String(passwordField.getPassword());
         }
 
         private String getServerName() {
@@ -406,7 +406,7 @@ public final class LoginDialog {
             else if (e.getSource() == loginButton) {
                 validateLogin();
             }
-            else if (e.getSource() == connectionButton) {
+            else if (e.getSource() == advancedButton) {
                 final LoginSettingDialog loginSettingsDialog = new LoginSettingDialog();
                 loginSettingsDialog.invoke(loginDialog);
             }
