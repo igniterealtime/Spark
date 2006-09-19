@@ -37,18 +37,18 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 public class PhonePlugin implements Plugin {
     public static PhoneClient phoneClient;
@@ -247,7 +247,7 @@ public class PhonePlugin implements Plugin {
                 incomingCall.setCallerName(Res.getString("message.no.caller.id"));
             }
 
-            //incomingDialog = SparkManager.getNotificationsEngine().showWindow(incomingCall, 500000000);
+            SparkManager.getNotificationsEngine().showWindow(incomingCall, 500000000);
         }
     }
 
@@ -266,13 +266,21 @@ public class PhonePlugin implements Plugin {
         thread.start();
     }
 
-    public void callJID(String jid) {
-        try {
-            phoneClient.dialByJID(jid);
-        }
-        catch (PhoneActionException e) {
-            Log.error(e);
-        }
+    public void callJID(final String jid) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    phoneClient.dialByJID(jid);
+                }
+                catch (PhoneActionException e) {
+                    Log.error(e);
+                }
+            }
+        });
+
+        thread.start();
+
+
     }
 
 
