@@ -34,8 +34,8 @@ import org.jivesoftware.smackx.SharedGroupManager;
 import org.jivesoftware.smackx.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -216,7 +216,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control N"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
-          //      searchContacts("");
+                //      searchContacts("");
             }
         });
 
@@ -297,7 +297,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // If not available, move to offline group.
         else if (presence.getType() == Presence.Type.unavailable && !isPending) {
-            moveToOfflineGroup(bareJID);
+            presence = roster.getPresence(bareJID);
+            if (presence == null) {
+                moveToOfflineGroup(bareJID);
+            }
         }
 
     }

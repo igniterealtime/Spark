@@ -72,7 +72,7 @@ public class PhonePlugin implements Plugin {
                 }
                 catch (Exception e) {
                     // Ignore because the user does not have support.
-                    //Log.error(e);
+                    Log.error(e);
                 }
                 return phoneClient;
             }

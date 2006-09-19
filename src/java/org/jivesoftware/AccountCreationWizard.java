@@ -279,6 +279,10 @@ public class AccountCreationWizard extends JPanel {
                 con = new XMPPConnection(localPref.getXmppHost(), port, serverName);
             }
         }
+
+        if(con != null){
+            con.connect();
+        }
         return con;
 
     }

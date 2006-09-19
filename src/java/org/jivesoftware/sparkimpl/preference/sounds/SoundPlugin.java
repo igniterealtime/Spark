@@ -11,10 +11,12 @@
 package org.jivesoftware.sparkimpl.preference.sounds;
 
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -39,9 +41,14 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
                 if (presence != null && presence.getType() == Presence.Type.unavailable) {
                     SoundPreferences preferences = soundPreference.getPreferences();
                     if (preferences != null && preferences.isPlayOfflineSound()) {
-                        String offline = preferences.getOfflineSound();
-                        File offlineFile = new File(offline);
-                        SparkManager.getSoundManager().playClip(offlineFile);
+                        Roster roster = SparkManager.getConnection().getRoster();
+                        final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
+                        presence = roster.getPresence(bareJID);
+                        if (presence == null) {
+                            String offline = preferences.getOfflineSound();
+                            File offlineFile = new File(offline);
+                            SparkManager.getSoundManager().playClip(offlineFile);
+                        }
                     }
                 }
             }
