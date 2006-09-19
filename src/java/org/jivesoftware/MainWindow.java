@@ -292,7 +292,7 @@ public final class MainWindow extends JFrame implements ActionListener {
     private void closeConnectionAndInvoke() {
         final XMPPConnection con = SparkManager.getConnection();
         if (con.isConnected()) {
-            con.close();
+            con.disconnect();
         }
 
         try {

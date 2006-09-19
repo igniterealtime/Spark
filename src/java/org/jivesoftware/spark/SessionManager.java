@@ -202,7 +202,7 @@ public final class SessionManager implements ConnectionListener {
      * @return the username associated with this session.
      */
     public String getUsername() {
-        return username;
+        return StringUtils.unescapeNode(username);
     }
 
     /**
@@ -372,6 +372,15 @@ public final class SessionManager implements ConnectionListener {
 
     public void setConnection(XMPPConnection con) {
         this.connection = con;
+    }
+
+    public void reconnectingIn(int i) {
+    }
+
+    public void reconectionSuccessful() {
+    }
+
+    public void reconnectionFailed(Exception exception) {
     }
 
 }

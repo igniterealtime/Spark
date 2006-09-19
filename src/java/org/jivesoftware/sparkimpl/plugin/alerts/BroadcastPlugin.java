@@ -21,6 +21,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -108,6 +109,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 
+                    jid = UserManager.escapeJID(jid);
                     ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(jid, nickname, nickname);
                     SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
                 }

@@ -18,6 +18,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.packet.Time;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -168,7 +169,7 @@ public class VCardPanel extends JPanel {
             usernameLabel.setText(firstName + " " + lastName);
         }
         else {
-            usernameLabel.setText(StringUtils.unescapeJID(jid));
+            usernameLabel.setText(UserManager.unescapeJID(jid));
         }
 
 

@@ -125,6 +125,15 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             public void connectionClosedOnError(Exception e) {
                 persistConversations();
             }
+
+            public void reconnectingIn(int i) {
+            }
+
+            public void reconectionSuccessful() {
+            }
+
+            public void reconnectionFailed(Exception exception) {
+            }
         });
     }
 
@@ -411,6 +420,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         }
     };
+
 
 
 }

@@ -35,6 +35,7 @@ import org.jivesoftware.smackx.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -1701,7 +1702,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
 
-        String message = Res.getString("message.approve.subscription", jid);
+        String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
 
         final JPanel layoutPanel = new JPanel();
         layoutPanel.setBackground(Color.white);
@@ -1732,7 +1733,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 int ok = JOptionPane.showConfirmDialog(getGUI(), Res.getString("message.add.user"), Res.getString("message.add.to.roster"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.OK_OPTION) {
                     RosterDialog rosterDialog = new RosterDialog();
-                    rosterDialog.setDefaultJID(jid);
+                    rosterDialog.setDefaultJID(UserManager.unescapeJID(jid));
                     rosterDialog.showRosterDialog();
                 }
 
@@ -2057,6 +2058,15 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         });
 
+    }
+
+    public void reconnectingIn(int i) {
+    }
+
+    public void reconectionSuccessful() {
+    }
+
+    public void reconnectionFailed(Exception exception) {
     }
 
 

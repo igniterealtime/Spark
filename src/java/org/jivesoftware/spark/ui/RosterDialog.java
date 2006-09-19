@@ -18,6 +18,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
@@ -41,7 +42,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -52,7 +52,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     private JPanel panel;
     private JTextField jidField;
     private JTextField nicknameField;
-    private final Vector groupModel = new Vector();
+    private final Vector<String> groupModel = new Vector<String>();
     private JComboBox groupBox;
     private JOptionPane pane;
     private JDialog dialog;
@@ -85,13 +85,12 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         newGroupButton.addActionListener(this);
 
 
-        Iterator groups = contactList.getContactGroups().iterator();
-        while (groups.hasNext()) {
-            ContactGroup group = (ContactGroup)groups.next();
+        for (ContactGroup group : contactList.getContactGroups()) {
             if (!group.isOfflineGroup() && !"Unfiled".equalsIgnoreCase(group.getGroupName()) && !group.isSharedGroup()) {
                 groupModel.add(group.getGroupName());
             }
         }
+
 
         groupBox.setEditable(true);
 
@@ -219,7 +218,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             dialog.setVisible(false);
         }
         else if ("Add".equals(value)) {
-            String contact = jidField.getText();
+            String contact = UserManager.escapeJID(jidField.getText());
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
 
@@ -275,6 +274,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         String nickname = nicknameField.getText();
         String group = (String)groupBox.getSelectedItem();
 
+        jid = UserManager.escapeJID(jid);
+        
         // Add as a new entry
         addEntry(jid, nickname, group);
     }

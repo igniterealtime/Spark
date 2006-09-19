@@ -133,7 +133,9 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smackx-debug.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://C:/code/smack/source" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -142,7 +144,9 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://C:/code/smack/source" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -185,6 +189,15 @@
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../src/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://C:/code/smack/source" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

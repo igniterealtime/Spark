@@ -61,7 +61,7 @@ public class UserManager {
 
         // Default to node if nothing.
         String username = SparkManager.getSessionManager().getUsername();
-        username = StringUtils.escapeNode(username);
+        username = StringUtils.unescapeNode(username);
 
         return username;
     }
@@ -259,7 +259,44 @@ public class UserManager {
             return item.getNickname();
         }
 
-        return StringUtils.unescapeJID(jid);
+        return unescapeJID(jid);
+    }
+
+    /**
+     * Escapes a complete JID by examing the Node itself and escaping
+     * when neccessary.
+     * @param jid the users JID
+     * @return the escaped JID.
+     */
+    public static String escapeJID(String jid){
+        if(jid == null){
+            return null;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        String node = StringUtils.parseName(jid);
+        String restOfJID = jid.substring(node.length());
+        builder.append(StringUtils.escapeNode(node));
+        builder.append(restOfJID);
+        return builder.toString();
+    }
+
+    /**
+     * Unescapes a complete JID by examing the node itself and unescaping when necessary.
+     * @param jid the users jid.
+     * @return the unescaped JID.
+     */
+    public static String unescapeJID(String jid){
+        if(jid == null){
+            return null;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        String node = StringUtils.parseName(jid);
+        String restOfJID = jid.substring(node.length());
+        builder.append(StringUtils.unescapeNode(node));
+        builder.append(restOfJID);
+        return builder.toString();
     }
 
     /**

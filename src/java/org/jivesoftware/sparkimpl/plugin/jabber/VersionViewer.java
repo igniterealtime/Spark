@@ -13,23 +13,23 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.packet.Time;
 import org.jivesoftware.smackx.packet.Version;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class VersionViewer {
 
@@ -131,7 +131,7 @@ public class VersionViewer {
         versionField.setEditable(false);
         softwareField.setEditable(false);
         timeField.setEditable(false);
-        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", StringUtils.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
+        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
     }
 
 }

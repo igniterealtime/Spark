@@ -116,8 +116,9 @@ public final class GroupChatRoom extends ChatRoom {
         // Thie Room Name is the same as the ChatRoom name
         roomname = chat.getRoom();
         roomTitle = roomname;
+
         // We are just using a generic Group Chat.
-        tabTitle = StringUtils.parseName(roomname);
+        tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
 
         // Room Information
         roomInfo = new ConferenceRoomInfo();

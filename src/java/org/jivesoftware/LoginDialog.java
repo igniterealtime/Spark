@@ -21,6 +21,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
@@ -130,7 +131,7 @@ public final class LoginDialog {
 
         final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
         if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
-            // Handle PoweredBy for custom clients.
+            // Handle Powered By for custom clients.
             final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
             mainPanel.add(poweredBy,
                 new GridBagConstraints(0, 1, 4, 1,
@@ -138,7 +139,6 @@ public final class LoginDialog {
                     new Insets(0, 0, 2, 0), 0, 0));
 
         }
-        // imagePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
 
         loginPanel.setOpaque(false);
         mainPanel.add(loginPanel,
@@ -316,7 +316,7 @@ public final class LoginDialog {
             String serverProp = localPref.getServer();
 
             if (userProp != null && serverProp != null) {
-                usernameField.setText(userProp);
+                usernameField.setText(StringUtils.unescapeNode(userProp));
                 serverField.setText(serverProp);
             }
 
@@ -371,7 +371,7 @@ public final class LoginDialog {
         }
 
         private String getUsername() {
-            return usernameField.getText().trim();
+            return StringUtils.escapeNode(usernameField.getText().trim());
         }
 
         private String getPassword() {
@@ -586,6 +586,8 @@ public final class LoginDialog {
                             connection = new XMPPConnection(localPref.getXmppHost(), port, serverName);
                         }
                     }
+
+                    connection.connect();
 
                     String resource = localPref.getResource();
                     if (!ModelUtil.hasLength(resource)) {

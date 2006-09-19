@@ -18,6 +18,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ChatContainer;
@@ -170,7 +171,9 @@ public class InvitationUI extends JPanel implements ActionListener {
             GroupChatRoom groupChatRoom = null;
             try {
                 groupChatRoom = (GroupChatRoom)SparkManager.getChatManager().getChatRoom(roomName);
-                groupChatRoom.setTabTitle(roomName);
+
+                String shortName = StringUtils.parseName(roomName);
+                groupChatRoom.setTabTitle(StringUtils.unescapeNode(shortName));
                 groupChatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
 
                 groupChatRoom.getToolBar().setVisible(true);
