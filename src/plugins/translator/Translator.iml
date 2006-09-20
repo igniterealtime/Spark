@@ -16,7 +16,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/build/lib/Tidy.jar!/" />
+          <root url="jar://$MODULE_DIR$/build/lib/dist/Tidy.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -25,7 +25,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/build/lib/httpunit.jar!/" />
+          <root url="jar://$MODULE_DIR$/build/lib/dist/httpunit.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

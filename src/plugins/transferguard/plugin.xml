@@ -1,0 +1,12 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>Transfer Guard</name>
+    <version>1.0</version>
+    <author>Pete Matern</author>
+    <homePage>http://www.jivesoftware.org</homePage>
+    <email>pete@jivesoftware.com</email>
+    <description>Adds the ability to automatically reject file transfers based on preference configuration</description>
+    <class>org.jivesoftware.spark.plugins.transfersettings.FileTransferSettingsPlugin</class>
+    <minSparkVersion>2.0.2</minSparkVersion>
+</plugin>
+
