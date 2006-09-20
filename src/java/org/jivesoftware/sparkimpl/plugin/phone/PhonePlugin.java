@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -247,7 +248,13 @@ public class PhonePlugin implements Plugin {
                 incomingCall.setCallerName(Res.getString("message.no.caller.id"));
             }
 
-            SparkManager.getNotificationsEngine().showWindow(incomingCall, 500000000);
+            SparkToaster toasterManager = new SparkToaster();
+
+            toasterManager.setTitle("Incoming Phone Call");
+            toasterManager.setDisplayTime(5000);
+            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+            toasterManager.setComponent(incomingCall);
+
         }
     }
 

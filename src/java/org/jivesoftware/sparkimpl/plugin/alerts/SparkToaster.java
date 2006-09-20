@@ -36,13 +36,16 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -124,6 +127,8 @@ public class SparkToaster {
 
     private Action customAction;
 
+    private JScrollPane pane;
+
     /**
      * Constructor to initialized toaster component...
      */
@@ -166,7 +171,8 @@ public class SparkToaster {
         private void initComponents() {
             message.setFont(getToasterMessageFont());
 
-            BackgroundPanel mainPanel = new BackgroundPanel();
+            JPanel mainPanel = new JPanel();
+            mainPanel.setBackground(Color.white);
             message.setOpaque(false);
             mainPanel.setLayout(new GridBagLayout());
             message.setMargin(new Insets(2, 2, 2, 2));
@@ -200,7 +206,7 @@ public class SparkToaster {
 
             message.setForeground(Color.BLACK);
 
-            JScrollPane pane = new JScrollPane(message);
+            pane = new JScrollPane(message);
             pane.setBorder(BorderFactory.createEmptyBorder());
             pane.setOpaque(false);
             message.setOpaque(false);
@@ -211,12 +217,12 @@ public class SparkToaster {
             getContentPane().add(mainPanel);
 
 
-            message.addMouseListener(new MouseAdapter() {
+            pane.getViewport().addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (customAction != null) {
                         customAction.actionPerformed(null);
                     }
-                    
+
                     setVisible(false);
                     dispose();
                 }
@@ -359,6 +365,14 @@ public class SparkToaster {
         }
         singleToaster.message.setText(msg);
         singleToaster.message.setCaretPosition(0);
+        singleToaster.animate();
+    }
+
+    public void showToaster(Icon icon) {
+        SingleToaster singleToaster = new SingleToaster();
+        if (icon != null) {
+            singleToaster.iconLabel.setIcon(icon);
+        }
         singleToaster.animate();
     }
 
@@ -548,17 +562,19 @@ public class SparkToaster {
         this.customAction = action;
     }
 
+    public void setComponent(Component comp) {
+        pane.setViewportView(comp);
+    }
+
     /**
      * Simple Example...
      */
     public static void main(String[] args) {
         SparkToaster toasterManager = new SparkToaster();
+        toasterManager.setDisplayTime(5000);
         toasterManager.setTitle("Spark");
-        toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE), " \t Message sent successfully.\n" +
-                "\n" +
-                "Send Administrative Message\n" +
-                "Use the form below to send an administrative message to all users.\n" +
-                "To: \tAll Online Users");
+        toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        toasterManager.setComponent(new JButton("HI"));
     }
 
 }
