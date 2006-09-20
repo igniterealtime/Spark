@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -21,6 +22,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.JButton;
@@ -65,13 +67,13 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         contactList = SparkManager.getWorkspace().getContactList();
 
         panel = new JPanel();
-        JLabel contactIDLabel = new JLabel("Jabber ID:");
+        JLabel contactIDLabel = new JLabel();
         jidField = new JTextField();
-        JLabel nicknameLabel = new JLabel("Nickname:");
+        JLabel nicknameLabel = new JLabel();
         nicknameField = new JTextField();
-        JLabel groupLabel = new JLabel("Group:");
+        JLabel groupLabel = new JLabel();
         groupBox = new JComboBox(groupModel);
-        JButton newGroupButton = new JButton("New...");
+        JButton newGroupButton = new JButton();
         pane = null;
         dialog = null;
         panel.setLayout(new GridBagLayout());
@@ -83,6 +85,11 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.add(groupBox, new GridBagConstraints(1, 2, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(newGroupButton, new GridBagConstraints(2, 2, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         newGroupButton.addActionListener(this);
+
+        ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.jabber.id") + ":");
+        ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
+        ResourceUtils.resLabel(groupLabel, groupBox, Res.getString("label.group") + ":");
+        ResourceUtils.resButton(newGroupButton, Res.getString("button.new"));
 
 
         for (ContactGroup group : contactList.getContactGroups()) {
@@ -158,7 +165,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
-        String group = JOptionPane.showInputDialog(dialog, "Enter new group name:", "New Roster Group", 3);
+        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") +":", Res.getString("title.new.roster.group"), 3);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
             SparkManager.getConnection().getRoster().createGroup(group);
             groupModel.add(group);
@@ -173,16 +180,16 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
      * @param parent the parent Frame.
      */
     public void showRosterDialog(JFrame parent) {
-        TitlePanel titlePanel = new TitlePanel("Add Contact", "Add contact to contact list", SparkRes.getImageIcon(SparkRes.USER1_32x32), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact.group"), Res.getString("message.add.contact.to.list"), SparkRes.getImageIcon(SparkRes.USER1_32x32), true);
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, "North");
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
         Object[] options = {
-                "Add", "Cancel"
+                Res.getString("add"), Res.getString("cancel")
         };
         pane = new JOptionPane(panel, -1, 2, null, options, options[0]);
-        mainPanel.add(pane, "Center");
-        dialog = new JDialog(parent, "Add Contact", true);
+        mainPanel.add(pane, BorderLayout.CENTER);
+        dialog = new JDialog(parent, Res.getString("title.add.contact"), true);
         dialog.pack();
         dialog.setContentPane(mainPanel);
         dialog.setSize(350, 250);
@@ -214,10 +221,10 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
         String value = (String)pane.getValue();
         String errorMessage = "General Error";
-        if ("Cancel".equals(value)) {
+        if (Res.getString("cancel").equals(value)) {
             dialog.setVisible(false);
         }
-        else if ("Add".equals(value)) {
+        else if (Res.getString("add").equals(value)) {
             String contact = UserManager.escapeJID(jidField.getText());
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
@@ -261,7 +268,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
                 return;
             }
 
-            JOptionPane.showMessageDialog(dialog, errorMessage, "Invalid Contact Information", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
         }
     }
@@ -328,7 +335,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             userEntry = roster.getEntry(jid);
         }
         catch (XMPPException ex) {
-            Log.error("Error adding new entry.", ex);
+            Log.error(ex);
         }
         return userEntry;
     }
