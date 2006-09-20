@@ -139,6 +139,7 @@ public class VCardPanel extends JPanel {
         String title = vcard.getField("TITLE");
 
         final JLabel usernameLabel = new JLabel();
+        usernameLabel.setHorizontalTextPosition(JLabel.LEFT);
         usernameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
 
         usernameLabel.setForeground(Color.DARK_GRAY);
