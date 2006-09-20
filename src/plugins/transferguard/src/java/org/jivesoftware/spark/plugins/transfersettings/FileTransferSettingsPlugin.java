@@ -1,8 +1,9 @@
-package com.jivesoftware.spark.plugins.transfersettings;
+package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugins.transfersettings.FileTransferSettings;
 import org.jivesoftware.spark.filetransfer.FileTransferListener;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.plugin.Plugin;

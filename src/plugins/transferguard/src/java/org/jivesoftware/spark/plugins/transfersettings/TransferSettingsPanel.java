@@ -1,6 +1,7 @@
-package com.jivesoftware.spark.plugins.transfersettings;
+package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.plugins.transfersettings.FileTransferSettings;
 
 import javax.swing.*;
 import java.awt.*;

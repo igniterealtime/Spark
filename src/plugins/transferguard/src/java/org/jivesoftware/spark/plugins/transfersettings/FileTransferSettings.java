@@ -1,4 +1,4 @@
-package com.jivesoftware.spark.plugins.transfersettings;
+package org.jivesoftware.spark.plugins.transfersettings;
 
 import java.util.*;
 import java.io.File;
