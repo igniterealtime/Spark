@@ -7,6 +7,8 @@
  */
 package com.jivesoftware.spark.translator;
 
+import org.jivesoftware.spark.translator.TranslatorUtil;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
