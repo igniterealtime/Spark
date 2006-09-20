@@ -1,0 +1,11 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>Google Plugin</name>
+    <version>1.0</version>
+    <author>Derek DeMoro</author>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <email>derek@jivesoftware.com</email>
+    <description>Adds Google Desktop Search   to Spark.</description>
+    <class>org.jivesoftware.spark.plugin.GooglePlugin</class>
+    <minSparkVersion>2.0.2</minSparkVersion>
+</plugin>
