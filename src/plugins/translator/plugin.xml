@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Google Plugin Structure -->
+<plugin>
+    <name>Translator Plugin</name>
+    <class>org.jivesoftware.spark.translator.TranslatorPlugin</class>
+    <author>Nick Hill</author>
+    <version>1.0</version>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <description>Translates instant messages between users using Google Translation Service.</description>
+    <email>nick@jivesoftware.com</email>
+    <minSparkVersion>2.0.2</minSparkVersion>
+</plugin>
