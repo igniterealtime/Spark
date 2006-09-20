@@ -171,7 +171,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @param item the ContactItem.
      */
-    public synchronized void addContactItem(ContactItem item) {
+    public void addContactItem(ContactItem item) {
         if (model.getSize() == 1 && model.getElementAt(0) == noContacts) {
             model.remove(0);
         }

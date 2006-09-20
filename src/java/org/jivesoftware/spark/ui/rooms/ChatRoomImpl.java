@@ -129,7 +129,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         RosterEntry entry = roster.getEntry(participantJID);
 
-        tabIcon = SparkManager.getUserManager().getIconFromPresence(presence);
+        tabIcon = SparkManager.getUserManager().getTabIconForPresence(presence);
 
         PacketFilter filter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
         SparkManager.getConnection().addPacketListener(new PacketListener() {

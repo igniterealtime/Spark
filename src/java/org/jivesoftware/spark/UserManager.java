@@ -339,7 +339,7 @@ public class UserManager {
      * @param presence the presence.
      * @return the icon.
      */
-    public Icon getIconFromPresence(Presence presence) {
+    public Icon getTabIconForPresence(Presence presence) {
         StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
         Icon tabIcon = null;
 
@@ -356,11 +356,13 @@ public class UserManager {
             }
         }
 
-        Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(presence);
+        Icon icon = SparkManager.getChatManager().getTabIconForContactHandler(presence);
         if (icon != null) {
             tabIcon = icon;
         }
 
         return tabIcon;
     }
+
+
 }

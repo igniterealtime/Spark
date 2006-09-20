@@ -12,9 +12,11 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketCollector;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.Time;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -28,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Icon;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -173,6 +176,14 @@ public class VCardPanel extends JPanel {
         }
 
 
+        Roster roster = SparkManager.getConnection().getRoster();
+        Presence p = roster.getPresence(vcard.getJabberId());
+        Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(p);
+        if(icon != null){
+            usernameLabel.setIcon(icon);
+        }
+
+
         add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 5), 0, 0));
 
         /*
@@ -209,14 +220,15 @@ public class VCardPanel extends JPanel {
         }
         time.setTo(fullJID);
 
-        final PacketCollector packetCollector = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(time.getPacketID()));
-
+    
         final VCardPanel panel = this;
         SwingWorker timeThread = new SwingWorker() {
             IQ timeResult;
 
             public Object construct() {
                 SparkManager.getConnection().sendPacket(time);
+                final PacketCollector packetCollector = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(time.getPacketID()));
+
                 timeResult = (IQ)packetCollector.nextResult();
                 return timeResult;
             }

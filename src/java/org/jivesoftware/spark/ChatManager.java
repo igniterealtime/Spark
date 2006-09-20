@@ -36,15 +36,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -354,7 +354,18 @@ public class ChatManager implements MessageEventNotificationListener {
 
     public Icon getPresenceIconForContactHandler(Presence presence) {
         for (ContactItemHandler handler : contactItemHandlers) {
-            Icon icon = handler.useIcon(presence);
+            Icon icon = handler.getIcon(presence);
+            if (icon != null) {
+                return icon;
+            }
+        }
+
+        return null;
+    }
+
+    public Icon getTabIconForContactHandler(Presence presence) {
+        for (ContactItemHandler handler : contactItemHandlers) {
+            Icon icon = handler.getTabIcon(presence);
             if (icon != null) {
                 return icon;
             }

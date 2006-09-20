@@ -249,7 +249,7 @@ public class GatewayPlugin implements Plugin {
                 return false;
             }
 
-            public Icon useIcon(Presence presence) {
+            public Icon getIcon(Presence presence) {
                 if (presence == null) {
                     return null;
                 }
@@ -266,8 +266,13 @@ public class GatewayPlugin implements Plugin {
                 return null;
             }
 
+            public Icon getTabIcon(Presence presence) {
+                return null;
+            }
 
         });
+
+
 
     }
 }

@@ -33,7 +33,9 @@ public interface ContactItemHandler {
      * @param presence the presence
      * @return the icon, if any. null may be returned.
      */
-    Icon useIcon(Presence presence);
+    Icon getIcon(Presence presence);
+
+    Icon getTabIcon(Presence presence);
 
 
     /**

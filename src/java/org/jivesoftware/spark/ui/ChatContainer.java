@@ -329,7 +329,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             }
 
-            Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(p);
+            Icon icon = SparkManager.getChatManager().getTabIconForContactHandler(p);
             if (icon != null) {
                 tabIcon = icon;
             }
@@ -957,7 +957,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
                 if (!chatRoomImpl.isIconHandler()) {
                     Presence presence = chatRoomImpl.getPresence();
-                    Icon icon = SparkManager.getUserManager().getIconFromPresence(presence);
+                    Icon icon = SparkManager.getUserManager().getTabIconForPresence(presence);
                     tab.setIcon(icon);
                 }
             }

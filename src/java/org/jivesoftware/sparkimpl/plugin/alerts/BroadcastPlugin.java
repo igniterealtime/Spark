@@ -310,7 +310,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
             String jid = StringUtils.parseBareAddress(room.getParticipantJID());
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 
-            Icon icon = SparkManager.getUserManager().getIconFromPresence(room.getPresence());
+            Icon icon = SparkManager.getUserManager().getTabIconForPresence(room.getPresence());
             room.setTabIcon(icon);
             room.setTabTitle(nickname);
 
