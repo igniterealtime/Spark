@@ -16,9 +16,8 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.StringUtils;
-import org.jivesoftware.spark.util.Utilities;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Uses the Windows registry to perform URI XMPP mappings.
@@ -88,7 +87,7 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
             body = uriMapping.substring(bodyIndex + 5);
         }
 
-        body =  StringUtils.unescapeFromXML(body);
+        body = StringUtils.unescapeFromXML(body);
         body = StringUtils.replace(body, "%20", " ");
 
         UserManager userManager = SparkManager.getUserManager();
@@ -122,7 +121,7 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
         ConferenceUtils.autoJoinConferenceRoom(conference, conference, null);
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         SparkStartupListener l = new SparkStartupListener();
         l.startupPerformed("xmpp:jorge@jivesoftware.com?message;body=hello%20there");
     }
