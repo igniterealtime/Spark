@@ -35,7 +35,7 @@ public class Log {
             Spark.getLogDirectory().mkdirs();
         }
 
-        LOG_FILE = new File(Spark.getLogDirectory(), "spark-error.log");
+        LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
 
 
         try {
@@ -49,7 +49,7 @@ public class Log {
             LOGGER.addHandler(handler);
         }
         catch (IOException e) {
-            Log.error(e);
+            e.printStackTrace();
         }
     }
 
