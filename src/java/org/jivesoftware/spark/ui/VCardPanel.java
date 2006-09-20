@@ -13,7 +13,6 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
@@ -24,13 +23,6 @@ import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.profile.VCardManager;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.Icon;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -45,6 +37,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -107,38 +105,14 @@ public class VCardPanel extends JPanel {
                 }
 
                 vcard.setJabberId(jid);
-                setupUI(vcard);
+                buildUI(vcard);
             }
         };
 
         worker.start();
     }
 
-    public VCardPanel(VCard vcard, String jid) {
-        setLayout(new GridBagLayout());
-        setOpaque(false);
-
-        this.jid = jid;
-        avatarImage = new JLabel();
-
-        byte[] bytes = vcard.getAvatar();
-        if (bytes != null) {
-            try {
-                ImageIcon icon = new ImageIcon(bytes);
-                icon = VCardManager.scale(icon);
-                if (icon.getIconWidth() > 0) {
-                    avatarImage.setIcon(icon);
-                    avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-                }
-                setupUI(vcard);
-            }
-            catch (Exception e) {
-                Log.error(e);
-            }
-        }
-    }
-
-    private void setupUI(final VCard vcard) {
+    private void buildUI(final VCard vcard) {
         add(avatarImage, new GridBagConstraints(0, 0, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         avatarImage.addMouseListener(new MouseAdapter() {
@@ -172,14 +146,15 @@ public class VCardPanel extends JPanel {
             usernameLabel.setText(firstName + " " + lastName);
         }
         else {
-            usernameLabel.setText(UserManager.unescapeJID(jid));
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+            usernameLabel.setText(UserManager.unescapeJID(nickname));
         }
 
 
         Roster roster = SparkManager.getConnection().getRoster();
         Presence p = roster.getPresence(vcard.getJabberId());
         Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(p);
-        if(icon != null){
+        if (icon != null) {
             usernameLabel.setIcon(icon);
         }
 
@@ -220,8 +195,7 @@ public class VCardPanel extends JPanel {
         }
         time.setTo(fullJID);
 
-    
-        final VCardPanel panel = this;
+
         SwingWorker timeThread = new SwingWorker() {
             IQ timeResult;
 
@@ -243,7 +217,7 @@ public class VCardPanel extends JPanel {
                         cal.setTimeZone(TimeZone.getTimeZone(t.getTz()));
                         // Convert the UTC time to local time.
                         cal.setTime(new Date(utcFormat.parse(t.getUtc()).getTime() +
-                                cal.getTimeZone().getOffset(cal.getTimeInMillis())));
+                            cal.getTimeZone().getOffset(cal.getTimeInMillis())));
                         Date date = cal.getTime();
 
                         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
@@ -259,6 +233,10 @@ public class VCardPanel extends JPanel {
         };
 
         timeThread.start();
+
+        localTime.setText("Retrieving time");
+        localTime.setText("");
+
     }
 
 
