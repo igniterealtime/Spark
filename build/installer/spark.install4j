@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="3.2.4">
+<install4j version="3.2.1">
   <directoryPresets config="../../documentation" />
   <application name="%APP_NAME%" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_%VERSION%" compression="6" lzmaCompression="true" keepModificationTimes="false" shortName="%APP_SHORT_NAME%" publisher="%PUBLISHER%" publisherWeb="%PUBLISHER_URL%" version="%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_REVISION%" allPathsRelative="true" backupOnSave="false" autoSave="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
     <searchSequence>
@@ -10,7 +10,7 @@
     <variables>
       <variable name="VERSION_MAJOR" value="2" />
       <variable name="VERSION_MINOR" value="0" />
-      <variable name="VERSION_REVISION" value="1" />
+      <variable name="VERSION_REVISION" value="2" />
       <variable name="APP_NAME" value="Spark" />
       <variable name="APP_SHORT_NAME" value="Spark" />
       <variable name="PUBLISHER" value="Jive Software" />
@@ -46,7 +46,7 @@
           <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot; -Xms16m -XX:PermSize=12m -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
+      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
         <searchSequence>
           <registry />
           <envVar name="JAVA_HOME" />
@@ -59,7 +59,9 @@
           <envVar name="macSystem" failOnError="false" />
           <scanDirectory location="lib/linux" failOnError="false" />
         </classPath>
-        <nativeLibraryDirectories />
+        <nativeLibraryDirectories>
+          <directory name="resources" />
+        </nativeLibraryDirectories>
       </java>
       <includedFiles />
     </launcher>
