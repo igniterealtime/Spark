@@ -233,15 +233,12 @@ public class GatewayPlugin implements Plugin {
                     Transport transport = TransportManager.getTransport(domain);
                     if (transport != null) {
                         if (presence.getType() == Presence.Type.available) {
-                            item.setIcon(transport.getIcon());
+                            item.setSideIcon(transport.getIcon());
                         }
                         else {
-                            item.setIcon(transport.getInactiveIcon());
+                            item.setSideIcon(transport.getInactiveIcon());
                         }
-
-                        item.updatePresenceStatus(presence);
-
-                        return true;
+                        return false;
                     }
                 }
 

@@ -487,6 +487,10 @@ public class ContactItem extends JPanel {
         }
     }
 
+    public void setSideIcon(Icon icon){
+        sideIcon.setIcon(icon);
+    }
+
     public void showUserComingOnline() {
         // Change Font
         getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));

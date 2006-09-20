@@ -27,7 +27,14 @@ public interface ContactItemHandler {
      */
     boolean handlePresence(ContactItem item, Presence presence);
 
+    /**
+     * Return the icon used for particular presence.
+     *
+     * @param presence the presence
+     * @return the icon, if any. null may be returned.
+     */
     Icon useIcon(Presence presence);
+
 
     /**
      * The <code>ContactItem</code> has been double-clicked by the user.
