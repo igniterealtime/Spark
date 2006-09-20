@@ -299,7 +299,13 @@ public final class SessionManager implements ConnectionListener {
                 }
 
                 long idleTime = SystemInfo.getSessionIdleTime();
-                boolean isLocked = SystemInfo.isSessionLocked();
+                boolean isLocked = false;
+                try {
+                    isLocked = SystemInfo.isSessionLocked();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
                 if (idleTime > delay) {
                     try {
                         // Handle if spark is not connected to the server.
