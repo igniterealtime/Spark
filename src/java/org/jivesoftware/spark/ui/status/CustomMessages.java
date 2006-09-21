@@ -11,15 +11,16 @@
 package org.jivesoftware.spark.ui.status;
 
 import com.thoughtworks.xstream.XStream;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
 import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.component.renderer.ListIconRenderer;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.resource.Res;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -504,6 +505,13 @@ public class CustomMessages {
                         optionsDialog.setVisible(false);
                     }
                     else if (Res.getString("ok").equals(value)) {
+
+                        if (!ModelUtil.hasLength(getStatus())) {
+                            JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.invalid.status"));
+                            optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                            return;
+                        }
+
 
                         if (!persistBox.isSelected()) {
                             // Change presence and quit.
