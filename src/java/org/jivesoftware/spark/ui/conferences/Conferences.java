@@ -187,7 +187,7 @@ public class Conferences {
             public void finished() {
                 bookedMarkedConferences = new BookmarkedConferences();
 
-                workspace.getWorkspacePane().addTab("Conferences", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookedMarkedConferences);
+                workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookedMarkedConferences);
 
                 if (conferenceData != null) {
                     // Add ConferenceDataProvider

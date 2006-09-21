@@ -301,7 +301,7 @@ public final class LoginDialog {
             GraphicUtils.makeSameSize(new JComponent[]{usernameField, passwordField});
 
             // Set progress bar description
-            progressBar.setText(SparkRes.getString(SparkRes.LOGIN_DIALOG_AUTHENTICATING));
+            progressBar.setText(Res.getString("message.autenticating"));
             //progressBar.setStringPainted(true);
 
             // Set Resources
