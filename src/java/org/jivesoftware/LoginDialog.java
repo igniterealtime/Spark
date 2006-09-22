@@ -37,6 +37,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.sparkimpl.settings.SSLXMPPConnection;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -572,10 +573,10 @@ public final class LoginDialog {
 
                     if (useSSL) {
                         if (!hostPortConfigured) {
-                            connection = new XMPPConnection(serverName);
+                            connection = new SSLXMPPConnection(serverName);
                         }
                         else {
-                            connection = new XMPPConnection(localPref.getXmppHost(), port, serverName);
+                            connection = new SSLXMPPConnection(localPref.getXmppHost(), port, serverName);
                         }
                     }
                     else {
