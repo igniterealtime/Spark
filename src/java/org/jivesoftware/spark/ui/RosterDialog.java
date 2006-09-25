@@ -220,7 +220,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         }
 
         String value = (String)pane.getValue();
-        String errorMessage = "General Error";
+        String errorMessage = Res.getString("title.error");
         if (Res.getString("cancel").equals(value)) {
             dialog.setVisible(false);
         }
@@ -251,16 +251,16 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
 
             if (isSharedGroup) {
-                errorMessage = "You cannot add new contacts to a Shared Group.";
+                errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
             }
             else if (!ModelUtil.hasLength(contact)) {
-                errorMessage = "Please specify the contact JID (ex. lisa@jivesoftware.org)";
+                errorMessage = Res.getString("message.specify.contact.jid");
             }
             else if (StringUtils.parseBareAddress(contact).indexOf("@") == -1) {
-                errorMessage = "The JID you specified is invalid. (ex. lisa@jivesoftware.com)";
+                errorMessage = Res.getString("message.invalid.jid.error");
             }
             else if (!ModelUtil.hasLength(group)) {
-                errorMessage = "You must specify a Group to add the user to.";
+                errorMessage = Res.getString("message.specify.group");
             }
             else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group) && !isSharedGroup) {
                 addEntry();
