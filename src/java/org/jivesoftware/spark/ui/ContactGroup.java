@@ -18,6 +18,13 @@ import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+import javax.swing.Timer;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -27,6 +34,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -39,12 +48,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -65,6 +68,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private JWindow window = new JWindow();
 
+    private final ListMotionListener motionListener = new ListMotionListener();
+    private boolean canShowPopup;
+    private MouseEvent mouseEvent;
 
     /**
      * Create a new ContactGroup.
@@ -665,53 +671,78 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void addPopupWindow() {
+        final Timer timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                canShowPopup = true;
+                motionListener.mouseMoved(mouseEvent);
+            }
+        });
 
-        list.addMouseMotionListener(new MouseMotionAdapter() {
-            ContactItem activeItem;
+        list.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent mouseEvent) {
+                timer.start();
+            }
 
-            public void mouseMoved(MouseEvent e) {
-
-                int loc = list.locationToIndex(e.getPoint());
-                Point point = list.indexToLocation(loc);
-
-                ContactItem item = (ContactItem)model.getElementAt(loc);
-                if (item == null || item.getFullJID() == null) {
-                    return;
-                }
-
-                if (activeItem != null && activeItem == item) {
-                    return;
-                }
-
-                activeItem = item;
-
-                window.setVisible(false);
-                window = new JWindow();
-                window.setFocusableWindowState(false);
-                ContactInfo info = new ContactInfo(item);
-                window.getContentPane().add(info);
-                window.pack();
-                info.setBorder(BorderFactory.createEtchedBorder());
-
-                Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
-                Point listLocation = list.getLocationOnScreen();
-
-                int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
-
-                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                if ((int)screenSize.getWidth() - 250 >= x) {
-                    window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
-                    window.setVisible(true);
-                }
-                else {
-                    window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
-                    window.setVisible(true);
-                }
-
+            public void mouseExited(MouseEvent mouseEvent) {
+                timer.stop();
+                canShowPopup = false;
             }
         });
 
 
+        list.addMouseMotionListener(motionListener);
+    }
+
+
+    private class ListMotionListener extends MouseMotionAdapter {
+        private ContactItem activeItem;
+
+        public void mouseMoved(MouseEvent e) {
+            if(e != null){
+                mouseEvent = e;
+            }
+
+            if(!canShowPopup){
+                return;
+            }
+            int loc = list.locationToIndex(e.getPoint());
+            Point point = list.indexToLocation(loc);
+
+            ContactItem item = (ContactItem)model.getElementAt(loc);
+            if (item == null || item.getFullJID() == null) {
+                return;
+            }
+
+            if (activeItem != null && activeItem == item) {
+                return;
+            }
+
+            activeItem = item;
+
+            window.setVisible(false);
+            window = new JWindow();
+            window.setFocusableWindowState(false);
+            ContactInfo info = new ContactInfo(item);
+            window.getContentPane().add(info);
+            window.pack();
+            info.setBorder(BorderFactory.createEtchedBorder());
+
+            Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
+            Point listLocation = list.getLocationOnScreen();
+
+            int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
+
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            if ((int)screenSize.getWidth() - 250 >= x) {
+                window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
+                window.setVisible(true);
+            }
+            else {
+                window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
+                window.setVisible(true);
+            }
+
+        }
     }
 
 }
