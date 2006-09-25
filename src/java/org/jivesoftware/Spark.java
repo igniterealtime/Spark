@@ -138,23 +138,10 @@ public final class Spark {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
-                try {
-                    try {
-
-                        UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
-
-                    }
-                    catch (Exception e) {
-                        //Handling Exception
-                    }
-                }
-                catch (Exception e) {
-                }
-
+                UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
                 UIManager.setLookAndFeel(classname);
-
             }
             else {
                 UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
@@ -177,10 +164,10 @@ public final class Spark {
         UIManager.put("CollapsiblePane.background", Color.white);
         UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
         if (isWindows()) {
-            UIManager.put("DockableFrameTitlePane.titleBarComponent", Boolean.valueOf(true));
+            UIManager.put("DockableFrameTitlePane.titleBarComponent", true);
         }
         else {
-            UIManager.put("DockableFrameTitlePane.titleBarComponent", Boolean.valueOf(false));
+            UIManager.put("DockableFrameTitlePane.titleBarComponent", false);
         }
 
         UIManager.put("SidePane.lineColor", Color.BLACK);
