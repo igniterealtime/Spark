@@ -100,7 +100,8 @@ public class JContactItemField extends JPanel {
 
         final List<ContactItem> validItems = new ArrayList<ContactItem>();
         for (ContactItem contactItem : items) {
-            if (contactItem.getNickname().startsWith(typedItem)) {
+            String nickname = contactItem.getNickname().toLowerCase();
+            if (nickname.startsWith(typedItem.toLowerCase())) {
                 validItems.add(contactItem);
             }
         }
