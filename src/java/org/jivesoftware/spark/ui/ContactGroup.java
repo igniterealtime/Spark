@@ -719,7 +719,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
             activeItem = item;
 
-            window.setVisible(false);
+            window.dispose();
             window = new JWindow();
             window.setFocusableWindowState(false);
             ContactInfo info = new ContactInfo(item);
