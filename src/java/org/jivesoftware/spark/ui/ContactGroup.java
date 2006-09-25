@@ -18,12 +18,6 @@ import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -38,12 +32,19 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -71,41 +72,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param groupName the name of the new ContactGroup.
      */
     public ContactGroup(String groupName) {
-        list = new JList(model) {
-            public String getToolTipText(MouseEvent event) {
-                window.setVisible(false);
-                window = new JWindow();
-                window.setFocusableWindowState(false);
-                int loc = list.locationToIndex(event.getPoint());
-                Point point = list.indexToLocation(loc);
-
-                ContactItem item = (ContactItem)model.getElementAt(loc);
-                if (item == null || item.getFullJID() == null) {
-                    return null;
-                }
-
-                ContactInfo info = new ContactInfo(item);
-                window.getContentPane().add(info);
-                window.pack();
-                info.setBorder(BorderFactory.createEtchedBorder());
-
-                Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
-                Point listLocation = list.getLocationOnScreen();
-
-                int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
-
-                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                if ((int)screenSize.getWidth() - 250 >= x) {
-                    window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
-                    window.setVisible(true);
-                }
-                else {
-                    window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
-                    window.setVisible(true);
-                }
-                return null;
-            }
-        };
+        list = new JList(model);
 
         setTitle(getGroupTitle(groupName));
 
@@ -164,6 +131,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         noContacts.getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
         noContacts.getNicknameLabel().setForeground(Color.GRAY);
         model.addElement(noContacts);
+
+        // Add Popup Window
+        addPopupWindow();
     }
 
     /**
@@ -692,6 +662,56 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     public JPanel getListPanel() {
         return listPanel;
+    }
+
+    private void addPopupWindow() {
+
+        list.addMouseMotionListener(new MouseMotionAdapter() {
+            ContactItem activeItem;
+
+            public void mouseMoved(MouseEvent e) {
+
+                int loc = list.locationToIndex(e.getPoint());
+                Point point = list.indexToLocation(loc);
+
+                ContactItem item = (ContactItem)model.getElementAt(loc);
+                if (item == null || item.getFullJID() == null) {
+                    return;
+                }
+
+                if (activeItem != null && activeItem == item) {
+                    return;
+                }
+
+                activeItem = item;
+
+                window.setVisible(false);
+                window = new JWindow();
+                window.setFocusableWindowState(false);
+                ContactInfo info = new ContactInfo(item);
+                window.getContentPane().add(info);
+                window.pack();
+                info.setBorder(BorderFactory.createEtchedBorder());
+
+                Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
+                Point listLocation = list.getLocationOnScreen();
+
+                int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
+
+                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                if ((int)screenSize.getWidth() - 250 >= x) {
+                    window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
+                    window.setVisible(true);
+                }
+                else {
+                    window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
+                    window.setVisible(true);
+                }
+
+            }
+        });
+
+
     }
 
 }
