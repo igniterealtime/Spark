@@ -12,13 +12,21 @@ package org.jivesoftware.sparkimpl.preference.sounds;
 
 import com.thoughtworks.xstream.XStream;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -29,14 +37,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 /**
  * Preferences to handle Sounds played within Spark.
@@ -69,7 +69,7 @@ public class SoundPreference implements Preference {
     }
 
     public String getListName() {
-      return Res.getString("title.sounds");
+        return Res.getString("title.sounds");
     }
 
     public String getNamespace() {
@@ -127,6 +127,9 @@ public class SoundPreference implements Preference {
 
                 soundPanel.setOfflineSound(preferences.getOfflineSound());
                 soundPanel.playOfflineSound(preferences.isPlayOfflineSound());
+
+                soundPanel.setInvitationSound(preferences.getIncomingInvitationSoundFile());
+                soundPanel.setPlayInvitationSound(preferences.playIncomingInvitationSound());
             }
         };
         worker.start();
@@ -135,11 +138,15 @@ public class SoundPreference implements Preference {
     public void commit() {
         preferences.setIncomingSound(soundPanel.getIncomingSound());
         preferences.setOutgoingSound(soundPanel.getOutgoingSound());
+
         preferences.setOfflineSound(soundPanel.getOfflineSound());
+        preferences.setPlayOfflineSound(soundPanel.playOfflineSound());
 
         preferences.setPlayIncomingSound(soundPanel.playIncomingSound());
         preferences.setPlayOutgoingSound(soundPanel.playOutgoingSound());
-        preferences.setPlayOfflineSound(soundPanel.playOfflineSound());
+
+        preferences.setIncomingInvitationSoundFile(soundPanel.getInvitationSound());
+        preferences.setPlayIncomingInvitationSound(soundPanel.playInvitationSound());
 
         saveSoundsFile();
     }
@@ -160,15 +167,19 @@ public class SoundPreference implements Preference {
     private class SoundPanel extends JPanel {
         final JCheckBox incomingMessageBox = new JCheckBox();
         final JTextField incomingMessageSound = new JTextField();
-        final JButton incomingBrowseButton = new JButton();
+        final JButton incomingBrowseButton = new JButton("..");
 
         final JCheckBox outgoingMessageBox = new JCheckBox();
         final JTextField outgoingMessageSound = new JTextField();
-        final JButton outgoingBrowseButton = new JButton();
+        final JButton outgoingBrowseButton = new JButton("..");
 
         final JCheckBox userOfflineCheckbox = new JCheckBox();
         final JTextField userOfflineField = new JTextField();
-        final JButton offlineBrowseButton = new JButton();
+        final JButton offlineBrowseButton = new JButton("..");
+
+        final JCheckBox incomingInvitationBox = new JCheckBox();
+        final JTextField incomingInvitationField = new JTextField();
+        final JButton incomingInvitationBrowseButton = new JButton("..");
         private JFileChooser fc;
 
 
@@ -179,9 +190,7 @@ public class SoundPreference implements Preference {
             ResourceUtils.resButton(incomingMessageBox, Res.getString("checkbox.play.sound.on.new.message"));
             ResourceUtils.resButton(outgoingMessageBox, Res.getString("checkbox.play.sound.on.outgoing.message"));
             ResourceUtils.resButton(userOfflineCheckbox, Res.getString("checkbox.play.sound.when.offline"));
-            ResourceUtils.resButton(incomingBrowseButton, Res.getString("button.browse"));
-            ResourceUtils.resButton(outgoingBrowseButton, Res.getString("button.browse2"));
-            ResourceUtils.resButton(offlineBrowseButton, Res.getString("button.browse3"));
+            ResourceUtils.resButton(incomingInvitationBox, Res.getString("checkbox.play.sound.on.invitation"));
 
             // Handle incoming sounds
             add(incomingMessageBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -196,7 +205,12 @@ public class SoundPreference implements Preference {
             // Handle User Online Sound
             add(userOfflineCheckbox, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
             add(userOfflineField, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            add(offlineBrowseButton, new GridBagConstraints(1, 5, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(offlineBrowseButton, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+            // Handle Invitation Sound
+            add(incomingInvitationBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(incomingInvitationField, new GridBagConstraints(0, 7, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            add(incomingInvitationBrowseButton, new GridBagConstraints(1, 7, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
             incomingBrowseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -214,6 +228,12 @@ public class SoundPreference implements Preference {
             offlineBrowseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     pickFile(Res.getString("title.choose.offline.sound"), userOfflineField);
+                }
+            });
+
+            incomingInvitationBrowseButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    pickFile(Res.getString("title.choose.incoming.sound"), incomingInvitationField);
                 }
             });
 
@@ -268,6 +288,23 @@ public class SoundPreference implements Preference {
         public String getOfflineSound() {
             return userOfflineField.getText();
         }
+
+        public void setInvitationSound(String invitationSound) {
+            incomingInvitationField.setText(invitationSound);
+        }
+
+        public String getInvitationSound() {
+            return incomingInvitationField.getText();
+        }
+
+        public void setPlayInvitationSound(boolean play) {
+            incomingInvitationBox.setSelected(play);
+        }
+
+        public boolean playInvitationSound() {
+            return incomingInvitationBox.isSelected();
+        }
+
 
         private void pickFile(String title, JTextField field) {
             if (fc == null) {

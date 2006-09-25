@@ -21,16 +21,19 @@ public class SoundPreferences {
     private String outgoingSound;
     private String incomingSound;
     private String offlineSound;
+    private String incomingInvitationSound;
 
     private boolean playOutgoingSound = false;
     private boolean playIncomingSound = false;
     private boolean playOfflineSound = false;
+    private boolean playIncomingInvitationSound = false;
 
     public SoundPreferences() {
         // Set initial sounds
         try {
             outgoingSound = new File(Spark.getResourceDirectory(), "sounds/outgoing.wav").getCanonicalPath();
             incomingSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getCanonicalPath();
+            incomingInvitationSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getCanonicalPath();
             offlineSound = new File(Spark.getResourceDirectory(), "sounds/presence_changed.wav").getCanonicalPath();
         }
         catch (IOException e) {
@@ -84,5 +87,23 @@ public class SoundPreferences {
 
     public void setPlayOfflineSound(boolean playOfflineSound) {
         this.playOfflineSound = playOfflineSound;
+    }
+
+
+
+    public void setIncomingInvitationSoundFile(String sound) {
+        incomingInvitationSound = sound;
+    }
+
+    public String getIncomingInvitationSoundFile() {
+        return incomingInvitationSound;
+    }
+
+    public boolean playIncomingInvitationSound() {
+        return playIncomingInvitationSound;
+    }
+
+    public void setPlayIncomingInvitationSound(boolean play) {
+        this.playIncomingInvitationSound = play;
     }
 }
