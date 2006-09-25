@@ -37,7 +37,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
-import org.jivesoftware.spark.component.JPopupField;
+import org.jivesoftware.spark.component.JContactItemField;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.WrappedLabel;
@@ -103,6 +103,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.JFrame;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -1775,15 +1776,18 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             Iterator contactItems = group.getContactItems().iterator();
             while (contactItems.hasNext()) {
                 ContactItem item = (ContactItem)contactItems.next();
-                contacts.add(item.getNickname());
-                contactMap.put(item.getNickname(), item);
+                if (contactMap.get(item.getNickname()) == null) {
+                    contacts.add(item);
+                    contactMap.put(item.getNickname(), item);
+                }
+
             }
         }
 
-        final JPopupField contactField = new JPopupField(new ArrayList(contacts));
+        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
 
-        final JDialog frame = new JDialog(SparkManager.getMainWindow(), Res.getString("title.find.contacts"), false);
-
+        final JFrame frame = new JFrame();
+        frame.setUndecorated(true);
         JPanel layoutPanel = new JPanel();
         layoutPanel.setLayout(new GridBagLayout());
         frame.getContentPane().setLayout(new BorderLayout());

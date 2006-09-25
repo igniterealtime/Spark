@@ -8,9 +8,12 @@
 
 package org.jivesoftware.spark.component;
 
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.ModelUtil;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -19,26 +22,28 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
+import javax.swing.ListCellRenderer;
 
 /**
  * Implementation of a popup field from a TextField.
  *
  * @author Derek DeMoro
  */
-public class JPopupField extends JPanel {
+public class JContactItemField extends JPanel {
 
     private JTextField textField = new JTextField();
     private DefaultListModel model = new DefaultListModel();
     private JList list = new JList(model);
     private JWindow popup;
-    private List<String> items;
+    private List<ContactItem> items;
 
-    public JPopupField(List items) {
+    public JContactItemField(List items) {
         setLayout(new BorderLayout());
         this.items = items;
 
@@ -55,13 +60,16 @@ public class JPopupField extends JPanel {
                 if (ch == KeyEvent.VK_ENTER) {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
-                        String selection = (String)list.getSelectedValue();
-                        textField.setText(selection);
+                        ContactItem selection = (ContactItem)list.getSelectedValue();
+                        textField.setText(selection.getNickname());
                         popup.setVisible(false);
                     }
-
-                    dispatchEvent(keyEvent);
                 }
+
+                if (ch == KeyEvent.VK_ESCAPE) {
+                    popup.setVisible(false);
+                }
+                dispatchEvent(keyEvent);
             }
 
             public void keyPressed(KeyEvent e) {
@@ -77,6 +85,8 @@ public class JPopupField extends JPanel {
 
 
         popup.getContentPane().add(new JScrollPane(list));
+
+        list.setCellRenderer(new PopupRenderer());
     }
 
     public void setItems(List list) {
@@ -88,17 +98,17 @@ public class JPopupField extends JPanel {
 
         String typedItem = textField.getText();
 
-        final List<String> validItems = new ArrayList<String>();
-        for (String string : items) {
-            if (string.startsWith(typedItem)) {
-                validItems.add(string);
+        final List<ContactItem> validItems = new ArrayList<ContactItem>();
+        for (ContactItem contactItem : items) {
+            if (contactItem.getNickname().startsWith(typedItem)) {
+                validItems.add(contactItem);
             }
         }
 
 
         if (validItems.size() > 0) {
-            for (final String str : validItems) {
-                model.addElement(str);
+            for (final ContactItem label : validItems) {
+                model.addElement(label);
             }
         }
 
@@ -167,6 +177,47 @@ public class JPopupField extends JPanel {
 
     public void setText(String text) {
         textField.setText(text);
+    }
+
+    class PopupRenderer extends JLabel implements ListCellRenderer {
+
+        /**
+         * Construct Default JLabelIconRenderer.
+         */
+        public PopupRenderer() {
+            setOpaque(true);
+            this.setHorizontalTextPosition(JLabel.RIGHT);
+            this.setHorizontalAlignment(JLabel.LEFT);
+        }
+
+        public Component getListCellRendererComponent(JList list,
+                                                      Object value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            }
+            else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+
+
+            ContactItem contactItem = (ContactItem)value;
+            setText(contactItem.getNickname());
+            if (contactItem.getIcon() == null) {
+                setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+            }
+            else {
+                setIcon(contactItem.getIcon());
+            }
+            setFont(contactItem.getNicknameLabel().getFont());
+            setForeground(contactItem.getForeground());
+
+            return this;
+        }
     }
 
 
