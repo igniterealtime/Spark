@@ -51,10 +51,11 @@ public class ContactInfo extends JPanel {
         final JLabel fullJIDLabel = new JLabel();
         final JLabel imageLabel = new JLabel();
 
-        add(nicknameLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 100, 0));
+        add(nicknameLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         add(statusLabel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 5, 5), 0, 0));
-        add(fullJIDLabel, new GridBagConstraints(0, 2, 2, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(imageLabel, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+
 
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
         statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -63,8 +64,8 @@ public class ContactInfo extends JPanel {
         fullJIDLabel.setForeground(Color.gray);
 
         nicknameLabel.setText(contactItem.getNickname());
-        nicknameLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
-        fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
+        nicknameLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
+        fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 
         statusLabel.setText(contactItem.getStatus());
         fullJIDLabel.setText(contactItem.getFullJID());
