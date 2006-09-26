@@ -272,6 +272,29 @@ public final class Spark {
     }
 
     /**
+     * Return if we are running on Linux.
+     *
+     * @return true if we are running on Linux, false otherwise.
+     */
+
+    public static boolean isLinux() {
+        final String osName = System.getProperty("os.name").toLowerCase();
+        return osName.startsWith("linux");
+    }
+
+    /**
+     * Keep track of the users configuration directory.
+     *
+     * @return Directory name depending on Operating System.
+     */
+    public static String getUserConf() {
+        if (isLinux()) {
+            return ".Spark";
+        }
+        return "Spark";
+    }
+
+    /**
      * Returns the User specific directory for this Spark instance. The user home is where all user specific
      * files are placed to run Spark within a multi-user system.
      *
