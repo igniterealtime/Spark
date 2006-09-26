@@ -37,19 +37,16 @@ import java.net.URL;
  * @author Derek DeMoro
  */
 public class ContactInfo extends JPanel {
-    private ContactItem contactItem;
+    private final WrappedLabel nicknameLabel = new WrappedLabel();
+    private final WrappedLabel statusLabel = new WrappedLabel();
+    private final JLabel fullJIDLabel = new JLabel();
+    private final JLabel imageLabel = new JLabel();
 
-    public ContactInfo(ContactItem contactItem) {
-        this.contactItem = contactItem;
 
+    public ContactInfo() {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
 
-
-        final WrappedLabel nicknameLabel = new WrappedLabel();
-        final WrappedLabel statusLabel = new WrappedLabel();
-        final JLabel fullJIDLabel = new JLabel();
-        final JLabel imageLabel = new JLabel();
 
         add(nicknameLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         add(statusLabel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 5, 5), 0, 0));
@@ -63,13 +60,19 @@ public class ContactInfo extends JPanel {
         fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         fullJIDLabel.setForeground(Color.gray);
 
-        nicknameLabel.setText(contactItem.getNickname());
+
         nicknameLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 
+        setBorder(BorderFactory.createEtchedBorder());
+    }
+
+    public void setContactItem(ContactItem contactItem) {
+        nicknameLabel.setText(contactItem.getNickname());
         statusLabel.setText(contactItem.getStatus());
         fullJIDLabel.setText(contactItem.getFullJID());
 
+        imageLabel.setBorder(null);
 
         try {
             URL avatarURL = contactItem.getAvatarURL();
@@ -96,9 +99,6 @@ public class ContactInfo extends JPanel {
         }
     }
 
-    public ContactItem getContactItem() {
-        return contactItem;
-    }
 
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();

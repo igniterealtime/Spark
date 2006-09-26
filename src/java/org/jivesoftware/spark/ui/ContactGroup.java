@@ -18,7 +18,6 @@ import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -71,6 +70,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final ListMotionListener motionListener = new ListMotionListener();
     private boolean canShowPopup;
     private MouseEvent mouseEvent;
+
+    private ContactInfo contactInfoPanel;
 
     /**
      * Create a new ContactGroup.
@@ -671,7 +672,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void addPopupWindow() {
-        final Timer timer = new Timer(1000, new ActionListener() {
+        final Timer timer = new Timer(500, new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 canShowPopup = true;
                 motionListener.mouseMoved(mouseEvent);
@@ -698,11 +699,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         private ContactItem activeItem;
 
         public void mouseMoved(MouseEvent e) {
-            if(e != null){
+            if (e != null) {
                 mouseEvent = e;
             }
 
-            if(!canShowPopup){
+            if (!canShowPopup) {
                 return;
             }
             int loc = list.locationToIndex(e.getPoint());
@@ -719,13 +720,16 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
             activeItem = item;
 
-            window.dispose();
-            window = new JWindow();
             window.setFocusableWindowState(false);
-            ContactInfo info = new ContactInfo(item);
-            window.getContentPane().add(info);
+            if (contactInfoPanel == null) {
+                contactInfoPanel = new ContactInfo();
+                window.getContentPane().add(contactInfoPanel);
+            }
+
+            contactInfoPanel.setContactItem(item);
+
             window.pack();
-            info.setBorder(BorderFactory.createEtchedBorder());
+
 
             Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
             Point listLocation = list.getLocationOnScreen();
@@ -735,11 +739,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             if ((int)screenSize.getWidth() - 250 >= x) {
                 window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
-                window.setVisible(true);
+                if (!window.isVisible())
+                    window.setVisible(true);
             }
             else {
                 window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
-                window.setVisible(true);
+                if (!window.isVisible())
+                    window.setVisible(true);
             }
 
         }
