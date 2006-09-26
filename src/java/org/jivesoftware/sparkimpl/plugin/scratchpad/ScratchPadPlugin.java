@@ -206,7 +206,7 @@ public class ScratchPadPlugin implements Plugin {
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 13));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        final Image backgroundImage = SparkRes.getImageIcon(SparkRes.STICKY_NOTE_IMAGE).getImage();
+
         final JTextPane pane = new JTextPane();
 
         pane.setOpaque(false);
@@ -220,16 +220,9 @@ public class ScratchPadPlugin implements Plugin {
         final RolloverButton cancelButton = new RolloverButton("Cancel", null);
 
         final JFrame frame = new JFrame("Notes");
-        frame.setUndecorated(true);
-        titleLabel.addMouseMotionListener(new DragWindowAdapter(frame));
-        final JPanel mainPanel = new JPanel() {
-            public void paintComponent(Graphics g) {
-                double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-                double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
-                AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-                ((Graphics2D)g).drawImage(backgroundImage, xform, this);
-            }
-        };
+
+
+        final JPanel mainPanel = new JPanel();
 
         pane.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
@@ -249,7 +242,7 @@ public class ScratchPadPlugin implements Plugin {
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
         frame.getContentPane().add(mainPanel);
 
-        mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+     //   mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         mainPanel.add(scrollPane, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         mainPanel.add(button, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
