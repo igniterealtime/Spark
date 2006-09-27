@@ -745,7 +745,7 @@ public final class GroupChatRoom extends ChatRoom {
             }
 
             public void voiceGranted() {
-                insertText(Res.getString("message.your.voice.revoked"));
+                insertText(Res.getString("message.your.voice.granted"));
                 getChatInputEditor().setEnabled(true);
             }
 
