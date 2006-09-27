@@ -386,7 +386,7 @@ public class UserManager {
         return tabIcon;
     }
 
-    public void searchContacts(String contact, JComponent parent) {
+    public void searchContacts(String contact, JFrame parent) {
         final Map contactMap = new HashMap();
         final Set contacts = new HashSet();
 

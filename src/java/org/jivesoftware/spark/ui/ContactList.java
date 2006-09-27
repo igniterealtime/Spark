@@ -204,10 +204,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         showHideMenu.setSelected(false);
 
         // Add KeyMappings
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
-        getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        SparkManager.getMainWindow().getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
-                SparkManager.getUserManager().searchContacts("", SparkManager.getWorkspace().getContactList());
+                SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
         });
 
