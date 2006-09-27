@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.component;
 
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jdesktop.swingx.JXTable;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -44,7 +45,7 @@ import java.util.Map;
  *
  * @version 1.0, 03/12/14
  */
-public abstract class Table extends JTable {
+public abstract class Table extends JXTable {
     private Table.JiveTableModel tableModel;
 
     /**
