@@ -193,6 +193,14 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
+          // Add KeyMappings
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control N"), "searchContacts");
+        getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
+            public void actionPerformed(ActionEvent evt) {
+                SparkManager.getUserManager().searchContacts("", SparkManager.getChatManager().getChatContainer());
+            }
+        });
+
 
     }
 

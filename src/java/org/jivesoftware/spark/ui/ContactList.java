@@ -37,13 +37,11 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
-import org.jivesoftware.spark.component.JContactItemField;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -53,46 +51,12 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -103,7 +67,33 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.JFrame;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -217,7 +207,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control N"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
-                searchContacts("");
+                SparkManager.getUserManager().searchContacts("", SparkManager.getWorkspace().getContactList());
             }
         });
 
@@ -271,7 +261,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
 
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
@@ -427,7 +417,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 ContactItem contactItem = new ContactItem(name, entry.getUser());
                 contactItem.setPresence(null);
                 if ((entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                     // Add to contact group.
                     contactGroup.addContactItem(contactItem);
                     contactGroup.setVisible(true);
@@ -657,7 +647,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             ContactItem offlineItem = offlineGroup.getContactItemByJID(jid);
                             if (offlineItem != null) {
                                 if ((rosterEntry.getType() == RosterPacket.ItemType.NONE || rosterEntry.getType() == RosterPacket.ItemType.FROM)
-                                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
+                                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
                                     // Remove from offlineItem and add to unfiledItem.
                                     offlineGroup.removeContactItem(offlineItem);
                                     unfiledGroup.addContactItem(offlineItem);
@@ -1001,7 +991,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
         else if (e.getSource() == chatMenu) {
             if (activeItem != null) {
-                activateChat(activeItem.getContactJID(), activeItem.getNickname());
+                SparkManager.getChatManager().activateChat(activeItem.getContactJID(), activeItem.getNickname());
             }
         }
         else if (e.getSource() == addContactMenu) {
@@ -1102,51 +1092,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
     }
 
-    /**
-     * Activate a chat room with the selected user.
-     */
-    private void activateChat(final String userJID, final String nickname) {
-        if (!ModelUtil.hasLength(userJID)) {
-            return;
-        }
-
-        SwingWorker worker = new SwingWorker() {
-            final ChatManager chatManager = SparkManager.getChatManager();
-            ChatRoom chatRoom;
-
-            public Object construct() {
-                try {
-                    Thread.sleep(10);
-                }
-                catch (InterruptedException e) {
-                    Log.error("Error in activate chat.", e);
-                }
-
-                ChatContainer chatRooms = chatManager.getChatContainer();
-
-                try {
-                    chatRoom = chatRooms.getChatRoom(userJID);
-                }
-                catch (ChatRoomNotFoundException e) {
-
-                }
-                return chatRoom;
-            }
-
-            public void finished() {
-                if (chatRoom == null) {
-                    chatRoom = new ChatRoomImpl(userJID, nickname, nickname);
-                    chatManager.getChatContainer().addChatRoom(chatRoom);
-                }
-                chatManager.getChatContainer().activateChatRoom(chatRoom);
-            }
-        };
-
-        worker.start();
-
-    }
-
-
     public void contactItemClicked(ContactItem item) {
         activeItem = item;
 
@@ -1160,7 +1105,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         boolean handled = chatManager.fireContactItemDoubleClicked(item);
 
         if (!handled) {
-            activateChat(item.getContactJID(), item.getNickname());
+            chatManager.activateChat(item.getContactJID(), item.getNickname());
         }
 
         clearSelectionList(item);
@@ -1764,70 +1709,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // show dialog
         SparkManager.getWorkspace().addAlert(layoutPanel);
         SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
-    }
-
-    private void searchContacts(String contact) {
-        final Map contactMap = new HashMap();
-        final Set contacts = new HashSet();
-
-        Iterator groups = getContactGroups().iterator();
-        while (groups.hasNext()) {
-            ContactGroup group = (ContactGroup)groups.next();
-            Iterator contactItems = group.getContactItems().iterator();
-            while (contactItems.hasNext()) {
-                ContactItem item = (ContactItem)contactItems.next();
-                if (contactMap.get(item.getNickname()) == null) {
-                    contacts.add(item);
-                    contactMap.put(item.getNickname(), item);
-                }
-
-            }
-        }
-
-        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
-
-        final JFrame frame = new JFrame();
-        frame.setUndecorated(true);
-        JPanel layoutPanel = new JPanel();
-        layoutPanel.setLayout(new GridBagLayout());
-        frame.getContentPane().setLayout(new BorderLayout());
-        JLabel enterLabel = new JLabel(Res.getString("label.contact.to.find"));
-        enterLabel.setFont(new Font("dialog", Font.BOLD, 10));
-        layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-        layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 200, 0));
-        layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
-        frame.getContentPane().add(layoutPanel);
-
-        frame.pack();
-        frame.setLocationRelativeTo(this);
-        frame.setVisible(true);
-
-        frame.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    frame.dispose();
-                }
-            }
-        });
-
-        contactField.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
-                    if (ModelUtil.hasLength(contactField.getText())) {
-                        ContactItem item = (ContactItem)contactMap.get(contactField.getText());
-                        if (item != null) {
-                            activateChat(item.getFullJID(), item.getNickname());
-                            frame.dispose();
-                        }
-                    }
-
-                }
-                else if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    frame.dispose();
-                }
-            }
-        });
-        contactField.setText(contact);
     }
 
     public void addContextMenuListener(ContextMenuListener listener) {

@@ -32,9 +32,14 @@ import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,9 +47,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -249,6 +251,50 @@ public class ChatManager implements MessageEventNotificationListener {
 
         getChatContainer().addChatRoom(room);
         return room;
+    }
+
+    /**
+     * Activate a chat room with the selected user.
+     */
+    public void activateChat(final String userJID, final String nickname) {
+        if (!ModelUtil.hasLength(userJID)) {
+            return;
+        }
+
+        SwingWorker worker = new SwingWorker() {
+            final ChatManager chatManager = SparkManager.getChatManager();
+            ChatRoom chatRoom;
+
+            public Object construct() {
+                try {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException e) {
+                    Log.error("Error in activate chat.", e);
+                }
+
+                ChatContainer chatRooms = chatManager.getChatContainer();
+
+                try {
+                    chatRoom = chatRooms.getChatRoom(userJID);
+                }
+                catch (ChatRoomNotFoundException e) {
+
+                }
+                return chatRoom;
+            }
+
+            public void finished() {
+                if (chatRoom == null) {
+                    chatRoom = new ChatRoomImpl(userJID, nickname, nickname);
+                    chatManager.getChatContainer().addChatRoom(chatRoom);
+                }
+                chatManager.getChatContainer().activateChatRoom(chatRoom);
+            }
+        };
+
+        worker.start();
+
     }
 
     /**

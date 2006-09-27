@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
@@ -115,6 +115,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindow.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 getChatInputEditor().requestFocus();
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                if (transcriptWindow.getSelectedText() == null) {
+                    getChatInputEditor().requestFocus();
+                }
             }
         });
 

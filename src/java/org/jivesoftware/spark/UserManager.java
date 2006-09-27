@@ -10,13 +10,16 @@
 
 package org.jivesoftware.spark;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.component.JContactItemField;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -25,11 +28,28 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles all users in the agent application. Each user or chatting user can be referenced from the User
@@ -265,11 +285,12 @@ public class UserManager {
     /**
      * Escapes a complete JID by examing the Node itself and escaping
      * when neccessary.
+     *
      * @param jid the users JID
      * @return the escaped JID.
      */
-    public static String escapeJID(String jid){
-        if(jid == null){
+    public static String escapeJID(String jid) {
+        if (jid == null) {
             return null;
         }
 
@@ -283,11 +304,12 @@ public class UserManager {
 
     /**
      * Unescapes a complete JID by examing the node itself and unescaping when necessary.
+     *
      * @param jid the users jid.
      * @return the unescaped JID.
      */
-    public static String unescapeJID(String jid){
-        if(jid == null){
+    public static String unescapeJID(String jid) {
+        if (jid == null) {
             return null;
         }
 
@@ -362,6 +384,73 @@ public class UserManager {
         }
 
         return tabIcon;
+    }
+
+    public void searchContacts(String contact, JComponent parent) {
+        final Map contactMap = new HashMap();
+        final Set contacts = new HashSet();
+
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+        Iterator groups = contactList.getContactGroups().iterator();
+        while (groups.hasNext()) {
+            ContactGroup group = (ContactGroup)groups.next();
+            Iterator contactItems = group.getContactItems().iterator();
+            while (contactItems.hasNext()) {
+                ContactItem item = (ContactItem)contactItems.next();
+                if (contactMap.get(item.getNickname()) == null) {
+                    contacts.add(item);
+                    contactMap.put(item.getNickname(), item);
+                }
+
+            }
+        }
+
+        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
+
+        final JFrame frame = new JFrame();
+        frame.setUndecorated(true);
+        JPanel layoutPanel = new JPanel();
+        layoutPanel.setLayout(new GridBagLayout());
+        frame.getContentPane().setLayout(new BorderLayout());
+        JLabel enterLabel = new JLabel(Res.getString("label.contact.to.find"));
+        enterLabel.setFont(new Font("dialog", Font.BOLD, 10));
+        layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+        layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 200, 0));
+        layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
+        frame.getContentPane().add(layoutPanel);
+
+        frame.pack();
+
+        frame.setLocationRelativeTo(parent);
+        frame.setVisible(true);
+
+        frame.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    frame.dispose();
+                }
+            }
+        });
+
+        contactField.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent keyEvent) {
+                if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
+                    if (ModelUtil.hasLength(contactField.getText())) {
+                        ContactItem item = (ContactItem)contactMap.get(contactField.getText());
+                        if (item != null) {
+                            SparkManager.getChatManager().activateChat(item.getFullJID(), item.getNickname());
+                            frame.dispose();
+                        }
+                    }
+
+                }
+                else if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    frame.dispose();
+                }
+            }
+        });
+        contactField.setText(contact);
     }
 
 
