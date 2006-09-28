@@ -367,6 +367,22 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         catch (Exception e) {
             Log.error(e);
         }
+
+        /*
+           try {
+            JScrollBar vbar = textScroller.getVerticalScrollBar();
+            int whereWeAt = vbar.getValue() + vbar.getVisibleAmount();
+            if (whereWeAt < vbar.getMaximum() - 50) {
+
+            }
+            else {
+                vbar.setValue(vbar.getMaximum());
+            }
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+        */
     }
 
 

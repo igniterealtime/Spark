@@ -1283,7 +1283,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
             }
         };
-        viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
+        viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16));
         viewProfile.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
 
         popup.add(viewProfile);

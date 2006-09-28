@@ -252,6 +252,7 @@ public class SparkRes {
     public static final String IM_UNAVAILABLE_STALE_IMAGE = "IM_UNAVAILABLE_STALE_IMAGE";
     public static final String ICQ_TRANSPORT_ACTIVE_IMAGE = "ICQ_TRANSPORT_ACTIVE_IMAGE";
     public static final String ICQ_TRANSPORT_INACTIVE_IMAGE = "ICQ_TRANSPORT_INACTIVE_IMAGE";
+    public static final String PROFILE_IMAGE_16x16 = "PROFILE_IMAGE_16x16";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

@@ -253,7 +253,7 @@ public class VCardManager {
         mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
         dlg = new JFrame(Res.getString("title.view.profile.for", jid));
-        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE).getImage());
+        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
 
         dlg.pack();
         dlg.setSize(500, 400);
