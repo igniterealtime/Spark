@@ -257,8 +257,8 @@ public class ConferenceRooms extends JPanel implements ActionListener {
                 return;
             }
         }
-        catch (XMPPException e) {
-            return;
+        catch (Exception e) {
+           // Do not return
         }
 
         JiveTreeNode rootNode = (JiveTreeNode)serviceTree.getModel().getRoot();
