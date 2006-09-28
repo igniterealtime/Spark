@@ -30,7 +30,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -57,6 +56,7 @@ import java.util.Set;
  * Manager. You would use the UserManager to get visitors in a chat room or secondary agents.
  */
 public class UserManager {
+    private JWindow window;
 
     public UserManager() {
     }
@@ -406,30 +406,33 @@ public class UserManager {
 
             }
         }
+        if (window != null) {
+            window.dispose();
+        }
 
-         final JWindow frame = new JWindow(parent);
-        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts), frame);
+        window = new JWindow(parent);
+        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
 
 
         JPanel layoutPanel = new JPanel();
         layoutPanel.setLayout(new GridBagLayout());
-        frame.getContentPane().setLayout(new BorderLayout());
+        window.setLayout(new BorderLayout());
         JLabel enterLabel = new JLabel(Res.getString("label.contact.to.find"));
         enterLabel.setFont(new Font("dialog", Font.BOLD, 10));
         layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 200, 0));
         layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
-        frame.getContentPane().add(layoutPanel);
+        window.add(layoutPanel);
 
-        frame.pack();
+        window.pack();
 
-        frame.setLocationRelativeTo(parent);
-        frame.setVisible(true);
+        window.setLocationRelativeTo(parent);
+        window.setVisible(true);
 
-        frame.addKeyListener(new KeyAdapter() {
+        window.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    frame.dispose();
+                    window.dispose();
                 }
             }
         });
@@ -441,13 +444,13 @@ public class UserManager {
                         ContactItem item = (ContactItem)contactMap.get(contactField.getText());
                         if (item != null) {
                             SparkManager.getChatManager().activateChat(item.getFullJID(), item.getNickname());
-                            frame.dispose();
+                            window.dispose();
                         }
                     }
 
                 }
                 else if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    frame.dispose();
+                    window.dispose();
                 }
             }
         });

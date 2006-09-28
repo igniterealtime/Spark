@@ -24,7 +24,6 @@ import javax.swing.ListCellRenderer;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -42,10 +41,9 @@ public class JContactItemField extends JPanel {
     private JList list = new JList(model);
     private JWindow popup;
     private List<ContactItem> items;
+    private JWindow parentWindow;
 
-    private Window parentWindow;
-
-    public JContactItemField(List items, Window parentWindow) {
+    public JContactItemField(List items) {
         setLayout(new BorderLayout());
         this.items = items;
 
@@ -83,21 +81,14 @@ public class JContactItemField extends JPanel {
         });
 
 
-        list.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    textField.requestFocus();
-                }
-            }
-        });
-
-
-        popup = new JWindow(parentWindow);
+        popup = new JWindow();
 
 
         popup.getContentPane().add(new JScrollPane(list));
+        popup.setAlwaysOnTop(true);
 
         list.setCellRenderer(new PopupRenderer());
+
     }
 
     public void setItems(List list) {
@@ -133,6 +124,7 @@ public class JContactItemField extends JPanel {
             popup.toFront();
             popup.setVisible(true);
         }
+
     }
 
     /**
