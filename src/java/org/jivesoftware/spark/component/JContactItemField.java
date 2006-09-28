@@ -91,6 +91,10 @@ public class JContactItemField extends JPanel {
 
     }
 
+    public void dispose(){
+        popup.dispose();
+    }
+
     public void setItems(List list) {
         this.items = items;
     }
@@ -181,6 +185,18 @@ public class JContactItemField extends JPanel {
 
     public void setText(String text) {
         textField.setText(text);
+    }
+
+    public void focus(){
+        textField.requestFocus();
+    }
+
+    public JTextField getTextField(){
+        return textField;
+    }
+
+    public JWindow getPopup(){
+        return popup;
     }
 
     class PopupRenderer extends JLabel implements ListCellRenderer {

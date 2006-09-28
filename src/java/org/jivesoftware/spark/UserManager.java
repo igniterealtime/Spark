@@ -33,15 +33,19 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,7 +60,8 @@ import java.util.Set;
  * Manager. You would use the UserManager to get visitors in a chat room or secondary agents.
  */
 public class UserManager {
-    private JWindow window;
+
+    private Map parents = new HashMap();
 
     public UserManager() {
     }
@@ -387,7 +392,15 @@ public class UserManager {
         return tabIcon;
     }
 
-    public void searchContacts(String contact, JFrame parent) {
+    public void searchContacts(String contact, final JFrame parent) {
+        if (parents.get(parent) == null) {
+            parents.put(parent, parent.getGlassPane());
+        }
+
+        // Make sure we are using the default glass pane
+        final Component glassPane = (Component)parents.get(parent);
+        parent.setGlassPane(glassPane);
+
         final Map contactMap = new HashMap();
         final Set contacts = new HashSet();
 
@@ -406,36 +419,17 @@ public class UserManager {
 
             }
         }
-        if (window != null) {
-            window.dispose();
-        }
 
-        window = new JWindow(parent);
         final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
 
 
         JPanel layoutPanel = new JPanel();
         layoutPanel.setLayout(new GridBagLayout());
-        window.setLayout(new BorderLayout());
         JLabel enterLabel = new JLabel(Res.getString("label.contact.to.find"));
         enterLabel.setFont(new Font("dialog", Font.BOLD, 10));
         layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-        layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 200, 0));
+        layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
         layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
-        window.add(layoutPanel);
-
-        window.pack();
-
-        window.setLocationRelativeTo(parent);
-        window.setVisible(true);
-
-        window.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    window.dispose();
-                }
-            }
-        });
 
         contactField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent keyEvent) {
@@ -443,18 +437,49 @@ public class UserManager {
                     if (ModelUtil.hasLength(contactField.getText())) {
                         ContactItem item = (ContactItem)contactMap.get(contactField.getText());
                         if (item != null) {
+                            parent.setGlassPane(glassPane);
+                            parent.getGlassPane().setVisible(false);
+                            contactField.dispose();
                             SparkManager.getChatManager().activateChat(item.getFullJID(), item.getNickname());
-                            window.dispose();
                         }
                     }
 
                 }
                 else if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    window.dispose();
+                    parent.setGlassPane(glassPane);
+                    parent.getGlassPane().setVisible(false);
+                    contactField.dispose();
                 }
             }
         });
+
+
+        final JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setLayout(new GridBagLayout());
+        mainPanel.add(layoutPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 200, 0));
+        mainPanel.setOpaque(false);
+
         contactField.setText(contact);
+        parent.setGlassPane(mainPanel);
+        parent.getGlassPane().setVisible(true);
+        contactField.focus();
+
+        mainPanel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+                parent.setGlassPane(glassPane);
+                parent.getGlassPane().setVisible(false);
+                contactField.dispose();
+            }
+        });
+
+        parent.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent) {
+                parent.setGlassPane(glassPane);
+                parent.getGlassPane().setVisible(false);
+                contactField.dispose();
+                parent.removeWindowListener(this);
+            }
+        });
     }
 
 
