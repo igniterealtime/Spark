@@ -302,35 +302,36 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             final ContactGroup group = (ContactGroup)groupIterator.next();
             final ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
-                item.showUserGoingOfflineOnline();
-                item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
-                group.fireContactGroupUpdated();
-
                 int numberOfMillisecondsInTheFuture = 3000;
                 Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
-                Timer timer = new Timer();
 
+                // Only run through if the users presence was online before.
+                if (item.getPresence() != null) {
+                    item.showUserGoingOfflineOnline();
+                    item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+                    group.fireContactGroupUpdated();
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        public void run() {
+                            Roster roster = SparkManager.getConnection().getRoster();
+                            Presence userPresence = roster.getPresence(bareJID);
+                            if (userPresence != null) {
+                                return;
+                            }
 
-                timer.schedule(new TimerTask() {
-                    public void run() {
-                        Roster roster = SparkManager.getConnection().getRoster();
-                        Presence userPresence = roster.getPresence(bareJID);
-                        if (userPresence != null) {
-                            return;
+                            item.setPresence(null);
+
+                            // Check for ContactItemHandler.
+                            group.removeContactItem(item);
+                            checkGroup(group);
+
+                            if (offlineGroup.getContactItemByJID(item.getFullJID()) == null) {
+                                offlineGroup.addContactItem(item);
+                                offlineGroup.fireContactGroupUpdated();
+                            }
                         }
-
-                        item.setPresence(null);
-
-                        // Check for ContactItemHandler.
-                        group.removeContactItem(item);
-                        checkGroup(group);
-
-                        if (offlineGroup.getContactItemByJID(item.getFullJID()) == null) {
-                            offlineGroup.addContactItem(item);
-                            offlineGroup.fireContactGroupUpdated();
-                        }
-                    }
-                }, timeToRun);
+                    }, timeToRun);
+                }
             }
         }
     }

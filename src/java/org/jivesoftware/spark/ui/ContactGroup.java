@@ -706,6 +706,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             if (!canShowPopup) {
                 return;
             }
+
+            if(e == null){
+                return;
+            }
+
             int loc = list.locationToIndex(e.getPoint());
             Point point = list.indexToLocation(loc);
 

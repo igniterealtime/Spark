@@ -428,7 +428,6 @@ public class SparkTransferManager {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Thread.sleep(1000);
                     final Robot robot = new Robot();
                     Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
                     return robot.createScreenCapture(area);
