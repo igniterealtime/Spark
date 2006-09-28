@@ -27,7 +27,6 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +35,7 @@ import java.util.List;
  *
  * @author Derek DeMoro
  */
-public class JContactItemField extends JPanel implements KeyListener {
+public class JContactItemField extends JPanel {
 
     private JTextField textField = new JTextField();
     private DefaultListModel model = new DefaultListModel();
@@ -84,8 +83,13 @@ public class JContactItemField extends JPanel implements KeyListener {
         });
 
 
-        list.addKeyListener(this);
-        addKeyListener(this);
+        list.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    textField.requestFocus();
+                }
+            }
+        });
 
 
         popup = new JWindow(parentWindow);
@@ -228,15 +232,5 @@ public class JContactItemField extends JPanel implements KeyListener {
         }
     }
 
-    public void keyTyped(KeyEvent keyEvent) {
-    }
 
-    public void keyPressed(KeyEvent keyEvent) {
-    }
-
-    public void keyReleased(KeyEvent keyEvent) {
-        if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-           textField.requestFocus();
-        }
-    }
 }
