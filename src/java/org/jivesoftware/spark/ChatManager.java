@@ -11,24 +11,16 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
+import org.jivesoftware.smackx.MessageEventRequestListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactItemHandler;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.MessageFilter;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -38,15 +30,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import javax.swing.*;
+import java.util.*;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -97,19 +82,11 @@ public class ChatManager implements MessageEventNotificationListener {
         // Add a Message Handler
 
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
-
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(final Packet packet) {
-                try {
-                    if (customList.contains(StringUtils.parseBareAddress(packet.getFrom()))) {
-                        cancelledNotification(packet.getFrom(), "");
-                    }
-                }
-                catch (Exception e) {
-                    Log.error(e);
-                }
-            }
-        }, new PacketTypeFilter(Message.class));
+        // Add message event request listener
+        MessageEventRequestListener messageEventRequestListener =
+                new ChatMessageEventRequestListener();
+        SparkManager.getMessageEventManager().
+                addMessageEventRequestListener(messageEventRequestListener);
     }
 
 
@@ -472,5 +449,33 @@ public class ChatManager implements MessageEventNotificationListener {
                 customList.remove(StringUtils.parseBareAddress(from));
             }
         });
+    }
+
+        /**
+     * Internal implementation of the MessageEventRequestListener.
+     */
+    private class ChatMessageEventRequestListener implements MessageEventRequestListener {
+        public void deliveredNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
+        }
+
+        public void displayedNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
+        }
+
+        public void composingNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
+            ChatRoom chatRoom;
+            try {
+                chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+            }
+            catch (ChatRoomNotFoundException e) {
+                return;
+            }
+            if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                ((ChatRoomImpl) chatRoom).setSendTypingNotification(true);
+            }
+        }
+
+        public void offlineNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
+            // The XMPP server should take care of this request. Do nothing.
+        }
     }
 }

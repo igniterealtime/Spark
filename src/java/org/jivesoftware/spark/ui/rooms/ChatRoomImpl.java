@@ -24,33 +24,21 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.MessageEventRequestListener;
+import org.jivesoftware.smackx.packet.MessageEvent;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.MessageEventListener;
-import org.jivesoftware.spark.ui.RosterDialog;
-import org.jivesoftware.spark.ui.VCardPanel;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
-
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -66,7 +54,6 @@ public class ChatRoomImpl extends ChatRoom {
     private String tabTitle;
     private String participantJID;
     private String participantNickname;
-    private MessageEventRequestListener messageEventRequestListener;
 
     boolean isOnline = true;
 
@@ -176,6 +163,9 @@ public class ChatRoomImpl extends ChatRoom {
 
         typingTimer = new Timer(2000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if(!sendTypingNotification) {
+                    return;
+                }
                 long now = System.currentTimeMillis();
                 if (now - lastTypedCharTime > 2000) {
                     if (!sendNotification) {
@@ -184,19 +174,11 @@ public class ChatRoomImpl extends ChatRoom {
 
                         sendNotification = true;
                     }
-
-
                 }
             }
         });
 
         typingTimer.start();
-
-        // Add message event request listener
-        messageEventRequestListener = new ChatMessageEventRequestListener();
-        SparkManager.getMessageEventManager().addMessageEventRequestListener(messageEventRequestListener);
-
-
         lastActivity = System.currentTimeMillis();
 
         // Add VCard Panel
@@ -208,11 +190,10 @@ public class ChatRoomImpl extends ChatRoom {
     public void closeChatRoom() {
         super.closeChatRoom();
 
-        SparkManager.getMessageEventManager().removeMessageEventRequestListener(messageEventRequestListener);
-
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removePacketListener(this);
+        typingTimer.stop();
     }
 
     public void sendMessage() {
@@ -278,8 +259,9 @@ public class ChatRoomImpl extends ChatRoom {
         getChatInputEditor().requestFocusInWindow();
         scrollToBottom();
 
-
-        MessageEventManager.addNotificationsRequests(message, true, true, true, true);
+        // No need to request displayed or delivered as we aren't doing anything with this
+        // information.
+        MessageEventManager.addNotificationsRequests(message, true, false, false, true);
 
         // Send the message that contains the notifications request
         try {
@@ -459,14 +441,15 @@ public class ChatRoomImpl extends ChatRoom {
     public void insertUpdate(DocumentEvent e) {
         checkForText(e);
 
+        if (!sendTypingNotification) {
+            return;
+        }
         lastTypedCharTime = System.currentTimeMillis();
 
         // If the user pauses for more than two seconds, send out a new notice.
         if (sendNotification) {
             try {
-                if (sendTypingNotification) {
-                    SparkManager.getMessageEventManager().sendComposingNotification(getParticipantJID(), threadID);
-                }
+                SparkManager.getMessageEventManager().sendComposingNotification(getParticipantJID(), threadID);
                 sendNotification = false;
             }
             catch (Exception exception) {
@@ -478,11 +461,34 @@ public class ChatRoomImpl extends ChatRoom {
     public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
+        MessageEvent messageEvent = (MessageEvent) message.getExtension("x", "jabber:x:event");
+        if(messageEvent != null) {
+            checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
+        }
 
         getTranscriptWindow().insertOthersMessage(participantNickname, message);
 
         // Set the participant jid to their full JID.
         participantJID = message.getFrom();
+    }
+
+    private void checkEvents(String from, String packetID, MessageEvent messageEvent) {
+        if(messageEvent.isDelivered() || messageEvent.isDisplayed()) {
+            // Create the message to send
+            Message msg = new Message(from);
+            // Create a MessageEvent Package and add it to the message
+            MessageEvent event = new MessageEvent();
+            if (messageEvent.isDelivered()) {
+                event.setDelivered(true);
+            }
+            if (messageEvent.isDisplayed()) {
+                event.setDisplayed(true);
+            }
+            event.setPacketID(packetID);
+            msg.addExtension(event);
+            // Send the packet
+            SparkManager.getConnection().sendPacket(msg);
+        }
     }
 
     public void addMessageEventListener(MessageEventListener listener) {
@@ -511,28 +517,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
     }
 
-    /**
-     * Internal implementation of the MessageEventRequestListener.
-     */
-    private class ChatMessageEventRequestListener implements MessageEventRequestListener {
-        public void deliveredNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-            // DefaultMessageEventRequestListener automatically responds that the message was delivered when receives this request
-            messageEventManager.sendDeliveredNotification(from, packetID);
-        }
 
-        public void displayedNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-            // Send to the message's sender that the message was displayed
-            messageEventManager.sendDisplayedNotification(from, packetID);
-        }
-
-        public void composingNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-            sendTypingNotification = true;
-        }
-
-        public void offlineNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-            // The XMPP server should take care of this request. Do nothing.
-        }
-    }
 
     /**
      * Show the typing notification.
@@ -579,5 +564,7 @@ public class ChatRoomImpl extends ChatRoom {
         this.iconHandler = iconHandler;
     }
 
-
+    public void setSendTypingNotification(boolean isSendTypingNotification) {
+        this.sendTypingNotification = isSendTypingNotification;
+    }
 }
