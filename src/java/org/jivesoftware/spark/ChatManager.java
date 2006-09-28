@@ -305,6 +305,14 @@ public class ChatManager implements MessageEventNotificationListener {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
+        try {
+            if (customList.contains(StringUtils.parseBareAddress(message.getFrom()))) {
+                cancelledNotification(message.getFrom(), "");
+            }
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
         while (filters.hasNext()) {
             ((MessageFilter)filters.next()).filterIncoming(room, message);
         }
