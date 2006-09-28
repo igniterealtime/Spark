@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -406,10 +407,10 @@ public class UserManager {
             }
         }
 
-        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
+         final JWindow frame = new JWindow(parent);
+        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts), frame);
 
-        final JFrame frame = new JFrame();
-        frame.setUndecorated(true);
+
         JPanel layoutPanel = new JPanel();
         layoutPanel.setLayout(new GridBagLayout());
         frame.getContentPane().setLayout(new BorderLayout());
