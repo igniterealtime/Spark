@@ -281,7 +281,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
             final DefaultTreeModel model = (DefaultTreeModel)serviceTree.getModel();
             model.nodeStructureChanged(node);
             serviceTree.expandPath(rootPath);
-            roomsTable.setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)), selectedRow, 0);
+            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)), selectedRow, 0);
             addBookmarkUI(false);
         }
         else {
@@ -290,7 +290,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
             JiveTreeNode node = (JiveTreeNode)path.getLastPathComponent();
             final DefaultTreeModel model = (DefaultTreeModel)serviceTree.getModel();
             model.removeNodeFromParent(node);
-            roomsTable.setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
+            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
             addBookmarkUI(true);
         }
     }
