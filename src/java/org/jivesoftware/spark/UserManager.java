@@ -28,12 +28,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
@@ -54,6 +48,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Handles all users in the agent application. Each user or chatting user can be referenced from the User
@@ -449,6 +449,22 @@ public class UserManager {
                     parent.setGlassPane(glassPane);
                     parent.getGlassPane().setVisible(false);
                     contactField.dispose();
+                }
+            }
+        });
+
+        contactField.getList().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    if (ModelUtil.hasLength(contactField.getText())) {
+                        ContactItem item = (ContactItem)contactMap.get(contactField.getText());
+                        if (item != null) {
+                            parent.setGlassPane(glassPane);
+                            parent.getGlassPane().setVisible(false);
+                            contactField.dispose();
+                            SparkManager.getChatManager().activateChat(item.getFullJID(), item.getNickname());
+                        }
+                    }
                 }
             }
         });

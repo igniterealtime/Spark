@@ -18,6 +18,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -92,7 +93,8 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground(Color.white);
 
-        final RolloverButton addButton = new RolloverButton("Add Task", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
+        final RolloverButton addButton = new RolloverButton("Add Task...");
+        addButton.setForeground(Color.gray);
         mainPanel.add(addButton);
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -208,16 +210,19 @@ public class ScratchPadPlugin implements Plugin {
 
 
         final JTextPane pane = new JTextPane();
+        pane.setFont(new Font("Dialog", Font.PLAIN, 12));
 
         pane.setOpaque(false);
 
         final JScrollPane scrollPane = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(null);
+
         pane.setText(text);
         final RolloverButton button = new RolloverButton("Save", null);
         final RolloverButton cancelButton = new RolloverButton("Cancel", null);
+        ResourceUtils.resButton(button, "&Save");
+        ResourceUtils.resButton(cancelButton, "&Cancel");
 
         final JFrame frame = new JFrame("Notes");
 
