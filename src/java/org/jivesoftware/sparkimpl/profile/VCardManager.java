@@ -563,6 +563,7 @@ public class VCardManager {
             catch (XMPPException e) {
                 Log.warning("Unable to load vcard for " + jid, e);
                 vcard.setError(new XMPPError(409));
+                return vcard;
             }
         }
         return (VCard)vcardMap.get(jid);
