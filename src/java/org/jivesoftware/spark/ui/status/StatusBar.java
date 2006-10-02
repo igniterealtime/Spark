@@ -13,10 +13,8 @@ package org.jivesoftware.spark.ui.status;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.PresenceListener;
@@ -109,8 +107,6 @@ public class StatusBar extends JPanel {
 
 
         setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
-
-        loadVCard();
 
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
@@ -407,21 +403,14 @@ public class StatusBar extends JPanel {
     }
 
 
-    private void loadVCard() {
-        final VCard vCard = new VCard();
-
+    public void loadVCard() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
-                try {
-                    vCard.load(SparkManager.getConnection());
-                }
-                catch (XMPPException e) {
-                    vCard.setError(new XMPPError(404));
-                }
-                return vCard;
+                return SparkManager.getVCardManager().getVCard();
             }
 
             public void finished() {
+                final VCard vCard = (VCard)get();
                 populateWithVCardInfo(vCard);
             }
         };

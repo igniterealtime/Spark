@@ -77,7 +77,7 @@ import javax.swing.UIManager;
  */
 public class Workspace extends JPanel implements PacketListener {
     private SparkTabbedPane workspacePane;
-    private final StatusBar statusBox = new StatusBar();
+    private StatusBar statusBox;
     private ContactList contactList;
     private Conferences conferences;
 
@@ -163,6 +163,8 @@ public class Workspace extends JPanel implements PacketListener {
         alerts.getTitlePane().setVisible(false);
         alerts.setVisible(false);
 
+        statusBox = new StatusBar();
+
         // Build default workspace
         this.setLayout(new GridBagLayout());
         add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 4, 4, 4), 0, 0));
@@ -194,6 +196,9 @@ public class Workspace extends JPanel implements PacketListener {
         // Initialize Contact List
         contactList = new ContactList();
         contactList.initialize();
+
+        // Load VCard information for status box
+        statusBox.loadVCard();
 
         conferences = new Conferences();
         conferences.initialize();
