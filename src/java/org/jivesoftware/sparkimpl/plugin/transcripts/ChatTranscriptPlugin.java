@@ -376,6 +376,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 }
 
                 window.setText(buf.toString());
+                window.setEditable(false);
 
                 // Handle no history
                 if (transcript.getMessages().size() == 0) {

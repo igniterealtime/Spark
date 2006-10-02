@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.Action;
 
 /**
  * Button UI for handling of rollover buttons.
@@ -33,6 +34,11 @@ public class RolloverButton extends JButton {
 
     public RolloverButton(String text) {
         super(text);
+        decorate();
+    }
+
+    public RolloverButton(Action action){
+        super(action);
         decorate();
     }
 
