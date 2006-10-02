@@ -251,7 +251,7 @@ public class Workspace extends JPanel implements PacketListener {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(5000);
                 }
                 catch (InterruptedException e) {
                     Log.error("Unable to sleep thread.", e);

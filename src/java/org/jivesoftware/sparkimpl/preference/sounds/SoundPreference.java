@@ -20,14 +20,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -38,6 +30,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 /**
  * Preferences to handle Sounds played within Spark.
  *
@@ -45,14 +45,14 @@ import java.io.IOException;
  */
 public class SoundPreference implements Preference {
 
-    private XStream xstream = new XStream();
+    private XStream xstream;
     private SoundPreferences preferences;
     private SoundPanel soundPanel;
 
     public static String NAMESPACE = "Sounds";
 
     public SoundPreference() {
-        xstream.alias("sounds", SoundPreferences.class);
+
     }
 
 
@@ -97,7 +97,7 @@ public class SoundPreference implements Preference {
             File settingsFile = getSoundSettingsFile();
             try {
                 FileReader reader = new FileReader(settingsFile);
-                preferences = (SoundPreferences)xstream.fromXML(reader);
+                preferences = (SoundPreferences)getXStream().fromXML(reader);
             }
             catch (Exception e) {
                 Log.error("Error loading Sound Preferences.", e);
@@ -343,7 +343,7 @@ public class SoundPreference implements Preference {
     private void saveSoundsFile() {
         try {
             FileWriter writer = new FileWriter(getSoundSettingsFile());
-            xstream.toXML(preferences, writer);
+            getXStream().toXML(preferences, writer);
         }
         catch (Exception e) {
             Log.error("Error saving sound settings.", e);
@@ -359,6 +359,14 @@ public class SoundPreference implements Preference {
 
     public void shutdown() {
 
+    }
+
+    private XStream getXStream() {
+        if (xstream == null) {
+            xstream = new XStream();
+            xstream.alias("sounds", SoundPreferences.class);
+        }
+        return xstream;
     }
 
 }
