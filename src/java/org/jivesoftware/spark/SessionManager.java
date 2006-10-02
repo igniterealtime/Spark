@@ -111,6 +111,7 @@ public final class SessionManager implements ConnectionListener {
         }
         catch (XMPPException e) {
             Log.error(e);
+            discoverItems = new DiscoverItems();
         }
     }
 
