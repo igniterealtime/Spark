@@ -116,7 +116,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../smack/source" />
+          <root url="file://C:/smack/source" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -127,7 +127,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../smack/source" />
+          <root url="file://C:/smack/source" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -179,7 +179,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../smack/source" />
+          <root url="file://C:/smack/source" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

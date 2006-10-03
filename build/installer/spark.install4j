@@ -174,8 +174,6 @@
   </mediaSets>
   <buildIds buildAll="false">
     <mediaSet refId="2" />
-    <mediaSet refId="13" />
-    <mediaSet refId="19" />
   </buildIds>
 </install4j>
 
