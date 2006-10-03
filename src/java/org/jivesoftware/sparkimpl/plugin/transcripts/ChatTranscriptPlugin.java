@@ -403,10 +403,10 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     /**
      * Sort HistoryMessages by date.
      */
-    final Comparator<HistoryMessage> dateComparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            final HistoryMessage historyMessageOne = (HistoryMessage)o1;
-            final HistoryMessage historyMessageTwo = (HistoryMessage)o2;
+    final Comparator dateComparator = new Comparator() {
+        public int compare(Object messageOne, Object messageTwo) {
+            final HistoryMessage historyMessageOne = (HistoryMessage)messageOne;
+            final HistoryMessage historyMessageTwo = (HistoryMessage)messageTwo;
 
             long time1 = historyMessageOne.getDate().getTime();
             long time2 = historyMessageTwo.getDate().getTime();
