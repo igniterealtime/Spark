@@ -25,7 +25,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.ConfirmDialog;
@@ -40,6 +39,13 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -56,13 +62,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TimerTask;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.text.html.HTMLEditorKit;
 
 public class CheckUpdates {
     private String mainUpdateURL;
@@ -406,8 +405,8 @@ public class CheckUpdates {
 
             ConfirmDialog confirm = new ConfirmDialog();
             confirm.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("title.new.version.available"),
-                Res.getString("message.new.spark.available", filename), Res.getString("yes"), Res.getString("no"),
-                null);
+                    Res.getString("message.new.spark.available", filename), Res.getString("yes"), Res.getString("no"),
+                    null);
             confirm.setDialogSize(400, 300);
             confirm.setConfirmListener(new ConfirmListener() {
                 public void yesOption() {
@@ -513,9 +512,9 @@ public class CheckUpdates {
             return false;
         }
 
-        ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(con);
+
         try {
-            DiscoverItems items = disco.discoverItems(con.getServiceName());
+            DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
             Iterator iter = items.getItems();
             while (iter.hasNext()) {
                 DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
@@ -524,7 +523,7 @@ public class CheckUpdates {
                 }
             }
         }
-        catch (XMPPException e) {
+        catch (Exception e) {
             Log.error(e);
         }
 
@@ -542,8 +541,8 @@ public class CheckUpdates {
     private void promptForInstallation(final File downloadedFile, String title, String message) {
         ConfirmDialog confirm = new ConfirmDialog();
         confirm.showConfirmDialog(SparkManager.getMainWindow(), title,
-            message, Res.getString("yes"), Res.getString("no"),
-            null);
+                message, Res.getString("yes"), Res.getString("no"),
+                null);
         confirm.setConfirmListener(new ConfirmListener() {
             public void yesOption() {
                 try {

@@ -104,7 +104,7 @@ public class GatewayPlugin implements Plugin {
     public void populateTransports(XMPPConnection con) throws Exception {
         ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(con);
 
-        DiscoverItems discoItems = manager.discoverItems(con.getServiceName());
+        DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
 
         DiscoverItems.Item item;
         DiscoverInfo info;
