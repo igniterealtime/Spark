@@ -85,6 +85,10 @@ public class TimeTrackingLabel extends JLabel {
         timer.start();
     }
 
+    public void resetTime() {
+        startTime = new Date();
+    }
+
     /**
      * Returns the total length of the session in milliseconds.
      *
