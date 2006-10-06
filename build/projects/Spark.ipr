@@ -405,6 +405,7 @@
       <module fileurl="file://C:/com/plugins/fastpath/Fastpath.iml" filepath="C:/com/plugins/fastpath/Fastpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
       <module fileurl="file://C:/code/sparkphone/client/SparkPhone.iml" filepath="C:/code/sparkphone/client/SparkPhone.iml" />
+      <module fileurl="file://C:/code/spark/client/src/plugins/salesforce/salesforce.iml" filepath="C:/code/spark/client/src/plugins/salesforce/salesforce.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="JDK 1.5.0" />
