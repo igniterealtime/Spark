@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
@@ -36,6 +36,16 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
@@ -50,16 +60,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such as agents and room information.
@@ -318,6 +318,10 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     public void userHasLeft(ChatRoom room, String userid) {
+        if (room != groupChatRoom) {
+            return;
+        }
+
         int index = getIndex(userid);
 
         if (index != -1) {
@@ -504,7 +508,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         if (isMe) {
             Action changeNicknameAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                    String newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("label.new.nickname") +":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
+                    String newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("label.new.nickname") + ":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
                     if (ModelUtil.hasLength(newNickname)) {
                         while (true) {
                             newNickname = newNickname.trim();

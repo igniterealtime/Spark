@@ -14,12 +14,21 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,14 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class AccountCreationWizard extends JPanel {
     private JLabel usernameLabel = new JLabel();
@@ -111,7 +112,7 @@ public class AccountCreationWizard extends JPanel {
     }
 
     public String getUsername() {
-        return usernameField.getText();
+        return StringUtils.escapeNode(usernameField.getText().toLowerCase());
     }
 
     public String getPassword() {
@@ -280,7 +281,7 @@ public class AccountCreationWizard extends JPanel {
             }
         }
 
-        if(con != null){
+        if (con != null) {
             con.connect();
         }
         return con;
