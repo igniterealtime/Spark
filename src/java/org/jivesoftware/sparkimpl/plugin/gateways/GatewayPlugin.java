@@ -39,15 +39,15 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
 
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -55,7 +55,10 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class GatewayPlugin implements Plugin {
+
+    /** Defined Static Variable for Gateways. **/
     public static final String GATEWAY = "gateway";
+
     private Map<Transport, RolloverButton> uiMap = new HashMap<Transport, RolloverButton>();
 
 
@@ -77,8 +80,8 @@ public class GatewayPlugin implements Plugin {
             }
 
             public void finished() {
-                Boolean b = (Boolean)get();
-                if (!b) {
+                Boolean transportExists = (Boolean)get();
+                if (!transportExists) {
                     return;
                 }
 
@@ -101,8 +104,8 @@ public class GatewayPlugin implements Plugin {
     public void uninstall() {
     }
 
-    public void populateTransports(XMPPConnection con) throws Exception {
-        ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(con);
+    private void populateTransports(XMPPConnection con) throws Exception {
+        ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(con);
 
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
 
@@ -114,7 +117,7 @@ public class GatewayPlugin implements Plugin {
         while (items.hasNext()) {
             item = (Item)items.next();
             try {
-                info = manager.discoverInfo(item.getEntityID());
+                info = discoveryManager.discoverInfo(item.getEntityID());
             }
             catch (XMPPException e) {
                 Log.error(e);
@@ -125,19 +128,19 @@ public class GatewayPlugin implements Plugin {
                 identity = (Identity)identities.next();
 
                 if (identity.getCategory().equalsIgnoreCase(GATEWAY)) {
-                    if (item.getEntityID().startsWith("aim.")) {
+                    if ("aim".equals(identity.getType())) {
                         AIMTransport aim = new AIMTransport(item.getEntityID());
                         TransportManager.addTransport(item.getEntityID(), aim);
                     }
-                    else if (item.getEntityID().startsWith("msn.")) {
+                    else if ("msn".equals(identity.getType())) {
                         MSNTransport msn = new MSNTransport(item.getEntityID());
                         TransportManager.addTransport(item.getEntityID(), msn);
                     }
-                    else if (item.getEntityID().startsWith("yahoo.")) {
+                    else if ("yahoo".equals(identity.getType())) {
                         YahooTransport yahoo = new YahooTransport(item.getEntityID());
                         TransportManager.addTransport(item.getEntityID(), yahoo);
                     }
-                    else if (item.getEntityID().startsWith("icq.")) {
+                    else if ("icq".equals(identity.getType())) {
                         ICQTransport icq = new ICQTransport(item.getEntityID());
                         TransportManager.addTransport(item.getEntityID(), icq);
                     }
@@ -271,7 +274,6 @@ public class GatewayPlugin implements Plugin {
             }
 
         });
-
 
 
     }
