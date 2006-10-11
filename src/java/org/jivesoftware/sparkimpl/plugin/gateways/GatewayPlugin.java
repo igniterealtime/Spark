@@ -27,10 +27,10 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -41,15 +41,15 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
 
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -70,7 +70,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         SwingWorker thread = new SwingWorker() {
             public Object construct() {
                 try {
-                    Thread.sleep(10000);
                     populateTransports(SparkManager.getConnection());
                     for (final Transport transport : TransportManager.getTransports()) {
                         addTransport(transport);
@@ -238,19 +237,21 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
         // Iterate through Contacts and check for
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        for(ContactGroup contactGroup : contactList.getContactGroups()){
-            for(ContactItem contactItem : contactGroup.getContactItems()){
+        for (ContactGroup contactGroup : contactList.getContactGroups()) {
+            for (ContactItem contactItem : contactGroup.getContactItems()) {
                 Presence presence = contactItem.getPresence();
-                boolean handle = handlePresence(contactItem, presence);
-                if(handle){
-                    contactGroup.fireContactGroupUpdated();
+                if (presence != null) {
+                    String domain = StringUtils.parseServer(presence.getFrom());
+                    Transport transport = TransportManager.getTransport(domain);
+                    if (transport != null) {
+                        handlePresence(contactItem, presence);
+                        contactGroup.fireContactGroupUpdated();
+                    }
                 }
             }
         }
-
-
-
     }
+
 
     public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence != null) {
