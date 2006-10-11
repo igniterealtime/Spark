@@ -57,7 +57,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 public class StatusBar extends JPanel {
-    private List dndList = new ArrayList();
+    private List<StatusItem> statusList = new ArrayList<StatusItem>();
 
     private JLabel imageLabel = new JLabel();
     private JLabel nicknameLabel = new JLabel();
@@ -160,11 +160,8 @@ public class StatusBar extends JPanel {
             custom = new ArrayList();
         }
 
-        // Build menu from dndList
-        Iterator statusIterator = dndList.iterator();
-        while (statusIterator.hasNext()) {
-            final StatusItem statusItem = (StatusItem)statusIterator.next();
-
+        // Build menu from StatusList
+        for(final StatusItem statusItem : statusList){
             final Action statusAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent actionEvent) {
                     final String text = statusItem.getText();
@@ -334,12 +331,12 @@ public class StatusBar extends JPanel {
         StatusItem dnd = new StatusItem(new Presence(Presence.Type.available, "Do Not Disturb", -1, Presence.Mode.dnd), dndIcon);
         StatusItem extendedAway = new StatusItem(new Presence(Presence.Type.available, "Extended Away", -1, Presence.Mode.xa), awayIcon);
 
-        dndList.add(freeToChat);
-        dndList.add(online);
-        dndList.add(away);
-        dndList.add(phone);
-        dndList.add(extendedAway);
-        dndList.add(dnd);
+        statusList.add(freeToChat);
+        statusList.add(online);
+        statusList.add(away);
+        statusList.add(phone);
+        statusList.add(extendedAway);
+        statusList.add(dnd);
 
         // Set default presence icon (Avaialble)
         statusPanel.setIcon(availableIcon);
@@ -351,7 +348,7 @@ public class StatusBar extends JPanel {
             return null;
         }
 
-        Iterator statusItemIterator = dndList.iterator();
+        Iterator statusItemIterator = statusList.iterator();
         while (statusItemIterator.hasNext()) {
             StatusItem item = (StatusItem)statusItemIterator.next();
 
@@ -363,7 +360,7 @@ public class StatusBar extends JPanel {
             }
         }
 
-        statusItemIterator = dndList.iterator();
+        statusItemIterator = statusList.iterator();
         while (statusItemIterator.hasNext()) {
             StatusItem item = (StatusItem)statusItemIterator.next();
 
@@ -377,7 +374,7 @@ public class StatusBar extends JPanel {
     }
 
     public Collection getStatusList() {
-        return dndList;
+        return statusList;
     }
 
     public Presence getPresence() {
@@ -385,7 +382,7 @@ public class StatusBar extends JPanel {
     }
 
     public StatusItem getStatusItem(String label) {
-        Iterator iter = dndList.iterator();
+        Iterator iter = statusList.iterator();
         while (iter.hasNext()) {
             StatusItem item = (StatusItem)iter.next();
             if (item.getText().equals(label)) {

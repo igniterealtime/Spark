@@ -165,7 +165,7 @@ public class PluginManager implements MainWindowListener {
         // For development purposes, load the plugin specified by -Dplugin=...
         String plugin = System.getProperty("plugin");
         if (plugin != null) {
-            StringTokenizer st = new StringTokenizer(plugin, ", ", false);
+            final StringTokenizer st = new StringTokenizer(plugin, ",", false);
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
                 File pluginXML = new File(token);
