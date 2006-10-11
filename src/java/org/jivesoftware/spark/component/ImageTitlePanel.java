@@ -10,6 +10,8 @@
 
 package org.jivesoftware.spark.component;
 
+import org.jivesoftware.resource.Default;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -42,13 +44,12 @@ public class ImageTitlePanel extends JPanel {
      * @param title the title to use for this label.
      */
     public ImageTitlePanel(String title) {
-        ImageIcon icons = new ImageIcon(getClass().getResource("/images/header-stretch.gif"));
-        backgroundImage = icons.getImage();
+        backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
         init();
 
         titleLabel.setText(title);
-        titleLabel.setForeground(Color.white);
+
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
     }
 
@@ -56,12 +57,11 @@ public class ImageTitlePanel extends JPanel {
      * Creates a new ImageTitlePanel object.
      */
     public ImageTitlePanel() {
-        ImageIcon icons = new ImageIcon(getClass().getResource("/images/header-stretch.gif"));
-        backgroundImage = icons.getImage();
+        backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
         init();
 
-        titleLabel.setForeground(Color.white);
+     
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
     }
 
