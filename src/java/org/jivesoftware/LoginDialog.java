@@ -592,7 +592,8 @@ public final class LoginDialog {
                     }
 
                     if (config != null) {
-                        //config.setCompressionEnabled(true);
+                        boolean compressionEnabled = localPref.isCompressionEnabled();
+                        config.setCompressionEnabled(compressionEnabled);
                         connection = new XMPPConnection(config);
                     }
 

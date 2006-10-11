@@ -74,6 +74,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
     private JCheckBox useSSLBox = new JCheckBox();
     private JLabel sslLabel = new JLabel();
 
+    private JCheckBox compressionBox = new JCheckBox();
+
     private LocalPreferences localPreferences;
 
     private ProxyPanel proxyPanel;
@@ -114,10 +116,11 @@ public class LoginSettingDialog implements PropertyChangeListener {
         ResourceUtils.resLabel(portLabel, portField, Res.getString("label.port"));
         ResourceUtils.resLabel(timeOutLabel, timeOutField, Res.getString("label.response.timeout"));
         ResourceUtils.resButton(autoLoginBox, Res.getString("label.auto.login"));
-        ResourceUtils.resLabel(sslLabel, useSSLBox, Res.getString("label.old.ssl"));
+        ResourceUtils.resButton(useSSLBox, Res.getString("label.old.ssl"));
         ResourceUtils.resLabel(xmppHostLabel, xmppHostField, Res.getString("label.host"));
         ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
         ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
+        ResourceUtils.resButton(compressionBox, "Use Co&mpression");
 
         inputPanel.add(autoDiscoverBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -129,6 +132,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
         autoDiscoverBox.setSelected(!localPreferences.isHostAndPortConfigured());
         updateAutoDiscovery();
+
+        compressionBox.setSelected(localPreferences.isCompressionEnabled());
 
         final JPanel connectionPanel = new JPanel();
         connectionPanel.setLayout(new GridBagLayout());
@@ -148,8 +153,9 @@ public class LoginSettingDialog implements PropertyChangeListener {
         inputPanel.add(timeOutLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         inputPanel.add(timeOutField, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
-        inputPanel.add(sslLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
-        inputPanel.add(useSSLBox, new GridBagConstraints(1, 4, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        inputPanel.add(useSSLBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        inputPanel.add(compressionBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Create the title panel for this dialog
         titlePanel = new TitlePanel("Advanced Connection Preferences", "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
@@ -232,6 +238,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 localPreferences.setXmppPort(Integer.parseInt(port));
                 localPreferences.setSSL(useSSLBox.isSelected());
                 localPreferences.setXmppHost(xmppHostField.getText());
+                localPreferences.setCompressionEnabled(compressionBox.isSelected());
+
                 optionsDialog.setVisible(false);
                 localPreferences.setResource(resource);
                 proxyPanel.save();

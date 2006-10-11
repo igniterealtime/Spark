@@ -447,6 +447,14 @@ public class LocalPreferences {
         return getBoolean("startOnStartup", false);
     }
 
+    public void setCompressionEnabled(boolean on) {
+        setBoolean("compressionOn", on);
+    }
+
+    public boolean isCompressionEnabled() {
+        return getBoolean("compressionOn", false);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
