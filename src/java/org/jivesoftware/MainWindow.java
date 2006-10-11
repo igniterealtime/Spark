@@ -258,9 +258,6 @@ public final class MainWindow extends JFrame implements ActionListener {
             }
         }
 
-        // Set auto-login to false
-        SettingsManager.getLocalPreferences().setAutoLogin(false);
-
         // Notify all MainWindowListeners
         try {
             fireWindowShutdown();
