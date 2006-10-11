@@ -62,7 +62,7 @@ public class LocalPreferences {
      * @return the smack timeout for requests.
      */
     public int getTimeOut() {
-        return Integer.parseInt(props.getProperty("timeout", "5"));
+        return Integer.parseInt(props.getProperty("timeout", "10"));
     }
 
     /**
@@ -120,7 +120,7 @@ public class LocalPreferences {
      * @return the number of minutes before checking for IDLE computer.
      */
     public int getIdleTime() {
-        return Integer.parseInt(props.getProperty("idleTime", "1"));
+        return Integer.parseInt(props.getProperty("idleTime", "3"));
     }
 
     /**
