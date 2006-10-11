@@ -29,6 +29,8 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -54,9 +56,11 @@ import java.util.Map;
  *
  * @author Derek DeMoro
  */
-public class GatewayPlugin implements Plugin {
+public class GatewayPlugin implements Plugin, ContactItemHandler {
 
-    /** Defined Static Variable for Gateways. **/
+    /**
+     * Defined Static Variable for Gateways. *
+     */
     public static final String GATEWAY = "gateway";
 
     private Map<Transport, RolloverButton> uiMap = new HashMap<Transport, RolloverButton>();
@@ -66,6 +70,7 @@ public class GatewayPlugin implements Plugin {
         SwingWorker thread = new SwingWorker() {
             public Object construct() {
                 try {
+                    Thread.sleep(10000);
                     populateTransports(SparkManager.getConnection());
                     for (final Transport transport : TransportManager.getTransports()) {
                         addTransport(transport);
@@ -229,52 +234,64 @@ public class GatewayPlugin implements Plugin {
 
 
         ChatManager chatManager = SparkManager.getChatManager();
-        chatManager.addContactItemHandler(new ContactItemHandler() {
-            public boolean handlePresence(ContactItem item, Presence presence) {
-                if (presence != null) {
-                    String domain = StringUtils.parseServer(presence.getFrom());
-                    Transport transport = TransportManager.getTransport(domain);
-                    if (transport != null) {
-                        if (presence.getType() == Presence.Type.available) {
-                            item.setSideIcon(transport.getIcon());
-                        }
-                        else {
-                            item.setSideIcon(transport.getInactiveIcon());
-                        }
-                        return false;
-                    }
-                }
+        chatManager.addContactItemHandler(this);
 
+        // Iterate through Contacts and check for
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        for(ContactGroup contactGroup : contactList.getContactGroups()){
+            for(ContactItem contactItem : contactGroup.getContactItems()){
+                Presence presence = contactItem.getPresence();
+                boolean handle = handlePresence(contactItem, presence);
+                if(handle){
+                    contactGroup.fireContactGroupUpdated();
+                }
+            }
+        }
+
+
+
+    }
+
+    public boolean handlePresence(ContactItem item, Presence presence) {
+        if (presence != null) {
+            String domain = StringUtils.parseServer(presence.getFrom());
+            Transport transport = TransportManager.getTransport(domain);
+            if (transport != null) {
+                if (presence.getType() == Presence.Type.available) {
+                    item.setSideIcon(transport.getIcon());
+                }
+                else {
+                    item.setSideIcon(transport.getInactiveIcon());
+                }
                 return false;
             }
+        }
 
-            public boolean handleDoubleClick(ContactItem item) {
-                return false;
+        return false;
+    }
+
+    public boolean handleDoubleClick(ContactItem item) {
+        return false;
+    }
+
+    public Icon getIcon(Presence presence) {
+        if (presence == null) {
+            return null;
+        }
+        String domain = StringUtils.parseServer(presence.getFrom());
+        Transport transport = TransportManager.getTransport(domain);
+        if (transport != null) {
+            if (presence.getType() == Presence.Type.available) {
+                return transport.getIcon();
             }
-
-            public Icon getIcon(Presence presence) {
-                if (presence == null) {
-                    return null;
-                }
-                String domain = StringUtils.parseServer(presence.getFrom());
-                Transport transport = TransportManager.getTransport(domain);
-                if (transport != null) {
-                    if (presence.getType() == Presence.Type.available) {
-                        return transport.getIcon();
-                    }
-                    else {
-                        return transport.getInactiveIcon();
-                    }
-                }
-                return null;
+            else {
+                return transport.getInactiveIcon();
             }
+        }
+        return null;
+    }
 
-            public Icon getTabIcon(Presence presence) {
-                return null;
-            }
-
-        });
-
-
+    public Icon getTabIcon(Presence presence) {
+        return null;
     }
 }
