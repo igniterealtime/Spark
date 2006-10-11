@@ -161,13 +161,14 @@ public class StatusBar extends JPanel {
         }
 
         // Build menu from StatusList
-        for(final StatusItem statusItem : statusList){
+        for (final StatusItem statusItem : statusList) {
             final Action statusAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent actionEvent) {
                     final String text = statusItem.getText();
                     final StatusItem si = getStatusItem(text);
                     if (si == null) {
                         // Custom status
+                        Log.error("Unable to find status item for status - " + text);
                         return;
                     }
 
@@ -223,6 +224,7 @@ public class StatusBar extends JPanel {
                                 final StatusItem si = getStatusItem(text);
                                 if (si == null) {
                                     // Custom status
+                                    Log.error("Unable to find status item for status - " + text);
                                     return;
                                 }
 
