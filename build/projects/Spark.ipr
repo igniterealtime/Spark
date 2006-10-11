@@ -403,10 +403,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../../com/plugins/fastpath/Fastpath.iml" filepath="$PROJECT_DIR$/../../../com/plugins/fastpath/Fastpath.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../code/spark/plugins/jniwrapper/JNIWrapper.iml" filepath="$PROJECT_DIR$/../../../code/spark/plugins/jniwrapper/JNIWrapper.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../code/sparkphone/client/SparkPhone.iml" filepath="$PROJECT_DIR$/../../../code/sparkphone/client/SparkPhone.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../code/spark/client/src/plugins/salesforce/salesforce.iml" filepath="$PROJECT_DIR$/../../../code/spark/client/src/plugins/salesforce/salesforce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../code/spark/client/src/plugins/nightmode/nightmode.iml" filepath="$PROJECT_DIR$/../../../code/spark/client/src/plugins/nightmode/nightmode.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="JDK 1.5.0" />
