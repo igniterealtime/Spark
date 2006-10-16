@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.search;
 
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.search.users.UserSearchService;
 
@@ -104,12 +103,12 @@ public class SearchManager {
      *
      * @return the collection of search services.
      */
-    public Collection getSearchServices() {
+    public Collection<Searchable> getSearchServices() {
         return searchServices;
     }
 
     private void checkSearchService() {
-        Collection searchables = SparkManager.getSearchManager().getSearchServices();
+        Collection searchables = getSearchServices();
         if (searchables.size() <= 1) {
             ui.getFindField().enableDropdown(false);
         }

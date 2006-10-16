@@ -12,8 +12,8 @@ package org.jivesoftware.spark.search;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.IconTextField;
@@ -44,7 +44,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class SearchService extends JPanel {
     private IconTextField findField;
@@ -138,16 +137,14 @@ public class SearchService extends JPanel {
 
         findField.getImageComponent().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                Collection searchables = SparkManager.getSearchManager().getSearchServices();
+                Collection<Searchable> searchables = SparkManager.getSearchManager().getSearchServices();
                 if (searchables.size() <= 1) {
                     return;
                 }
 
                 // Show popup
                 final JPopupMenu popup = new JPopupMenu();
-                Iterator iter = searchables.iterator();
-                while (iter.hasNext()) {
-                    final Searchable searchable = (Searchable)iter.next();
+                for (final Searchable searchable : searchables) {
                     Action action = new AbstractAction() {
                         public void actionPerformed(ActionEvent e) {
                             setActiveSearchService(searchable);

@@ -38,7 +38,7 @@ public class UserSearchService implements Searchable {
     private Collection searchServices;
 
     public UserSearchService() {
-
+        loadSearchServices();
     }
 
     public void search(final String query) {
