@@ -584,11 +584,13 @@ public final class LoginDialog {
                     }
                     else {
                         if (!hostPortConfigured) {
-                            config = new ConnectionConfiguration(serverName, 5222);
+                            config = new ConnectionConfiguration(serverName);
                         }
                         else {
                             config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
                         }
+
+                        config.setReconnectionAllowed(false);
                     }
 
                     if (config != null) {
