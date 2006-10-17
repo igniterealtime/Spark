@@ -34,6 +34,23 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -53,23 +70,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class PluginViewer extends JPanel implements Plugin {
 
@@ -397,7 +397,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
                 try {
                     String version = plugin.selectSingleNode("minSparkVersion").getText();
-                    if (version.compareTo(JiveInfo.getVersion()) < 1) {
+                    if (!isGreaterOrEqual(JiveInfo.getVersion(), version)){
                         Log.error("Unable to load plugin " + name + " due to min version incompatibility.");
                         continue;
                     }
@@ -558,4 +558,16 @@ public class PluginViewer extends JPanel implements Plugin {
     public void uninstall() {
         // Do nothing.
     }
+
+    /**
+     * Returns true if the first version number is greater than the second.
+     *
+     * @param firstVersion the first version number.
+     * @param secondVersion the second version number.
+     * @return returns true if the first version is greater than the second.
+     */
+    public boolean isGreaterOrEqual(String firstVersion, String secondVersion) {
+        return firstVersion.compareTo(secondVersion) >= 0;
+    }
+
 }

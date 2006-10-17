@@ -124,7 +124,7 @@ public class SparkPlugUI extends JPanel {
             buttonPanel.add(changeLogButton);
             buttonPanel.add(readMeButton);
 
-            changeLogButton.setToolTipText(Res.getString("tooltip.view.change.log"));
+            changeLogButton.setToolTipText(Res.getString("tooltip.view.changelog"));
             readMeButton.setToolTipText(Res.getString("tooltip.view.readme"));
             add(descriptionLabel, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
             add(buttonPanel, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
