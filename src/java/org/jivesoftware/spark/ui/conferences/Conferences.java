@@ -15,6 +15,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
@@ -33,7 +34,9 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -93,6 +96,29 @@ public class Conferences {
                     rooms.invoke();
                 }
             });
+
+
+            // Add Presence Listener to send directed presence to Group Chat Rooms.
+            PresenceListener presenceListener = new PresenceListener() {
+                public void presenceChanged(Presence presence) {
+                    for(ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()){
+                        if(room instanceof GroupChatRoom){
+                            GroupChatRoom groupChatRoom = (GroupChatRoom)room;
+                            String jid = groupChatRoom.getMultiUserChat().getRoom();
+
+                            // Send presence to room
+                            String to = presence.getTo();
+
+                            presence.setTo(jid);
+                            SparkManager.getConnection().sendPacket(presence);
+                            presence.setTo(to);
+                        }
+                    }
+
+                }
+            };
+
+            SparkManager.getSessionManager().addPresenceListener(presenceListener);
         }
     }
 

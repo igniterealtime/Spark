@@ -83,7 +83,6 @@ public final class PasswordDialog implements PropertyChangeListener {
      * @return the user input.
      */
     public String getPassword(String title, String description, Icon icon, Component parent) {
-        System.out.println(parent);
         passwordField = new JPasswordField();
 
         TitlePanel titlePanel = new TitlePanel(title, description, icon, true);
