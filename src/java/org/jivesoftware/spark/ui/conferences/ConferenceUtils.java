@@ -10,7 +10,7 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.packet.DataForm;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.PasswordDialog;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -38,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 
 public class ConferenceUtils {
     private ConferenceUtils() {
@@ -130,9 +130,8 @@ public class ConferenceUtils {
 
 
         if (requiresPassword(roomJID) && password == null) {
-            JPasswordField field = new JPasswordField();
-            JOptionPane.showMessageDialog(null, field, Res.getString("title.password"), JOptionPane.QUESTION_MESSAGE);
-            password = new String(field.getPassword());
+            final PasswordDialog passwordDialog = new PasswordDialog();
+            password = passwordDialog.getPassword("Password Required", "This group chat room requires a password to enter.", SparkRes.getImageIcon(SparkRes.LOCK_16x16), SparkManager.getMainWindow());
             if (!ModelUtil.hasLength(password)) {
                 return;
             }
@@ -172,7 +171,7 @@ public class ConferenceUtils {
                                     errors.add("No response from server.");
                                 }
                                 else if (code == 401) {
-                                    errors.add("The password did not match the room's password.");
+                                    errors.add("The password did not match the rooms password.");
                                 }
                                 else if (code == 403) {
                                     errors.add("You have been banned from this room.");
