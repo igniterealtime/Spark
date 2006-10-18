@@ -86,11 +86,11 @@ public class ChatRoomImpl extends ChatRoom {
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
 
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(this.participantJID));
+        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new BareAddressFilter(participantJID));
 
         // Register PacketListeners
 
-        AndFilter messageFilter = new AndFilter(new PacketTypeFilter(Message.class), new FromContainsFilter(participantJID));
+        AndFilter messageFilter = new AndFilter(new PacketTypeFilter(Message.class), new BareAddressFilter(participantJID));
         SparkManager.getConnection().addPacketListener(this, messageFilter);
 
         SparkManager.getConnection().addPacketListener(this, presenceFilter);

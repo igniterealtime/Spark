@@ -270,7 +270,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
             ChatRoomImpl chatRoom = null;
             try {
-                chatRoom = (ChatRoomImpl)container.getChatRoom(from);
+                chatRoom = (ChatRoomImpl)container.getChatRoom(jid);
             }
             catch (ChatRoomNotFoundException e) {
                 chatRoom = new ChatRoomImpl(jid, nickname, Res.getString("message.broadcast.from", nickname));
