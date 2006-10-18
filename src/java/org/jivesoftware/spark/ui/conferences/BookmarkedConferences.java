@@ -18,8 +18,8 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -82,6 +82,8 @@ public class BookmarkedConferences extends JPanel {
     private Set autoJoinRooms = new HashSet();
 
     private List listeners = new ArrayList();
+
+    private Collection bookmarks;
 
     /**
      * Initialize Conference UI.
@@ -516,6 +518,8 @@ public class BookmarkedConferences extends JPanel {
      * @param bookmarks the current bookmarks used with this account.
      */
     public void setBookmarks(Collection bookmarks) {
+        this.bookmarks = bookmarks;
+
         Iterator iter = bookmarks.iterator();
         while (iter.hasNext()) {
             Bookmark bookmark = (Bookmark)iter.next();
@@ -587,7 +591,14 @@ public class BookmarkedConferences extends JPanel {
             Element autoJoin = (Element)joins.next();
             String conferenceJID = autoJoin.getText();
             autoJoinRooms.add(conferenceJID);
-            ConferenceUtils.autoJoinConferenceRoom(conferenceJID, conferenceJID, null);
+
+            Iterator iter = bookmarks.iterator();
+            while (iter.hasNext()) {
+                Bookmark bookmark = (Bookmark)iter.next();
+                if (bookmark.getRoomJID().equals(conferenceJID)) {
+                    ConferenceUtils.autoJoinConferenceRoom(bookmark.getRoomName(), conferenceJID, null);
+                }
+            }
         }
     }
 

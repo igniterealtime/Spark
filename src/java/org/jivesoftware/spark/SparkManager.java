@@ -24,10 +24,14 @@ import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
+import java.awt.Component;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 
@@ -85,9 +89,25 @@ public final class SparkManager {
     private static VCardManager vcardManager;
     private static AlertManager alertManager;
 
+    private static Component focusedComponent;
+
 
     private SparkManager() {
         // Do not allow initialization
+    }
+
+    static {
+        KeyboardFocusManager focusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        focusManager.addPropertyChangeListener(
+                new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent e) {
+                        String prop = e.getPropertyName();
+                        if (("focusOwner".equals(prop)) && (e.getNewValue() != null)) {
+                            focusedComponent = (Component)e.getNewValue();
+                        }
+                    }
+                }
+        );
     }
 
 
@@ -338,6 +358,15 @@ public final class SparkManager {
             userDirectory.mkdirs();
         }
         return userDirectory;
+    }
+
+    /**
+     * Return the component in focus at any particular instance.
+     *
+     * @return the focused component
+     */
+    public static Component getFocusedComponent() {
+        return focusedComponent;
     }
 
 
