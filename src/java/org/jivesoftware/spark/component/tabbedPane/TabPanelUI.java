@@ -37,8 +37,8 @@ import javax.swing.plaf.basic.BasicPanelUI;
  * @author Derek DeMoro
  */
 public class TabPanelUI extends BasicPanelUI {
-    private Color backgroundColor1 = new Color(0, 0, 0, 0);
-    private Color backgroundColor2 = new Color(0, 0, 0, 0);
+    private Color backgroundColor1 = new Color(0,0,0,0);
+    private Color backgroundColor2 = new Color(0,0,0,0);
 
     private Color borderColor = new Color(86, 88, 72);
     private Color borderColorAlpha1 = new Color(86, 88, 72, 100);
@@ -49,8 +49,6 @@ public class TabPanelUI extends BasicPanelUI {
     private boolean hideBorder;
 
     private int placement = JTabbedPane.TOP;
-
-    private boolean changed;
 
     // ------------------------------------------------------------------------------------------------------------------
     //  Custom installation methods
@@ -71,7 +69,6 @@ public class TabPanelUI extends BasicPanelUI {
         }
 
         this.selected = selected;
-        changed = true;
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -107,7 +104,6 @@ public class TabPanelUI extends BasicPanelUI {
 
         // Handle custom actions.
         if (placement == JTabbedPane.TOP) {
-
             if (selected) {
                 g2d.setColor(Color.lightGray);
                 g2d.drawRoundRect(x, y, w, h, arc, arc);
@@ -119,23 +115,15 @@ public class TabPanelUI extends BasicPanelUI {
             g2d.setClip(vOldClip);
             g2d.setColor(borderColorAlpha2);
 
-            if (!changed) {
-                return;
-            }
+
             g2d.setColor(backgroundColor2);
             g2d.fillRect(x, h - 5, w, h);
-
         }
         else {
-            if (!changed) {
-                return;
-            }
             // Make straight line.
             g2d.setColor(backgroundColor2);
             g2d.fillRect(x, y, w, 4);
         }
-        
-        changed = false;
 
         if (selected) {
 
