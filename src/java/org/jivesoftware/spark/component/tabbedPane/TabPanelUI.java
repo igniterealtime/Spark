@@ -50,7 +50,6 @@ public class TabPanelUI extends BasicPanelUI {
 
     private int placement = JTabbedPane.TOP;
 
-    private boolean changed;
 
     // ------------------------------------------------------------------------------------------------------------------
     //  Custom installation methods
@@ -71,7 +70,6 @@ public class TabPanelUI extends BasicPanelUI {
         }
 
         this.selected = selected;
-        changed = true;
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -97,10 +95,7 @@ public class TabPanelUI extends BasicPanelUI {
 
         g2d.setClip(vButtonShape);
         g2d.setColor(backgroundColor2);
-        if (!changed) {
-            g2d.fillRect(x, y, w, h);
-            changed = true;
-        }
+        g2d.fillRect(x, y, w, h);
 
         g2d.setClip(vOldClip);
         GradientPaint vPaint = new GradientPaint(x, y, borderColor, x, y + h, borderHighlight);
