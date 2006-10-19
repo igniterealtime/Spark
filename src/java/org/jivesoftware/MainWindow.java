@@ -11,19 +11,19 @@
 package org.jivesoftware;
 
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.component.browser.BrowserFactory;
+import org.jivesoftware.spark.component.browser.BrowserViewer;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
 
 import java.awt.BorderLayout;
@@ -359,9 +359,6 @@ public final class MainWindow extends JFrame implements ActionListener {
         });
 
 
-
-
-
         if (Spark.isWindows()) {
             connectMenu.add(logoutMenuItem);
             connectMenu.add(logoutWithStatus);
@@ -390,7 +387,7 @@ public final class MainWindow extends JFrame implements ActionListener {
         updateAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
 
         // Build Help Menu
-        //s helpMenu.add(helpMenuItem);
+        helpMenu.add(helpMenuItem);
         helpMenu.add(showTrafficAction);
         helpMenu.add(updateAction);
         helpMenu.addSeparator();
@@ -412,9 +409,20 @@ public final class MainWindow extends JFrame implements ActionListener {
         helpMenuItem.addActionListener(new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    BrowserLauncher.openURL("http://www.jivesoftware.org/community/kbcategory.jspa?categoryID=23");
+                    BrowserViewer browser = BrowserFactory.getBrowser();
+
+                    final JFrame browserViewer = new JFrame("Spark Help");
+                    browserViewer.setIconImage(SparkManager.getMainWindow().getIconImage());
+                    browserViewer.setContentPane(browser);
+
+                    browserViewer.pack();
+                    browserViewer.setSize(600, 400);
+                    browserViewer.setLocationRelativeTo(SparkManager.getMainWindow());
+                    browserViewer.setVisible(true);
+
+                    browser.loadURL("http://liveassist.jivesoftware.com/webchat/start.jsp?workgroup=spark@workgroup.jivesoftware.com&noUI=true&username=sparkuser");
                 }
-                catch (IOException browserException) {
+                catch (Exception browserException) {
                     Log.error("Error launching browser:", browserException);
                 }
             }
