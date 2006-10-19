@@ -37,8 +37,8 @@ import javax.swing.plaf.basic.BasicPanelUI;
  * @author Derek DeMoro
  */
 public class TabPanelUI extends BasicPanelUI {
-    private Color backgroundColor1 = new Color(0,0,0,0);
-    private Color backgroundColor2 = new Color(0,0,0,0);
+    private Color backgroundColor1 = new Color(0, 0, 0, 0);
+    private Color backgroundColor2 = new Color(0, 0, 0, 0);
 
     private Color borderColor = new Color(86, 88, 72);
     private Color borderColorAlpha1 = new Color(86, 88, 72, 100);
@@ -49,6 +49,8 @@ public class TabPanelUI extends BasicPanelUI {
     private boolean hideBorder;
 
     private int placement = JTabbedPane.TOP;
+
+    private boolean changed;
 
     // ------------------------------------------------------------------------------------------------------------------
     //  Custom installation methods
@@ -69,6 +71,7 @@ public class TabPanelUI extends BasicPanelUI {
         }
 
         this.selected = selected;
+        changed = true;
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -94,9 +97,10 @@ public class TabPanelUI extends BasicPanelUI {
 
         g2d.setClip(vButtonShape);
         g2d.setColor(backgroundColor2);
-        g2d.fillRect(x, y, w, h / 2);
-        g2d.setColor(backgroundColor2);
-        g2d.fillRect(x, y + h / 2, w, h / 2);
+        if (!changed) {
+            g2d.fillRect(x, y, w, h);
+            changed = true;
+        }
 
         g2d.setClip(vOldClip);
         GradientPaint vPaint = new GradientPaint(x, y, borderColor, x, y + h, borderHighlight);
