@@ -13,6 +13,8 @@ package org.jivesoftware.sparkimpl.plugin.layout;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -116,14 +118,49 @@ public class LayoutSettingsManager {
             String chatFrameHeight = props.getProperty("chatFrameHeight");
 
             settings = new LayoutSettings();
-            settings.setMainWindowX(Integer.parseInt(mainWindowX));
-            settings.setMainWindowY(Integer.parseInt(mainWindowY));
-            settings.setMainWindowHeight(Integer.parseInt(mainWindowHeight));
-            settings.setMainWindowWidth(Integer.parseInt(mainWindowWidth));
-            settings.setChatFrameX(Integer.parseInt(chatFrameX));
-            settings.setChatFrameY(Integer.parseInt(chatFrameY));
-            settings.setChatFrameWidth(Integer.parseInt(chatFrameWidth));
-            settings.setChatFrameHeight(Integer.parseInt(chatFrameHeight));
+
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int height = (int)screenSize.getHeight();
+            int width = (int)screenSize.getWidth();
+
+            int mainWindowXInt = Integer.parseInt(mainWindowX);
+            int mainWindowYInt = Integer.parseInt(mainWindowY);
+            int mainWindowHeightInt = Integer.parseInt(mainWindowHeight);
+            int mainWindowWidthInt = Integer.parseInt(mainWindowWidth);
+
+            if (mainWindowXInt + mainWindowWidthInt > width) {
+                mainWindowXInt = (width - mainWindowWidthInt) / 2;
+            }
+
+            if (mainWindowYInt + mainWindowHeightInt > height) {
+                mainWindowYInt = (height - mainWindowHeightInt) / 2;
+            }
+
+
+            int chatFrameXInt = Integer.parseInt(chatFrameX);
+            int chatFrameYInt = Integer.parseInt(chatFrameY);
+            int chatFrameWidthInt = Integer.parseInt(chatFrameWidth);
+            int chatFrameHeightInt = Integer.parseInt(chatFrameHeight);
+
+            if (chatFrameXInt + chatFrameWidthInt > width) {
+                chatFrameXInt = (width - chatFrameWidthInt) / 2;
+            }
+
+            if (chatFrameYInt + chatFrameHeightInt > height) {
+                chatFrameYInt = (height - chatFrameHeightInt) / 2;
+            }
+
+
+            settings.setMainWindowX(mainWindowXInt);
+            settings.setMainWindowY(mainWindowYInt);
+            settings.setMainWindowHeight(mainWindowHeightInt);
+            settings.setMainWindowWidth(mainWindowWidthInt);
+
+            settings.setChatFrameX(chatFrameXInt);
+            settings.setChatFrameY(chatFrameYInt);
+            settings.setChatFrameWidth(chatFrameWidthInt);
+            settings.setChatFrameHeight(chatFrameHeightInt);
+
             return settings;
         }
         catch (Exception e) {
