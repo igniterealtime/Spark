@@ -83,7 +83,7 @@ public class CheckUpdates {
         xstream.alias("Version", SparkVersion.class);
 
         // Specify the main update url for JiveSoftware
-        this.mainUpdateURL = "http://localhost:8080/updater/updater";
+        this.mainUpdateURL = "http://www.jivesoftware.org/updater/updater";
 
         sparkPluginInstalled = isSparkPluginInstalled(SparkManager.getConnection());
     }
