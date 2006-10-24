@@ -440,7 +440,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                 if (o != null) {
                     try {
                         final String url = (String)o;
-                        boolean handled = fireLinkInterceptors(url);
+                        boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
                             if (Spark.isWindows() || Spark.isMac()) {
                                 BrowserLauncher.openURL(url);
@@ -676,10 +676,10 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         interceptors.remove(interceptor);
     }
 
-    public boolean fireLinkInterceptors(String link) {
+    public boolean fireLinkInterceptors(MouseEvent event, String link) {
         final Iterator iter = new ArrayList(interceptors).iterator();
         while (iter.hasNext()) {
-            boolean handled = ((LinkInterceptor)iter.next()).handleLink(link);
+            boolean handled = ((LinkInterceptor)iter.next()).handleLink(event, link);
             if (handled) {
                 return true;
             }

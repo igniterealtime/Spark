@@ -213,15 +213,13 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
         StringBuffer buf = new StringBuffer();
         if (subject != null) {
-            buf.append(Res.getString("subject") + ": ").append(subject);
+            buf.append(Res.getString("subject")).append(": ").append(subject);
             buf.append("\n\n");
         }
 
         buf.append(body);
 
-        String host = SparkManager.getSessionManager().getServerAddress();
         String from = message.getFrom() != null ? message.getFrom() : "";
-
 
         final TranscriptWindow window = new TranscriptWindow();
         window.insertCustomMessage(null, buf.toString());
@@ -237,9 +235,6 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         toaster.setBorder(BorderFactory.createBevelBorder(0));
 
 
-        String title = host;
-
-
         if (!from.contains("@")) {
             ChatManager chatManager = SparkManager.getChatManager();
             ChatContainer container = chatManager.getChatContainer();
@@ -249,7 +244,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 chatRoom = (ChatRoomImpl)container.getChatRoom(from);
             }
             catch (ChatRoomNotFoundException e) {
-                chatRoom = new ChatRoomImpl(from, from, Res.getString("message.broadcast.from", from));
+                chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("broadcast"));
                 chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
                 chatRoom.setIconHandler(true);
                 chatRoom.getBottomPanel().setVisible(false);
@@ -335,7 +330,6 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         if (ModelUtil.hasLength(messageText)) {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             for (ContactGroup contactGroup : contactList.getContactGroups()) {
-                Iterator items = contactGroup.getContactItems().iterator();
                 for (ContactItem item : contactGroup.getContactItems()) {
                     if (item != null && item.getFullJID() != null) {
                         final Message message = new Message();
