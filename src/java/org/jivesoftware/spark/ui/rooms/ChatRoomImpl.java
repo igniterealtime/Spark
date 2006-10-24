@@ -26,20 +26,32 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.packet.MessageEvent;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.*;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.MessageEventListener;
+import org.jivesoftware.spark.ui.RosterDialog;
+import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -86,11 +98,11 @@ public class ChatRoomImpl extends ChatRoom {
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
 
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new BareAddressFilter(participantJID));
+        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
 
         // Register PacketListeners
 
-        AndFilter messageFilter = new AndFilter(new PacketTypeFilter(Message.class), new BareAddressFilter(participantJID));
+        AndFilter messageFilter = new AndFilter(new PacketTypeFilter(Message.class), new FromContainsFilter(participantJID));
         SparkManager.getConnection().addPacketListener(this, messageFilter);
 
         SparkManager.getConnection().addPacketListener(this, presenceFilter);
@@ -163,7 +175,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         typingTimer = new Timer(2000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(!sendTypingNotification) {
+                if (!sendTypingNotification) {
                     return;
                 }
                 long now = System.currentTimeMillis();
@@ -461,8 +473,8 @@ public class ChatRoomImpl extends ChatRoom {
     public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
-        MessageEvent messageEvent = (MessageEvent) message.getExtension("x", "jabber:x:event");
-        if(messageEvent != null) {
+        MessageEvent messageEvent = (MessageEvent)message.getExtension("x", "jabber:x:event");
+        if (messageEvent != null) {
             checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
         }
 
@@ -473,7 +485,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     private void checkEvents(String from, String packetID, MessageEvent messageEvent) {
-        if(messageEvent.isDelivered() || messageEvent.isDisplayed()) {
+        if (messageEvent.isDelivered() || messageEvent.isDisplayed()) {
             // Create the message to send
             Message msg = new Message(from);
             // Create a MessageEvent Package and add it to the message
@@ -516,7 +528,6 @@ public class ChatRoomImpl extends ChatRoom {
             ((MessageEventListener)messageEventListeners.next()).receivingMessage(message);
         }
     }
-
 
 
     /**
