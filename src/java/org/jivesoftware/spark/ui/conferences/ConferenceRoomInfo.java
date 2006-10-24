@@ -359,10 +359,10 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
 
     private void startChat(ChatRoom groupChat, String groupJID) {
-        String groupJIDNickname = StringUtils.parseResource(groupJID);
+        String nicknameOfUser = StringUtils.parseResource(groupJID);
         String nickname = groupChat.getNickname();
 
-        if (groupJIDNickname.equals(nickname)) {
+        if (nicknameOfUser.equals(nickname)) {
             return;
         }
 
@@ -371,10 +371,10 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             chatRoom = chatManager.getChatContainer().getChatRoom(groupJID);
         }
         catch (ChatRoomNotFoundException e) {
-            Log.error("Could not find chat room - " + groupJID);
+            Log.debug("Could not find chat room - " + groupJID);
 
             // Create new room
-            chatRoom = new ChatRoomImpl(groupJID, groupJIDNickname, groupJID);
+            chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, nicknameOfUser);
             chatManager.getChatContainer().addChatRoom(chatRoom);
         }
 
