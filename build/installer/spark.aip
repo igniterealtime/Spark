@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DOCUMENT type="Advanced Installer" CreateVersion="4.4.1" version="4.4.1" modules="java" RootPath="." Language="en">
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
+    <ROW Property="ALLUSERS" Value="2"/>
+    <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
+    <ROW Property="BannerBitmap" Value="default_banner.bmp" Type="1"/>
+    <ROW Property="DialogBitmap" Value="default_dialog.bmp" Type="1"/>
+    <ROW Property="Manufacturer" Value="Jive Software" ValueLocId="*"/>
+    <ROW Property="ProductCode" Value="1033:{123DA596-A76D-42A4-B6DA-688320D834BE} "/>
+    <ROW Property="ProductLanguage" Value="1033"/>
+    <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
+    <ROW Property="ProductVersion" Value="1.0.0"/>
+    <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
+    <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
+    <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="Deskto~1|DesktopFolder" IsPseudoRoot="1"/>
+    <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
+    <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="bin_DIR" Directory_Parent="APPDIR" DefaultDir="bin"/>
+    <ROW Directory="documentation_DIR" Directory_Parent="APPDIR" DefaultDir="docume~1|documentation"/>
+    <ROW Directory="images_DIR" Directory_Parent="documentation_DIR" DefaultDir="images"/>
+    <ROW Directory="lib_DIR" Directory_Parent="APPDIR" DefaultDir="lib"/>
+    <ROW Directory="logs_DIR" Directory_Parent="APPDIR" DefaultDir="logs"/>
+    <ROW Directory="plugins_DIR" Directory_Parent="APPDIR" DefaultDir="plugins"/>
+    <ROW Directory="resources_DIR" Directory_Parent="APPDIR" DefaultDir="resour~1|resources"/>
+    <ROW Directory="sounds_DIR" Directory_Parent="resources_DIR" DefaultDir="sounds"/>
+    <ROW Directory="windows_DIR" Directory_Parent="lib_DIR" DefaultDir="windows"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
+    <ROW Component="IeEmbed.exe" ComponentId="{2552E216-7836-4ED2-8676-8F0DAC7CFBE4}" Directory_="windows_DIR" Attributes="0" KeyPath="IeEmbed.exe" FullKeyPath="APPDIR\lib\windows\IeEmbed.exe"/>
+    <ROW Component="Info.plist" ComponentId="{DFF8C4AC-6AF8-48D8-8960-7D2930A4B487}" Directory_="resources_DIR" Attributes="0" KeyPath="Info.plist" FullKeyPath="APPDIR\resources"/>
+    <ROW Component="MozEmbed.exe" ComponentId="{80FB601E-4D1E-47CC-8900-72DAF42B0771}" Directory_="windows_DIR" Attributes="0" KeyPath="MozEmbed.exe" FullKeyPath="APPDIR\lib\windows\MozEmbed.exe"/>
+    <ROW Component="Spark.exe" ComponentId="{64B04163-3A7C-4F9F-9F72-2E2FEDB7FE4D}" Directory_="APPDIR" Attributes="0" KeyPath="Spark.exe" FullKeyPath="APPDIR\Spark.exe"/>
+    <ROW Component="activation.jar" ComponentId="{4AA0D33E-9C25-4CA7-8C10-4CE4FBF116A0}" Directory_="lib_DIR" Attributes="0" KeyPath="activation.jar" FullKeyPath="APPDIR\lib"/>
+    <ROW Component="banner_spark.gif" ComponentId="{73562780-810A-49E3-B2D2-F77E2C2F837E}" Directory_="images_DIR" Attributes="0" KeyPath="banner_spark.gif" FullKeyPath="APPDIR\documentation\images"/>
+    <ROW Component="bell.wav" ComponentId="{EF2B5A55-1F75-4FD9-AA4A-D74E2E68E693}" Directory_="sounds_DIR" Attributes="0" KeyPath="bell.wav" FullKeyPath="APPDIR\resources\sounds"/>
+    <ROW Component="builder.jar" ComponentId="{795A80F8-B5ED-4AD1-936D-C899D0372A3D}" Directory_="documentation_DIR" Attributes="0" KeyPath="builder.jar" FullKeyPath="APPDIR\documentation"/>
+    <ROW Component="error.log" ComponentId="{70AD4F3B-9CDF-4026-AA4D-5F36707989ED}" Directory_="logs_DIR" Attributes="0" KeyPath="error.log" FullKeyPath="APPDIR\logs"/>
+    <ROW Component="fastpath.jar" ComponentId="{503F9197-8958-4BEC-822A-94E0E6E1D4C4}" Directory_="plugins_DIR" Attributes="0" KeyPath="fastpath.jar" FullKeyPath="APPDIR\plugins"/>
+    <ROW Component="jdic.dll" ComponentId="{17D3EE65-D6C1-467E-B25A-676C0EEFAD93}" Directory_="windows_DIR" Attributes="0" KeyPath="jdic.dll" FullKeyPath="APPDIR\lib\windows\jdic.dll"/>
+    <ROW Component="jdic.jar" ComponentId="{8964186C-0874-41F6-85D3-4EA5BF7004B7}" Directory_="windows_DIR" Attributes="0" KeyPath="jdic.jar" FullKeyPath="APPDIR\lib\windows"/>
+    <ROW Component="jniwrap.dll" ComponentId="{CB50B6AC-1A6C-4603-A7E9-5FA0699A8487}" Directory_="resources_DIR" Attributes="0" KeyPath="jniwrap.dll" FullKeyPath="APPDIR\resources\jniwrap.dll"/>
+    <ROW Component="startup.bat" ComponentId="{FE572BF0-B831-45A0-9011-65560A86D090}" Directory_="bin_DIR" Attributes="0" KeyPath="startup.bat" FullKeyPath="APPDIR\bin"/>
+    <ROW Component="systeminfo.dll" ComponentId="{9551A043-A929-4E37-B8AA-6958B70A5172}" Directory_="resources_DIR" Attributes="0" KeyPath="systeminfo.dll" FullKeyPath="APPDIR\resources\systeminfo.dll"/>
+    <ROW Component="tray.dll" ComponentId="{9111ECAE-92BB-4C1C-BFBF-BF4A76C93CC1}" Directory_="windows_DIR" Attributes="0" KeyPath="tray.dll" FullKeyPath="APPDIR\lib\windows\tray.dll"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="startup.bat builder.jar banner_spark.gif activation.jar IeEmbed.exe jdic.dll jdic.jar MozEmbed.exe tray.dll error.log fastpath.jar Info.plist jniwrap.dll bell.wav systeminfo.dll Spark.exe"/>
+    <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
+    <ROW File="IeEmbed.exe" Component_="IeEmbed.exe" FileName="IeEmbed.exe" Attributes="0" SourcePath="..\..\target\build\lib\windows\IeEmbed.exe" SelfReg="false" Sequence="24"/>
+    <ROW File="Info.plist" Component_="Info.plist" FileName="Info~1.pli|Info.plist" Attributes="0" SourcePath="..\..\target\build\resources\Info.plist" SelfReg="false" Sequence="35"/>
+    <ROW File="LICENSE.html" Component_="builder.jar" FileName="LICENS~1.htm|LICENSE.html" Attributes="0" SourcePath="..\..\target\build\documentation\LICENSE.html" SelfReg="false" Sequence="9"/>
+    <ROW File="MozEmbed.exe" Component_="MozEmbed.exe" FileName="MozEmbed.exe" Attributes="0" SourcePath="..\..\target\build\lib\windows\MozEmbed.exe" SelfReg="false" Sequence="27"/>
+    <ROW File="README.html" Component_="builder.jar" FileName="README~1.htm|README.html" Attributes="0" SourcePath="..\..\target\build\documentation\README.html" SelfReg="false" Sequence="10"/>
+    <ROW File="Spark.exe" Component_="Spark.exe" FileName="Spark.exe" Attributes="0" SourcePath="&lt;aijclw.exe&gt;" SelfReg="false" Sequence="45"/>
+    <ROW File="activation.jar" Component_="activation.jar" FileName="activa~1.jar|activation.jar" Attributes="0" SourcePath="..\..\target\build\lib\activation.jar" SelfReg="false" Sequence="13"/>
+    <ROW File="asterisk_im_client.jar" Component_="activation.jar" FileName="asteri~1.jar|asterisk-im-client.jar" Attributes="0" SourcePath="..\..\target\build\lib\asterisk-im-client.jar" SelfReg="false" Sequence="14"/>
+    <ROW File="banner_spark.gif" Component_="banner_spark.gif" FileName="banner~1.gif|banner-spark.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spark.gif" SelfReg="false" Sequence="4"/>
+    <ROW File="banner_spring.gif" Component_="banner_spark.gif" FileName="banner~2.gif|banner-spring.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spring.gif" SelfReg="false" Sequence="5"/>
+    <ROW File="base.jar" Component_="activation.jar" FileName="base.jar" Attributes="0" SourcePath="..\..\target\build\lib\base.jar" SelfReg="false" Sequence="15"/>
+    <ROW File="bell.wav" Component_="bell.wav" FileName="bell.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\bell.wav" SelfReg="false" Sequence="38"/>
+    <ROW File="builder.jar" Component_="builder.jar" FileName="builder.jar" Attributes="0" SourcePath="..\..\target\build\documentation\builder.jar" SelfReg="false" Sequence="2"/>
+    <ROW File="changelog.html" Component_="builder.jar" FileName="change~1.htm|changelog.html" Attributes="0" SourcePath="..\..\target\build\documentation\changelog.html" SelfReg="false" Sequence="3"/>
+    <ROW File="chat_request.wav" Component_="bell.wav" FileName="chat_r~1.wav|chat_request.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\chat_request.wav" SelfReg="false" Sequence="39"/>
+    <ROW File="chat_room.png" Component_="banner_spark.gif" FileName="chat-r~1.png|chat-room.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\chat-room.png" SelfReg="false" Sequence="6"/>
+    <ROW File="contact_list.png" Component_="banner_spark.gif" FileName="contac~1.png|contact-list.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\contact-list.png" SelfReg="false" Sequence="7"/>
+    <ROW File="dom4j.jar" Component_="activation.jar" FileName="dom4j.jar" Attributes="0" SourcePath="..\..\target\build\lib\dom4j.jar" SelfReg="false" Sequence="16"/>
+    <ROW File="error.log" Component_="error.log" FileName="error.log" Attributes="0" SourcePath="..\..\target\build\logs\error.log" SelfReg="false" Sequence="31"/>
+    <ROW File="fastpath.jar" Component_="fastpath.jar" FileName="fastpath.jar" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar" SelfReg="false" Sequence="32"/>
+    <ROW File="i4jruntime.jar" Component_="activation.jar" FileName="i4jrun~1.jar|i4jruntime.jar" Attributes="0" SourcePath="..\..\target\build\lib\i4jruntime.jar" SelfReg="false" Sequence="17"/>
+    <ROW File="incoming.wav" Component_="bell.wav" FileName="incoming.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\incoming.wav" SelfReg="false" Sequence="40"/>
+    <ROW File="jdic.dll" Component_="jdic.dll" FileName="jdic.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.dll" SelfReg="false" Sequence="25"/>
+    <ROW File="jdic.jar" Component_="jdic.jar" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.jar" SelfReg="false" Sequence="26"/>
+    <ROW File="jniwrap.dll" Component_="jniwrap.dll" FileName="jniwrap.dll" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.dll" SelfReg="false" Sequence="36"/>
+    <ROW File="jniwrap.lic" Component_="Info.plist" FileName="jniwrap.lic" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.lic" SelfReg="false" Sequence="37"/>
+    <ROW File="jniwrapper.jar" Component_="fastpath.jar" FileName="jniwra~1.jar|jniwrapper.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper.jar" SelfReg="false" Sequence="33"/>
+    <ROW File="login_dialog.png" Component_="banner_spark.gif" FileName="login-~1.png|login-dialog.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\login-dialog.png" SelfReg="false" Sequence="8"/>
+    <ROW File="outgoing.wav" Component_="bell.wav" FileName="outgoing.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\outgoing.wav" SelfReg="false" Sequence="41"/>
+    <ROW File="presence_changed.wav" Component_="bell.wav" FileName="presen~1.wav|presence_changed.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\presence_changed.wav" SelfReg="false" Sequence="42"/>
+    <ROW File="smack.jar" Component_="activation.jar" FileName="smack.jar" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar" SelfReg="false" Sequence="18"/>
+    <ROW File="smackx.jar" Component_="activation.jar" FileName="smackx.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar" SelfReg="false" Sequence="20"/>
+    <ROW File="smackx_debug.jar" Component_="activation.jar" FileName="smackx~1.jar|smackx-debug.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar" SelfReg="false" Sequence="19"/>
+    <ROW File="spark.jar" Component_="activation.jar" FileName="spark.jar" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar" SelfReg="false" Sequence="21"/>
+    <ROW File="sparkplug_dev_guide.html" Component_="builder.jar" FileName="sparkp~1.htm|sparkplug_dev_guide.html" Attributes="0" SourcePath="..\..\target\build\documentation\sparkplug_dev_guide.html" SelfReg="false" Sequence="11"/>
+    <ROW File="spelling_plugin.jar" Component_="fastpath.jar" FileName="spelli~1.jar|spelling-plugin.jar" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin.jar" SelfReg="false" Sequence="34"/>
+    <ROW File="startup.bat" Component_="startup.bat" FileName="startup.bat" Attributes="0" SourcePath="..\..\target\build\bin\startup.bat" SelfReg="false" Sequence="1"/>
+    <ROW File="startup.sh" Component_="Info.plist" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\resources\startup.sh" SelfReg="false" Sequence="43"/>
+    <ROW File="style.css" Component_="builder.jar" FileName="style.css" Attributes="0" SourcePath="..\..\target\build\documentation\style.css" SelfReg="false" Sequence="12"/>
+    <ROW File="swingx.jar" Component_="activation.jar" FileName="swingx.jar" Attributes="0" SourcePath="..\..\target\build\lib\swingx.jar" SelfReg="false" Sequence="22"/>
+    <ROW File="systeminfo.dll" Component_="systeminfo.dll" FileName="system~1.dll|systeminfo.dll" Attributes="0" SourcePath="..\..\target\build\resources\systeminfo.dll" SelfReg="false" Sequence="44"/>
+    <ROW File="systeminfo.jar" Component_="activation.jar" FileName="system~1.jar|systeminfo.jar" Attributes="0" SourcePath="..\..\target\build\lib\systeminfo.jar" SelfReg="false" Sequence="23"/>
+    <ROW File="tray.dll" Component_="tray.dll" FileName="tray.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\tray.dll" SelfReg="false" Sequence="28"/>
+    <ROW File="xpp.jar" Component_="activation.jar" FileName="xpp.jar" Attributes="0" SourcePath="..\..\target\build\lib\xpp.jar" SelfReg="false" Sequence="29"/>
+    <ROW File="xstream.jar" Component_="activation.jar" FileName="xstream.jar" Attributes="0" SourcePath="..\..\target\build\lib\xstream.jar" SelfReg="false" Sequence="30"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
+    <ROW Path="&lt;ui.ail&gt;"/>
+    <ROW Path="&lt;ui_en.ail&gt;"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
+    <ROW Fragment="FolderDlg.aip" Path="&lt;FolderDlg.aip&gt;"/>
+    <ROW Fragment="StaticUIStrings.aip" Path="&lt;StaticUIStrings.aip&gt;"/>
+    <ROW Fragment="UI.aip" Path="&lt;UI.aip&gt;"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
+    <ROW Name="default_banner.bmp" SourcePath="&lt;default-banner.bmp&gt;"/>
+    <ROW Name="default_dialog.bmp" SourcePath="&lt;default-dialog.bmp&gt;"/>
+    <ROW Name="launcher.dll" SourcePath="&lt;launcher.dll&gt;"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
+    <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
+    <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="3"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceWelcomeDlg" Condition="AI_MAINT" Ordering="1"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control_="Next" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="2"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_PATCH" Ordering="3"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
+    <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
+    <ROW Action="AI_PREPARE_UPGRADE" Type="1" Source="launcher.dll" Target="PrepareUpgrade"/>
+    <ROW Action="AI_RESTORE_LOCATION" Type="1" Source="launcher.dll" Target="RestoreLocation"/>
+    <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]"/>
+    <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
+    <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
+    <ROW IniFile="Application_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Application Type" Value="gui" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Class_Path" FileName="Spark.ini" DirProperty="APPDIR" Section="Class Path" Key="Class Path" Value="[#builder.jar];[#activation.jar];[#asterisk_im_client.jar];[#base.jar];[#dom4j.jar];[#i4jruntime.jar];[#smack.jar];[#smackx_debug.jar];[#smackx.jar];[#spark.jar];[#swingx.jar];[#systeminfo.jar];[#jdic.jar];[#xpp.jar];[#xstream.jar];[#fastpath.jar];[#jniwrapper.jar];[#spelling_plugin.jar];" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Error_File" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Error File" Value="[APPDIR]/logs/error.log" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Failure_Check" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Failure Check" Value="yes" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="JVM_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JVM Type" Value="favor_client" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Main_Class" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.Spark" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Maximum_Version" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Maximum Version" Value="1.5" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Minimum_Version" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Minimum Version" Value="1.5" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Output_File" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Output File" Value="[APPDIR]/logs/output.log" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Override_WorkingDir" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Override WorkingDir" Value="yes" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Preferred_versions" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Preferred versions" Value="1.5" Action="0" Component_="Spark.exe"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
+    <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
+    <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="740"/>
+    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1545"/>
+    <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1300"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
+    <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="740"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiJavaComponent">
+    <ROW Name="Spark.exe" Launcher="Spark.exe" MainClass="Main_Class" ClassPath="Class_Path" JREMin="Minimum_Version" JREMax="Maximum_Version" IconPath="..\..\src\resources\images\message.ico" AppType="Application_Type" PreferredVersion="Preferred_versions" JVMType="JVM_Type" PlusList="APPDIR;" MinusList="#Spark.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File" ErrorFile="Error_File" FailureCheck="Failure_Check" OverrideWkDir="Override_WorkingDir"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiMediaComponent">
+    <ATTRIBUTE name="Compress" value="1"/>
+    <ATTRIBUTE name="FirstMediaSize" value="0"/>
+    <ATTRIBUTE name="FirstMediaSizeUnit" value="0"/>
+    <ATTRIBUTE name="InstallationType" value="0"/>
+    <ATTRIBUTE name="MacBuild" value="true"/>
+    <ATTRIBUTE name="MediaSize" value="0"/>
+    <ATTRIBUTE name="MediaSizeUnit" value="0"/>
+    <ATTRIBUTE name="Package" value="1"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
+    <ROW Shortcut="Spark.exe" Directory_="SHORTCUTDIR" Name="Spark.exe" Component_="Spark.exe" Target="[#Spark.exe]" Description="Spark.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="Spark.exe_1" Directory_="DesktopFolder" Name="Spark.exe" Component_="Spark.exe" Target="[#Spark.exe]" Description="Spark.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
+    <ROW UpgradeCode="UpgradeCode" VersionMax="ProductVersion" Attributes="1025"/>
+    <ROW UpgradeCode="UpgradeCode" VersionMin="ProductVersion" Attributes="2"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
+    <ROW Directory_="APPDIR" SourcePath="..\..\target\build" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
+  </COMPONENT>
+</DOCUMENT>
