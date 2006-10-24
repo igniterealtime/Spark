@@ -178,12 +178,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             public void actionPerformed(ActionEvent e) {
                 boolean reg = TransportManager.isRegistered(SparkManager.getConnection(), transport);
                 if (!reg) {
-                    TransportManager.registerWithService(SparkManager.getConnection(), transport.getServiceName());
-
-                    // Send Presence
-                    Presence presence = statusBar.getPresence();
-                    presence.setTo(transport.getServiceName());
-                    SparkManager.getConnection().sendPacket(presence);
+                    TransportRegistrationDialog regDialog = new TransportRegistrationDialog(transport.getServiceName());
+                    regDialog.invoke();
                 }
                 else {
                     int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
