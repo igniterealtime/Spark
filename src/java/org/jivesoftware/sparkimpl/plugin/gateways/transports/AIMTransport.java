@@ -46,6 +46,10 @@ public class AIMTransport implements Transport {
         return serviceName;
     }
 
+    public String getName(){
+        return "AIM";
+    }
+
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }

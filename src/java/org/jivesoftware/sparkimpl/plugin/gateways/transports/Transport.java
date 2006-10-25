@@ -24,6 +24,8 @@ public interface Transport {
 
     String getServiceName();
 
+    String getName();
+
 
 
 }

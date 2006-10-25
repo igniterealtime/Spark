@@ -43,4 +43,8 @@ public class YahooTransport implements Transport {
     public String getServiceName() {
         return serviceName;
     }
+
+    public String getName(){
+        return "Yahoo";
+    }
 }

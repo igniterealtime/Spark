@@ -42,6 +42,10 @@ public class ICQTransport implements Transport {
         return SparkRes.getImageIcon(SparkRes.ICQ_TRANSPORT_INACTIVE_IMAGE);
     }
 
+    public String getName(){
+        return "ICQ";
+    }
+
     public String getServiceName() {
         return serviceName;
     }

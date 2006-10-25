@@ -46,6 +46,10 @@ public class MSNTransport implements Transport {
         return serviceName;
     }
 
+    public String getName(){
+        return "MSN";
+    }
+
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }

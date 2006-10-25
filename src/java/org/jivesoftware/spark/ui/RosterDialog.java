@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -21,10 +21,14 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -35,6 +39,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -44,6 +50,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -56,6 +64,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     private JTextField nicknameField;
     private final Vector<String> groupModel = new Vector<String>();
     private JComboBox groupBox;
+    private JComboBox accounts;
     private JOptionPane pane;
     private JDialog dialog;
     private ContactList contactList;
@@ -73,7 +82,13 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         nicknameField = new JTextField();
         JLabel groupLabel = new JLabel();
         groupBox = new JComboBox(groupModel);
+
         JButton newGroupButton = new JButton();
+
+        JLabel accountsLabel = new JLabel("Account:");
+        accounts = new JComboBox();
+
+
         pane = null;
         dialog = null;
         panel.setLayout(new GridBagLayout());
@@ -81,16 +96,22 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.add(jidField, new GridBagConstraints(1, 0, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(groupLabel, new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(groupBox, new GridBagConstraints(1, 2, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(newGroupButton, new GridBagConstraints(2, 2, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+
+        panel.add(accountsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(accounts, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+
+
+        panel.add(groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(newGroupButton, new GridBagConstraints(2, 3, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         newGroupButton.addActionListener(this);
 
-        ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.jabber.id") + ":");
+        ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.username") + ":");
         ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
         ResourceUtils.resLabel(groupLabel, groupBox, Res.getString("label.group") + ":");
         ResourceUtils.resButton(newGroupButton, Res.getString("button.new"));
 
+        accounts.setRenderer(new JPanelRenderer());
 
         for (ContactGroup group : contactList.getContactGroups()) {
             if (!group.isOfflineGroup() && !"Unfiled".equalsIgnoreCase(group.getGroupName()) && !group.isSharedGroup()) {
@@ -116,9 +137,17 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             public void focusLost(FocusEvent e) {
                 String jid = jidField.getText();
+                AccountItem item = (AccountItem)accounts.getSelectedItem();
+                Transport transport = item.getTransport();
+
                 if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                     // Append server address
-                    jidField.setText(jid + "@" + SparkManager.getConnection().getServiceName());
+                    if (transport == null) {
+                        jidField.setText(jid + "@" + SparkManager.getConnection().getServiceName());
+                    }
+                    else {
+                        jidField.setText(jid + "@" + transport.getServiceName());
+                    }
                 }
 
                 String nickname = nicknameField.getText();
@@ -127,6 +156,11 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
                 }
             }
         });
+
+        for (AccountItem item : getAccounts()) {
+            accounts.addItem(item);
+        }
+
     }
 
     /**
@@ -165,7 +199,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
-        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") +":", Res.getString("title.new.roster.group"), 3);
+        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), 3);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
             SparkManager.getConnection().getRoster().createGroup(group);
             groupModel.add(group);
@@ -274,17 +308,29 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     }
 
     private void addEntry() {
-        String jid = jidField.getText();
-        if (jid.indexOf("@") == -1) {
-            jid = jid + "@" + SparkManager.getConnection().getHost();
-        }
-        String nickname = nicknameField.getText();
-        String group = (String)groupBox.getSelectedItem();
+        AccountItem item = (AccountItem)accounts.getSelectedItem();
+        if (item.getTransport() == null) {
+            String jid = jidField.getText();
+            if (jid.indexOf("@") == -1) {
+                jid = jid + "@" + SparkManager.getConnection().getHost();
+            }
+            String nickname = nicknameField.getText();
+            String group = (String)groupBox.getSelectedItem();
 
-        jid = UserManager.escapeJID(jid);
-        
-        // Add as a new entry
-        addEntry(jid, nickname, group);
+            jid = UserManager.escapeJID(jid);
+
+            // Add as a new entry
+            addEntry(jid, nickname, group);
+        }
+        else {
+            String jid = jidField.getText();
+            if (jid.indexOf("@") == -1) {
+                jid = jid + "@" + item.getTransport().getServiceName();
+                String nickname = nicknameField.getText();
+                String group = (String)groupBox.getSelectedItem();
+                addEntry(jid, nickname, group);
+            }
+        }
     }
 
     /**
@@ -340,5 +386,49 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         return userEntry;
     }
 
+    public List<AccountItem> getAccounts() {
+        List<AccountItem> list = new ArrayList<AccountItem>();
 
+        // Create Jabber Account
+        AccountItem account = new AccountItem(SparkRes.getImageIcon(SparkRes.ADDRESS_BOOK_16x16), "Jabber", null);
+        list.add(account);
+
+        for (Transport transport : TransportManager.getTransports()) {
+            if (TransportManager.isRegistered(SparkManager.getConnection(), transport)) {
+                AccountItem item = new AccountItem(transport.getIcon(), transport.getName(), transport);
+                list.add(item);
+            }
+        }
+
+        return list;
+    }
+
+    class AccountItem extends JPanel {
+
+        private String name;
+        private Transport transport;
+
+        public AccountItem(Icon icon, String name, Transport transport) {
+            setLayout(new GridBagLayout());
+            this.name = name;
+            this.transport = transport;
+
+            JLabel iconLabel = new JLabel();
+            iconLabel.setIcon(icon);
+
+            JLabel label = new JLabel();
+            label.setText(name);
+            label.setFont(new Font("Dialog", Font.BOLD, 11));
+            label.setHorizontalTextPosition(JLabel.CENTER);
+
+            add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            add(label, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0));
+
+            setBackground(Color.white);
+        }
+
+        public Transport getTransport() {
+            return transport;
+        }
+    }
 }
