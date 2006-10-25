@@ -137,22 +137,14 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             public void focusLost(FocusEvent e) {
                 String jid = jidField.getText();
-                AccountItem item = (AccountItem)accounts.getSelectedItem();
-                Transport transport = item.getTransport();
-
-                if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
-                    // Append server address
-                    if (transport == null) {
-                        jidField.setText(jid + "@" + SparkManager.getConnection().getServiceName());
-                    }
-                    else {
-                        jidField.setText(jid + "@" + transport.getServiceName());
-                    }
-                }
 
                 String nickname = nicknameField.getText();
                 if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(jid)) {
-                    nicknameField.setText(StringUtils.parseName(jidField.getText()));
+                    nickname = StringUtils.parseName(jid);
+                    if (!ModelUtil.hasLength(nickname)) {
+                        nickname = jid;
+                    }
+                    nicknameField.setText(nickname);
                 }
             }
         });
@@ -226,7 +218,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         dialog = new JDialog(parent, Res.getString("title.add.contact"), true);
         dialog.pack();
         dialog.setContentPane(mainPanel);
-        dialog.setSize(350, 250);
+        dialog.setSize(350, 350);
 
         dialog.setLocationRelativeTo(parent);
         pane.addPropertyChangeListener(this);
@@ -263,6 +255,20 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
 
+            AccountItem item = (AccountItem)accounts.getSelectedItem();
+            Transport transport = item.getTransport();
+
+            if (transport == null) {
+                if (contact.indexOf("@") == -1) {
+                    contact = contact + "@" + SparkManager.getConnection().getHost();
+                }
+            }
+            else {
+                if (contact.indexOf("@") == -1) {
+                    contact = contact + "@" + transport.getServiceName();
+                }
+            }
+
             if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
                 // Try to load nickname from VCard
                 VCard vcard = new VCard();
@@ -282,7 +288,6 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             ContactGroup contactGroup = contactList.getContactGroup(group);
             boolean isSharedGroup = contactGroup != null && contactGroup.isSharedGroup();
-
 
             if (isSharedGroup) {
                 errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
@@ -390,7 +395,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         List<AccountItem> list = new ArrayList<AccountItem>();
 
         // Create Jabber Account
-        AccountItem account = new AccountItem(SparkRes.getImageIcon(SparkRes.ADDRESS_BOOK_16x16), "Jabber", null);
+        AccountItem account = new AccountItem(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE), "Jabber", null);
         list.add(account);
 
         for (Transport transport : TransportManager.getTransports()) {
@@ -418,7 +423,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             JLabel label = new JLabel();
             label.setText(name);
-            label.setFont(new Font("Dialog", Font.BOLD, 11));
+            label.setFont(new Font("Dialog", Font.PLAIN, 11));
             label.setHorizontalTextPosition(JLabel.CENTER);
 
             add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
