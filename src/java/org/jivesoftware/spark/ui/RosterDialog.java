@@ -180,7 +180,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
      * @param parent the parent Frame.
      */
     public void showRosterDialog(JFrame parent) {
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact.group"), Res.getString("message.add.contact.to.list"), SparkRes.getImageIcon(SparkRes.USER1_32x32), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), SparkRes.getImageIcon(SparkRes.USER1_32x32), true);
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
