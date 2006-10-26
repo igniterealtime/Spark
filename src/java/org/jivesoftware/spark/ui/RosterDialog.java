@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -100,6 +101,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.add(accountsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(accounts, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
+        accountsLabel.setVisible(false);
+        accounts.setVisible(false);
 
         panel.add(groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
@@ -149,9 +152,17 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             }
         });
 
-        for (AccountItem item : getAccounts()) {
+        final List<AccountItem> accountCol = getAccounts();
+        for (AccountItem item : accountCol) {
             accounts.addItem(item);
         }
+
+        if (accountCol.size() > 1) {
+            accountsLabel.setVisible(true);
+            accounts.setVisible(true);
+
+        }
+
 
     }
 
@@ -207,7 +218,16 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
      */
     public void showRosterDialog(JFrame parent) {
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), SparkRes.getImageIcon(SparkRes.USER1_32x32), true);
-        JPanel mainPanel = new JPanel();
+
+
+        JPanel mainPanel = new JPanel() {
+            public Dimension getPreferredSize() {
+                final Dimension size = super.getPreferredSize();
+                size.width = 350;
+                return size;
+            }
+        };
+
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
         Object[] options = {
@@ -216,9 +236,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         pane = new JOptionPane(panel, -1, 2, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
         dialog = new JDialog(parent, Res.getString("title.add.contact"), true);
-        dialog.pack();
         dialog.setContentPane(mainPanel);
-        dialog.setSize(350, 350);
+        dialog.pack();
 
         dialog.setLocationRelativeTo(parent);
         pane.addPropertyChangeListener(this);
@@ -260,7 +279,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             if (transport == null) {
                 if (contact.indexOf("@") == -1) {
-                    contact = contact + "@" + SparkManager.getConnection().getHost();
+                    contact = contact + "@" + SparkManager.getConnection().getServiceName();
                 }
             }
             else {
@@ -317,7 +336,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         if (item.getTransport() == null) {
             String jid = jidField.getText();
             if (jid.indexOf("@") == -1) {
-                jid = jid + "@" + SparkManager.getConnection().getHost();
+                jid = jid + "@" + SparkManager.getConnection().getServiceName();
             }
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
@@ -395,7 +414,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         List<AccountItem> list = new ArrayList<AccountItem>();
 
         // Create Jabber Account
-        AccountItem account = new AccountItem(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE), "Jabber", null);
+        AccountItem account = new AccountItem(SparkRes.getImageIcon(SparkRes.LIGHTBULB_ON_16x16_IMAGE), "XMPP", null);
         list.add(account);
 
         for (Transport transport : TransportManager.getTransports()) {

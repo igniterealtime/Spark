@@ -10,17 +10,17 @@
 
 package org.jivesoftware.resource;
 
+import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+
 import java.awt.BorderLayout;
 import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
-import javax.swing.ImageIcon;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 
 public class SparkRes {
     private static PropertyResourceBundle prb;
@@ -253,6 +253,7 @@ public class SparkRes {
     public static final String ICQ_TRANSPORT_ACTIVE_IMAGE = "ICQ_TRANSPORT_ACTIVE_IMAGE";
     public static final String ICQ_TRANSPORT_INACTIVE_IMAGE = "ICQ_TRANSPORT_INACTIVE_IMAGE";
     public static final String PROFILE_IMAGE_16x16 = "PROFILE_IMAGE_16x16";
+    public static final String LIGHTBULB_ON_16x16_IMAGE = "LIGHTBULB_ON_16x16_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
