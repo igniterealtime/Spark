@@ -93,7 +93,9 @@ public class TabPanelUI extends BasicPanelUI {
         Shape vButtonShape = new RoundRectangle2D.Double((double)x, (double)y, (double)w, (double)h, (double)arc, (double)arc);
         Shape vOldClip = g.getClip();
 
-        g2d.setClip(vButtonShape);
+        if(!Spark.isMac()){
+            g2d.setClip(vButtonShape);
+        }
         g2d.setColor(backgroundColor2);
         g2d.fillRect(x, y, w, h);
 
