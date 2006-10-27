@@ -12,10 +12,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.Time;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -152,9 +150,7 @@ public class VCardPanel extends JPanel {
         }
 
 
-        Roster roster = SparkManager.getConnection().getRoster();
-        Presence p = roster.getPresence(vcard.getJabberId());
-        Icon icon = SparkManager.getChatManager().getPresenceIconForContactHandler(p);
+        Icon icon = SparkManager.getChatManager().getIconForContactHandler(vcard.getJabberId());
         if (icon != null) {
             usernameLabel.setIcon(icon);
         }

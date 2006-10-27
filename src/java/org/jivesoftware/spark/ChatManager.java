@@ -20,7 +20,14 @@ import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.MessageEventRequestListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.ui.*;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactItemHandler;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -30,8 +37,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -84,9 +98,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-                new ChatMessageEventRequestListener();
+            new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-                addMessageEventRequestListener(messageEventRequestListener);
+            addMessageEventRequestListener(messageEventRequestListener);
     }
 
 
@@ -383,9 +397,9 @@ public class ChatManager implements MessageEventNotificationListener {
         return false;
     }
 
-    public Icon getPresenceIconForContactHandler(Presence presence) {
+    public Icon getIconForContactHandler(String jid) {
         for (ContactItemHandler handler : contactItemHandlers) {
-            Icon icon = handler.getIcon(presence);
+            Icon icon = handler.getIcon(jid);
             if (icon != null) {
                 return icon;
             }
@@ -393,6 +407,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
         return null;
     }
+
 
     public Icon getTabIconForContactHandler(Presence presence) {
         for (ContactItemHandler handler : contactItemHandlers) {
@@ -459,7 +474,7 @@ public class ChatManager implements MessageEventNotificationListener {
         });
     }
 
-        /**
+    /**
      * Internal implementation of the MessageEventRequestListener.
      */
     private class ChatMessageEventRequestListener implements MessageEventRequestListener {
@@ -478,7 +493,7 @@ public class ChatManager implements MessageEventNotificationListener {
                 return;
             }
             if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                ((ChatRoomImpl) chatRoom).setSendTypingNotification(true);
+                ((ChatRoomImpl)chatRoom).setSendTypingNotification(true);
             }
         }
 

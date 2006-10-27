@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -271,14 +272,13 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         return false;
     }
 
-    public Icon getIcon(Presence presence) {
-        if (presence == null) {
-            return null;
-        }
-        String domain = StringUtils.parseServer(presence.getFrom());
+    public Icon getIcon(String jid) {
+        Roster roster = SparkManager.getConnection().getRoster();
+        Presence presence = roster.getPresence(jid);
+        String domain = StringUtils.parseServer(jid);
         Transport transport = TransportManager.getTransport(domain);
         if (transport != null) {
-            if (presence.getType() == Presence.Type.available) {
+            if (presence != null && presence.getType() == Presence.Type.available) {
                 return transport.getIcon();
             }
             else {

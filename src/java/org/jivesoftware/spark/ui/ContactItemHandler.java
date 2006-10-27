@@ -23,24 +23,33 @@ public interface ContactItemHandler {
     /**
      * The users presence has been changed.
      *
+     * @param item     the contact item.
      * @param presence the users new presence.
+     * @return true if the presence was handled.
      */
     boolean handlePresence(ContactItem item, Presence presence);
 
     /**
      * Return the icon used for particular presence.
      *
-     * @param presence the presence
+     * @param jid the users jid.
      * @return the icon, if any. null may be returned.
      */
-    Icon getIcon(Presence presence);
+    Icon getIcon(String jid);
 
+    /**
+     * Return the icon to use on the chat room tab.
+     *
+     * @param presence the presence of the user.
+     * @return the icon to use.
+     */
     Icon getTabIcon(Presence presence);
 
 
     /**
      * The <code>ContactItem</code> has been double-clicked by the user.
      *
+     * @param item the ContactItem to handle.
      * @return true if you wish to handle the double-click event.
      */
     boolean handleDoubleClick(ContactItem item);
