@@ -30,6 +30,7 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -69,6 +70,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     private JOptionPane pane;
     private JDialog dialog;
     private ContactList contactList;
+    private JCheckBox publicBox;
 
     /**
      * Create a new instance of RosterDialog.
@@ -88,6 +90,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
         JLabel accountsLabel = new JLabel("Account:");
         accounts = new JComboBox();
+        publicBox = new JCheckBox("User is on a public network");
 
 
         pane = null;
@@ -98,15 +101,19 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
-        panel.add(accountsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(accounts, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(publicBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        panel.add(accountsLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(accounts, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
         accountsLabel.setVisible(false);
         accounts.setVisible(false);
+        publicBox.setVisible(false);
+        accounts.setEnabled(false);
 
-        panel.add(groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(newGroupButton, new GridBagConstraints(2, 3, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(groupLabel, new GridBagConstraints(0, 4, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(groupBox, new GridBagConstraints(1, 4, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         newGroupButton.addActionListener(this);
 
         ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.username") + ":");
@@ -157,11 +164,17 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             accounts.addItem(item);
         }
 
-        if (accountCol.size() > 1) {
+        if (accountCol.size() > 0) {
             accountsLabel.setVisible(true);
             accounts.setVisible(true);
-
+            publicBox.setVisible(true);
         }
+
+        publicBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                accounts.setEnabled(publicBox.isSelected());
+            }
+        });
 
 
     }
@@ -235,7 +248,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         };
         pane = new JOptionPane(panel, -1, 2, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
-        dialog = new JDialog(parent, Res.getString("title.add.contact"), true);
+        dialog = new JDialog(parent, Res.getString("title.add.contact"), false);
         dialog.setContentPane(mainPanel);
         dialog.pack();
 
@@ -274,8 +287,11 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
 
-            AccountItem item = (AccountItem)accounts.getSelectedItem();
-            Transport transport = item.getTransport();
+            Transport transport = null;
+            if (publicBox.isSelected()) {
+                AccountItem item = (AccountItem)accounts.getSelectedItem();
+                transport = item.getTransport();
+            }
 
             if (transport == null) {
                 if (contact.indexOf("@") == -1) {
@@ -332,8 +348,13 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     }
 
     private void addEntry() {
-        AccountItem item = (AccountItem)accounts.getSelectedItem();
-        if (item.getTransport() == null) {
+        Transport transport = null;
+        AccountItem item = null;
+        if (publicBox.isSelected()) {
+            item = (AccountItem)accounts.getSelectedItem();
+            transport = item.getTransport();
+        }
+        if (transport == null) {
             String jid = jidField.getText();
             if (jid.indexOf("@") == -1) {
                 jid = jid + "@" + SparkManager.getConnection().getServiceName();
@@ -412,10 +433,6 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
     public List<AccountItem> getAccounts() {
         List<AccountItem> list = new ArrayList<AccountItem>();
-
-        // Create Jabber Account
-        AccountItem account = new AccountItem(SparkRes.getImageIcon(SparkRes.LIGHTBULB_ON_16x16_IMAGE), "XMPP", null);
-        list.add(account);
 
         for (Transport transport : TransportManager.getTransports()) {
             if (TransportManager.isRegistered(SparkManager.getConnection(), transport)) {
