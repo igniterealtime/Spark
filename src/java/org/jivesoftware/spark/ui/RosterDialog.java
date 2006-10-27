@@ -88,10 +88,11 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
         JButton newGroupButton = new JButton();
 
-        JLabel accountsLabel = new JLabel("Account:");
+        JLabel accountsLabel = new JLabel();
         accounts = new JComboBox();
-        publicBox = new JCheckBox("User is on a public network");
+        publicBox = new JCheckBox(Res.getString("label.user.on.public.network"));
 
+        ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.accounts"));
 
         pane = null;
         dialog = null;
@@ -230,7 +231,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
      * @param parent the parent Frame.
      */
     public void showRosterDialog(JFrame parent) {
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), SparkRes.getImageIcon(SparkRes.USER1_32x32), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), null, true);
 
 
         JPanel mainPanel = new JPanel() {
