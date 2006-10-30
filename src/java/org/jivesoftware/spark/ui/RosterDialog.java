@@ -11,7 +11,6 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -21,6 +20,7 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.borders.ComponentTitledBorder;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -28,6 +28,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -65,6 +66,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     private JTextField jidField;
     private JTextField nicknameField;
     private final Vector<String> groupModel = new Vector<String>();
+    private final JPanel networkPanel = new JPanel(new GridBagLayout());
+
     private JComboBox groupBox;
     private JComboBox accounts;
     private JOptionPane pane;
@@ -92,7 +95,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         accounts = new JComboBox();
         publicBox = new JCheckBox(Res.getString("label.user.on.public.network"));
 
-        ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.accounts"));
+        ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.network"));
 
         pane = null;
         dialog = null;
@@ -102,20 +105,27 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
-        panel.add(publicBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        panel.add(accountsLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(accounts, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        ComponentTitledBorder componentBorder = new ComponentTitledBorder(publicBox, networkPanel
+                , BorderFactory.createEtchedBorder());
 
-        accountsLabel.setVisible(false);
-        accounts.setVisible(false);
-        publicBox.setVisible(false);
+
+        networkPanel.add(accountsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        networkPanel.add(accounts, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+
+        networkPanel.setBorder(componentBorder);
+
+        networkPanel.setVisible(false);
         accounts.setEnabled(false);
+
 
         panel.add(groupLabel, new GridBagConstraints(0, 4, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(groupBox, new GridBagConstraints(1, 4, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         newGroupButton.addActionListener(this);
+
+        panel.add(networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
 
         ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.username") + ":");
         ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
@@ -169,6 +179,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             accountsLabel.setVisible(true);
             accounts.setVisible(true);
             publicBox.setVisible(true);
+            networkPanel.setVisible(true);
         }
 
         publicBox.addActionListener(new ActionListener() {

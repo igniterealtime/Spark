@@ -3,13 +3,15 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="ALLUSERS" Value="2"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
+    <ROW Property="ARPPRODUCTICON" Value="controlPanelIcon.exe"/>
+    <ROW Property="ARPURLINFOABOUT" Value="http://www.jivesoftware.org/spark"/>
     <ROW Property="BannerBitmap" Value="default_banner.bmp" Type="1"/>
     <ROW Property="DialogBitmap" Value="default_dialog.bmp" Type="1"/>
     <ROW Property="Manufacturer" Value="Jive Software" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{123DA596-A76D-42A4-B6DA-688320D834BE} "/>
+    <ROW Property="ProductCode" Value="1033:{B68C7CBE-A77D-4CA3-9E78-2C3BF2B5A897} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.0.0"/>
+    <ROW Property="ProductVersion" Value="2.0.5"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
   </COMPONENT>
@@ -30,7 +32,7 @@
     <ROW Directory="windows_DIR" Directory_Parent="lib_DIR" DefaultDir="windows"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="APPDIR" ComponentId="{919A2FAA-6797-48F7-AAB7-FE36CE25F87E}" Directory_="APPDIR" Attributes="0"/>
+    <ROW Component="APPDIR" ComponentId="{3935C926-AF48-40EE-A385-2E4EFF174BA4}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="IeEmbed.exe" ComponentId="{2552E216-7836-4ED2-8676-8F0DAC7CFBE4}" Directory_="windows_DIR" Attributes="0" KeyPath="IeEmbed.exe" FullKeyPath="APPDIR\lib\windows\IeEmbed.exe"/>
     <ROW Component="Info.plist" ComponentId="{DFF8C4AC-6AF8-48D8-8960-7D2930A4B487}" Directory_="resources_DIR" Attributes="0" KeyPath="Info.plist" FullKeyPath="APPDIR\resources"/>
     <ROW Component="MozEmbed.exe" ComponentId="{80FB601E-4D1E-47CC-8900-72DAF42B0771}" Directory_="windows_DIR" Attributes="0" KeyPath="MozEmbed.exe" FullKeyPath="APPDIR\lib\windows\MozEmbed.exe"/>
@@ -143,9 +145,12 @@
     <ROW Action="AI_PREPARE_UPGRADE" Type="1" Source="launcher.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="1" Source="launcher.dll" Target="RestoreLocation"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
+    <ROW Name="controlPanelIcon.exe" SourcePath="..\..\src\resources\images\message.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
     <ROW IniFile="Application_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Application Type" Value="gui" Action="0" Component_="Spark.exe"/>
@@ -169,6 +174,7 @@
     <ROW IniFile="Override_WorkingDir_1" FileName="starter.ini" DirProperty="APPDIR" Section="Application" Key="Override WorkingDir" Value="yes" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Preferred_versions" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Preferred versions" Value="1.6;1.5;" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Preferred_versions_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Preferred versions" Value="1.6;" Action="0" Component_="Your_Product.exe"/>
+    <ROW IniFile="Single_Instance" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Single Instance" Value="yes" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Virtual_Machine_Parameters" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Virtual Machine Parameters" Value="-Dappdir=&quot;[APPDIR]&quot; " Action="0" Component_="Spark.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
@@ -181,15 +187,14 @@
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="740"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiJavaComponent">
-    <ROW Name="Spark.exe" Launcher="Spark.exe" MainClass="Main_Class" ClassPath="Class_Path" VMParams="Virtual_Machine_Parameters" JREMin="Minimum_Version" JREMax="Maximum_Version" IconPath="..\..\src\resources\images\message.ico" AppType="Application_Type" PreferredVersion="Preferred_versions" JVMType="JVM_Type" PlusList="APPDIR;" MinusList="#Your_Product.exe;#Spark.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File" ErrorFile="Error_File" FailureCheck="Failure_Check" OverrideWkDir="Override_WorkingDir"/>
-    <ROW Name="Your Product.exe" Launcher="Your_Product.exe" MainClass="Main_Class_1" ClassPath="Class_Path_1" JREMin="Minimum_Version_1" JREMax="Maximum_Version_1" AppType="Application_Type_1" PreferredVersion="Preferred_versions_1" JVMType="JVM_Type_1" MinusList="#Your_Product.exe;APPDIR;#Spark.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File_1" ErrorFile="Error_File_1" OverrideWkDir="Override_WorkingDir_1"/>
+    <ROW Name="Spark.exe" Launcher="Spark.exe" MainClass="Main_Class" ClassPath="Class_Path" VMParams="Virtual_Machine_Parameters" JREMin="Minimum_Version" JREMax="Maximum_Version" IconPath="..\..\src\resources\images\message.ico" AppType="Application_Type" PreferredVersion="Preferred_versions" JVMType="JVM_Type" SingleInstance="Single_Instance" PlusList="APPDIR;" MinusList="#Spark.exe;#Your_Product.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File" ErrorFile="Error_File" FailureCheck="Failure_Check" OverrideWkDir="Override_WorkingDir"/>
+    <ROW Name="Your Product.exe" Launcher="Your_Product.exe" MainClass="Main_Class_1" ClassPath="Class_Path_1" JREMin="Minimum_Version_1" JREMax="Maximum_Version_1" AppType="Application_Type_1" PreferredVersion="Preferred_versions_1" JVMType="JVM_Type_1" MinusList="APPDIR;#Spark.exe;#Your_Product.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File_1" ErrorFile="Error_File_1" OverrideWkDir="Override_WorkingDir_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMediaComponent">
     <ATTRIBUTE name="Compress" value="1"/>
     <ATTRIBUTE name="FirstMediaSize" value="0"/>
     <ATTRIBUTE name="FirstMediaSizeUnit" value="0"/>
     <ATTRIBUTE name="InstallationType" value="0"/>
-    <ATTRIBUTE name="MacBuild" value="true"/>
     <ATTRIBUTE name="MediaSize" value="0"/>
     <ATTRIBUTE name="MediaSizeUnit" value="0"/>
     <ATTRIBUTE name="Package" value="1"/>
