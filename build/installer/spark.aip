@@ -32,16 +32,24 @@
     <ROW Directory="windows_DIR" Directory_Parent="lib_DIR" DefaultDir="windows"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="APPDIR" ComponentId="{3935C926-AF48-40EE-A385-2E4EFF174BA4}" Directory_="APPDIR" Attributes="0"/>
+    <ROW Component="APPDIR" ComponentId="{846B8A6F-154D-4B59-BC3F-997826D65711}" Directory_="APPDIR" Attributes="0"/>
+    <ROW Component="DellSupport" ComponentId="{2A003F7E-D1AD-4434-88FC-8B2D1C71262F}" Directory_="APPDIR" Attributes="4" KeyPath="DellSupport" FullKeyPath="HK_CU\Run\DellSupport"/>
+    <ROW Component="DellSupport_1" ComponentId="{D2786D68-0F93-45FF-8CDA-6F7239D857CD}" Directory_="APPDIR" Attributes="4" KeyPath="DellSupport_1" FullKeyPath="HK_UM\Software\Run\DellSupport"/>
     <ROW Component="IeEmbed.exe" ComponentId="{2552E216-7836-4ED2-8676-8F0DAC7CFBE4}" Directory_="windows_DIR" Attributes="0" KeyPath="IeEmbed.exe" FullKeyPath="APPDIR\lib\windows\IeEmbed.exe"/>
     <ROW Component="Info.plist" ComponentId="{DFF8C4AC-6AF8-48D8-8960-7D2930A4B487}" Directory_="resources_DIR" Attributes="0" KeyPath="Info.plist" FullKeyPath="APPDIR\resources"/>
     <ROW Component="MozEmbed.exe" ComponentId="{80FB601E-4D1E-47CC-8900-72DAF42B0771}" Directory_="windows_DIR" Attributes="0" KeyPath="MozEmbed.exe" FullKeyPath="APPDIR\lib\windows\MozEmbed.exe"/>
+    <ROW Component="MsnMsgr" ComponentId="{09DC89A4-AA56-4800-BA0B-C5AC6C37DB99}" Directory_="APPDIR" Attributes="4" KeyPath="MsnMsgr" FullKeyPath="HK_CU\Run\MsnMsgr"/>
+    <ROW Component="MsnMsgr_1" ComponentId="{4891BA95-02B4-427F-B9FE-0F2926728297}" Directory_="APPDIR" Attributes="4" KeyPath="MsnMsgr_1" FullKeyPath="HK_UM\Software\Run\MsnMsgr"/>
+    <ROW Component="Spark" ComponentId="{EBD3450E-80F9-4F19-9AC6-A3750F7BD93B}" Directory_="APPDIR" Attributes="4" KeyPath="Spark" FullKeyPath="HK_UM\Software\Spark"/>
     <ROW Component="Spark.exe" ComponentId="{64B04163-3A7C-4F9F-9F72-2E2FEDB7FE4D}" Directory_="APPDIR" Attributes="0" KeyPath="Spark.exe" FullKeyPath="APPDIR\Spark.exe"/>
+    <ROW Component="Spark_1" ComponentId="{E702163D-2F26-4D0D-8419-FE32DBED2FC3}" Directory_="APPDIR" Attributes="4" KeyPath="Spark_1" FullKeyPath="HK_UM\Software\Run\Spark"/>
     <ROW Component="Your_Product.exe" ComponentId="{0CCEE694-7AA5-4D78-BA82-A5001AF3489F}" Directory_="APPDIR" Attributes="0" KeyPath="Your_Product.exe" FullKeyPath="APPDIR\starter.exe"/>
     <ROW Component="activation.jar" ComponentId="{4AA0D33E-9C25-4CA7-8C10-4CE4FBF116A0}" Directory_="lib_DIR" Attributes="0" KeyPath="activation.jar" FullKeyPath="APPDIR\lib"/>
     <ROW Component="banner_spark.gif" ComponentId="{73562780-810A-49E3-B2D2-F77E2C2F837E}" Directory_="images_DIR" Attributes="0" KeyPath="banner_spark.gif" FullKeyPath="APPDIR\documentation\images"/>
     <ROW Component="bell.wav" ComponentId="{EF2B5A55-1F75-4FD9-AA4A-D74E2E68E693}" Directory_="sounds_DIR" Attributes="0" KeyPath="bell.wav" FullKeyPath="APPDIR\resources\sounds"/>
     <ROW Component="builder.jar" ComponentId="{795A80F8-B5ED-4AD1-936D-C899D0372A3D}" Directory_="documentation_DIR" Attributes="0" KeyPath="builder.jar" FullKeyPath="APPDIR\documentation"/>
+    <ROW Component="ctfmon.exe" ComponentId="{462D3330-8845-4801-9ABD-A88B0837C790}" Directory_="APPDIR" Attributes="4" KeyPath="ctfmon.exe" FullKeyPath="HK_CU\Run\ctfmon.exe"/>
+    <ROW Component="ctfmon.exe_1" ComponentId="{98880385-19A4-4A17-88D7-75582C9C245F}" Directory_="APPDIR" Attributes="4" KeyPath="ctfmon.exe_1" FullKeyPath="HK_UM\Software\Run\ctfmon.exe"/>
     <ROW Component="error.log" ComponentId="{70AD4F3B-9CDF-4026-AA4D-5F36707989ED}" Directory_="logs_DIR" Attributes="0" KeyPath="error.log" FullKeyPath="APPDIR\logs"/>
     <ROW Component="fastpath.jar" ComponentId="{503F9197-8958-4BEC-822A-94E0E6E1D4C4}" Directory_="plugins_DIR" Attributes="0" KeyPath="fastpath.jar" FullKeyPath="APPDIR\plugins"/>
     <ROW Component="jdic.dll" ComponentId="{17D3EE65-D6C1-467E-B25A-676C0EEFAD93}" Directory_="windows_DIR" Attributes="0" KeyPath="jdic.dll" FullKeyPath="APPDIR\lib\windows\jdic.dll"/>
@@ -53,7 +61,7 @@
     <ROW Component="tray.dll" ComponentId="{9111ECAE-92BB-4C1C-BFBF-BF4A76C93CC1}" Directory_="windows_DIR" Attributes="0" KeyPath="tray.dll" FullKeyPath="APPDIR\lib\windows\tray.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="startup.bat builder.jar banner_spark.gif activation.jar IeEmbed.exe jdic.dll jdic.jar MozEmbed.exe tray.dll error.log fastpath.jar Info.plist jniwrap.dll bell.wav systeminfo.dll Spark.exe jdic.jar_1 Your_Product.exe APPDIR"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="startup.bat builder.jar banner_spark.gif activation.jar IeEmbed.exe jdic.dll jdic.jar MozEmbed.exe tray.dll error.log fastpath.jar Info.plist jniwrap.dll bell.wav systeminfo.dll Spark.exe jdic.jar_1 Your_Product.exe APPDIR DellSupport ctfmon.exe MsnMsgr Spark DellSupport_1 ctfmon.exe_1 MsnMsgr_1 Spark_1"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -190,6 +198,9 @@
     <ROW Name="Spark.exe" Launcher="Spark.exe" MainClass="Main_Class" ClassPath="Class_Path" VMParams="Virtual_Machine_Parameters" JREMin="Minimum_Version" JREMax="Maximum_Version" IconPath="..\..\src\resources\images\message.ico" AppType="Application_Type" PreferredVersion="Preferred_versions" JVMType="JVM_Type" SingleInstance="Single_Instance" PlusList="APPDIR;" MinusList="#Spark.exe;#Your_Product.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File" ErrorFile="Error_File" FailureCheck="Failure_Check" OverrideWkDir="Override_WorkingDir"/>
     <ROW Name="Your Product.exe" Launcher="Your_Product.exe" MainClass="Main_Class_1" ClassPath="Class_Path_1" JREMin="Minimum_Version_1" JREMax="Maximum_Version_1" AppType="Application_Type_1" PreferredVersion="Preferred_versions_1" JVMType="JVM_Type_1" MinusList="APPDIR;#Spark.exe;#Your_Product.exe;" MacDescription="[CurrentJavaProductName] [ProductVersion] © [Manufacturer], Inc, 2006" MacBundleId="com.[Manufacturer].[ProductName].[CurrentJavaProductName]" OutputFile="Output_File_1" ErrorFile="Error_File_1" OverrideWkDir="Override_WorkingDir_1"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiLockPermComponent">
+    <ROW LockObject="Spark" Table="Registry" User="Everyone" Permission="268435456"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMediaComponent">
     <ATTRIBUTE name="Compress" value="1"/>
     <ATTRIBUTE name="FirstMediaSize" value="0"/>
@@ -198,6 +209,16 @@
     <ATTRIBUTE name="MediaSize" value="0"/>
     <ATTRIBUTE name="MediaSizeUnit" value="0"/>
     <ATTRIBUTE name="Package" value="1"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
+    <ROW Registry="DellSupport" Root="1" Key="Run" Name="DellSupport" Value="&quot;C:\Program Files\Dell Support\DSAgnt.exe&quot; /startup" Component_="DellSupport"/>
+    <ROW Registry="DellSupport_1" Root="-1" Key="Software\Run" Name="DellSupport" Value="&quot;C:\Program Files\Dell Support\DSAgnt.exe&quot; /startup" Component_="DellSupport_1"/>
+    <ROW Registry="MsnMsgr" Root="1" Key="Run" Name="MsnMsgr" Value="&quot;C:\Program Files\MSN Messenger\MsnMsgr.Exe&quot; /background" Component_="MsnMsgr"/>
+    <ROW Registry="MsnMsgr_1" Root="-1" Key="Software\Run" Name="MsnMsgr" Value="&quot;C:\Program Files\MSN Messenger\MsnMsgr.Exe&quot; /background" Component_="MsnMsgr_1"/>
+    <ROW Registry="Spark" Root="-1" Key="Software" Name="Spark" Value="[#Spark.exe]" Component_="Spark"/>
+    <ROW Registry="Spark_1" Root="-1" Key="Software\Run" Name="Spark" Value="[#Spark.exe]" Component_="Spark_1"/>
+    <ROW Registry="ctfmon.exe" Root="1" Key="Run" Name="ctfmon.exe" Value="C:\WINDOWS\system32\ctfmon.exe" Component_="ctfmon.exe"/>
+    <ROW Registry="ctfmon.exe_1" Root="-1" Key="Software\Run" Name="ctfmon.exe" Value="C:\WINDOWS\system32\ctfmon.exe" Component_="ctfmon.exe_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="Spark.exe" Directory_="SHORTCUTDIR" Name="Spark.exe" Component_="Spark.exe" Target="[#Spark.exe]" Description="Spark.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
