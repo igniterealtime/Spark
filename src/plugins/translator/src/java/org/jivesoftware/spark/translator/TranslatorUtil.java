@@ -5,6 +5,7 @@
  * Copyright (C) 1999-2005 Jive Software. All rights reserved.
  * This software is the proprietary information of Jive Software. Use is subject to license terms.
  */
+
 package org.jivesoftware.spark.translator;
 
 import com.meterware.httpunit.GetMethodWebRequest;
@@ -14,6 +15,7 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import org.jivesoftware.spark.util.log.Log;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -53,9 +55,17 @@ public class TranslatorUtil {
 
         try {
             WebResponse webResponse = wc.getResponse(webRequest);
-            Element body = (Element)webResponse.getDOM().getDocumentElement().getElementsByTagName("body").item(0);
-            NodeList elems = body.getElementsByTagName("textarea");
-            response = elems.item(0).getChildNodes().item(0).getNodeValue();
+            NodeList list = webResponse.getDOM().getDocumentElement().getElementsByTagName("div");
+            int length = list.getLength();
+            for (int i = 0; i < length; i++) {
+                Element element = (Element)list.item(i);
+                if ("result_box".equals(element.getAttribute("id"))) {
+                    Node translation = element.getFirstChild();
+                    if (translation != null) {
+                        response = translation.getNodeValue();
+                    }
+                }
+            }
         }
         catch (MalformedURLException e) {
             Log.error("Could not for url: " + e);
@@ -179,25 +189,25 @@ public class TranslatorUtil {
          * Array containing all TranslationTypes
          */
         private static final TranslationType[] types = {
-            None,
-            EnglishToGerman,
-            EnglishToSpanish,
-            EnglishToFrench,
-            EnglishToItalian,
-            EnglishToPortuguese,
-            EnglishToJapanese,
-            EnglishToKorean,
-            EnglishToChineseSimplified,
-            GermanToEnglish,
-            GermanToFrench,
-            SpanishToEnglish,
-            FrenchToEnglish,
-            FrenchToGerman,
-            ItalianToEnglish,
-            PortugueseToEnglish,
-            JapaneseToEnglish,
-            KoreanToEnglish,
-            ChineseSimplifiedToEnglish
+                None,
+                EnglishToGerman,
+                EnglishToSpanish,
+                EnglishToFrench,
+                EnglishToItalian,
+                EnglishToPortuguese,
+                EnglishToJapanese,
+                EnglishToKorean,
+                EnglishToChineseSimplified,
+                GermanToEnglish,
+                GermanToFrench,
+                SpanishToEnglish,
+                FrenchToEnglish,
+                FrenchToGerman,
+                ItalianToEnglish,
+                PortugueseToEnglish,
+                JapaneseToEnglish,
+                KoreanToEnglish,
+                ChineseSimplifiedToEnglish
         };
     }
 }

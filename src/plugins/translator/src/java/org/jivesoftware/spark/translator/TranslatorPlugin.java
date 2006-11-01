@@ -5,6 +5,7 @@
  * Copyright (C) 1999-2005 Jive Software. All rights reserved.
  * This software is the proprietary information of Jive Software. Use is subject to license terms.
  */
+
 package org.jivesoftware.spark.translator;
 
 import org.jivesoftware.smack.packet.Message;
@@ -16,13 +17,15 @@ import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
+import javax.swing.JComboBox;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JComboBox;
-
 /**
  * A plugin that uses google's translation service to translate instant messages between two users.
+ *
+ * @author Jive Software
  */
 public class TranslatorPlugin implements Plugin {
 
@@ -57,7 +60,7 @@ public class TranslatorPlugin implements Plugin {
                         public void sendingMessage(Message message) {
                             String currentBody = message.getBody();
                             TranslatorUtil.TranslationType type =
-                                (TranslatorUtil.TranslationType)translatorBox.getSelectedItem();
+                                    (TranslatorUtil.TranslationType)translatorBox.getSelectedItem();
                             if (type != null && type != TranslatorUtil.TranslationType.None) {
                                 currentBody = TranslatorUtil.translate(currentBody, type);
                                 message.setBody(currentBody);
