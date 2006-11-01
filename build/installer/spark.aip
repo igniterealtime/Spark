@@ -5,13 +5,15 @@
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
     <ROW Property="ARPPRODUCTICON" Value="controlPanelIcon.exe"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://www.jivesoftware.org/spark"/>
-    <ROW Property="BannerBitmap" Value="default_banner.bmp" Type="1"/>
-    <ROW Property="DialogBitmap" Value="default_dialog.bmp" Type="1"/>
+    <ROW Property="BannerBitmap" Value="style2blue_banner.jpg" Type="1"/>
+    <ROW Property="CTRLS" Value="2"/>
+    <ROW Property="DialogBitmap" Value="style2blue_dialog.jpg" Type="1"/>
     <ROW Property="Manufacturer" Value="Jive Software" ValueLocId="*"/>
     <ROW Property="ProductCode" Value="1033:{B68C7CBE-A77D-4CA3-9E78-2C3BF2B5A897} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
     <ROW Property="ProductVersion" Value="2.0.5"/>
+    <ROW Property="RUNAPPLICATION" Value="1" Type="4"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
   </COMPONENT>
@@ -128,9 +130,9 @@
     <ROW Fragment="UI.aip" Path="&lt;UI.aip&gt;"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
-    <ROW Name="default_banner.bmp" SourcePath="&lt;default-banner.bmp&gt;"/>
-    <ROW Name="default_dialog.bmp" SourcePath="&lt;default-dialog.bmp&gt;"/>
     <ROW Name="launcher.dll" SourcePath="&lt;launcher.dll&gt;"/>
+    <ROW Name="style2blue_banner.jpg" SourcePath="&lt;style2blue-banner.jpg&gt;"/>
+    <ROW Name="style2blue_dialog.jpg" SourcePath="&lt;style2blue-dialog.jpg&gt;"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
     <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
@@ -150,6 +152,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
+    <ROW Action="AI_LaunchApp" Type="1" Source="launcher.dll" Target="[#Spark.exe]"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="1" Source="launcher.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="1" Source="launcher.dll" Target="RestoreLocation"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
@@ -209,6 +212,7 @@
     <ATTRIBUTE name="MediaSize" value="0"/>
     <ATTRIBUTE name="MediaSizeUnit" value="0"/>
     <ATTRIBUTE name="Package" value="1"/>
+    <ATTRIBUTE name="PackageName" value="..\..\..\..\spark"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
     <ROW Registry="DellSupport" Root="1" Key="Run" Name="DellSupport" Value="&quot;C:\Program Files\Dell Support\DSAgnt.exe&quot; /startup" Component_="DellSupport"/>

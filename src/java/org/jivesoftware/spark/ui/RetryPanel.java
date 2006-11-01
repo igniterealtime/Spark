@@ -16,10 +16,9 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -29,9 +28,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * RetryPanel is the UI/Function class to handle reconnection logic. This allows for a simple card layout to replace the current
@@ -42,12 +38,6 @@ import java.util.List;
 public class RetryPanel extends JPanel {
     private WrappedLabel descriptionLabel;
     private RolloverButton retryButton;
-    private RolloverButton cancelButton;
-
-    private Timer timer;
-    private int countdown;
-
-    private List listeners = new ArrayList();
 
     /**
      * Construct the RetryPanel.
@@ -55,35 +45,61 @@ public class RetryPanel extends JPanel {
     public RetryPanel() {
         setLayout(new GridBagLayout());
 
-        countdown = 45;
-
         // Init Components
         descriptionLabel = new WrappedLabel();
 
         retryButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-        cancelButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-
-        ResourceUtils.resButton(cancelButton, Res.getString("button.reconnect"));
 
         layoutComponents();
 
         retryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                //attemptReconnect();
+                attemptReconnection();
             }
         });
 
-
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                logout();
-            }
-        });
 
         setBackground(Color.white);
 
         // Set Font
-        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 13));
+        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+
+        retryButton.setText("Reconnect");
+    }
+
+    private void attemptReconnection() {
+        retryButton.setText("Attempting...");
+        retryButton.setEnabled(false);
+
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    SparkManager.getConnection().connect();
+                    return true;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            public void finished() {
+                retryButton.setEnabled(true);
+
+                if ((Boolean)get()) {
+                    ContactList list = SparkManager.getWorkspace().getContactList();
+                    list.clientReconnected();
+                }
+                else {
+                    retryButton.setText("Reconnect");
+                }
+            }
+
+        };
+
+        worker.start();
+
+
     }
 
     /**
@@ -104,7 +120,6 @@ public class RetryPanel extends JPanel {
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
         buttonPanel.add(retryButton);
-        buttonPanel.add(cancelButton);
 
         add(buttonPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
     }
@@ -112,24 +127,12 @@ public class RetryPanel extends JPanel {
     /**
      * Starts the countdown to the next retry attempt. The retry attemp is set for every 45 seconds or what is set
      * as the default in preferences.
+     *
+     * @param text the text to display on the reconnect button.
      */
-    protected void startTimer() {
+    protected void setReconnectText(String text) {
         retryButton.setVisible(true);
-
-        ActionListener updateTime = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (countdown > 0) {
-                    retryButton.setText("Retry in " + countdown);
-                    countdown--;
-                }
-                else {
-                    //attemptReconnect();
-                }
-            }
-        };
-
-        timer = new Timer(1000, updateTime);
-        timer.start();
+        retryButton.setText(text);
     }
 
     /**
@@ -138,101 +141,4 @@ public class RetryPanel extends JPanel {
     public void showConflict() {
         retryButton.setVisible(false);
     }
-
-    /*
-    private void attemptReconnect() {
-        retryButton.setText("Attempting....");
-        timer.stop();
-
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(500);
-                }
-                catch (InterruptedException e) {
-                    Log.error(e);
-                }
-
-                return timer;
-            }
-
-            public void finished() {
-                XMPPConnection con;
-                try {
-                    con = SparkManager.getConnection().reconnect();
-                    SparkManager.getSessionManager().setConnection(con);
-                    SparkManager.getMessageEventManager().setConnection(con);
-                    fireReconnection();
-                }
-                catch (XMPPException e) {
-                    countdown = 45;
-                    timer.start();
-                }
-            }
-        };
-
-        worker.start();
-
-
-    }
-    */
-
-    /**
-     * Adds a <code>ReconnectListener</code>.
-     *
-     * @param listener the listener to add.
-     */
-    public void addReconnectionListener(ReconnectListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * Removes a <code>ReconnectListener</code>.
-     *
-     * @param listener the listener to remove.
-     */
-    public void removeReconnectionListener(ReconnectListener listener) {
-        listeners.remove(listener);
-    }
-
-    private void fireReconnection() {
-        final Iterator iter = ModelUtil.reverseListIterator(listeners.listIterator());
-        while (iter.hasNext()) {
-            ReconnectListener listener = (ReconnectListener)iter.next();
-            listener.reconnected();
-        }
-    }
-
-    private void fireCancelled() {
-        final Iterator iter = ModelUtil.reverseListIterator(listeners.listIterator());
-        while (iter.hasNext()) {
-            ReconnectListener listener = (ReconnectListener)iter.next();
-            listener.cancelled();
-        }
-    }
-
-
-    private void logout() {
-        SparkManager.getMainWindow().setVisible(false);
-        SparkManager.getMainWindow().logout(false);
-    }
-
-    /**
-     * Implementation of this class if you wish to be notified of reconnection or cancelling events when Spark
-     * loses it's connection to the server.
-     */
-    public interface ReconnectListener {
-
-        /**
-         * Spark has successfully reconnected.
-         */
-        void reconnected();
-
-        /**
-         * The user has decided to cancel the reconnection attempt.
-         */
-        void cancelled();
-    }
-
-
 }

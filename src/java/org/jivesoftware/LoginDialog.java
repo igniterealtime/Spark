@@ -590,7 +590,7 @@ public final class LoginDialog {
                             config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
                         }
 
-                        config.setReconnectionAllowed(false);
+                        //config.setReconnectionAllowed(false);
                     }
 
                     if (config != null) {

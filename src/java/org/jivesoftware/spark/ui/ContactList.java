@@ -134,7 +134,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
     private RetryPanel retryPanel;
-    private RetryPanel.ReconnectListener reconnectListener;
 
     private Workspace workspace;
 
@@ -1863,86 +1862,33 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         connectionClosedOnError(null);
     }
 
-    private void reconnect(final String message, final boolean conflict) {
+    private void reconnect(final String message) {
         // Show MainWindow
         SparkManager.getMainWindow().setVisible(true);
 
         // Flash That Window.
         SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
 
-        if (reconnectListener == null) {
-            reconnectListener = new RetryPanel.ReconnectListener() {
-                public void reconnected() {
-                    clientReconnected();
-                }
-
-                public void cancelled() {
-                    removeAllUsers();
-                }
-
-            };
-
-            retryPanel.addReconnectionListener(reconnectListener);
-        }
-
         workspace.changeCardLayout(RETRY_PANEL);
 
         retryPanel.setDisconnectReason(message);
-
-        if (false) {
-            retryPanel.startTimer();
-        }
-        else {
-            retryPanel.showConflict();
-        }
-
-
-    }
-
-    private void removeAllUsers() {
-        // Show reconnect panel
-        workspace.changeCardLayout(RETRY_PANEL);
-
-        // Behind the scenes, move everyone to the offline group.
-        Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
-            Iterator contactItems = new ArrayList(contactGroup.getContactItems()).iterator();
-            while (contactItems.hasNext()) {
-                ContactItem item = (ContactItem)contactItems.next();
-                contactGroup.removeContactItem(item);
-            }
-        }
-
     }
 
     public void clientReconnected() {
-        XMPPConnection con = SparkManager.getConnection();
-        if (con.isConnected()) {
-            // Send Available status
-            final Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
-            SparkManager.getSessionManager().changePresence(presence);
-            final Roster roster = con.getRoster();
-
-            for (RosterEntry entry : roster.getEntries()) {
-                updateUserPresence(roster.getPresence(entry.getUser()));
-            }
-        }
-
+        buildContactList();
         workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
     }
 
     public void connectionClosedOnError(final Exception ex) {
         String errorMessage = Res.getString("message.disconnected.error");
-        boolean conflictError = false;
 
         if (ex != null && ex instanceof XMPPException) {
             XMPPException xmppEx = (XMPPException)ex;
             StreamError error = xmppEx.getStreamError();
             String reason = error.getCode();
+
             if ("conflict".equals(reason)) {
                 errorMessage = Res.getString("message.disconnected.conflict.error");
-                conflictError = true;
             }
             else {
                 errorMessage = Res.getString("message.general.error", reason);
@@ -1950,22 +1896,29 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         final String message = errorMessage;
-        final boolean conflicted = conflictError;
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                reconnect(message, conflicted);
+                reconnect(message);
             }
         });
 
     }
 
     public void reconnectingIn(int i) {
+        if (i == 0) {
+            retryPanel.setReconnectText("Attempting...");
+        }
+        else {
+            retryPanel.setReconnectText("Reconnect...");
+        }
     }
 
     public void reconectionSuccessful() {
+        clientReconnected();
     }
 
     public void reconnectionFailed(Exception exception) {
+        retryPanel.setReconnectText("Reconnect Failed");
     }
 
 
