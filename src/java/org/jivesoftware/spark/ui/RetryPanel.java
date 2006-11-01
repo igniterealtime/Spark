@@ -14,15 +14,14 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.text.html.HTMLEditorKit;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,7 +35,7 @@ import java.awt.event.ActionListener;
  * @author Derek DeMoro
  */
 public class RetryPanel extends JPanel {
-    private WrappedLabel descriptionLabel;
+    private JEditorPane pane;
     private RolloverButton retryButton;
 
     /**
@@ -46,7 +45,9 @@ public class RetryPanel extends JPanel {
         setLayout(new GridBagLayout());
 
         // Init Components
-        descriptionLabel = new WrappedLabel();
+        pane = new JEditorPane();
+        pane.setEditorKit(new HTMLEditorKit());
+        pane.setEditable(false);
 
         retryButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
 
@@ -60,9 +61,6 @@ public class RetryPanel extends JPanel {
 
 
         setBackground(Color.white);
-
-        // Set Font
-        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
 
         retryButton.setText("Reconnect");
     }
@@ -91,7 +89,7 @@ public class RetryPanel extends JPanel {
                     list.clientReconnected();
                 }
                 else {
-                    retryButton.setText("Reconnect");
+                    retryButton.setText("Reconnect...");
                 }
             }
 
@@ -111,17 +109,21 @@ public class RetryPanel extends JPanel {
         if (!ModelUtil.hasLength(reason)) {
             reason = Res.getString("message.generic.reconnect.message");
         }
-        descriptionLabel.setText(reason);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html><body><table height=100% width=100%><tr><td align=center>");
+        builder.append("<b><u>");
+        builder.append(reason);
+        builder.append("</u></b>");
+        builder.append("</td></tr></table></body></html>");
+
+        pane.setText(builder.toString());
     }
 
     private void layoutComponents() {
-        add(descriptionLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-        buttonPanel.add(retryButton);
-
-        add(buttonPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(retryButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
