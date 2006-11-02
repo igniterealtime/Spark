@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -53,6 +54,15 @@ public class URLFileSystem {
         }
         catch (IOException e) {
             return null;
+        }
+    }
+
+    public static String getContents(File file) {
+        try {
+            return getContents(file.toURL());
+        }
+        catch (MalformedURLException e) {
+            return "";
         }
     }
 
