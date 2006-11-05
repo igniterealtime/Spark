@@ -195,8 +195,10 @@
         <copy todir="${bin}">
             <fileset dir="${resources.dir}">
                 <include name="startup.bat"/>
+                <include name="startup.sh"/>
             </fileset>
         </copy>
+        <chmod file="${bin}/startup.sh" perm="+x" />
     </target>
 
     <!-- jar =================================================================================== -->
