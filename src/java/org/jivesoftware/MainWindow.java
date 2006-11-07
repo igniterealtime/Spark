@@ -364,9 +364,15 @@ public final class MainWindow extends JFrame implements ActionListener {
             connectMenu.add(logoutWithStatus);
         }
 
-        connectMenu.addSeparator();
-
-        connectMenu.add(exitMenuItem);
+        // Only add a separator and an "exit" menu item if we're not on the mac platform
+        try {
+            boolean isMacPlatform = Class.forName("com.apple.eawt.Application") == null;
+            if (!isMacPlatform) {
+                connectMenu.addSeparator();
+                connectMenu.add(exitMenuItem);
+            }
+        }
+        catch (ClassNotFoundException ignored) { Log.debug(ignored.getMessage()); }
 
         Action showTrafficAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
