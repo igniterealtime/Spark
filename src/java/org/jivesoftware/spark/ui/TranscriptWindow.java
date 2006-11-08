@@ -24,7 +24,6 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -76,18 +75,9 @@ public class TranscriptWindow extends JPanel {
 
         themeManager = ThemeManager.getInstance();
 
-        BrowserEngineManager bem = BrowserEngineManager.instance();
-        //specific engine if you want and the engine you specified will return
-        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
-
-        //IBrowserEngine be = bem.setActiveEngine(...);
-        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
-        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
         browser = new WebBrowser();
 
-     
-
-
+        browser.setURL(themeManager.getTemplateURL());
 
         browser.addWebBrowserListener(new WebBrowserListener() {
             public void downloadStarted(WebBrowserEvent webBrowserEvent) {
@@ -386,7 +376,6 @@ public class TranscriptWindow extends JPanel {
             Log.error("Unable to save chat transcript.", ex);
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     public void scrollToBottom() {

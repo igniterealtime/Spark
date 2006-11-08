@@ -20,7 +20,12 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,7 +51,7 @@ public class ThemeManager {
     private String outgoingTransferText;
     private String incomingTransferText;
 
-
+    private File tempFile;
     private String chatName;
 
     /**
@@ -70,6 +75,14 @@ public class ThemeManager {
     }
 
     private ThemeManager() {
+        BrowserEngineManager bem = BrowserEngineManager.instance();
+        //specific engine if you want and the engine you specified will return
+        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
+
+        //IBrowserEngine be = bem.setActiveEngine(...);
+        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
+        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
+
         // URL url = getClass().getResource("/themes/pin");
         File file = new File("C:\\adium\\renkoo2.3\\renkoo.AdiumMessageStyle");
         setTheme(file);
@@ -122,6 +135,15 @@ public class ThemeManager {
         File nextOutgoingTextFile = new File(theme, "/Outgoing/NextContent.html");
         nextOutgoingText = URLFileSystem.getContents(nextOutgoingTextFile);
 
+        tempFile = new File(theme, "temp.html");
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
+            out.write(templateText);
+            out.close();
+        }
+        catch (IOException e) {
+        }
+
         // Load outgoing transfer text
         File outgoingTransferFile = new File(theme, "/Outgoing/filetransfer.html");
         outgoingTransferText = URLFileSystem.getContents(outgoingTransferFile);
@@ -145,6 +167,18 @@ public class ThemeManager {
     public String getTemplate() {
         return templateText;
     }
+
+    public URL getTemplateURL() {
+        try {
+            return tempFile.toURL();
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     public String getIncomingMessage(String sender, String time, String message) {
         String incoming = incomingText;

@@ -29,10 +29,6 @@ class NativeBrowserViewer extends BrowserViewer implements WebBrowserListener {
     private WebBrowser browser;
 
     public void initializeBrowser() {
-        BrowserEngineManager bem = BrowserEngineManager.instance();
-        //specific engine if you want and the engine you specified will return
-        bem.setActiveEngine(BrowserEngineManager.IE);
-
         browser = new WebBrowser();
 
 
