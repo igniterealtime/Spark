@@ -317,6 +317,7 @@ public final class MainWindow extends JFrame implements ActionListener {
      * Setup the Main Toolbar with File, Tools and Help.
      */
     private void buildMenu() {
+
         // setup file menu
         JMenuItem exitMenuItem = new JMenuItem();
 
@@ -364,15 +365,11 @@ public final class MainWindow extends JFrame implements ActionListener {
             connectMenu.add(logoutWithStatus);
         }
 
-        // Only add a separator and an "exit" menu item if we're not on the mac platform
-        try {
-            boolean isMacPlatform = Class.forName("com.apple.eawt.Application") == null;
-            if (!isMacPlatform) {
-                connectMenu.addSeparator();
-                connectMenu.add(exitMenuItem);
-            }
+        // Only add a separator and an "exit" menu item if we're not on the Mac platform
+        if (!Spark.isMac()) {
+            connectMenu.addSeparator();
+            connectMenu.add(exitMenuItem);
         }
-        catch (ClassNotFoundException ignored) { Log.debug(ignored.getMessage()); }
 
         Action showTrafficAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
