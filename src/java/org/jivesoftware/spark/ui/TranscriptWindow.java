@@ -10,6 +10,8 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jdesktop.jdic.browser.BrowserEngineManager;
+import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jdesktop.jdic.browser.WebBrowser;
 import org.jdesktop.jdic.browser.WebBrowserEvent;
 import org.jdesktop.jdic.browser.WebBrowserListener;
@@ -18,19 +20,22 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.preference.PreferenceManager;
+import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -61,7 +66,7 @@ public class TranscriptWindow extends JPanel {
 
     private boolean documentLoaded;
 
-    private JPanel downloadPanel = new JPanel();
+    private JPanel extraPanel = new JPanel();
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
@@ -71,9 +76,18 @@ public class TranscriptWindow extends JPanel {
 
         themeManager = ThemeManager.getInstance();
 
+        BrowserEngineManager bem = BrowserEngineManager.instance();
+        //specific engine if you want and the engine you specified will return
+        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
+
+        //IBrowserEngine be = bem.setActiveEngine(...);
+        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
+        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
         browser = new WebBrowser();
 
-        browser.setURL(themeManager.getTemplateURL());
+     
+
+
 
         browser.addWebBrowserListener(new WebBrowserListener() {
             public void downloadStarted(WebBrowserEvent webBrowserEvent) {
@@ -98,14 +112,18 @@ public class TranscriptWindow extends JPanel {
 
             public void statusTextChange(WebBrowserEvent webBrowserEvent) {
             }
+
+
+            public void initializationCompleted(WebBrowserEvent webBrowserEvent) {
+            }
         });
 
         add(browser, BorderLayout.CENTER);
 
-        /* Load Preferences for this instance */
-        PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
+        extraPanel.setBackground(Color.white);
+        extraPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
 
-        startCommandListener();
+        add(extraPanel, BorderLayout.SOUTH);
     }
 
 
@@ -439,10 +457,29 @@ public class TranscriptWindow extends JPanel {
                             System.out.println(command);
                         }
                     }
-                }, 50, 50);
+                }, 500, 500);
             }
         };
 
         worker.start();
+    }
+
+    public void addComponent(JComponent component) {
+        extraPanel.add(component);
+        extraPanel.setVisible(true);
+        extraPanel.invalidate();
+        extraPanel.validate();
+        extraPanel.repaint();
+    }
+
+    public void removeComponent(JComponent component) {
+        if (extraPanel.getComponentCount() == 0) {
+            extraPanel.setVisible(false);
+        }
+
+        extraPanel.remove(component);
+        extraPanel.invalidate();
+        extraPanel.validate();
+        extraPanel.repaint();
     }
 }

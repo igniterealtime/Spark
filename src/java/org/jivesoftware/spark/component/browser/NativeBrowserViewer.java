@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.component.browser;
 
+import org.jdesktop.jdic.browser.BrowserEngineManager;
 import org.jdesktop.jdic.browser.WebBrowser;
 import org.jdesktop.jdic.browser.WebBrowserEvent;
 import org.jdesktop.jdic.browser.WebBrowserListener;
@@ -28,13 +29,18 @@ class NativeBrowserViewer extends BrowserViewer implements WebBrowserListener {
     private WebBrowser browser;
 
     public void initializeBrowser() {
+        BrowserEngineManager bem = BrowserEngineManager.instance();
+        //specific engine if you want and the engine you specified will return
+        bem.setActiveEngine(BrowserEngineManager.IE);
+
         browser = new WebBrowser();
+
+
         this.setLayout(new BorderLayout());
 
         this.add(browser, BorderLayout.CENTER);
 
         browser.addWebBrowserListener(this);
-
     }
 
     public void loadURL(String url) {
@@ -80,5 +86,9 @@ class NativeBrowserViewer extends BrowserViewer implements WebBrowserListener {
 
     public void statusTextChange(WebBrowserEvent event) {
 
+    }
+
+
+    public void initializationCompleted(WebBrowserEvent webBrowserEvent) {
     }
 }

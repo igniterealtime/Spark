@@ -10,23 +10,17 @@
 
 package org.jivesoftware.spark.ui.themes;
 
+import org.jdesktop.jdic.browser.BrowserEngineManager;
+import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jdesktop.jdic.browser.WebBrowser;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -52,7 +46,6 @@ public class ThemeManager {
     private String outgoingTransferText;
     private String incomingTransferText;
 
-    private File tempFile;
 
     private String chatName;
 
@@ -77,22 +70,13 @@ public class ThemeManager {
     }
 
     private ThemeManager() {
-        File file = new File("C:\\adium\\pin");
+        // URL url = getClass().getResource("/themes/pin");
+        File file = new File("C:\\adium\\renkoo2.3\\renkoo.AdiumMessageStyle");
         setTheme(file);
     }
 
     public void setTheme(File theme) {
         theme = new File(theme, "/Contents/Resources");
-
-        // Load Template
-        URL protypeFile = getClass().getResource("/themes/prototype-1.4.0.js");
-
-        try {
-            URLFileSystem.copy(protypeFile, new File(theme, "prototype-1.4.0.js"));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
 
         File template = new File(theme, "template.html");
         templateText = URLFileSystem.getContents(template);
@@ -138,15 +122,6 @@ public class ThemeManager {
         File nextOutgoingTextFile = new File(theme, "/Outgoing/NextContent.html");
         nextOutgoingText = URLFileSystem.getContents(nextOutgoingTextFile);
 
-        tempFile = new File(theme, "temp.html");
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
-            out.write(templateText);
-            out.close();
-        }
-        catch (IOException e) {
-        }
-
         // Load outgoing transfer text
         File outgoingTransferFile = new File(theme, "/Outgoing/filetransfer.html");
         outgoingTransferText = URLFileSystem.getContents(outgoingTransferFile);
@@ -156,18 +131,19 @@ public class ThemeManager {
         incomingTransferText = URLFileSystem.getContents(incomingTransferFile);
     }
 
-    public String getTemplate() {
-        return templateText;
+    public String getTemplate(String chatName) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMMMM, d,yyyy");
+        String time = formatter.format(new Date());
+
+        String text = templateText;
+        text = text.replaceAll("%timeOpened%", time);
+        text = text.replaceAll("%chatOpened%", chatName);
+
+        return text;
     }
 
-    public URL getTemplateURL() {
-        try {
-            return tempFile.toURL();
-        }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public String getTemplate() {
+        return templateText;
     }
 
     public String getIncomingMessage(String sender, String time, String message) {
@@ -193,6 +169,22 @@ public class ThemeManager {
         status = status.replaceAll("%time%", time);
         status = status.replaceAll("%message%", message);
         status = html(status);
+        return status;
+    }
+
+    public String getNotificationMessage(String message, boolean allowQuotes) {
+        String status = statusText;
+        status = status.replaceAll("%time%", "");
+        status = status.replaceAll("%message%", message);
+        if (!allowQuotes) {
+            status = html(status);
+        }
+        else {
+            status = status.replaceAll("\"", "\\\"");
+            status = status.replaceAll("\n", "");
+            status = status.replaceAll("\t", "");
+            status = status.replaceAll("\r", "");
+        }
         return status;
     }
 
@@ -240,6 +232,7 @@ public class ThemeManager {
         }
         return text;
     }
+
 
     private String html(String text) {
         text = text.replaceAll("\n", "");
@@ -308,58 +301,27 @@ public class ThemeManager {
 
 
     public static void main(String args[]) {
-        final ThemeManager themeManager = ThemeManager.getInstance();
-        themeManager.setChatName("Discussion Room");
+        File tempFile = new File("C:\\Demo.html");
+        String contents = URLFileSystem.getContents(tempFile);
 
-        // Write out new template
-        String tempTemplate = themeManager.getTemplate();
+        BrowserEngineManager bem = BrowserEngineManager.instance();
+        //specific engine if you want and the engine you specified will return
+        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
 
-        final File file = URLFileSystem.url2File(themeManager.getTemplateURL());
-        File tempFile = new File(file, "temp.html");
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
-            out.write(tempTemplate);
-            out.close();
-        }
-        catch (IOException e) {
-        }
-
-
+        //IBrowserEngine be = bem.setActiveEngine(...);
+        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
+        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
         final WebBrowser browser = new WebBrowser();
 
 
-        browser.setURL(themeManager.getTemplateURL());
+        browser.setContent(contents);
+
 
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
 
-        frame.add(browser, BorderLayout.CENTER);
+        frame.add(browser.asComponent(), BorderLayout.CENTER);
 
-
-        JButton button = new JButton("Add");
-        frame.add(button, BorderLayout.SOUTH);
-        button.addActionListener(new ActionListener() {
-            boolean ok = false;
-
-            public void actionPerformed(ActionEvent e) {
-                String incomingText = themeManager.getIncomingMessage("Don", "7 a.m.", "I'm away fuck face.");
-                if (ok) {
-                    incomingText = themeManager.getNextIncomingMessage("HI", "8 a.m.");
-                }
-
-                if (true) {
-                    browser.executeScript("appendMessage('" + incomingText + "')");
-                }
-                else {
-                    browser.executeScript("appendNextMessage('" + incomingText + "')");
-                }
-
-                if (!ok) {
-                    //   ok = true;
-                }
-
-            }
-        });
 
         frame.setSize(400, 400);
         GraphicUtils.centerWindowOnScreen(frame);
