@@ -1,0 +1,126 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <script type='text/javascript' src='prototype-1.4.0.js'></script>
+    <link type="text/css" rel="stylesheet" href="main.css" media="screen"/>
+    <script type="text/javascript">
+        var scrollToBottomIsNeeded = false;
+
+        var commands = new Array();
+
+        function appendMessage(html) {
+            //Remove any existing insertion point
+            var insert = document.getElementById("insert");
+            if (insert) {
+                Element.remove(insert);
+            }
+
+            //Append the new message to the bottom of our chat block
+            var chat = document.getElementById('Chat');
+            new Insertion.Bottom('chat', html);
+        }
+
+        function appendNextMessage(html) {
+            //
+            var insert = document.getElementById("insert");
+
+            var newNode = document.createElement("span");
+            newNode.innerHTML = html;
+
+            //swap
+            if (insert) {
+                var parent = insert.parentNode;
+                parent.appendChild(newNode);
+                parent.removeChild(insert);
+            }
+
+        }
+
+        function addCommand(command) {
+            commands = commands.concat(command);
+        }
+
+        function getNextCommand() {
+            if (commands.length > 0) {
+                return commands.shift(commands);
+            }
+            return null;
+        }
+
+        function scrollToBottom() {
+            var endDiv = document.getElementById('endB');
+            window.scrollTo(0, endDiv.offsetTop);
+        }
+
+        function checkIfScrollToBottomIsNeeded() {
+            scrollToBottomIsNeeded = ( document.body.scrollTop >= ( document.body.offsetHeight - ( window.innerHeight * 1.2 ) ) );
+        }
+
+        function scrollToBottomIfNeeded() {
+            if (checkIfScrollToBottomIsNeeded)
+                scrollToBottom();
+        }
+
+        function setStylesheet(id, url) {
+            code = "<style id=\"" + id + "\" type=\"text/css\" media=\"screen,print\">";
+            if (url.length) code += "@import url( \"" + url + "\" );";
+            code += "</style>";
+            range = document.createRange();
+            head = document.getElementsByTagName("head").item(0);
+            range.selectNode(head);
+            documentFragment = range.createContextualFragment(code);
+            head.removeChild(document.getElementById(id));
+            head.appendChild(documentFragment);
+        }
+
+        document.onclick = imageCheck;
+
+        function imageCheck() {
+            var node = event.target;
+            if (node == null) {
+                return;
+            }
+            if (node.tagName == 'IMG' && node.alt) {
+                a = document.createElement('a');
+                a.setAttribute('onclick', 'imageSwap(this)');
+                a.setAttribute('src', node.src);
+                text = document.createTextNode(node.alt);
+                a.appendChild(text);
+                node.parentNode.replaceChild(a, node);
+            }
+        }
+        function imageSwap(node) {
+            var img = document.createElement('img');
+            img.setAttribute('src', node.src);
+            img.setAttribute('alt', node.firstChild.nodeValue);
+            node.parentNode.replaceChild(img, node);
+            alignChat();
+        }
+
+        function alignChat() {
+            var windowHeight = window.innerHeight;
+            if (windowHeight > 0) {
+                var contentElement = document.getElementById('Chat');
+                var contentHeight = contentElement.offsetHeight;
+                if (windowHeight - contentHeight > 0) {
+                    contentElement.style.position = 'static';
+                    contentElement.style.top = (windowHeight - contentHeight) + 'px';
+                }
+                else {
+                    contentElement.style.position = 'static';
+                }
+            }
+            scrollToBottom();
+        }
+        window.onresize = alignChat;
+
+    </script>
+</head>
+<body onload="alignChat();" style="==bodyBackground==">
+%header%
+<div id="Chat">
+</div>
+%footer%
+ <div id="endB"></div>
+</body>
+</html>

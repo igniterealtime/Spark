@@ -415,9 +415,7 @@ public class Workspace extends JPanel implements PacketListener {
     private void insertMessage(final String bareJID, final Message message) throws ChatRoomNotFoundException {
         ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
         chatRoom.insertMessage(message);
-        int chatLength = chatRoom.getTranscriptWindow().getDocument().getLength();
-        chatRoom.getTranscriptWindow().setCaretPosition(chatLength);
-        chatRoom.getChatInputEditor().requestFocusInWindow();
+
     }
 
     public void addAlert(Component comp) {

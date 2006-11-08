@@ -278,7 +278,7 @@ public final class SparkManager {
         final ChatPrinter printer = new ChatPrinter();
         final TranscriptWindow currentWindow = room.getTranscriptWindow();
         if (currentWindow != null) {
-            printer.print(currentWindow);
+        //    printer.print(currentWindow);
         }
     }
 
@@ -319,7 +319,7 @@ public final class SparkManager {
      */
     public static void printChatTranscript(TranscriptWindow transcriptWindow) {
         final ChatPrinter printer = new ChatPrinter();
-        printer.print(transcriptWindow);
+        //printer.print(transcriptWindow);
     }
 
 

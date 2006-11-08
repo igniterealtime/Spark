@@ -1,0 +1,25 @@
+<div id="%requestID%" style="background-color:white;">
+    <div>
+        %icon%<br/>
+        <span id="transfer_title">
+            %title%
+        </span>
+        <br/>
+        <span id="transfer_filename">
+            %filename%
+        </span>
+        &nbsp;%filesize%
+        <br/>
+        <span id="accept_or_reject_button">
+            <a href=javascript:addCommand("filetransfer:accept?requestID=%requestID%")>Accept</a>&nbsp;
+            <a href=javascript:addCommand("filetransfer:reject?requestID=%requestID%")>Reject</a>
+        </span>
+
+        <div id="mContainer" style="display:none;">
+	        <div id="gradient"></div>
+	        <div id="mask"></div>
+	        <div id="progressIndicator">0%</div>
+        </div>
+    </div>
+</div>
+

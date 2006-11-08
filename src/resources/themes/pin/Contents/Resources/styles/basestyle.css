@@ -1,0 +1,136 @@
+.buddyicon {
+    height: 64px;
+    width: 64px;
+    position: relative;
+    float: right;
+    z-index: -2;
+    padding-top: 20px;
+    padding-right: 8px;
+    
+}
+
+.photo {
+    height: 90px;
+    width: 80px;
+    position: relative;
+    float: right;
+    z-index: 2;
+    margin-top: 2px;
+}
+
+.top {
+    min-width: 250px;
+}
+
+.topleftcorner {
+    background: url(../images/corner_top_left.png) top left no-repeat;
+}
+
+.toprightcorner {
+    padding-top: 46px;
+    padding-bottom: 14px;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-left: 74px;
+    font-family: Lucida Handwriting;
+    font-size: 12px;
+    background: url(../images/corner_top_right.png) top repeat-x;
+}
+
+.left {
+    background: url(../images/edge_left.png) top left repeat-y;
+}
+
+.margintimestamp {
+    padding-left: 15px;
+    float: left;
+    font-family: Lucida Handwriting;
+    font-size: 12px;
+}
+
+.right {
+    padding-right: 15px;	    
+    padding-left: 5px;
+    margin-left: 74px;
+    background: url(../images/background_pane.png) top repeat;
+}
+
+.msg1 {
+    min-width: 250px;
+}
+
+.msg2 { 
+    min-width: 250px;
+}
+
+.bottomleftcorner {
+    background: url(../images/corner_bottom_left.png) top left no-repeat;
+}
+
+.bottomrightcorner {
+    padding-bottom: 10px;
+    background: url(../images/corner_bottom_right.png) top right no-repeat;
+}
+    
+.header {
+    min-width: 250px;
+    padding: 0px 10px;
+}
+
+.headertop {
+    background: url(../images/header_top.png) top no-repeat;
+    padding-top: 50px;
+}
+
+.headermiddle {
+    background: url(../images/newspaper_texture.png) top repeat;
+    font-family: Capitals;
+    font-size: 10px;
+    color: rgba(35,35,35); 
+    padding: 0px 10px;
+}
+
+.headerbottom {
+    background: url(../images/header_bottom.png) top right repeat-x;
+    padding-top: 35px;
+}
+
+.statusupdate {
+    width: 150px;
+    margin: 0px auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    padding-left: 15px;
+    font-family: Lucida Handwriting;
+    font-size: 14px;
+    background: rgb(255,255,115);
+}
+
+.statusbottom {
+    width: 200px;
+    margin: 0px auto;
+    font-family: Lucida Handwriting;
+    font-size: 10px;
+}
+
+.statusbottomleft {
+    background: url(../images/status_bottom_left.png) top left no-repeat;
+    padding-left: 10px;
+}
+
+.statusbottomright {
+    background: url(../images/status_bottom_right.png) top right repeat-x;
+    padding-top: 3px;
+    padding-bottom: 32px;
+    padding-right: 20px;
+    font-size: 10px;
+}
+
+.context {
+    text-decoration: line-through;
+}
+
+IMG {
+    position: absolute;
+}

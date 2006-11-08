@@ -75,7 +75,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final TranscriptWindow transcriptWindow;
     private final ChatAreaSendField chatAreaButton;
     private final ChatToolBar toolbar;
-    private final JScrollPane textScroller;
     private final JPanel bottomPanel;
     private final JPanel editorBar;
     private JPanel chatWindowPanel;
@@ -118,23 +117,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
 
             public void mouseReleased(MouseEvent e) {
-                if (transcriptWindow.getSelectedText() == null) {
-                    getChatInputEditor().requestFocus();
-                }
+
             }
         });
 
-        textScroller = new JScrollPane(transcriptWindow);
-
-        textScroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                mousePressed = true;
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                mousePressed = false;
-            }
-        });
 
         chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND));
 
@@ -149,7 +135,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
 
-
+        /*
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object component, JPopupMenu popup) {
                 Action saveAction = new AbstractAction() {
@@ -172,6 +158,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 return false;
             }
         });
+        */
 
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
         this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
@@ -201,15 +188,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         verticalSplit.setBorder(null);
         splitPane.setLeftComponent(verticalSplit);
 
-        textScroller.setAutoscrolls(true);
-
-        // Speed up scrolling. It was way too slow.
-        textScroller.getVerticalScrollBar().setBlockIncrement(50);
-        textScroller.getVerticalScrollBar().setUnitIncrement(20);
 
         chatWindowPanel = new JPanel();
         chatWindowPanel.setLayout(new GridBagLayout());
-        chatWindowPanel.add(textScroller, new GridBagConstraints(0, 10, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        chatWindowPanel.add(transcriptWindow, new GridBagConstraints(0, 10, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
@@ -357,32 +339,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             return;
         }
 
-        int chatLength = transcriptWindow.getDocument().getLength();
-        transcriptWindow.setCaretPosition(chatLength);
-
-        try {
-            JScrollBar sb = textScroller.getVerticalScrollBar();
-            sb.setValue(sb.getMaximum());
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
-
-        /*
-           try {
-            JScrollBar vbar = textScroller.getVerticalScrollBar();
-            int whereWeAt = vbar.getValue() + vbar.getVisibleAmount();
-            if (whereWeAt < vbar.getMaximum() - 50) {
-
-            }
-            else {
-                vbar.setValue(vbar.getMaximum());
-            }
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
-        */
+        transcriptWindow.scrollToBottom();
     }
 
 
@@ -878,10 +835,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         }
     }
 
-    public JScrollPane getScrollPaneForTranscriptWindow() {
-        return textScroller;
-    }
-
+    
     /**
      * Return the "Send" button.
      *

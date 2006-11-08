@@ -145,7 +145,7 @@ public class InvitationUI extends JPanel implements ActionListener {
         // set invisible
         room.getSplitPane().getRightComponent().setVisible(false);
         room.getBottomPanel().setVisible(false);
-        room.getScrollPaneForTranscriptWindow().setVisible(false);
+        //room.getScrollPaneForTranscriptWindow().setVisible(false);
 
         SparkManager.getChatManager().getChatContainer().addChatRoom(room);
         SparkManager.getChatManager().getChatContainer().makeTabRed(room);
@@ -158,7 +158,7 @@ public class InvitationUI extends JPanel implements ActionListener {
             room.getSplitPane().getRightComponent().setVisible(true);
             room.getBottomPanel().setVisible(true);
 
-            room.getScrollPaneForTranscriptWindow().setVisible(true);
+          //  room.getScrollPaneForTranscriptWindow().setVisible(true);
             room.getSendFieldToolbar().setVisible(true);
             room.getChatInputEditor().setEnabled(true);
             room.getToolBar().setVisible(true);

@@ -10,26 +10,27 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jdesktop.jdic.browser.WebBrowser;
+import org.jdesktop.jdic.browser.WebBrowserEvent;
+import org.jdesktop.jdic.browser.WebBrowserListener;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.preference.PreferenceManager;
+import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,119 +39,75 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
  * of a Chat Window. In general, extensions could override this class
  * to offer more support within the chat, but should not be necessary.
  */
-public class TranscriptWindow extends ChatArea {
+public class TranscriptWindow extends JPanel {
 
     private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
 
-
     private Date lastUpdated;
 
-    /**
-     * The default font used in the chat window for all messages.
-     */
-    private Font font = new Font("Dialog", Font.PLAIN, 12);
+    private WebBrowser browser;
 
+    private ThemeManager themeManager;
+
+    private String activeUser;
+
+    private boolean documentLoaded;
+
+    private JPanel downloadPanel = new JPanel();
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
      */
     public TranscriptWindow() {
-        setEditable(false);
+        setLayout(new BorderLayout());
+
+        themeManager = ThemeManager.getInstance();
+
+        browser = new WebBrowser();
+
+        browser.setURL(themeManager.getTemplateURL());
+
+        browser.addWebBrowserListener(new WebBrowserListener() {
+            public void downloadStarted(WebBrowserEvent webBrowserEvent) {
+            }
+
+            public void downloadCompleted(WebBrowserEvent webBrowserEvent) {
+
+            }
+
+            public void downloadProgress(WebBrowserEvent webBrowserEvent) {
+            }
+
+            public void downloadError(WebBrowserEvent webBrowserEvent) {
+            }
+
+            public void documentCompleted(WebBrowserEvent webBrowserEvent) {
+                documentLoaded = true;
+            }
+
+            public void titleChange(WebBrowserEvent webBrowserEvent) {
+            }
+
+            public void statusTextChange(WebBrowserEvent webBrowserEvent) {
+            }
+        });
+
+        add(browser, BorderLayout.CENTER);
 
         /* Load Preferences for this instance */
         PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
 
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        setDragEnabled(true);
-
-        final TranscriptWindow window = this;
-        addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object component, JPopupMenu popup) {
-                Action printAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        SparkManager.printChatTranscript(window);
-                    }
-                };
-
-
-                Action clearAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        clear();
-                    }
-                };
-
-
-                printAction.putValue(Action.NAME, "Print");
-                printAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PRINTER_IMAGE_16x16));
-
-                clearAction.putValue(Action.NAME, "Clear");
-                clearAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.ERASER_IMAGE));
-                popup.addSeparator();
-                popup.add(printAction);
-
-                popup.add(clearAction);
-            }
-
-            public void poppingDown(JPopupMenu popup) {
-
-            }
-
-            public boolean handleDefaultAction(MouseEvent e) {
-                return false;
-            }
-        });
-
-        // Make sure ctrl-c works
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
-
-        getActionMap().put("copy", new AbstractAction("copy") {
-            public void actionPerformed(ActionEvent evt) {
-                StringSelection ss = new StringSelection(getSelectedText());
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
-            }
-        });
+        startCommandListener();
     }
 
-    public void addComponent(Component component) {
-        StyledDocument doc = (StyledDocument)getDocument();
-
-        // The image must first be wrapped in a style
-        Style style = doc.addStyle("StyleName", null);
-
-
-        StyleConstants.setComponent(style, component);
-
-        // Insert the image at the end of the text
-        try {
-            doc.insertString(doc.getLength(), "ignored text", style);
-            doc.insertString(doc.getLength(), "\n", null);
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
-    }
 
     /**
      * Create and insert a message from the current user.
@@ -159,7 +116,6 @@ public class TranscriptWindow extends ChatArea {
      * @param message the message to insert.
      */
     public void insertMessage(String userid, Message message) {
-
         // Check interceptors.
         for (TranscriptWindowInterceptor interceptor : interceptors) {
             boolean handled = interceptor.handleInsertMessage(userid, message);
@@ -170,70 +126,30 @@ public class TranscriptWindow extends ChatArea {
         }
 
         String body = message.getBody();
+        String date = getDate(null);
 
-        try {
-            String date = getDate(null);
 
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), date + userid + ": ", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setText(body);
-            insertText("\n");
+        if (userid.equals(activeUser)) {
+            String text = themeManager.getNextOutgoingMessage(body, date);
+            executeScript("appendNextMessage('" + text + "')");
         }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
+        else {
+            String text = themeManager.getOutgoingMessage(userid, date, body);
+            executeScript("appendMessage('" + text + "')");
         }
+
+        activeUser = userid;
     }
 
 
     public void insertCustomMessage(String prefix, String message) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            if (prefix != null) {
-                doc.insertString(doc.getLength(), prefix + ": ", styles);
-            }
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setText(message);
-            insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
-        }
+        String text = themeManager.getOutgoingMessage(prefix, "", message);
+        executeScript("appendMessage('" + text + "')");
     }
 
     public void insertCustomOtherMessage(String prefix, String message) {
-        try {
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), prefix + ": ", styles);
-
-            StyleConstants.setBold(styles, false);
-            setText(message);
-            insertText("\n");
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
+        String text = themeManager.getIncomingMessage(prefix, "", message);
+        executeScript("appendMessage('" + text + "')");
     }
 
     /**
@@ -268,19 +184,18 @@ public class TranscriptWindow extends ChatArea {
 
             String theDate = getDate(sentDate);
 
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
+            if (userid.equals(activeUser)) {
+                String text = themeManager.getNextIncomingMessage(body, theDate);
+                executeScript("appendNextMessage('" + text + "')");
+            }
+            else {
+                String text = themeManager.getIncomingMessage(userid, theDate, body);
+                executeScript("appendMessage('" + text + "')");
+            }
 
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), theDate + userid + ": ", styles);
-
-            StyleConstants.setBold(styles, false);
-            setText(body);
-            insertText("\n");
+            activeUser = userid;
         }
-        catch (BadLocationException ex) {
+        catch (Exception ex) {
             Log.error("Error message.", ex);
         }
     }
@@ -293,29 +208,8 @@ public class TranscriptWindow extends ChatArea {
      * @param message the information message to insert.
      */
     public synchronized void insertNotificationMessage(String message) {
-        try {
-
-            Color notificationColor = (Color)UIManager.get("Notification.foreground");
-
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, notificationColor);
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setForeground(notificationColor);
-            setText(message);
-            insertText("\n");
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
+        String text = themeManager.getStatusMessage(message, "");
+        executeScript("appendMessage('" + text + "')");
     }
 
     /**
@@ -324,26 +218,8 @@ public class TranscriptWindow extends ChatArea {
      * @param message the information message to insert.
      */
     public void insertErrorMessage(String message) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("Error.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setForeground(Color.red);
-            setText(message);
-            insertText("\n");
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
+        String text = themeManager.getStatusMessage(message, "");
+        executeScript("appendMessage('" + text + "')");
     }
 
     /**
@@ -353,25 +229,12 @@ public class TranscriptWindow extends ChatArea {
      * @param question the question asked by the customer.
      */
     public void insertQuestionMessage(String question) {
+        String text = themeManager.getStatusMessage(question, "");
+        executeScript("appendMessage('" + text + "')");
+    }
 
-        try {
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("Question.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            StyleConstants.setFontFamily(styles, font.getFamily());
-            doc.insertString(doc.getLength(), "Question - ", styles);
-
-            StyleConstants.setBold(styles, false);
-            setText(question);
-            insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
-        }
-
+    public void insertHTML(String html) {
+        executeScript("appendMessage('" + html + "')");
     }
 
 
@@ -388,14 +251,10 @@ public class TranscriptWindow extends ChatArea {
             insertDate = new Date();
         }
 
-        StyleConstants.setFontFamily(styles, font.getFontName());
-        StyleConstants.setFontSize(styles, font.getSize());
 
         if (pref.isTimeDisplayedInChat()) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
-            final String date = formatter.format(insertDate);
-
-            return "[" + date + "] ";
+            final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+            return formatter.format(insertDate);
         }
         lastUpdated = insertDate;
         return "";
@@ -419,32 +278,19 @@ public class TranscriptWindow extends ChatArea {
      * @param date    the Date object created when the message was delivered.
      */
     public void insertHistoryMessage(String userid, String message, Date date) {
-        try {
-            String value = "";
+        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+        String time = formatter.format(date);
 
-            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-            value = "[" + formatter.format(date) + "] ";
-            value = value + userid + ": ";
-
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, Color.GRAY);
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), value, styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setForeground(Color.gray);
-            setText(message);
-            setForeground(Color.BLACK);
-            insertText("\n");
+        if (userid.equals(activeUser)) {
+            String text = themeManager.getNextOutgoingMessage(message, time);
+            executeScript("appendNextMessage('" + text + "')");
         }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
+        else {
+            String text = themeManager.getOutgoingMessage(userid, time, message);
+            executeScript("appendMessage('" + text + "')");
         }
+
+        activeUser = userid;
     }
 
     /**
@@ -452,13 +298,7 @@ public class TranscriptWindow extends ChatArea {
      * it as disabled.
      */
     public void showDisabledWindowUI() {
-        final Document document = getDocument();
-        final SimpleAttributeSet attrs = new SimpleAttributeSet();
-        StyleConstants.setForeground(attrs, Color.LIGHT_GRAY);
 
-        final int length = document.getLength();
-        StyledDocument styledDocument = getStyledDocument();
-        styledDocument.setCharacterAttributes(0, length, attrs, false);
     }
 
     /**
@@ -521,7 +361,7 @@ public class TranscriptWindow extends ChatArea {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -531,13 +371,10 @@ public class TranscriptWindow extends ChatArea {
 
     }
 
-    public void setFont(Font font) {
-        this.font = font;
+    public void scrollToBottom() {
+        executeScript("scrollToBottom();");
     }
 
-    public Font getFont() {
-        return font;
-    }
 
     public void addTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
         interceptors.add(interceptor);
@@ -547,4 +384,65 @@ public class TranscriptWindow extends ChatArea {
         interceptors.remove(interceptor);
     }
 
+    public boolean isDocumentLoaded() {
+        return documentLoaded;
+    }
+
+    public void executeScript(final String script) {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                while (true) {
+                    if (documentLoaded) {
+                        browser.executeScript(script);
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(50);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return documentLoaded;
+            }
+        };
+
+        worker.start();
+
+    }
+
+    private void startCommandListener() {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                while (true) {
+                    if (documentLoaded) {
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(50);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return documentLoaded;
+            }
+
+            public void finished() {
+                final Timer timer = new Timer();
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    public void run() {
+                        final String command = browser.executeScript("getNextCommand();");
+                        if (command != null) {
+                            System.out.println(command);
+                        }
+                    }
+                }, 50, 50);
+            }
+        };
+
+        worker.start();
+    }
 }

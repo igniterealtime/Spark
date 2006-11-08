@@ -167,13 +167,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final TranscriptWindow roomWindow = room.getTranscriptWindow();
 
         final TranscriptWindow window = new TranscriptWindow();
-        window.setEditable(false);
         window.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 room.getChatInputEditor().requestFocusInWindow();
             }
         });
-        insertHistory(room, roomWindow);
+        insertHistory(room);
 
         if (room instanceof ChatRoomImpl) {
             // Add History Button
@@ -189,7 +188,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
     }
 
-    private void insertHistory(final ChatRoom room, final TranscriptWindow roomWindow) {
+    private void insertHistory(final ChatRoom room) {
         final StringBuffer buf = new StringBuffer();
         final String jid = room.getRoomname();
 
@@ -205,7 +204,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
                     ChatTranscript transcript = ChatTranscripts.getChatTranscript(jid);
-
+                    TranscriptWindow window = room.getTranscriptWindow();
                     final Iterator messages = transcript.getNumberOfEntries(20).iterator();
                     boolean isNew = false;
                     while (messages.hasNext()) {
@@ -215,6 +214,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                 HistoryMessage message = (HistoryMessage)messages.next();
                                 String from = StringUtils.parseName(message.getFrom());
                                 Date date = message.getDate();
+
                                 final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
                                 String dateValue = "[" + formatter.format(date) + "] ";
                                 buf.append(dateValue);
@@ -223,6 +223,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                 buf.append(": ");
                                 buf.append(message.getBody());
                                 buf.append("\n");
+
+                                window.insertHistoryMessage(from, message.getBody(), date);
                             }
                             catch (Exception e) {
                                 Log.error(e);
@@ -237,19 +239,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 public void finished() {
                     Boolean boo = (Boolean)get();
                     if (boo) {
-                        StyledDocument doc = (StyledDocument)roomWindow.getDocument();
-                        final SimpleAttributeSet styles = new SimpleAttributeSet();
-                        StyleConstants.setFontSize(styles, 12);
-                        StyleConstants.setFontFamily(styles, "Dialog");
-                        StyleConstants.setForeground(styles, Color.LIGHT_GRAY);
 
-                        // Insert the image at the end of the text
-                        try {
-                            doc.insertString(0, buf.toString(), styles);
-                        }
-                        catch (BadLocationException e) {
-                            Log.error(e);
-                        }
                     }
                 }
             };

@@ -10,13 +10,15 @@
 
 package org.jivesoftware.spark.component;
 
+import org.jivesoftware.Spark;
+
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JButton;
+
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.Action;
 
 /**
  * Button UI for handling of rollover buttons.
@@ -37,7 +39,7 @@ public class RolloverButton extends JButton {
         decorate();
     }
 
-    public RolloverButton(Action action){
+    public RolloverButton(Action action) {
         super(action);
         decorate();
     }
@@ -78,7 +80,11 @@ public class RolloverButton extends JButton {
             public void mouseEntered(MouseEvent e) {
                 if (isEnabled()) {
                     setBorderPainted(true);
-                    setContentAreaFilled(true);
+
+                    // Handle background border on mac.
+                    if (!Spark.isMac()) {
+                        setContentAreaFilled(true);
+                    }
                 }
             }
 

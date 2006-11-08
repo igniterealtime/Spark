@@ -49,8 +49,8 @@
         }
 
         function scrollToBottomIfNeeded() {
-            if (scrollToBottomIsNeeded)
-                document.body.scrollTop = document.body.offsetHeight;
+            if (checkIfScrollToBottomIsNeeded)
+                scrollToBottom();
         }
 
         function setStylesheet(id, url) {

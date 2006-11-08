@@ -79,6 +79,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.BorderLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -235,10 +236,6 @@ public class SparkTransferManager {
         }
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
-
-        // The image must first be wrapped in a style
-        Style style = doc.addStyle("StyleName", null);
 
         final ReceiveMessage receivingMessageUI = new ReceiveMessage();
         receivingMessageUI.acceptFileTransfer(request);
@@ -249,18 +246,7 @@ public class SparkTransferManager {
             }
         });
 
-        StyleConstants.setComponent(style, receivingMessageUI);
-
-        // Insert the image at the end of the text
-        try {
-            doc.insertString(doc.getLength(), "ignored text", style);
-            doc.insertString(doc.getLength(), "\n", null);
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
-
-        chatRoom.scrollToBottom();
+        transcriptWindow.add(receivingMessageUI, BorderLayout.AFTER_LAST_LINE);
 
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
     }
@@ -601,10 +587,7 @@ public class SparkTransferManager {
 
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
 
-        // The image must first be wrapped in a style
-        Style style = doc.addStyle("StyleName", null);
 
         SendMessage sendingUI = new SendMessage();
         try {
@@ -641,18 +624,7 @@ public class SparkTransferManager {
         });
 
         sendingUI.sendFile(transfer, transferManager, presence.getFrom(), contactItem.getNickname());
-        StyleConstants.setComponent(style, sendingUI);
-
-        // Insert the image at the end of the text
-        try {
-            doc.insertString(doc.getLength(), "ignored text", style);
-            doc.insertString(doc.getLength(), "\n", null);
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
-
-        chatRoom.scrollToBottom();
+        transcriptWindow.add(sendingUI, BorderLayout.AFTER_LAST_LINE);
         return chatRoom;
     }
 

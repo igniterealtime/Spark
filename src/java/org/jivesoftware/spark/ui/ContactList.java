@@ -1872,7 +1872,25 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         workspace.changeCardLayout(RETRY_PANEL);
 
         retryPanel.setDisconnectReason(message);
+
+        removeAllUsers();
     }
+
+
+    private void removeAllUsers() {
+        // Behind the scenes, move everyone to the offline group.
+        Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
+        while (contactGroups.hasNext()) {
+            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
+            Iterator contactItems = new ArrayList(contactGroup.getContactItems()).iterator();
+            while (contactItems.hasNext()) {
+                ContactItem item = (ContactItem)contactItems.next();
+                contactGroup.removeContactItem(item);
+            }
+        }
+
+    }
+
 
     public void clientReconnected() {
         buildContactList();

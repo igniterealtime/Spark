@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.util.ResourceUtils;
 
@@ -46,6 +47,10 @@ public class ChatAreaSendField extends JPanel {
         setBorder(new JTextField().getBorder());
 
         button = new JButton();
+
+        if (Spark.isMac()) {
+            button.setContentAreaFilled(false);
+        }
 
         ResourceUtils.resButton(button, text);
 

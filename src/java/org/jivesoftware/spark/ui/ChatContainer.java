@@ -36,6 +36,20 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -57,20 +71,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -193,7 +193,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
-          // Add KeyMappings
+        // Add KeyMappings
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
@@ -241,7 +241,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
         }
         else {
-            tooltip = ((GroupChatRoom)room).getRoomname();
+            tooltip = room.getRoomname();
         }
 
         // Create ChatRoom UI and dock
@@ -264,7 +264,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setTitle(room.getRoomTitle());
         }
 
-        SwingWorker worker = new SwingWorker() {
+        final SwingWorker visibilityThread = new SwingWorker() {
             public Object construct() {
                 try {
                     Thread.sleep(100);
@@ -280,13 +280,15 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         };
 
-        worker.start();
+        visibilityThread.start();
 
         // Add to ChatRoomList
         chatRoomList.add(room);
 
+        // Notify users that the chat room has been opened.
         fireChatRoomOpened(room);
 
+        // Focus Chat
         focusChat();
     }
 
@@ -729,7 +731,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         boolean isGroupChat = room.getChatType() == Message.Type.GROUP_CHAT;
         if (isGroupChat) {
             final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
-                Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
+                    Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;

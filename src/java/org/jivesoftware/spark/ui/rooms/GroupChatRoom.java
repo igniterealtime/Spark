@@ -136,6 +136,7 @@ public final class GroupChatRoom extends ChatRoom {
         getToolBar().add(subjectLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add ContextMenuListener
+        /*
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object component, JPopupMenu popup) {
                 popup.addSeparator();
@@ -226,7 +227,7 @@ public final class GroupChatRoom extends ChatRoom {
                 return false;
             }
         });
-
+*/
 
         messageManager = new ChatRoomMessageManager();
 

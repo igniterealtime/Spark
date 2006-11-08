@@ -76,7 +76,7 @@ public class StatusBar extends JPanel {
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
         // Initialze command panel
-        commandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        commandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         commandPanel.setOpaque(false);
 
         ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);

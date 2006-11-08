@@ -122,7 +122,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
             if (!DataFlavor.stringFlavor.equals(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }
-            return item.getSelectedText();
+            return "";
         }
     }
 
