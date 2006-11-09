@@ -86,8 +86,10 @@ public class ThemeManager {
         // not about mozilla. Me love Mozilla. 
         be.setEnginePath("C:\\crapola\\mozilla\\mozilla.exe");
 
+
         URL url = getClass().getResource("/themes/renkoo2.3/renkoo.AdiumMessageStyle");
         setTheme(URLFileSystem.url2File(url));
+
     }
 
     public void setTheme(File theme) {
@@ -321,11 +323,10 @@ public class ThemeManager {
             text = text.replaceAll("%chatName%", getChatName());
         }
 
-        String timestamp = findTimeStamp(text);
-        if (timestamp != null) {
-            String newTimestamp = getTimeStamp(timestamp);
-            text = StringUtils.replace(text, timestamp, newTimestamp);
-        }
+        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+        String time = formatter.format(new Date());
+
+        text = text.replaceAll("%timeOpened", time);
         return text;
     }
 
@@ -336,11 +337,10 @@ public class ThemeManager {
         text = text.replaceAll("\t", "");
         text = text.replaceAll("\r", "");
 
-        String timestamp = findTimeStamp(text);
-        if (timestamp != null) {
-            String newTimestamp = getTimeStamp(timestamp);
-            text = StringUtils.replace(text, timestamp, newTimestamp);
-        }
+        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+        String time = formatter.format(new Date());
+
+        text = text.replaceAll("%timeOpened", time);
         return text;
     }
 
@@ -353,48 +353,11 @@ public class ThemeManager {
         return chatName;
     }
 
-    public String findTimeStamp(String text) {
-        int index = text.indexOf("%timeOpened{");
-        if (index != 1) {
-            int index2 = text.indexOf("}");
-            if (index2 != -1) {
-                String timestamp = text.substring(index, index2 + 2);
-                return timestamp;
-            }
-        }
-
-        return null;
-    }
-
-
-    public String getTimeStamp(String timestamp) {
-        //%timeOpened{%B %e, %Y}%
-        String token = "%timeOpened{";
-        int index = timestamp.indexOf("%timeOpened{");
-        if (index != 1) {
-            int index2 = timestamp.indexOf("}");
-            if (index2 != -1) {
-                String inner = timestamp.substring(index + token.length(), index2);
-
-                // Do the replacements
-                inner = inner.replace("%B", "MMMMM");
-                inner = inner.replace("%e", "d");
-                inner = inner.replace("%Y", "yyyy");
-
-                SimpleDateFormat formatter = new SimpleDateFormat(inner);
-                String time = formatter.format(new Date());
-                return time;
-            }
-        }
-
-        return "November 3, 2006";
-    }
-
 
     public static void main(String args[]) {
-        File file = new File("C:\\adium\\renkoo2.3\\renkoo.AdiumMessageStyle");
+
         ThemeManager themeManager = ThemeManager.getInstance();
-        themeManager.setTheme(file);
+
         System.out.println(themeManager.getTemplate());
     }
 }

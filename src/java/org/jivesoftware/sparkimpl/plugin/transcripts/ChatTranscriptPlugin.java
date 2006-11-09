@@ -33,20 +33,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +45,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -202,14 +197,21 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                         Log.error("Exception in Chat Transcript Loading.", e);
                     }
 
+                    return ChatTranscripts.getChatTranscript(jid);
+                }
 
-                    ChatTranscript transcript = ChatTranscripts.getChatTranscript(jid);
+
+                public void finished() {
+                    ChatTranscript transcript = (ChatTranscript)get();
+                    if(transcript == null){
+                        return;
+                    }
                     TranscriptWindow window = room.getTranscriptWindow();
                     final Iterator messages = transcript.getNumberOfEntries(20).iterator();
-                    boolean isNew = false;
+
                     while (messages.hasNext()) {
                         while (messages != null && messages.hasNext()) {
-                            isNew = true;
+
                             try {
                                 HistoryMessage message = (HistoryMessage)messages.next();
                                 String from = StringUtils.parseName(message.getFrom());
@@ -231,14 +233,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                 break;
                             }
                         }
-
-                    }
-                    return Boolean.valueOf(isNew);
-                }
-
-                public void finished() {
-                    Boolean boo = (Boolean)get();
-                    if (boo) {
 
                     }
                 }
@@ -358,7 +352,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                         buf.append("\n");
                     }
                     else {
-                    buf.append(prefix + ": " + message.getBody());
+                        buf.append(prefix + ": " + message.getBody());
                         buf.append("\n");
                         //    window.insertCustomOtherMessage(prefix, message.getBody());
                     }
@@ -411,7 +405,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         }
     };
-
 
 
 }

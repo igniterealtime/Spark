@@ -29,8 +29,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -69,6 +67,9 @@ public class TranscriptWindow extends JPanel {
     private JPanel extraPanel;
 
     private VCardManager vcardManager;
+
+    private List scriptList = new ArrayList();
+
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
@@ -121,6 +122,8 @@ public class TranscriptWindow extends JPanel {
         extraPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
 
         add(extraPanel, BorderLayout.SOUTH);
+
+        startCommandListener();
     }
 
 
@@ -432,61 +435,24 @@ public class TranscriptWindow extends JPanel {
     }
 
     public void executeScript(final String script) {
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                while (true) {
-                    if (documentLoaded) {
-                        browser.executeScript(script);
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(50);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return documentLoaded;
-            }
-        };
-
-        worker.start();
-
+        scriptList.add(script);
     }
 
     private void startCommandListener() {
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                while (true) {
-                    if (documentLoaded) {
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(50);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                if (documentLoaded) {
+                    if (scriptList.size() > 0) {
+                        String script = (String)scriptList.get(0);
+                        scriptList.remove(0);
+                        System.out.println(script);
+                        String str = browser.executeScript(script);
+                        System.out.println(str);
                     }
                 }
-                return documentLoaded;
             }
-
-            public void finished() {
-                final Timer timer = new Timer();
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    public void run() {
-                        final String command = browser.executeScript("getNextCommand();");
-                        if (command != null) {
-                            System.out.println(command);
-                        }
-                    }
-                }, 500, 500);
-            }
-        };
-
-        worker.start();
+        }, 50, 50);
     }
 
     public void addComponent(JComponent component) {

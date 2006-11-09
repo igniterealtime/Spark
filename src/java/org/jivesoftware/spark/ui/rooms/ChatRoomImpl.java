@@ -32,15 +32,13 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
-import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -194,9 +192,14 @@ public class ChatRoomImpl extends ChatRoom {
         lastActivity = System.currentTimeMillis();
 
 
-        String time =  formatter.format(new Date());
+        String time = formatter.format(new Date());
         transcriptWindow.setInnerHTML("chatName", participantNickname);
-        transcriptWindow.setInnerHTML("timeOpened", "Conversation started on "+time);
+        transcriptWindow.setInnerHTML("timeOpened", "Conversation started on " + time);
+
+        URL url = SparkManager.getVCardManager().getAvatar(SparkManager.getSessionManager().getJID());
+        if (url != null) {
+            transcriptWindow.setInnerHTML("incomingIconPath", "<img src=\"" + url.toExternalForm() + "\">");
+        }
     }
 
 
