@@ -10,8 +10,6 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jdesktop.jdic.browser.BrowserEngineManager;
-import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jdesktop.jdic.browser.WebBrowser;
 import org.jdesktop.jdic.browser.WebBrowserEvent;
 import org.jdesktop.jdic.browser.WebBrowserListener;
@@ -38,6 +36,7 @@ import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +76,19 @@ public class TranscriptWindow extends JPanel {
 
         browser = new WebBrowser();
 
-        browser.setURL(themeManager.getTemplateURL());
+        String templateText = themeManager.getTemplate("Dogwood");
+        File tempFile = new File("c:\\me.html");
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
+            out.write(templateText);
+            out.close();
+
+            browser.setURL(tempFile.toURL());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         browser.addWebBrowserListener(new WebBrowserListener() {
             public void downloadStarted(WebBrowserEvent webBrowserEvent) {

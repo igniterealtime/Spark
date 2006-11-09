@@ -159,7 +159,7 @@ public class ThemeManager {
 
         String text = templateText;
         text = text.replaceAll("%timeOpened%", time);
-        text = text.replaceAll("%chatOpened%", chatName);
+        text = text.replaceAll("%chatName%", chatName);
 
         return text;
     }
