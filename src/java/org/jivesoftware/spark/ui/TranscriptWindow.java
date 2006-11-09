@@ -23,20 +23,17 @@ import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +41,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -64,7 +66,9 @@ public class TranscriptWindow extends JPanel {
 
     private boolean documentLoaded;
 
-    private JPanel extraPanel = new JPanel();
+    private JPanel extraPanel;
+
+    private VCardManager vcardManager;
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
@@ -73,21 +77,12 @@ public class TranscriptWindow extends JPanel {
         setLayout(new BorderLayout());
 
         themeManager = ThemeManager.getInstance();
+        vcardManager = SparkManager.getVCardManager();
+
+        extraPanel = new JPanel();
 
         browser = new WebBrowser();
-
-        String templateText = themeManager.getTemplate("Dogwood");
-        File tempFile = new File("c:\\me.html");
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
-            out.write(templateText);
-            out.close();
-
-            browser.setURL(tempFile.toURL());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        browser.setURL(themeManager.getTemplateURL());
 
 
         browser.addWebBrowserListener(new WebBrowserListener() {
@@ -119,6 +114,7 @@ public class TranscriptWindow extends JPanel {
             }
         });
 
+
         add(browser, BorderLayout.CENTER);
 
         extraPanel.setBackground(Color.white);
@@ -147,13 +143,15 @@ public class TranscriptWindow extends JPanel {
         String body = message.getBody();
         String date = getDate(null);
 
+        String jid = SparkManager.getSessionManager().getJID();
+
 
         if (userid.equals(activeUser)) {
             String text = themeManager.getNextOutgoingMessage(body, date);
             executeScript("appendNextMessage('" + text + "')");
         }
         else {
-            String text = themeManager.getOutgoingMessage(userid, date, body);
+            String text = themeManager.getOutgoingMessage(userid, date, body, vcardManager.getAvatar(jid));
             executeScript("appendMessage('" + text + "')");
         }
 
@@ -162,12 +160,12 @@ public class TranscriptWindow extends JPanel {
 
 
     public void insertCustomMessage(String prefix, String message) {
-        String text = themeManager.getOutgoingMessage(prefix, "", message);
+        String text = themeManager.getOutgoingMessage(prefix, "", message, null);
         executeScript("appendMessage('" + text + "')");
     }
 
     public void insertCustomOtherMessage(String prefix, String message) {
-        String text = themeManager.getIncomingMessage(prefix, "", message);
+        String text = themeManager.getIncomingMessage(prefix, "", message, null);
         executeScript("appendMessage('" + text + "')");
     }
 
@@ -203,12 +201,13 @@ public class TranscriptWindow extends JPanel {
 
             String theDate = getDate(sentDate);
 
+
             if (userid.equals(activeUser)) {
                 String text = themeManager.getNextIncomingMessage(body, theDate);
                 executeScript("appendNextMessage('" + text + "')");
             }
             else {
-                String text = themeManager.getIncomingMessage(userid, theDate, body);
+                String text = themeManager.getIncomingMessage(userid, theDate, body, vcardManager.getAvatar(message.getFrom()));
                 executeScript("appendMessage('" + text + "')");
             }
 
@@ -292,21 +291,40 @@ public class TranscriptWindow extends JPanel {
     /**
      * Inserts a history message.
      *
+     * @param jid     the users jid.
      * @param userid  the userid of the sender.
      * @param message the message to insert.
      * @param date    the Date object created when the message was delivered.
      */
-    public void insertHistoryMessage(String userid, String message, Date date) {
+    public void insertHistoryMessage(String jid, String userid, String message, Date date) {
+        final String sessionJID = SparkManager.getSessionManager().getJID();
+        boolean outgoingMessage = false;
+        if (StringUtils.parseBareAddress(sessionJID).equals(jid)) {
+            outgoingMessage = true;
+        }
+
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
         String time = formatter.format(date);
 
         if (userid.equals(activeUser)) {
-            String text = themeManager.getNextOutgoingMessage(message, time);
-            executeScript("appendNextMessage('" + text + "')");
+            if (outgoingMessage) {
+                String text = themeManager.getNextOutgoingHiString(message, time);
+                executeScript("appendNextMessage('" + text + "')");
+            }
+            else {
+                String text = themeManager.getNextIncomingHistoryMessage(message, time);
+                executeScript("appendNextMessage('" + text + "')");
+            }
         }
         else {
-            String text = themeManager.getOutgoingMessage(userid, time, message);
-            executeScript("appendMessage('" + text + "')");
+            if (outgoingMessage) {
+                String text = themeManager.getOutgoingHistoryMessage(userid, time, message, vcardManager.getAvatar(jid));
+                executeScript("appendMessage('" + text + "')");
+            }
+            else {
+                String text = themeManager.getIncomingHistoryMessage(userid, time, message, vcardManager.getAvatar(jid));
+                executeScript("appendMessage('" + text + "')");
+            }
         }
 
         activeUser = userid;
@@ -380,7 +398,7 @@ public class TranscriptWindow extends JPanel {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -404,6 +422,13 @@ public class TranscriptWindow extends JPanel {
 
     public boolean isDocumentLoaded() {
         return documentLoaded;
+    }
+
+    public void setInnerHTML(String elementID, String value) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("var myVar = document.getElementById(\"" + elementID + "\");");
+        builder.append("if(myVar){ myVar.innerHTML = '" + value + "';}");
+        executeScript(builder.toString());
     }
 
     public void executeScript(final String script) {
@@ -482,4 +507,6 @@ public class TranscriptWindow extends JPanel {
         extraPanel.validate();
         extraPanel.repaint();
     }
+
+
 }

@@ -1,0 +1,16 @@
+
+.outgoingItem .avatar {
+	float:right;
+}
+
+.outgoingItem .indicator {
+	float:right;
+	position:relative;
+	left:11px;
+	top:8px;
+}
+
+.myBubble {
+	margin-right:40px;
+}
+

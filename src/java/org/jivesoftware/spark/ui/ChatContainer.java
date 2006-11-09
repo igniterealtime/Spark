@@ -210,7 +210,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room the ChatRoom to add.
      */
-    public void addChatRoom(final ChatRoom room) {
+    public synchronized void addChatRoom(final ChatRoom room) {
         createFrameIfNeeded();
 
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));

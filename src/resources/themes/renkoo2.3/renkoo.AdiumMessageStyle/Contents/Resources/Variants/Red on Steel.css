@@ -1,0 +1,93 @@
+@import url("../main.css");
+
+/* outgoing */
+
+
+.outgoingItem .timeStamp {
+		color:#f8b1b1;
+}
+
+.outgoingItem .myBubble .indicator {
+	background:url("../images/redIndicator.png") no-repeat top left;
+}
+
+.outgoingItem .tableBubble .tl {
+	background:url("../images/redCurves.png") no-repeat top left;
+}
+
+.outgoingItem .tableBubble .tr {
+	background:url("../images/redCurves.png") no-repeat top right;
+}
+
+.outgoingItem .tableBubble .head {
+	background:url("../images/redCurves.png") no-repeat -10px 0;
+}
+
+.outgoingItem .tableBubble .message {
+	background:url("../images/redBackground.png") repeat-y top left;
+}
+
+.outgoingItem .tableBubble .messageRight {
+	background:url("../images/redBackground.png") repeat-y top right;
+}
+
+.outgoingItem .tableBubble .bl {
+	background:url("../images/redCurves.png") no-repeat bottom left;
+}
+
+.outgoingItem .tableBubble .br {
+	background:url("../images/redCurves.png") no-repeat bottom right;
+}
+
+.outgoingItem .followUp {
+	background-color:#ffdada;
+	border-bottom:1px solid #fff;
+}
+
+
+
+
+/*incoming */
+
+.incomingItem .timeStamp {
+	color:#d2d2d2;
+}
+
+.incomingItem .myBubble .indicator {
+	background:url("../images/steelIndicator.png") no-repeat top left;
+}
+
+.incomingItem .tableBubble .tl {
+	background:url("../images/steelCurves.png") no-repeat top left;
+}
+
+.incomingItem .tableBubble .tr {
+	background:url("../images/steelCurves.png") no-repeat top right;
+}
+
+.incomingItem .tableBubble .head {
+	background:url("../images/steelCurves.png") no-repeat -10px 0;
+}
+
+.incomingItem .tableBubble .message {
+	background:url("../images/steelBackground.png") repeat-y top left;
+}
+
+.incomingItem .tableBubble .messageRight {
+	background:url("../images/steelBackground.png") repeat-y top right;
+}
+
+.incomingItem .tableBubble .bl {
+	background:url("../images/steelCurves.png") no-repeat bottom left;
+}
+
+.incomingItem .tableBubble .br {
+	background:url("../images/steelCurves.png") no-repeat bottom right;
+}
+
+.incomingItem .followUp {
+	background-color:#ececec;
+	border-bottom:1px solid #fff;
+}
+
+

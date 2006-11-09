@@ -24,6 +24,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -44,13 +45,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -74,6 +78,9 @@ public class VCardManager {
 
     private Map vcardMap = new HashMap();
     private boolean vcardLoaded = false;
+
+    final private File imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
+
 
     public VCardManager() {
         initialize();
@@ -535,8 +542,19 @@ public class VCardManager {
         if (!vcardLoaded) {
             try {
                 vcard.load(SparkManager.getConnection());
+
+                // If VCard is loaded, then save the avatar to the personal folder.
+                byte[] bytes = vcard.getAvatar();
+                if (bytes != null) {
+                    ImageIcon icon = new ImageIcon(bytes);
+                    icon = VCardManager.scale(icon);
+                    if (icon != null && icon.getIconWidth() != -1) {
+                        BufferedImage image = GraphicUtils.convert(icon.getImage());
+                        ImageIO.write(image, "PNG", imageFile);
+                    }
+                }
             }
-            catch (XMPPException e) {
+            catch (Exception e) {
             }
             vcardLoaded = true;
         }
@@ -553,6 +571,11 @@ public class VCardManager {
         return null;
     }
 
+    /**
+     * Returns the VCard associated with a jid.
+     * @param jid the jid.
+     * @return the VCard.
+     */
     public VCard getVCard(String jid) {
         if (!vcardMap.containsKey(jid)) {
             VCard vcard = new VCard();
@@ -573,6 +596,11 @@ public class VCardManager {
         vcardMap.put(jid, vcard);
     }
 
+    /**
+     * Scales an image to the preferred avatar size.
+     * @param icon the icon to scale.
+     * @return the scaled version of the image.
+     */
     public static ImageIcon scale(ImageIcon icon) {
         Image avatarImage = icon.getImage();
         if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
@@ -580,6 +608,46 @@ public class VCardManager {
         }
 
         return new ImageIcon(avatarImage);
+    }
+
+    /**
+     * Returns the URL of the avatar image associated with the users JID.
+     * @param jid the jid of the user.
+     * @return the URL of the image. If not image is found, a default avatar is returned.
+     */
+    public URL getAvatar(String jid) {
+        // Handle own avatar file.
+        if (jid != null && StringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()).equals(StringUtils.parseBareAddress(jid))) {
+            if(imageFile.exists()){
+                try {
+                    return imageFile.toURL();
+                }
+                catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+               return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
+            }
+        }
+
+        // Handle other users JID
+        ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+        URL avatarURL = null;
+        if (item != null) {
+            try {
+                avatarURL = item.getAvatarURL();
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(avatarURL == null){
+            return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
+        }
+        
+        return avatarURL;
     }
 
 }

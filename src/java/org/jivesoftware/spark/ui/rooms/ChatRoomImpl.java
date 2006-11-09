@@ -193,9 +193,10 @@ public class ChatRoomImpl extends ChatRoom {
         typingTimer.start();
         lastActivity = System.currentTimeMillis();
 
-        // Add VCard Panel
-        final VCardPanel vcardPanel = new VCardPanel(participantJID);
-        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        String time =  formatter.format(new Date());
+        transcriptWindow.setInnerHTML("chatName", participantNickname);
+        transcriptWindow.setInnerHTML("timeOpened", "Conversation started on "+time);
     }
 
 

@@ -568,7 +568,7 @@ public final class GroupChatRoom extends ChatRoom {
                 String from = StringUtils.parseResource(message.getFrom());
 
                 if (inf != null) {
-                    getTranscriptWindow().insertHistoryMessage(from, message.getBody(), sentDate);
+                    getTranscriptWindow().insertHistoryMessage(message.getFrom(), from, message.getBody(), sentDate);
                 }
                 else {
                     if (isBlocked(message.getFrom())) {

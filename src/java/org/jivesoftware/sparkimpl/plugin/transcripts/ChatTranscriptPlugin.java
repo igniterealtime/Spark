@@ -224,7 +224,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                 buf.append(message.getBody());
                                 buf.append("\n");
 
-                                window.insertHistoryMessage(from, message.getBody(), date);
+                                window.insertHistoryMessage(message.getFrom(), from, message.getBody(), date);
                             }
                             catch (Exception e) {
                                 Log.error(e);

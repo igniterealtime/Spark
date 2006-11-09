@@ -1,0 +1,95 @@
+@import url("../main.css");
+
+/* outgoing */
+
+
+.outgoingItem .timeStamp {
+		color:#f8b1b1;
+}
+
+.outgoingItem .myBubble .indicator {
+	background:url("../images/redIndicator.png") no-repeat top left;
+}
+
+.outgoingItem .tableBubble .tl {
+	background:url("../images/redCurves.png") no-repeat top left;
+}
+
+.outgoingItem .tableBubble .tr {
+	background:url("../images/redCurves.png") no-repeat top right;
+}
+
+.outgoingItem .tableBubble .head {
+	background:url("../images/redCurves.png") no-repeat -10px 0;
+}
+
+.outgoingItem .tableBubble .message {
+	background:url("../images/redBackground.png") repeat-y top left;
+}
+
+.outgoingItem .tableBubble .messageRight {
+	background:url("../images/redBackground.png") repeat-y top right;
+}
+
+.outgoingItem .tableBubble .bl {
+	background:url("../images/redCurves.png") no-repeat bottom left;
+}
+
+.outgoingItem .tableBubble .br {
+	background:url("../images/redCurves.png") no-repeat bottom right;
+}
+
+.outgoingItem .followUp {
+	background-color:#ffdada;
+	border-bottom:1px solid #fff;
+}
+
+/*incoming */
+
+.incomingItem .timeStamp {
+	color:#b3cf77;
+}
+
+
+.incomingItem .myBubble .indicator {
+	background:url("../images/greenIndicator.png") no-repeat top left;
+}
+
+.incomingItem .timeStamp {
+	color:#b3cf77;
+}
+
+.incomingItem .tableBubble .tl {
+	background:url("../images/greenCurves.png") no-repeat top left;
+}
+
+.incomingItem .tableBubble .tr {
+	background:url("../images/greenCurves.png") no-repeat top right;
+}
+
+.incomingItem .tableBubble .head {
+	background:url("../images/greenCurves.png") no-repeat -10px 0;
+}
+
+.incomingItem .tableBubble .message {
+	background:url("../images/greenBackground.png") repeat-y top left;
+}
+
+.incomingItem .tableBubble .messageRight {
+	background:url("../images/greenBackground.png") repeat-y top right;
+}
+
+.incomingItem .tableBubble .bl {
+	background:url("../images/greenCurves.png") no-repeat bottom left;
+}
+
+.incomingItem .tableBubble .br {
+	background:url("../images/greenCurves.png") no-repeat bottom right;
+}
+
+.incomingItem .followUp {
+	background-color:#f4f2cb;
+	border-bottom:1px solid #fff;
+}
+
+

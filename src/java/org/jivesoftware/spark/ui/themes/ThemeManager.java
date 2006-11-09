@@ -12,14 +12,9 @@ package org.jivesoftware.spark.ui.themes;
 
 import org.jdesktop.jdic.browser.BrowserEngineManager;
 import org.jdesktop.jdic.browser.IBrowserEngine;
-import org.jdesktop.jdic.browser.WebBrowser;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 
-import javax.swing.JFrame;
-
-import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -51,6 +46,11 @@ public class ThemeManager {
     private String outgoingTransferText;
     private String incomingTransferText;
 
+    private String incomingHistoryText;
+    private String outgoingHistoryText;
+    private String nextIncomingHistoryText;
+    private String nextOutgoingHistoryText;
+
     private File tempFile;
     private String chatName;
 
@@ -81,11 +81,13 @@ public class ThemeManager {
 
         //IBrowserEngine be = bem.setActiveEngine(...);
         IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
-        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
 
-        // URL url = getClass().getResource("/themes/pin");
-        File file = new File("C:\\adium\\renkoo2.3\\renkoo.AdiumMessageStyle");
-        setTheme(file);
+        // Note that the install directory is my name for temporary files and
+        // not about mozilla. Me love Mozilla. 
+        be.setEnginePath("C:\\crapola\\mozilla\\mozilla.exe");
+
+        URL url = getClass().getResource("/themes/renkoo2.3/renkoo.AdiumMessageStyle");
+        setTheme(URLFileSystem.url2File(url));
     }
 
     public void setTheme(File theme) {
@@ -135,6 +137,17 @@ public class ThemeManager {
         File nextOutgoingTextFile = new File(theme, "/Outgoing/NextContent.html");
         nextOutgoingText = URLFileSystem.getContents(nextOutgoingTextFile);
 
+        // Set Base Href
+        String baseHref = null;
+        try {
+            baseHref = theme.toURL().toExternalForm();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        baseHref = StringUtils.replace(baseHref, "\\", "\\\\");
+        templateText = templateText.replaceAll("%base_href%", baseHref);
+
         tempFile = new File(theme, "temp.html");
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
@@ -151,17 +164,18 @@ public class ThemeManager {
         // Load incoming transfer text
         File incomingTransferFile = new File(theme, "/Incoming/filetransfer.html");
         incomingTransferText = URLFileSystem.getContents(incomingTransferFile);
-    }
 
-    public String getTemplate(String chatName) {
-        SimpleDateFormat formatter = new SimpleDateFormat("MMMMM, d,yyyy");
-        String time = formatter.format(new Date());
+        // Load incoming history text
+        incomingHistoryText = URLFileSystem.getContents(new File(theme, "/Incoming/Context.html"));
 
-        String text = templateText;
-        text = text.replaceAll("%timeOpened%", time);
-        text = text.replaceAll("%chatName%", chatName);
+        // Load outgoing history text
+        outgoingHistoryText = URLFileSystem.getContents(new File(theme, "/Outgoing/Context.html"));
 
-        return text;
+        // Load next incoming history text
+        nextIncomingHistoryText = URLFileSystem.getContents(new File(theme, "/Incoming/NextContext.html"));
+
+        // Load next outgoing history text
+        nextOutgoingHistoryText = URLFileSystem.getContents(new File(theme, "/Outgoing/NextContext.html"));
     }
 
     public String getTemplate() {
@@ -180,21 +194,52 @@ public class ThemeManager {
     }
 
 
-    public String getIncomingMessage(String sender, String time, String message) {
+    public String getIncomingMessage(String sender, String time, String message, URL iconPath) {
         String incoming = incomingText;
         incoming = incoming.replaceAll("%sender%", sender);
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
         incoming = html(incoming);
+        if (iconPath != null) {
+            incoming = incoming.replaceAll("%userIconPath%", iconPath.toExternalForm());
+        }
         return incoming;
     }
 
-    public String getOutgoingMessage(String sender, String time, String message) {
+    public String getIncomingHistoryMessage(String sender, String time, String message, URL iconPath) {
+        String incoming = incomingHistoryText;
+        incoming = incoming.replaceAll("%sender%", sender);
+        incoming = incoming.replaceAll("%time%", time);
+        incoming = incoming.replaceAll("%message%", message);
+        incoming = html(incoming);
+        if (iconPath != null) {
+            incoming = incoming.replaceAll("%userIconPath%", iconPath.toExternalForm());
+        }
+        return incoming;
+    }
+
+
+    public String getOutgoingMessage(String sender, String time, String message, URL iconPath) {
         String outgoing = outgoingText;
         outgoing = outgoing.replaceAll("%sender%", sender);
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
         outgoing = html(outgoing);
+        if (iconPath != null) {
+            outgoing = outgoing.replaceAll("%userIconPath%", iconPath.toExternalForm());
+        }
+        return outgoing;
+    }
+
+    public String getOutgoingHistoryMessage(String sender, String time, String message, URL iconPath) {
+        String outgoing = outgoingHistoryText;
+        outgoing = outgoing.replaceAll("%sender%", sender);
+        outgoing = outgoing.replaceAll("%time%", time);
+        outgoing = outgoing.replaceAll("%message%", message);
+        outgoing = html(outgoing);
+        if (iconPath != null) {
+            outgoing = outgoing.replaceAll("%userIconPath%", iconPath.toExternalForm());
+        }
         return outgoing;
     }
 
@@ -230,13 +275,30 @@ public class ThemeManager {
         return incoming;
     }
 
+    public String getNextIncomingHistoryMessage(String message, String time) {
+        String incoming = nextIncomingHistoryText;
+        incoming = incoming.replaceAll("%time%", time);
+        incoming = incoming.replaceAll("%message%", message);
+        incoming = html(incoming);
+        return incoming;
+    }
+
     public String getNextOutgoingMessage(String message, String time) {
-        String out = nextOutgoingText;
+        String out = nextOutgoingHistoryText;
         out = out.replaceAll("%time%", time);
         out = out.replaceAll("%message%", message);
         out = html(out);
         return out;
     }
+
+    public String getNextOutgoingHiString(String message, String time) {
+        String out = nextOutgoingHistoryText;
+        out = out.replaceAll("%time%", time);
+        out = out.replaceAll("%message%", message);
+        out = html(out);
+        return out;
+    }
+
 
     public String getIncomingTransferUI(String title, String filename, String size, String requestID) {
         String text = incomingTransferText;
@@ -273,11 +335,6 @@ public class ThemeManager {
         text = text.replaceAll("\'", "&#180;");
         text = text.replaceAll("\t", "");
         text = text.replaceAll("\r", "");
-        text = text.replaceAll("%userIconPath%", "file:///c:/zapwire_desktop.png");
-
-        if (getChatName() != null) {
-            text = text.replaceAll("%chatName%", getChatName());
-        }
 
         String timestamp = findTimeStamp(text);
         if (timestamp != null) {
@@ -335,30 +392,9 @@ public class ThemeManager {
 
 
     public static void main(String args[]) {
-        File tempFile = new File("C:\\Demo.html");
-        String contents = URLFileSystem.getContents(tempFile);
-
-        BrowserEngineManager bem = BrowserEngineManager.instance();
-        //specific engine if you want and the engine you specified will return
-        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
-
-        //IBrowserEngine be = bem.setActiveEngine(...);
-        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
-        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
-        final WebBrowser browser = new WebBrowser();
-
-
-        browser.setContent(contents);
-
-
-        JFrame frame = new JFrame();
-        frame.setLayout(new BorderLayout());
-
-        frame.add(browser.asComponent(), BorderLayout.CENTER);
-
-
-        frame.setSize(400, 400);
-        GraphicUtils.centerWindowOnScreen(frame);
-        frame.setVisible(true);
+        File file = new File("C:\\adium\\renkoo2.3\\renkoo.AdiumMessageStyle");
+        ThemeManager themeManager = ThemeManager.getInstance();
+        themeManager.setTheme(file);
+        System.out.println(themeManager.getTemplate());
     }
 }

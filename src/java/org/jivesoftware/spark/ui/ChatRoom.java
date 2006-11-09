@@ -72,7 +72,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private final JLabel notificationLabel;
-    private final TranscriptWindow transcriptWindow;
     private final ChatAreaSendField chatAreaButton;
     private final ChatToolBar toolbar;
     private final JPanel bottomPanel;
@@ -89,6 +88,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private boolean mousePressed;
 
     private List closingListeners = new ArrayList();
+
+    protected final TranscriptWindow transcriptWindow;
 
 
     final JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -679,7 +680,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
          */
         public ChatToolBar() {
             buttonPanel = new JPanel();
-            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,0));
 
             rightPanel = new JPanel();
             rightPanel.setOpaque(false);

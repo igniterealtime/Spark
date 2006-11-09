@@ -1,0 +1,7 @@
+@import url("Yellow on Blue.css");
+@import url("../alternating.css");
+
+
+.outgoingItem .myBubble .indicator {
+	background:url("../images/yellowIndicator2.png") no-repeat top left;
+}

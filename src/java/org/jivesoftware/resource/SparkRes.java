@@ -254,6 +254,7 @@ public class SparkRes {
     public static final String ICQ_TRANSPORT_INACTIVE_IMAGE = "ICQ_TRANSPORT_INACTIVE_IMAGE";
     public static final String PROFILE_IMAGE_16x16 = "PROFILE_IMAGE_16x16";
     public static final String LIGHTBULB_ON_16x16_IMAGE = "LIGHTBULB_ON_16x16_IMAGE";
+    public static final String DUMMY_CONTACT_IMAGE = "DUMMY_CONTACT_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
