@@ -15,6 +15,12 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicPanelUI;
+
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -25,31 +31,22 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.util.StringTokenizer;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicPanelUI;
-
 /**
  * Represents a single instance of a Tab Paint Component.
  *
  * @author Derek DeMoro
  */
 public class TabPanelUI extends BasicPanelUI {
-    private Color backgroundColor1 = new Color(0, 0, 0, 0);
-    private Color backgroundColor2 = new Color(0, 0, 0, 0);
-
-    private Color borderColor = new Color(86, 88, 72);
-    private Color borderColorAlpha1 = new Color(86, 88, 72, 100);
-    private Color borderColorAlpha2 = new Color(86, 88, 72, 50);
-    private Color borderHighlight = new Color(225, 224, 224);
+    private Color backgroundColor = new Color(0, 0, 0, 0);
 
     private boolean selected;
     private boolean hideBorder;
 
     private int placement = JTabbedPane.TOP;
 
+
+    private Color fillerColor;
+    private Color border;
 
     // ------------------------------------------------------------------------------------------------------------------
     //  Custom installation methods
@@ -61,12 +58,10 @@ public class TabPanelUI extends BasicPanelUI {
 
     public void setSelected(boolean selected) {
         if (selected) {
-            backgroundColor1 = getSelectedStartColor();
-            backgroundColor2 = getSelectedEndColor();
+            backgroundColor = getSelectedEndColor();
         }
         else {
-            backgroundColor1 = new Color(0, 0, 0, 0);
-            backgroundColor2 = new Color(0, 0, 0, 0);
+            backgroundColor = new Color(0, 0, 0, 0);
         }
 
         this.selected = selected;
@@ -77,6 +72,7 @@ public class TabPanelUI extends BasicPanelUI {
     // ------------------------------------------------------------------------------------------------------------------
 
     public void paint(Graphics g, JComponent c) {
+        Color borderColor = getBorderColor();
         Graphics2D g2d = (Graphics2D)g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -93,45 +89,40 @@ public class TabPanelUI extends BasicPanelUI {
         Shape vButtonShape = new RoundRectangle2D.Double((double)x, (double)y, (double)w, (double)h, (double)arc, (double)arc);
         Shape vOldClip = g.getClip();
 
-        if(!Spark.isMac()){
-            g2d.setClip(vButtonShape);
+        if (!Spark.isMac()) {
+            //   g2d.setClip(vButtonShape);
         }
-        g2d.setColor(backgroundColor2);
+        g2d.setColor(backgroundColor);
         g2d.fillRect(x, y, w, h);
 
         g2d.setClip(vOldClip);
-        GradientPaint vPaint = new GradientPaint(x, y, borderColor, x, y + h, borderHighlight);
+        GradientPaint vPaint = new GradientPaint(x, y, borderColor, x, y + h, borderColor);
         g2d.setPaint(vPaint);
 
         // Handle custom actions.
         if (placement == JTabbedPane.TOP) {
             if (selected) {
-                g2d.setColor(Color.lightGray);
-                g2d.drawRoundRect(x, y, w, h, arc, arc);
+                g2d.setColor(borderColor);
+                g2d.drawRect(x, y, w, h);
             }
-
-            g2d.clipRect(x, y, w + 1, h - arc / 4);
-            g2d.setColor(borderColorAlpha1);
-
-            g2d.setClip(vOldClip);
-            g2d.setColor(borderColorAlpha2);
-
-
-            g2d.setColor(backgroundColor2);
-            g2d.fillRect(x, h - 5, w, h);
         }
         else {
-            // Make straight line.
-            g2d.setColor(backgroundColor2);
-            g2d.fillRect(x, y, w, 4);
+            if (selected) {
+                g2d.setColor(borderColor);
+                g2d.drawLine(w - 1, 0, w - 1, h);
+                g2d.drawLine(x, y, x, h);
+                g2d.drawLine(0, h - 1, w - 1, h - 1);
+            }
         }
 
         if (selected) {
-
+            // Draw border on right side.
+            g2d.setColor(borderColor);
+            g2d.drawLine(w - 1, 0, w - 1, h);
         }
         else if (!hideBorder) {
             // Draw border on right side.
-            g2d.setColor(Color.lightGray);
+            g2d.setColor(borderColor);
             g2d.drawLine(w - 1, 4, w - 1, h - 4);
         }
     }
@@ -159,6 +150,10 @@ public class TabPanelUI extends BasicPanelUI {
 
 
     private Color getSelectedEndColor() {
+        if (fillerColor != null) {
+            return fillerColor;
+        }
+
         Color uiEndColor = (Color)UIManager.get("SparkTabbedPane.endColor");
         if (uiEndColor != null) {
             return uiEndColor;
@@ -172,6 +167,26 @@ public class TabPanelUI extends BasicPanelUI {
             return new Color(180, 207, 247);
         }
     }
+
+    private Color getBorderColor() {
+        if (border != null) {
+            return border;
+        }
+
+        Color color = (Color)UIManager.get("SparkTabbedPane.borderColor");
+        if (color != null) {
+            return color;
+        }
+
+        if (Spark.isCustomBuild()) {
+            String end = Default.getString(Default.CONTACT_GROUP_END_COLOR);
+            return getColor(end);
+        }
+        else {
+            return Color.lightGray;
+        }
+    }
+
 
     private static Color getColor(String commaColorString) {
         Color color = null;
@@ -190,6 +205,23 @@ public class TabPanelUI extends BasicPanelUI {
 
     public void setPlacement(int placement) {
         this.placement = placement;
+    }
+
+
+    public Color getFillerColor() {
+        return fillerColor;
+    }
+
+    public void setFillerColor(Color fillerColor) {
+        this.fillerColor = fillerColor;
+    }
+
+    public Color getBorder() {
+        return border;
+    }
+
+    public void setBorder(Color border) {
+        this.border = border;
     }
 }
 

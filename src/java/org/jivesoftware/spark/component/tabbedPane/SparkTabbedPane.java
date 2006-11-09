@@ -14,8 +14,15 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ModelUtil;
 
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -31,12 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 /**
  * Jive Software imlementation of a TabbedPane.
@@ -61,6 +62,9 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
 
     private int tabPlacement = JTabbedPane.TOP;
+
+    private Color backgroundColor;
+    private Color borderColor;
 
     /**
      * Listeners
@@ -149,6 +153,14 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     public SparkTab addTab(String text, Icon icon, final Component component) {
         final SparkTab tab = new SparkTab(icon, text);
+        if (getBackgroundColor() != null) {
+            tab.setBackgroundColor(backgroundColor);
+        }
+
+        if (getBorderColor() != null) {
+            tab.setBorderColor(borderColor);
+        }
+
         tab.setTabPlacement(tabPlacement);
         //tabs.add(tab, new GridBagConstraints(tabs.getComponentCount(), 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 0, 0, 0), 0, 0));
 
@@ -179,55 +191,6 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         }
 
-        /*
-        if (isPopupAllowed()) {
-            RolloverButton popButton = new RolloverButton(LaRes.getImageIcon(LaRes.SMALL_PIN_BLUE));
-            tab.addPop(popButton);
-
-            popButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    int index = getIndex(tab);
-
-                    // Close Tab
-
-                    String title = tab.getActualText();
-
-                    // Create Frame
-                    final JFrame frame = new JFrame();
-                    frame.setTitle(title);
-
-                    frame.getContentPane().setLayout(new BorderLayout());
-                    frame.getContentPane().add(component, BorderLayout.CENTER);
-                    frame.pack();
-
-                    GraphicUtils.centerWindowOnScreen(frame);
-                    frame.setVisible(true);
-
-                    mainPanel.remove(component);
-                    tabs.remove(tab);
-
-
-                    tabs.invalidate();
-                    tabs.validate();
-                    tabs.repaint();
-
-                    mainPanel.invalidate();
-                    mainPanel.validate();
-                    mainPanel.repaint();
-
-                    fireTabRemoved(tab, component, index);
-                    Component[] comps = tabs.getComponents();
-                    if (comps.length == 0) {
-                        allTabsClosed();
-                    }
-                    else {
-                        findSelectedTab(index);
-                    }
-
-                }
-            });
-        }
-        */
 
         if (getSelectedIndex() == -1) {
             setSelectedTab(tab);
@@ -235,6 +198,8 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
 
         fireTabAdded(tab, component, getIndex(tab));
+
+
         return tab;
     }
 
@@ -559,5 +524,22 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
      */
     public JPanel getMainPanel() {
         return mainPanel;
+    }
+
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Color getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
     }
 }

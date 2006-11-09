@@ -15,6 +15,10 @@ import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.text.html.HTMLEditorKit;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.awt.BorderLayout;
 
 /**
  * Manages Themes.
@@ -84,7 +89,7 @@ public class ThemeManager {
 
         // Note that the install directory is my name for temporary files and
         // not about mozilla. Me love Mozilla. 
-        be.setEnginePath("C:\\crapola\\mozilla\\mozilla.exe");
+        be.setEnginePath("C:\\crapoloa\\mozilla\\mozilla.exe");
 
 
         URL url = getClass().getResource("/themes/renkoo2.3/renkoo.AdiumMessageStyle");
@@ -354,10 +359,5 @@ public class ThemeManager {
     }
 
 
-    public static void main(String args[]) {
-
-        ThemeManager themeManager = ThemeManager.getInstance();
-
-        System.out.println(themeManager.getTemplate());
-    }
+   
 }

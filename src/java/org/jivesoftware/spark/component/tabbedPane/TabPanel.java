@@ -12,6 +12,8 @@ package org.jivesoftware.spark.component.tabbedPane;
 
 import javax.swing.JPanel;
 
+import java.awt.Color;
+
 /**
  *
  */
@@ -43,6 +45,14 @@ public class TabPanel extends JPanel {
 
     protected void setTabPlacement(int placement){
         ui.setPlacement(placement);
+    }
+
+    public void setBorderColor(Color color){
+        ui.setBorder(color);
+    }
+
+    public void setBackgroundColor(Color color){
+        ui.setFillerColor(color);
     }
 }
 

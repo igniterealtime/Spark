@@ -147,6 +147,8 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
         workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
+        workspacePane.setBackgroundColor(new Color(180, 207, 247));
+        workspacePane.setBorderColor(Color.lightGray);
         workspacePane.setActiveButtonBold(true);
 
         // Add Panels.
