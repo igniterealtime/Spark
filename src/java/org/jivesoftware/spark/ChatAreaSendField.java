@@ -56,6 +56,8 @@ public class ChatAreaSendField extends JPanel {
 
         add(button, new GridBagConstraints(1, 0, 1, 1, 0.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
 
+        button.setVisible(false);
+
         final JScrollPane pane = new JScrollPane(textField);
         pane.setBorder(null);
         add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
@@ -64,6 +66,10 @@ public class ChatAreaSendField extends JPanel {
 
     public JButton getButton() {
         return button;
+    }
+
+    public void showSendButton(boolean show){
+        button.setVisible(show);
     }
 
     public void enableSendButton(boolean enabled) {

@@ -21,7 +21,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -311,7 +310,7 @@ public class TranscriptWindow extends JPanel {
 
         if (userid.equals(activeUser)) {
             if (outgoingMessage) {
-                String text = themeManager.getNextOutgoingHiString(message, time);
+                String text = themeManager.getNextOutgoingHistoryString(message, time);
                 executeScript("appendNextMessage('" + text + "')");
             }
             else {

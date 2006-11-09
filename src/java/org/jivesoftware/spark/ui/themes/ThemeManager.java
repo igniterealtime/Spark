@@ -93,8 +93,8 @@ public class ThemeManager {
 
 
         URL url = getClass().getResource("/themes/renkoo2.3/renkoo.AdiumMessageStyle");
-        setTheme(URLFileSystem.url2File(url));
-
+       // setTheme(URLFileSystem.url2File(url));
+       setTheme(new File("C:\\adium\\Satin.AdiumMessageStyle\\"));
     }
 
     public void setTheme(File theme) {
@@ -206,6 +206,8 @@ public class ThemeManager {
         incoming = incoming.replaceAll("%sender%", sender);
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
+        incoming = incoming.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
         incoming = html(incoming);
         if (iconPath != null) {
             incoming = incoming.replaceAll("%userIconPath%", iconPath.toExternalForm());
@@ -218,6 +220,7 @@ public class ThemeManager {
         incoming = incoming.replaceAll("%sender%", sender);
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
+        incoming = incoming.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         incoming = html(incoming);
         if (iconPath != null) {
             incoming = incoming.replaceAll("%userIconPath%", iconPath.toExternalForm());
@@ -231,6 +234,7 @@ public class ThemeManager {
         outgoing = outgoing.replaceAll("%sender%", sender);
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
+        outgoing = outgoing.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         outgoing = html(outgoing);
         if (iconPath != null) {
             outgoing = outgoing.replaceAll("%userIconPath%", iconPath.toExternalForm());
@@ -243,6 +247,7 @@ public class ThemeManager {
         outgoing = outgoing.replaceAll("%sender%", sender);
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
+        outgoing = outgoing.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         outgoing = html(outgoing);
         if (iconPath != null) {
             outgoing = outgoing.replaceAll("%userIconPath%", iconPath.toExternalForm());
@@ -298,7 +303,7 @@ public class ThemeManager {
         return out;
     }
 
-    public String getNextOutgoingHiString(String message, String time) {
+    public String getNextOutgoingHistoryString(String message, String time) {
         String out = nextOutgoingHistoryText;
         out = out.replaceAll("%time%", time);
         out = out.replaceAll("%message%", message);

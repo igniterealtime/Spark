@@ -97,6 +97,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Creates the ChatRooms to hold all ChatRooms.
      */
     public ChatContainer() {
+        super(JTabbedPane.BOTTOM);
         // Set minimum size
         setMinimumSize(new Dimension(400, 200));
         // Don't allow tabs to shrink and allow scrolling.
