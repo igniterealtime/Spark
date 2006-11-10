@@ -23,6 +23,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.Timer;
+import javax.swing.ImageIcon;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -33,6 +34,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -47,6 +49,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.net.URL;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -141,6 +144,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // Add Popup Window
         addPopupWindow();
+
+        // Use background image
+        URL url = getClass().getResource("/images/blue-steel-background.png");
+        ImageIcon icon = new ImageIcon(url);
+        getTitlePane().useImageAsBackground(icon.getImage());
+        getTitlePane().setTitleColor(Color.white);
     }
 
     /**

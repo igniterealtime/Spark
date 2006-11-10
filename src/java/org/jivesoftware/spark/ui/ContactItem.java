@@ -25,6 +25,13 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -35,17 +42,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 public class ContactItem extends JPanel {
     private JLabel imageLabel;
@@ -217,6 +214,15 @@ public class ContactItem extends JPanel {
         return null;
     }
 
+
+    public void setForeground(Color fg) {
+        super.setForeground(fg);
+
+        if (nicknameLabel != null) {
+            nicknameLabel.setForeground(fg);
+        }
+    }
+
     private void updateAvatar(final String hash) {
         Thread updateAvatarThread = new Thread(new Runnable() {
             public void run() {
@@ -274,7 +280,8 @@ public class ContactItem extends JPanel {
                 }
             }
         }
-        else if (this.presence != null && (this.presence.getMode() == Presence.Mode.available || this.presence.getMode() == Presence.Mode.chat)) {
+        else
+        if (this.presence != null && (this.presence.getMode() == Presence.Mode.available || this.presence.getMode() == Presence.Mode.chat)) {
             if (presence != null && presence.getMode() != Presence.Mode.available && presence.getMode() != Presence.Mode.chat) {
                 awayTime = new Date();
                 String status = presence.getStatus();
@@ -323,7 +330,8 @@ public class ContactItem extends JPanel {
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
         }
-        else if (presence != null && (presence.getMode() == Presence.Mode.dnd || presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa)) {
+        else
+        if (presence != null && (presence.getMode() == Presence.Mode.dnd || presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa)) {
             statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
         }
         else if (presence != null && presence.getType() == Presence.Type.available) {
@@ -335,7 +343,7 @@ public class ContactItem extends JPanel {
 
             RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getFullJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
@@ -426,7 +434,7 @@ public class ContactItem extends JPanel {
 
             RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getFullJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
                 setStatusText("Pending");
@@ -487,7 +495,7 @@ public class ContactItem extends JPanel {
         }
     }
 
-    public void setSideIcon(Icon icon){
+    public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
     }
 

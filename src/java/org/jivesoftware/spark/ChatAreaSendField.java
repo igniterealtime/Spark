@@ -14,10 +14,10 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.util.ResourceUtils;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import java.awt.Color;
@@ -44,8 +44,7 @@ public class ChatAreaSendField extends JPanel {
 
         textField = new ChatInputEditor();
         textField.setBorder(null);
-        setBorder(new JTextField().getBorder());
-
+        setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.lightGray));
         button = new JButton();
 
         if (Spark.isMac()) {
@@ -60,7 +59,7 @@ public class ChatAreaSendField extends JPanel {
 
         final JScrollPane pane = new JScrollPane(textField);
         pane.setBorder(null);
-        add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
         button.setEnabled(false);
     }
 
@@ -68,7 +67,7 @@ public class ChatAreaSendField extends JPanel {
         return button;
     }
 
-    public void showSendButton(boolean show){
+    public void showSendButton(boolean show) {
         button.setVisible(show);
     }
 

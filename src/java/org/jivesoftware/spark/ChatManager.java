@@ -34,8 +34,12 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,9 +47,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -98,9 +99,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-            new ChatMessageEventRequestListener();
+                new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-            addMessageEventRequestListener(messageEventRequestListener);
+                addMessageEventRequestListener(messageEventRequestListener);
     }
 
 
@@ -438,7 +439,10 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        ((ChatRoomImpl)chatRoom).showTyping(true);
+                        // Get Tab
+                        int index = getChatContainer().indexOfComponent(chatRoom);
+                        SparkTab tab = getChatContainer().getTabAt(index);
+                        tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
                     }
                 }
                 catch (ChatRoomNotFoundException e) {
@@ -446,6 +450,8 @@ public class ChatManager implements MessageEventNotificationListener {
 
                 contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
                 customList.add(StringUtils.parseBareAddress(from));
+
+
             }
         });
     }
@@ -462,7 +468,10 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        ((ChatRoomImpl)chatRoom).showTyping(false);
+                         // Get Tab
+                        int index = getChatContainer().indexOfComponent(chatRoom);
+                        SparkTab tab = getChatContainer().getTabAt(index);
+                        tab.setIcon(tab.getPreviousIcon());
                     }
                 }
                 catch (ChatRoomNotFoundException e) {

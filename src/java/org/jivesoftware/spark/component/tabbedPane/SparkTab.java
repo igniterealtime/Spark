@@ -39,6 +39,8 @@ public class SparkTab extends TabPanel {
 
     private Font defaultFont;
 
+    private Icon previousIcon;
+
     public SparkTab(Icon icon, String text) {
         setLayout(new GridBagLayout());
 
@@ -108,11 +110,18 @@ public class SparkTab extends TabPanel {
     }
 
     public void setIcon(Icon icon) {
+        if(iconLabel.getIcon() != null){
+            previousIcon = iconLabel.getIcon();
+        }
         iconLabel.setIcon(icon);
     }
 
     public void setBoldWhenActive(boolean boldWhenActive) {
         this.boldWhenActive = boldWhenActive;
+    }
+
+    public Icon getPreviousIcon(){
+        return previousIcon;
     }
 
 

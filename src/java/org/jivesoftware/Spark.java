@@ -313,11 +313,12 @@ public final class Spark {
         UIManager.put("TextField.foreground", Color.BLACK);
         UIManager.put("TextField.caretForeground", Color.black);
 
-        UIManager.put("List.selectionBackground", new Color(217, 232, 250));
-        UIManager.put("List.selectionForeground", Color.black);
+        UIManager.put("List.selectionBackground", new Color(103, 121, 142));
+        UIManager.put("List.selectionForeground", Color.white);
         UIManager.put("List.selectionBorder", new Color(187, 195, 215));
         UIManager.put("List.foreground", Color.black);
         UIManager.put("List.background", Color.white);
+        UIManager.put("List.secondBackground", new Color(237, 243, 254));
         UIManager.put("TextPane.foreground", Color.black);
         UIManager.put("TextPane.background", Color.white);
         UIManager.put("TextPane.inactiveForeground", Color.white);

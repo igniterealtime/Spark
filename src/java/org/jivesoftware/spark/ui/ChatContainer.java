@@ -14,6 +14,7 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -57,6 +58,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -130,8 +135,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         this.setFocusable(false);
 
         setOpaque(true);
+
         setBackground(Color.white);
     }
+
+
 
     /**
      * Adds navigation capability to chat rooms. Users can navigate using the alt-left or right arrow keys.

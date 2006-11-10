@@ -20,23 +20,17 @@ import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
@@ -71,7 +65,6 @@ import java.util.List;
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
-    private final JLabel notificationLabel;
     private final ChatAreaSendField chatAreaButton;
     private final ChatToolBar toolbar;
     private final JPanel bottomPanel;
@@ -103,7 +96,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindow = new TranscriptWindow();
         splitPane = new JSplitPane();
         packetIDList = new ArrayList();
-        notificationLabel = new JLabel();
         toolbar = new ChatToolBar();
         bottomPanel = new JPanel();
 
@@ -133,8 +125,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         // Initally, set the right pane to null to keep it empty.
         getSplitPane().setRightComponent(null);
-
-        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
 
         /*
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
@@ -182,7 +172,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
         add(splitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        add(notificationLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 2, 5, 0), 0, 0));
 
         // Remove Default Beveled Borders
         splitPane.setBorder(null);
@@ -208,7 +197,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 5));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 15));
         bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         verticalSplit.setOpaque(false);
 
@@ -322,12 +311,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcript.add(newMessage);
 
-        // Add current date if this is the current agent
-        if (updateDate && transcriptWindow.getLastUpdated() != null) {
-            // Set new label date
-            notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
-            notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(transcriptWindow.getLastUpdated())));
-        }
 
         scrollToBottom();
     }
@@ -595,17 +578,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
     /**
-     * Returns the notification label. The notification label notifies the
-     * user of chat room activity, such as the date of the last message
-     * and typing notifications.
-     *
-     * @return the notification label.
-     */
-    public JLabel getNotificationLabel() {
-        return notificationLabel;
-    }
-
-    /**
      * Adds a packetID to the packedIDList. The packetIDLlist
      * keeps track of all messages coming into the chatroom.
      *
@@ -680,7 +652,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
          */
         public ChatToolBar() {
             buttonPanel = new JPanel();
-            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,0));
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 0));
 
             rightPanel = new JPanel();
             rightPanel.setOpaque(false);
@@ -836,7 +808,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         }
     }
 
-    
+
     /**
      * Return the "Send" button.
      *

@@ -430,8 +430,6 @@ public class ChatRoomImpl extends ChatRoom {
                         }
                         participantJID = message.getFrom();
                         insertMessage(message);
-
-                        showTyping(false);
                     }
                 }
             }
@@ -534,24 +532,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
 
-    /**
-     * Show the typing notification.
-     *
-     * @param typing true if the typing notification should show, otherwise hide it.
-     */
-    public void showTyping(boolean typing) {
-        if (typing) {
-            String isTypingText = Res.getString("message.is.typing.a.message", participantNickname);
-            getNotificationLabel().setText(isTypingText);
-            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-        }
-        else {
-            // Remove is typing text.
-            getNotificationLabel().setText("");
-            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-        }
 
-    }
 
     /**
      * The last time this chat room sent or receieved a message.

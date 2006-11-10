@@ -29,9 +29,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.util.StringTokenizer;
 
 /**
@@ -55,6 +57,8 @@ public class CollapsibleTitlePane extends JPanel {
     private Font titleFont;
 
     private boolean subPane;
+
+    private Image backgroundImage;
 
     public CollapsibleTitlePane() {
         setLayout(new GridBagLayout());
@@ -166,6 +170,14 @@ public class CollapsibleTitlePane extends JPanel {
 
 
     public void paintComponent(Graphics g) {
+        if (backgroundImage != null) {
+            double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
+            double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+            AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+            ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+            return;
+        }
+
         Color stopColor = endColor;
         Color starterColor = startColor;
 
@@ -220,5 +232,9 @@ public class CollapsibleTitlePane extends JPanel {
 
     public void setTitleForeground(Color color) {
         titleLabel.setForeground(color);
+    }
+
+    public void useImageAsBackground(Image image){
+        this.backgroundImage = image;
     }
 }

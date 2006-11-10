@@ -49,9 +49,18 @@ public class JPanelRenderer extends JPanel implements ListCellRenderer {
             panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("List.selectionBorder")));
         }
         else {
-            panel.setBackground(list.getBackground());
-            panel.setForeground(list.getForeground());
-            panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("List.background")));
+            if (index % 2 != 0) {
+                panel.setBackground((Color)UIManager.get("List.secondBackground"));
+                panel.setForeground(list.getForeground());
+                panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("List.secondBackground")));
+            }
+            else {
+                panel.setBackground(list.getBackground());
+                panel.setForeground(list.getForeground());
+                panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("List.background")));
+            }
+
+
         }
 
         list.setBackground((Color)UIManager.get("List.background"));

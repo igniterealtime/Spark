@@ -89,12 +89,13 @@ public final class GroupChatRoom extends ChatRoom {
     private List blockedUsers = new ArrayList();
 
     private ChatRoomMessageManager messageManager;
-    private Timer typingTimer;
     private int typedChars;
 
     private ConferenceRoomInfo roomInfo;
 
     private long lastActivity;
+
+    private boolean sendNotifications = false;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -458,9 +459,7 @@ public final class GroupChatRoom extends ChatRoom {
         getTranscriptWindow().showDisabledWindowUI();
 
         // Update Notification Label
-        getNotificationLabel().setText(Res.getString("message.chat.session.ended", SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date())));
-        getNotificationLabel().setIcon(null);
-        getNotificationLabel().setEnabled(false);
+        getTranscriptWindow().insertNotificationMessage(Res.getString("message.chat.session.ended", SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date())));
 
         getSplitPane().setRightComponent(null);
         getSplitPane().setDividerSize(0);
@@ -584,10 +583,7 @@ public final class GroupChatRoom extends ChatRoom {
                     getTranscriptWindow().insertOthersMessage(from, message);
                 }
 
-                if (typingTimer != null) {
-                    getNotificationLabel().setText("");
-                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-                }
+
             }
         }
         else if (message.getType() == Message.Type.CHAT) {
@@ -903,19 +899,13 @@ public final class GroupChatRoom extends ChatRoom {
      *         true to use typing notifications.
      */
     public void setSendAndReceiveTypingNotifications(boolean sendAndReceiveTypingNotifications) {
+        sendNotifications = sendAndReceiveTypingNotifications;
+        
         if (sendAndReceiveTypingNotifications) {
-            typingTimer = new Timer(10000, new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    getNotificationLabel().setText("");
-                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-                }
-            });
             SparkManager.getMessageEventManager().addMessageEventNotificationListener(messageManager);
         }
         else {
-            if (typingTimer != null) {
-                typingTimer.stop();
-            }
+
             SparkManager.getMessageEventManager().removeMessageEventNotificationListener(messageManager);
         }
     }
@@ -945,9 +935,7 @@ public final class GroupChatRoom extends ChatRoom {
                     if (bareAddress.equals(getRoomname())) {
                         String nickname = StringUtils.parseResource(from);
                         String isTypingText = Res.getString("message.is.typing.a.message", nickname);
-                        getNotificationLabel().setText(isTypingText);
-                        getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-                        typingTimer.restart();
+                       
                     }
                 }
             });
@@ -973,7 +961,7 @@ public final class GroupChatRoom extends ChatRoom {
         // If the user pauses for more than two seconds, send out a new notice.
         if (typedChars >= 10) {
             try {
-                if (typingTimer != null) {
+                if (sendNotifications) {
                     final Iterator iter = chat.getOccupants();
                     while (iter.hasNext()) {
                         String from = (String)iter.next();
