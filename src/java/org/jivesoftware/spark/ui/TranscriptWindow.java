@@ -28,6 +28,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -43,6 +44,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -81,7 +83,13 @@ public class TranscriptWindow extends JPanel {
 
         extraPanel = new JPanel();
 
-        browser = new WebBrowser();
+        browser = new WebBrowser() {
+            public Dimension getPreferredSize() {
+                final Dimension size = super.getPreferredSize();
+                size.width = 0;
+                return size;
+            }
+        };
         browser.setURL(themeManager.getTemplateURL());
 
 
@@ -115,7 +123,7 @@ public class TranscriptWindow extends JPanel {
         });
 
 
-        add(browser, BorderLayout.CENTER);
+        add(new JScrollPane(browser), BorderLayout.CENTER);
 
         extraPanel.setBackground(Color.white);
         extraPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
@@ -143,6 +151,7 @@ public class TranscriptWindow extends JPanel {
         }
 
         String body = message.getBody();
+        body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(body);
         String date = getDate(null);
 
         String jid = SparkManager.getSessionManager().getJID();
@@ -203,6 +212,7 @@ public class TranscriptWindow extends JPanel {
 
             String theDate = getDate(sentDate);
 
+            body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(body);
 
             if (userid.equals(activeUser)) {
                 String text = themeManager.getNextIncomingMessage(body, theDate);
@@ -445,9 +455,9 @@ public class TranscriptWindow extends JPanel {
                     if (scriptList.size() > 0) {
                         String script = (String)scriptList.get(0);
                         scriptList.remove(0);
-                        System.out.println(script);
+                        //   System.out.println(script);
                         String str = browser.executeScript(script);
-                        System.out.println(str);
+                        //   System.out.println(str);
                     }
                 }
             }
@@ -471,6 +481,12 @@ public class TranscriptWindow extends JPanel {
         extraPanel.invalidate();
         extraPanel.validate();
         extraPanel.repaint();
+    }
+
+    public Dimension getPreferredSize() {
+        final Dimension size = super.getPreferredSize();
+        size.width = 0;
+        return size;
     }
 
 

@@ -30,6 +30,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.ui.conferences.Conferences;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -190,6 +191,9 @@ public class Workspace extends JPanel implements PacketListener {
      * Builds the Workspace layout.
      */
     public void buildLayout() {
+        // Initialize ThemeManager
+        ThemeManager.getInstance();
+        
         new Enterprise();
 
         // Initilaize tray
