@@ -1,0 +1,66 @@
+body {margin: 10px 15px 10px 15px;}
+
+
+p {margin: 0px;overflow: hidden;}
+
+.spacer {clear: both;}
+
+.nameheader {
+	font-family: "Myriad";
+	font-size: 11px;
+	font-weight: 900;
+	font-style: normal;
+	opacity: 1.0;
+	#border: 1px solid #999999;
+	}
+.name {
+	#border: 1px solid #999999;
+	}
+.protocol {
+	b#order: 1px solid #999999;
+	}
+
+.message {
+	font-size: 11px;
+	color: #454545;
+	text-shadow: 0px 1px 0px rgba(255,255,255,0.9);
+	}
+.messagetime {
+	font-family: "Helvetica";
+	font-size: 11px;
+	color: #999999;
+	float: right;
+	padding-top: 2px;
+	vertical-align: baseline;
+	}
+.messagetime.consecutive {
+	padding-left: 11px;
+	}
+
+.status {
+	font-family: "Myriad";
+	font-size: 11px;
+	font-weight: bold;
+	color: rgba(255,255,255,1.0);
+	#border: 1px solid #999999;
+	}
+.statusmessage {
+	text-align: left;
+	#border: 1px solid #999999;
+	}
+.statustime {
+	text-align: right;
+	#border: 1px solid #999999;
+	}
+	
+.nextmessageline {
+	border-bottom: 1px dotted #CCCCCC; 
+	height: 1px; 
+	margin-top: 2px;
+	margin-bottom: 2px;
+	}
+
+#chat {
+	overflow: hidden;
+	margin-bottom: 10px;
+	}

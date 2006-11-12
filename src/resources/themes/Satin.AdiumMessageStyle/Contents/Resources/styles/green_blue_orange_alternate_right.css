@@ -1,0 +1,58 @@
+@import url("message_common.css");
+
+.out.content .nameheader {
+	background: url("../images/sender/sender_fill.png") top repeat-x;
+	color: rgba(84,155,38,0.8);
+	}
+.out.context .nameheader {
+	background: url("../images/sender/sender_context_fill.png") top repeat-x;
+	color: rgba(84,155,38,0.5);
+	}
+.in.content .nameheader {
+	background: url("../images/sender/sender_fill.png") top repeat-x;
+	color: rgba(39,55,152,0.8);
+	}
+.in.context .nameheader {
+	background: url("../images/sender/sender_context_fill.png") top repeat-x;
+	color: rgba(39,55,152,0.5);
+	}
+
+.out.content .name {
+	background: url("../images/sender/flipped/sender_right.png") right top no-repeat;
+	}
+.out.context .name {
+	background: url("../images/sender/flipped/sender_context_right.png") right top no-repeat;
+	}
+.in.content .name {
+	background: url("../images/sender/standard/sender_left.png") left top no-repeat;
+	}
+.in.context .name {
+	background: url("../images/sender/standard/sender_context_left.png") left top no-repeat;
+	}
+
+.out.content .protocol {
+	background: url("../images/sender/flipped/green/sender_left.png") left top no-repeat;
+	color: rgba(84,155,38,0.4);
+	}
+.out.context .protocol {
+	background: url("../images/sender/flipped/green/sender_context_left.png") left top no-repeat;
+	color: rgba(84,155,38,0.3);
+	}
+.in.content .protocol {
+	background: url("../images/sender/standard/blue/sender_right.png") right top no-repeat;
+	color: rgba(39,55,152,0.4);
+	}
+.in.context .protocol {
+	background: url("../images/sender/standard/blue/sender_context_right.png") right top no-repeat;
+	color: rgba(39,55,152,0.3);
+	}
+
+.status {
+	background: url("../images/status/orange/status_fill.png") top repeat-x;
+	}
+.statusmessage {
+	background: url("../images/status/orange/status_left.png") left top no-repeat;
+	}
+.statustime {
+	background: url("../images/status/orange/status_right.png") right top no-repeat;
+	}

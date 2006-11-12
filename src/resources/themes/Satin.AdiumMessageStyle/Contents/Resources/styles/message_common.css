@@ -1,0 +1,34 @@
+body {
+	background: #FFFFFF url("../images/background.png") bottom fixed repeat-x;
+	}
+
+.content .message {
+	background: url("../images/message/message_bot_right.png") bottom right no-repeat;
+	}
+.context .message {
+	background: url("../images/message/message_context_bot_right.png") bottom right no-repeat;
+	}
+.content .messagetextcontainer {
+	background: url("../images/message/message_bot_left.png") bottom left no-repeat;
+	}
+.context .messagetextcontainer {
+	background: url("../images/message/message_context_bot_left.png") bottom left no-repeat;
+	}
+.content .messagetop {
+	background: url("../images/message/message_top_fill.png") top repeat-x;
+	}
+.context .messagetop {
+	background: url("../images/message/message_context_top_fill.png") top repeat-x;
+	}
+.content .messagetopleft {
+	background: url("../images/message/message_top_left.png") left top no-repeat;
+	}
+.context .messagetopleft {
+	background: url("../images/message/message_context_top_left.png") left top no-repeat;
+	}
+.content .messagetopright {
+	background: url("../images/message/message_top_right.png") right top no-repeat;
+	}
+.context .messagetopright {
+	background: url("../images/message/message_context_top_right.png") right top no-repeat;
+	}

@@ -1,0 +1,32 @@
+@import url("layout_all.css");
+
+.nameheader {
+	position: relative;
+	height: 25px;
+	top: 0px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 77px 0px 25px;
+	}
+.name {
+	position: relative;
+	float: left;
+	height: 25px;
+	top: 0px;
+	left: -25px;
+	padding: 4px 0px 0px 12px;
+	margin: 0px 0px 0px 0px;
+	}
+.protocol {
+	position: relative;
+	float: right;
+	height: 25px;
+	top: 0px;
+	right: -78px;
+	padding: 6px 12px 0px 66px;
+	margin: 0px 0px -2px 0px;
+	}
+.messagecontainer {
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+	}
+.buddyicon {display: none;}

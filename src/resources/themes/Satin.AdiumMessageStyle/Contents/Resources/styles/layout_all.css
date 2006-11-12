@@ -1,0 +1,62 @@
+.in {margin-bottom: 0px;}
+.out {margin-bottom: 0px;}
+
+.message {
+	margin-left: 0px;
+	padding: 0px 11px 12px 0px;
+	}
+.messagetop {
+	position: relative;
+	height: 12px;
+	top: -8px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 12px 0px 12px;
+	}
+.messagetopleft {
+	position: relative;
+	float: left;
+	height: 12px;
+	top: 0px;
+	left: -12px;
+	padding: 0px 12px 0px 0px;
+	margin: 0px -13px 0px 0px;
+	}
+.messagetopright {
+	position: relative;
+	float: right;
+	height: 12px;
+	top: 0px;
+	right: -12px;
+	padding: 0px 0px 0px 12px;
+	margin: 0px 0px 0px -13px;
+	}
+.messagetextcontainer {
+	position: relative;
+	margin: -8px 0px 0px 0px;
+	padding: 0px 0px 0px 12px;
+	}
+.status {
+	position: relative;
+	height: 23px;
+	top: 0px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 30px 0px 30px;
+	}
+.statusmessage {
+	position: relative;
+	float: left;
+	height: 23px;
+	top: 0px;
+	left: -30px;
+	padding: 5px 30px 0px 12px;
+	margin: 0px 0px 0px 0px;
+	}
+.statustime {
+	position: relative;
+	float: right;
+	height: 23px;
+	top: 0px;
+	right: -30px;
+	padding: 5px 12px 0px 18px;
+	margin: 0px 0px 0px 0px;
+	}
