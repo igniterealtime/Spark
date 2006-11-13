@@ -196,7 +196,7 @@ public class ChatRoomImpl extends ChatRoom {
         transcriptWindow.setInnerHTML("chatName", participantNickname);
         transcriptWindow.setInnerHTML("timeOpened", "Conversation started on " + time);
 
-        URL url = SparkManager.getVCardManager().getAvatar(SparkManager.getSessionManager().getJID());
+        URL url = SparkManager.getVCardManager().getAvatar(participantJID);
         if (url != null) {
             transcriptWindow.setInnerHTML("incomingIconPath", "<img src=\"" + url.toExternalForm() + "\">");
         }
