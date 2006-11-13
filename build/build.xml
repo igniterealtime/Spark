@@ -11,7 +11,7 @@
     <property name="version.period" value="${version.major}.${version.minor}.${version.revision}"/>
     <property name="version.underscore" value="${version.major}_${version.minor}_${version.revision}"/>
 
-    <description>Jive Spark Build</description>
+    <description>Spark Build</description>
     <!--set global properties for this build-->
     <property name="src" location="../src/java"/>
     <property name="lib.dir" location="./lib"/>
@@ -32,6 +32,9 @@
     <property name="bin" location="${target.build}/bin"/>
     <property name="resources.dir" location="../src/resources"/>
     <property name="commercial.plugin.dir" location="../src/commercial"/>
+    <property name="xtra.dir" location="../src/xtra"/>
+    <property name="target.xtra" location="${target.build}/xtra"/>
+
 
     <!-- Installer Ant Script -->
 
@@ -121,6 +124,8 @@
         <mkdir dir="${targetdocs}"/>
         <mkdir dir="${plugins}"/>
         <mkdir dir="${bin}"/>
+        <mkdir dir="${target.xtra}"/>
+
     </target>
 
     <!-- resources =================================================================================== -->
@@ -150,6 +155,12 @@
                 <include name="*.jar"/>
             </fileset>
         </copy>
+        <copy todir="${target.xtra}">
+            <fileset dir="${xtra.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
 
     </target>
 
@@ -198,7 +209,7 @@
                 <include name="startup.sh"/>
             </fileset>
         </copy>
-        <chmod file="${bin}/startup.sh" perm="+x" />
+        <chmod file="${bin}/startup.sh" perm="+x"/>
     </target>
 
     <!-- jar =================================================================================== -->

@@ -113,7 +113,7 @@ public class ThemeManager {
         THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
         // For Testing
-        THEMES_DIRECTORY = new File("c:\\xtra\\themes");
+        //THEMES_DIRECTORY = new File("c:\\xtra\\themes");
 
         expandNewThemes();
 
