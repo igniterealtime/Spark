@@ -12,18 +12,29 @@ package org.jivesoftware.spark.ui.themes;
 
 import org.jdesktop.jdic.browser.BrowserEngineManager;
 import org.jdesktop.jdic.browser.IBrowserEngine;
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
-import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 /**
  * Manages Themes.
@@ -54,6 +65,11 @@ public class ThemeManager {
 
     private File tempFile;
     private String chatName;
+
+    /**
+     * The root themes directory.
+     */
+    public static File THEMES_DIRECTORY;
 
     /**
      * Returns the singleton instance of <CODE>ThemeManager</CODE>,
@@ -87,16 +103,114 @@ public class ThemeManager {
         // not about mozilla. Me love Mozilla. 
         be.setEnginePath("C:\\crapola\\mozilla\\mozilla.exe");
 
+        THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
-        URL url = getClass().getResource("/themes/renkoo2.3/renkoo.AdiumMessageStyle");
-        setTheme(URLFileSystem.url2File(url));
-       //setTheme(new File("C:\\adium\\Satin.AdiumMessageStyle\\"));
+        // For Testing
+        THEMES_DIRECTORY = new File("c:\\themes");
+
+        expandNewThemes();
+
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+
+        String themeName = pref.getTheme();
+
+        File theme = new File(THEMES_DIRECTORY, themeName);
+
+        try {
+            setTheme(theme);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Add Preference
         SparkManager.getPreferenceManager().addPreference(new ThemePreference());
     }
 
-    public void setTheme(File theme) {
+    private void expandNewThemes() {
+        File[] jars = THEMES_DIRECTORY.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                boolean accept = false;
+                String smallName = name.toLowerCase();
+                if (smallName.endsWith(".zip")) {
+                    accept = true;
+                }
+                return accept;
+            }
+        });
+
+        // Do nothing if no jar or zip files were found
+        if (jars == null) {
+            return;
+        }
+
+
+        for (int i = 0; i < jars.length; i++) {
+            if (jars[i].isFile()) {
+                File file = jars[i];
+
+                URL url = null;
+                try {
+                    url = file.toURL();
+                }
+                catch (MalformedURLException e) {
+                    Log.error(e);
+                }
+                String name = URLFileSystem.getName(url);
+                File directory = new File(THEMES_DIRECTORY, name);
+                if (directory.exists() && directory.isDirectory()) {
+                    continue;
+                }
+                else {
+                    // Unzip contents into directory
+                    unzipTheme(file, directory.getParentFile());
+                }
+            }
+        }
+    }
+
+    /**
+     * Unzips a theme from a ZIP file into a directory.
+     *
+     * @param zip the ZIP file
+     * @param dir the directory to extract the plugin to.
+     */
+    private void unzipTheme(File zip, File dir) {
+        try {
+            ZipFile zipFile = new JarFile(zip);
+
+            dir.mkdir();
+            for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+                JarEntry entry = (JarEntry)e.nextElement();
+                File entryFile = new File(dir, entry.getName());
+                // Ignore any manifest.mf entries.
+                if (entry.getName().toLowerCase().endsWith("manifest.mf")) {
+                    continue;
+                }
+                if (!entry.isDirectory()) {
+                    entryFile.getParentFile().mkdirs();
+                    FileOutputStream out = new FileOutputStream(entryFile);
+                    InputStream zin = zipFile.getInputStream(entry);
+                    byte[] b = new byte[512];
+                    int len = 0;
+                    while ((len = zin.read(b)) != -1) {
+                        out.write(b, 0, len);
+                    }
+                    out.flush();
+                    out.close();
+                    zin.close();
+                }
+            }
+            zipFile.close();
+            zipFile = null;
+        }
+        catch (Exception e) {
+            Log.error("Error unzipping Theme", e);
+        }
+    }
+
+
+    public void setTheme(File theme) throws Exception {
         theme = new File(theme, "/Contents/Resources");
 
         File template = new File(theme, "template.html");
@@ -363,5 +477,4 @@ public class ThemeManager {
     }
 
 
-   
 }

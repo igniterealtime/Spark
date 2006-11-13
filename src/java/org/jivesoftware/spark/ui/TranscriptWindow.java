@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.net.URL;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -83,13 +84,7 @@ public class TranscriptWindow extends JPanel {
 
         extraPanel = new JPanel();
 
-        browser = new WebBrowser() {
-            public Dimension getPreferredSize() {
-                final Dimension size = super.getPreferredSize();
-                size.width = 0;
-                return size;
-            }
-        };
+        browser = new WebBrowser();
         browser.setURL(themeManager.getTemplateURL());
 
 
@@ -447,6 +442,12 @@ public class TranscriptWindow extends JPanel {
         scriptList.add(script);
     }
 
+    public void setURL(URL url){
+        documentLoaded = false;
+        
+        browser.setURL(url);
+    }
+
     private void startCommandListener() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -455,7 +456,7 @@ public class TranscriptWindow extends JPanel {
                     if (scriptList.size() > 0) {
                         String script = (String)scriptList.get(0);
                         scriptList.remove(0);
-                        //   System.out.println(script);
+                        System.out.println(script);
                         String str = browser.executeScript(script);
                         //   System.out.println(str);
                     }

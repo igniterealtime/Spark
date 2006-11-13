@@ -455,12 +455,28 @@ public class LocalPreferences {
         return getBoolean("compressionOn", false);
     }
 
+    public void setTheme(String theme){
+        props.setProperty("theme", theme);
+    }
+
+    public String getTheme(){
+        return props.getProperty("theme", "Default");
+    }
+
+    public void setEmoticonPack(String pack){
+        props.setProperty("emoticonPack", pack);
+    }
+
+    public String getEmoticonPack(){
+        return props.getProperty("emoticonPack", "Default");
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
     private void setBoolean(String property, boolean value) {
         props.setProperty(property, Boolean.toString(value));
-    }
+    }    
 
 }

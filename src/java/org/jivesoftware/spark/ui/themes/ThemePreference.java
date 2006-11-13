@@ -12,6 +12,8 @@ package org.jivesoftware.spark.ui.themes;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -35,11 +37,11 @@ public class ThemePreference implements Preference {
     }
 
     public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.PALETTE_24x24_IMAGE);
     }
 
     public String getTooltip() {
-        return "Change the appearance of your chats.";
+        return "Change the appearance of your conversations.";
     }
 
     public String getListName() {
@@ -51,9 +53,8 @@ public class ThemePreference implements Preference {
     }
 
     public JComponent getGUI() {
-        if (panel == null) {
-            panel = new ThemePanel();
-        }
+        panel = new ThemePanel();
+
         return panel;
     }
 
@@ -62,6 +63,7 @@ public class ThemePreference implements Preference {
     }
 
     public void load() {
+
     }
 
     public boolean isDataValid() {
@@ -77,7 +79,9 @@ public class ThemePreference implements Preference {
     }
 
     public void commit() {
-
+        final String theme = panel.getSelectedTheme();
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        pref.setTheme(theme);
     }
 
 
