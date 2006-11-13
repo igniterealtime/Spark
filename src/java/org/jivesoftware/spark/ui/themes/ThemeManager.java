@@ -19,6 +19,7 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -92,6 +93,8 @@ public class ThemeManager {
     }
 
     private ThemeManager() {
+        EmoticonManager.getInstance();
+
         BrowserEngineManager bem = BrowserEngineManager.instance();
         //specific engine if you want and the engine you specified will return
         bem.setActiveEngine(BrowserEngineManager.MOZILLA);
@@ -106,7 +109,7 @@ public class ThemeManager {
         THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
         // For Testing
-        THEMES_DIRECTORY = new File("c:\\themes");
+        THEMES_DIRECTORY = new File("c:\\xtra\\themes");
 
         expandNewThemes();
 
@@ -167,6 +170,11 @@ public class ThemeManager {
                 }
             }
         }
+    }
+
+    public void installTheme(File theme) {
+        // Copy the file to the themes directory
+        unzipTheme(theme, THEMES_DIRECTORY);
     }
 
     /**

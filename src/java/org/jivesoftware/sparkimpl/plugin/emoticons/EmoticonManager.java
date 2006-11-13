@@ -15,14 +15,29 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 /**
  * Responsible for the handling of all Emoticon packs. Using the EmoticonManager, you can specify
@@ -36,8 +51,13 @@ public class EmoticonManager {
     private static EmoticonManager singleton;
     private static final Object LOCK = new Object();
 
-    private List<Emoticon> emoticons = new ArrayList<Emoticon>();
-    private File emoticonDirectory;
+
+    private Map<String, List> emoticonMap = new HashMap<String, List>();
+
+    /**
+     * The root emoticon directory.
+     */
+    public static File EMOTICON_DIRECTORY;
 
     /**
      * Returns the singleton instance of <CODE>EmoticonManager</CODE>,
@@ -60,17 +80,66 @@ public class EmoticonManager {
     }
 
     private EmoticonManager() {
+        EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/emoticons").getAbsoluteFile();
+        EMOTICON_DIRECTORY = new File("c:\\xtra\\emoticons");
 
+        expandNewPacks();
+
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        String emoticonPack = pref.getEmoticonPack();
+
+        try {
+            addEmoticonPack(emoticonPack);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Collection<Emoticon> getActiveEmoticonSet() {
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        String emoticonPack = pref.getEmoticonPack();
+        return emoticonMap.get(emoticonPack);
+    }
+
+    public String getActiveEmoticonSetName() {
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        String emoticonPack = pref.getEmoticonPack();
+        return emoticonPack;
+    }
+
+    public void installPack(File pack){
+        // Copy to the emoticon area
+        try {
+            URLFileSystem.copy(pack.toURL(), new File(EMOTICON_DIRECTORY, pack.getName()));
+
+            expandNewPacks();
+
+            File[] files = EMOTICON_DIRECTORY.listFiles();
+            for(int i=0; i<files.length; i++){
+                File file = files[i];
+                if(file.getName().toLowerCase().endsWith("adiumemoticonset") && file.isDirectory()){
+                    String name = URLFileSystem.getName(file.toURL());
+                    name = name.replaceAll(".adiumemoticonset", "");
+                    name = name.replaceAll(".AdiumEmoticonset", "");
+
+                    addEmoticonPack(name);
+                }
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Loads an emoticon set.
      *
-     * @param emoticonSet the directory of the emoticon set to load.
+     * @param packName the name of the pack.
      */
-    public void loadEmoticonSet(File emoticonSet) {
-        // Set the current emoticon directory.
-        this.emoticonDirectory = emoticonSet;
+    public void addEmoticonPack(String packName) {
+        File emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".adiumemoticonset");
+        List<Emoticon> emoticons = new ArrayList<Emoticon>();
 
         final File plist = new File(emoticonSet, "Emoticons.plist");
         SAXReader saxReader = new SAXReader();
@@ -107,9 +176,11 @@ public class EmoticonManager {
                 equivs.add(equivilantString);
             }
 
-            final Emoticon emoticon = new Emoticon(key, name, equivs);
+            final Emoticon emoticon = new Emoticon(key, name, equivs, emoticonSet);
             emoticons.add(emoticon);
         }
+
+        emoticonMap.put(packName, emoticons);
     }
 
     /**
@@ -121,7 +192,7 @@ public class EmoticonManager {
     public URL getEmoticonURL(Emoticon emoticon) {
         final String imageName = emoticon.getImageName();
 
-        File file = new File(emoticonDirectory, imageName);
+        File file = new File(emoticon.getEmoticonDirectory(), imageName);
         try {
             return file.toURL();
         }
@@ -137,7 +208,9 @@ public class EmoticonManager {
      * @param key the key.
      * @return the emoticon.
      */
-    public Emoticon getEmoticon(String key) {
+    public Emoticon getEmoticon(String packName, String key) {
+        final List<Emoticon> emoticons = emoticonMap.get(packName);
+
         for (Emoticon emoticon : emoticons) {
             for (String string : emoticon.getEquivalants()) {
                 if (key.equals(string)) {
@@ -149,19 +222,110 @@ public class EmoticonManager {
         return null;
     }
 
-    /**
-     * Test Bed
-     *
-     * @param args the args man.
-     */
-    public static void main(String args[]) {
-        final File emoticonSet = new File("C:\\adium\\Adiumy.AdiumEmoticonset");
+    public Collection<String> getEmoticonPacks() {
+        final List<String> emoticonList = new ArrayList<String>();
 
-        EmoticonManager manager = EmoticonManager.getInstance();
-        manager.loadEmoticonSet(emoticonSet);
-
-        Emoticon emoticon = manager.getEmoticon(":)");
-        System.out.println(emoticon);
-        System.out.println(manager.getEmoticonURL(emoticon));
+        File[] dirs = EMOTICON_DIRECTORY.listFiles();
+        for (int i = 0; i < dirs.length; i++) {
+            File file = dirs[i];
+            if (file.isDirectory() && file.getName().endsWith("adiumemoticonset")) {
+                try {
+                    String name = URLFileSystem.getName(file.toURL());
+                    name = name.replaceAll("adiumemoticonset", "");
+                    emoticonList.add(name);
+                }
+                catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return emoticonList;
     }
+
+
+    private void expandNewPacks() {
+        File[] jars = EMOTICON_DIRECTORY.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                boolean accept = false;
+                String smallName = name.toLowerCase();
+                if (smallName.endsWith(".zip")) {
+                    accept = true;
+                }
+                return accept;
+            }
+        });
+
+        // Do nothing if no jar or zip files were found
+        if (jars == null) {
+            return;
+        }
+
+
+        for (int i = 0; i < jars.length; i++) {
+            if (jars[i].isFile()) {
+                File file = jars[i];
+
+                URL url = null;
+                try {
+                    url = file.toURL();
+                }
+                catch (MalformedURLException e) {
+                    Log.error(e);
+                }
+                String name = URLFileSystem.getName(url);
+                File directory = new File(EMOTICON_DIRECTORY, name);
+                if (directory.exists() && directory.isDirectory()) {
+                    continue;
+                }
+                else {
+                    // Unzip contents into directory
+                    unzipPack(file, directory.getParentFile());
+
+                    // Delete the pack
+                    file.delete();
+                }
+            }
+        }
+    }
+
+    /**
+     * Unzips a theme from a ZIP file into a directory.
+     *
+     * @param zip the ZIP file
+     * @param dir the directory to extract the plugin to.
+     */
+    private void unzipPack(File zip, File dir) {
+        try {
+            ZipFile zipFile = new JarFile(zip);
+
+            dir.mkdir();
+            for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+                JarEntry entry = (JarEntry)e.nextElement();
+                File entryFile = new File(dir, entry.getName());
+                // Ignore any manifest.mf entries.
+                if (entry.getName().toLowerCase().endsWith("manifest.mf")) {
+                    continue;
+                }
+                if (!entry.isDirectory()) {
+                    entryFile.getParentFile().mkdirs();
+                    FileOutputStream out = new FileOutputStream(entryFile);
+                    InputStream zin = zipFile.getInputStream(entry);
+                    byte[] b = new byte[512];
+                    int len = 0;
+                    while ((len = zin.read(b)) != -1) {
+                        out.write(b, 0, len);
+                    }
+                    out.flush();
+                    out.close();
+                    zin.close();
+                }
+            }
+            zipFile.close();
+            zipFile = null;
+        }
+        catch (Exception e) {
+            Log.error("Error unzipping emoticon pack", e);
+        }
+    }
+
 }

@@ -10,27 +10,29 @@
 
 package org.jivesoftware.sparkimpl.plugin.emoticons;
 
-import org.jivesoftware.resource.EmotionRes;
 import org.jivesoftware.spark.component.RolloverButton;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.Map;
+import java.net.URL;
+import java.util.Collection;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 public class EmoticonUI extends JPanel {
-    private Map emoticons;
+    private Collection<Emoticon> emoticons;
     private EmoticonPickListener listener;
 
     public EmoticonUI() {
         setBackground(Color.white);
 
-        emoticons = EmotionRes.getEmoticonMap();
+        final EmoticonManager manager = EmoticonManager.getInstance();
+
+
+        emoticons = manager.getActiveEmoticonSet();
 
         int no = emoticons.size();
 
@@ -39,10 +41,15 @@ public class EmoticonUI extends JPanel {
         setLayout(new GridLayout(rows, 5));
 
         // Add Emoticons
-        Iterator iter = emoticons.keySet().iterator();
-        while (iter.hasNext()) {
-            final String text = (String)iter.next();
-            ImageIcon icon = EmotionRes.getImageIcon(text);
+        for (Emoticon emoticon : emoticons) {
+            final String text = emoticon.getEquivalants().get(0);
+            String name = manager.getActiveEmoticonSetName();
+
+            final Emoticon smileEmoticon = manager.getEmoticon(name, text);
+            URL smileURL = manager.getEmoticonURL(smileEmoticon);
+
+            // Add Emoticon button
+            ImageIcon icon = new ImageIcon(smileURL);
 
             RolloverButton emotButton = new RolloverButton();
             emotButton.setIcon(icon);
@@ -60,7 +67,6 @@ public class EmoticonUI extends JPanel {
     }
 
     public interface EmoticonPickListener {
-
         void emoticonPicked(String emoticon);
     }
 }

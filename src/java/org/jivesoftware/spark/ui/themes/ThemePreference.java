@@ -80,8 +80,10 @@ public class ThemePreference implements Preference {
 
     public void commit() {
         final String theme = panel.getSelectedTheme();
+        final String pack = panel.getSelectedEmoticonPack();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setTheme(theme);
+        pref.setEmoticonPack(pack);
     }
 
 

@@ -10,7 +10,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.emoticons;
 
-import org.jivesoftware.resource.EmotionRes;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -21,24 +20,34 @@ import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonUI.EmoticonPickListener;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URL;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * Adds an EmoticonPickList to each ChatRoom.
  */
 public class EmoticonPlugin implements Plugin {
 
+
     public void initialize() {
+
+
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomOpened(final ChatRoom room) {
+                final EmoticonManager manager = EmoticonManager.getInstance();
+                String name = manager.getActiveEmoticonSetName();
+
+                final Emoticon smileEmoticon = manager.getEmoticon(name, ":)");
+                URL smileURL = manager.getEmoticonURL(smileEmoticon);
+
                 // Add Emoticon button
-                ImageIcon icon = EmotionRes.getImageIcon(":)");
+                ImageIcon icon = new ImageIcon(smileURL);
                 final RolloverButton button = new RolloverButton(icon);
                 room.getEditorBar().add(button);
 

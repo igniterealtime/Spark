@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.emoticons;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
 
 /**
  * Represents a single emoticon.
@@ -22,7 +23,7 @@ public class Emoticon {
 
     private String imageName;
     private String emoticonName;
-
+    private File emoticonDirectory;
     private List<String> equivalants = new ArrayList<String>();
 
 
@@ -33,11 +34,12 @@ public class Emoticon {
      * @param emoticonName the name of this emoticon
      * @param equivalants  all string representations of this emoticon.
      */
-    public Emoticon(String nameOfImage, String emoticonName, List<String> equivalants) {
+    public Emoticon(String nameOfImage, String emoticonName, List<String> equivalants, File emoticonDirectory) {
         this.imageName = nameOfImage;
         this.emoticonName = emoticonName;
 
         this.equivalants = equivalants;
+        this.emoticonDirectory = emoticonDirectory;
     }
 
     /**
@@ -73,5 +75,9 @@ public class Emoticon {
      */
     public List<String> getEquivalants() {
         return equivalants;
+    }
+
+    public File getEmoticonDirectory(){
+        return emoticonDirectory;
     }
 }

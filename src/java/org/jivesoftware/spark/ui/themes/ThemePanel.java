@@ -10,9 +10,13 @@
 
 package org.jivesoftware.spark.ui.themes;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.WindowsFileSystemView;
+import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -22,9 +26,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.MalformedURLException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,8 +50,13 @@ public class ThemePanel extends JPanel {
     private JButton addThemeButton;
     private JButton addEmoticonButton;
 
+    private JFileChooser fc;
+    private ThemeManager themeManager;
+
     public ThemePanel() {
         setLayout(new GridBagLayout());
+
+        themeManager = ThemeManager.getInstance();
 
         messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
@@ -82,7 +93,6 @@ public class ThemePanel extends JPanel {
         add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        final ThemeManager manager = ThemeManager.getInstance();
         File themeDir = ThemeManager.THEMES_DIRECTORY;
         File[] dirs = themeDir.listFiles();
         for (int i = 0; i < dirs.length; i++) {
@@ -103,6 +113,35 @@ public class ThemePanel extends JPanel {
         String theme = pref.getTheme();
 
         messageStyleBox.setSelectedItem(theme);
+
+
+        addThemeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addTheme();
+            }
+        });
+
+
+        final EmoticonManager emoticonManager = EmoticonManager.getInstance();
+        for (String pack : emoticonManager.getEmoticonPacks()) {
+            emoticonBox.addItem(pack);
+        }
+
+        String activePack = pref.getEmoticonPack();
+        emoticonBox.setSelectedItem(activePack);
+
+        emoticonBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                emoticonManager.addEmoticonPack((String)emoticonBox.getSelectedItem());
+            }
+        });
+
+        addEmoticonButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addEmoticon();
+            }
+        });
+
     }
 
     private void addTheme(File dir) {
@@ -140,6 +179,102 @@ public class ThemePanel extends JPanel {
 
     public String getSelectedTheme() {
         return (String)messageStyleBox.getSelectedItem();
+    }
+
+    public String getSelectedEmoticonPack() {
+        return (String)emoticonBox.getSelectedItem();
+    }
+
+    private void addTheme() {
+        if (fc == null) {
+            fc = new JFileChooser();
+            if (Spark.isWindows()) {
+                fc.setFileSystemView(new WindowsFileSystemView());
+            }
+        }
+        fc.setDialogTitle("Add Theme");
+
+        fc.addChoosableFileFilter(new ZipFilter());
+
+        int returnVal = fc.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File theme = fc.getSelectedFile();
+            themeManager.installTheme(theme);
+            try {
+                String name = URLFileSystem.getName(theme.toURL());
+
+                // If the name does not exists, add it to the message box.
+                for (int i = 0; i < messageStyleBox.getItemCount(); i++) {
+                    String n = (String)messageStyleBox.getItemAt(i);
+                    if (name.equals(n)) {
+                        return;
+                    }
+                }
+
+                messageStyleBox.addItem(name);
+
+                // Set Selected
+                messageStyleBox.setSelectedItem(name);
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addEmoticon() {
+        if (fc == null) {
+            fc = new JFileChooser();
+            if (Spark.isWindows()) {
+                fc.setFileSystemView(new WindowsFileSystemView());
+            }
+        }
+        fc.setDialogTitle("Add Emoticon Pack");
+
+        fc.addChoosableFileFilter(new ZipFilter());
+
+        int returnVal = fc.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File pack = fc.getSelectedFile();
+            try {
+                EmoticonManager emoticonManager = EmoticonManager.getInstance();
+                emoticonManager.installPack(pack);
+
+                String name = URLFileSystem.getName(pack.toURL());
+                
+                // If the name does not exists, add it to the message box.
+                for (int i = 0; i < emoticonBox.getItemCount(); i++) {
+                    String n = (String)messageStyleBox.getItemAt(i);
+                    if (name.equals(n)) {
+                        return;
+                    }
+                }
+
+                emoticonBox.addItem(name);
+
+                // Set Selected
+                emoticonBox.setSelectedItem(name);
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class ZipFilter extends javax.swing.filechooser.FileFilter {
+        public boolean accept(File file) {
+            String filename = file.getName();
+            if (file.isDirectory()) {
+                return true;
+            }
+            return filename.endsWith(".zip");
+        }
+
+        public String getDescription() {
+            return "*.zip";
+        }
     }
 
 }
