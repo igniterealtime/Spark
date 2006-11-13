@@ -108,7 +108,7 @@ public class ThemeManager {
 
         // Note that the install directory is my name for temporary files and
         // not about mozilla. Me love Mozilla. 
-        be.setEnginePath("C:\\crapola\\mozilla\\mozilla.exe");
+        be.setEnginePath("C:\\mozilla\\mozilla.exe");
 
         THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
