@@ -17,9 +17,10 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
+import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,6 +34,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
@@ -67,6 +69,8 @@ public class ThemeManager {
     private File tempFile;
     private String chatName;
 
+    private EmoticonManager emoticonManager;
+
     /**
      * The root themes directory.
      */
@@ -93,7 +97,7 @@ public class ThemeManager {
     }
 
     private ThemeManager() {
-        EmoticonManager.getInstance();
+        emoticonManager = EmoticonManager.getInstance();
 
         BrowserEngineManager bem = BrowserEngineManager.instance();
         //specific engine if you want and the engine you specified will return
@@ -228,7 +232,7 @@ public class ThemeManager {
         File header = new File(theme, "Header.html");
         if (header.exists()) {
             String headerText = URLFileSystem.getContents(header);
-            headerText = html(headerText);
+            headerText = filter(headerText);
             templateText = templateText.replaceAll("%header%", headerText);
         }
         else {
@@ -329,7 +333,7 @@ public class ThemeManager {
         incoming = incoming.replaceAll("%message%", message);
         incoming = incoming.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
-        incoming = html(incoming);
+        incoming = filter(incoming);
         if (iconPath != null) {
             incoming = incoming.replaceAll("%userIconPath%", iconPath.toExternalForm());
         }
@@ -342,7 +346,7 @@ public class ThemeManager {
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
         incoming = incoming.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-        incoming = html(incoming);
+        incoming = filter(incoming);
         if (iconPath != null) {
             incoming = incoming.replaceAll("%userIconPath%", iconPath.toExternalForm());
         }
@@ -356,7 +360,7 @@ public class ThemeManager {
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
         outgoing = outgoing.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-        outgoing = html(outgoing);
+        outgoing = filter(outgoing);
         if (iconPath != null) {
             outgoing = outgoing.replaceAll("%userIconPath%", iconPath.toExternalForm());
         }
@@ -369,7 +373,7 @@ public class ThemeManager {
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
         outgoing = outgoing.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-        outgoing = html(outgoing);
+        outgoing = filter(outgoing);
         if (iconPath != null) {
             outgoing = outgoing.replaceAll("%userIconPath%", iconPath.toExternalForm());
         }
@@ -380,7 +384,7 @@ public class ThemeManager {
         String status = statusText;
         status = status.replaceAll("%time%", time);
         status = status.replaceAll("%message%", message);
-        status = html(status);
+        status = filter(status);
         return status;
     }
 
@@ -389,7 +393,7 @@ public class ThemeManager {
         status = status.replaceAll("%time%", "");
         status = status.replaceAll("%message%", message);
         if (!allowQuotes) {
-            status = html(status);
+            status = filter(status);
         }
         else {
             status = status.replaceAll("\"", "\\\"");
@@ -404,7 +408,7 @@ public class ThemeManager {
         String incoming = nextIncomingText;
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
-        incoming = html(incoming);
+        incoming = filter(incoming);
         return incoming;
     }
 
@@ -412,7 +416,7 @@ public class ThemeManager {
         String incoming = nextIncomingHistoryText;
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
-        incoming = html(incoming);
+        incoming = filter(incoming);
         return incoming;
     }
 
@@ -420,7 +424,7 @@ public class ThemeManager {
         String out = nextOutgoingHistoryText;
         out = out.replaceAll("%time%", time);
         out = out.replaceAll("%message%", message);
-        out = html(out);
+        out = filter(out);
         return out;
     }
 
@@ -428,7 +432,7 @@ public class ThemeManager {
         String out = nextOutgoingHistoryText;
         out = out.replaceAll("%time%", time);
         out = out.replaceAll("%message%", message);
-        out = html(out);
+        out = filter(out);
         return out;
     }
 
@@ -462,7 +466,7 @@ public class ThemeManager {
     }
 
 
-    private String html(String text) {
+    private String filter(String text) {
         text = text.replaceAll("\n", "");
         text = text.replaceAll("\'", "&#180;");
         text = text.replaceAll("\t", "");
@@ -472,6 +476,7 @@ public class ThemeManager {
         String time = formatter.format(new Date());
 
         text = text.replaceAll("%timeOpened", time);
+        
         return text;
     }
 

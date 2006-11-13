@@ -24,8 +24,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -108,14 +108,14 @@ public class EmoticonManager {
         return emoticonPack;
     }
 
-    public String installPack(File pack){
+    public String installPack(File pack) {
         String name = null;
         // Copy to the emoticon area
         try {
             URLFileSystem.copy(pack.toURL(), new File(EMOTICON_DIRECTORY, pack.getName()));
 
             File rootDirectory = unzipPack(pack, EMOTICON_DIRECTORY);
-             name = URLFileSystem.getName(rootDirectory.toURL());
+            name = URLFileSystem.getName(rootDirectory.toURL());
             addEmoticonPack(name);
         }
         catch (IOException e) {
@@ -132,10 +132,10 @@ public class EmoticonManager {
      */
     public void addEmoticonPack(String packName) {
         File emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".adiumemoticonset");
-        if(!emoticonSet.exists()){
+        if (!emoticonSet.exists()) {
             emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".AdiumEmoticonset");
         }
-        
+
         List<Emoticon> emoticons = new ArrayList<Emoticon>();
 
         final File plist = new File(emoticonSet, "Emoticons.plist");
@@ -219,6 +219,20 @@ public class EmoticonManager {
         return null;
     }
 
+    public Emoticon getEmoticon(String key) {
+        final List<Emoticon> emoticons = emoticonMap.get(getActiveEmoticonSetName());
+
+        for (Emoticon emoticon : emoticons) {
+            for (String string : emoticon.getEquivalants()) {
+                if (key.equals(string)) {
+                    return emoticon;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public Collection<String> getEmoticonPacks() {
         final List<String> emoticonList = new ArrayList<String>();
 
@@ -229,7 +243,7 @@ public class EmoticonManager {
                 try {
                     String name = URLFileSystem.getName(file.toURL());
                     name = name.replaceAll("adiumemoticonset", "");
-                     name = name.replaceAll("AdiumEmoticonset", "");
+                    name = name.replaceAll("AdiumEmoticonset", "");
                     emoticonList.add(name);
                 }
                 catch (MalformedURLException e) {
@@ -307,10 +321,10 @@ public class EmoticonManager {
                     continue;
                 }
 
-                if(entry.isDirectory() && rootDirectory == null){
+                if (entry.isDirectory() && rootDirectory == null) {
                     rootDirectory = entryFile;
                 }
-                
+
                 if (!entry.isDirectory()) {
                     entryFile.getParentFile().mkdirs();
                     FileOutputStream out = new FileOutputStream(entryFile);

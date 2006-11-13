@@ -22,6 +22,8 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
+import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -32,14 +34,15 @@ import java.awt.Dimension;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.net.URL;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -147,6 +150,7 @@ public class TranscriptWindow extends JPanel {
 
         String body = message.getBody();
         body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(body);
+        body = filterBody(body);
         String date = getDate(null);
 
         String jid = SparkManager.getSessionManager().getJID();
@@ -166,11 +170,13 @@ public class TranscriptWindow extends JPanel {
 
 
     public void insertCustomMessage(String prefix, String message) {
+        message = filterBody(message);
         String text = themeManager.getOutgoingMessage(prefix, "", message, null);
         executeScript("appendMessage('" + text + "')");
     }
 
     public void insertCustomOtherMessage(String prefix, String message) {
+        message = filterBody(message);
         String text = themeManager.getIncomingMessage(prefix, "", message, null);
         executeScript("appendMessage('" + text + "')");
     }
@@ -192,6 +198,7 @@ public class TranscriptWindow extends JPanel {
         }
 
         String body = message.getBody();
+        body = filterBody(body);
 
         try {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
@@ -233,6 +240,7 @@ public class TranscriptWindow extends JPanel {
      * @param message the information message to insert.
      */
     public synchronized void insertNotificationMessage(String message) {
+        message = filterBody(message);
         String text = themeManager.getStatusMessage(message, "");
         executeScript("appendMessage('" + text + "')");
     }
@@ -243,6 +251,7 @@ public class TranscriptWindow extends JPanel {
      * @param message the information message to insert.
      */
     public void insertErrorMessage(String message) {
+        message = filterBody(message);
         String text = themeManager.getStatusMessage(message, "");
         executeScript("appendMessage('" + text + "')");
     }
@@ -312,6 +321,8 @@ public class TranscriptWindow extends JPanel {
 
         final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
         String time = formatter.format(date);
+
+        message = filterBody(message);
 
         if (userid.equals(activeUser)) {
             if (outgoingMessage) {
@@ -442,9 +453,9 @@ public class TranscriptWindow extends JPanel {
         scriptList.add(script);
     }
 
-    public void setURL(URL url){
+    public void setURL(URL url) {
         documentLoaded = false;
-        
+
         browser.setURL(url);
     }
 
@@ -488,6 +499,32 @@ public class TranscriptWindow extends JPanel {
         final Dimension size = super.getPreferredSize();
         size.width = 0;
         return size;
+    }
+
+    private String filterBody(String text) {
+        EmoticonManager emoticonManager = EmoticonManager.getInstance();
+        StringBuilder builder = new StringBuilder();
+
+
+        final StringTokenizer tokenizer = new StringTokenizer(text, "> \n \t", true);
+        while (tokenizer.hasMoreTokens()) {
+            String textFound = tokenizer.nextToken();
+            if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
+                || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                builder.append("<a href=\"").append(textFound).append("\" target=_blank>").append(textFound).append("</a>");
+            }
+            else if (emoticonManager.getEmoticon(textFound) != null) {
+                Emoticon emot = emoticonManager.getEmoticon(textFound);
+                URL url = emoticonManager.getEmoticonURL(emot);
+                builder.append("<img src=\"").append(url.toExternalForm()).append("\" />");
+            }
+            else {
+                builder.append(textFound);
+            }
+        }
+
+        return builder.toString();
+
     }
 
 
