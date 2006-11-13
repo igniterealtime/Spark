@@ -200,6 +200,8 @@ public class ChatRoomImpl extends ChatRoom {
         if (url != null) {
             transcriptWindow.setInnerHTML("incomingIconPath", "<img src=\"" + url.toExternalForm() + "\">");
         }
+
+        getToolBar().setVisible(false);
     }
 
 
