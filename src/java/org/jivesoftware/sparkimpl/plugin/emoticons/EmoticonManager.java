@@ -107,6 +107,11 @@ public class EmoticonManager {
         return emoticonPack;
     }
 
+    public void setActivePack(String pack) {
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        pref.setEmoticonPack(pack);
+    }
+
     public String installPack(File pack) {
         String name = null;
         // Copy to the emoticon area

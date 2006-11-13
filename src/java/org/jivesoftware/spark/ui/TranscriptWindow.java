@@ -21,6 +21,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
@@ -171,13 +172,13 @@ public class TranscriptWindow extends JPanel {
 
     public void insertCustomMessage(String prefix, String message) {
         message = filterBody(message);
-        String text = themeManager.getOutgoingMessage(prefix, "", message, null);
+        String text = themeManager.getOutgoingMessage(prefix, "", message, vcardManager.getAvatar(""));
         executeScript("appendMessage('" + text + "')");
     }
 
     public void insertCustomOtherMessage(String prefix, String message) {
         message = filterBody(message);
-        String text = themeManager.getIncomingMessage(prefix, "", message, null);
+        String text = themeManager.getIncomingMessage(prefix, "", message, vcardManager.getAvatar(""));
         executeScript("appendMessage('" + text + "')");
     }
 
@@ -198,7 +199,7 @@ public class TranscriptWindow extends JPanel {
         }
 
         String body = message.getBody();
-        body = filterBody(body);
+
 
         try {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
@@ -215,6 +216,7 @@ public class TranscriptWindow extends JPanel {
             String theDate = getDate(sentDate);
 
             body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(body);
+            body = filterBody(body);
 
             if (userid.equals(activeUser)) {
                 String text = themeManager.getNextIncomingMessage(body, theDate);
@@ -506,7 +508,7 @@ public class TranscriptWindow extends JPanel {
         StringBuilder builder = new StringBuilder();
 
 
-        final StringTokenizer tokenizer = new StringTokenizer(text, "> \n \t", true);
+        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
@@ -516,6 +518,7 @@ public class TranscriptWindow extends JPanel {
             else if (emoticonManager.getEmoticon(textFound) != null) {
                 Emoticon emot = emoticonManager.getEmoticon(textFound);
                 URL url = emoticonManager.getEmoticonURL(emot);
+                File file = URLFileSystem.url2File(url);
                 builder.append("<img src=\"").append(url.toExternalForm()).append("\" />");
             }
             else {

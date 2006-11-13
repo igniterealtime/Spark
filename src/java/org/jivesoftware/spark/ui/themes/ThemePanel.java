@@ -16,6 +16,7 @@ import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
+import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -127,12 +128,14 @@ public class ThemePanel extends JPanel {
             emoticonBox.addItem(pack);
         }
 
-        String activePack = pref.getEmoticonPack();
+        final String activePack = pref.getEmoticonPack();
         emoticonBox.setSelectedItem(activePack);
 
         emoticonBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 emoticonManager.addEmoticonPack((String)emoticonBox.getSelectedItem());
+                emoticonManager.setActivePack((String)emoticonBox.getSelectedItem());
+                showSelectedTheme();
             }
         });
 
@@ -175,6 +178,18 @@ public class ThemePanel extends JPanel {
         transcript.insertNotificationMessage("Welcome to this theme.");
         transcript.executeScript(("appendMessage('" + message1 + "')"));
         transcript.executeScript("appendMessage('" + message2 + "')");
+
+        StringBuilder builder = new StringBuilder();
+
+        EmoticonManager emoticonManager = EmoticonManager.getInstance();
+        for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
+            String eq = emoticon.getEquivalants().get(0);
+            builder.append(eq);
+            builder.append(" ");
+        }
+
+
+        transcript.insertCustomMessage("Emoticon Man:", builder.toString());
     }
 
     public String getSelectedTheme() {
@@ -241,7 +256,7 @@ public class ThemePanel extends JPanel {
             try {
                 EmoticonManager emoticonManager = EmoticonManager.getInstance();
                 String name = emoticonManager.installPack(pack);
-                
+
                 // If the name does not exists, add it to the message box.
                 for (int i = 0; i < emoticonBox.getItemCount(); i++) {
                     String n = (String)messageStyleBox.getItemAt(i);
