@@ -81,7 +81,6 @@ public class EmoticonManager {
 
     private EmoticonManager() {
         EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/emoticons").getAbsoluteFile();
-        EMOTICON_DIRECTORY = new File("c:\\xtra\\emoticons");
 
         expandNewPacks();
 
