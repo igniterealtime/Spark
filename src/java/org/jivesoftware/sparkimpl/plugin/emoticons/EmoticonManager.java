@@ -108,28 +108,21 @@ public class EmoticonManager {
         return emoticonPack;
     }
 
-    public void installPack(File pack){
+    public String installPack(File pack){
+        String name = null;
         // Copy to the emoticon area
         try {
             URLFileSystem.copy(pack.toURL(), new File(EMOTICON_DIRECTORY, pack.getName()));
 
-            expandNewPacks();
-
-            File[] files = EMOTICON_DIRECTORY.listFiles();
-            for(int i=0; i<files.length; i++){
-                File file = files[i];
-                if(file.getName().toLowerCase().endsWith("adiumemoticonset") && file.isDirectory()){
-                    String name = URLFileSystem.getName(file.toURL());
-                    name = name.replaceAll(".adiumemoticonset", "");
-                    name = name.replaceAll(".AdiumEmoticonset", "");
-
-                    addEmoticonPack(name);
-                }
-            }
+            File rootDirectory = unzipPack(pack, EMOTICON_DIRECTORY);
+             name = URLFileSystem.getName(rootDirectory.toURL());
+            addEmoticonPack(name);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        return name;
     }
 
     /**
@@ -139,6 +132,10 @@ public class EmoticonManager {
      */
     public void addEmoticonPack(String packName) {
         File emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".adiumemoticonset");
+        if(!emoticonSet.exists()){
+            emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".AdiumEmoticonset");
+        }
+        
         List<Emoticon> emoticons = new ArrayList<Emoticon>();
 
         final File plist = new File(emoticonSet, "Emoticons.plist");
@@ -228,10 +225,11 @@ public class EmoticonManager {
         File[] dirs = EMOTICON_DIRECTORY.listFiles();
         for (int i = 0; i < dirs.length; i++) {
             File file = dirs[i];
-            if (file.isDirectory() && file.getName().endsWith("adiumemoticonset")) {
+            if (file.isDirectory() && file.getName().toLowerCase().endsWith("adiumemoticonset")) {
                 try {
                     String name = URLFileSystem.getName(file.toURL());
                     name = name.replaceAll("adiumemoticonset", "");
+                     name = name.replaceAll("AdiumEmoticonset", "");
                     emoticonList.add(name);
                 }
                 catch (MalformedURLException e) {
@@ -293,8 +291,10 @@ public class EmoticonManager {
      *
      * @param zip the ZIP file
      * @param dir the directory to extract the plugin to.
+     * @return the root directory.
      */
-    private void unzipPack(File zip, File dir) {
+    private File unzipPack(File zip, File dir) {
+        File rootDirectory = null;
         try {
             ZipFile zipFile = new JarFile(zip);
 
@@ -306,6 +306,11 @@ public class EmoticonManager {
                 if (entry.getName().toLowerCase().endsWith("manifest.mf")) {
                     continue;
                 }
+
+                if(entry.isDirectory() && rootDirectory == null){
+                    rootDirectory = entryFile;
+                }
+                
                 if (!entry.isDirectory()) {
                     entryFile.getParentFile().mkdirs();
                     FileOutputStream out = new FileOutputStream(entryFile);
@@ -326,6 +331,8 @@ public class EmoticonManager {
         catch (Exception e) {
             Log.error("Error unzipping emoticon pack", e);
         }
+
+        return rootDirectory;
     }
 
 }

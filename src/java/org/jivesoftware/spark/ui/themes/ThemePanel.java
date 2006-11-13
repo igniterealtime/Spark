@@ -240,9 +240,7 @@ public class ThemePanel extends JPanel {
             File pack = fc.getSelectedFile();
             try {
                 EmoticonManager emoticonManager = EmoticonManager.getInstance();
-                emoticonManager.installPack(pack);
-
-                String name = URLFileSystem.getName(pack.toURL());
+                String name = emoticonManager.installPack(pack);
                 
                 // If the name does not exists, add it to the message box.
                 for (int i = 0; i < emoticonBox.getItemCount(); i++) {
@@ -257,7 +255,7 @@ public class ThemePanel extends JPanel {
                 // Set Selected
                 emoticonBox.setSelectedItem(name);
             }
-            catch (MalformedURLException e) {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
