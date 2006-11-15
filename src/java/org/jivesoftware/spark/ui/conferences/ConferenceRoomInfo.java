@@ -17,10 +17,13 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.InvitationRejectionListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.UserStatusListener;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
@@ -77,8 +80,11 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     private JList list = new JList(model);
     private PacketListener listener = null;
 
+    private Map<String, String> invitees = new HashMap<String, String>();
 
     private boolean allowNicknameChange = true;
+
+    private DiscoverInfo roomInformation;
 
     /**
      * Creates a new RoomInfo instance using the specified ChatRoom.  The RoomInfo
@@ -137,6 +143,15 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
         chat = groupChatRoom.getMultiUserChat();
 
+        chat.addInvitationRejectionListener(new InvitationRejectionListener() {
+            public void invitationDeclined(String jid, String message) {
+                String nickname = userManager.getUserNicknameFromJID(jid);
+                userHasLeft(chatRoom, nickname);
+
+                chatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has rejected the invitation.");
+            }
+        });
+
 
         listener = new PacketListener() {
             public void processPacket(final Packet packet) {
@@ -162,6 +177,14 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         };
 
         chat.addParticipantListener(listener);
+
+        ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        try {
+            roomInformation = disco.discoverInfo(chat.getRoom());
+        }
+        catch (XMPPException e) {
+            Log.debug("Unable to retrieve room informatino for " + chat.getRoom());
+        }
     }
 
     public void chatRoomOpened(ChatRoom room) {
@@ -241,6 +264,27 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     public void userHasJoined(ChatRoom room, String userid) {
     }
 
+    public void addInvitee(String jid, String message) {
+        // So the problem with this is that I have no idea what the users actual jid is in most cases.
+        final UserManager userManager = SparkManager.getUserManager();
+
+        String nickname = userManager.getUserNicknameFromJID(jid);
+
+        groupChatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has been invited to join this room.");
+
+        if (roomInformation != null && !roomInformation.containsFeature("muc_nonanonymous")) {
+            return;
+        }
+
+
+        final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.USER1_BACK_16x16);
+        inviteIcon.setDescription(nickname);
+
+        model.addElement(inviteIcon);
+
+        invitees.put(nickname, message);
+    }
+
     private ImageIcon getImageIcon(String participantJID) {
         String nickname = StringUtils.parseResource(participantJID);
         Occupant occupant = SparkManager.getUserManager().getOccupant(groupChatRoom, nickname);
@@ -263,6 +307,23 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     private void addParticipant(String participantJID, Presence presence) {
+        // Remove reference to invitees
+        for (String nick : invitees.keySet()) {
+            String jid = SparkManager.getUserManager().getJIDFromNickname(nick);
+
+            Occupant occ = chat.getOccupant(participantJID);
+            if (occ != null) {
+                String actualJID = occ.getJid();
+                if (actualJID.equals(jid)) {
+                    int index = getIndex(nick);
+
+                    if (index != -1) {
+                        model.removeElementAt(index);
+                    }
+                }
+            }
+        }
+
         String nickname = StringUtils.parseResource(participantJID);
         Occupant occupant = SparkManager.getUserManager().getOccupant(groupChatRoom, nickname);
         boolean isOwnerOrAdmin = SparkManager.getUserManager().isOwnerOrAdmin(occupant);
@@ -326,6 +387,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
         if (index != -1) {
             model.removeElementAt(index);
+            userMap.remove(userid);
         }
     }
 
@@ -502,9 +564,41 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
         final boolean userIsAdmin = userManager.isOwnerOrAdmin(occupant);
         final boolean userIsModerator = userManager.isModerator(occupant);
-        boolean isMe = groupJIDNickname.equals(nickname);
+        boolean isMe = nickname.equals(groupJIDNickname);
 
         JPopupMenu popup = new JPopupMenu();
+
+        // Handle invites
+        if (groupJIDNickname == null) {
+            Action inviteAgainAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    String message = invitees.get(selectedUser);
+                    String jid = userManager.getJIDFromNickname(selectedUser);
+                    chat.invite(jid, message);
+                }
+            };
+
+            inviteAgainAction.putValue(Action.NAME, "Invite Again");
+            popup.add(inviteAgainAction);
+
+
+            Action removeInvite = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    int index = getIndex(selectedUser);
+
+                    if (index != -1) {
+                        model.removeElementAt(index);
+                    }
+                }
+            };
+
+            removeInvite.putValue(Action.NAME, "Remove");
+            popup.add(removeInvite);
+
+            popup.show(list, evt.getX(), evt.getY());
+            return;
+        }
+
         if (isMe) {
             Action changeNicknameAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent actionEvent) {

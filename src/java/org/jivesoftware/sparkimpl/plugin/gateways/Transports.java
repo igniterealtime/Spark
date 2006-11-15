@@ -19,7 +19,7 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -68,7 +68,7 @@ public class Transports extends JPanel {
                         int confirm = JOptionPane.showConfirmDialog(item, Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                         if (confirm == JOptionPane.YES_OPTION) {
                             try {
-                                TransportManager.unregister(con, item.getTransport().getServiceName());
+                                TransportUtils.unregister(con, item.getTransport().getServiceName());
                             }
                             catch (XMPPException e1) {
                                 e1.printStackTrace();
@@ -83,8 +83,8 @@ public class Transports extends JPanel {
         });
 
 
-        for (Transport transport : TransportManager.getTransports()) {
-            final TransportItem transportItem = new TransportItem(transport, TransportManager.isRegistered(con, transport), transport.getServiceName());
+        for (Transport transport : TransportUtils.getTransports()) {
+            final TransportItem transportItem = new TransportItem(transport, TransportUtils.isRegistered(con, transport), transport.getServiceName());
             model.addElement(transportItem);
         }
     }

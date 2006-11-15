@@ -34,12 +34,10 @@ import org.jivesoftware.smackx.SharedGroupManager;
 import org.jivesoftware.smackx.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.status.StatusBar;
@@ -51,29 +49,9 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -94,6 +72,23 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -260,7 +255,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
 
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
@@ -423,7 +418,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 ContactItem contactItem = new ContactItem(name, entry.getUser());
                 contactItem.setPresence(null);
                 if ((entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                     // Add to contact group.
                     contactGroup.addContactItem(contactItem);
                     contactGroup.setVisible(true);
@@ -496,7 +491,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 if (contactGroup == null) {
                     contactGroup = addContactGroup(group.getName());
                 }
+
+                boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+                if (isPending) {
+                    contactGroup.setVisible(true);
+                }
                 contactGroup.addContactItem(newContactItem);
+
             }
             return;
         }
@@ -616,7 +618,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     updateUserPresence(presence);
 
                                     if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
-                                            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                                         contactGroup.setVisible(true);
 
                                     }
@@ -660,7 +662,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             ContactItem offlineItem = offlineGroup.getContactItemByJID(jid);
                             if (offlineItem != null) {
                                 if ((rosterEntry.getType() == RosterPacket.ItemType.NONE || rosterEntry.getType() == RosterPacket.ItemType.FROM)
-                                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
+                                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
                                     // Remove from offlineItem and add to unfiledItem.
                                     offlineGroup.removeContactItem(offlineItem);
                                     unfiledGroup.addContactItem(offlineItem);
@@ -1653,75 +1655,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     private void subscriptionRequest(final String jid) {
-        final Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(jid);
-        if (entry != null && entry.getType() == RosterPacket.ItemType.TO) {
-            Presence response = new Presence(Presence.Type.subscribed);
-            response.setTo(jid);
-
-            SparkManager.getConnection().sendPacket(response);
-            return;
-        }
-
-
-        String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
-
-        final JPanel layoutPanel = new JPanel();
-        layoutPanel.setBackground(Color.white);
-        layoutPanel.setLayout(new GridBagLayout());
-
-        WrappedLabel messageLabel = new WrappedLabel();
-        messageLabel.setText(message);
-        layoutPanel.add(messageLabel, new GridBagConstraints(0, 0, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-        RolloverButton acceptButton = new RolloverButton();
-        ResourceUtils.resButton(acceptButton, Res.getString("button.accept"));
-        RolloverButton viewInfoButton = new RolloverButton();
-        ResourceUtils.resButton(viewInfoButton, Res.getString("button.profile"));
-        RolloverButton denyButton = new RolloverButton();
-        ResourceUtils.resButton(denyButton, Res.getString("button.deny"));
-        layoutPanel.add(acceptButton, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        layoutPanel.add(viewInfoButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        layoutPanel.add(denyButton, new GridBagConstraints(4, 1, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.getWorkspace().removeAlert(layoutPanel);
-                Presence response = new Presence(Presence.Type.subscribed);
-                response.setTo(jid);
-
-                SparkManager.getConnection().sendPacket(response);
-
-                int ok = JOptionPane.showConfirmDialog(getGUI(), Res.getString("message.add.user"), Res.getString("message.add.to.roster"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (ok == JOptionPane.OK_OPTION) {
-                    RosterDialog rosterDialog = new RosterDialog();
-                    rosterDialog.setDefaultJID(UserManager.unescapeJID(jid));
-                    rosterDialog.showRosterDialog();
-                }
-
-            }
-        });
-
-        denyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.getWorkspace().removeAlert(layoutPanel);
-
-                // Send subscribed
-                Presence response = new Presence(Presence.Type.unsubscribe);
-                response.setTo(jid);
-                SparkManager.getConnection().sendPacket(response);
-            }
-        });
-
-        viewInfoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.getVCardManager().viewProfile(jid, getGUI());
-            }
-        });
-
-        // show dialog
-        SparkManager.getWorkspace().addAlert(layoutPanel);
-        SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
+        final SubscriptionDialog subscriptionDialog = new SubscriptionDialog();
+        subscriptionDialog.invoke(jid);
     }
 
     public void addContextMenuListener(ContextMenuListener listener) {
@@ -1876,22 +1811,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         removeAllUsers();
     }
 
-
-    private void removeAllUsers() {
-        // Behind the scenes, move everyone to the offline group.
-        Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
-            Iterator contactItems = new ArrayList(contactGroup.getContactItems()).iterator();
-            while (contactItems.hasNext()) {
-                ContactItem item = (ContactItem)contactItems.next();
-                contactGroup.removeContactItem(item);
-            }
-        }
-
-    }
-
-
     public void clientReconnected() {
         buildContactList();
         workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
@@ -1919,6 +1838,19 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 reconnect(message);
             }
         });
+    }
+
+    private void removeAllUsers() {
+        // Behind the scenes, move everyone to the offline group.
+        final Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
+        while (contactGroups.hasNext()) {
+            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
+            Iterator contactItems = new ArrayList(contactGroup.getContactItems()).iterator();
+            while (contactItems.hasNext()) {
+                ContactItem item = (ContactItem)contactItems.next();
+                contactGroup.removeContactItem(item);
+            }
+        }
 
     }
 

@@ -21,7 +21,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -76,7 +76,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         buttonPanel.add(cancelButton);
 
 
-        transport = TransportManager.getTransport(serviceName);
+        transport = TransportUtils.getTransport(serviceName);
 
         final TitlePanel titlePanel = new TitlePanel(transport.getTitle(), transport.getInstructions(), transport.getIcon(), true);
 
@@ -140,9 +140,9 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         }
 
         try {
-            TransportManager.registerUser(SparkManager.getConnection(), serviceName, username, password);
+            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password);
 
-            // Send Presence
+            // Send Directed Presence
             final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
             Presence presence = statusBar.getPresence();
             presence.setTo(transport.getServiceName());

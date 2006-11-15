@@ -26,12 +26,12 @@ import java.util.Map;
 /**
  *
  */
-public class TransportManager {
+public class TransportUtils {
 
     private static Map<String, Transport> transports = new HashMap<String, Transport>();
 
 
-    private TransportManager() {
+    private TransportUtils() {
 
     }
 

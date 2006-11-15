@@ -26,7 +26,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -446,8 +446,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     public List<AccountItem> getAccounts() {
         List<AccountItem> list = new ArrayList<AccountItem>();
 
-        for (Transport transport : TransportManager.getTransports()) {
-            if (TransportManager.isRegistered(SparkManager.getConnection(), transport)) {
+        for (Transport transport : TransportUtils.getTransports()) {
+            if (TransportUtils.isRegistered(SparkManager.getConnection(), transport)) {
                 AccountItem item = new AccountItem(transport.getIcon(), transport.getName(), transport);
                 list.add(item);
             }

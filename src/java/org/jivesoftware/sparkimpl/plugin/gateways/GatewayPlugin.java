@@ -32,6 +32,7 @@ import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -39,18 +40,18 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.ICQTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportManager;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
+
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -72,7 +73,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             public Object construct() {
                 try {
                     populateTransports(SparkManager.getConnection());
-                    for (final Transport transport : TransportManager.getTransports()) {
+                    for (final Transport transport : TransportUtils.getTransports()) {
                         addTransport(transport);
                     }
                 }
@@ -91,7 +92,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 }
 
                 // Register presences.
-                registerPresences();
+                registerPresenceListener();
 
             }
         };
@@ -135,19 +136,19 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 if (identity.getCategory().equalsIgnoreCase(GATEWAY)) {
                     if ("aim".equals(identity.getType())) {
                         AIMTransport aim = new AIMTransport(item.getEntityID());
-                        TransportManager.addTransport(item.getEntityID(), aim);
+                        TransportUtils.addTransport(item.getEntityID(), aim);
                     }
                     else if ("msn".equals(identity.getType())) {
                         MSNTransport msn = new MSNTransport(item.getEntityID());
-                        TransportManager.addTransport(item.getEntityID(), msn);
+                        TransportUtils.addTransport(item.getEntityID(), msn);
                     }
                     else if ("yahoo".equals(identity.getType())) {
                         YahooTransport yahoo = new YahooTransport(item.getEntityID());
-                        TransportManager.addTransport(item.getEntityID(), yahoo);
+                        TransportUtils.addTransport(item.getEntityID(), yahoo);
                     }
                     else if ("icq".equals(identity.getType())) {
                         ICQTransport icq = new ICQTransport(item.getEntityID());
-                        TransportManager.addTransport(item.getEntityID(), icq);
+                        TransportUtils.addTransport(item.getEntityID(), icq);
                     }
                 }
             }
@@ -160,14 +161,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         final JPanel commandPanel = statusBar.getCommandPanel();
 
 
-        final boolean isRegistered = TransportManager.isRegistered(SparkManager.getConnection(), transport);
         final RolloverButton button = new RolloverButton();
-        if (!isRegistered) {
-            button.setIcon(transport.getInactiveIcon());
-        }
-        else {
-            button.setIcon(transport.getIcon());
-        }
+        button.setIcon(transport.getInactiveIcon());
 
         button.setToolTipText(transport.getInstructions());
 
@@ -177,7 +172,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
 
             public void actionPerformed(ActionEvent e) {
-                boolean reg = TransportManager.isRegistered(SparkManager.getConnection(), transport);
+                boolean reg = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
                 if (!reg) {
                     TransportRegistrationDialog regDialog = new TransportRegistrationDialog(transport.getServiceName());
                     regDialog.invoke();
@@ -186,7 +181,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         try {
-                            TransportManager.unregister(SparkManager.getConnection(), transport.getServiceName());
+                            TransportUtils.unregister(SparkManager.getConnection(), transport.getServiceName());
                         }
                         catch (XMPPException e1) {
                             Log.error(e1);
@@ -202,14 +197,21 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         statusBar.invalidate();
         statusBar.validate();
         statusBar.repaint();
+
+        // Send directed presence if registered with this transport.
+        final boolean isRegistered = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
+        if (isRegistered) {
+            Presence presence = statusBar.getPresence();
+            presence.setTo(transport.getServiceName());
+            SparkManager.getConnection().sendPacket(presence);
+        }
     }
 
-
-    private void registerPresences() {
+    private void registerPresenceListener() {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                Transport transport = TransportManager.getTransport(packet.getFrom());
+                Transport transport = TransportUtils.getTransport(packet.getFrom());
                 if (transport != null) {
                     boolean registered = presence != null && presence.getMode() != null;
                     if (presence.getType() == Presence.Type.unavailable) {
@@ -239,7 +241,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 Presence presence = contactItem.getPresence();
                 if (presence != null) {
                     String domain = StringUtils.parseServer(presence.getFrom());
-                    Transport transport = TransportManager.getTransport(domain);
+                    Transport transport = TransportUtils.getTransport(domain);
                     if (transport != null) {
                         handlePresence(contactItem, presence);
                         contactGroup.fireContactGroupUpdated();
@@ -247,13 +249,22 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 }
             }
         }
+
+        SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
+            public void presenceChanged(Presence presence) {
+                for (Transport transport : TransportUtils.getTransports()) {
+                    presence.setTo(transport.getServiceName());
+                    SparkManager.getConnection().sendPacket(presence);
+                }
+            }
+        });
     }
 
 
     public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence != null) {
             String domain = StringUtils.parseServer(presence.getFrom());
-            Transport transport = TransportManager.getTransport(domain);
+            Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
                 if (presence.getType() == Presence.Type.available) {
                     item.setSideIcon(transport.getIcon());
@@ -276,7 +287,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         Roster roster = SparkManager.getConnection().getRoster();
         Presence presence = roster.getPresence(jid);
         String domain = StringUtils.parseServer(jid);
-        Transport transport = TransportManager.getTransport(domain);
+        Transport transport = TransportUtils.getTransport(domain);
         if (transport != null) {
             if (presence != null && presence.getType() == Presence.Type.available) {
                 return transport.getIcon();

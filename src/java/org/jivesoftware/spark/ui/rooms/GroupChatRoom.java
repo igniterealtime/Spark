@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.ui.rooms;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -21,7 +21,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
@@ -32,37 +31,26 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.conferences.ConferenceRoomInfo;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -664,6 +652,16 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
+    public void inviteUser(String jid, String message) {
+        message = message != null ? message : Res.getString("message.please.join.in.conference");
+
+        // Invite User
+        getMultiUserChat().invite(jid, message);
+
+        // Add Invite
+        roomInfo.addInvitee(jid, message);
+    }
+
     private void setupListeners() {
         chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
             public void kicked(String participant) {
@@ -730,7 +728,6 @@ public final class GroupChatRoom extends ChatRoom {
                 insertText(Res.getString("message.user.nickname.changed", StringUtils.parseResource(participant), nickname));
             }
         });
-
 
 
         chat.addUserStatusListener(new DefaultUserStatusListener() {
@@ -900,7 +897,7 @@ public final class GroupChatRoom extends ChatRoom {
      */
     public void setSendAndReceiveTypingNotifications(boolean sendAndReceiveTypingNotifications) {
         sendNotifications = sendAndReceiveTypingNotifications;
-        
+
         if (sendAndReceiveTypingNotifications) {
             SparkManager.getMessageEventManager().addMessageEventNotificationListener(messageManager);
         }
@@ -935,7 +932,7 @@ public final class GroupChatRoom extends ChatRoom {
                     if (bareAddress.equals(getRoomname())) {
                         String nickname = StringUtils.parseResource(from);
                         String isTypingText = Res.getString("message.is.typing.a.message", nickname);
-                       
+
                     }
                 }
             });
