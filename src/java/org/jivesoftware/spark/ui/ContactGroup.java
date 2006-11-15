@@ -146,10 +146,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         addPopupWindow();
 
         // Use background image
+        /*
         URL url = getClass().getResource("/images/blue-steel-background.png");
         ImageIcon icon = new ImageIcon(url);
         getTitlePane().useImageAsBackground(icon.getImage());
         getTitlePane().setTitleColor(Color.white);
+        */
     }
 
     /**

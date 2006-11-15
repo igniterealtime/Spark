@@ -17,7 +17,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -34,7 +33,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
@@ -108,8 +106,10 @@ public class ThemeManager {
 
         // Note that the install directory is my name for temporary files and
         // not about mozilla. Me love Mozilla. 
-        be.setEnginePath("C:\\mozilla\\mozilla.exe");
+        //be.setEnginePath("C:\\mozilla\\mozilla.exe");
 
+        File mozilla = new File(Spark.getBinDirectory(), "mozilla");
+        be.setEnginePath(mozilla.getAbsolutePath());
         THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
         // For Testing
@@ -328,6 +328,9 @@ public class ThemeManager {
 
     public String getIncomingMessage(String sender, String time, String message, URL iconPath) {
         String incoming = incomingText;
+        if (sender == null) {
+            sender = "";
+        }
         incoming = incoming.replaceAll("%sender%", sender);
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
@@ -342,6 +345,9 @@ public class ThemeManager {
 
     public String getIncomingHistoryMessage(String sender, String time, String message, URL iconPath) {
         String incoming = incomingHistoryText;
+        if (sender == null) {
+            sender = "";
+        }
         incoming = incoming.replaceAll("%sender%", sender);
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
@@ -356,6 +362,9 @@ public class ThemeManager {
 
     public String getOutgoingMessage(String sender, String time, String message, URL iconPath) {
         String outgoing = outgoingText;
+        if (sender == null) {
+            sender = "";
+        }
         outgoing = outgoing.replaceAll("%sender%", sender);
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
@@ -369,6 +378,9 @@ public class ThemeManager {
 
     public String getOutgoingHistoryMessage(String sender, String time, String message, URL iconPath) {
         String outgoing = outgoingHistoryText;
+        if (sender == null) {
+            sender = "";
+        }
         outgoing = outgoing.replaceAll("%sender%", sender);
         outgoing = outgoing.replaceAll("%time%", time);
         outgoing = outgoing.replaceAll("%message%", message);
@@ -476,7 +488,7 @@ public class ThemeManager {
         String time = formatter.format(new Date());
 
         text = text.replaceAll("%timeOpened", time);
-        
+
         return text;
     }
 

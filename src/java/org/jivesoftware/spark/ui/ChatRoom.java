@@ -204,7 +204,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         verticalSplit.setTopComponent(chatPanel);
         verticalSplit.setBottomComponent(bottomPanel);
         verticalSplit.setResizeWeight(1.0);
-        verticalSplit.setDividerSize(2);
+        verticalSplit.setDividerSize(1);
 
         // Add listener to send button
         chatAreaButton.getButton().addActionListener(this);

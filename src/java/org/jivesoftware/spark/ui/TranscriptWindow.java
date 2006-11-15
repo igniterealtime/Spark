@@ -121,8 +121,9 @@ public class TranscriptWindow extends JPanel {
             }
         });
 
-
-        add(new JScrollPane(browser), BorderLayout.CENTER);
+        final JScrollPane pane = new JScrollPane(browser);
+        pane.setBorder(null);
+        add(pane, BorderLayout.CENTER);
 
         extraPanel.setBackground(Color.white);
         extraPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
@@ -130,6 +131,10 @@ public class TranscriptWindow extends JPanel {
         add(extraPanel, BorderLayout.SOUTH);
 
         startCommandListener();
+
+        browser.setFocusable(false);
+        this.setFocusable(false);
+        setBorder(null);
     }
 
 
@@ -469,9 +474,7 @@ public class TranscriptWindow extends JPanel {
                     if (scriptList.size() > 0) {
                         String script = (String)scriptList.get(0);
                         scriptList.remove(0);
-                        System.out.println(script);
-                        String str = browser.executeScript(script);
-                        //   System.out.println(str);
+                        browser.executeScript(script);
                     }
                 }
             }
