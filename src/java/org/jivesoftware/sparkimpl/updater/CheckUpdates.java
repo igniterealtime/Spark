@@ -374,7 +374,7 @@ public class CheckUpdates {
         boolean dayOrLonger = weekAgo.getTime() >= lastChecked.getTime();
 
 
-        if (dayOrLonger || explicit || sparkPluginInstalled) {
+        if (dayOrLonger || explicit) {
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);

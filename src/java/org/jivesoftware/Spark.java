@@ -16,17 +16,17 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Insets;
-import java.io.File;
-import java.io.IOException;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -341,5 +341,9 @@ public final class Spark {
         UIManager.put("Notification.foreground", new Color(51, 153, 51));
         UIManager.put("Error.foreground", Color.red);
         UIManager.put("Question.foreground", Color.red);
+
+        UIManager.put("SparkTabbedPane.startColor", new Color(236, 236, 236));
+        UIManager.put("SparkTabbedPane.endColor", new Color(236, 236, 236));
+        UIManager.put("SparkTabbedPane.borderColor", Color.lightGray);
     }
 }

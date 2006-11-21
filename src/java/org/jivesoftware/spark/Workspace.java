@@ -332,7 +332,7 @@ public class Workspace extends JPanel implements PacketListener {
             final String body = message.getBody();
             boolean broadcast = message.getProperty("broadcast") != null;
 
-            if (body == null || isGroupChat || broadcast || message.getType() == Message.Type.NORMAL) {
+            if (body == null || isGroupChat || broadcast || message.getType() == Message.Type.NORMAL || message.getType() == Message.Type.HEADLINE) {
                 return;
             }
 

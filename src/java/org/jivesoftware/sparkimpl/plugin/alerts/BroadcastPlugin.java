@@ -42,14 +42,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.Iterator;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -60,6 +52,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Date;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -183,8 +184,15 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
                     boolean broadcast = message.getProperty("broadcast") != null;
 
-                    if ((broadcast || (message.getType() == Message.Type.NORMAL) || message.getType() == Message.Type.HEADLINE) && message.getBody() != null) {
+                    if ((broadcast || message.getType() == Message.Type.NORMAL) && message.getBody() != null) {
                         showAlert((Message)packet);
+                    }
+                    else if (message.getType() == Message.Type.HEADLINE && message.getBody() != null) {
+                        SparkToaster toaster = new SparkToaster();
+                        toaster.setDisplayTime(30000);
+                        toaster.setBorder(BorderFactory.createBevelBorder(0));
+                        toaster.setTitle(Res.getString("title.notification"));
+                        toaster.showToaster(message.getBody());
                     }
                     else {
                         String host = SparkManager.getSessionManager().getServerAddress();
