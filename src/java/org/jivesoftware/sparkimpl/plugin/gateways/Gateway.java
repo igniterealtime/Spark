@@ -12,10 +12,10 @@ import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.spark.SparkManager;
 import org.xmlpull.v1.XmlPullParser;
 
 /**
@@ -57,7 +57,7 @@ public class Gateway extends IQ {
     public String getChildElementXML() {
         StringBuffer buf = new StringBuffer();
         buf.append("<query xmlns=\"" + NAMESPACE + "\">");
-        buf.append("<prompt>derek.demoro@hotmail.com</prompt>");
+        buf.append("<prompt>" + username + "</prompt>");
         buf.append("</query>");
         return buf.toString();
     }
@@ -99,23 +99,25 @@ public class Gateway extends IQ {
         }
     }
 
-
-    public static void main(String args[]) throws Exception {
-        XMPPConnection.DEBUG_ENABLED = true;
-        XMPPConnection con = new XMPPConnection("jivesoftware.com", 5222);
-        con.connect();
-        con.login("test", "test");
-
-        System.out.println(StringUtils.unescapeNode("derek.demoro%hotmail.com"));
-
+    /**
+     * Returns the fully qualified JID of a user.
+     *
+     * @param serviceName the service the user belongs to.
+     * @param username    the name of the user.
+     * @return the JID.
+     * @throws XMPPException thrown if an exception occurs.
+     */
+    public static String getJID(String serviceName, String username) throws XMPPException {
         Gateway registration = new Gateway();
         registration.setType(IQ.Type.SET);
-        registration.setTo("msn.jivesoftware.com");
+        registration.setTo(serviceName);
+        registration.setUsername(username);
 
+        XMPPConnection con = SparkManager.getConnection();
         PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
         con.sendPacket(registration);
 
-        IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
+        Gateway response = (Gateway)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
         collector.cancel();
         if (response == null) {
             throw new XMPPException("Server timed out");
@@ -124,7 +126,10 @@ public class Gateway extends IQ {
             throw new XMPPException("Error registering user", response.getError());
         }
 
+        return response.getJid();
     }
+
+
 }
 
 

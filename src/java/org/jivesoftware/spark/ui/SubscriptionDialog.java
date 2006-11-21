@@ -226,7 +226,7 @@ public class SubscriptionDialog {
         dialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
         dialog.getContentPane().add(mainPanel);
         dialog.pack();
-        dialog.setSize(400, 225);
+        dialog.setSize(400, 250);
         dialog.setLocationRelativeTo(SparkManager.getMainWindow());
 
 
