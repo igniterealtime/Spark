@@ -590,10 +590,11 @@ public final class LoginDialog {
                             config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
                         }
 
-                        //config.setReconnectionAllowed(false);
+
                     }
 
                     if (config != null) {
+                        config.setReconnectionAllowed(true);
                         boolean compressionEnabled = localPref.isCompressionEnabled();
                         config.setCompressionEnabled(compressionEnabled);
                         connection = new XMPPConnection(config);
@@ -613,8 +614,7 @@ public final class LoginDialog {
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getUsername(), getPassword());
-                    final String jid = getUsername() + '@' + sessionManager.getServerAddress() + "/" + resource;
-                    sessionManager.setJID(jid);
+                    sessionManager.setJID(connection.getUser());
 
                 }
                 catch (Exception xee) {

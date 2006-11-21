@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 public class RetryPanel extends JPanel {
     private JEditorPane pane;
     private RolloverButton retryButton;
+    private boolean closedOnError = false;
 
     /**
      * Construct the RetryPanel.
@@ -72,7 +73,12 @@ public class RetryPanel extends JPanel {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    SparkManager.getConnection().connect();
+                    if(closedOnError){
+                        SparkManager.getConnection().connect();
+                    }
+                    else {
+                        SparkManager.getMainWindow().logout(false);
+                    }
                     return true;
                 }
                 catch (Exception e) {
@@ -83,14 +89,7 @@ public class RetryPanel extends JPanel {
 
             public void finished() {
                 retryButton.setEnabled(true);
-
-                if ((Boolean)get()) {
-                    ContactList list = SparkManager.getWorkspace().getContactList();
-                    list.clientReconnected();
-                }
-                else {
-                    retryButton.setText("Reconnect...");
-                }
+                retryButton.setText("Reconnect...");
             }
 
         };
@@ -142,5 +141,9 @@ public class RetryPanel extends JPanel {
      */
     public void showConflict() {
         retryButton.setVisible(false);
+    }
+
+    public void setClosedOnError(boolean onError){
+        closedOnError = onError;
     }
 }

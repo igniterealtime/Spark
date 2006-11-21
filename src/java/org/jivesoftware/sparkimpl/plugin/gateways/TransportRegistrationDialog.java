@@ -66,7 +66,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
 
         this.serviceName = serviceName;
 
-        ResourceUtils.resButton(registerButton, Res.getString("button.register"));
+        ResourceUtils.resButton(registerButton, Res.getString("button.save"));
         ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
 
 

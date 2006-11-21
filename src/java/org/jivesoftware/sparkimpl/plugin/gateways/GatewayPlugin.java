@@ -10,7 +10,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
@@ -26,14 +25,12 @@ import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.PresenceListener;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
@@ -44,11 +41,7 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
 
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -65,7 +58,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
      */
     public static final String GATEWAY = "gateway";
 
-    private Map<Transport, RolloverButton> uiMap = new HashMap<Transport, RolloverButton>();
+    private Map<Transport, GatewayButton> uiMap = new HashMap<Transport, GatewayButton>();
 
 
     public void initialize() {
@@ -73,9 +66,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             public Object construct() {
                 try {
                     populateTransports(SparkManager.getConnection());
-                    for (final Transport transport : TransportUtils.getTransports()) {
-                        addTransport(transport);
-                    }
                 }
                 catch (Exception e) {
                     Log.error(e);
@@ -91,9 +81,12 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     return;
                 }
 
+                for (final Transport transport : TransportUtils.getTransports()) {
+                    addTransport(transport);
+                }
+
                 // Register presences.
                 registerPresenceListener();
-
             }
         };
 
@@ -157,54 +150,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     private void addTransport(final Transport transport) {
-        final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        final JPanel commandPanel = statusBar.getCommandPanel();
-
-
-        final RolloverButton button = new RolloverButton();
-        button.setIcon(transport.getInactiveIcon());
-
-        button.setToolTipText(transport.getInstructions());
-
-        commandPanel.add(button);
-
-        button.addActionListener(new ActionListener() {
-
-
-            public void actionPerformed(ActionEvent e) {
-                boolean reg = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
-                if (!reg) {
-                    TransportRegistrationDialog regDialog = new TransportRegistrationDialog(transport.getServiceName());
-                    regDialog.invoke();
-                }
-                else {
-                    int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        try {
-                            TransportUtils.unregister(SparkManager.getConnection(), transport.getServiceName());
-                        }
-                        catch (XMPPException e1) {
-                            Log.error(e1);
-                        }
-                    }
-
-                }
-
-            }
-        });
+        final GatewayButton button = new GatewayButton(transport);
         uiMap.put(transport, button);
-
-        statusBar.invalidate();
-        statusBar.validate();
-        statusBar.repaint();
-
-        // Send directed presence if registered with this transport.
-        final boolean isRegistered = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
-        if (isRegistered) {
-            Presence presence = statusBar.getPresence();
-            presence.setTo(transport.getServiceName());
-            SparkManager.getConnection().sendPacket(presence);
-        }
     }
 
     private void registerPresenceListener() {
@@ -217,13 +164,9 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     if (presence.getType() == Presence.Type.unavailable) {
                         registered = false;
                     }
-                    RolloverButton button = uiMap.get(transport);
-                    if (!registered) {
-                        button.setIcon(transport.getInactiveIcon());
-                    }
-                    else {
-                        button.setIcon(transport.getIcon());
-                    }
+
+                    GatewayButton button = uiMap.get(transport);
+                    button.signedIn(registered);
                 }
 
 

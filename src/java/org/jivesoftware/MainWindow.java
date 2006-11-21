@@ -24,6 +24,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
 
 import java.awt.BorderLayout;
@@ -260,6 +261,9 @@ public final class MainWindow extends JFrame implements ActionListener {
 
         // Notify all MainWindowListeners
         try {
+            // Set auto-login to false;
+            SettingsManager.getLocalPreferences().setAutoLogin(false);
+
             fireWindowShutdown();
             setVisible(false);
         }
@@ -282,7 +286,6 @@ public final class MainWindow extends JFrame implements ActionListener {
             };
 
             shutdownThread.start();
-
         }
     }
 
@@ -317,7 +320,6 @@ public final class MainWindow extends JFrame implements ActionListener {
      * Setup the Main Toolbar with File, Tools and Help.
      */
     private void buildMenu() {
-
         // setup file menu
         JMenuItem exitMenuItem = new JMenuItem();
 
@@ -365,11 +367,9 @@ public final class MainWindow extends JFrame implements ActionListener {
             connectMenu.add(logoutWithStatus);
         }
 
-        // Only add a separator and an "exit" menu item if we're not on the Mac platform
-        if (!Spark.isMac()) {
-            connectMenu.addSeparator();
-            connectMenu.add(exitMenuItem);
-        }
+        connectMenu.addSeparator();
+
+        connectMenu.add(exitMenuItem);
 
         Action showTrafficAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {

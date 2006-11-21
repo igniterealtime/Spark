@@ -378,7 +378,7 @@ public final class SessionManager implements ConnectionListener {
     public void reconnectingIn(int i) {
     }
 
-    public void reconectionSuccessful() {
+    public void reconnectionSuccessful() {
     }
 
     public void reconnectionFailed(Exception exception) {

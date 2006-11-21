@@ -20,7 +20,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.WrappedLabel;
+import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.borders.ComponentTitledBorder;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -28,15 +28,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -44,7 +37,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.ImageIcon;
+
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * SubscriptionDialog handles all subscription requests.
@@ -53,7 +52,8 @@ import javax.swing.ImageIcon;
  */
 public class SubscriptionDialog {
 
-    private final WrappedLabel messageLabel = new WrappedLabel();
+    private TitlePanel messageLabel;
+
     private final RolloverButton acceptButton = new RolloverButton();
     private final RolloverButton viewInfoButton = new RolloverButton();
     private final RolloverButton denyButton = new RolloverButton();
@@ -61,11 +61,14 @@ public class SubscriptionDialog {
 
     private final JCheckBox rosterBox = new JCheckBox();
 
-    private final JLabel nameLabel = new JLabel();
-    private final JTextField nameField = new JTextField();
+    private final JLabel nicknameLabel = new JLabel();
+    private final JTextField nicknameField = new JTextField();
 
     private final JLabel groupLabel = new JLabel();
     private final JComboBox groupBox = new JComboBox();
+
+    private JLabel usernameLabel = new JLabel();
+    private JLabel usernameLabelValue = new JLabel();
 
     private JFrame dialog;
 
@@ -76,40 +79,44 @@ public class SubscriptionDialog {
         mainPanel = new JPanel();
 
         mainPanel.setLayout(new GridBagLayout());
-        messageLabel.setBackground(Color.white);
-
-        // Add Message Label
-        mainPanel.add(messageLabel, new GridBagConstraints(0, 0, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Roster Addition
         final JPanel rosterPanel = new JPanel();
         rosterPanel.setLayout(new GridBagLayout());
 
         // Add ResourceUtils
-        ResourceUtils.resLabel(nameLabel, nameField, Res.getString("label.username") + ":");
+        ResourceUtils.resLabel(usernameLabel, nicknameField, Res.getString("label.username") + ":");
+        ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
         ResourceUtils.resLabel(groupLabel, groupBox, Res.getString("label.group") + ":");
 
 
         rosterBox.setText("Add user to your roster");
-        rosterBox.setSelected(true);
+        groupBox.setEditable(true);
 
         rosterBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                nameField.setEnabled(rosterBox.isSelected());
+                nicknameField.setEnabled(rosterBox.isSelected());
                 groupBox.setEnabled(rosterBox.isSelected());
             }
         });
+
+        rosterBox.setSelected(true);
 
 
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(rosterBox, rosterPanel, BorderFactory.createEtchedBorder());
 
 
-        rosterPanel.add(nameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        rosterPanel.add(nameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        rosterPanel.add(groupLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        rosterPanel.add(groupBox, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        rosterPanel.add(new JLabel(), new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add(usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add(usernameLabelValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+
+        rosterPanel.add(nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add(nicknameField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        rosterPanel.add(groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add(new JLabel(), new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Roster Panel to mainPanel
         mainPanel.add(rosterPanel, new GridBagConstraints(2, 1, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -158,10 +165,21 @@ public class SubscriptionDialog {
         }
 
         String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
-        messageLabel.setText(message);
+        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(jid));
+        Icon icon = null;
+        if (transport != null) {
+            icon = transport.getIcon();
+        }
+
+        messageLabel = new TitlePanel("", message, icon, true);
+
+        // Add Message Label
+        mainPanel.add(messageLabel, new GridBagConstraints(0, 0, 6, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
 
         String username = StringUtils.parseName(UserManager.unescapeJID(jid));
-        nameField.setText(username);
+        usernameLabelValue.setText(UserManager.unescapeJID(jid));
+        nicknameField.setText(username);
 
         acceptButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -204,16 +222,11 @@ public class SubscriptionDialog {
 
         dialog = new JFrame("Subscription Request");
 
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(jid));
-        if (transport != null) {
-            dialog.setIconImage(((ImageIcon)transport.getIcon()).getImage());
-        }
-        else {
-            dialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
-        }
+
+        dialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
         dialog.getContentPane().add(mainPanel);
         dialog.pack();
-        dialog.setSize(350, 200);
+        dialog.setSize(400, 225);
         dialog.setLocationRelativeTo(SparkManager.getMainWindow());
 
 
@@ -226,13 +239,14 @@ public class SubscriptionDialog {
             dialog.setState(Frame.ICONIFIED);
             dialog.setVisible(true);
             SparkManager.getAlertManager().flashWindowStopOnFocus(dialog);
+            dialog.setFocusableWindowState(true);
         }
     }
 
 
     private boolean addEntry() {
         String errorMessage = Res.getString("title.error");
-        String nickname = nameField.getText();
+        String nickname = nicknameField.getText();
         String group = (String)groupBox.getSelectedItem();
 
 
