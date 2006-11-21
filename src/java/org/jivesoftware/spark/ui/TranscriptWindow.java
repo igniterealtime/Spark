@@ -29,6 +29,11 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,12 +49,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -121,9 +120,10 @@ public class TranscriptWindow extends JPanel {
             }
         });
 
-        final JScrollPane pane = new JScrollPane(browser);
-        pane.setBorder(null);
-        add(pane, BorderLayout.CENTER);
+
+        add(browser, BorderLayout.CENTER);
+        browser.setMinimumSize(new Dimension(0, 0));
+
 
         extraPanel.setBackground(Color.white);
         extraPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
@@ -423,7 +423,7 @@ public class TranscriptWindow extends JPanel {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -515,7 +515,7 @@ public class TranscriptWindow extends JPanel {
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
                 builder.append("<a href=\"").append(textFound).append("\" target=_blank>").append(textFound).append("</a>");
             }
             else if (emoticonManager.getEmoticon(textFound) != null) {
