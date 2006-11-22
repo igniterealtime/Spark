@@ -238,6 +238,7 @@ public class SparkTransferManager {
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
 
         final ReceiveMessage receivingMessageUI = new ReceiveMessage();
+        receivingMessageUI.setChatRoom(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
 
         chatRoom.addClosingListener(new ChatRoomClosingListener() {

@@ -13,16 +13,19 @@ package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -31,6 +34,7 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -54,6 +58,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -71,6 +76,8 @@ public class ReceiveMessage extends JPanel {
     private JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
     private TransferButton cancelButton = new TransferButton();
+
+    private ChatRoom chatRoom;
 
 
     public ReceiveMessage() {
@@ -129,6 +136,10 @@ public class ReceiveMessage extends JPanel {
         });
     }
 
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+    }
+
     public void acceptFileTransfer(final FileTransferRequest request) {
         String fileName = request.getFileName();
         long fileSize = request.getFileSize();
@@ -185,6 +196,13 @@ public class ReceiveMessage extends JPanel {
     private void rejectRequest(FileTransferRequest request) {
         request.reject();
 
+        this.setVisible(true);
+        final TranscriptWindow window = chatRoom.getTranscriptWindow();
+        window.remove(this);
+
+        String message = ThemeManager.getInstance().getStatusMessage(Res.getString("message.file.transfer.canceled"), "");
+        window.insertHTML(message);
+
         setBackground(new Color(239, 245, 250));
         acceptLabel.setText("");
         declineLabel.setText("");
@@ -192,9 +210,9 @@ public class ReceiveMessage extends JPanel {
         titleLabel.setText(Res.getString("message.file.transfer.canceled"));
         titleLabel.setForeground(new Color(65, 139, 179));
 
-        invalidate();
-        validate();
-        repaint();
+        window.invalidate();
+        window.validate();
+        window.repaint();
     }
 
     private void acceptRequest(final FileTransferRequest request) {
@@ -271,7 +289,7 @@ public class ReceiveMessage extends JPanel {
 
                 public void finished() {
                     if (transfer.getAmountWritten() >= request.getFileSize()) {
-                        transferDone(request, transfer);
+                        //transferDone(request, transfer);
 
                         imageLabel.setToolTipText(Res.getString("message.click.to.open"));
                         titleLabel.setToolTipText(Res.getString("message.click.to.open"));
@@ -315,10 +333,14 @@ public class ReceiveMessage extends JPanel {
                             }
                         });
 
-
-                        invalidate();
-                        validate();
-                        repaint();
+                        TranscriptWindow window = chatRoom.getTranscriptWindow();
+                        String message = ThemeManager.getInstance().getNotificationMessage(getFinishedText(titleLabel.getText(), downloadedFile), true);
+                        System.out.println(message);
+                        window.insertHTML(message);
+                        setVisible(false);
+                        window.invalidate();
+                        window.validate();
+                        window.repaint();
                         return;
                     }
 
@@ -634,5 +656,41 @@ public class ReceiveMessage extends JPanel {
             popup.add(saveAsAction);
             popup.show(this, e.getX(), e.getY());
         }
+    }
+
+
+    private String getFinishedText(String title, File file) {
+        final StringBuilder builder = new StringBuilder();
+        BufferedImage image = GraphicUtils.getBufferedImage(file);
+        File f = new File("c:\\test.png");
+        try {
+            ImageIO.write(image, "PNG", f);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        builder.append("<table width=\"100%\">" +
+                "    <tr>" +
+                "     <td><img src=\"" + f.getAbsolutePath() + "\"></td>" +
+                "        <td>" +
+                "            " + title + "" +
+                "        </td>" +
+                "    </tr>" +
+                "    <tr>" +
+                "        <td colspan=\"2\">" +
+                "           " + file.getName() + "" +
+                "        </td>" +
+                "    </tr>" +
+                "    <tr>" +
+                "        <td width=\"5%\">" +
+                "            <a href=\"" + file.getAbsolutePath() + "\">Open</a>" +
+                "        </td>" +
+                "        <td align=\"left\">" +
+                "            <a href=\"" + file.getParent() + "\">Close</a>" +
+                "        </td>" +
+                "    </tr>" +
+                "</table>");
+
+        return builder.toString();
     }
 }

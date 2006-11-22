@@ -635,4 +635,35 @@ public final class GraphicUtils {
 
         return SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
     }
+
+
+    public static BufferedImage getBufferedImage(File file){
+        Icon icon = null;
+         try {
+            sun.awt.shell.ShellFolder sf = sun.awt.shell.ShellFolder.getShellFolder(file);
+
+            // Get large icon
+            icon = new ImageIcon(sf.getIcon(true), sf.getFolderType());
+        }
+        catch (Exception e) {
+            try {
+                icon =  new JFileChooser().getIcon(file);
+            }
+            catch (Exception e1) {
+            }
+        }
+
+        icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
+
+
+        BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics bg = bi.getGraphics();
+
+        ImageIcon i = (ImageIcon)icon;
+
+        bg.drawImage(i.getImage(), 0, 0, null);
+        bg.dispose();
+
+        return bi;
+    }
 }
