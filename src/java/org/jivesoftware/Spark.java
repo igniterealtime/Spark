@@ -112,32 +112,7 @@ public final class Spark {
             }
         }
 
-
-        buf.append(classPath);
-
-        // Update System Properties
-        System.setProperty("java.library.path", buf.toString());
-
-
-        System.setProperty("sun.java2d.noddraw", "true");
-
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // Start Application
-                new Spark();
-            }
-        });
-
-        // Handle arguments
-        if (args.length > 0) {
-            argument = args[0];
-        }
-    }
-
-
-    // Setup the look and feel of this application.
-    static {
-        try {
+         try {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
@@ -163,6 +138,33 @@ public final class Spark {
         catch (Exception e) {
             Log.error(e);
         }
+
+
+        buf.append(classPath);
+
+        // Update System Properties
+        System.setProperty("java.library.path", buf.toString());
+
+
+        System.setProperty("sun.java2d.noddraw", "true");
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // Start Application
+                new Spark();
+            }
+        });
+
+        // Handle arguments
+        if (args.length > 0) {
+            argument = args[0];
+        }
+    }
+
+
+    // Setup the look and feel of this application.
+    static {
+
 
         UIManager.put("Tree.openIcon", SparkRes.getImageIcon(SparkRes.FOLDER));
         UIManager.put("Tree.closedIcon", SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED));
