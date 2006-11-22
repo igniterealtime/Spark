@@ -33,8 +33,14 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -45,14 +51,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -203,7 +201,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                 public void finished() {
                     ChatTranscript transcript = (ChatTranscript)get();
-                    if(transcript == null){
+                    if (transcript == null) {
                         return;
                     }
                     TranscriptWindow window = room.getTranscriptWindow();
@@ -323,14 +321,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final VCardPanel topPanel = new VCardPanel(jid);
                 mainPanel.add(topPanel, BorderLayout.NORTH);
 
-                final JTextArea window = new JTextArea();
-                window.setWrapStyleWord(true);
-                window.setFont(new Font("Dialog", Font.PLAIN, 12));
-                final JScrollPane pane = new JScrollPane(window);
-                pane.getVerticalScrollBar().setBlockIncrement(50);
-                pane.getVerticalScrollBar().setUnitIncrement(20);
-
-                mainPanel.add(pane, BorderLayout.CENTER);
+                final TranscriptWindow window = new TranscriptWindow();
+                mainPanel.add(window, BorderLayout.CENTER);
 
 
                 ChatTranscript transcript = (ChatTranscript)get();
@@ -346,25 +338,14 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                     String prefix = nickname + " [" + date + "]";
 
-                    if (from.equals(SparkManager.getSessionManager().getJID())) {
-                        //   window.insertCustomMessage(prefix, message.getBody());
-                        buf.append(prefix + ": " + message.getBody());
-                        buf.append("\n");
-                    }
-                    else {
-                        buf.append(prefix + ": " + message.getBody());
-                        buf.append("\n");
-                        //    window.insertCustomOtherMessage(prefix, message.getBody());
-                    }
+                    window.insertHistoryMessage(from, nickname, message.getBody(), message.getDate());
+
 
                 }
 
-                window.setText(buf.toString());
-                window.setEditable(false);
-
                 // Handle no history
                 if (transcript.getMessages().size() == 0) {
-                    window.setText(Res.getString("message.no.history.found"));
+                    window.insertNotificationMessage(Res.getString("message.no.history.found"));
                 }
 
                 final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
@@ -374,7 +355,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
                 frame.pack();
                 frame.setSize(600, 400);
-                window.setCaretPosition(0);
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
 

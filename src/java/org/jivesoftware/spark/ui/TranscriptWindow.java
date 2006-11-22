@@ -33,6 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.BorderFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -119,7 +120,6 @@ public class TranscriptWindow extends JPanel {
             public void initializationCompleted(WebBrowserEvent webBrowserEvent) {
             }
         });
-
 
         add(browser, BorderLayout.CENTER);
         browser.setMinimumSize(new Dimension(0, 0));

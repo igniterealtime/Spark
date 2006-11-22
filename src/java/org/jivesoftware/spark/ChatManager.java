@@ -20,6 +20,7 @@ import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.MessageEventRequestListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
@@ -34,7 +35,6 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -443,6 +443,10 @@ public class ChatManager implements MessageEventNotificationListener {
                         int index = getChatContainer().indexOfComponent(chatRoom);
                         SparkTab tab = getChatContainer().getTabAt(index);
                         tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+
+                        if (getChatContainer().getActiveChatRoom() == chatRoom) {
+                            getChatContainer().getChatFrame().setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE).getImage());
+                        }
                     }
                 }
                 catch (ChatRoomNotFoundException e) {
@@ -450,8 +454,6 @@ public class ChatManager implements MessageEventNotificationListener {
 
                 contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
                 customList.add(StringUtils.parseBareAddress(from));
-
-
             }
         });
     }
@@ -468,11 +470,13 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                         // Get Tab
+                        // Get Tab
                         int index = getChatContainer().indexOfComponent(chatRoom);
                         SparkTab tab = getChatContainer().getTabAt(index);
                         tab.setIcon(tab.getPreviousIcon());
                     }
+
+                    getChatContainer().getChatFrame().setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
                 }
                 catch (ChatRoomNotFoundException e) {
                 }

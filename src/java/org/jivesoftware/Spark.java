@@ -120,7 +120,8 @@ public final class Spark {
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 File skinDir = new File(Spark.getBinDirectory().getParent(), "xtra/skins").getAbsoluteFile();
                 File defaultSkin = new File(skinDir, "crystal2themepack.zip");
-                Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
+                //Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
+                Skin theSkinToUse = SkinLookAndFeel.loadThemePackDefinition(new File("c:\\craploa\\crystal\\skinlf-themepack.xml").toURL());
                 SkinLookAndFeel.setSkin(theSkinToUse);
 
                 // finally set the Skin Look And Feel

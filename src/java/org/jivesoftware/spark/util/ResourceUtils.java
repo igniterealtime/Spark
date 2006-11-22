@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.util;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.component.RolloverButton;
 
 import javax.swing.AbstractButton;
 import javax.swing.JLabel;
@@ -69,6 +70,26 @@ public final class ResourceUtils {
      * @see AbstractButton#setMnemonic(int)
      */
     public static void resButton(AbstractButton button, String labelText) {
+        button.setText(stripMnemonic(labelText));
+
+        if (Spark.isWindows()) {
+            button.setMnemonic(getMnemonicKeyCode(labelText));
+        }
+    }
+
+      /**
+     * Sets the resources on a subclass of {@link AbstractButton}.  The common
+     * classes are {@link javax.swing.JRadioButton}, {@link javax.swing.JButton},
+     * and {@link javax.swing.JCheckBox}
+     * <p/>
+     * This method sets the text and mnemonic.
+     *
+     * @param button    The button on which to set the text and mnemonoic
+     * @param labelText the text which contains the displayed text and mnemonic
+     * @see AbstractButton#setText(String)
+     * @see AbstractButton#setMnemonic(int)
+     */
+    public static void resButton(RolloverButton button, String labelText) {
         button.setText(stripMnemonic(labelText));
 
         if (Spark.isWindows()) {
