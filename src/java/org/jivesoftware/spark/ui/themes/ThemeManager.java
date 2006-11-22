@@ -402,8 +402,8 @@ public class ThemeManager {
 
     public String getNotificationMessage(String message, boolean allowQuotes) {
         String status = statusText;
-        status = status.replaceAll("%time%", "");
-        status = status.replaceAll("%message%", message);
+        status = StringUtils.replace(status, "%time%", "");
+        status = StringUtils.replace(status, "%message%", message);
         if (!allowQuotes) {
             status = filter(status);
         }

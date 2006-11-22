@@ -334,13 +334,19 @@ public class ReceiveMessage extends JPanel {
                         });
 
                         TranscriptWindow window = chatRoom.getTranscriptWindow();
-                        String message = ThemeManager.getInstance().getNotificationMessage(getFinishedText(titleLabel.getText(), downloadedFile), true);
-                        System.out.println(message);
-                        window.insertHTML(message);
-                        setVisible(false);
-                        window.invalidate();
-                        window.validate();
-                        window.repaint();
+
+                        try {
+                            String message = ThemeManager.getInstance().getNotificationMessage(getFinishedText(titleLabel.getText(), downloadedFile), true);
+                            System.out.println(message);
+                            window.insertHTML(message);
+                            setVisible(false);
+                            window.invalidate();
+                            window.validate();
+                            window.repaint();
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         return;
                     }
 
@@ -659,7 +665,7 @@ public class ReceiveMessage extends JPanel {
     }
 
 
-    private String getFinishedText(String title, File file) {
+    private String getFinishedText(String title, File file) throws Exception {
         final StringBuilder builder = new StringBuilder();
         BufferedImage image = GraphicUtils.getBufferedImage(file);
         File f = new File("c:\\test.png");
@@ -669,9 +675,13 @@ public class ReceiveMessage extends JPanel {
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        String iconURL = f.toURL().toString();
+        String fileURL = file.toURL().toString();
+        String folderURL = file.getParentFile().toURL().toString();
         builder.append("<table width=\"100%\">" +
                 "    <tr>" +
-                "     <td><img src=\"" + f.getAbsolutePath() + "\"></td>" +
+                "     <td><img src=\"" + iconURL + "\"></td>" +
                 "        <td>" +
                 "            " + title + "" +
                 "        </td>" +
@@ -683,10 +693,10 @@ public class ReceiveMessage extends JPanel {
                 "    </tr>" +
                 "    <tr>" +
                 "        <td width=\"5%\">" +
-                "            <a href=\"" + file.getAbsolutePath() + "\">Open</a>" +
+                "            <a href=\"" + fileURL + "\">Open</a>" +
                 "        </td>" +
                 "        <td align=\"left\">" +
-                "            <a href=\"" + file.getParent() + "\">Close</a>" +
+                "            <a href=\"" + folderURL + "\">Open Folder</a>" +
                 "        </td>" +
                 "    </tr>" +
                 "</table>");
