@@ -656,7 +656,7 @@ public final class GraphicUtils {
         icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
 
 
-        BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.OPAQUE);
         Graphics bg = bi.getGraphics();
 
         ImageIcon i = (ImageIcon)icon;

@@ -118,6 +118,7 @@ public final class LoginDialog {
 
         // Construct Dialog
         loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
+       
         loginDialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
 
         final JPanel mainPanel = new GrayBackgroundPanel();

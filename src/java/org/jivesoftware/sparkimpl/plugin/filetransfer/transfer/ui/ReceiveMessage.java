@@ -693,10 +693,10 @@ public class ReceiveMessage extends JPanel {
                 "    </tr>" +
                 "    <tr>" +
                 "        <td width=\"5%\">" +
-                "            <a href=\"" + fileURL + "\">Open</a>" +
+                "            <a href=\"" + fileURL + "\" target=\"_blank\">Open</a>" +
                 "        </td>" +
                 "        <td align=\"left\">" +
-                "            <a href=\"" + folderURL + "\">Open Folder</a>" +
+                "            <a href=\"" + folderURL + "\" target=\"_blank\">Open Folder</a>" +
                 "        </td>" +
                 "    </tr>" +
                 "</table>");
