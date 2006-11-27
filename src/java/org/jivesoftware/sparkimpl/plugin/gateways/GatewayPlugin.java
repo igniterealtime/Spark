@@ -199,8 +199,10 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
                 for (Transport transport : TransportUtils.getTransports()) {
-                    presence.setTo(transport.getServiceName());
-                    SparkManager.getConnection().sendPacket(presence);
+                    // Create new presence
+                    Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
+                    p.setTo(transport.getServiceName());
+                    SparkManager.getConnection().sendPacket(p);
                 }
             }
         });

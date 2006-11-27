@@ -70,7 +70,8 @@ public class GatewayButton extends JPanel {
             // Check if auto login is set.
             boolean autoJoin = TransportUtils.autoJoinService(transport.getServiceName());
             if (autoJoin) {
-                Presence presence = statusBar.getPresence();
+                Presence oldPresence = statusBar.getPresence();
+                Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
                 presence.setTo(transport.getServiceName());
                 SparkManager.getConnection().sendPacket(presence);
             }

@@ -10,8 +10,8 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
 
 import javax.swing.Icon;
@@ -41,7 +41,7 @@ public class LocalPreference implements Preference {
     }
 
     public String getTooltip() {
-         return Res.getString("title.login.settings");
+        return Res.getString("title.login.settings");
     }
 
     public Icon getIcon() {
@@ -54,6 +54,8 @@ public class LocalPreference implements Preference {
 
     public void commit() {
         getData();
+
+        SettingsManager.saveSettings();
     }
 
     public Object getData() {
