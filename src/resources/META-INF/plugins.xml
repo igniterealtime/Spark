@@ -8,7 +8,8 @@
         <homePage>http://www.jivesoftware.com</homePage>
         <email>derek@jivesoftware.com</email>
         <description>Used to display alerts from server. Can be used for server administrators for global
-            notification.</description>
+            notification.
+        </description>
         <class>org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin</class>
     </plugin>
     <plugin>
@@ -27,7 +28,8 @@
         <homePage>http://www.jivesoftware.com</homePage>
         <email>derek@jivesoftware.com</email>
         <description>Adds phone-pbx capabilities within Spark. Users can make calls, take incoming calls and be
-            notified of presence changes.</description>
+            notified of presence changes.
+        </description>
         <class>org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin</class>
     </plugin>
     <plugin>
@@ -120,7 +122,7 @@
         <description>Allows users to have bookmarks.</description>
         <class>org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin</class>
     </plugin>
-      <plugin>
+    <plugin>
         <name>Transports Plugin</name>
         <version>1.0</version>
         <author>Derek DeMoro</author>
@@ -128,5 +130,14 @@
         <email>derek@jivesoftware.com</email>
         <description>Allows users to register with Gateways.</description>
         <class>org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Buzz Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to shake a users frame.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.alerts.BuzzPlugin</class>
     </plugin>
 </plugins>

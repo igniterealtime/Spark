@@ -8,10 +8,14 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.spark.SparkManager;
+
 import javax.swing.Timer;
+import javax.swing.JFrame;
 
 import java.awt.Point;
 import java.awt.Window;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -28,12 +32,21 @@ public class ShakeWindow extends Object {
     private Timer shakeTimer;
     private final double HALF_PI = Math.PI / 2.0;
     private final double TWO_PI = Math.PI * 2.0;
+    private boolean added = false;
 
     public ShakeWindow(Window d) {
         window = d;
     }
 
     public void startShake() {
+        if(window instanceof JFrame){
+            JFrame f = (JFrame)window;
+            f.setState(Frame.NORMAL);
+            f.setVisible(true);
+            f.setAlwaysOnTop(true);
+        }
+        SparkManager.getAlertManager().flashWindow(window);
+
         naturalLocation = window.getLocation();
         startTime = System.currentTimeMillis();
         shakeTimer =
@@ -54,7 +67,18 @@ public class ShakeWindow extends Object {
                                 int shakenX = (int)((Math.sin(angle) *
                                         SHAKE_DISTANCE) +
                                         naturalLocation.x);
-                                window.setLocation(shakenX, naturalLocation.y);
+
+                                int shakenY = 0;
+                                if (added) {
+                                    shakenY = naturalLocation.y - 10;
+                                    added = false;
+                                }
+                                else {
+                                    shakenY = naturalLocation.y + 10;
+                                    added = true;
+                                }
+
+                                window.setLocation(shakenX, shakenY);
                                 window.repaint();
 
                                 // should we stop timer?
@@ -69,6 +93,8 @@ public class ShakeWindow extends Object {
         shakeTimer.stop();
         window.setLocation(naturalLocation);
         window.repaint();
+
+        SparkManager.getAlertManager().stopFlashing(window);
     }
 
 
