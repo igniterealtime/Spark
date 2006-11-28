@@ -10,6 +10,8 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jdesktop.jdic.browser.BrowserEngineManager;
+import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jdesktop.jdic.browser.WebBrowser;
 import org.jdesktop.jdic.browser.WebBrowserEvent;
 import org.jdesktop.jdic.browser.WebBrowserListener;
@@ -29,12 +31,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.BorderFactory;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,6 +46,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -76,6 +77,8 @@ public class TranscriptWindow extends JPanel {
 
     private List scriptList = new ArrayList();
 
+    private   Timer timer = new Timer();
+
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
@@ -87,8 +90,30 @@ public class TranscriptWindow extends JPanel {
         vcardManager = SparkManager.getVCardManager();
 
         extraPanel = new JPanel();
+        BrowserEngineManager bem = BrowserEngineManager.instance();
+        //specific engine if you want and the engine you specified will return
+        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
 
-        browser = new WebBrowser();
+        //IBrowserEngine be = bem.setActiveEngine(...);
+        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
+        browser = new WebBrowser() {
+
+            public void addNotify() {
+                super.addNotify();
+                setVisible(true);
+            }
+
+
+            public void removeNotify() {
+                timer.purge();
+                setVisible(false);
+            }
+
+
+            public boolean isAutoDispose() {
+                return false;
+            }
+        };
         browser.setURL(themeManager.getTemplateURL());
 
 
@@ -423,7 +448,7 @@ public class TranscriptWindow extends JPanel {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -467,7 +492,7 @@ public class TranscriptWindow extends JPanel {
     }
 
     private void startCommandListener() {
-        Timer timer = new Timer();
+
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (documentLoaded) {
@@ -515,7 +540,7 @@ public class TranscriptWindow extends JPanel {
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
                 builder.append("<a href=\"").append(textFound).append("\" target=_blank>").append(textFound).append("</a>");
             }
             else if (emoticonManager.getEmoticon(textFound) != null) {
