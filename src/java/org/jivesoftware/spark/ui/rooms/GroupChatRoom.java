@@ -20,6 +20,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
@@ -38,6 +39,12 @@ import org.jivesoftware.spark.ui.conferences.ConferenceRoomInfo;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.ArrayList;
@@ -45,12 +52,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -983,5 +984,33 @@ public final class GroupChatRoom extends ChatRoom {
 
     public long getLastActivity() {
         return lastActivity;
+    }
+
+    public void connectionClosed() {
+        handleDisconnect();
+    }
+
+    public void connectionClosedOnError(Exception ex) {
+        handleDisconnect();
+
+        String message = Res.getString("message.disconnected.error");
+
+        if (ex instanceof XMPPException) {
+            XMPPException xmppEx = (XMPPException)ex;
+            StreamError error = xmppEx.getStreamError();
+            String reason = error.getCode();
+            if ("conflict".equals(reason)) {
+                message = Res.getString("message.disconnected.conflict.error");
+            }
+        }
+
+        getTranscriptWindow().insertErrorMessage(message);
+    }
+
+
+    private void handleDisconnect() {
+        getChatInputEditor().setEnabled(false);
+        getSendButton().setEnabled(false);
+        SparkManager.getChatManager().getChatContainer().useTabDefault(this);
     }
 }

@@ -164,28 +164,6 @@ public final class SessionManager implements ConnectionListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Log.error("Connection closed on error.", ex);
-
-                String message = Res.getString("message.disconnected.error");
-
-                if (ex instanceof XMPPException) {
-                    XMPPException xmppEx = (XMPPException)ex;
-                    StreamError error = xmppEx.getStreamError();
-                    String reason = error.getCode();
-                    if ("conflict".equals(reason)) {
-                        message = Res.getString("message.disconnected.conflict.error");
-                    }
-                }
-
-                Collection rooms = SparkManager.getChatManager().getChatContainer().getChatRooms();
-                Iterator iter = rooms.iterator();
-                while (iter.hasNext()) {
-                    ChatRoom chatRoom = (ChatRoom)iter.next();
-                    chatRoom.getChatInputEditor().setEnabled(false);
-                    chatRoom.getSendButton().setEnabled(false);
-                    chatRoom.getTranscriptWindow().insertNotificationMessage(message);
-                }
-
-
             }
         });
     }

@@ -15,6 +15,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
@@ -22,6 +23,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.packet.MessageEvent;
@@ -36,6 +38,11 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -45,11 +52,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -534,8 +536,6 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
 
-
-
     /**
      * The last time this chat room sent or receieved a message.
      *
@@ -564,5 +564,43 @@ public class ChatRoomImpl extends ChatRoom {
 
     public void setSendTypingNotification(boolean isSendTypingNotification) {
         this.sendTypingNotification = isSendTypingNotification;
+    }
+
+    public void connectionClosed() {
+        handleDisconnect();
+    }
+
+    public void connectionClosedOnError(Exception ex) {
+        handleDisconnect();
+
+        String message = Res.getString("message.disconnected.error");
+
+        if (ex instanceof XMPPException) {
+            XMPPException xmppEx = (XMPPException)ex;
+            StreamError error = xmppEx.getStreamError();
+            String reason = error.getCode();
+            if ("conflict".equals(reason)) {
+                message = Res.getString("message.disconnected.conflict.error");
+            }
+        }
+
+        getTranscriptWindow().insertErrorMessage(message);
+    }
+
+    public void reconnectionSuccessful() {
+        Roster roster = SparkManager.getConnection().getRoster();
+        Presence p = roster.getPresence(getParticipantJID());
+        if (p != null) {
+            presence = p;
+        }
+
+        SparkManager.getChatManager().getChatContainer().useTabDefault(this);
+    }
+
+    private void handleDisconnect() {
+        presence = null;
+        getChatInputEditor().setEnabled(false);
+        getSendButton().setEnabled(false);
+        SparkManager.getChatManager().getChatContainer().useTabDefault(this);
     }
 }

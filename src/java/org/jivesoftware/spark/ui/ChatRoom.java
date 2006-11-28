@@ -13,6 +13,7 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
@@ -62,7 +63,7 @@ import java.util.List;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private final ChatAreaSendField chatAreaButton;
@@ -230,6 +231,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
             }
         });
+
+        SparkManager.getConnection().addConnectionListener(this);
     }
 
 
@@ -829,6 +832,22 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @return the last time (in system milliseconds) that the room last recieved a message.
      */
     public abstract long getLastActivity();
+
+
+    public void connectionClosed() {
+    }
+
+    public void connectionClosedOnError(Exception exception) {
+    }
+
+    public void reconnectingIn(int i) {
+    }
+
+    public void reconnectionSuccessful() {
+    }
+
+    public void reconnectionFailed(Exception exception) {
+    }
 }
 
 
