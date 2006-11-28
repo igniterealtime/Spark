@@ -10,18 +10,14 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 import org.jivesoftware.MainWindowListener;
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.bookmark.BookmarkManager;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverItems;
@@ -59,9 +55,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -82,8 +75,6 @@ public class BookmarkedConferences extends JPanel {
     private Set autoJoinRooms = new HashSet();
 
     private List listeners = new ArrayList();
-
-    private Collection bookmarks;
 
     /**
      * Initialize Conference UI.
@@ -154,28 +145,12 @@ public class BookmarkedConferences extends JPanel {
             }
         }
         );
-        // Set background
-        Color menuBarColor = new Color(235, 233, 237);
         setBackground(Color.white);
 
         // Add closing listener
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
             public void shutdown() {
-                // Save autoJoins
-                File sparkHom = new File(Spark.getUserHome(), "Spark");
-                File conferenceXML = new File(sparkHom, "conferences.xml");
-                Element element = DocumentHelper.createElement("conferences");
-                Iterator iter = autoJoinRooms.iterator();
-                while (iter.hasNext()) {
-                    element.addElement("auto-join").setText((String)iter.next());
-                }
-                try {
-                    XMLWriter saxWriter = new XMLWriter(new FileOutputStream(conferenceXML));
-                    saxWriter.write(element);
-                }
-                catch (IOException e) {
-                    Log.error(e);
-                }
+                saveConferenceData();
             }
 
             public void mainWindowActivated() {
@@ -421,7 +396,7 @@ public class BookmarkedConferences extends JPanel {
                                             Collection services = getConferenceServices(conferenceService);
                                             Iterator serviceIterator = services.iterator();
                                             while (serviceIterator.hasNext()) {
-                                                serviceList.add((String)serviceIterator.next());
+                                                serviceList.add(serviceIterator.next());
                                             }
                                         }
                                         catch (Exception e1) {
@@ -517,15 +492,16 @@ public class BookmarkedConferences extends JPanel {
      *
      * @param bookmarks the current bookmarks used with this account.
      */
-    public void setBookmarks(Collection bookmarks) {
-        this.bookmarks = bookmarks;
+    public void setBookmarks(Collection<BookmarkedConference> bookmarks) {
 
-        Iterator iter = bookmarks.iterator();
-        while (iter.hasNext()) {
-            Bookmark bookmark = (Bookmark)iter.next();
-            String serviceName = bookmark.getServiceName();
-            String roomJID = bookmark.getRoomJID();
-            String roomName = bookmark.getRoomName();
+        for (BookmarkedConference bookmark : bookmarks) {
+            String serviceName = StringUtils.parseServer(bookmark.getJid());
+            String roomJID = bookmark.getJid();
+            String roomName = bookmark.getName();
+
+            if (bookmark.isAutoJoin()) {
+                ConferenceUtils.autoJoinConferenceRoom(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+            }
 
             // Get Service Node
             TreePath path = tree.findByName(tree, new String[]{rootNode.getUserObject().toString(), serviceName});
@@ -541,64 +517,6 @@ public class BookmarkedConferences extends JPanel {
             addBookmark(serviceNode, roomName, roomJID);
 
             tree.expandPath(path);
-        }
-
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(2000);
-                }
-                catch (InterruptedException e) {
-                    Log.error(e);
-                }
-                return getAutoJoins();
-            }
-
-            public void finished() {
-                Collection col = (Collection)get();
-                if (col != null) {
-                    joinTaggedRooms(col);
-                }
-            }
-        };
-        worker.start();
-    }
-
-    private Collection getAutoJoins() {
-        // Load auto-joined rooms
-        // Save autoJoins
-        File sparkHome = new File(Spark.getUserHome(), "Spark");
-        File conferenceXML = new File(sparkHome, "conferences.xml");
-        if (!conferenceXML.exists()) {
-            return null;
-        }
-        SAXReader saxReader = new SAXReader();
-        Document conferenceDocument = null;
-        List autoJoins = null;
-        try {
-            conferenceDocument = saxReader.read(conferenceXML);
-            autoJoins = conferenceDocument.selectNodes("/conferences/auto-join");
-        }
-        catch (DocumentException e) {
-        }
-
-        return autoJoins;
-    }
-
-    private void joinTaggedRooms(Collection autoJoins) {
-        Iterator joins = autoJoins.iterator();
-        while (joins.hasNext()) {
-            Element autoJoin = (Element)joins.next();
-            String conferenceJID = autoJoin.getText();
-            autoJoinRooms.add(conferenceJID);
-
-            Iterator iter = bookmarks.iterator();
-            while (iter.hasNext()) {
-                Bookmark bookmark = (Bookmark)iter.next();
-                if (bookmark.getRoomJID().equals(conferenceJID)) {
-                    ConferenceUtils.autoJoinConferenceRoom(bookmark.getRoomName(), conferenceJID, null);
-                }
-            }
         }
     }
 
@@ -634,6 +552,38 @@ public class BookmarkedConferences extends JPanel {
         while (iter.hasNext()) {
             ContextMenuListener listener = (ContextMenuListener)iter.next();
             listener.poppingUp(node, popup);
+        }
+    }
+
+    private void saveConferenceData() {
+        BookmarkManager manager = null;
+        try {
+            manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+        }
+        catch (XMPPException e) {
+            e.printStackTrace();
+        }
+
+        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+        JiveTreeNode rootNode = (JiveTreeNode)model.getRoot();
+
+        int children = rootNode.getChildCount();
+        for (int i = 0; i < children; i++) {
+            JiveTreeNode serviceNode = (JiveTreeNode)rootNode.getChildAt(i);
+            int bookmarks = serviceNode.getChildCount();
+            for (int j = 0; j < bookmarks; j++) {
+                JiveTreeNode node = (JiveTreeNode)serviceNode.getChildAt(j);
+
+                String name = node.getUserObject().toString();
+                String jid = (String)node.getAssociatedObject();
+                boolean autoJoin = autoJoinRooms.contains(jid);
+                try {
+                    manager.addBookmarkedConference(name, jid, autoJoin, null, null);
+                }
+                catch (XMPPException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -10,23 +10,21 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.bookmark.BookmarkManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.component.JiveTreeNode;
 import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -48,7 +46,6 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultTreeModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -97,12 +94,11 @@ public class Conferences {
                 }
             });
 
-
             // Add Presence Listener to send directed presence to Group Chat Rooms.
             PresenceListener presenceListener = new PresenceListener() {
                 public void presenceChanged(Presence presence) {
-                    for(ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()){
-                        if(room instanceof GroupChatRoom){
+                    for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
+                        if (room instanceof GroupChatRoom) {
                             GroupChatRoom groupChatRoom = (GroupChatRoom)room;
                             String jid = groupChatRoom.getMultiUserChat().getRoom();
 
@@ -157,34 +153,6 @@ public class Conferences {
         if (!mucSupported) {
             return;
         }
-
-        ConferenceData conferenceData = new ConferenceData();
-
-        Tree tree = bookedMarkedConferences.getTree();
-        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
-        JiveTreeNode rootNode = (JiveTreeNode)model.getRoot();
-
-        int children = rootNode.getChildCount();
-        for (int i = 0; i < children; i++) {
-            JiveTreeNode serviceNode = (JiveTreeNode)rootNode.getChildAt(i);
-            int bookmarks = serviceNode.getChildCount();
-            for (int j = 0; j < bookmarks; j++) {
-                JiveTreeNode node = (JiveTreeNode)serviceNode.getChildAt(j);
-                Bookmark bookmark = new Bookmark();
-                bookmark.setRoomJID((String)node.getAssociatedObject());
-                bookmark.setRoomName(node.getUserObject().toString());
-                bookmark.setServiceName(serviceNode.getUserObject().toString());
-                conferenceData.addBookmark(bookmark);
-            }
-        }
-
-        PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
-        try {
-            pdm.setPrivateData(conferenceData);
-        }
-        catch (XMPPException e) {
-            Log.error("Unable to save Bookmarks in Private Data.", e);
-        }
     }
 
     /**
@@ -193,34 +161,24 @@ public class Conferences {
     private void loadBookmarks() {
         final Workspace workspace = SparkManager.getWorkspace();
 
-
         SwingWorker lazyWorker = new SwingWorker() {
-            ConferenceData conferenceData;
 
             public Object construct() {
-                PrivateDataManager.addPrivateDataProvider(ConferenceData.ELEMENT, ConferenceData.NAMESPACE, new ConferenceData.ConferencePrivateDataProvider());
-
-                PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
                 try {
-                    conferenceData = (ConferenceData)pdm.getPrivateData(ConferenceData.ELEMENT, ConferenceData.NAMESPACE);
+                    BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+                    return manager.getBookmarkedConferences();
                 }
                 catch (XMPPException e) {
-                    Log.error("Unable to load private data for bookmarks.", e);
+                    e.printStackTrace();
                 }
-                return conferenceData;
+                return true;
             }
 
             public void finished() {
                 bookedMarkedConferences = new BookmarkedConferences();
 
                 workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookedMarkedConferences);
-
-                if (conferenceData != null) {
-                    // Add ConferenceDataProvider
-
-                    Collection bookmakrs = conferenceData.getBookmarks();
-                    bookedMarkedConferences.setBookmarks(bookmakrs);
-                }
+                bookedMarkedConferences.setBookmarks((Collection)get());
             }
         };
 
