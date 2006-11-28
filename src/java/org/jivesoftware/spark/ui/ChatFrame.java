@@ -154,5 +154,10 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         LayoutSettingsManager.saveLayoutSettings();
     }
 
+    public void buzz(){
+        ShakeWindow d = new ShakeWindow(this);
+        d.startShake();
+    }
+
 
 }
