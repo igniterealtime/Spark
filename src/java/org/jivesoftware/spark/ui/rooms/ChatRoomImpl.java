@@ -568,6 +568,9 @@ public class ChatRoomImpl extends ChatRoom {
 
     public void connectionClosed() {
         handleDisconnect();
+
+        String message = Res.getString("message.disconnected.error");
+        getTranscriptWindow().insertErrorMessage(message);
     }
 
     public void connectionClosedOnError(Exception ex) {
