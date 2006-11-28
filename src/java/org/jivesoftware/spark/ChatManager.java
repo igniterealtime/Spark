@@ -350,7 +350,7 @@ public class ChatManager implements MessageEventNotificationListener {
         invitationListeners.remove(listener);
     }
 
-    public Collection getInvitationListeners() {
+    public Collection<RoomInvitationListener> getInvitationListeners() {
         return invitationListeners;
     }
 

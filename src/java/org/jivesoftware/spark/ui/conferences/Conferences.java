@@ -19,6 +19,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bookmark.BookmarkManager;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
@@ -127,10 +128,8 @@ public class Conferences {
             public void invitationReceived(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        Collection listeners = new ArrayList(SparkManager.getChatManager().getInvitationListeners());
-                        Iterator iter = listeners.iterator();
-                        while (iter.hasNext()) {
-                            RoomInvitationListener listener = (RoomInvitationListener)iter.next();
+                        Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(SparkManager.getChatManager().getInvitationListeners());
+                        for(RoomInvitationListener listener : listeners){
                             boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
                             if (handle) {
                                 return;
@@ -138,7 +137,7 @@ public class Conferences {
                         }
 
                         // If no listeners handled the invitation, default to generic invite.
-                        final InvitationUI inviteDialog = new InvitationUI(conn, room, inviter, reason, password, message);
+                       new InvitationUI(conn, room, inviter, reason, password, message);
                     }
                 });
 
