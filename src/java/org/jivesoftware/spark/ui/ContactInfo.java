@@ -11,10 +11,13 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -70,7 +73,17 @@ public class ContactInfo extends JPanel {
     public void setContactItem(ContactItem contactItem) {
         nicknameLabel.setText(contactItem.getNickname());
         statusLabel.setText(contactItem.getStatus());
-        fullJIDLabel.setText(contactItem.getFullJID());
+
+        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(contactItem.getFullJID()));
+        if (transport != null) {
+            fullJIDLabel.setIcon(transport.getIcon());
+            String name = StringUtils.parseName(contactItem.getFullJID());
+            fullJIDLabel.setText(transport.getName() + " - " + name);
+        }
+        else {
+            fullJIDLabel.setText(contactItem.getFullJID());
+            fullJIDLabel.setIcon(null);
+        }
 
         imageLabel.setBorder(null);
 
