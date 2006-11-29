@@ -90,12 +90,6 @@ public class TranscriptWindow extends JPanel {
         vcardManager = SparkManager.getVCardManager();
 
         extraPanel = new JPanel();
-        BrowserEngineManager bem = BrowserEngineManager.instance();
-        //specific engine if you want and the engine you specified will return
-        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
-
-        //IBrowserEngine be = bem.setActiveEngine(...);
-        IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
         browser = new WebBrowser() {
 
             public void addNotify() {

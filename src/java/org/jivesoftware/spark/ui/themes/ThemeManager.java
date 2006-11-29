@@ -99,7 +99,7 @@ public class ThemeManager {
 
         BrowserEngineManager bem = BrowserEngineManager.instance();
         //specific engine if you want and the engine you specified will return
-        bem.setActiveEngine(BrowserEngineManager.MOZILLA);
+        bem.setActiveEngine(BrowserEngineManager.IE);
 
         //IBrowserEngine be = bem.setActiveEngine(...);
         IBrowserEngine be = bem.getActiveEngine();//default or specified engine is returned
@@ -108,8 +108,8 @@ public class ThemeManager {
         // not about mozilla. Me love Mozilla. 
         //be.setEnginePath("C:\\mozilla\\mozilla.exe");
 
-        File mozilla = new File(Spark.getBinDirectory(), "mozilla");
-        be.setEnginePath(mozilla.getAbsolutePath());
+       // File mozilla = new File(Spark.getBinDirectory(), "mozilla");
+       // be.setEnginePath(mozilla.getAbsolutePath());
         THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
         // For Testing
@@ -345,6 +345,9 @@ public class ThemeManager {
 
     public String getIncomingHistoryMessage(String sender, String time, String message, URL iconPath) {
         String incoming = incomingHistoryText;
+        if(incoming == null){
+            incoming = incomingText;
+        }
         if (sender == null) {
             sender = "";
         }
@@ -378,6 +381,9 @@ public class ThemeManager {
 
     public String getOutgoingHistoryMessage(String sender, String time, String message, URL iconPath) {
         String outgoing = outgoingHistoryText;
+        if(outgoing == null){
+            outgoing = outgoingText;
+        }
         if (sender == null) {
             sender = "";
         }
@@ -433,7 +439,7 @@ public class ThemeManager {
     }
 
     public String getNextOutgoingMessage(String message, String time) {
-        String out = nextOutgoingHistoryText;
+        String out = nextOutgoingText;
         out = out.replaceAll("%time%", time);
         out = out.replaceAll("%message%", message);
         out = filter(out);
