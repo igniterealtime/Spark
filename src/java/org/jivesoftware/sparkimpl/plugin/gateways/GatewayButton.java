@@ -180,5 +180,9 @@ public class GatewayButton extends JPanel {
         this.signedIn = signedIn;
     }
 
+    public boolean isLoggedIn(){
+        return signedIn;
+    }
+
 
 }

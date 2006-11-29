@@ -14,10 +14,10 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
@@ -41,11 +41,11 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
 
+import javax.swing.Icon;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.swing.Icon;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -199,10 +199,13 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
                 for (Transport transport : TransportUtils.getTransports()) {
-                    // Create new presence
-                    Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
-                    p.setTo(transport.getServiceName());
-                    SparkManager.getConnection().sendPacket(p);
+                    GatewayButton button = uiMap.get(transport);
+                    if (button.isLoggedIn()) {
+                        // Create new presence
+                        Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
+                        p.setTo(transport.getServiceName());
+                        SparkManager.getConnection().sendPacket(p);
+                    }
                 }
             }
         });

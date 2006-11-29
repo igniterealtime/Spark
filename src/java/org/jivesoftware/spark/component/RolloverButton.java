@@ -87,7 +87,7 @@ public class RolloverButton extends JPanel {
         listeners.add(listener);
     }
 
-    public void removeActionListener(ActionListener listener){
+    public void removeActionListener(ActionListener listener) {
         listeners.remove(listener);
     }
 
@@ -97,6 +97,11 @@ public class RolloverButton extends JPanel {
 
     public JLabel getInnerLabel() {
         return innerLabel;
+    }
+
+    public void setEnabled(boolean enabled) {
+        innerLabel.setEnabled(enabled);
+        setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)));
     }
 
     public void setMnemonic(int mnemonic) {
@@ -111,7 +116,7 @@ public class RolloverButton extends JPanel {
         innerLabel.setHorizontalTextPosition(pos);
     }
 
-    public void addMouseListener(MouseListener listener){
+    public void addMouseListener(MouseListener listener) {
         innerLabel.addMouseListener(listener);
     }
 
@@ -129,12 +134,18 @@ public class RolloverButton extends JPanel {
             }
 
             public void mousePressed(MouseEvent e) {
+                if (!innerLabel.isEnabled()) {
+                    return;
+                }
                 setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.lightGray));
                 setOpaque(true);
 
             }
 
             public void mouseReleased(MouseEvent e) {
+                if (!innerLabel.isEnabled()) {
+                    return;
+                }
                 setOpaque(false);
 
                 for (ActionListener listener : listeners) {
@@ -143,10 +154,16 @@ public class RolloverButton extends JPanel {
             }
 
             public void mouseEntered(MouseEvent e) {
+                if (!innerLabel.isEnabled()) {
+                    return;
+                }
                 setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.lightGray));
             }
 
             public void mouseExited(MouseEvent e) {
+                if (!innerLabel.isEnabled()) {
+                    return;
+                }
                 setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)));
             }
         });

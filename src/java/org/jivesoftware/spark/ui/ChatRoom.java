@@ -12,8 +12,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
@@ -44,6 +44,7 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -116,7 +117,19 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         });
 
 
-        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND));
+        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND)) {
+            public Dimension getPreferredSize() {
+                Dimension dim = super.getPreferredSize();
+
+                int windowHeight = getChatRoom().getHeight();
+
+                if (dim.getHeight() > windowHeight - 200) {
+                    dim.height = windowHeight - 200;
+                }
+
+                return dim;
+            }
+        };
 
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
@@ -198,7 +211,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 15));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         verticalSplit.setOpaque(false);
 
@@ -343,6 +356,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         else {
             chatAreaButton.getButton().setEnabled(false);
         }
+
+        verticalSplit.setDividerLocation(-1);
     }
 
     /**
@@ -501,7 +516,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param docEvent the document event.
      */
     public void changedUpdate(DocumentEvent docEvent) {
-        // Do nothing.
     }
 
     /**

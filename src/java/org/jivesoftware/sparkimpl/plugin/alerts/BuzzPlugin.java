@@ -24,6 +24,8 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -61,6 +63,16 @@ public class BuzzPlugin implements Plugin {
                             message.setTo(jid);
                             message.addExtension(new BuzzPacket());
                             SparkManager.getConnection().sendPacket(message);
+
+                            room.getTranscriptWindow().insertNotificationMessage("BUZZ!");
+                            Timer timer = new Timer();
+                            timer.schedule(new TimerTask() {
+                                public void run() {
+                                    chatRoomButton.setEnabled(true);
+                                }
+                            }, 30000);
+
+                            chatRoomButton.setEnabled(false);
                         }
                     });
                     room.getEditorBar().add(chatRoomButton);

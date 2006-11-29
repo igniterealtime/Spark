@@ -59,7 +59,7 @@ public class ChatAreaSendField extends JPanel {
 
         final JScrollPane pane = new JScrollPane(textField);
         pane.setBorder(null);
-        add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
+        add(textField, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
         button.setEnabled(false);
     }
 
