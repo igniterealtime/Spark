@@ -432,6 +432,9 @@ public class ThemeManager {
 
     public String getNextIncomingHistoryMessage(String message, String time) {
         String incoming = nextIncomingHistoryText;
+        if(incoming == null){
+            incoming = nextIncomingText;
+        }
         incoming = incoming.replaceAll("%time%", time);
         incoming = incoming.replaceAll("%message%", message);
         incoming = filter(incoming);
@@ -448,6 +451,9 @@ public class ThemeManager {
 
     public String getNextOutgoingHistoryString(String message, String time) {
         String out = nextOutgoingHistoryText;
+        if(out == null){
+            out = nextOutgoingText;
+        }
         out = out.replaceAll("%time%", time);
         out = out.replaceAll("%message%", message);
         out = filter(out);

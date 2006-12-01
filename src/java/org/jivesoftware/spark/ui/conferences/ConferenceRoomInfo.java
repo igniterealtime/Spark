@@ -28,7 +28,7 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.ImageTitlePanel;
-import org.jivesoftware.spark.component.renderer.ListIconRenderer;
+import org.jivesoftware.spark.component.Table;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
@@ -39,30 +39,33 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableCellRenderer;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such as agents and room information.
@@ -76,8 +79,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     private final Map userMap = new HashMap();
 
     private UserManager userManager = SparkManager.getUserManager();
-    private DefaultListModel model = new DefaultListModel();
-    private JList list = new JList(model);
+    private ParticipantList table = new ParticipantList();
     private PacketListener listener = null;
 
     private Map<String, String> invitees = new HashMap<String, String>();
@@ -92,7 +94,6 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
      */
     public ConferenceRoomInfo() {
         chatManager = SparkManager.getChatManager();
-        list.setCellRenderer(new ListIconRenderer());
 
         // Set the room to track
         this.setOpaque(true);
@@ -102,7 +103,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         this.setBackground(Color.white);
 
         // Respond to Double-Click in Agent List to start a chat
-        list.addMouseListener(new MouseAdapter() {
+        table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     String selectedUser = getSelectedUser();
@@ -124,7 +125,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         });
 
 
-        JScrollPane scroller = new JScrollPane(list);
+        JScrollPane scroller = new JScrollPane(table);
 
         // Speed up scrolling. It was way too slow.
         scroller.getVerticalScrollBar().setBlockIncrement(50);
@@ -168,7 +169,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
                             agentInfoPanel.setVisible(true);
                         }
                         else {
-                            model.removeElement(nickname);
+                            table.removeUser(nickname);
                         }
                     }
                 });
@@ -278,9 +279,8 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
 
         final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.USER1_BACK_16x16);
-        inviteIcon.setDescription(nickname);
 
-        model.addElement(inviteIcon);
+        table.addUser(inviteIcon, nickname);
 
         invitees.put(nickname, message);
     }
@@ -315,11 +315,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             if (occ != null) {
                 String actualJID = occ.getJid();
                 if (actualJID.equals(jid)) {
-                    int index = getIndex(nick);
-
-                    if (index != -1) {
-                        model.removeElementAt(index);
-                    }
+                    table.removeUser(nick);
                 }
             }
         }
@@ -349,7 +345,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
             }
 
             icon.setDescription(nickname);
-            model.addElement(icon);
+            table.addUser(icon, nickname);
         }
         else {
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
@@ -372,8 +368,8 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
             int index = getIndex(nickname);
             if (index != -1) {
-                model.removeElementAt(index);
-                model.insertElementAt(icon, index);
+                final JLabel userLabel = new JLabel(nickname, icon, JLabel.HORIZONTAL);
+                table.getTableModel().setValueAt(userLabel, index, 0);
             }
         }
     }
@@ -386,15 +382,15 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
         int index = getIndex(userid);
 
         if (index != -1) {
-            model.removeElementAt(index);
+            table.removeUser(userid);
             userMap.remove(userid);
         }
     }
 
-    private boolean exists(String user) {
-        for (int i = 0; i < model.getSize(); i++) {
-            final ImageIcon icon = (ImageIcon)model.get(i);
-            if (icon.getDescription().equals(user)) {
+    private boolean exists(String nickname) {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            final JLabel userLabel = (JLabel)table.getValueAt(i, 0);
+            if (userLabel.getText().equals(nickname)) {
                 return true;
             }
         }
@@ -402,9 +398,9 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     private int getIndex(String nickname) {
-        for (int i = 0; i < model.getSize(); i++) {
-            final ImageIcon icon = (ImageIcon)model.get(i);
-            if (icon.getDescription().equals(nickname)) {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            final JLabel userLabel = (JLabel)table.getValueAt(i, 0);
+            if (userLabel.getText().equals(nickname)) {
                 return i;
             }
         }
@@ -412,11 +408,13 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     private String getSelectedUser() {
-        ImageIcon icon = (ImageIcon)list.getSelectedValue();
-        if (icon == null) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
             return null;
         }
-        return icon.getDescription();
+
+        JLabel label = (JLabel)table.getValueAt(selectedRow, 0);
+        return label.getText();
     }
 
 
@@ -550,225 +548,232 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
     }
 
     private void checkPopup(MouseEvent evt) {
-        final int index = list.locationToIndex(evt.getPoint());
-        list.setSelectedIndex(index);
+        Point p = evt.getPoint();
+        final int index = table.rowAtPoint(p);
 
-        final String selectedUser = getSelectedUser();
-        final String groupJID = (String)userMap.get(selectedUser);
-        String groupJIDNickname = StringUtils.parseResource(groupJID);
-
-        final String nickname = groupChatRoom.getNickname();
-        final Occupant occupant = userManager.getOccupant(groupChatRoom, selectedUser);
-        final boolean admin = SparkManager.getUserManager().isOwnerOrAdmin(groupChatRoom, chat.getNickname());
-        final boolean moderator = SparkManager.getUserManager().isModerator(groupChatRoom, chat.getNickname());
-
-        final boolean userIsAdmin = userManager.isOwnerOrAdmin(occupant);
-        final boolean userIsModerator = userManager.isModerator(occupant);
-        boolean isMe = nickname.equals(groupJIDNickname);
-
-        JPopupMenu popup = new JPopupMenu();
-
-        // Handle invites
-        if (groupJIDNickname == null) {
-            Action inviteAgainAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    String message = invitees.get(selectedUser);
-                    String jid = userManager.getJIDFromNickname(selectedUser);
-                    chat.invite(jid, message);
-                }
-            };
-
-            inviteAgainAction.putValue(Action.NAME, "Invite Again");
-            popup.add(inviteAgainAction);
+        final JPopupMenu popup = new JPopupMenu();
 
 
-            Action removeInvite = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    int index = getIndex(selectedUser);
+        if (index != -1) {
+            table.setRowSelectionInterval(index, index);
 
-                    if (index != -1) {
-                        model.removeElementAt(index);
+            final JLabel userLabel = (JLabel)table.getValueAt(index, 0);
+            final String selectedUser = userLabel.getText();
+            final String groupJID = (String)userMap.get(selectedUser);
+            String groupJIDNickname = StringUtils.parseResource(groupJID);
+
+            final String nickname = groupChatRoom.getNickname();
+            final Occupant occupant = userManager.getOccupant(groupChatRoom, selectedUser);
+            final boolean admin = SparkManager.getUserManager().isOwnerOrAdmin(groupChatRoom, chat.getNickname());
+            final boolean moderator = SparkManager.getUserManager().isModerator(groupChatRoom, chat.getNickname());
+
+            final boolean userIsAdmin = userManager.isOwnerOrAdmin(occupant);
+            final boolean userIsModerator = userManager.isModerator(occupant);
+            boolean isMe = nickname.equals(groupJIDNickname);
+
+            // Handle invites
+            if (groupJIDNickname == null) {
+                Action inviteAgainAction = new AbstractAction() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        String message = invitees.get(selectedUser);
+                        String jid = userManager.getJIDFromNickname(selectedUser);
+                        chat.invite(jid, message);
                     }
-                }
-            };
+                };
 
-            removeInvite.putValue(Action.NAME, "Remove");
-            popup.add(removeInvite);
+                inviteAgainAction.putValue(Action.NAME, "Invite Again");
+                popup.add(inviteAgainAction);
 
-            popup.show(list, evt.getX(), evt.getY());
-            return;
-        }
 
-        if (isMe) {
-            Action changeNicknameAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    String newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("label.new.nickname") + ":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
-                    if (ModelUtil.hasLength(newNickname)) {
-                        while (true) {
-                            newNickname = newNickname.trim();
-                            try {
-                                chat.changeNickname(newNickname);
-                                break;
-                            }
-                            catch (XMPPException e1) {
-                                newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("message.nickname.in.use") + ":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
-                                if (!ModelUtil.hasLength(newNickname)) {
+                Action removeInvite = new AbstractAction() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        int index = getIndex(selectedUser);
+
+                        if (index != -1) {
+                            table.getTableModel().removeRow(index);
+                        }
+                    }
+                };
+
+                removeInvite.putValue(Action.NAME, "Remove");
+                popup.add(removeInvite);
+
+                popup.show(table, evt.getX(), evt.getY());
+                return;
+            }
+
+            if (isMe) {
+                Action changeNicknameAction = new AbstractAction() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        String newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("label.new.nickname") + ":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
+                        if (ModelUtil.hasLength(newNickname)) {
+                            while (true) {
+                                newNickname = newNickname.trim();
+                                try {
+                                    chat.changeNickname(newNickname);
                                     break;
+                                }
+                                catch (XMPPException e1) {
+                                    newNickname = JOptionPane.showInputDialog(groupChatRoom, Res.getString("message.nickname.in.use") + ":", Res.getString("title.change.nickname"), JOptionPane.QUESTION_MESSAGE);
+                                    if (!ModelUtil.hasLength(newNickname)) {
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                };
+
+                changeNicknameAction.putValue(Action.NAME, Res.getString("menuitem.change.nickname"));
+                changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+
+                if (allowNicknameChange) {
+                    popup.add(changeNicknameAction);
+                }
+            }
+
+            Action chatAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    String selectedUser = getSelectedUser();
+                    startChat(groupChatRoom, (String)userMap.get(selectedUser));
                 }
             };
 
-            changeNicknameAction.putValue(Action.NAME, Res.getString("menuitem.change.nickname"));
-            changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
-
-            if (allowNicknameChange) {
-                popup.add(changeNicknameAction);
+            chatAction.putValue(Action.NAME, Res.getString("menuitem.start.a.chat"));
+            chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+            if (!isMe) {
+                popup.add(chatAction);
             }
-        }
 
-        Action chatAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                String selectedUser = getSelectedUser();
-                startChat(groupChatRoom, (String)userMap.get(selectedUser));
-            }
-        };
+            Action blockAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent e) {
+                    String user = getSelectedUser();
+                    ImageIcon icon = null;
+                    if (groupChatRoom.isBlocked(groupJID)) {
+                        groupChatRoom.removeBlockedUser(groupJID);
+                        icon = getImageIcon(groupJID);
+                    }
+                    else {
+                        groupChatRoom.addBlockedUser(groupJID);
+                        icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
+                    }
 
-        chatAction.putValue(Action.NAME, Res.getString("menuitem.start.a.chat"));
-        chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        if (!isMe) {
-            popup.add(chatAction);
-        }
 
-        Action blockAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                ImageIcon icon = (ImageIcon)list.getSelectedValue();
-                String description = icon.getDescription();
+                    JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
+                    table.getTableModel().setValueAt(label, index, 0);
+                }
+            };
+
+            blockAction.putValue(Action.NAME, Res.getString("menuitem.block.user"));
+            blockAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
+            if (!isMe) {
                 if (groupChatRoom.isBlocked(groupJID)) {
-                    groupChatRoom.removeBlockedUser(groupJID);
-                    icon = getImageIcon(groupJID);
-                    model.setElementAt(icon, index);
+                    blockAction.putValue(Action.NAME, Res.getString("menuitem.unblock.user"));
                 }
-                else {
-                    groupChatRoom.addBlockedUser(groupJID);
-                    icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
-                    icon.setDescription(description);
-                    model.setElementAt(icon, index);
+                popup.add(blockAction);
+            }
+
+
+            Action kickAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    kickUser(selectedUser);
                 }
+            };
+
+            kickAction.putValue(Action.NAME, Res.getString("menuitem.kick.user"));
+            kickAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+            if (moderator && !userIsAdmin && !isMe) {
+                popup.add(kickAction);
             }
-        };
 
-        blockAction.putValue(Action.NAME, Res.getString("menuitem.block.user"));
-        blockAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
-        if (!isMe) {
-            if (groupChatRoom.isBlocked(groupJID)) {
-                blockAction.putValue(Action.NAME, Res.getString("menuitem.unblock.user"));
-            }
-            popup.add(blockAction);
-        }
+            // Handle Voice Operations
+            Action voiceAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    if (userManager.hasVoice(groupChatRoom, selectedUser)) {
+                        revokeVoice(selectedUser);
+                    }
+                    else {
+                        grantVoice(selectedUser);
+                    }
 
+                }
+            };
 
-        Action kickAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                kickUser(selectedUser);
-            }
-        };
-
-        kickAction.putValue(Action.NAME, Res.getString("menuitem.kick.user"));
-        kickAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
-        if (moderator && !userIsAdmin && !isMe) {
-            popup.add(kickAction);
-        }
-
-        // Handle Voice Operations
-        Action voiceAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+            voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
+            voiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+            if (moderator && !userIsModerator && !isMe) {
                 if (userManager.hasVoice(groupChatRoom, selectedUser)) {
-                    revokeVoice(selectedUser);
+                    voiceAction.putValue(Action.NAME, Res.getString("menuitem.revoke.voice"));
                 }
                 else {
-                    grantVoice(selectedUser);
+                    voiceAction.putValue(Action.NAME, Res.getString("menuitem.grant.voice"));
+                }
+                popup.add(voiceAction);
+            }
+
+
+            Action banAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    banUser(selectedUser);
+                }
+            };
+            banAction.putValue(Action.NAME, Res.getString("menuitem.ban.user"));
+            banAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.RED_FLAG_16x16));
+            if (admin && !userIsModerator && !isMe) {
+                popup.add(banAction);
+            }
+
+
+            Action moderatorAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    if (!userIsModerator) {
+                        grantModerator(selectedUser);
+                    }
+                    else {
+                        revokeModerator(selectedUser);
+                    }
+                }
+            };
+
+            moderatorAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE));
+            if (admin && !userIsModerator) {
+                moderatorAction.putValue(Action.NAME, Res.getString("menuitem.grant.moderator"));
+                popup.add(moderatorAction);
+            }
+            else if (admin && userIsModerator && !isMe) {
+                moderatorAction.putValue(Action.NAME, Res.getString("menuitem.revoke.moderator"));
+                popup.add(moderatorAction);
+            }
+
+            // Handle Unbanning of users.
+            Action unbanAction = new AbstractAction() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    String jid = ((JMenuItem)actionEvent.getSource()).getText();
+                    unbanUser(jid);
+                }
+            };
+
+            if (admin) {
+                JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
+                Iterator bannedUsers = null;
+                try {
+                    bannedUsers = chat.getOutcasts().iterator();
+                }
+                catch (XMPPException e) {
+                    Log.error("Error loading all banned users", e);
                 }
 
-            }
-        };
-
-        voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
-        voiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
-        if (moderator && !userIsModerator && !isMe) {
-            if (userManager.hasVoice(groupChatRoom, selectedUser)) {
-                voiceAction.putValue(Action.NAME, Res.getString("menuitem.revoke.voice"));
-            }
-            else {
-                voiceAction.putValue(Action.NAME, Res.getString("menuitem.grant.voice"));
-            }
-            popup.add(voiceAction);
-        }
-
-
-        Action banAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                banUser(selectedUser);
-            }
-        };
-        banAction.putValue(Action.NAME, Res.getString("menuitem.ban.user"));
-        banAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.RED_FLAG_16x16));
-        if (admin && !userIsModerator && !isMe) {
-            popup.add(banAction);
-        }
-
-
-        Action moderatorAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (!userIsModerator) {
-                    grantModerator(selectedUser);
+                while (bannedUsers != null && bannedUsers.hasNext()) {
+                    Affiliate bannedUser = (Affiliate)bannedUsers.next();
+                    ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
+                    JMenuItem bannedItem = new JMenuItem(bannedUser.getJid(), icon);
+                    unbanMenu.add(bannedItem);
+                    bannedItem.addActionListener(unbanAction);
                 }
-                else {
-                    revokeModerator(selectedUser);
+
+                if (unbanMenu.getMenuComponentCount() > 0) {
+                    popup.add(unbanMenu);
                 }
-            }
-        };
-
-        moderatorAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE));
-        if (admin && !userIsModerator) {
-            moderatorAction.putValue(Action.NAME, Res.getString("menuitem.grant.moderator"));
-            popup.add(moderatorAction);
-        }
-        else if (admin && userIsModerator && !isMe) {
-            moderatorAction.putValue(Action.NAME, Res.getString("menuitem.revoke.moderator"));
-            popup.add(moderatorAction);
-        }
-
-        // Handle Unbanning of users.
-        Action unbanAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                String jid = ((JMenuItem)actionEvent.getSource()).getText();
-                unbanUser(jid);
-            }
-        };
-
-        if (admin) {
-            JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
-            Iterator bannedUsers = null;
-            try {
-                bannedUsers = chat.getOutcasts().iterator();
-            }
-            catch (XMPPException e) {
-                Log.error("Error loading all banned users", e);
-            }
-
-            while (bannedUsers != null && bannedUsers.hasNext()) {
-                Affiliate bannedUser = (Affiliate)bannedUsers.next();
-                ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
-                JMenuItem bannedItem = new JMenuItem(bannedUser.getJid(), icon);
-                unbanMenu.add(bannedItem);
-                bannedItem.addActionListener(unbanAction);
-            }
-
-            if (unbanMenu.getMenuComponentCount() > 0) {
-                popup.add(unbanMenu);
             }
         }
 
@@ -781,16 +786,61 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
 
         inviteAction.putValue(Action.NAME, Res.getString("menuitem.invite.users"));
         inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
-        popup.addSeparator();
+
+        if (index != -1) {
+            popup.addSeparator();
+        }
         popup.add(inviteAction);
 
 
-        popup.show(list, evt.getX(), evt.getY());
+        popup.show(table, evt.getX(), evt.getY());
     }
 
     public void setNicknameChangeAllowed(boolean allowed) {
         allowNicknameChange = allowed;
     }
+
+    private final class ParticipantList extends Table {
+        public ParticipantList() {
+            super(new String[]{"Participants"});
+            setSelectionBackground(Table.SELECTION_COLOR);
+            setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            setRowSelectionAllowed(true);
+            getTableHeader().setOpaque(false);
+            Color borderHighlight = new Color(240, 240, 240);
+
+            Font f = getTableHeader().getFont().deriveFont(Font.BOLD);
+            getTableHeader().setFont(f);
+            getTableHeader().setBackground(borderHighlight);
+        }
+
+        public void removeUser(String nickname) {
+            for (int i = 0; i < getRowCount(); i++) {
+                JLabel label = (JLabel)getValueAt(i, 0);
+                if (label.getText().equals(nickname)) {
+                    getTableModel().removeRow(i);
+                }
+            }
+        }
+
+        public void addUser(ImageIcon userIcon, String nickname) {
+            JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
+            final Object[] userObject = new Object[]{user};
+            getTableModel().addRow(userObject);
+        }
+
+        // Handle image rendering correctly
+        public TableCellRenderer getCellRenderer(int row, int column) {
+            Object o = getValueAt(row, column);
+            if (o != null) {
+                if (o instanceof JLabel) {
+                    return new JLabelRenderer(false);
+                }
+            }
+            return super.getCellRenderer(row, column);
+        }
+    }
+
 }
 
 

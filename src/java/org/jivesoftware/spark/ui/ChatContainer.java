@@ -685,6 +685,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // Set the title of the room.
             chatFrame.setTitle(room.getRoomTitle());
+            chatFrame.setIconImage(SparkManager.getMainWindow().getIconImage());
         }
         catch (ChatRoomNotFoundException e1) {
             // Ignore
