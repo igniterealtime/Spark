@@ -17,24 +17,16 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -42,12 +34,26 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.JToolBar;
 
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
@@ -249,7 +255,7 @@ public final class MainWindow extends JFrame implements ActionListener {
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
             String status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
-                    SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
+                SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
 
             if (status != null) {
                 Presence presence = new Presence(Presence.Type.unavailable);
@@ -334,7 +340,6 @@ public final class MainWindow extends JFrame implements ActionListener {
         mainWindowBar.add(connectMenu);
         mainWindowBar.add(contactsMenu);
         mainWindowBar.add(actionsMenu);
-        //mainWindowBar.add(pluginsMenu);
         mainWindowBar.add(helpMenu);
 
 
@@ -392,6 +397,24 @@ public final class MainWindow extends JFrame implements ActionListener {
         helpMenu.add(helpMenuItem);
         helpMenu.add(showTrafficAction);
         helpMenu.add(updateAction);
+
+        // Add Error Dialog Viewer
+        Action viewErrors = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                File logDir = new File(Spark.getLogDirectory(), "errors.log");
+                if (!logDir.exists()) {
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No error logs found.", "Error Log", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    showErrorLog();
+                }
+            }
+        };
+
+        viewErrors.putValue(Action.NAME, "View Logs");
+
+        helpMenu.add(viewErrors);
+
         helpMenu.addSeparator();
         helpMenu.add(menuAbout);
 
@@ -411,20 +434,6 @@ public final class MainWindow extends JFrame implements ActionListener {
         helpMenuItem.addActionListener(new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    /*
-                    BrowserViewer browser = BrowserFactory.getBrowser();
-
-                    final JFrame browserViewer = new JFrame("Spark Help");
-                    browserViewer.setIconImage(SparkManager.getMainWindow().getIconImage());
-                    browserViewer.setContentPane(browser);
-
-                    browserViewer.pack();
-                    browserViewer.setSize(600, 400);
-                    browserViewer.setLocationRelativeTo(SparkManager.getMainWindow());
-                    browserViewer.setVisible(true);
-
-                    browser.loadURL("http://liveassist.jivesoftware.com/webchat/start.jsp?workgroup=spark@workgroup.jivesoftware.com&noUI=true&username=sparkuser");
-                */
                     BrowserLauncher.openURL("http://www.jivesoftware.org/community/forum.jspa?forumID=49");
                 }
                 catch (Exception browserException) {
@@ -553,7 +562,45 @@ public final class MainWindow extends JFrame implements ActionListener {
      */
     private static void showAboutBox() {
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion(),
-                "About", JOptionPane.INFORMATION_MESSAGE);
+            "About", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Displays the Spark error log.
+     */
+    private void showErrorLog() {
+        final File logDir = new File(Spark.getLogDirectory(), "errors.log");
+
+        // Read file and show
+        final String errorLogs = URLFileSystem.getContents(logDir);
+
+        final JFrame frame = new JFrame("Spark Logs");
+        frame.setLayout(new BorderLayout());
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+
+        final JTextPane pane = new JTextPane();
+        pane.setEditable(false);
+        pane.setText(errorLogs);
+
+        frame.add(new JScrollPane(pane), BorderLayout.CENTER);
+
+        final JButton copyButton = new JButton("Copy To Clipboard");
+        frame.add(copyButton, BorderLayout.SOUTH);
+
+        copyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SparkManager.setClipboard(errorLogs);
+                copyButton.setEnabled(false);
+            }
+        });
+
+        frame.pack();
+        frame.setSize(600, 400);
+
+        GraphicUtils.centerWindowOnScreen(frame);
+        frame.setVisible(true);
+
+
     }
 
 }
