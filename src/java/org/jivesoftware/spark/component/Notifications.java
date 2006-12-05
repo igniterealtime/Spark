@@ -91,7 +91,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
         unavaliableIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_AWAY);
         busyIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_DND);
         trayIcon = new TrayIcon(availableIcon);
-        trayIcon.setToolTip("Spark"); // NORES
+        trayIcon.setToolTip("Spark Client"); // NORES
 
         JPopupMenu popupMenu = new JPopupMenu(Res.getString("title.tray.information"));
 
@@ -160,6 +160,12 @@ public final class Notifications implements ActionListener, MainWindowListener {
         }
         else {
             trayIcon.setIcon(busyIcon);
+        }
+
+        // Get Status Text
+        if (presence != null) {
+            String status = presence.getStatus();
+            trayIcon.setToolTip("Spark Client\n" + status);
         }
     }
 
@@ -233,7 +239,13 @@ public final class Notifications implements ActionListener, MainWindowListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (!(o instanceof JMenuItem)) {
-            showMainWindow();
+            if (SparkManager.getMainWindow().isVisible()) {
+                SparkManager.getMainWindow().setVisible(false);
+                hideMenu.setEnabled(false);
+            }
+            else {
+                showMainWindow();
+            }
             return;
         }
 
@@ -284,6 +296,8 @@ public final class Notifications implements ActionListener, MainWindowListener {
         notificationDialog.setVisible(false);
 
         hideMenu.setEnabled(true);
+
+        SparkManager.getMainWindow().toFront();
     }
 
 

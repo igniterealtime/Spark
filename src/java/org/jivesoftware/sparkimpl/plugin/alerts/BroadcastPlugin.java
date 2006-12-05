@@ -42,6 +42,14 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.Iterator;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -52,15 +60,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Date;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -216,6 +215,11 @@ public class BroadcastPlugin implements Plugin, PacketListener {
      * @param message the message to show.
      */
     private void showAlert(Message message) {
+        // Do not show alert if the message is an error.
+        if (message.getError() != null) {
+            return;
+        }
+
         final String body = message.getBody();
         String subject = message.getSubject();
 

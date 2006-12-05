@@ -38,15 +38,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -99,9 +99,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-                new ChatMessageEventRequestListener();
+            new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-                addMessageEventRequestListener(messageEventRequestListener);
+            addMessageEventRequestListener(messageEventRequestListener);
     }
 
 
@@ -350,7 +350,7 @@ public class ChatManager implements MessageEventNotificationListener {
         invitationListeners.remove(listener);
     }
 
-    public Collection<RoomInvitationListener> getInvitationListeners() {
+    public Collection getInvitationListeners() {
         return invitationListeners;
     }
 
@@ -439,14 +439,18 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                        final ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
+
                         // Get Tab
                         int index = getChatContainer().indexOfComponent(chatRoom);
                         SparkTab tab = getChatContainer().getTabAt(index);
                         tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
 
-                        if (getChatContainer().getActiveChatRoom() == chatRoom) {
+                        if (getChatContainer().getActiveChatRoom() == chatRoom && !getChatContainer().getChatFrame().isInFocus()) {
                             getChatContainer().getChatFrame().setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE).getImage());
                         }
+
+                        roomImpl.setAlternativeIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
                     }
                 }
                 catch (ChatRoomNotFoundException e) {
@@ -457,6 +461,7 @@ public class ChatManager implements MessageEventNotificationListener {
             }
         });
     }
+
 
     public void offlineNotification(String from, String packetID) {
     }
@@ -470,13 +475,16 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                        final ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
+                        roomImpl.setAlternativeIcon(null);
+
                         // Get Tab
                         int index = getChatContainer().indexOfComponent(chatRoom);
                         SparkTab tab = getChatContainer().getTabAt(index);
                         tab.setIcon(tab.getPreviousIcon());
                     }
 
-                    getChatContainer().getChatFrame().setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
+                    getChatContainer().getChatFrame().setIconImage(SparkManager.getMainWindow().getIconImage());
                 }
                 catch (ChatRoomNotFoundException e) {
                 }
@@ -486,6 +494,7 @@ public class ChatManager implements MessageEventNotificationListener {
             }
         });
     }
+
 
     /**
      * Internal implementation of the MessageEventRequestListener.

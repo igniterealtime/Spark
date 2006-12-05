@@ -12,13 +12,11 @@ package org.jivesoftware.spark.ui.rooms;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
@@ -34,24 +32,26 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
+import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -86,6 +86,8 @@ public class ChatRoomImpl extends ChatRoom {
 
     private boolean iconHandler;
 
+    private Icon alternativeIcon;
+
 
     /**
      * Constructs a 1-to-1 ChatRoom.
@@ -98,14 +100,12 @@ public class ChatRoomImpl extends ChatRoom {
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
 
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
-
         // Register PacketListeners
+        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
+        SparkManager.getConnection().addPacketListener(this, presenceFilter);
 
         AndFilter messageFilter = new AndFilter(new PacketTypeFilter(Message.class), new FromContainsFilter(participantJID));
         SparkManager.getConnection().addPacketListener(this, messageFilter);
-
-        SparkManager.getConnection().addPacketListener(this, presenceFilter);
 
         // The roomname will be the participantJID
         this.roomname = participantJID;
@@ -129,13 +129,6 @@ public class ChatRoomImpl extends ChatRoom {
         RosterEntry entry = roster.getEntry(participantJID);
 
         tabIcon = SparkManager.getUserManager().getTabIconForPresence(presence);
-
-        PacketFilter filter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                presence = (Presence)packet;
-            }
-        }, filter);
 
         // Create toolbar buttons.
         ChatRoomButton infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
@@ -193,17 +186,9 @@ public class ChatRoomImpl extends ChatRoom {
         typingTimer.start();
         lastActivity = System.currentTimeMillis();
 
-
-        String time = formatter.format(new Date());
-        transcriptWindow.setInnerHTML("chatName", participantNickname);
-        transcriptWindow.setInnerHTML("timeOpened", "Conversation started on " + time);
-
-        URL url = SparkManager.getVCardManager().getAvatar(participantJID);
-        if (url != null) {
-            transcriptWindow.setInnerHTML("incomingIconPath", "<img src=\"" + url.toExternalForm() + "\">");
-        }
-
-        getToolBar().setVisible(false);
+        // Add VCard Panel
+        final VCardPanel vcardPanel = new VCardPanel(participantJID);
+        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
     }
 
 
@@ -361,6 +346,8 @@ public class ChatRoomImpl extends ChatRoom {
         final Runnable runnable = new Runnable() {
             public void run() {
                 if (packet instanceof Presence) {
+                    presence = (Presence)packet;
+
                     final Presence presence = (Presence)packet;
 
                     ContactList list = SparkManager.getWorkspace().getContactList();
@@ -434,6 +421,8 @@ public class ChatRoomImpl extends ChatRoom {
                         }
                         participantJID = message.getFrom();
                         insertMessage(message);
+
+                        showTyping(false);
                     }
                 }
             }
@@ -537,6 +526,16 @@ public class ChatRoomImpl extends ChatRoom {
 
 
     /**
+     * Show the typing notification.
+     *
+     * @param typing true if the typing notification should show, otherwise hide it.
+     */
+    public void showTyping(boolean typing) {
+       
+
+    }
+
+    /**
      * The last time this chat room sent or receieved a message.
      *
      * @return the last time this chat room sent or receieved a message.
@@ -565,6 +564,7 @@ public class ChatRoomImpl extends ChatRoom {
     public void setSendTypingNotification(boolean isSendTypingNotification) {
         this.sendTypingNotification = isSendTypingNotification;
     }
+
 
     public void connectionClosed() {
         handleDisconnect();
@@ -598,6 +598,8 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         SparkManager.getChatManager().getChatContainer().useTabDefault(this);
+        getChatInputEditor().setEnabled(true);
+        getSendButton().setEnabled(true);
     }
 
     private void handleDisconnect() {
@@ -606,4 +608,24 @@ public class ChatRoomImpl extends ChatRoom {
         getSendButton().setEnabled(false);
         SparkManager.getChatManager().getChatContainer().useTabDefault(this);
     }
+
+    /**
+     * Sets the alternative icon to use for the chat room. If null,
+     * then the default icon will be used.
+     *
+     * @param icon the alternative icon
+     */
+    public void setAlternativeIcon(Icon icon) {
+        this.alternativeIcon = icon;
+    }
+
+    /**
+     * Returns the alternative icon. This can be null.
+     *
+     * @return the alternative icon.
+     */
+    public Icon getAlternativeIcon() {
+        return alternativeIcon;
+    }
+
 }

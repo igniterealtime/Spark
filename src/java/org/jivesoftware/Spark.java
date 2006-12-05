@@ -119,9 +119,9 @@ public final class Spark {
 
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 File skinDir = new File(Spark.getBinDirectory().getParent(), "xtra/skins").getAbsoluteFile();
-                File defaultSkin = new File(skinDir, "crystal.zip");
-                Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
-                //Skin theSkinToUse = SkinLookAndFeel.loadThemePackDefinition(new File("c:\\craploa\\crystal\\skinlf-themepack.xml").toURL());
+                File defaultSkin = new File(skinDir, "crystal2themepack.zip");
+                //Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
+                Skin theSkinToUse = SkinLookAndFeel.loadThemePackDefinition(new File("c:\\crapola\\crystal\\skinlf-themepack.xml").toURL());
                 SkinLookAndFeel.setSkin(theSkinToUse);
 
                 // finally set the Skin Look And Feel
@@ -324,7 +324,7 @@ public final class Spark {
     }
 
     public static void installBaseUIProperties() {
-        UIManager.put("TextField.lightforeground", Color.BLACK);
+        UIManager.put("TextField.lightforeground", Color.lightGray);
         UIManager.put("TextField.foreground", Color.BLACK);
         UIManager.put("TextField.caretForeground", Color.black);
 
