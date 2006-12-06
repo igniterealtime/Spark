@@ -51,6 +51,7 @@
     <property name="mac.build.dir" value="${target}/spark_${version.underscore}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/spark_${version.underscore}.dmg"/>
+    <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
 
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
         <classpath>
@@ -75,7 +76,9 @@
     <!-- clean =================================================================================== -->
     <target name="clean" description="Deletes files generated during the build.">
         <!--Delete created directory trees-->
-        <delete dir="${target}"/>
+        <delete>
+            <fileset dir="${target}" followsymlinks="false"/>
+        </delete>
     </target>
 
     <!-- init =================================================================================== -->
@@ -374,7 +377,10 @@
     </target>
 
     <target name="mac.clean">
-        <delete dir="${mac.build.dir}"/>
+        <symlink action="delete" failonerror="false" link="${mac.build.dir}/Applications"/>
+        <delete failonerror="false" includeemptydirs="true">
+            <fileset dir="${mac.build.dir}" followsymlinks="false"/>
+        </delete>
         <delete file="${target}/tmp.dmg"/>
         <delete file="${mac.dmg.file}"/>
     </target>
@@ -441,25 +447,42 @@
         <delete file="${plugins}/jniwrapper.jar"/>
     </target>
 
-    <target name="installer.mac" depends="mac.app" description="build Install4J release dmg file for the Macintosh">
+    <target name="installer.mac" depends="mac.app" description="build release dmg file for the Macintosh">
         <fileset file="*.dmg"/>
+
+        <mkdir dir="${mac.build.dir}/.background"/>
+        
+        <copy todir="${mac.build.dir}/.background">
+            <fileset file="installer/images/mac/dmgBackground.png"/>
+        </copy>
+        
+        <symlink link="${mac.build.dir}/Applications" resource="/Applications"/>
+
         <exec executable="hdiutil" failonerror="true">
-            <arg value="create"/>
-            <arg value="-srcfolder"/>
-            <arg value="${mac.build.dir}"/>
-            <arg value="-fs"/>
-            <arg value="HFS+"/>
-            <arg value="${target}/tmp.dmg"/>
+            <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${basedir}/tmp.dmg'"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
-            <arg line="convert ${target}/tmp.dmg -format UDZO -o ${mac.dmg.file}"/>
+            <arg line="attach '${basedir}/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${basedir}/tmp'"/>
         </exec>
-        <delete file="${target}/tmp.dmg"/>
+        <exec executable="osascript" dir="${basedir}/installer/" failonerror="true">
+            <arg value="mac/dmg_spark.scpt"/>
+            <arg value="${mac.volname}"/>
+            <arg value="images/mac/background/"/>
+            <arg value="460"/>
+            <arg value="460"/>
+            <arg value="180"/>
+            <arg value="150"/>
+            <arg value="430"/>
+            <arg value="150"/>
+            <arg value="128"/>
+        </exec>
         <exec executable="hdiutil" failonerror="true">
-            <arg value="internet-enable"/>
-            <arg value="-yes"/>
-            <arg value="${mac.dmg.file}"/>
+            <arg line="detach ${basedir}/tmp -quiet -force"/>
         </exec>
+        <exec executable="hdiutil" failonerror="true">
+            <arg line="convert ${basedir}/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
+        </exec>
+        <delete file="${basedir}/tmp.dmg"/>
     </target>
 
 </project>
