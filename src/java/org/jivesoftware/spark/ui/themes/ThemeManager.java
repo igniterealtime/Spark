@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.ui.themes;
 
+import com.webrenderer.BrowserFactory;
 import org.jdesktop.jdic.browser.BrowserEngineManager;
 import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jivesoftware.Spark;
@@ -95,6 +96,8 @@ public class ThemeManager {
     }
 
     private ThemeManager() {
+        BrowserFactory.setLicenseData("30dtrial", "VO3I81PG53P21111DROMSQJ0");
+
         emoticonManager = EmoticonManager.getInstance();
 
         BrowserEngineManager bem = BrowserEngineManager.instance();
@@ -108,8 +111,8 @@ public class ThemeManager {
         // not about mozilla. Me love Mozilla. 
         //be.setEnginePath("C:\\mozilla\\mozilla.exe");
 
-       // File mozilla = new File(Spark.getBinDirectory(), "mozilla");
-       // be.setEnginePath(mozilla.getAbsolutePath());
+        // File mozilla = new File(Spark.getBinDirectory(), "mozilla");
+        // be.setEnginePath(mozilla.getAbsolutePath());
         THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
 
         // For Testing
@@ -127,6 +130,7 @@ public class ThemeManager {
             setTheme(theme);
         }
         catch (Exception e) {
+            System.err.println("Could not locate "+theme);
             e.printStackTrace();
         }
 
@@ -345,7 +349,7 @@ public class ThemeManager {
 
     public String getIncomingHistoryMessage(String sender, String time, String message, URL iconPath) {
         String incoming = incomingHistoryText;
-        if(incoming == null){
+        if (incoming == null) {
             incoming = incomingText;
         }
         if (sender == null) {
@@ -381,7 +385,7 @@ public class ThemeManager {
 
     public String getOutgoingHistoryMessage(String sender, String time, String message, URL iconPath) {
         String outgoing = outgoingHistoryText;
-        if(outgoing == null){
+        if (outgoing == null) {
             outgoing = outgoingText;
         }
         if (sender == null) {
@@ -432,7 +436,7 @@ public class ThemeManager {
 
     public String getNextIncomingHistoryMessage(String message, String time) {
         String incoming = nextIncomingHistoryText;
-        if(incoming == null){
+        if (incoming == null) {
             incoming = nextIncomingText;
         }
         incoming = incoming.replaceAll("%time%", time);
@@ -451,7 +455,7 @@ public class ThemeManager {
 
     public String getNextOutgoingHistoryString(String message, String time) {
         String out = nextOutgoingHistoryText;
-        if(out == null){
+        if (out == null) {
             out = nextOutgoingText;
         }
         out = out.replaceAll("%time%", time);

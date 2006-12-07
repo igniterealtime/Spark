@@ -10,77 +10,159 @@
 
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
-import com.thoughtworks.xstream.XStream;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ChatTranscripts {
-    private static Map transcripts = new HashMap();
-    private static XStream xstream = new XStream();
-
-    private ChatTranscripts() {
-    }
+    private static Map<String, ChatTranscript> TRANSCRIPTS = new HashMap<String, ChatTranscript>();
+    private static DateFormat FORMATTER;
 
     static {
-        xstream.alias("transcript", ChatTranscript.class);
-        xstream.alias("message", HistoryMessage.class);
+        FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");
     }
 
+    private ChatTranscripts() {
+
+    }
 
     public static ChatTranscript getChatTranscript(String jid) {
-        ChatTranscript transcript = (ChatTranscript)transcripts.get(jid);
+        ChatTranscript transcript = TRANSCRIPTS.get(jid);
         if (transcript == null) {
             transcript = load(jid);
-            transcripts.put(jid, transcript);
+            TRANSCRIPTS.put(jid, transcript);
         }
         return transcript;
     }
 
     public static void addChatTranscript(String jid, ChatTranscript transcript) {
-        transcripts.put(jid, transcript);
+        TRANSCRIPTS.put(jid, transcript);
     }
 
     public static void saveTranscript(String jid) {
 
         try {
-            File file = getTranscriptFile(jid);
-            file.getParentFile().mkdirs();
+            File transcriptFile = getTranscriptFile(jid);
+            transcriptFile.getParentFile().mkdirs();
             ChatTranscript transcript = getChatTranscript(jid);
             if (transcript.getMessages().size() == 0) {
-                file.delete();
                 return;
             }
 
-            FileOutputStream fout = new FileOutputStream(getTranscriptFile(jid));
-            OutputStreamWriter ow = new OutputStreamWriter(fout, "UTF-8");
+            FileOutputStream fout = new FileOutputStream(transcriptFile);
 
+            Element root = DocumentHelper.createElement("transcript");
+            Element messages = root.addElement("messages");
+            for (HistoryMessage m : transcript.getMessages()) {
+                Element message = messages.addElement("message");
 
-            xstream.toXML(transcript, ow);
+                message.addElement("to").setText(m.getTo());
+                message.addElement("from").setText(m.getFrom());
+                message.addElement("body").setText(m.getBody());
+
+                String dateString = FORMATTER.format(m.getDate());
+                message.addElement("date").setText(dateString);
+            }
+
+            try {
+                OutputStreamWriter ow = new OutputStreamWriter(fout, "UTF-8");
+                XMLWriter saxWriter = new XMLWriter(ow);
+                saxWriter.write(root);
+                saxWriter.flush();
+                saxWriter.close();
+            }
+            catch (IOException e) {
+                Log.error(e);
+            }
+
         }
         catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
+
+
     }
 
     private static ChatTranscript load(String jid) {
-        File transcriptFile = getTranscriptFile(jid);
+        final File transcriptFile = getTranscriptFile(jid);
+        final ChatTranscript transcript = new ChatTranscript();
+
+        if (!transcriptFile.exists()) {
+            return transcript;
+        }
+
+
         try {
             FileInputStream fis = new FileInputStream(transcriptFile);
             InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            return (ChatTranscript)xstream.fromXML(isr);
+            SAXReader saxReader = new SAXReader();
+            Document pluginXML = null;
+            try {
+                pluginXML = saxReader.read(isr);
+            }
+            catch (DocumentException e) {
+                Log.error(e);
+                return transcript;
+            }
+
+
+            List messages = pluginXML.selectNodes("/transcript/messages/message");
+            Iterator iter = messages.iterator();
+
+            while (iter.hasNext()) {
+                HistoryMessage message = new HistoryMessage();
+
+
+                try {
+                    Element messageElement = (Element)iter.next();
+
+                    String to = messageElement.selectSingleNode("to").getText();
+                    String from = messageElement.selectSingleNode("from").getText();
+                    String body = messageElement.selectSingleNode("body").getText();
+                    String date = messageElement.selectSingleNode("date").getText();
+
+                    message.setTo(to);
+                    message.setFrom(from);
+                    message.setBody(body);
+                    Date d = null;
+                    try {
+                        d = FORMATTER.parse(date);
+                    }
+                    catch (ParseException e) {
+                        d = new Date();
+                    }
+                    message.setDate(d);
+                    transcript.addHistoryMessage(message);
+                }
+                catch (Exception ex) {
+
+                }
+            }
         }
         catch (Exception e) {
             // Ignore
         }
-        return new ChatTranscript();
+        return transcript;
     }
 
     /**

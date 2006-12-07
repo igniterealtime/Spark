@@ -23,6 +23,17 @@ import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,17 +49,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 
 /**
  * Handles tray icon operations inside of Spark. Use to display incoming chat requests, incoming messages
@@ -239,13 +239,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (!(o instanceof JMenuItem)) {
-            if (SparkManager.getMainWindow().isVisible()) {
-                SparkManager.getMainWindow().setVisible(false);
-                hideMenu.setEnabled(false);
-            }
-            else {
-                showMainWindow();
-            }
+            showMainWindow();
             return;
         }
 

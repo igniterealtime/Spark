@@ -396,112 +396,123 @@ public class SparkTransferManager {
     }
 
     private void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
-        button.setEnabled(false);
+           button.setEnabled(false);
 
-        final MainWindow mainWindow = SparkManager.getMainWindow();
-        final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+           final MainWindow mainWindow = SparkManager.getMainWindow();
+           final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
-        final boolean mainWindowVisible = mainWindow.isVisible();
-        final boolean chatFrameVisible = chatFrame.isVisible();
+           final boolean mainWindowVisible = mainWindow.isVisible();
+           final boolean chatFrameVisible = chatFrame.isVisible();
 
-        if (mainWindowVisible) {
-            mainWindow.setVisible(false);
-        }
+           if (mainWindowVisible) {
+               mainWindow.setVisible(false);
+           }
 
-        if (chatFrameVisible) {
-            chatFrame.setVisible(false);
-        }
+           if (chatFrameVisible) {
+               chatFrame.setVisible(false);
+           }
 
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    final Robot robot = new Robot();
-                    Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-                    return robot.createScreenCapture(area);
-                }
-                catch (Exception e) {
-                    Log.error(e);
-                }
-                return null;
-            }
+           final SwingWorker worker = new SwingWorker() {
+               public Object construct() {
+                   try {
+                       Thread.sleep(1000);
+                       final Robot robot = new Robot();
+                       Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+                       return robot.createScreenCapture(area);
+                   }
+                   catch (Exception e) {
+                       Log.error(e);
 
-            public void finished() {
-                final JFrame frame = new JFrame();
-                frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                       if (mainWindowVisible) {
+                           mainWindow.setVisible(true);
+                       }
 
-                final BufferedImage bufferedImage = (BufferedImage)get();
-                final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
-                mainPanel.addMouseListener(new MouseAdapter() {
-                    public void mouseReleased(MouseEvent e) {
-                        Rectangle clip = mainPanel.getClip();
-                        BufferedImage newImage = null;
-                        try {
-                            newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
-                        }
-                        catch (Exception e1) {
+                       if (chatFrameVisible) {
+                           chatFrame.setVisible(true);
+                       }
 
-                        }
+                   }
+                   return null;
+               }
 
+               public void finished() {
+                   final JFrame frame = new JFrame();
+                   frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
-                        if (newImage != null) {
-                            sendImage(newImage, room);
-                        }
+                   final BufferedImage bufferedImage = (BufferedImage)get();
+                   final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
+                   mainPanel.addMouseListener(new MouseAdapter() {
+                       public void mouseReleased(MouseEvent e) {
+                           Rectangle clip = mainPanel.getClip();
+                           BufferedImage newImage = null;
+                           try {
+                               newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
+                           }
+                           catch (Exception e1) {
 
-                        frame.dispose();
-                        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-                        if (mainWindowVisible) {
-                            mainWindow.setVisible(false);
-                        }
-
-                        if (chatFrameVisible) {
-                            chatFrame.setVisible(false);
-                        }
-
-                    }
-                });
-
-                frame.addKeyListener(new KeyAdapter() {
-                    public void keyTyped(KeyEvent e) {
-                        if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                            frame.dispose();
-                            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                            if (mainWindowVisible) {
-                                mainWindow.setVisible(false);
-                            }
-
-                            if (chatFrameVisible) {
-                                chatFrame.setVisible(false);
-                            }
-                        }
-                    }
-                });
+                           }
 
 
-                if (bufferedImage != null) {
+                           if (newImage != null) {
+                               sendImage(newImage, room);
+                           }
 
-                    frame.setUndecorated(true);
-                    frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
-                    frame.getContentPane().add(mainPanel);
+                           frame.dispose();
+                           frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
-                    // Determine if full-screen mode is supported directly
-                    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                    GraphicsDevice gs = ge.getDefaultScreenDevice();
-                    if (gs.isFullScreenSupported()) {
+                           if (mainWindowVisible) {
+                               mainWindow.setVisible(true);
+                           }
 
-                        gs.setFullScreenWindow(frame);
-                    }
-                    else {
-                        // Full-screen mode will be simulated
-                    }
-                }
+                           if (chatFrameVisible) {
+                               chatFrame.setVisible(true);
+                           }
+
+                       }
+                   });
+
+                   frame.addKeyListener(new KeyAdapter() {
+                       public void keyTyped(KeyEvent e) {
+                           if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                               frame.dispose();
+                               frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                               if (mainWindowVisible) {
+                                   mainWindow.setVisible(true);
+                               }
+
+                               if (chatFrameVisible) {
+                                   chatFrame.setVisible(true);
+                               }
+                           }
+                       }
+                   });
 
 
-                button.setEnabled(true);
-            }
-        };
-        worker.start();
-    }
+                   if (bufferedImage != null) {
+
+                       frame.setUndecorated(true);
+                       frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
+                       frame.getContentPane().add(mainPanel);
+
+                       // Determine if full-screen mode is supported directly
+                       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                       GraphicsDevice gs = ge.getDefaultScreenDevice();
+                       if (gs.isFullScreenSupported()) {
+
+                           gs.setFullScreenWindow(frame);
+                       }
+                       else {
+                           // Full-screen mode will be simulated
+                       }
+                   }
+
+
+                   button.setEnabled(true);
+               }
+           };
+           worker.start();
+       }
+   
 
     private void addPresenceListener() {
         SparkManager.getConnection().addPacketListener(new PacketListener() {

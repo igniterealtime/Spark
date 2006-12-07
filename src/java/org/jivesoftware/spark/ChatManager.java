@@ -482,6 +482,7 @@ public class ChatManager implements MessageEventNotificationListener {
                         int index = getChatContainer().indexOfComponent(chatRoom);
                         SparkTab tab = getChatContainer().getTabAt(index);
                         tab.setIcon(tab.getPreviousIcon());
+                        getChatContainer().useTabDefault(chatRoom);
                     }
 
                     getChatContainer().getChatFrame().setIconImage(SparkManager.getMainWindow().getIconImage());

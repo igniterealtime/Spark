@@ -10,11 +10,10 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jdesktop.jdic.browser.BrowserEngineManager;
-import org.jdesktop.jdic.browser.IBrowserEngine;
-import org.jdesktop.jdic.browser.WebBrowser;
-import org.jdesktop.jdic.browser.WebBrowserEvent;
-import org.jdesktop.jdic.browser.WebBrowserListener;
+import com.webrenderer.BrowserFactory;
+import com.webrenderer.IBrowserCanvas;
+import com.webrenderer.event.MouseEvent;
+import com.webrenderer.event.MouseListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
@@ -32,6 +31,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.BufferedWriter;
@@ -63,7 +63,7 @@ public class TranscriptWindow extends JPanel {
 
     private Date lastUpdated;
 
-    private WebBrowser browser;
+    private IBrowserCanvas browser;
 
     private ThemeManager themeManager;
 
@@ -77,7 +77,7 @@ public class TranscriptWindow extends JPanel {
 
     private List scriptList = new ArrayList();
 
-    private   Timer timer = new Timer();
+    private Timer timer = new Timer();
 
 
     /**
@@ -90,58 +90,32 @@ public class TranscriptWindow extends JPanel {
         vcardManager = SparkManager.getVCardManager();
 
         extraPanel = new JPanel();
-        browser = new WebBrowser() {
 
-            public void addNotify() {
-                super.addNotify();
-                setVisible(true);
+//Core function to create browser
+        browser = BrowserFactory.spawnMozilla();
+        browser.loadURL(themeManager.getTemplateURL());
+        documentLoaded = true;
+
+        browser.enableDefaultContextMenu(false);
+
+        browser.addMouseListener(new MouseListener() {
+            public void onClick(MouseEvent mouseEvent) {
             }
 
-
-            public void removeNotify() {
-                timer.purge();
-                setVisible(false);
+            public void onDoubleClick(MouseEvent mouseEvent) {
+                mouseEvent.consume();
             }
 
-
-            public boolean isAutoDispose() {
-                return false;
-            }
-        };
-        browser.setURL(themeManager.getTemplateURL());
-
-
-        browser.addWebBrowserListener(new WebBrowserListener() {
-            public void downloadStarted(WebBrowserEvent webBrowserEvent) {
+            public void onMouseDown(MouseEvent mouseEvent) {
+                mouseEvent.consume();
             }
 
-            public void downloadCompleted(WebBrowserEvent webBrowserEvent) {
-
-            }
-
-            public void downloadProgress(WebBrowserEvent webBrowserEvent) {
-            }
-
-            public void downloadError(WebBrowserEvent webBrowserEvent) {
-            }
-
-            public void documentCompleted(WebBrowserEvent webBrowserEvent) {
-                documentLoaded = true;
-            }
-
-            public void titleChange(WebBrowserEvent webBrowserEvent) {
-            }
-
-            public void statusTextChange(WebBrowserEvent webBrowserEvent) {
-            }
-
-
-            public void initializationCompleted(WebBrowserEvent webBrowserEvent) {
+            public void onMouseUp(MouseEvent mouseEvent) {
+                mouseEvent.consume();
             }
         });
 
-        add(browser, BorderLayout.CENTER);
-        browser.setMinimumSize(new Dimension(0, 0));
+        add((Canvas)browser, BorderLayout.CENTER);
 
 
         extraPanel.setBackground(Color.white);
@@ -151,7 +125,7 @@ public class TranscriptWindow extends JPanel {
 
         startCommandListener();
 
-        browser.setFocusable(false);
+
         this.setFocusable(false);
         setBorder(null);
     }
@@ -482,7 +456,7 @@ public class TranscriptWindow extends JPanel {
     public void setURL(URL url) {
         documentLoaded = false;
 
-        browser.setURL(url);
+        browser.loadURL(url);
     }
 
     private void startCommandListener() {

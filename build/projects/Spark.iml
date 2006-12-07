@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../src/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/../../target" />
     </content>
-    <orderEntry type="jdk" jdkName="JDK 1.5.0" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library>
@@ -106,9 +106,7 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../code/smack/source" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -189,9 +187,7 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../code/smack/source" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -200,15 +196,40 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smackx-debug.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../code/smack/source" />
-        </SOURCES>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/dist/skinlf.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/skinlf.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/webrenderer-win.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/dist/corecomponents-win.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/dist/webrenderer.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
