@@ -347,7 +347,7 @@ public class ThemeManager {
         return incoming;
     }
 
-    public String getIncomingHistoryMessage(String sender, String time, String message, URL iconPath) {
+    public String getIncomingHistoryMessage(String sender, String time, String message, URL iconPath) throws Exception {
         String incoming = incomingHistoryText;
         if (incoming == null) {
             incoming = incomingText;
@@ -357,7 +357,7 @@ public class ThemeManager {
         }
         incoming = incoming.replaceAll("%sender%", sender);
         incoming = incoming.replaceAll("%time%", time);
-        incoming = incoming.replaceAll("%message%", message);
+        incoming = StringUtils.replace(incoming, "%message%", message);
         incoming = incoming.replaceAll("%service%", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         incoming = filter(incoming);
         if (iconPath != null) {

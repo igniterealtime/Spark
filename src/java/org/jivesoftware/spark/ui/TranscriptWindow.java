@@ -340,8 +340,15 @@ public class TranscriptWindow extends JPanel {
                 executeScript("appendMessage('" + text + "')");
             }
             else {
-                String text = themeManager.getIncomingHistoryMessage(userid, time, message, vcardManager.getAvatar(jid));
-                executeScript("appendMessage('" + text + "')");
+                String text = null;
+                try {
+                    text = themeManager.getIncomingHistoryMessage(userid, time, message, vcardManager.getAvatar(jid));
+                    executeScript("appendMessage('" + text + "')");
+                }
+                catch (Exception e) {
+                    Log.error(e);
+                }
+
             }
         }
 

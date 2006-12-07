@@ -33,17 +33,9 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -51,6 +43,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -157,14 +155,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        final TranscriptWindow roomWindow = room.getTranscriptWindow();
-
-        final TranscriptWindow window = new TranscriptWindow();
-        window.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                room.getChatInputEditor().requestFocusInWindow();
-            }
-        });
         insertHistory(room);
 
         if (room instanceof ChatRoomImpl) {
@@ -185,59 +175,42 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final StringBuffer buf = new StringBuffer();
         final String jid = room.getRoomname();
 
-        if (room.getChatType() == Message.Type.CHAT) {
-            SwingWorker worker = new SwingWorker() {
-                public Object construct() {
-                    try {
-                        Thread.sleep(10);
-                    }
-                    catch (InterruptedException e) {
-                        Log.error("Exception in Chat Transcript Loading.", e);
-                    }
+        ChatTranscript transcript = ChatTranscripts.getChatTranscript(jid);
 
-                    return ChatTranscripts.getChatTranscript(jid);
+        if (transcript == null) {
+            return;
+        }
+        TranscriptWindow window = room.getTranscriptWindow();
+        final Iterator messages = transcript.getNumberOfEntries(20).iterator();
+
+        while (messages.hasNext()) {
+            while (messages != null && messages.hasNext()) {
+
+                try {
+                    HistoryMessage message = (HistoryMessage)messages.next();
+                    String from = StringUtils.parseName(message.getFrom());
+                    Date date = message.getDate();
+
+                    final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+                    String dateValue = "[" + formatter.format(date) + "] ";
+                    buf.append(dateValue);
+                    buf.append(" ");
+                    buf.append(from);
+                    buf.append(": ");
+                    buf.append(message.getBody());
+                    buf.append("\n");
+
+                    window.insertHistoryMessage(message.getFrom(), from, message.getBody(), date);
                 }
-
-
-                public void finished() {
-                    ChatTranscript transcript = (ChatTranscript)get();
-                    if (transcript == null) {
-                        return;
-                    }
-                    TranscriptWindow window = room.getTranscriptWindow();
-                    final Iterator messages = transcript.getNumberOfEntries(20).iterator();
-
-                    while (messages.hasNext()) {
-                        while (messages != null && messages.hasNext()) {
-
-                            try {
-                                HistoryMessage message = (HistoryMessage)messages.next();
-                                String from = StringUtils.parseName(message.getFrom());
-                                Date date = message.getDate();
-
-                                final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-                                String dateValue = "[" + formatter.format(date) + "] ";
-                                buf.append(dateValue);
-                                buf.append(" ");
-                                buf.append(from);
-                                buf.append(": ");
-                                buf.append(message.getBody());
-                                buf.append("\n");
-
-                                window.insertHistoryMessage(message.getFrom(), from, message.getBody(), date);
-                            }
-                            catch (Exception e) {
-                                Log.error(e);
-                                break;
-                            }
-                        }
-
-                    }
+                catch (Exception e) {
+                    Log.error(e);
+                    break;
                 }
-            };
-            worker.start();
+            }
+
         }
     }
+
 
     public void chatRoomLeft(ChatRoom room) {
 
