@@ -468,13 +468,13 @@
             <arg value="mac/dmg_spark.scpt"/>
             <arg value="${mac.volname}"/>
             <arg value="images/mac/background/"/>
-            <arg value="460"/>
-            <arg value="460"/>
-            <arg value="180"/>
-            <arg value="150"/>
+            <arg value="400"/>
+            <arg value="400"/>
+            <arg value="200"/>
+            <arg value="205"/>
             <arg value="430"/>
-            <arg value="150"/>
-            <arg value="128"/>
+            <arg value="205"/>
+            <arg value="80"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
             <arg line="detach ${basedir}/tmp -quiet -force"/>
