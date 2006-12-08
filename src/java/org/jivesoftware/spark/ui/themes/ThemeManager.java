@@ -17,6 +17,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -149,6 +150,15 @@ public class ThemeManager {
 
         // Add Preference
         SparkManager.getPreferenceManager().addPreference(new ThemePreference());
+
+
+        SwingWorker worker = new SwingWorker(){
+            public Object construct(){
+                 return BrowserFactory.spawnMozilla();
+            }
+        };
+
+        worker.start();
     }
 
     private void expandNewThemes() {

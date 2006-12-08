@@ -119,14 +119,14 @@ public final class Spark {
 
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 File skinDir = new File(Spark.getBinDirectory().getParent(), "xtra/skins").getAbsoluteFile();
-                File defaultSkin = new File(skinDir, "crystal2themepack.zip");
-                //Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
-                Skin theSkinToUse = SkinLookAndFeel.loadThemePackDefinition(new File("c:\\crapola\\crystal\\skinlf-themepack.xml").toURL());
+                File defaultSkin = new File(skinDir, "crystal.zip");
+                Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
                 SkinLookAndFeel.setSkin(theSkinToUse);
 
                 // finally set the Skin Look And Feel
+                UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+
                 UIManager.setLookAndFeel(new SkinLookAndFeel());
-                //UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
                 UIManager.setLookAndFeel(classname);
