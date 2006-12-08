@@ -32,13 +32,10 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
-import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -185,10 +182,6 @@ public class ChatRoomImpl extends ChatRoom {
 
         typingTimer.start();
         lastActivity = System.currentTimeMillis();
-
-        // Add VCard Panel
-        final VCardPanel vcardPanel = new VCardPanel(participantJID);
-        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
     }
 
 
@@ -531,7 +524,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @param typing true if the typing notification should show, otherwise hide it.
      */
     public void showTyping(boolean typing) {
-       
+
 
     }
 

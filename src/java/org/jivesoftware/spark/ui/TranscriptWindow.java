@@ -14,6 +14,8 @@ import com.webrenderer.BrowserFactory;
 import com.webrenderer.IBrowserCanvas;
 import com.webrenderer.event.MouseEvent;
 import com.webrenderer.event.MouseListener;
+import com.webrenderer.event.NetworkEvent;
+import com.webrenderer.event.NetworkListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
@@ -93,7 +95,33 @@ public class TranscriptWindow extends JPanel {
 
 //Core function to create browser
         browser = BrowserFactory.spawnMozilla();
+        browser.addNetworkListener(new NetworkListener() {
+            public void onProgressChange(NetworkEvent networkEvent) {
+            }
+
+            public void onDocumentLoad(NetworkEvent networkEvent) {
+                documentLoaded = true;
+            }
+
+            public void onDocumentComplete(NetworkEvent networkEvent) {
+            }
+
+            public void onNetworkStatus(NetworkEvent networkEvent) {
+            }
+
+            public void onNetworkError(NetworkEvent networkEvent) {
+            }
+
+            public void onHTTPResponse(NetworkEvent networkEvent) {
+            }
+
+            public void onHTTPInterceptHeaders(NetworkEvent networkEvent) {
+            }
+        });
+
+
         browser.loadURL(themeManager.getTemplateURL());
+
         documentLoaded = true;
 
         browser.enableDefaultContextMenu(false);

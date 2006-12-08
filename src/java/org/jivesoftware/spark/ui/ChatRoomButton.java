@@ -10,6 +10,8 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.spark.component.RolloverButton;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 
@@ -20,13 +22,12 @@ import java.awt.event.MouseEvent;
 /**
  * Button to use with ChatRooms to allow for conformity in the Chat Room look and feel.
  */
-public class ChatRoomButton extends JButton {
+public class ChatRoomButton extends RolloverButton {
 
     /**
      * Create a new ChatRoomButton.
      */
     public ChatRoomButton() {
-        decorate();
     }
 
     /**
@@ -36,7 +37,6 @@ public class ChatRoomButton extends JButton {
      */
     public ChatRoomButton(Icon icon) {
         super(icon);
-        decorate();
     }
 
     /**
@@ -47,7 +47,6 @@ public class ChatRoomButton extends JButton {
      */
     public ChatRoomButton(String text, Icon icon) {
         super(text, icon);
-        decorate();
     }
 
     /**
@@ -58,38 +57,10 @@ public class ChatRoomButton extends JButton {
     public ChatRoomButton(String text) {
         super(text);
 
-        decorate();
     }
 
 
-    /**
-     * Decorates the button with the approriate UI configurations.
-     */
-    private void decorate() {
-        setBorderPainted(false);
-        setOpaque(true);
 
-        setContentAreaFilled(false);
-        setMargin(new Insets(0, 0, 0, 0));
-
-        addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                if (isEnabled()) {
-                    setBorderPainted(true);
-                    setContentAreaFilled(true);
-                }
-            }
-
-            public void mouseExited(MouseEvent e) {
-                setBorderPainted(false);
-                setContentAreaFilled(false);
-            }
-        });
-
-        setVerticalTextPosition(JButton.BOTTOM);
-        setHorizontalTextPosition(JButton.CENTER);
-        setIconTextGap(2);
-    }
 
 
 }

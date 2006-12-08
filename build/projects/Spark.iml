@@ -187,22 +187,15 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../lib/dist/customskin.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/smackx-debug.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/skinlf.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -230,6 +223,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/webrenderer.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/dist/skinlf.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
