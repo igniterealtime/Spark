@@ -81,7 +81,6 @@ public class TranscriptWindow extends JPanel {
 
     private Timer timer = new Timer();
 
-
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
      */
@@ -93,7 +92,7 @@ public class TranscriptWindow extends JPanel {
 
         extraPanel = new JPanel();
 
-//Core function to create browser
+        //Core function to create browser
         browser = BrowserFactory.spawnMozilla();
         browser.addNetworkListener(new NetworkListener() {
             public void onProgressChange(NetworkEvent networkEvent) {
@@ -512,9 +511,9 @@ public class TranscriptWindow extends JPanel {
     public void addComponent(JComponent component) {
         extraPanel.add(component);
         extraPanel.setVisible(true);
-        extraPanel.invalidate();
-        extraPanel.validate();
-        extraPanel.repaint();
+        invalidate();
+        validate();
+        repaint();
     }
 
     public void removeComponent(JComponent component) {
@@ -523,9 +522,9 @@ public class TranscriptWindow extends JPanel {
         }
 
         extraPanel.remove(component);
-        extraPanel.invalidate();
-        extraPanel.validate();
-        extraPanel.repaint();
+        invalidate();
+        validate();
+        repaint();
     }
 
     public Dimension getPreferredSize() {

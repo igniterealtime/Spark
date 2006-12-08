@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ByteFormat;
@@ -77,6 +78,15 @@ public class SendMessage extends JPanel {
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
+
+        final RolloverButton hideButton = new RolloverButton("Hide", SparkRes.getImageIcon(SparkRes.SMALL_CLOSE_BUTTON));
+        add(hideButton, new GridBagConstraints(2, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        hideButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+            }
+        });
+
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
         cancelButton.setText(Res.getString("cancel"));

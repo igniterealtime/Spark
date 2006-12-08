@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
@@ -33,20 +34,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -65,6 +52,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 
 public class ReceiveMessage extends JPanel {
     private JLabel imageLabel = new JLabel();
@@ -90,6 +91,14 @@ public class ReceiveMessage extends JPanel {
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+
+        final RolloverButton hideButton = new RolloverButton("Hide", SparkRes.getImageIcon(SparkRes.SMALL_CLOSE_BUTTON));
+        add(hideButton, new GridBagConstraints(2, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        hideButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+            }
+        });
 
         add(acceptLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 2), 0, 0));
 
@@ -272,8 +281,8 @@ public class ReceiveMessage extends JPanel {
                         progressBar.setValue((int)bytesRead);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == FileTransfer.Status.error ||
-                                status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
-                                status == FileTransfer.Status.refused) {
+                            status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
+                            status == FileTransfer.Status.refused) {
                             break;
                         }
                         else if (status == FileTransfer.Status.negotiating_stream) {
@@ -361,7 +370,7 @@ public class ReceiveMessage extends JPanel {
                         transferMessage = Res.getString("message.transfer.refused");
                     }
                     else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
-                            transfer.getAmountWritten() < request.getFileSize()) {
+                        transfer.getAmountWritten() < request.getFileSize()) {
                         transferMessage = Res.getString("message.transfer.cancelled");
                     }
 
@@ -680,26 +689,26 @@ public class ReceiveMessage extends JPanel {
         String fileURL = file.toURL().toString();
         String folderURL = file.getParentFile().toURL().toString();
         builder.append("<table width=\"100%\">" +
-                "    <tr>" +
-                "     <td><img src=\"" + iconURL + "\"></td>" +
-                "        <td>" +
-                "            " + title + "" +
-                "        </td>" +
-                "    </tr>" +
-                "    <tr>" +
-                "        <td colspan=\"2\">" +
-                "           " + file.getName() + "" +
-                "        </td>" +
-                "    </tr>" +
-                "    <tr>" +
-                "        <td width=\"5%\">" +
-                "            <a href=\"" + fileURL + "\" target=\"_blank\">Open</a>" +
-                "        </td>" +
-                "        <td align=\"left\">" +
-                "            <a href=\"" + folderURL + "\" target=\"_blank\">Open Folder</a>" +
-                "        </td>" +
-                "    </tr>" +
-                "</table>");
+            "    <tr>" +
+            "     <td><img src=\"" + iconURL + "\"></td>" +
+            "        <td>" +
+            "            " + title + "" +
+            "        </td>" +
+            "    </tr>" +
+            "    <tr>" +
+            "        <td colspan=\"2\">" +
+            "           " + file.getName() + "" +
+            "        </td>" +
+            "    </tr>" +
+            "    <tr>" +
+            "        <td width=\"5%\">" +
+            "            <a href=\"" + fileURL + "\" target=\"_blank\">Open</a>" +
+            "        </td>" +
+            "        <td align=\"left\">" +
+            "            <a href=\"" + folderURL + "\" target=\"_blank\">Open Folder</a>" +
+            "        </td>" +
+            "    </tr>" +
+            "</table>");
 
         return builder.toString();
     }

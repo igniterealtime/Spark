@@ -125,12 +125,25 @@ public class ThemeManager {
         String themeName = pref.getTheme();
 
         File theme = new File(THEMES_DIRECTORY, themeName);
+        if (!theme.exists()) {
+            File themeDir = ThemeManager.THEMES_DIRECTORY;
+            File[] dirs = themeDir.listFiles();
+            for (int i = 0; i < dirs.length; i++) {
+                File file = dirs[i];
+                if (file.isDirectory()) {
+                    themeName = file.getName();
+                    pref.setTheme(themeName);
+                    theme = new File(THEMES_DIRECTORY, themeName);
+                    break;
+                }
+            }
+        }
 
         try {
             setTheme(theme);
         }
         catch (Exception e) {
-            System.err.println("Could not locate "+theme);
+            System.err.println("Could not locate " + theme);
             e.printStackTrace();
         }
 

@@ -636,7 +636,7 @@ public class SparkTransferManager {
         });
 
         sendingUI.sendFile(transfer, transferManager, presence.getFrom(), contactItem.getNickname());
-        transcriptWindow.add(sendingUI, BorderLayout.AFTER_LAST_LINE);
+        transcriptWindow.addComponent(sendingUI);
         return chatRoom;
     }
 
