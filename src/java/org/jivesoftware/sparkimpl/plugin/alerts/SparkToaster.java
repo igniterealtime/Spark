@@ -235,6 +235,7 @@ public class SparkToaster {
 
             pack();
             setSize(toasterWidth, toasterHeight);
+            mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         }
 
 
@@ -358,6 +359,7 @@ public class SparkToaster {
         SingleToaster singleToaster = new SingleToaster();
         final JScrollPane pane = new JScrollPane(singleToaster.message);
         pane.setOpaque(false);
+        pane.setBorder(BorderFactory.createEmptyBorder());
         pane.getViewport().setBackground(Color.white);
         mainPanel.add(pane, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
 
