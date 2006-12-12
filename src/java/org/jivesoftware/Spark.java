@@ -10,26 +10,24 @@
 
 package org.jivesoftware;
 
-import com.l2fprod.gui.plaf.skin.Skin;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Insets;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -112,21 +110,18 @@ public final class Spark {
             }
         }
 
-         try {
+        try {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
 
                 JFrame.setDefaultLookAndFeelDecorated(true);
-                File skinDir = new File(Spark.getBinDirectory().getParent(), "xtra/skins").getAbsoluteFile();
-                File defaultSkin = new File(skinDir, "crystal.zip");
-                Skin theSkinToUse = SkinLookAndFeel.loadThemePack(defaultSkin.toURL());
-                SkinLookAndFeel.setSkin(theSkinToUse);
 
                 // finally set the Skin Look And Feel
                 UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+                UIManager.setLookAndFeel(new SyntheticaStandardLookAndFeel());
 
-                UIManager.setLookAndFeel(new SkinLookAndFeel());
+
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
                 UIManager.setLookAndFeel(classname);
