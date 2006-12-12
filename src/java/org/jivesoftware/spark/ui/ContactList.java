@@ -282,15 +282,15 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // If not available, move to offline group.
         else if (presence.getType() == Presence.Type.unavailable && !isPending) {
-            presence = roster.getPresence(bareJID);
-            if (presence == null) {
-                moveToOfflineGroup(bareJID);
+            Presence p = roster.getPresence(bareJID);
+            if (p == null) {
+                moveToOfflineGroup(presence, bareJID);
             }
         }
 
     }
 
-    private void moveToOfflineGroup(final String bareJID) {
+    private void moveToOfflineGroup(final Presence presence, final String bareJID) {
         final Iterator groupIterator = new ArrayList(groupList).iterator();
         while (groupIterator.hasNext()) {
             final ContactGroup group = (ContactGroup)groupIterator.next();
@@ -313,7 +313,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                 return;
                             }
 
-                            item.setPresence(null);
+                            item.setPresence(presence);
 
                             // Check for ContactItemHandler.
                             group.removeContactItem(item);
