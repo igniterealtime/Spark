@@ -72,7 +72,7 @@ public class BookmarkedConferences extends JPanel {
 
     private Collection mucServices;
 
-    private Set autoJoinRooms = new HashSet();
+    private Set<String> autoJoinRooms = new HashSet<String>();
 
     private List listeners = new ArrayList();
 
@@ -501,6 +501,7 @@ public class BookmarkedConferences extends JPanel {
 
             if (bookmark.isAutoJoin()) {
                 ConferenceUtils.autoJoinConferenceRoom(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+                autoJoinRooms.add(bookmark.getJid());
             }
 
             // Get Service Node
