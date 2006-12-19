@@ -30,7 +30,7 @@ import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.ContactInfoHandler;
-import org.jivesoftware.spark.ui.ContactInfo;
+import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -401,7 +401,7 @@ public class ChatManager implements MessageEventNotificationListener {
         contactInfoHandlers.remove(handler);
     }
 
-    public void notifyContactInfoHandlers(ContactInfo contactInfo){
+    public void notifyContactInfoHandlers(ContactInfoWindow contactInfo){
         for(ContactInfoHandler handler : contactInfoHandlers){
             handler.handleContactInfo(contactInfo);
         }

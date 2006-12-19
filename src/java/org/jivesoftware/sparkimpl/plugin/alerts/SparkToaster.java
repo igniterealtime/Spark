@@ -33,15 +33,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.Border;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -56,6 +47,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.Border;
 
 /**
  * Class to show tosters in multiplatform
@@ -288,7 +288,7 @@ public class SparkToaster {
             try {
                 boolean animateFromBottom = true;
                 GraphicsEnvironment ge = GraphicsEnvironment
-                        .getLocalGraphicsEnvironment();
+                    .getLocalGraphicsEnvironment();
                 Rectangle screenRect = ge.getMaximumWindowBounds();
 
                 int screenHeight = (int)screenRect.height;
@@ -306,10 +306,13 @@ public class SparkToaster {
                 int posx = (int)screenRect.width - toasterWidth - 1;
 
                 toaster.setLocation(posx, screenHeight);
+                toaster.setFocusableWindowState(false);
                 toaster.setVisible(true);
                 if (useAlwaysOnTop) {
                     toaster.setAlwaysOnTop(true);
                 }
+
+                toaster.setFocusableWindowState(true);
 
                 if (animateFromBottom) {
                     startYPosition = screenHeight;

@@ -19,5 +19,5 @@ public interface ContactInfoHandler {
      * Called everytime a <code>ContactInfo</code> is about to appear.
      * @param contactInfo the contactInfo object.
      */
-    void handleContactInfo(ContactInfo contactInfo);
+    void handleContactInfo(ContactInfoWindow contactInfo);
 }

@@ -11,13 +11,10 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
@@ -27,8 +24,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -47,7 +42,6 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
 import javax.swing.Timer;
 
 /**
@@ -67,20 +61,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     // Used to display no contacts in list.
     private final ContactItem noContacts = new ContactItem("There are no online contacts in this group.", null);
 
-    private JWindow window = new JWindow();
-
     private final ListMotionListener motionListener = new ListMotionListener();
+
     private boolean canShowPopup;
+
     private MouseEvent mouseEvent;
 
-    private ContactInfo contactInfoPanel;
-
-    private ContactItem activeItem;
-
-    private boolean inWindow;
-
-    private ChatManager chatManager;
-
+    private ContactInfoWindow contactWindow = new ContactInfoWindow();
 
     /**
      * Create a new ContactGroup.
@@ -150,40 +137,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // Add Popup Window
         addPopupWindow();
-
-        window.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                inWindow = true;
-            }
-
-            public void mouseExited(MouseEvent e) {
-                Point point = e.getLocationOnScreen();
-                Point windowPoint = window.getLocationOnScreen();
-
-                int newX = (int)point.getX();
-                int newY = (int)point.getY();
-
-                int x = (int)windowPoint.getX();
-                int y = (int)windowPoint.getY();
-
-                boolean close = false;
-
-                if (newX < x || newX > x + window.getWidth()) {
-                    close = true;
-                }
-
-                if (newY < y || newY > y + window.getHeight()) {
-                    close = true;
-                }
-
-                if (close) {
-                    inWindow = false;
-                    checkWindow();
-                }
-            }
-        });
-
-        chatManager = SparkManager.getChatManager();
     }
 
     /**
@@ -405,7 +358,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        checkWindow();
+        contactWindow.checkWindow();
 
         Object o = null;
         try {
@@ -737,29 +690,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         list.addMouseMotionListener(motionListener);
     }
 
-    private void checkWindow() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(100);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-
-            public void finished() {
-                if (!inWindow) {
-                    window.setVisible(false);
-                    activeItem = null;
-                }
-            }
-        };
-
-        worker.start();
-    }
-
 
     private class ListMotionListener extends MouseMotionAdapter {
 
@@ -776,49 +706,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 return;
             }
 
-            int loc = list.locationToIndex(e.getPoint());
-            Point point = list.indexToLocation(loc);
-
-            ContactItem item = (ContactItem)model.getElementAt(loc);
-            if (item == null || item.getFullJID() == null) {
-                return;
-            }
-
-            if (activeItem != null && activeItem == item) {
-                return;
-            }
-
-            activeItem = item;
-
-            window.setFocusableWindowState(false);
-            if (contactInfoPanel == null) {
-                contactInfoPanel = new ContactInfo();
-                window.getContentPane().add(contactInfoPanel);
-            }
-
-            contactInfoPanel.setContactItem(item);
-            chatManager.notifyContactInfoHandlers(contactInfoPanel);
-            window.pack();
-
-
-            Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
-            Point listLocation = list.getLocationOnScreen();
-
-            int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
-
-            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            if ((int)screenSize.getWidth() - 250 >= x) {
-                window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
-                if (!window.isVisible())
-                    window.setVisible(true);
-            }
-            else {
-                window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
-                if (!window.isVisible())
-                    window.setVisible(true);
-            }
-
+            displayWindow(e);
         }
+    }
+
+    private void displayWindow(MouseEvent e) {
+        contactWindow.display(this, e);
     }
 }
 
