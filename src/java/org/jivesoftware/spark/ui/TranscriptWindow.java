@@ -24,7 +24,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
@@ -39,6 +38,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -55,8 +55,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -74,6 +72,8 @@ public class TranscriptWindow extends JPanel {
     private ThemeManager themeManager;
 
     private String activeUser;
+    private String activeHistoryUser;
+
 
     private boolean documentLoaded;
 
@@ -81,11 +81,14 @@ public class TranscriptWindow extends JPanel {
 
     private VCardManager vcardManager;
 
-    private List scriptList = new ArrayList();
-
-    private Timer timer = new Timer();
+    private Timer timer;
 
     private javax.swing.Timer activeTimer;
+
+    private StringBuilder scriptBuilder = new StringBuilder();
+
+    private final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
@@ -156,8 +159,6 @@ public class TranscriptWindow extends JPanel {
 
         add(extraPanel, BorderLayout.SOUTH);
 
-        startCommandListener();
-
         setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
         final Action resetAction = new AbstractAction() {
@@ -169,6 +170,27 @@ public class TranscriptWindow extends JPanel {
         int fiveMinutes = 5000 * 60;
         activeTimer = new javax.swing.Timer(fiveMinutes, resetAction);
         activeTimer.start();
+
+        final Action insertAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (documentLoaded) {
+                    final String script = scriptBuilder.toString();
+                    if (ModelUtil.hasLength(script)) {
+                        Thread thread = new Thread(new Runnable() {
+                            public void run() {
+                                browser.executeScript(script);
+                            }
+                        });
+                        thread.start();
+
+                        scriptBuilder.setLength(0);
+                    }
+                }
+                timer.restart();
+            }
+        };
+
+        timer = new Timer(50, insertAction);
     }
 
 
@@ -215,6 +237,12 @@ public class TranscriptWindow extends JPanel {
         executeScript("appendMessage('" + text + "')");
     }
 
+    /**
+     * Inserts a custom message into the transcript window.
+     *
+     * @param prefix  the prefix of the message (ex: johndoe:)
+     * @param message the body of the message.
+     */
     public void insertCustomOtherMessage(String prefix, String message) {
         message = filterBody(message);
         String text = themeManager.getIncomingMessage(prefix, "", message, vcardManager.getAvatar(""));
@@ -320,15 +348,14 @@ public class TranscriptWindow extends JPanel {
      * @return the formatted date.
      */
     private String getDate(Date insertDate) {
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
 
         if (insertDate == null) {
             insertDate = new Date();
         }
 
 
-        if (pref.isTimeDisplayedInChat()) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+        if (localPreferences.isTimeDisplayedInChat()) {
             return formatter.format(insertDate);
         }
         lastUpdated = insertDate;
@@ -365,7 +392,7 @@ public class TranscriptWindow extends JPanel {
 
         message = filterBody(message);
 
-        if (userid.equals(activeUser)) {
+        if (userid.equals(activeHistoryUser)) {
             if (outgoingMessage) {
                 String text = themeManager.getNextOutgoingHistoryString(message, time);
                 executeScript("appendNextMessage('" + text + "')");
@@ -393,7 +420,7 @@ public class TranscriptWindow extends JPanel {
             }
         }
 
-        activeUser = userid;
+        activeHistoryUser = userid;
     }
 
     /**
@@ -401,7 +428,7 @@ public class TranscriptWindow extends JPanel {
      * it as disabled.
      */
     public void showDisabledWindowUI() {
-
+        //TODO: Update disabled code.
     }
 
     /**
@@ -492,34 +519,25 @@ public class TranscriptWindow extends JPanel {
 
     public void setInnerHTML(String elementID, String value) {
         final StringBuilder builder = new StringBuilder();
-        builder.append("var myVar = document.getElementById(\"" + elementID + "\");");
-        builder.append("if(myVar){ myVar.innerHTML = '" + value + "';}");
+        builder.append("var myVar = document.getElementById(\"").append(elementID).append("\");");
+        builder.append("if(myVar){ myVar.innerHTML = '").append(value).append("';}");
         executeScript(builder.toString());
     }
 
     public void executeScript(final String script) {
-        scriptList.add(script);
+        scriptBuilder.append(script);
+        if (!script.endsWith(";")) {
+            scriptBuilder.append(";");
+        }
+
+        scriptBuilder.append(" ");
+        timer.restart();
     }
 
     public void setURL(URL url) {
         documentLoaded = false;
 
         browser.loadURL(url);
-    }
-
-    private void startCommandListener() {
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                if (documentLoaded) {
-                    if (scriptList.size() > 0) {
-                        String script = (String)scriptList.get(0);
-                        scriptList.remove(0);
-                        browser.executeScript(script);
-                    }
-                }
-            }
-        }, 50, 50);
     }
 
     public void addComponent(JComponent component) {
@@ -562,7 +580,6 @@ public class TranscriptWindow extends JPanel {
             else if (emoticonManager.getEmoticon(textFound) != null) {
                 Emoticon emot = emoticonManager.getEmoticon(textFound);
                 URL url = emoticonManager.getEmoticonURL(emot);
-                File file = URLFileSystem.url2File(url);
                 builder.append("<img src=\"").append(url.toExternalForm()).append("\" />");
             }
             else {
@@ -587,3 +604,4 @@ public class TranscriptWindow extends JPanel {
 
 
 }
+
