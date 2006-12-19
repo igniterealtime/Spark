@@ -32,10 +32,19 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -48,11 +57,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -80,6 +84,8 @@ public class TranscriptWindow extends JPanel {
     private List scriptList = new ArrayList();
 
     private Timer timer = new Timer();
+
+    private javax.swing.Timer activeTimer;
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
@@ -152,9 +158,17 @@ public class TranscriptWindow extends JPanel {
 
         startCommandListener();
 
+        setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
-        this.setFocusable(false);
-        setBorder(null);
+        final Action resetAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                activeUser = null;
+            }
+        };
+
+        int fiveMinutes = 5000 * 60;
+        activeTimer = new javax.swing.Timer(fiveMinutes, resetAction);
+        activeTimer.start();
     }
 
 
@@ -191,7 +205,7 @@ public class TranscriptWindow extends JPanel {
             executeScript("appendMessage('" + text + "')");
         }
 
-        activeUser = userid;
+        setActiveUser(userid);
     }
 
 
@@ -252,7 +266,7 @@ public class TranscriptWindow extends JPanel {
                 executeScript("appendMessage('" + text + "')");
             }
 
-            activeUser = userid;
+            setActiveUser(userid);
         }
         catch (Exception ex) {
             Log.error("Error message.", ex);
@@ -450,7 +464,7 @@ public class TranscriptWindow extends JPanel {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -542,7 +556,7 @@ public class TranscriptWindow extends JPanel {
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
                 builder.append("<a href=\"").append(textFound).append("\" target=_blank>").append(textFound).append("</a>");
             }
             else if (emoticonManager.getEmoticon(textFound) != null) {
@@ -558,6 +572,17 @@ public class TranscriptWindow extends JPanel {
 
         return builder.toString();
 
+    }
+
+    /**
+     * Sets the current active user.
+     *
+     * @param user the active user.
+     */
+    private void setActiveUser(String user) {
+        activeUser = user;
+        activeTimer.stop();
+        activeTimer.start();
     }
 
 
