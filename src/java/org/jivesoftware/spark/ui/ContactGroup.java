@@ -20,12 +20,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-import javax.swing.Timer;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -49,6 +43,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -157,8 +157,29 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
 
             public void mouseExited(MouseEvent e) {
-                inWindow = false;
-                checkWindow();
+                Point point = e.getLocationOnScreen();
+                Point windowPoint = window.getLocationOnScreen();
+
+                int newX = (int)point.getX();
+                int newY = (int)point.getY();
+
+                int x = (int)windowPoint.getX();
+                int y = (int)windowPoint.getY();
+
+                boolean close = false;
+
+                if (newX < x || newX > x + window.getWidth()) {
+                    close = true;
+                }
+
+                if (newY < y || newY > y + window.getHeight()) {
+                    close = true;
+                }
+
+                if (close) {
+                    inWindow = false;
+                    checkWindow();
+                }
             }
         });
 
