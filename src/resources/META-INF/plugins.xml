@@ -140,4 +140,13 @@
         <description>Allows users to shake a users frame.</description>
         <class>org.jivesoftware.sparkimpl.plugin.alerts.BuzzPlugin</class>
     </plugin>
+    <plugin>
+        <name>ChatInfo Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Handles basic Chat Info operation.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ChatInfoPlugin</class>
+    </plugin>
 </plugins>

@@ -63,6 +63,7 @@ public class PhonePlugin implements Plugin {
 
         final XMPPConnection con = SparkManager.getConnection();
 
+        /*
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
@@ -86,6 +87,7 @@ public class PhonePlugin implements Plugin {
         };
 
         worker.start();
+        */
     }
 
     private void setupPhoneSystem() {

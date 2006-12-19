@@ -11,11 +11,13 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.DefaultListModel;
@@ -72,6 +74,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private MouseEvent mouseEvent;
 
     private ContactInfo contactInfoPanel;
+
+    private ContactItem activeItem;
+
+    private boolean inWindow;
+
+    private ChatManager chatManager;
+
 
     /**
      * Create a new ContactGroup.
@@ -141,6 +150,19 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // Add Popup Window
         addPopupWindow();
+
+        window.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                inWindow = true;
+            }
+
+            public void mouseExited(MouseEvent e) {
+                inWindow = false;
+                checkWindow();
+            }
+        });
+
+        chatManager = SparkManager.getChatManager();
     }
 
     /**
@@ -362,7 +384,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        window.setVisible(false);
+        checkWindow();
 
         Object o = null;
         try {
@@ -694,9 +716,31 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         list.addMouseMotionListener(motionListener);
     }
 
+    private void checkWindow() {
+        final SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    Thread.sleep(100);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
+            public void finished() {
+                if (!inWindow) {
+                    window.setVisible(false);
+                    activeItem = null;
+                }
+            }
+        };
+
+        worker.start();
+    }
+
 
     private class ListMotionListener extends MouseMotionAdapter {
-        private ContactItem activeItem;
 
         public void mouseMoved(MouseEvent e) {
             if (e != null) {
@@ -707,7 +751,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 return;
             }
 
-            if(e == null){
+            if (e == null) {
                 return;
             }
 
@@ -732,7 +776,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
 
             contactInfoPanel.setContactItem(item);
-
+            chatManager.notifyContactInfoHandlers(contactInfoPanel);
             window.pack();
 
 

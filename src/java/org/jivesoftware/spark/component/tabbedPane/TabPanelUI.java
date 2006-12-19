@@ -13,23 +13,28 @@ package org.jivesoftware.spark.component.tabbedPane;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicPanelUI;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.TexturePaint;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.StringTokenizer;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicPanelUI;
 
 /**
  * Represents a single instance of a Tab Paint Component.
@@ -92,7 +97,26 @@ public class TabPanelUI extends BasicPanelUI {
         if (!Spark.isMac()) {
             //   g2d.setClip(vButtonShape);
         }
-        g2d.setColor(backgroundColor);
+        // g2d.setColor(backgroundColor);
+        BufferedImage theImage = null;
+
+        if (selected) {
+            try {
+                theImage = GraphicUtils.convert(Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage());
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                theImage = GraphicUtils.convert(SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage());
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        g2d.setPaint(new TexturePaint(theImage, new Rectangle(x, y, w, h)));
         g2d.fillRect(x, y, w, h);
 
         g2d.setClip(vOldClip);

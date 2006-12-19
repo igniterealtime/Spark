@@ -12,7 +12,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.component.WrappedLabel;
+import org.jivesoftware.spark.component.JMultilineLabel;
 import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -40,21 +41,29 @@ import java.net.URL;
  * @author Derek DeMoro
  */
 public class ContactInfo extends JPanel {
-    private final WrappedLabel nicknameLabel = new WrappedLabel();
-    private final WrappedLabel statusLabel = new WrappedLabel();
+    private final JMultilineLabel nicknameLabel = new JMultilineLabel();
+    private final JMultilineLabel statusLabel = new JMultilineLabel();
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel imageLabel = new JLabel();
 
+    private ContactItem contactItem;
+
+    private JPanel toolbar;
 
     public ContactInfo() {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
 
+        toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        toolbar.setOpaque(false);
+
 
         add(nicknameLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         add(statusLabel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 5, 5), 0, 0));
-        add(fullJIDLabel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        add(imageLabel, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+
+        add(fullJIDLabel, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(imageLabel, new GridBagConstraints(1, 0, 1, 3, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
 
 
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -71,6 +80,8 @@ public class ContactInfo extends JPanel {
     }
 
     public void setContactItem(ContactItem contactItem) {
+        this.contactItem = contactItem;
+
         nicknameLabel.setText(contactItem.getNickname());
         statusLabel.setText(contactItem.getStatus());
 
@@ -103,13 +114,25 @@ public class ContactInfo extends JPanel {
             else {
                 icon = new ImageIcon(SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage().getScaledInstance(1, 64, Image.SCALE_SMOOTH));
                 imageLabel.setIcon(icon);
-
-
             }
         }
         catch (MalformedURLException e) {
             Log.error(e);
         }
+
+        toolbar.removeAll();
+    }
+
+    public ContactItem getContactItem() {
+        return contactItem;
+    }
+
+    public void addChatRoomButton(ChatRoomButton button) {
+        toolbar.add(button);
+    }
+
+    public JPanel getToolbar() {
+        return toolbar;
     }
 
 

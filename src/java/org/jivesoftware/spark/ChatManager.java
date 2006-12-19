@@ -29,6 +29,8 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageFilter;
+import org.jivesoftware.spark.ui.ContactInfoHandler;
+import org.jivesoftware.spark.ui.ContactInfo;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -38,6 +40,9 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -45,14 +50,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
  * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
  */
 public class ChatManager implements MessageEventNotificationListener {
+    private static ChatManager singleton;
+    private static final Object LOCK = new Object();
+
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
 
     private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
@@ -64,8 +69,8 @@ public class ChatManager implements MessageEventNotificationListener {
 
     private Set<String> customList = new HashSet<String>();
 
-    private static ChatManager singleton;
-    private static final Object LOCK = new Object();
+    private List<ContactInfoHandler> contactInfoHandlers = new ArrayList<ContactInfoHandler>();
+
 
     /**
      * Returns the singleton instance of <CODE>ChatManager</CODE>,
@@ -99,9 +104,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-            new ChatMessageEventRequestListener();
+                new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-            addMessageEventRequestListener(messageEventRequestListener);
+                addMessageEventRequestListener(messageEventRequestListener);
     }
 
 
@@ -386,6 +391,20 @@ public class ChatManager implements MessageEventNotificationListener {
         }
 
         return false;
+    }
+
+    public void addContactInfoHandler(ContactInfoHandler handler){
+        contactInfoHandlers.add(handler);
+    }
+
+    public void removeContactInfoHandler(ContactInfoHandler handler){
+        contactInfoHandlers.remove(handler);
+    }
+
+    public void notifyContactInfoHandlers(ContactInfo contactInfo){
+        for(ContactInfoHandler handler : contactInfoHandlers){
+            handler.handleContactInfo(contactInfo);
+        }
     }
 
     public boolean fireContactItemDoubleClicked(ContactItem item) {
