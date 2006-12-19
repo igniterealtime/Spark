@@ -22,6 +22,7 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ContactInfoHandler;
 import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.util.SwingWorker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,7 +42,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
     private final ChatManager chatManager = SparkManager.getChatManager();
 
     // The active ContactInfoWindow.
-    private ContactInfoWindow window;
+    private ContactInfoWindow contactInfoWindow;
 
     public void initialize() {
         // Add this as a contact info handler.
@@ -52,7 +53,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
     }
 
     public boolean canShutDown() {
-        return false;
+        return true;
     }
 
     public void uninstall() {
@@ -64,17 +65,11 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
      * @param contactInfo the ContactInfoWindow.
      */
     public void handleContactInfo(final ContactInfoWindow contactInfo) {
-        this.window = contactInfo;
+        this.contactInfoWindow = contactInfo;
 
         final ChatRoomButton chatButton = new ChatRoomButton(Res.getString("button.start.chat"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        final ChatRoomButton emailButton = new ChatRoomButton(Res.getString("button.send.email"), SparkRes.getImageIcon(SparkRes.SEND_MAIL_IMAGE_16x16));
 
         contactInfo.addChatRoomButton(chatButton);
-
-        final VCard vcard = SparkManager.getVCardManager().getVCard(contactInfo.getContactItem().getContactJID());
-        if (vcard != null && vcard.getEmailHome() != null) {
-            contactInfo.addChatRoomButton(emailButton);
-        }
 
         chatButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -82,12 +77,34 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
             }
         });
 
-        emailButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sendEmail(contactInfo.getContactItem());
-            }
-        });
+        checkForEmailAddress();
+    }
 
+
+    private void checkForEmailAddress() {
+        final SwingWorker vcardCheckThread = new SwingWorker() {
+            public Object construct() {
+                return SparkManager.getVCardManager().getVCard(contactInfoWindow.getContactItem().getContactJID());
+            }
+
+            public void finished() {
+                final VCard vcard = (VCard)get();
+                if (vcard != null && vcard.getEmailHome() != null) {
+                    final ChatRoomButton emailButton = new ChatRoomButton(Res.getString("button.send.email"), SparkRes.getImageIcon(SparkRes.SEND_MAIL_IMAGE_16x16));
+                    contactInfoWindow.addChatRoomButton(emailButton);
+                    contactInfoWindow.getToolbar().invalidate();
+                    contactInfoWindow.getToolbar().validate();
+                    contactInfoWindow.getToolbar().repaint();
+                    emailButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            sendEmail(contactInfoWindow.getContactItem());
+                        }
+                    });
+                }
+            }
+        };
+
+        vcardCheckThread.start();
     }
 
     /**
@@ -96,7 +113,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
      * @param item the ContactItem.
      */
     private void startConversation(ContactItem item) {
-        window.dispose();
+        contactInfoWindow.dispose();
         chatManager.activateChat(item.getContactJID(), item.getNickname());
     }
 
@@ -106,7 +123,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
      * @param item the ContactItem.
      */
     private void sendEmail(ContactItem item) {
-        window.dispose();
+        contactInfoWindow.dispose();
 
         final VCard vcard = SparkManager.getVCardManager().getVCard(item.getContactJID());
 

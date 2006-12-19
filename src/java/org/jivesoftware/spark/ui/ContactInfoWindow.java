@@ -50,7 +50,7 @@ import javax.swing.JWindow;
  * @author Derek DeMoro
  */
 public class ContactInfoWindow extends JPanel {
-    private final JMultilineLabel nicknameLabel = new JMultilineLabel();
+    private final JLabel nicknameLabel = new JLabel();
     private final JMultilineLabel statusLabel = new JMultilineLabel();
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel imageLabel = new JLabel();
@@ -79,9 +79,9 @@ public class ContactInfoWindow extends JPanel {
         add(toolbar, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         add(nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-        add(statusLabel, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 5, 5), 0, 0));
+        add(statusLabel, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 8, 5, 5), 0, 0));
 
-        add(fullJIDLabel, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
         add(imageLabel, new GridBagConstraints(1, 1, 1, 3, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
 
 
@@ -95,7 +95,7 @@ public class ContactInfoWindow extends JPanel {
         nicknameLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 
-        setBorder(BorderFactory.createEtchedBorder());
+        setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 
         window.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
@@ -169,6 +169,8 @@ public class ContactInfoWindow extends JPanel {
             return;
         }
 
+        nicknameLabel.setIcon(item.getIcon());
+
         Point point = group.getList().indexToLocation(loc);
 
         window.setFocusableWindowState(false);
@@ -183,13 +185,13 @@ public class ContactInfoWindow extends JPanel {
         int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        if ((int)screenSize.getWidth() - 250 >= x) {
+        if ((int)screenSize.getWidth() - getPreferredSize().getWidth() >= x) {
             window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
             if (!window.isVisible())
                 window.setVisible(true);
         }
         else {
-            window.setLocation((int)mainWindowLocation.getX() - 250, (int)listLocation.getY() + (int)point.getY());
+            window.setLocation((int)mainWindowLocation.getX() - (int)getPreferredSize().getWidth(), (int)listLocation.getY() + (int)point.getY());
             if (!window.isVisible())
                 window.setVisible(true);
         }
@@ -262,7 +264,8 @@ public class ContactInfoWindow extends JPanel {
 
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
-        size.width = 250;
+        size.width = 330;
+        size.height = 160;
         return size;
     }
 }
