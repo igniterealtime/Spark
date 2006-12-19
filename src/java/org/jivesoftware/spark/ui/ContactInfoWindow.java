@@ -54,6 +54,7 @@ public class ContactInfoWindow extends JPanel {
     private final JMultilineLabel statusLabel = new JMultilineLabel();
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel imageLabel = new JLabel();
+    private final JLabel iconLabel = new JLabel();
 
     private ContactItem contactItem;
 
@@ -64,6 +65,7 @@ public class ContactInfoWindow extends JPanel {
     private boolean inWindow;
 
     private ChatManager chatManager;
+
 
     public ContactInfoWindow() {
         setLayout(new GridBagLayout());
@@ -77,6 +79,7 @@ public class ContactInfoWindow extends JPanel {
         toolbar.setOpaque(false);
 
         add(toolbar, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
 
         add(nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         add(statusLabel, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 8, 5, 5), 0, 0));
