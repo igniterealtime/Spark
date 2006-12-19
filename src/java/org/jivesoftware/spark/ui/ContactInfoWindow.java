@@ -10,23 +10,34 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.JMultilineLabel;
 import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -35,14 +46,9 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
@@ -74,18 +80,28 @@ public class ContactInfoWindow extends JPanel {
 
         setBackground(Color.white);
 
-        toolbar = new BackgroundPanel();
+        toolbar = new JPanel() {
+            public void paintComponent(Graphics g) {
+                final Image backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
+                double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
+                double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+                AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+                ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+            }
+        };
+
         toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         toolbar.setOpaque(false);
+        toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
+        add(toolbar, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-        add(toolbar, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
+        add(iconLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 0, 0));
+        add(statusLabel, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0));
 
-        add(nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-        add(statusLabel, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 8, 5, 5), 0, 0));
-
-        add(fullJIDLabel, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
-        add(imageLabel, new GridBagConstraints(1, 1, 1, 3, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 4, 3, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+        add(imageLabel, new GridBagConstraints(2, 1, 1, 3, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
 
 
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -95,7 +111,6 @@ public class ContactInfoWindow extends JPanel {
         fullJIDLabel.setForeground(Color.gray);
 
 
-        nicknameLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 
         setBorder(BorderFactory.createLineBorder(Color.gray, 1));
@@ -172,7 +187,7 @@ public class ContactInfoWindow extends JPanel {
             return;
         }
 
-        nicknameLabel.setIcon(item.getIcon());
+        iconLabel.setIcon(item.getIcon());
 
         Point point = group.getList().indexToLocation(loc);
 
@@ -207,7 +222,17 @@ public class ContactInfoWindow extends JPanel {
         }
 
         nicknameLabel.setText(contactItem.getNickname());
-        statusLabel.setText(contactItem.getStatus());
+
+        String status = contactItem.getStatus();
+        if (!ModelUtil.hasLength(status)) {
+            if (contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable) {
+                status = "Offline";
+            }
+            else {
+                status = "Online";
+            }
+        }
+        statusLabel.setText(status);
 
         Transport transport = TransportUtils.getTransport(StringUtils.parseServer(contactItem.getFullJID()));
         if (transport != null) {
@@ -253,6 +278,10 @@ public class ContactInfoWindow extends JPanel {
 
     public void addChatRoomButton(ChatRoomButton button) {
         toolbar.add(button);
+    }
+
+    public void addToolbarComponent(Component comp) {
+        toolbar.add(comp);
     }
 
     public JPanel getToolbar() {
