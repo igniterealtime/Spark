@@ -90,7 +90,7 @@ public class ContactInfoWindow extends JPanel {
             }
         };
 
-        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         toolbar.setOpaque(false);
         toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
         add(toolbar, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -121,22 +121,20 @@ public class ContactInfoWindow extends JPanel {
             }
 
             public void mouseExited(MouseEvent e) {
-                Point point = e.getLocationOnScreen();
-                Point windowPoint = window.getLocationOnScreen();
+                Point point = e.getPoint();
 
-                int newX = (int)point.getX();
-                int newY = (int)point.getY();
+                Dimension dim = window.getSize();
 
-                int x = (int)windowPoint.getX();
-                int y = (int)windowPoint.getY();
+                int x = (int)point.getX();
+                int y = (int)point.getY();
 
                 boolean close = false;
 
-                if (newX < x || newX > x + window.getWidth()) {
+                if (x < 0 || x >= dim.getWidth()) {
                     close = true;
                 }
 
-                if (newY < y || newY > y + window.getHeight()) {
+                if (y < 0 || y >= dim.getHeight()) {
                     close = true;
                 }
 
