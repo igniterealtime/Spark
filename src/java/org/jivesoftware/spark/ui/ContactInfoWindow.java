@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
@@ -25,19 +24,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -46,9 +37,14 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
@@ -59,7 +55,7 @@ public class ContactInfoWindow extends JPanel {
     private final JLabel nicknameLabel = new JLabel();
     private final JMultilineLabel statusLabel = new JMultilineLabel();
     private final JLabel fullJIDLabel = new JLabel();
-    private final JLabel imageLabel = new JLabel();
+    private final JLabel avatarLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
 
     private ContactItem contactItem;
@@ -80,28 +76,21 @@ public class ContactInfoWindow extends JPanel {
 
         setBackground(Color.white);
 
-        toolbar = new JPanel() {
-            public void paintComponent(Graphics g) {
-                final Image backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
-                double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-                double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
-                AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-                ((Graphics2D)g).drawImage(backgroundImage, xform, this);
-            }
-        };
+        toolbar = new JPanel();
 
-        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         toolbar.setOpaque(false);
-        toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
-        add(toolbar, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
+        add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 2, 2), 0, 0));
+        avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
 
 
-        add(iconLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
-        add(nicknameLabel, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 0, 0));
-        add(statusLabel, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0));
+        add(iconLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
+        add(statusLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+        add(toolbar, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-        add(fullJIDLabel, new GridBagConstraints(0, 4, 3, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
-        add(imageLabel, new GridBagConstraints(2, 1, 1, 3, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
 
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -243,7 +232,7 @@ public class ContactInfoWindow extends JPanel {
             fullJIDLabel.setIcon(null);
         }
 
-        imageLabel.setBorder(null);
+        avatarLabel.setBorder(null);
 
         try {
             URL avatarURL = contactItem.getAvatarURL();
@@ -254,13 +243,13 @@ public class ContactInfoWindow extends JPanel {
 
             if (icon != null && icon.getIconHeight() > 1) {
                 icon = GraphicUtils.scaleImageIcon(icon, 96, 96);
-                imageLabel.setIcon(icon);
+                avatarLabel.setIcon(icon);
 
-                imageLabel.setBorder(new PartialLineBorder(Color.gray, 1));
+                avatarLabel.setBorder(new PartialLineBorder(Color.gray, 1));
             }
             else {
                 icon = new ImageIcon(SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage().getScaledInstance(1, 64, Image.SCALE_SMOOTH));
-                imageLabel.setIcon(icon);
+                avatarLabel.setIcon(icon);
             }
         }
         catch (MalformedURLException e) {
@@ -294,8 +283,8 @@ public class ContactInfoWindow extends JPanel {
 
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
-        size.width = 330;
-        size.height = 160;
+        size.width = 250;
+        size.height = 125;
         return size;
     }
 }
