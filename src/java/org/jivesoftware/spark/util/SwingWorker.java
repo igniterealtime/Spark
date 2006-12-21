@@ -73,9 +73,6 @@ public abstract class SwingWorker {
      * after the <code>construct</code> method has returned.
      */
     public void finished() {
-        if (invokable != null) {
-            invokable.invoke(null);
-        }
     }
 
     /**

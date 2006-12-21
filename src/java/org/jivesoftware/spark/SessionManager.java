@@ -46,7 +46,7 @@ public final class SessionManager implements ConnectionListener {
 
     private String JID;
 
-    private List presenceListeners = new ArrayList();
+    private List<PresenceListener> presenceListeners = new ArrayList<PresenceListener>();
 
     private String userBareAddress;
     private DiscoverItems discoverItems;

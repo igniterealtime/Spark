@@ -16,8 +16,8 @@ import org.jdesktop.jdic.browser.IBrowserEngine;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -114,7 +114,12 @@ public class ThemeManager {
 
         // File mozilla = new File(Spark.getBinDirectory(), "mozilla");
         // be.setEnginePath(mozilla.getAbsolutePath());
-        THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getAbsoluteFile();
+        try {
+            THEMES_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/themes").getCanonicalFile();
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
 
         // For Testing
         //THEMES_DIRECTORY = new File("c:\\xtra\\themes");
@@ -152,9 +157,9 @@ public class ThemeManager {
         SparkManager.getPreferenceManager().addPreference(new ThemePreference());
 
 
-        SwingWorker worker = new SwingWorker(){
-            public Object construct(){
-                 return BrowserFactory.spawnMozilla();
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                return BrowserFactory.spawnMozilla();
             }
         };
 
