@@ -77,7 +77,7 @@
     <target name="clean" description="Deletes files generated during the build.">
         <!--Delete created directory trees-->
         <delete>
-            <fileset dir="${target}" followsymlinks="false"/>
+            <fileset dir="${target}" followsymlinks="false" failonerror="false" />
         </delete>
     </target>
 
