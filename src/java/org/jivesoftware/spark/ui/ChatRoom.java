@@ -211,7 +211,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 10));
         bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         verticalSplit.setOpaque(false);
 
