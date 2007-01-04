@@ -35,7 +35,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.conferences.ConferenceRoomInfo;
+import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -80,7 +80,7 @@ public final class GroupChatRoom extends ChatRoom {
     private ChatRoomMessageManager messageManager;
     private int typedChars;
 
-    private ConferenceRoomInfo roomInfo;
+    private GroupChatParticipantList roomInfo;
 
     private long lastActivity;
 
@@ -111,7 +111,7 @@ public final class GroupChatRoom extends ChatRoom {
         tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
 
         // Room Information
-        roomInfo = new ConferenceRoomInfo();
+        roomInfo = new GroupChatParticipantList();
         getSplitPane().setRightComponent(roomInfo.getGUI());
 
         roomInfo.setChatRoom(this);
@@ -978,7 +978,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
-    public ConferenceRoomInfo getConferenceRoomInfo() {
+    public GroupChatParticipantList getConferenceRoomInfo() {
         return roomInfo;
     }
 

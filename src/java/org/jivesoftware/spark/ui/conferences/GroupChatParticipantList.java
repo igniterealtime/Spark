@@ -70,7 +70,7 @@ import java.util.Map;
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such as agents and room information.
  */
-public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener {
+public final class GroupChatParticipantList extends JPanel implements ChatRoomListener {
     private GroupChatRoom groupChatRoom;
     private final ImageTitlePanel agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
     private ChatManager chatManager;
@@ -92,7 +92,7 @@ public final class ConferenceRoomInfo extends JPanel implements ChatRoomListener
      * Creates a new RoomInfo instance using the specified ChatRoom.  The RoomInfo
      * component is responsible for monitoring all activity in the ChatRoom.
      */
-    public ConferenceRoomInfo() {
+    public GroupChatParticipantList() {
         chatManager = SparkManager.getChatManager();
 
         // Set the room to track
