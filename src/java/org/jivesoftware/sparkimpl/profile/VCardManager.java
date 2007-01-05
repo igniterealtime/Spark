@@ -35,6 +35,20 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -54,20 +68,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 public class VCardManager {
     private BusinessPanel businessPanel;
     private PersonalPanel personalPanel;
@@ -76,8 +76,8 @@ public class VCardManager {
     private JLabel avatarLabel;
     private VCard vcard = new VCard();
 
-    private Map vcardMap = new HashMap();
-    private boolean vcardLoaded = false;
+    private Map<String, VCard> vcardMap = new HashMap<String, VCard>();
+    private boolean vcardLoaded;
 
     final private File imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
 
@@ -293,7 +293,7 @@ public class VCardManager {
             }
         });
 
-        populateVCardUI(vcard);
+        createVCardUI(vcard);
 
         dlg.setVisible(true);
         dlg.toFront();
@@ -361,22 +361,17 @@ public class VCardManager {
         return true;
     }
 
-    private void loadVCard(String jid) {
-        final String userJID = StringUtils.parseBareAddress(jid);
-        final VCard userVCard = new VCard();
-
+    private void loadVCard(final String jid) {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
-                try {
-                    userVCard.load(SparkManager.getConnection(), userJID);
-                }
-                catch (XMPPException e) {
-                }
-                return true;
+                return getVCard(jid);
             }
 
             public void finished() {
-                populateVCardUI(userVCard);
+                VCard vcard = (VCard)get();
+                if (vcard.getError() == null) {
+                    createVCardUI(vcard);
+                }
             }
         };
 
@@ -491,7 +486,7 @@ public class VCardManager {
 
     }
 
-    private void populateVCardUI(VCard vcard) {
+    private void createVCardUI(VCard vcard) {
         personalPanel.setFirstName(vcard.getFirstName());
         personalPanel.setMiddleName(vcard.getMiddleName());
         personalPanel.setLastName(vcard.getLastName());
@@ -573,6 +568,7 @@ public class VCardManager {
 
     /**
      * Returns the VCard associated with a jid.
+     *
      * @param jid the jid.
      * @return the VCard.
      */
@@ -599,6 +595,7 @@ public class VCardManager {
 
     /**
      * Scales an image to the preferred avatar size.
+     *
      * @param icon the icon to scale.
      * @return the scaled version of the image.
      */
@@ -613,13 +610,14 @@ public class VCardManager {
 
     /**
      * Returns the URL of the avatar image associated with the users JID.
+     *
      * @param jid the jid of the user.
      * @return the URL of the image. If not image is found, a default avatar is returned.
      */
     public URL getAvatar(String jid) {
         // Handle own avatar file.
         if (jid != null && StringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()).equals(StringUtils.parseBareAddress(jid))) {
-            if(imageFile.exists()){
+            if (imageFile.exists()) {
                 try {
                     return imageFile.toURL();
                 }
@@ -628,7 +626,7 @@ public class VCardManager {
                 }
             }
             else {
-               return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
+                return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
             }
         }
 
@@ -644,10 +642,10 @@ public class VCardManager {
             }
         }
 
-        if(avatarURL == null){
+        if (avatarURL == null) {
             return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
         }
-        
+
         return avatarURL;
     }
 
