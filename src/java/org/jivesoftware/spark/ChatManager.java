@@ -25,12 +25,12 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.ContactInfoHandler;
+import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageFilter;
-import org.jivesoftware.spark.ui.ContactInfoHandler;
-import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -393,20 +393,6 @@ public class ChatManager implements MessageEventNotificationListener {
         return false;
     }
 
-    public void addContactInfoHandler(ContactInfoHandler handler){
-        contactInfoHandlers.add(handler);
-    }
-
-    public void removeContactInfoHandler(ContactInfoHandler handler){
-        contactInfoHandlers.remove(handler);
-    }
-
-    public void notifyContactInfoHandlers(ContactInfoWindow contactInfo){
-        for(ContactInfoHandler handler : contactInfoHandlers){
-            handler.handleContactInfo(contactInfo);
-        }
-    }
-
     public boolean fireContactItemDoubleClicked(ContactItem item) {
         for (ContactItemHandler handler : contactItemHandlers) {
             if (handler.handleDoubleClick(item)) {
@@ -438,6 +424,20 @@ public class ChatManager implements MessageEventNotificationListener {
         }
 
         return null;
+    }
+
+    public void addContactInfoHandler(ContactInfoHandler handler) {
+        contactInfoHandlers.add(handler);
+    }
+
+    public void removeContactInfoHandler(ContactInfoHandler handler) {
+        contactInfoHandlers.remove(handler);
+    }
+
+    public synchronized void notifyContactInfoHandlers(ContactInfoWindow contactInfo) {
+        for (ContactInfoHandler handler : contactInfoHandlers) {
+            handler.handleContactInfo(contactInfo);
+        }
     }
 
     // Implemenation of MessageEventListener

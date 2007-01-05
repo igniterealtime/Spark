@@ -58,8 +58,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -72,14 +72,14 @@ import java.util.Map;
  */
 public final class GroupChatParticipantList extends JPanel implements ChatRoomListener {
     private GroupChatRoom groupChatRoom;
-    private final ImageTitlePanel agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
+    private final ImageTitlePanel agentInfoPanel;
     private ChatManager chatManager;
     private MultiUserChat chat;
 
-    private final Map userMap = new HashMap();
+    private final Map<String, String> userMap = new HashMap<String, String>();
 
     private UserManager userManager = SparkManager.getUserManager();
-    private ParticipantList table = new ParticipantList();
+    private ParticipantList participantsList;
     private PacketListener listener = null;
 
     private Map<String, String> invitees = new HashMap<String, String>();
@@ -95,6 +95,9 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
     public GroupChatParticipantList() {
         chatManager = SparkManager.getChatManager();
 
+        agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
+        participantsList = new ParticipantList();
+
         // Set the room to track
         this.setOpaque(true);
 
@@ -103,7 +106,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         this.setBackground(Color.white);
 
         // Respond to Double-Click in Agent List to start a chat
-        table.addMouseListener(new MouseAdapter() {
+        participantsList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     String selectedUser = getSelectedUser();
@@ -125,7 +128,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         });
 
 
-        JScrollPane scroller = new JScrollPane(table);
+        JScrollPane scroller = new JScrollPane(participantsList);
 
         // Speed up scrolling. It was way too slow.
         scroller.getVerticalScrollBar().setBlockIncrement(50);
@@ -169,7 +172,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                             agentInfoPanel.setVisible(true);
                         }
                         else {
-                            table.removeUser(nickname);
+                            participantsList.removeUser(nickname);
                         }
                     }
                 });
@@ -280,7 +283,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
         final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.USER1_BACK_16x16);
 
-        table.addUser(inviteIcon, nickname);
+        participantsList.addUser(inviteIcon, nickname);
 
         invitees.put(nickname, message);
     }
@@ -315,7 +318,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             if (occ != null) {
                 String actualJID = occ.getJid();
                 if (actualJID.equals(jid)) {
-                    table.removeUser(nick);
+                    participantsList.removeUser(nick);
                 }
             }
         }
@@ -326,50 +329,37 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         boolean isModerator = SparkManager.getUserManager().isModerator(occupant);
 
         if (!exists(nickname)) {
-            ImageIcon icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
+            ImageIcon icon = null;
 
-            if (!isOwnerOrAdmin) {
-                if (isModerator) {
-                    icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
-                }
-                else {
-                    StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-                    StatusItem item = statusBar.getItemFromPresence(presence);
-                    if (item != null) {
-                        icon = new ImageIcon(item.getImageIcon().getImage());
-                    }
-                    else {
-                        icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-                    }
-                }
+            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+            StatusItem item = statusBar.getItemFromPresence(presence);
+            if (item != null) {
+                icon = new ImageIcon(item.getImageIcon().getImage());
+            }
+            else {
+                icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
             }
 
             icon.setDescription(nickname);
-            table.addUser(icon, nickname);
+            participantsList.addUser(icon, nickname);
         }
         else {
-            ImageIcon icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
-            if (!isOwnerOrAdmin) {
-                if (isModerator) {
-                    icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
-                }
-                else {
-                    StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-                    StatusItem item = statusBar.getItemFromPresence(presence);
-                    if (item != null) {
-                        icon = new ImageIcon(item.getImageIcon().getImage());
-                    }
-                    else {
-                        icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-                    }
-                }
+            ImageIcon icon = null;
+            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+            StatusItem item = statusBar.getItemFromPresence(presence);
+            if (item != null) {
+                icon = new ImageIcon(item.getImageIcon().getImage());
             }
+            else {
+                icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+            }
+
             icon.setDescription(nickname);
 
             int index = getIndex(nickname);
             if (index != -1) {
                 final JLabel userLabel = new JLabel(nickname, icon, JLabel.HORIZONTAL);
-                table.getTableModel().setValueAt(userLabel, index, 0);
+                participantsList.getTableModel().setValueAt(userLabel, index, 0);
             }
         }
     }
@@ -382,14 +372,14 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         int index = getIndex(userid);
 
         if (index != -1) {
-            table.removeUser(userid);
+            participantsList.removeUser(userid);
             userMap.remove(userid);
         }
     }
 
     private boolean exists(String nickname) {
-        for (int i = 0; i < table.getRowCount(); i++) {
-            final JLabel userLabel = (JLabel)table.getValueAt(i, 0);
+        for (int i = 0; i < participantsList.getRowCount(); i++) {
+            final JLabel userLabel = (JLabel)participantsList.getValueAt(i, 0);
             if (userLabel.getText().equals(nickname)) {
                 return true;
             }
@@ -398,8 +388,8 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
     }
 
     private int getIndex(String nickname) {
-        for (int i = 0; i < table.getRowCount(); i++) {
-            final JLabel userLabel = (JLabel)table.getValueAt(i, 0);
+        for (int i = 0; i < participantsList.getRowCount(); i++) {
+            final JLabel userLabel = (JLabel)participantsList.getTableModel().getValueAt(i, 0);
             if (userLabel.getText().equals(nickname)) {
                 return i;
             }
@@ -408,12 +398,12 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
     }
 
     private String getSelectedUser() {
-        int selectedRow = table.getSelectedRow();
+        int selectedRow = participantsList.getSelectedRow();
         if (selectedRow == -1) {
             return null;
         }
 
-        JLabel label = (JLabel)table.getValueAt(selectedRow, 0);
+        JLabel label = (JLabel)participantsList.getValueAt(selectedRow, 0);
         return label.getText();
     }
 
@@ -549,15 +539,15 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
     private void checkPopup(MouseEvent evt) {
         Point p = evt.getPoint();
-        final int index = table.rowAtPoint(p);
+        final int index = participantsList.rowAtPoint(p);
 
         final JPopupMenu popup = new JPopupMenu();
 
 
         if (index != -1) {
-            table.setRowSelectionInterval(index, index);
+            participantsList.setRowSelectionInterval(index, index);
 
-            final JLabel userLabel = (JLabel)table.getValueAt(index, 0);
+            final JLabel userLabel = (JLabel)participantsList.getValueAt(index, 0);
             final String selectedUser = userLabel.getText();
             final String groupJID = (String)userMap.get(selectedUser);
             String groupJIDNickname = StringUtils.parseResource(groupJID);
@@ -590,7 +580,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                         int index = getIndex(selectedUser);
 
                         if (index != -1) {
-                            table.getTableModel().removeRow(index);
+                            participantsList.getTableModel().removeRow(index);
                         }
                     }
                 };
@@ -598,7 +588,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                 removeInvite.putValue(Action.NAME, "Remove");
                 popup.add(removeInvite);
 
-                popup.show(table, evt.getX(), evt.getY());
+                popup.show(participantsList, evt.getX(), evt.getY());
                 return;
             }
 
@@ -660,7 +650,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
 
                     JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
-                    table.getTableModel().setValueAt(label, index, 0);
+                    participantsList.getTableModel().setValueAt(label, index, 0);
                 }
             };
 
@@ -793,7 +783,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         popup.add(inviteAction);
 
 
-        popup.show(table, evt.getX(), evt.getY());
+        popup.show(participantsList, evt.getX(), evt.getY());
     }
 
     public void setNicknameChangeAllowed(boolean allowed) {
@@ -812,6 +802,8 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             Font f = getTableHeader().getFont().deriveFont(Font.BOLD);
             getTableHeader().setFont(f);
             getTableHeader().setBackground(borderHighlight);
+
+            getSortController().toggleSortOrder(0);
         }
 
         public void removeUser(String nickname) {

@@ -19,7 +19,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bookmark.BookmarkManager;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
@@ -97,21 +96,22 @@ public class Conferences {
 
             // Add Presence Listener to send directed presence to Group Chat Rooms.
             PresenceListener presenceListener = new PresenceListener() {
-                public void presenceChanged(Presence presence) {
-                    for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
-                        if (room instanceof GroupChatRoom) {
-                            GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-                            String jid = groupChatRoom.getMultiUserChat().getRoom();
+                public void presenceChanged(final Presence presence) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
+                                if (room instanceof GroupChatRoom) {
+                                    final Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
 
-                            // Send presence to room
-                            String to = presence.getTo();
+                                    GroupChatRoom groupChatRoom = (GroupChatRoom)room;
+                                    String jid = groupChatRoom.getMultiUserChat().getRoom();
 
-                            presence.setTo(jid);
-                            SparkManager.getConnection().sendPacket(presence);
-                            presence.setTo(to);
+                                    p.setTo(jid);
+                                    SparkManager.getConnection().sendPacket(p);
+                                }
+                            }
                         }
-                    }
-
+                    });
                 }
             };
 
@@ -129,7 +129,7 @@ public class Conferences {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(SparkManager.getChatManager().getInvitationListeners());
-                        for(RoomInvitationListener listener : listeners){
+                        for (RoomInvitationListener listener : listeners) {
                             boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
                             if (handle) {
                                 return;
@@ -137,7 +137,7 @@ public class Conferences {
                         }
 
                         // If no listeners handled the invitation, default to generic invite.
-                       new InvitationUI(conn, room, inviter, reason, password, message);
+                        new InvitationUI(conn, room, inviter, reason, password, message);
                     }
                 });
 
