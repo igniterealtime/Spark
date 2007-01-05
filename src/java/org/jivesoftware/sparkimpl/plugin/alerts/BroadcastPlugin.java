@@ -183,10 +183,10 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
                     boolean broadcast = message.getProperty("broadcast") != null;
 
-                    if ((broadcast || message.getType() == Message.Type.NORMAL) && message.getBody() != null) {
+                    if ((broadcast || message.getType() == Message.Type.normal) && message.getBody() != null) {
                         showAlert((Message)packet);
                     }
-                    else if (message.getType() == Message.Type.HEADLINE && message.getBody() != null) {
+                    else if (message.getType() == Message.Type.headline && message.getBody() != null) {
                         SparkToaster toaster = new SparkToaster();
                         toaster.setDisplayTime(30000);
                         toaster.setBorder(BorderFactory.createBevelBorder(0));

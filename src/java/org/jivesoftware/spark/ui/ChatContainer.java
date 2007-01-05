@@ -579,7 +579,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Check to see if it's a room update.
         String from = message.getFrom();
         String insertMessage = message.getBody();
-        if (room.getChatType() == Message.Type.CHAT) {
+        if (room.getChatType() == Message.Type.chat) {
             from = StringUtils.parseName(from);
         }
         else {
@@ -739,7 +739,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         // Confirm end session
-        boolean isGroupChat = room.getChatType() == Message.Type.GROUP_CHAT;
+        boolean isGroupChat = room.getChatType() == Message.Type.groupchat;
         if (isGroupChat) {
             final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
                     Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);

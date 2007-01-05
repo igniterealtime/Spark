@@ -469,7 +469,7 @@ public class TranscriptWindow extends JPanel {
                         from = pref.getNickname();
                     }
 
-                    if (Message.Type.GROUP_CHAT == message.getType()) {
+                    if (Message.Type.groupchat == message.getType()) {
                         if (ModelUtil.hasLength(StringUtils.parseResource(from))) {
                             from = StringUtils.parseResource(from);
                         }

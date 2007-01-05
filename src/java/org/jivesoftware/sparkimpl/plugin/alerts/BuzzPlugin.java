@@ -34,7 +34,7 @@ public class BuzzPlugin implements Plugin {
 
 
     public void initialize() {
-        ProviderManager.addExtensionProvider("buzz", "http://www.jivesoftware.com/spark", BuzzPacket.class);
+        ProviderManager.getInstance().addExtensionProvider("buzz", "http://www.jivesoftware.com/spark", BuzzPacket.class);
 
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {

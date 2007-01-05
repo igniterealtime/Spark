@@ -244,7 +244,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // Before sending message, let's add our full jid for full verification
-        message.setType(Message.Type.CHAT);
+        message.setType(Message.Type.chat);
         message.setTo(participantJID);
         message.setFrom(SparkManager.getSessionManager().getJID());
 
@@ -301,7 +301,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public Message.Type getChatType() {
-        return Message.Type.CHAT;
+        return Message.Type.chat;
     }
 
     public void leaveChatRoom() {
@@ -396,7 +396,7 @@ public class ChatRoomImpl extends ChatRoom {
                     boolean broadcast = message.getProperty("broadcast") != null;
 
                     // If this is a group chat message, discard
-                    if (message.getType() == Message.Type.GROUP_CHAT || broadcast) {
+                    if (message.getType() == Message.Type.groupchat || broadcast) {
                         return;
                     }
 

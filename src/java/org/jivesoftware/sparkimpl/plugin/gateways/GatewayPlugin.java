@@ -63,7 +63,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
 
     public void initialize() {
-        ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
+        ProviderManager.getInstance().addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
 
         SwingWorker thread = new SwingWorker() {
             public Object construct() {

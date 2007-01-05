@@ -322,7 +322,7 @@ public class Workspace extends JPanel implements PacketListener {
         // We only handle message packets here.
         if (packet instanceof Message) {
             final Message message = (Message)packet;
-            boolean isGroupChat = message.getType() == Message.Type.GROUP_CHAT;
+            boolean isGroupChat = message.getType() == Message.Type.groupchat;
 
             // Check if Conference invite. If so, do not handle here.
             if (message.getExtension("x", "jabber:x:conference") != null) {
@@ -332,7 +332,7 @@ public class Workspace extends JPanel implements PacketListener {
             final String body = message.getBody();
             boolean broadcast = message.getProperty("broadcast") != null;
 
-            if (body == null || isGroupChat || broadcast || message.getType() == Message.Type.NORMAL || message.getType() == Message.Type.HEADLINE) {
+            if (body == null || isGroupChat || broadcast || message.getType() == Message.Type.normal || message.getType() == Message.Type.headline) {
                 return;
             }
 
@@ -358,7 +358,7 @@ public class Workspace extends JPanel implements PacketListener {
             // Handle offline message.
             DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
 
-            if (offlineInformation != null && (Message.Type.CHAT == message.getType() || Message.Type.NORMAL == message.getType())) {
+            if (offlineInformation != null && (Message.Type.chat == message.getType() || Message.Type.normal == message.getType())) {
                 offlineMessages.add(message);
             }
 

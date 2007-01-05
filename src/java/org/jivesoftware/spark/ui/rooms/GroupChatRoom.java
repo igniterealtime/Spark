@@ -42,10 +42,12 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,7 +72,6 @@ public final class GroupChatRoom extends ChatRoom {
     private final String roomTitle;
     private boolean isActive = true;
     private boolean showPresenceMessages = true;
-    private JLabel subjectLabel = new JLabel();
 
     private List currentUserList = new ArrayList();
 
@@ -85,6 +86,8 @@ public final class GroupChatRoom extends ChatRoom {
     private long lastActivity;
 
     private boolean sendNotifications = false;
+
+    private SubjectPanel subjectPanel;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -122,8 +125,10 @@ public final class GroupChatRoom extends ChatRoom {
 
         conferenceService = StringUtils.parseServer(chat.getRoom());
 
+        subjectPanel = new SubjectPanel();
+
         // Do not show top toolbar
-        getToolBar().add(subjectLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        getToolBar().add(subjectPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add ContextMenuListener
         /*
@@ -264,7 +269,7 @@ public final class GroupChatRoom extends ChatRoom {
     public void sendMessage(Message message) {
         try {
             message.setTo(chat.getRoom());
-            message.setType(Message.Type.GROUP_CHAT);
+            message.setType(Message.Type.groupchat);
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
             // Add packetID to list
             addPacketID(message.getPacketID());
@@ -310,7 +315,7 @@ public final class GroupChatRoom extends ChatRoom {
     public void sendMessageWithoutNotification(Message message) {
         try {
             message.setTo(chat.getRoom());
-            message.setType(Message.Type.GROUP_CHAT);
+            message.setType(Message.Type.groupchat);
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
             // Add packetID to list
             addPacketID(message.getPacketID());
@@ -411,7 +416,7 @@ public final class GroupChatRoom extends ChatRoom {
      * @return the type of chat we are in.
      */
     public Message.Type getChatType() {
-        return Message.Type.GROUP_CHAT;
+        return Message.Type.groupchat;
     }
 
     /**
@@ -525,7 +530,7 @@ public final class GroupChatRoom extends ChatRoom {
     private void handleMessagePacket(Packet packet) {
         // Do something with the incoming packet here.
         final Message message = (Message)packet;
-        if (message.getType() == Message.Type.GROUP_CHAT) {
+        if (message.getType() == Message.Type.groupchat) {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
             Date sentDate;
             if (inf != null) {
@@ -575,7 +580,7 @@ public final class GroupChatRoom extends ChatRoom {
 
             }
         }
-        else if (message.getType() == Message.Type.CHAT) {
+        else if (message.getType() == Message.Type.chat) {
             ChatRoom chatRoom = null;
             try {
                 chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(message.getFrom());
@@ -804,10 +809,8 @@ public final class GroupChatRoom extends ChatRoom {
     private class SubjectListener implements SubjectUpdatedListener {
 
         public void subjectUpdated(String subject, String by) {
-            subjectLabel.setText(Res.getString("subject") + ": " + subject);
-            subjectLabel.setToolTipText(subject);
-
-            String nickname = StringUtils.parseResource(by);
+            subjectPanel.setSubject(subject);
+            subjectPanel.setToolTipText(subject);
 
             String insertMessage = Res.getString("message.subject.has.been.changed.to", subject);
             getTranscriptWindow().insertNotificationMessage(insertMessage);
@@ -1012,5 +1015,30 @@ public final class GroupChatRoom extends ChatRoom {
         getChatInputEditor().setEnabled(false);
         getSendButton().setEnabled(false);
         SparkManager.getChatManager().getChatContainer().useTabDefault(this);
+    }
+
+    private class SubjectPanel extends JPanel {
+
+        private JLabel iconLabel;
+        private JLabel roomJIDLabel;
+        private JLabel subjectLabel;
+
+        public SubjectPanel() {
+            setLayout(new GridBagLayout());
+
+            iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
+            roomJIDLabel = new JLabel("<" + getMultiUserChat().getRoom() + ">");
+            subjectLabel = new JLabel(getMultiUserChat().getSubject());
+
+            add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+            add(roomJIDLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
+            add(subjectLabel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
+
+            setOpaque(false);
+        }
+
+        public void setSubject(String subject) {
+            subjectLabel.setText(subject);
+        }
     }
 }
