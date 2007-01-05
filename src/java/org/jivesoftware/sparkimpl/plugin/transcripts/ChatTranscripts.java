@@ -36,6 +36,8 @@ import java.util.Map;
 
 public class ChatTranscripts {
     private static Map<String, ChatTranscript> TRANSCRIPTS = new HashMap<String, ChatTranscript>();
+    private static Map<String, ChatTranscript> CURRENT_TRANSCRIPTS = new HashMap<String, ChatTranscript>();
+
     private static DateFormat FORMATTER;
 
     static {
@@ -49,8 +51,19 @@ public class ChatTranscripts {
     public static ChatTranscript getChatTranscript(String jid) {
         ChatTranscript transcript = TRANSCRIPTS.get(jid);
         if (transcript == null) {
-            transcript = load(jid);
+            final File transcriptFile = getTranscriptFile(jid);
+            transcript = load(transcriptFile);
             TRANSCRIPTS.put(jid, transcript);
+        }
+        return transcript;
+    }
+
+    public static ChatTranscript getCurrentChatTranscript(String jid) {
+        ChatTranscript transcript = CURRENT_TRANSCRIPTS.get(jid);
+        if (transcript == null) {
+            final File transcriptFile = getCurrentHistoryFile(jid);
+            transcript = load(transcriptFile);
+            CURRENT_TRANSCRIPTS.put(jid, transcript);
         }
         return transcript;
     }
@@ -60,7 +73,6 @@ public class ChatTranscripts {
     }
 
     public static void saveTranscript(String jid) {
-
         try {
             File transcriptFile = getTranscriptFile(jid);
             transcriptFile.getParentFile().mkdirs();
@@ -73,6 +85,7 @@ public class ChatTranscripts {
 
             Element root = DocumentHelper.createElement("transcript");
             Element messages = root.addElement("messages");
+
             for (HistoryMessage m : transcript.getMessages()) {
                 Element message = messages.addElement("message");
 
@@ -84,9 +97,36 @@ public class ChatTranscripts {
                 message.addElement("date").setText(dateString);
             }
 
+            ChatTranscript t = new ChatTranscript();
+            for(HistoryMessage mes : transcript.getNumberOfEntries(20)){
+                t.addHistoryMessage(mes);
+            }
+            CURRENT_TRANSCRIPTS.put(jid, t);
+
+
             try {
+                // Write out main transcript
                 OutputStreamWriter ow = new OutputStreamWriter(fout, "UTF-8");
                 XMLWriter saxWriter = new XMLWriter(ow);
+                saxWriter.write(root);
+                saxWriter.flush();
+                saxWriter.close();
+
+                // Write out current transcript
+                List list = messages.elements();
+                int size = list.size();
+                if (list.size() > 20) {
+                    for (int i = 0; i < size - 20; i++) {
+                        final Element ele = (Element)list.get(i);
+                        messages.remove(ele);
+                    }
+                }
+
+                // Write out current transcript
+                fout = new FileOutputStream(getCurrentHistoryFile(jid));
+
+                ow = new OutputStreamWriter(fout, "UTF-8");
+                saxWriter = new XMLWriter(ow);
                 saxWriter.write(root);
                 saxWriter.flush();
                 saxWriter.close();
@@ -103,8 +143,7 @@ public class ChatTranscripts {
 
     }
 
-    private static ChatTranscript load(String jid) {
-        final File transcriptFile = getTranscriptFile(jid);
+    private static ChatTranscript load(File transcriptFile) {
         final ChatTranscript transcript = new ChatTranscript();
 
         if (!transcriptFile.exists()) {
@@ -168,10 +207,21 @@ public class ChatTranscripts {
     /**
      * Returns the settings file.
      *
+     * @param jid the
      * @return the settings file.
      */
     public static File getTranscriptFile(String jid) {
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + ".xml");
+    }
+
+    /**
+     * Returns the current transcript (20 messages) for a particular jid.
+     *
+     * @param jid the jid of the user.
+     * @return the current transcript file.
+     */
+    public static File getCurrentHistoryFile(String jid) {
+        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + "_current.xml");
     }
 
 

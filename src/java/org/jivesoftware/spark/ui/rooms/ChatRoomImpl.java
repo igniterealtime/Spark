@@ -34,7 +34,17 @@ import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
+import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscripts;
+import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,11 +54,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -96,6 +101,8 @@ public class ChatRoomImpl extends ChatRoom {
     public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
+
+        loadHistory();
 
         // Register PacketListeners
         AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(participantJID));
@@ -619,6 +626,24 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public Icon getAlternativeIcon() {
         return alternativeIcon;
+    }
+
+    private void loadHistory() {
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        if (!pref.isChatHistoryEnabled()) {
+            return;
+        }
+
+        String bareJID = StringUtils.parseBareAddress(getParticipantJID());
+        final ChatTranscript transcript = ChatTranscripts.getCurrentChatTranscript(bareJID);
+
+        for (HistoryMessage message : transcript.getMessages()) {
+            String from = message.getFrom();
+            String nickname = StringUtils.parseName(from);
+            Date date = message.getDate();
+            getTranscriptWindow().insertHistoryMessage(getParticipantJID(), nickname, message.getBody(), date);
+        }
+
     }
 
 }

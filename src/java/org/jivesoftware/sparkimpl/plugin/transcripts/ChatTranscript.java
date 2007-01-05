@@ -47,7 +47,7 @@ public class ChatTranscript {
      * @param number the number of messages to return.
      * @return the specified number of messages, or all messages if number is greater than the current amount.
      */
-    public Collection getNumberOfEntries(int number) {
+    public Collection<HistoryMessage> getNumberOfEntries(int number) {
         int listSize = messages.size();
 
         if (messages.size() <= number) {
