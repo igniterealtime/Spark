@@ -10,9 +10,9 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.resource.Res;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -27,6 +27,8 @@ public class NotificationsUI extends JPanel {
 
     private JCheckBox toasterBox;
     private JCheckBox windowFocusBox;
+    private JCheckBox offlineNotificationBox;
+    private JCheckBox onlineNotificationBox;
 
     public NotificationsUI() {
         setLayout(new VerticalFlowLayout());
@@ -40,6 +42,12 @@ public class NotificationsUI extends JPanel {
         windowFocusBox = new JCheckBox();
         ResourceUtils.resButton(windowFocusBox, Res.getString("checkbox.window.to.front"));
         add(windowFocusBox);
+
+        offlineNotificationBox = new JCheckBox("Notify when a user goes offline.");
+        add(offlineNotificationBox);
+
+        onlineNotificationBox = new JCheckBox("Notify when a user comes online.");
+        add(onlineNotificationBox);
     }
 
     public void setShowToaster(boolean show) {
@@ -56,5 +64,21 @@ public class NotificationsUI extends JPanel {
 
     public boolean shouldWindowPopup() {
         return windowFocusBox.isSelected();
+    }
+
+    public void setOfflineNotification(boolean notify) {
+        offlineNotificationBox.setSelected(notify);
+    }
+
+    public boolean isOfflineNotificationOn() {
+        return offlineNotificationBox.isSelected();
+    }
+
+    public void setOnlineNotification(boolean notify) {
+        onlineNotificationBox.setSelected(notify);
+    }
+
+    public boolean isOnlineNotificationOn() {
+        return onlineNotificationBox.isSelected();
     }
 }

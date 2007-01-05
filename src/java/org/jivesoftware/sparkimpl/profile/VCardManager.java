@@ -579,6 +579,7 @@ public class VCardManager {
     public VCard getVCard(String jid) {
         if (!vcardMap.containsKey(jid)) {
             VCard vcard = new VCard();
+            vcard.setJabberId(jid);
             try {
                 vcard.load(SparkManager.getConnection(), jid);
                 vcardMap.put(jid, vcard);

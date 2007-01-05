@@ -16,13 +16,18 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JMultilineLabel;
-import org.jivesoftware.spark.component.borders.PartialLineBorder;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -39,12 +44,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
@@ -68,8 +67,30 @@ public class ContactInfoWindow extends JPanel {
 
     private ChatManager chatManager;
 
+    private static ContactInfoWindow singleton;
+    private static final Object LOCK = new Object();
 
-    public ContactInfoWindow() {
+    /**
+     * Returns the singleton instance of <CODE>ContactInfoWindow</CODE>,
+     * creating it if necessary.
+     * <p/>
+     *
+     * @return the singleton instance of <Code>ContactInfoWindow</CODE>
+     */
+    public static ContactInfoWindow getInstance() {
+        // Synchronize on LOCK to ensure that we don't end up creating
+        // two singletons.
+        synchronized (LOCK) {
+            if (null == singleton) {
+                ContactInfoWindow controller = new ContactInfoWindow();
+                singleton = controller;
+                return controller;
+            }
+        }
+        return singleton;
+    }
+
+    private ContactInfoWindow() {
         setLayout(new GridBagLayout());
 
         this.chatManager = SparkManager.getChatManager();
@@ -81,16 +102,13 @@ public class ContactInfoWindow extends JPanel {
         toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         toolbar.setOpaque(false);
 
-        add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 2, 2), 0, 0));
-        avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-
-
+        add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 0, 2, 2), 0, 0));
         add(iconLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
         add(nicknameLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
         add(statusLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-        add(toolbar, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-        add(fullJIDLabel, new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
+        add(toolbar, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 4, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
 
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -244,8 +262,7 @@ public class ContactInfoWindow extends JPanel {
             if (icon != null && icon.getIconHeight() > 1) {
                 icon = GraphicUtils.scaleImageIcon(icon, 96, 96);
                 avatarLabel.setIcon(icon);
-
-                avatarLabel.setBorder(new PartialLineBorder(Color.gray, 1));
+                avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
             }
             else {
                 icon = new ImageIcon(SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage().getScaledInstance(1, 64, Image.SCALE_SMOOTH));
@@ -265,6 +282,9 @@ public class ContactInfoWindow extends JPanel {
 
     public void addChatRoomButton(ChatRoomButton button) {
         toolbar.add(button);
+        window.invalidate();
+        window.validate();
+        window.repaint();
     }
 
     public void addToolbarComponent(Component comp) {
@@ -284,7 +304,7 @@ public class ContactInfoWindow extends JPanel {
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 250;
-        size.height = 125;
+        size.height = 100;
         return size;
     }
 }

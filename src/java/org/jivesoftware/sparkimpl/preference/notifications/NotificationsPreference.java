@@ -10,8 +10,8 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -62,9 +62,13 @@ public class NotificationsPreference implements Preference {
             public void finished() {
                 boolean toaster = localPreferences.getShowToasterPopup();
                 boolean windowFocus = localPreferences.getWindowTakesFocus();
+                boolean offlineNotification = localPreferences.isOfflineNotificationsOn();
+                boolean onlineNotification = localPreferences.isOnlineNotificationsOn();
 
                 panel.setShowToaster(toaster);
                 panel.setShowWindowPopup(windowFocus);
+                panel.setOfflineNotification(offlineNotification);
+                panel.setOnlineNotification(onlineNotification);
             }
         };
 
@@ -77,7 +81,8 @@ public class NotificationsPreference implements Preference {
 
         pref.setShowToasterPopup(panel.showToaster());
         pref.setWindowTakesFocus(panel.shouldWindowPopup());
-
+        pref.setOfflineNotifications(panel.isOfflineNotificationOn());
+        pref.setOnlineNotifications(panel.isOnlineNotificationOn());
         SettingsManager.saveSettings();
     }
 

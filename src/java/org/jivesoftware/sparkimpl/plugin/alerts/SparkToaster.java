@@ -28,18 +28,32 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
  */
 
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.Border;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -47,15 +61,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.Border;
+import java.awt.geom.AffineTransform;
 
 /**
  * Class to show tosters in multiplatform
@@ -78,7 +84,7 @@ public class SparkToaster {
     private int toasterWidth = 200;
 
     // Height of the toster
-    private int toasterHeight = 185;
+    private int toasterHeight = 150;
 
     // Step for the toaster
     private int step = 20;
@@ -130,8 +136,7 @@ public class SparkToaster {
 
     private JPanel mainPanel = new JPanel();
 
-    private JLabel titleLabel;
-    private JLabel iconLabel;
+    private TitleLabel titleLabel;
 
     /**
      * Constructor to initialized toaster component...
@@ -139,9 +144,6 @@ public class SparkToaster {
     public SparkToaster() {
         // Set default font...
         font = new Font("Dialog", Font.PLAIN, 11);
-
-        titleLabel = new JLabel();
-        iconLabel = new JLabel();
 
         // Border color
         borderColor = new Color(245, 153, 15);
@@ -185,17 +187,13 @@ public class SparkToaster {
             message.setWrapStyleWord(true);
 
             message.setForeground(getMessageColor());
-            titleLabel.setText(getTitle());
+            titleLabel = new TitleLabel(getTitle(), true);
             titleLabel.setForeground(new Color(87, 166, 211));
             titleLabel.setFont(new Font("Dialog", Font.BOLD, 13));
 
-            RolloverButton closeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
+            mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-            mainPanel.add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 0, 0));
-            mainPanel.add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1, 5, 0, 0), 0, 0));
-            mainPanel.add(closeButton, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(1, 0, 0, 0), 0, 0));
-
-            closeButton.addActionListener(new ActionListener() {
+            titleLabel.getCloseButton().addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     setVisible(false);
                     dispose();
@@ -213,25 +211,8 @@ public class SparkToaster {
             getContentPane().add(mainPanel);
 
 
-            mainPanel.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (customAction != null) {
-                        customAction.actionPerformed(null);
-                    }
-
-                    setVisible(false);
-                    dispose();
-                }
-
-                public void mouseEntered(MouseEvent e) {
-                    message.setCursor(HAND_CURSOR);
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    message.setCursor(DEFAULT_CURSOR);
-                }
-            });
-
+            mainPanel.addMouseListener(new PaneMouseListener());
+            message.addMouseListener(new PaneMouseListener());
 
             pack();
             setSize(toasterWidth, toasterHeight);
@@ -246,7 +227,29 @@ public class SparkToaster {
             (new Animation(this)).start();
         }
 
+        private class PaneMouseListener extends MouseAdapter {
+
+            public void mouseClicked(MouseEvent e) {
+                if (customAction != null) {
+                    customAction.actionPerformed(null);
+                }
+
+                setVisible(false);
+                dispose();
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                message.setCursor(HAND_CURSOR);
+                setCursor(HAND_CURSOR);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                message.setCursor(DEFAULT_CURSOR);
+                setCursor(DEFAULT_CURSOR);
+            }
+        }
     }
+
 
     /**
      * Class that manage the animation
@@ -288,7 +291,7 @@ public class SparkToaster {
             try {
                 boolean animateFromBottom = true;
                 GraphicsEnvironment ge = GraphicsEnvironment
-                    .getLocalGraphicsEnvironment();
+                        .getLocalGraphicsEnvironment();
                 Rectangle screenRect = ge.getMaximumWindowBounds();
 
                 int screenHeight = (int)screenRect.height;
@@ -306,13 +309,10 @@ public class SparkToaster {
                 int posx = (int)screenRect.width - toasterWidth - 1;
 
                 toaster.setLocation(posx, screenHeight);
-                toaster.setFocusableWindowState(false);
                 toaster.setVisible(true);
                 if (useAlwaysOnTop) {
                     toaster.setAlwaysOnTop(true);
                 }
-
-                toaster.setFocusableWindowState(true);
 
                 if (animateFromBottom) {
                     startYPosition = screenHeight;
@@ -368,7 +368,7 @@ public class SparkToaster {
 
 
         if (icon != null) {
-            iconLabel.setIcon(icon);
+            titleLabel.setIcon(icon);
         }
         singleToaster.message.setText(msg);
         singleToaster.message.setCaretPosition(0);
@@ -376,11 +376,29 @@ public class SparkToaster {
         window = singleToaster;
     }
 
+    /**
+     * Show a toaster with the specified message and the associated icon.
+     */
+    public void showToaster(String title, Component comp) {
+        SingleToaster singleToaster = new SingleToaster();
+        mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
+
+        titleLabel.setTitle(title);
+        singleToaster.animate();
+        window = singleToaster;
+    }
+
     public void showToaster(Icon icon) {
         SingleToaster singleToaster = new SingleToaster();
         if (icon != null) {
-            iconLabel.setIcon(icon);
+            titleLabel.setIcon(icon);
         }
+        singleToaster.animate();
+        window = singleToaster;
+    }
+
+    public void showToaster() {
+        SingleToaster singleToaster = new SingleToaster();
         singleToaster.animate();
         window = singleToaster;
     }
@@ -587,7 +605,50 @@ public class SparkToaster {
 
     public void hideTitle() {
         titleLabel.setVisible(false);
-        iconLabel.setVisible(false);
+    }
+
+
+    class TitleLabel extends JPanel {
+
+        private JLabel label;
+        private RolloverButton closeButton;
+
+        public TitleLabel(String text, boolean showCloseIcon) {
+            setLayout(new GridBagLayout());
+            label = new JLabel(text);
+            label.setFont(new Font("Dialog", Font.BOLD, 11));
+            label.setHorizontalTextPosition(JLabel.LEFT);
+            label.setHorizontalAlignment(JLabel.LEFT);
+
+            add(label, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+            closeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
+            if (showCloseIcon) {
+                add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            }
+
+            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
+        }
+
+        public void setIcon(Icon icon) {
+            label.setIcon(icon);
+        }
+
+        public RolloverButton getCloseButton() {
+            return closeButton;
+        }
+
+        public void setTitle(String title) {
+            label.setText(title);
+        }
+
+        public void paintComponent(Graphics g) {
+            final Image backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
+            double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
+            double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+            AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+            ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+        }
     }
 
     /**
@@ -598,7 +659,11 @@ public class SparkToaster {
         toaster.setDisplayTime(30000);
         toaster.setBorder(BorderFactory.createBevelBorder(0));
         toaster.setTitle(Res.getString("title.notification"));
-        toaster.showToaster("JDLFJSLKDFJLSJFLSJFLSJDLFJLSDFJLJSDFLJSLDFJS");
+
+        JButton button = new JButton("DDD");
+        toaster.hideTitle();
+        toaster.showToaster("HELLO", button);
+
     }
 
 }

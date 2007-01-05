@@ -12,7 +12,6 @@ import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jdesktop.jdic.desktop.Message;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
@@ -68,7 +67,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
         this.contactInfoWindow = contactInfo;
 
         final ChatRoomButton chatButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        chatButton.setToolTipText(Res.getString("button.start.chat"));
+        chatButton.setToolTipText("Start a conversation.");
 
         contactInfo.addChatRoomButton(chatButton);
 
@@ -78,22 +77,25 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
             }
         });
 
-        checkForEmailAddress();
+        checkForEmailAddress(contactInfoWindow.getContactItem().getContactJID());
     }
 
 
-    private void checkForEmailAddress() {
+    private void checkForEmailAddress(final String jid) {
         final SwingWorker vcardCheckThread = new SwingWorker() {
             public Object construct() {
-                return SparkManager.getVCardManager().getVCard(contactInfoWindow.getContactItem().getContactJID());
+                return SparkManager.getVCardManager().getVCard(jid);
             }
 
             public void finished() {
                 final VCard vcard = (VCard)get();
+                if (contactInfoWindow.getContactItem() == null || !contactInfoWindow.getContactItem().getContactJID().equals(jid)) {
+                    return;
+                }
+
                 if (vcard != null && vcard.getEmailHome() != null) {
                     final ChatRoomButton emailButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.SEND_MAIL_IMAGE_16x16));
-                    emailButton.setToolTipText(Res.getString("button.send.email"));
-
+                    emailButton.setToolTipText("Send an email");
                     contactInfoWindow.addChatRoomButton(emailButton);
                     contactInfoWindow.getToolbar().invalidate();
                     contactInfoWindow.getToolbar().validate();
@@ -133,19 +135,27 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
         String emailHome = vcard.getEmailHome();
 
         if (emailHome != null && Spark.isWindows()) {
-            Message message = new Message();
+            final Message message = new Message();
 
             final List<String> list = new ArrayList<String>();
             list.add(emailHome);
 
             message.setToAddrs(list);
-            try {
-                Desktop.mail(message);
-            }
-            catch (DesktopException e) {
-                e.printStackTrace();
-            }
-        }
 
+            SwingWorker worker = new SwingWorker() {
+                public Object construct() {
+                    try {
+                        Desktop.mail(message);
+                    }
+                    catch (DesktopException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+            };
+
+            worker.start();
+
+        }
     }
 }
