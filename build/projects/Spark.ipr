@@ -404,6 +404,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../../sparkcom/plugins/jniwrapper/JNIWrapper.iml" filepath="$PROJECT_DIR$/../../../sparkcom/plugins/jniwrapper/JNIWrapper.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../sparkphone/client/SparkPhone.iml" filepath="$PROJECT_DIR$/../../../sparkphone/client/SparkPhone.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.6 (1)" project-jdk-type="JavaSDK" />

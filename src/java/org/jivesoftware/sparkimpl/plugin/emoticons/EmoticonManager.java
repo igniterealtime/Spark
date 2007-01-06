@@ -150,6 +150,7 @@ public class EmoticonManager {
         }
         catch (DocumentException e) {
             Log.error(e);
+            return;
         }
 
         Node root = emoticonFile.selectSingleNode("/plist/dict/dict");
