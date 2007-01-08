@@ -113,12 +113,14 @@ public final class Spark {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
+
                 try {
                     UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
                 }
                 catch (ParseException e) {
                     e.printStackTrace();
                 }
+
                 installBaseUIProperties();
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
