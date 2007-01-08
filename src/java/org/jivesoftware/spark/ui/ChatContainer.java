@@ -634,7 +634,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         int tabLocation = indexOfComponent(chatRoom);
         setSelectedIndex(tabLocation);
         if (Spark.isWindows()) {
-            chatFrame.setFocusableWindowState(false);
             chatFrame.setState(Frame.ICONIFIED);
         }
 

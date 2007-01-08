@@ -117,7 +117,6 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridBagLayout());
-        topPanel.add(new JLabel(), new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         topPanel.setOpaque(false);
 
         // Add Tabs panel to top of panel.
