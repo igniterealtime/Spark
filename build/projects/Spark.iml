@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../src/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/../../target" />
     </content>
-    <orderEntry type="jdk" jdkName="JDK 1.5.0" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library>
@@ -184,15 +184,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/corecomponents-win.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/synthetica.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -202,7 +193,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/syntheticaBlueMoon.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/syntheticaBlackMoon.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -211,7 +202,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/syntheticaBlackMoon.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/syntheticaBlueMoon.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

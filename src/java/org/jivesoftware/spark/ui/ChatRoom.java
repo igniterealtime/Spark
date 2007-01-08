@@ -49,6 +49,7 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -125,6 +126,21 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
+        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND)) {
+            public Dimension getPreferredSize() {
+                Dimension dim = super.getPreferredSize();
+
+                int windowHeight = getChatRoom().getHeight();
+
+                if (dim.getHeight() > windowHeight - 200) {
+                    dim.height = windowHeight - 200;
+                }
+
+                return dim;
+            }
+        };
+
+
         textScroller = new JScrollPane(transcriptWindow);
 
         textScroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
@@ -139,8 +155,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
-
-        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND));
 
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
@@ -404,6 +418,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         else {
             chatAreaButton.getButton().setEnabled(false);
         }
+
+        verticalSplit.setDividerLocation(-1);
     }
 
     /**
