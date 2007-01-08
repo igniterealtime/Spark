@@ -10,189 +10,169 @@
 
 package org.jivesoftware.spark.ui;
 
-import com.webrenderer.BrowserFactory;
-import com.webrenderer.IBrowserCanvas;
-import com.webrenderer.event.MouseEvent;
-import com.webrenderer.event.MouseListener;
-import com.webrenderer.event.NetworkEvent;
-import com.webrenderer.event.NetworkListener;
+import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.ui.themes.ThemeManager;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
-import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
-import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
-import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
  * of a Chat Window. In general, extensions could override this class
  * to offer more support within the chat, but should not be necessary.
  */
-public class TranscriptWindow extends JPanel {
+public class TranscriptWindow extends ChatArea {
 
     private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
+    private final SimpleDateFormat notificationDateFormatter;
+    private final SimpleDateFormat messageDateFormatter;
+
 
     private Date lastUpdated;
 
-    private IBrowserCanvas browser;
+    /**
+     * The default font used in the chat window for all messages.
+     */
+    private Font font = new Font("Dialog", Font.PLAIN, 12);
 
-    private ThemeManager themeManager;
+    private Date lastPost;
 
-    private String activeUser;
-    private String activeHistoryUser;
-
-
-    private boolean documentLoaded;
-
-    private JPanel extraPanel;
-
-    private VCardManager vcardManager;
-
-    private Timer timer;
-
-    private javax.swing.Timer activeTimer;
-
-    private StringBuilder scriptBuilder = new StringBuilder();
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
+    private Image customBackgroundImage;
 
 
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
      */
     public TranscriptWindow() {
-        setLayout(new BorderLayout());
+        setEditable(false);
 
-        themeManager = ThemeManager.getInstance();
-        vcardManager = SparkManager.getVCardManager();
+        /* Load Preferences for this instance */
+        PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
 
-        extraPanel = new JPanel();
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        setDragEnabled(true);
 
-        //Core function to create browser
-        browser = BrowserFactory.spawnMozilla();
-        browser.addNetworkListener(new NetworkListener() {
-            public void onProgressChange(NetworkEvent networkEvent) {
-            }
-
-            public void onDocumentLoad(NetworkEvent networkEvent) {
-                documentLoaded = true;
-            }
-
-            public void onDocumentComplete(NetworkEvent networkEvent) {
-            }
-
-            public void onNetworkStatus(NetworkEvent networkEvent) {
-            }
-
-            public void onNetworkError(NetworkEvent networkEvent) {
-            }
-
-            public void onHTTPResponse(NetworkEvent networkEvent) {
-            }
-
-            public void onHTTPInterceptHeaders(NetworkEvent networkEvent) {
-            }
-        });
-
-
-        browser.loadURL(themeManager.getTemplateURL());
-
-        documentLoaded = true;
-
-        browser.enableDefaultContextMenu(false);
-
-        browser.addMouseListener(new MouseListener() {
-            public void onClick(MouseEvent mouseEvent) {
-            }
-
-            public void onDoubleClick(MouseEvent mouseEvent) {
-                mouseEvent.consume();
-            }
-
-            public void onMouseDown(MouseEvent mouseEvent) {
-                mouseEvent.consume();
-            }
-
-            public void onMouseUp(MouseEvent mouseEvent) {
-                mouseEvent.consume();
-            }
-        });
-
-        add((Canvas)browser, BorderLayout.CENTER);
-
-
-        extraPanel.setBackground(Color.white);
-        extraPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-
-        add(extraPanel, BorderLayout.SOUTH);
-
-        setBorder(BorderFactory.createLineBorder(Color.lightGray));
-
-        final Action resetAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                activeUser = null;
-            }
-        };
-
-        int fiveMinutes = 5000 * 60;
-        activeTimer = new javax.swing.Timer(fiveMinutes, resetAction);
-        activeTimer.start();
-
-        final Action insertAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                if (documentLoaded) {
-                    final String script = scriptBuilder.toString();
-                    if (ModelUtil.hasLength(script)) {
-                        Thread thread = new Thread(new Runnable() {
-                            public void run() {
-                                browser.executeScript(script);
-                            }
-                        });
-                        thread.start();
-
-                        scriptBuilder.setLength(0);
+        final TranscriptWindow window = this;
+        addContextMenuListener(new ContextMenuListener() {
+            public void poppingUp(Object component, JPopupMenu popup) {
+                Action printAction = new AbstractAction() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        SparkManager.printChatTranscript(window);
                     }
-                }
-                timer.restart();
-            }
-        };
+                };
 
-        timer = new Timer(50, insertAction);
+
+                Action clearAction = new AbstractAction() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        clear();
+                    }
+                };
+
+
+                printAction.putValue(Action.NAME, "Print");
+                printAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PRINTER_IMAGE_16x16));
+
+                clearAction.putValue(Action.NAME, "Clear");
+                clearAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.ERASER_IMAGE));
+                popup.addSeparator();
+                popup.add(printAction);
+
+                popup.add(clearAction);
+            }
+
+            public void poppingDown(JPopupMenu popup) {
+
+            }
+
+            public boolean handleDefaultAction(MouseEvent e) {
+                return false;
+            }
+        });
+
+        // Make sure ctrl-c works
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
+
+        getActionMap().put("copy", new AbstractAction("copy") {
+            public void actionPerformed(ActionEvent evt) {
+                StringSelection ss = new StringSelection(getSelectedText());
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+            }
+        });
+
+        notificationDateFormatter = new SimpleDateFormat("EEEEE, MMMMM d, yyyy");
+        messageDateFormatter = new SimpleDateFormat("h:mm a");
     }
 
+    public void addComponent(Component component) {
+        StyledDocument doc = (StyledDocument)getDocument();
+
+        // The image must first be wrapped in a style
+        Style style = doc.addStyle("StyleName", null);
+
+
+        StyleConstants.setComponent(style, component);
+
+        // Insert the image at the end of the text
+        try {
+            doc.insertString(doc.getLength(), "ignored text", style);
+            doc.insertString(doc.getLength(), "\n", null);
+        }
+        catch (BadLocationException e) {
+            Log.error(e);
+        }
+    }
+
+    public void paintComponent(Graphics g) {
+        if (customBackgroundImage != null) {
+            Rectangle rec = getVisibleRect();
+            setOpaque(false);
+            g.drawImage(customBackgroundImage, getWidth() - customBackgroundImage.getWidth(null), (int)rec.getY(), customBackgroundImage.getWidth(null), customBackgroundImage.getHeight(null), this);
+        }
+        super.paintComponent(g);
+    }
 
     /**
      * Create and insert a message from the current user.
@@ -201,6 +181,7 @@ public class TranscriptWindow extends JPanel {
      * @param message the message to insert.
      */
     public void insertMessage(String userid, Message message) {
+
         // Check interceptors.
         for (TranscriptWindowInterceptor interceptor : interceptors) {
             boolean handled = interceptor.handleInsertMessage(userid, message);
@@ -211,42 +192,70 @@ public class TranscriptWindow extends JPanel {
         }
 
         String body = message.getBody();
-        body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(body);
-        body = filterBody(body);
-        String date = getDate(null);
 
-        String jid = SparkManager.getSessionManager().getJID();
+        try {
+            String date = getDate(null);
 
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
 
-        if (userid.equals(activeUser)) {
-            String text = themeManager.getNextOutgoingMessage(body, date);
-            executeScript("appendNextMessage('" + text + "')");
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), date + userid + ": ", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setText(body);
+            insertText("\n");
         }
-        else {
-            String text = themeManager.getOutgoingMessage(userid, date, body, vcardManager.getAvatar(jid));
-            executeScript("appendMessage('" + text + "')");
+        catch (BadLocationException e) {
+            Log.error("Error message.", e);
         }
-
-        setActiveUser(userid);
     }
 
 
     public void insertCustomMessage(String prefix, String message) {
-        message = filterBody(message);
-        String text = themeManager.getOutgoingMessage(prefix, "", message, vcardManager.getAvatar(""));
-        executeScript("appendMessage('" + text + "')");
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            if (prefix != null) {
+                doc.insertString(doc.getLength(), prefix + ": ", styles);
+            }
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setText(message);
+            insertText("\n");
+        }
+        catch (BadLocationException e) {
+            Log.error("Error message.", e);
+        }
     }
 
-    /**
-     * Inserts a custom message into the transcript window.
-     *
-     * @param prefix  the prefix of the message (ex: johndoe:)
-     * @param message the body of the message.
-     */
     public void insertCustomOtherMessage(String prefix, String message) {
-        message = filterBody(message);
-        String text = themeManager.getIncomingMessage(prefix, "", message, vcardManager.getAvatar(""));
-        executeScript("appendMessage('" + text + "')");
+        try {
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), prefix + ": ", styles);
+
+            StyleConstants.setBold(styles, false);
+            setText(message);
+            insertText("\n");
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
     }
 
     /**
@@ -267,7 +276,6 @@ public class TranscriptWindow extends JPanel {
 
         String body = message.getBody();
 
-
         try {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
             Date sentDate = null;
@@ -282,21 +290,81 @@ public class TranscriptWindow extends JPanel {
 
             String theDate = getDate(sentDate);
 
-            body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(body);
-            body = filterBody(body);
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
 
-            if (userid.equals(activeUser)) {
-                String text = themeManager.getNextIncomingMessage(body, theDate);
-                executeScript("appendNextMessage('" + text + "')");
-            }
-            else {
-                String text = themeManager.getIncomingMessage(userid, theDate, body, vcardManager.getAvatar(message.getFrom()));
-                executeScript("appendMessage('" + text + "')");
-            }
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), theDate + userid + ": ", styles);
 
-            setActiveUser(userid);
+            StyleConstants.setBold(styles, false);
+            setText(body);
+            insertText("\n");
         }
-        catch (Exception ex) {
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
+    }
+
+
+    /**
+     * Create and insert a notification message. A notification message generally is a
+     * presence update, but can be used for most anything related to the room.
+     *
+     * @param timestamp the information message to insert.
+     */
+    public synchronized void insertTimestamp(String timestamp) {
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, true);
+            StyleConstants.setForeground(styles, Color.lightGray);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, true);
+            StyleConstants.setUnderline(styles, true);
+            setForeground(Color.lightGray);
+            setText(timestamp);
+            insertText("\n");
+            StyleConstants.setUnderline(styles, false);
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
+    }
+
+    /**
+     * Creates and inserts a title notification message.
+     *
+     * @param title the title to insert into the chat transcript.
+     */
+    public synchronized void insertTitle(String title) {
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, true);
+            StyleConstants.setForeground(styles, Color.gray);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, true);
+            StyleConstants.setUnderline(styles, true);
+            setForeground(Color.gray);
+            setText(title);
+            insertText("\n");
+            StyleConstants.setUnderline(styles, false);
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
             Log.error("Error message.", ex);
         }
     }
@@ -309,9 +377,29 @@ public class TranscriptWindow extends JPanel {
      * @param message the information message to insert.
      */
     public synchronized void insertNotificationMessage(String message) {
-        message = filterBody(message);
-        String text = themeManager.getStatusMessage(message, "");
-        executeScript("appendMessage('" + text + "')");
+        try {
+
+            Color notificationColor = (Color)UIManager.get("Notification.foreground");
+
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, notificationColor);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setForeground(notificationColor);
+            setText(message);
+            insertText("\n");
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
     }
 
     /**
@@ -320,9 +408,26 @@ public class TranscriptWindow extends JPanel {
      * @param message the information message to insert.
      */
     public void insertErrorMessage(String message) {
-        message = filterBody(message);
-        String text = themeManager.getStatusMessage(message, "");
-        executeScript("appendMessage('" + text + "')");
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, (Color)UIManager.get("Error.foreground"));
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setForeground(Color.red);
+            setText(message);
+            insertText("\n");
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
     }
 
     /**
@@ -332,12 +437,25 @@ public class TranscriptWindow extends JPanel {
      * @param question the question asked by the customer.
      */
     public void insertQuestionMessage(String question) {
-        String text = themeManager.getStatusMessage(question, "");
-        executeScript("appendMessage('" + text + "')");
-    }
 
-    public void insertHTML(String html) {
-        executeScript("appendMessage('" + html + "')");
+        try {
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, (Color)UIManager.get("Question.foreground"));
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            StyleConstants.setFontFamily(styles, font.getFamily());
+            doc.insertString(doc.getLength(), "Question - ", styles);
+
+            StyleConstants.setBold(styles, false);
+            setText(question);
+            insertText("\n");
+        }
+        catch (BadLocationException e) {
+            Log.error("Error message.", e);
+        }
+
     }
 
 
@@ -348,15 +466,20 @@ public class TranscriptWindow extends JPanel {
      * @return the formatted date.
      */
     private String getDate(Date insertDate) {
-        final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         if (insertDate == null) {
             insertDate = new Date();
         }
 
+        StyleConstants.setFontFamily(styles, font.getFontName());
+        StyleConstants.setFontSize(styles, font.getSize());
 
-        if (localPreferences.isTimeDisplayedInChat()) {
-            return formatter.format(insertDate);
+        if (pref.isTimeDisplayedInChat()) {
+            final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+            final String date = formatter.format(insertDate);
+
+            return "[" + date + "] ";
         }
         lastUpdated = insertDate;
         return "";
@@ -375,52 +498,45 @@ public class TranscriptWindow extends JPanel {
     /**
      * Inserts a history message.
      *
-     * @param jid     the users jid.
      * @param userid  the userid of the sender.
      * @param message the message to insert.
      * @param date    the Date object created when the message was delivered.
      */
-    public void insertHistoryMessage(String jid, String userid, String message, Date date) {
-        final String sessionJID = SparkManager.getSessionManager().getJID();
-        boolean outgoingMessage = false;
-        if (StringUtils.parseBareAddress(sessionJID).equals(jid)) {
-            outgoingMessage = true;
+    public void insertHistoryMessage(String userid, String message, Date date) {
+        try {
+            String value = "";
+
+            long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
+            int diff = DateUtils.getDaysDiff(lastPostTime, date.getTime());
+            if (diff != 0) {
+                insertTimestamp(notificationDateFormatter.format(date));
+            }
+
+            value = "[" + messageDateFormatter.format(date) + "] ";
+            value = value + userid + ": ";
+
+
+            lastPost = date;
+
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, Color.gray);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), value, styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setForeground((Color)UIManager.get("History.foreground"));
+            setText(message);
+            setForeground(Color.BLACK);
+            insertText("\n");
         }
-
-        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm");
-        String time = formatter.format(date);
-
-        message = filterBody(message);
-
-        if (userid.equals(activeHistoryUser)) {
-            if (outgoingMessage) {
-                String text = themeManager.getNextOutgoingHistoryString(message, time);
-                executeScript("appendNextMessage('" + text + "')");
-            }
-            else {
-                String text = themeManager.getNextIncomingHistoryMessage(message, time);
-                executeScript("appendNextMessage('" + text + "')");
-            }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
         }
-        else {
-            if (outgoingMessage) {
-                String text = themeManager.getOutgoingHistoryMessage(userid, time, message, vcardManager.getAvatar(jid));
-                executeScript("appendMessage('" + text + "')");
-            }
-            else {
-                String text = null;
-                try {
-                    text = themeManager.getIncomingHistoryMessage(userid, time, message, vcardManager.getAvatar(jid));
-                    executeScript("appendMessage('" + text + "')");
-                }
-                catch (Exception e) {
-                    Log.error(e);
-                }
-
-            }
-        }
-
-        activeHistoryUser = userid;
     }
 
     /**
@@ -428,7 +544,13 @@ public class TranscriptWindow extends JPanel {
      * it as disabled.
      */
     public void showDisabledWindowUI() {
-        //TODO: Update disabled code.
+        final Document document = getDocument();
+        final SimpleAttributeSet attrs = new SimpleAttributeSet();
+        StyleConstants.setForeground(attrs, Color.LIGHT_GRAY);
+
+        final int length = document.getLength();
+        StyledDocument styledDocument = getStyledDocument();
+        styledDocument.setCharacterAttributes(0, length, attrs, false);
     }
 
     /**
@@ -491,19 +613,23 @@ public class TranscriptWindow extends JPanel {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
             Log.error("Unable to save chat transcript.", ex);
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
-    public void scrollToBottom() {
-        executeScript("scrollToBottom();");
+    public void setFont(Font font) {
+        this.font = font;
     }
 
+    public Font getFont() {
+        return font;
+    }
 
     public void addTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
         interceptors.add(interceptor);
@@ -513,95 +639,8 @@ public class TranscriptWindow extends JPanel {
         interceptors.remove(interceptor);
     }
 
-    public boolean isDocumentLoaded() {
-        return documentLoaded;
+    public void setCustomBackgroundImage(Image customBackgroundImage) {
+        this.customBackgroundImage = customBackgroundImage;
     }
-
-    public void setInnerHTML(String elementID, String value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("var myVar = document.getElementById(\"").append(elementID).append("\");");
-        builder.append("if(myVar){ myVar.innerHTML = '").append(value).append("';}");
-        executeScript(builder.toString());
-    }
-
-    public void executeScript(final String script) {
-        scriptBuilder.append(script);
-        if (!script.endsWith(";")) {
-            scriptBuilder.append(";");
-        }
-
-        scriptBuilder.append(" ");
-        timer.restart();
-    }
-
-    public void setURL(URL url) {
-        documentLoaded = false;
-
-        browser.loadURL(url);
-    }
-
-    public void addComponent(JComponent component) {
-        extraPanel.add(component);
-        extraPanel.setVisible(true);
-        invalidate();
-        validate();
-        repaint();
-    }
-
-    public void removeComponent(JComponent component) {
-        if (extraPanel.getComponentCount() == 0) {
-            extraPanel.setVisible(false);
-        }
-
-        extraPanel.remove(component);
-        invalidate();
-        validate();
-        repaint();
-    }
-
-    public Dimension getPreferredSize() {
-        final Dimension size = super.getPreferredSize();
-        size.width = 0;
-        return size;
-    }
-
-    private String filterBody(String text) {
-        EmoticonManager emoticonManager = EmoticonManager.getInstance();
-        StringBuilder builder = new StringBuilder();
-
-
-        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
-        while (tokenizer.hasMoreTokens()) {
-            String textFound = tokenizer.nextToken();
-            if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
-                builder.append("<a href=\"").append(textFound).append("\" target=_blank>").append(textFound).append("</a>");
-            }
-            else if (emoticonManager.getEmoticon(textFound) != null) {
-                Emoticon emot = emoticonManager.getEmoticon(textFound);
-                URL url = emoticonManager.getEmoticonURL(emot);
-                builder.append("<img src=\"").append(url.toExternalForm()).append("\" />");
-            }
-            else {
-                builder.append(textFound);
-            }
-        }
-
-        return builder.toString();
-
-    }
-
-    /**
-     * Sets the current active user.
-     *
-     * @param user the active user.
-     */
-    private void setActiveUser(String user) {
-        activeUser = user;
-        activeTimer.stop();
-        activeTimer.start();
-    }
-
 
 }
-

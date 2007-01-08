@@ -24,8 +24,23 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -42,19 +57,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 
 public class StatusBar extends JPanel {
     private List<StatusItem> statusList = new ArrayList<StatusItem>();
@@ -76,13 +78,28 @@ public class StatusBar extends JPanel {
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
         // Initialze command panel
-        commandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        commandPanel = new JPanel() {
+
+            public Dimension getPreferredSize() {
+                Dimension dim = super.getPreferredSize();
+                Component[] comps = getComponents();
+                for (int i = 0; i < comps.length; i++) {
+                    if (comps[i].isVisible()) {
+
+                    }
+                    else {
+                        System.out.println("Nope");
+                    }
+                }
+                return dim;
+            }
+        };
+        commandPanel.setLayout(new BoxLayout(commandPanel, BoxLayout.X_AXIS));
         commandPanel.setOpaque(false);
 
         ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);
         if (brandedImage != null && brandedImage.getIconWidth() > 1) {
             final JLabel brandedLabel = new JLabel(brandedImage);
-            //  brandedLabel.setBorder(new PartialLineBorder(Color.LIGHT_GRAY, 1));
             add(brandedLabel, new GridBagConstraints(3, 0, 1, 3, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         }
 
@@ -356,7 +373,7 @@ public class StatusBar extends JPanel {
 
             if (presence.getStatus() != null && item.getPresence().getStatus() != null) {
                 if ((presence.getMode() == item.getPresence().getMode()) && (presence.getType() == item.getPresence().getType()) &&
-                    (presence.getStatus().equals(item.getPresence().getStatus()))) {
+                        (presence.getStatus().equals(item.getPresence().getStatus()))) {
                     return item;
                 }
             }
@@ -554,4 +571,10 @@ public class StatusBar extends JPanel {
         return commandPanel;
     }
 
+
+    public Dimension getPreferredSize() {
+        Dimension dim = super.getPreferredSize();
+        dim.width = 0;
+        return dim;
+    }
 }

@@ -22,6 +22,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
@@ -32,28 +33,39 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -72,6 +84,7 @@ public final class GroupChatRoom extends ChatRoom {
     private final String roomTitle;
     private boolean isActive = true;
     private boolean showPresenceMessages = true;
+    private SubjectPanel subjectPanel;
 
     private List currentUserList = new ArrayList();
 
@@ -79,15 +92,12 @@ public final class GroupChatRoom extends ChatRoom {
     private List blockedUsers = new ArrayList();
 
     private ChatRoomMessageManager messageManager;
+    private Timer typingTimer;
     private int typedChars;
 
     private GroupChatParticipantList roomInfo;
 
     private long lastActivity;
-
-    private boolean sendNotifications = false;
-
-    private SubjectPanel subjectPanel;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -118,7 +128,7 @@ public final class GroupChatRoom extends ChatRoom {
         getSplitPane().setRightComponent(roomInfo.getGUI());
 
         roomInfo.setChatRoom(this);
-        getSplitPane().setResizeWeight(.75);
+        getSplitPane().setResizeWeight(.60);
 
         setupListeners();
 
@@ -128,10 +138,9 @@ public final class GroupChatRoom extends ChatRoom {
         subjectPanel = new SubjectPanel();
 
         // Do not show top toolbar
-        getToolBar().add(subjectPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        getToolBar().add(subjectPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
         // Add ContextMenuListener
-        /*
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object component, JPopupMenu popup) {
                 popup.addSeparator();
@@ -222,7 +231,7 @@ public final class GroupChatRoom extends ChatRoom {
                 return false;
             }
         });
-*/
+
 
         messageManager = new ChatRoomMessageManager();
 
@@ -453,7 +462,9 @@ public final class GroupChatRoom extends ChatRoom {
         getTranscriptWindow().showDisabledWindowUI();
 
         // Update Notification Label
-        getTranscriptWindow().insertNotificationMessage(Res.getString("message.chat.session.ended", SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date())));
+        getNotificationLabel().setText(Res.getString("message.chat.session.ended", SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date())));
+        getNotificationLabel().setIcon(null);
+        getNotificationLabel().setEnabled(false);
 
         getSplitPane().setRightComponent(null);
         getSplitPane().setDividerSize(0);
@@ -561,7 +572,7 @@ public final class GroupChatRoom extends ChatRoom {
                 String from = StringUtils.parseResource(message.getFrom());
 
                 if (inf != null) {
-                    getTranscriptWindow().insertHistoryMessage(message.getFrom(), from, message.getBody(), sentDate);
+                    getTranscriptWindow().insertHistoryMessage(from, message.getBody(), sentDate);
                 }
                 else {
                     if (isBlocked(message.getFrom())) {
@@ -577,7 +588,10 @@ public final class GroupChatRoom extends ChatRoom {
                     getTranscriptWindow().insertOthersMessage(from, message);
                 }
 
-
+                if (typingTimer != null) {
+                    getNotificationLabel().setText("");
+                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+                }
             }
         }
         else if (message.getType() == Message.Type.chat) {
@@ -656,16 +670,6 @@ public final class GroupChatRoom extends ChatRoom {
                 }
             }
         }
-    }
-
-    public void inviteUser(String jid, String message) {
-        message = message != null ? message : Res.getString("message.please.join.in.conference");
-
-        // Invite User
-        getMultiUserChat().invite(jid, message);
-
-        // Add Invite
-        roomInfo.addInvitee(jid, message);
     }
 
     private void setupListeners() {
@@ -900,15 +904,31 @@ public final class GroupChatRoom extends ChatRoom {
      *         true to use typing notifications.
      */
     public void setSendAndReceiveTypingNotifications(boolean sendAndReceiveTypingNotifications) {
-        sendNotifications = sendAndReceiveTypingNotifications;
-
         if (sendAndReceiveTypingNotifications) {
+            typingTimer = new Timer(10000, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    getNotificationLabel().setText("");
+                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+                }
+            });
             SparkManager.getMessageEventManager().addMessageEventNotificationListener(messageManager);
         }
         else {
-
+            if (typingTimer != null) {
+                typingTimer.stop();
+            }
             SparkManager.getMessageEventManager().removeMessageEventNotificationListener(messageManager);
         }
+    }
+
+    public void inviteUser(String jid, String message) {
+        message = message != null ? message : Res.getString("message.please.join.in.conference");
+
+        // Invite User
+        getMultiUserChat().invite(jid, message);
+
+        // Add Invite
+        roomInfo.addInvitee(jid, message);
     }
 
     /**
@@ -936,7 +956,9 @@ public final class GroupChatRoom extends ChatRoom {
                     if (bareAddress.equals(getRoomname())) {
                         String nickname = StringUtils.parseResource(from);
                         String isTypingText = Res.getString("message.is.typing.a.message", nickname);
-
+                        getNotificationLabel().setText(isTypingText);
+                        getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                        typingTimer.restart();
                     }
                 }
             });
@@ -962,7 +984,7 @@ public final class GroupChatRoom extends ChatRoom {
         // If the user pauses for more than two seconds, send out a new notice.
         if (typedChars >= 10) {
             try {
-                if (sendNotifications) {
+                if (typingTimer != null) {
                     final Iterator iter = chat.getOccupants();
                     while (iter.hasNext()) {
                         String from = (String)iter.next();
@@ -988,6 +1010,7 @@ public final class GroupChatRoom extends ChatRoom {
     public long getLastActivity() {
         return lastActivity;
     }
+
 
     public void connectionClosed() {
         handleDisconnect();
@@ -1016,6 +1039,7 @@ public final class GroupChatRoom extends ChatRoom {
         getSendButton().setEnabled(false);
         SparkManager.getChatManager().getChatContainer().useTabDefault(this);
     }
+
 
     private class SubjectPanel extends JPanel {
 

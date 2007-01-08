@@ -55,22 +55,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
@@ -79,7 +63,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.BorderLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -98,6 +81,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -236,9 +235,12 @@ public class SparkTransferManager {
         }
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+
+        // The image must first be wrapped in a style
+        Style style = doc.addStyle("StyleName", null);
 
         final ReceiveMessage receivingMessageUI = new ReceiveMessage();
-        receivingMessageUI.setChatRoom(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
 
         chatRoom.addClosingListener(new ChatRoomClosingListener() {
@@ -247,7 +249,18 @@ public class SparkTransferManager {
             }
         });
 
-        transcriptWindow.add(receivingMessageUI, BorderLayout.AFTER_LAST_LINE);
+        StyleConstants.setComponent(style, receivingMessageUI);
+
+        // Insert the image at the end of the text
+        try {
+            doc.insertString(doc.getLength(), "ignored text", style);
+            doc.insertString(doc.getLength(), "\n", null);
+        }
+        catch (BadLocationException e) {
+            Log.error(e);
+        }
+
+        chatRoom.scrollToBottom();
 
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
     }
@@ -396,123 +409,122 @@ public class SparkTransferManager {
     }
 
     private void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
-           button.setEnabled(false);
+        button.setEnabled(false);
 
-           final MainWindow mainWindow = SparkManager.getMainWindow();
-           final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+        final MainWindow mainWindow = SparkManager.getMainWindow();
+        final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
-           final boolean mainWindowVisible = mainWindow.isVisible();
-           final boolean chatFrameVisible = chatFrame.isVisible();
+        final boolean mainWindowVisible = mainWindow.isVisible();
+        final boolean chatFrameVisible = chatFrame.isVisible();
 
-           if (mainWindowVisible) {
-               mainWindow.setVisible(false);
-           }
+        if (mainWindowVisible) {
+            mainWindow.setVisible(false);
+        }
 
-           if (chatFrameVisible) {
-               chatFrame.setVisible(false);
-           }
+        if (chatFrameVisible) {
+            chatFrame.setVisible(false);
+        }
 
-           final SwingWorker worker = new SwingWorker() {
-               public Object construct() {
-                   try {
-                       Thread.sleep(1000);
-                       final Robot robot = new Robot();
-                       Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-                       return robot.createScreenCapture(area);
-                   }
-                   catch (Exception e) {
-                       Log.error(e);
+        final SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    Thread.sleep(1000);
+                    final Robot robot = new Robot();
+                    Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+                    return robot.createScreenCapture(area);
+                }
+                catch (Exception e) {
+                    Log.error(e);
 
-                       if (mainWindowVisible) {
-                           mainWindow.setVisible(true);
-                       }
+                    if (mainWindowVisible) {
+                        mainWindow.setVisible(true);
+                    }
 
-                       if (chatFrameVisible) {
-                           chatFrame.setVisible(true);
-                       }
+                    if (chatFrameVisible) {
+                        chatFrame.setVisible(true);
+                    }
 
-                   }
-                   return null;
-               }
+                }
+                return null;
+            }
 
-               public void finished() {
-                   final JFrame frame = new JFrame();
-                   frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+            public void finished() {
+                final JFrame frame = new JFrame();
+                frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
-                   final BufferedImage bufferedImage = (BufferedImage)get();
-                   final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
-                   mainPanel.addMouseListener(new MouseAdapter() {
-                       public void mouseReleased(MouseEvent e) {
-                           Rectangle clip = mainPanel.getClip();
-                           BufferedImage newImage = null;
-                           try {
-                               newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
-                           }
-                           catch (Exception e1) {
+                final BufferedImage bufferedImage = (BufferedImage)get();
+                final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
+                mainPanel.addMouseListener(new MouseAdapter() {
+                    public void mouseReleased(MouseEvent e) {
+                        Rectangle clip = mainPanel.getClip();
+                        BufferedImage newImage = null;
+                        try {
+                            newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
+                        }
+                        catch (Exception e1) {
 
-                           }
-
-
-                           if (newImage != null) {
-                               sendImage(newImage, room);
-                           }
-
-                           frame.dispose();
-                           frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-                           if (mainWindowVisible) {
-                               mainWindow.setVisible(true);
-                           }
-
-                           if (chatFrameVisible) {
-                               chatFrame.setVisible(true);
-                           }
-
-                       }
-                   });
-
-                   frame.addKeyListener(new KeyAdapter() {
-                       public void keyTyped(KeyEvent e) {
-                           if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                               frame.dispose();
-                               frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                               if (mainWindowVisible) {
-                                   mainWindow.setVisible(true);
-                               }
-
-                               if (chatFrameVisible) {
-                                   chatFrame.setVisible(true);
-                               }
-                           }
-                       }
-                   });
+                        }
 
 
-                   if (bufferedImage != null) {
+                        if (newImage != null) {
+                            sendImage(newImage, room);
+                        }
 
-                       frame.setUndecorated(true);
-                       frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
-                       frame.getContentPane().add(mainPanel);
+                        frame.dispose();
+                        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
-                       // Determine if full-screen mode is supported directly
-                       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                       GraphicsDevice gs = ge.getDefaultScreenDevice();
-                       if (gs.isFullScreenSupported()) {
+                        if (mainWindowVisible) {
+                            mainWindow.setVisible(true);
+                        }
 
-                           gs.setFullScreenWindow(frame);
-                       }
-                       else {
-                           // Full-screen mode will be simulated
-                       }
-                   }
+                        if (chatFrameVisible) {
+                            chatFrame.setVisible(true);
+                        }
+
+                    }
+                });
+
+                frame.addKeyListener(new KeyAdapter() {
+                    public void keyTyped(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                            frame.dispose();
+                            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                            if (mainWindowVisible) {
+                                mainWindow.setVisible(true);
+                            }
+
+                            if (chatFrameVisible) {
+                                chatFrame.setVisible(true);
+                            }
+                        }
+                    }
+                });
 
 
-                   button.setEnabled(true);
-               }
-           };
-           worker.start();
-       }
-   
+                if (bufferedImage != null) {
+
+                    frame.setUndecorated(true);
+                    frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
+                    frame.getContentPane().add(mainPanel);
+
+                    // Determine if full-screen mode is supported directly
+                    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                    GraphicsDevice gs = ge.getDefaultScreenDevice();
+                    if (gs.isFullScreenSupported()) {
+
+                        gs.setFullScreenWindow(frame);
+                    }
+                    else {
+                        // Full-screen mode will be simulated
+                    }
+                }
+
+
+                button.setEnabled(true);
+            }
+        };
+        worker.start();
+    }
 
     private void addPresenceListener() {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
@@ -599,7 +611,10 @@ public class SparkTransferManager {
 
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
 
+        // The image must first be wrapped in a style
+        Style style = doc.addStyle("StyleName", null);
 
         SendMessage sendingUI = new SendMessage();
         try {
@@ -636,7 +651,18 @@ public class SparkTransferManager {
         });
 
         sendingUI.sendFile(transfer, transferManager, presence.getFrom(), contactItem.getNickname());
-        transcriptWindow.addComponent(sendingUI);
+        StyleConstants.setComponent(style, sendingUI);
+
+        // Insert the image at the end of the text
+        try {
+            doc.insertString(doc.getLength(), "ignored text", style);
+            doc.insertString(doc.getLength(), "\n", null);
+        }
+        catch (BadLocationException e) {
+            Log.error(e);
+        }
+
+        chatRoom.scrollToBottom();
         return chatRoom;
     }
 

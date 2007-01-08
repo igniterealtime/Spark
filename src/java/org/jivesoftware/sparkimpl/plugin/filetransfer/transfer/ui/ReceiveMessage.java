@@ -13,20 +13,16 @@ package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.TranscriptWindow;
-import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -35,25 +31,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -67,6 +44,23 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class ReceiveMessage extends JPanel {
     private JLabel imageLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
@@ -78,31 +72,21 @@ public class ReceiveMessage extends JPanel {
     private IncomingFileTransfer transfer;
     private TransferButton cancelButton = new TransferButton();
 
-    private ChatRoom chatRoom;
-
 
     public ReceiveMessage() {
         setLayout(new GridBagLayout());
-        setOpaque(false);
-        setBackground(new Color(250, 249, 242));
-        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
-        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        setBackground(new Color(250, 249, 242));
+        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
-        final RolloverButton hideButton = new RolloverButton("Hide", SparkRes.getImageIcon(SparkRes.SMALL_CLOSE_BUTTON));
-        add(hideButton, new GridBagConstraints(2, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-        hideButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        add(acceptLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
-        add(acceptLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 2), 0, 0));
-
-        add(declineLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 2), 0, 0));
+        add(declineLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 
         ResourceUtils.resButton(acceptLabel, Res.getString("accept"));
@@ -143,10 +127,6 @@ public class ReceiveMessage extends JPanel {
                 declineLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
-    }
-
-    public void setChatRoom(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
     }
 
     public void acceptFileTransfer(final FileTransferRequest request) {
@@ -205,13 +185,6 @@ public class ReceiveMessage extends JPanel {
     private void rejectRequest(FileTransferRequest request) {
         request.reject();
 
-        this.setVisible(true);
-        final TranscriptWindow window = chatRoom.getTranscriptWindow();
-        window.remove(this);
-
-        String message = ThemeManager.getInstance().getStatusMessage(Res.getString("message.file.transfer.canceled"), "");
-        window.insertHTML(message);
-
         setBackground(new Color(239, 245, 250));
         acceptLabel.setText("");
         declineLabel.setText("");
@@ -219,9 +192,9 @@ public class ReceiveMessage extends JPanel {
         titleLabel.setText(Res.getString("message.file.transfer.canceled"));
         titleLabel.setForeground(new Color(65, 139, 179));
 
-        window.invalidate();
-        window.validate();
-        window.repaint();
+        invalidate();
+        validate();
+        repaint();
     }
 
     private void acceptRequest(final FileTransferRequest request) {
@@ -238,8 +211,8 @@ public class ReceiveMessage extends JPanel {
         titleLabel.setForeground(new Color(65, 139, 179));
 
 
-        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 2), 150, 0));
-        add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
+        add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         cancelButton.setVisible(true);
         transfer = request.accept();
         try {
@@ -281,8 +254,8 @@ public class ReceiveMessage extends JPanel {
                         progressBar.setValue((int)bytesRead);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == FileTransfer.Status.error ||
-                            status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
-                            status == FileTransfer.Status.refused) {
+                                status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
+                                status == FileTransfer.Status.refused) {
                             break;
                         }
                         else if (status == FileTransfer.Status.negotiating_stream) {
@@ -298,7 +271,7 @@ public class ReceiveMessage extends JPanel {
 
                 public void finished() {
                     if (transfer.getAmountWritten() >= request.getFileSize()) {
-                        //transferDone(request, transfer);
+                        transferDone(request, transfer);
 
                         imageLabel.setToolTipText(Res.getString("message.click.to.open"));
                         titleLabel.setToolTipText(Res.getString("message.click.to.open"));
@@ -342,20 +315,10 @@ public class ReceiveMessage extends JPanel {
                             }
                         });
 
-                        TranscriptWindow window = chatRoom.getTranscriptWindow();
 
-                        try {
-                            String message = ThemeManager.getInstance().getNotificationMessage(getFinishedText(titleLabel.getText(), downloadedFile), true);
-                            System.out.println(message);
-                            window.insertHTML(message);
-                            setVisible(false);
-                            window.invalidate();
-                            window.validate();
-                            window.repaint();
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        invalidate();
+                        validate();
+                        repaint();
                         return;
                     }
 
@@ -370,7 +333,7 @@ public class ReceiveMessage extends JPanel {
                         transferMessage = Res.getString("message.transfer.refused");
                     }
                     else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
-                        transfer.getAmountWritten() < request.getFileSize()) {
+                            transfer.getAmountWritten() < request.getFileSize()) {
                         transferMessage = Res.getString("message.transfer.cancelled");
                     }
 
@@ -422,8 +385,8 @@ public class ReceiveMessage extends JPanel {
 
         final TransferButton openFileButton = new TransferButton();
         final TransferButton openFolderButton = new TransferButton();
-        add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 2), 0, 0));
-        add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 2), 0, 0));
+        add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         Downloads downloads = Downloads.getInstance();
         final File downloadedFile = new File(downloads.getDownloadDirectory(), request.getFileName());
@@ -451,7 +414,7 @@ public class ReceiveMessage extends JPanel {
         });
 
 
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         ResourceUtils.resButton(openFileButton, Res.getString("open"));
         ResourceUtils.resButton(openFolderButton, Res.getString("open.folder"));
@@ -671,45 +634,5 @@ public class ReceiveMessage extends JPanel {
             popup.add(saveAsAction);
             popup.show(this, e.getX(), e.getY());
         }
-    }
-
-
-    private String getFinishedText(String title, File file) throws Exception {
-        final StringBuilder builder = new StringBuilder();
-        BufferedImage image = GraphicUtils.getBufferedImage(file);
-        File f = new File("c:\\test.png");
-        try {
-            ImageIO.write(image, "PNG", f);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String iconURL = f.toURL().toString();
-        String fileURL = file.toURL().toString();
-        String folderURL = file.getParentFile().toURL().toString();
-        builder.append("<table width=\"100%\">" +
-            "    <tr>" +
-            "     <td><img src=\"" + iconURL + "\"></td>" +
-            "        <td>" +
-            "            " + title + "" +
-            "        </td>" +
-            "    </tr>" +
-            "    <tr>" +
-            "        <td colspan=\"2\">" +
-            "           " + file.getName() + "" +
-            "        </td>" +
-            "    </tr>" +
-            "    <tr>" +
-            "        <td width=\"5%\">" +
-            "            <a href=\"" + fileURL + "\" target=\"_blank\">Open</a>" +
-            "        </td>" +
-            "        <td align=\"left\">" +
-            "            <a href=\"" + folderURL + "\" target=\"_blank\">Open Folder</a>" +
-            "        </td>" +
-            "    </tr>" +
-            "</table>");
-
-        return builder.toString();
     }
 }

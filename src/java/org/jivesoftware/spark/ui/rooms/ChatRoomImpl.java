@@ -32,6 +32,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
+import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
@@ -46,6 +47,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -189,6 +192,10 @@ public class ChatRoomImpl extends ChatRoom {
 
         typingTimer.start();
         lastActivity = System.currentTimeMillis();
+
+        // Add VCard Panel
+        final VCardPanel vcardPanel = new VCardPanel(participantJID);
+        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
     }
 
 
@@ -531,7 +538,16 @@ public class ChatRoomImpl extends ChatRoom {
      * @param typing true if the typing notification should show, otherwise hide it.
      */
     public void showTyping(boolean typing) {
-
+        if (typing) {
+            String isTypingText = Res.getString("message.is.typing.a.message", participantNickname);
+            getNotificationLabel().setText(isTypingText);
+            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+        }
+        else {
+            // Remove is typing text.
+            getNotificationLabel().setText("");
+            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+        }
 
     }
 
@@ -628,6 +644,7 @@ public class ChatRoomImpl extends ChatRoom {
         return alternativeIcon;
     }
 
+
     private void loadHistory() {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
@@ -641,9 +658,8 @@ public class ChatRoomImpl extends ChatRoom {
             String from = message.getFrom();
             String nickname = StringUtils.parseName(from);
             Date date = message.getDate();
-            getTranscriptWindow().insertHistoryMessage(getParticipantJID(), nickname, message.getBody(), date);
+            getTranscriptWindow().insertHistoryMessage(nickname, message.getBody(), date);
         }
 
     }
-
 }

@@ -39,6 +39,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
+import javax.swing.ImageIcon;
+
 /**
  * Responsible for the handling of all Emoticon packs. Using the EmoticonManager, you can specify
  * any defined Emoticon Pack, retrieve any emoticon based on its text equivalant, and retrieve its
@@ -233,6 +235,16 @@ public class EmoticonManager {
                     return emoticon;
                 }
             }
+        }
+
+        return null;
+    }
+
+    public ImageIcon getEmoticonImage(String key){
+        final Emoticon emoticon = getEmoticon(key);
+        if(emoticon != null){
+            URL url = getEmoticonURL(emoticon);
+            return new ImageIcon(url);
         }
 
         return null;

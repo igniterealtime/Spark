@@ -30,7 +30,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.themes.ThemeManager;
 import org.jivesoftware.spark.ui.conferences.Conferences;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -84,12 +83,12 @@ public class Workspace extends JPanel implements PacketListener {
 
     private static Workspace singleton;
     private static final Object LOCK = new Object();
-    private List offlineMessages = new ArrayList();
+    private List<Message> offlineMessages = new ArrayList<Message>();
 
     private JPanel cardPanel;
     private CardLayout cardLayout;
 
-    final public static String WORKSPACE_PANE = "WORKSPACE_PANE";
+    public static final String WORKSPACE_PANE = "WORKSPACE_PANE";
 
     private final CollapsiblePane alerts = new CollapsiblePane();
     private final JPanel alertPanel = new JPanel();
@@ -148,8 +147,6 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
         workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
-        workspacePane.setBackgroundColor(new Color(180, 207, 247));
-        workspacePane.setBorderColor(Color.lightGray);
         workspacePane.setActiveButtonBold(true);
 
         // Add Panels.
@@ -191,9 +188,6 @@ public class Workspace extends JPanel implements PacketListener {
      * Builds the Workspace layout.
      */
     public void buildLayout() {
-        // Initialize ThemeManager
-        ThemeManager.getInstance();
-        
         new Enterprise();
 
         // Initilaize tray
@@ -282,11 +276,11 @@ public class Workspace extends JPanel implements PacketListener {
             public void run() {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        final Iterator offlineMessage = offlineMessages.iterator();
-                        while (offlineMessage.hasNext()) {
-                            Message offline = (Message)offlineMessage.next();
-                            handleOfflineMessage(offline);
+                        for(Message offlineMessage : offlineMessages){
+                            handleOfflineMessage(offlineMessage);
                         }
+
+                        offlineMessages.clear();
                     }
                 });
             }
@@ -332,7 +326,12 @@ public class Workspace extends JPanel implements PacketListener {
             final String body = message.getBody();
             boolean broadcast = message.getProperty("broadcast") != null;
 
-            if (body == null || isGroupChat || broadcast || message.getType() == Message.Type.normal || message.getType() == Message.Type.headline) {
+            if (body == null ||
+                isGroupChat ||
+                broadcast ||
+                message.getType() == Message.Type.normal ||
+                message.getType() == Message.Type.headline ||
+                message.getType() == Message.Type.error) {
                 return;
             }
 
@@ -421,7 +420,9 @@ public class Workspace extends JPanel implements PacketListener {
     private void insertMessage(final String bareJID, final Message message) throws ChatRoomNotFoundException {
         ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
         chatRoom.insertMessage(message);
-
+        int chatLength = chatRoom.getTranscriptWindow().getDocument().getLength();
+        chatRoom.getTranscriptWindow().setCaretPosition(chatLength);
+        chatRoom.getChatInputEditor().requestFocusInWindow();
     }
 
     public void addAlert(Component comp) {

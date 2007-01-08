@@ -21,17 +21,22 @@ import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
@@ -44,7 +49,6 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -67,16 +71,14 @@ import java.util.List;
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
+    private final JLabel notificationLabel;
+    private final TranscriptWindow transcriptWindow;
     private final ChatAreaSendField chatAreaButton;
     private final ChatToolBar toolbar;
+    private final JScrollPane textScroller;
     private final JPanel bottomPanel;
     private final JPanel editorBar;
     private JPanel chatWindowPanel;
-
-    private final List packetIDList;
-    private final List messageListeners;
-    private List transcript;
-    private List fileDropListeners;
 
     private int unreadMessageCount;
 
@@ -84,11 +86,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private List closingListeners = new ArrayList();
 
-    protected final TranscriptWindow transcriptWindow;
-
 
     final JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
+    private ChatRoomTransferHandler transferHandler;
+
+    private final List packetIDList;
+    private final List messageListeners;
+    private List transcript;
+    private List fileDropListeners;
 
     /**
      * Initializes the base layout and base background color.
@@ -98,6 +104,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindow = new TranscriptWindow();
         splitPane = new JSplitPane();
         packetIDList = new ArrayList();
+        notificationLabel = new JLabel();
         toolbar = new ChatToolBar();
         bottomPanel = new JPanel();
 
@@ -112,24 +119,28 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
 
             public void mouseReleased(MouseEvent e) {
-
+                if (transcriptWindow.getSelectedText() == null) {
+                    getChatInputEditor().requestFocus();
+                }
             }
         });
 
+        textScroller = new JScrollPane(transcriptWindow);
 
-        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND)) {
-            public Dimension getPreferredSize() {
-                Dimension dim = super.getPreferredSize();
-
-                int windowHeight = getChatRoom().getHeight();
-
-                if (dim.getHeight() > windowHeight - 200) {
-                    dim.height = windowHeight - 200;
-                }
-
-                return dim;
+        textScroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                mousePressed = true;
             }
-        };
+
+            public void mouseReleased(MouseEvent e) {
+                mousePressed = false;
+            }
+        });
+
+        textScroller.setBackground(transcriptWindow.getBackground());
+        textScroller.getViewport().setBackground(Color.white);
+
+        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND));
 
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
@@ -140,7 +151,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Initally, set the right pane to null to keep it empty.
         getSplitPane().setRightComponent(null);
 
-        /*
+        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+
+
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object component, JPopupMenu popup) {
                 Action saveAction = new AbstractAction() {
@@ -163,7 +176,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 return false;
             }
         });
-        */
 
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
         this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
@@ -173,11 +185,16 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
-        getTranscriptWindow().setTransferHandler(new ChatRoomTransferHandler(this));
-        getChatInputEditor().setTransferHandler(new ChatRoomTransferHandler(this));
 
+        transferHandler = new ChatRoomTransferHandler(this);
+
+        getTranscriptWindow().setTransferHandler(transferHandler);
+        getChatInputEditor().setTransferHandler(transferHandler);
 
         add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
+        // Add Connection Listener
+        SparkManager.getConnection().addConnectionListener(this);
     }
 
     // Setup base layout.
@@ -186,16 +203,22 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
         add(splitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        //   add(notificationLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 2, 5, 0), 0, 0));
 
         // Remove Default Beveled Borders
         splitPane.setBorder(null);
         verticalSplit.setBorder(null);
         splitPane.setLeftComponent(verticalSplit);
 
+        textScroller.setAutoscrolls(true);
+
+        // Speed up scrolling. It was way too slow.
+        textScroller.getVerticalScrollBar().setBlockIncrement(50);
+        textScroller.getVerticalScrollBar().setUnitIncrement(20);
 
         chatWindowPanel = new JPanel();
         chatWindowPanel.setLayout(new GridBagLayout());
-        chatWindowPanel.add(transcriptWindow, new GridBagConstraints(0, 10, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        chatWindowPanel.add(textScroller, new GridBagConstraints(0, 10, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
@@ -211,14 +234,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 10));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 15));
         bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         verticalSplit.setOpaque(false);
 
         verticalSplit.setTopComponent(chatPanel);
         verticalSplit.setBottomComponent(bottomPanel);
         verticalSplit.setResizeWeight(1.0);
-        verticalSplit.setDividerSize(1);
+        verticalSplit.setDividerSize(2);
 
         // Add listener to send button
         chatAreaButton.getButton().addActionListener(this);
@@ -236,16 +259,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
             public void actionPerformed(ActionEvent evt) {
-                final int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.end.chat"),
-                        Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
-                if (ok == JOptionPane.OK_OPTION) {
-                    // Leave this chat.
-                    closeChatRoom();
-                }
+                // Leave this chat.
+                closeChatRoom();
             }
         });
-
-        SparkManager.getConnection().addConnectionListener(this);
     }
 
 
@@ -327,6 +344,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcript.add(newMessage);
 
+        // Add current date if this is the current agent
+        if (updateDate && transcriptWindow.getLastUpdated() != null) {
+            // Set new label date
+            notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
+            notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(transcriptWindow.getLastUpdated())));
+        }
 
         scrollToBottom();
     }
@@ -339,7 +362,32 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             return;
         }
 
-        transcriptWindow.scrollToBottom();
+        int chatLength = transcriptWindow.getDocument().getLength();
+        transcriptWindow.setCaretPosition(chatLength);
+
+        try {
+            JScrollBar sb = textScroller.getVerticalScrollBar();
+            sb.setValue(sb.getMaximum());
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
+        /*
+           try {
+            JScrollBar vbar = textScroller.getVerticalScrollBar();
+            int whereWeAt = vbar.getValue() + vbar.getVisibleAmount();
+            if (whereWeAt < vbar.getMaximum() - 50) {
+
+            }
+            else {
+                vbar.setValue(vbar.getMaximum());
+            }
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+        */
     }
 
 
@@ -356,8 +404,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         else {
             chatAreaButton.getButton().setEnabled(false);
         }
-
-        verticalSplit.setDividerLocation(-1);
     }
 
     /**
@@ -516,6 +562,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param docEvent the document event.
      */
     public void changedUpdate(DocumentEvent docEvent) {
+        // Do nothing.
     }
 
     /**
@@ -541,6 +588,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void closeChatRoom() {
         fireClosingListeners();
+
+        // Remove Connection Listener
+        SparkManager.getConnection().removeConnectionListener(this);
+        getTranscriptWindow().setTransferHandler(null);
+        getChatInputEditor().setTransferHandler(null);
+
+        transferHandler = null;
+
+        packetIDList.clear();
+        messageListeners.clear();
+        fileDropListeners.clear();
     }
 
     /**
@@ -593,6 +651,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public abstract boolean isActive();
 
+
+    /**
+     * Returns the notification label. The notification label notifies the
+     * user of chat room activity, such as the date of the last message
+     * and typing notifications.
+     *
+     * @return the notification label.
+     */
+    public JLabel getNotificationLabel() {
+        return notificationLabel;
+    }
 
     /**
      * Adds a packetID to the packedIDList. The packetIDLlist
@@ -669,7 +738,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
          */
         public ChatToolBar() {
             buttonPanel = new JPanel();
-            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 0));
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 
             rightPanel = new JPanel();
             rightPanel.setOpaque(false);
@@ -679,7 +748,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             setLayout(new GridBagLayout());
 
             buttonPanel.setOpaque(false);
-            add(buttonPanel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            add(buttonPanel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             setOpaque(false);
         }
 
@@ -825,6 +894,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         }
     }
 
+    public JScrollPane getScrollPaneForTranscriptWindow() {
+        return textScroller;
+    }
 
     /**
      * Return the "Send" button.
@@ -851,16 +923,16 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void connectionClosed() {
     }
 
-    public void connectionClosedOnError(Exception exception) {
+    public void connectionClosedOnError(Exception e) {
     }
 
-    public void reconnectingIn(int i) {
+    public void reconnectingIn(int seconds) {
     }
 
     public void reconnectionSuccessful() {
     }
 
-    public void reconnectionFailed(Exception exception) {
+    public void reconnectionFailed(Exception e) {
     }
 }
 

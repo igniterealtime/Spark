@@ -10,17 +10,17 @@
 
 package org.jivesoftware;
 
+import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -113,8 +113,13 @@ public final class Spark {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
-                UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
-
+                try {
+                    UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
+                }
+                catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                installBaseUIProperties();
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
                 UIManager.setLookAndFeel(classname);
@@ -130,6 +135,7 @@ public final class Spark {
 
 
         buf.append(classPath);
+        buf.append(";").append(RESOURCE_DIRECTORY.getAbsolutePath());
 
         // Update System Properties
         System.setProperty("java.library.path", buf.toString());
@@ -153,37 +159,6 @@ public final class Spark {
 
     // Setup the look and feel of this application.
     static {
-
-
-        UIManager.put("Tree.openIcon", SparkRes.getImageIcon(SparkRes.FOLDER));
-        UIManager.put("Tree.closedIcon", SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED));
-        UIManager.put("Button.showMnemonics", Boolean.TRUE);
-        UIManager.put("CollapsiblePane.titleFont", new Font("Dialog", Font.BOLD, 11));
-        UIManager.put("DockableFrameTitlePane.font", new Font("Dialog", Font.BOLD, 10));
-        UIManager.put("DockableFrame.inactiveTitleForeground", Color.white);
-        UIManager.put("DockableFrame.inactiveTitleBackground", new Color(180, 176, 160));
-        UIManager.put("DockableFrame.activeTitleBackground", new Color(105, 132, 188));
-        UIManager.put("DockableFrame.activeTitleForeground", Color.white);
-        UIManager.put("CollapsiblePane.background", Color.white);
-        UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
-        if (isWindows()) {
-            UIManager.put("DockableFrameTitlePane.titleBarComponent", true);
-        }
-        else {
-            UIManager.put("DockableFrameTitlePane.titleBarComponent", false);
-        }
-
-        UIManager.put("SidePane.lineColor", Color.BLACK);
-        UIManager.put("SidePane.foreground", Color.BLACK);
-
-
-        Color menuBarColor = new Color(255, 255, 255);//235, 233, 237);
-        UIManager.put("MenuBar.background", menuBarColor);
-        UIManager.put("JideTabbedPane.tabInsets", new Insets(3, 10, 3, 10));
-        UIManager.put("JideTabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
-
-        installBaseUIProperties();
-
         com.install4j.api.launcher.StartupNotification.registerStartupListener(new SparkStartupListener());
     }
 
@@ -321,6 +296,8 @@ public final class Spark {
         UIManager.put("List.selectionBorder", new Color(187, 195, 215));
         UIManager.put("List.foreground", Color.black);
         UIManager.put("List.background", Color.white);
+        UIManager.put("MenuItem.selectionBackground", new Color(217, 232, 250));
+        UIManager.put("MenuItem.selectionForeground", Color.black);
         UIManager.put("TextPane.foreground", Color.black);
         UIManager.put("TextPane.background", Color.white);
         UIManager.put("TextPane.inactiveForeground", Color.white);
@@ -341,9 +318,10 @@ public final class Spark {
         UIManager.put("Link.foreground", Color.blue);
         UIManager.put("User.foreground", Color.blue);
         UIManager.put("OtherUser.foreground", Color.red);
-        UIManager.put("Notification.foreground", new Color(51, 153, 51));
+        UIManager.put("Notification.foreground", new Color(0, 128, 0));
         UIManager.put("Error.foreground", Color.red);
         UIManager.put("Question.foreground", Color.red);
+        UIManager.put("History.foreground", new Color(0, 57, 109));
 
         UIManager.put("SparkTabbedPane.startColor", new Color(236, 236, 236));
         UIManager.put("SparkTabbedPane.endColor", new Color(236, 236, 236));

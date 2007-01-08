@@ -33,7 +33,7 @@ public class ThemePreference implements Preference {
 
 
     public String getTitle() {
-        return "Appearance";
+        return "Customization";
     }
 
     public Icon getIcon() {
@@ -82,7 +82,6 @@ public class ThemePreference implements Preference {
         final String theme = panel.getSelectedTheme();
         final String pack = panel.getSelectedEmoticonPack();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        pref.setTheme(theme);
         pref.setEmoticonPack(pack);
     }
 
