@@ -36,7 +36,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -262,12 +261,12 @@ public class ContactInfoWindow extends JPanel {
             if (icon != null && icon.getIconHeight() > 1) {
                 icon = GraphicUtils.scaleImageIcon(icon, 96, 96);
                 avatarLabel.setIcon(icon);
-                avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
             }
             else {
-                icon = new ImageIcon(SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage().getScaledInstance(1, 64, Image.SCALE_SMOOTH));
+                icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE);
                 avatarLabel.setIcon(icon);
             }
+            avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
         }
         catch (MalformedURLException e) {
             Log.error(e);

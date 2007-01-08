@@ -256,6 +256,9 @@ public class SparkRes {
     public static final String LIGHTBULB_ON_16x16_IMAGE = "LIGHTBULB_ON_16x16_IMAGE";
     public static final String DUMMY_CONTACT_IMAGE = "DUMMY_CONTACT_IMAGE";
     public static final String PALETTE_24x24_IMAGE = "PALETTE_24x24_IMAGE";
+    public static final String DEFAULT_AVATAR_64x64_IMAGE = "DEFAULT_AVATAR_64x64_IMAGE";
+    public static final String DEFAULT_AVATAR_32x32_IMAGE = "DEFAULT_AVATAR_32x32_IMAGE";
+    public static final String DEFAULT_AVATAR_16x16_IMAGE = "DEFAULT_AVATAR_16x16_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
