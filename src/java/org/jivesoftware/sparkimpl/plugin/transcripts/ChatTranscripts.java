@@ -106,12 +106,14 @@ final public class ChatTranscripts {
 
         // Append to File
         try {
-            RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
+            final RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
 
-            // Seek to end of file
-            raf.seek(transcriptFile.length() - 24);
-
-            builder.append("</messages></transcript>");
+            // We want to append near the end of the document as the last
+            // child in the transcript.
+            final String endTag = "</messages></transcript>";
+            builder.append(endTag);
+            
+            raf.seek(transcriptFile.length() - endTag.length());
 
             // Append to the end
             raf.writeBytes(builder.toString());
