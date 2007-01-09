@@ -1106,7 +1106,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 }
                 catch (InterruptedException e1) {
                     Log.error(e1);
