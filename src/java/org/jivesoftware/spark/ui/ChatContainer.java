@@ -384,7 +384,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         else if (!chatFrame.isVisible()) {
             if (Spark.isWindows()) {
-                chatFrame.setFocusableWindowState(false);
+                //chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
@@ -640,7 +640,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         else if (!chatFrame.isVisible()) {
             if (Spark.isWindows()) {
-                chatFrame.setFocusableWindowState(false);
+                //chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
