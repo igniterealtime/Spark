@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.StringReader;
+import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -154,11 +155,10 @@ final public class ChatTranscripts {
             return transcript;
         }
 
-        final String contents = URLFileSystem.getContents(transcriptFile);
         try {
-            MXParser parser = new MXParser();
+            final MXParser parser = new MXParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            parser.setInput(new StringReader(contents));
+            parser.setInput(new FileInputStream(transcriptFile), "UTF-8");
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
