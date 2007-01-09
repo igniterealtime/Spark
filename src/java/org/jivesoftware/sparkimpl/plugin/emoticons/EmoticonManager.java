@@ -55,6 +55,7 @@ public class EmoticonManager {
 
 
     private Map<String, List> emoticonMap = new HashMap<String, List>();
+    private Map<String, ImageIcon> imageMap = new HashMap<String, ImageIcon>();
 
     /**
      * The root emoticon directory.
@@ -112,6 +113,7 @@ public class EmoticonManager {
     public void setActivePack(String pack) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setEmoticonPack(pack);
+        imageMap.clear();
     }
 
     public String installPack(File pack) {
@@ -240,11 +242,17 @@ public class EmoticonManager {
         return null;
     }
 
-    public ImageIcon getEmoticonImage(String key){
+    public ImageIcon getEmoticonImage(String key) {
         final Emoticon emoticon = getEmoticon(key);
-        if(emoticon != null){
-            URL url = getEmoticonURL(emoticon);
-            return new ImageIcon(url);
+        if (emoticon != null) {
+            ImageIcon icon = imageMap.get(key);
+            if (icon == null) {
+                URL url = getEmoticonURL(emoticon);
+                icon = new ImageIcon(url);
+                imageMap.put(key, icon);
+            }
+
+            return imageMap.get(key);
         }
 
         return null;
