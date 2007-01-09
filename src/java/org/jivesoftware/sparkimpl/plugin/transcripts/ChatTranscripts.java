@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.StringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -78,7 +79,7 @@ final public class ChatTranscripts {
             builder.append("<message>");
             builder.append("<to>").append(m.getTo()).append("</to>");
             builder.append("<from>").append(m.getFrom()).append("</from>");
-            builder.append("<body>").append(m.getBody()).append("</body>");
+            builder.append("<body>").append(StringUtils.escapeForXML(m.getBody())).append("</body>");
 
             String dateString = FORMATTER.format(m.getDate());
             builder.append("<date>").append(dateString).append("</date>");
@@ -213,7 +214,7 @@ final public class ChatTranscripts {
                 message.setFrom(parser.nextText());
             }
             else if (eventType == XmlPullParser.START_TAG && "body".equals(parser.getName())) {
-                message.setBody(parser.nextText());
+                message.setBody(StringUtils.unescapeFromXML(parser.nextText()));
             }
             else if (eventType == XmlPullParser.START_TAG && "date".equals(parser.getName())) {
                 Date d = null;
