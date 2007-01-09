@@ -649,4 +649,32 @@ public class VCardManager {
         return avatarURL;
     }
 
+    public VCard searchPhoneNumber(String phoneNumber) {
+        for (VCard vcard : vcardMap.values()) {
+            String homePhone = getNumbersFromPhone(vcard.getPhoneHome("VOICE"));
+            String workPhone = getNumbersFromPhone(vcard.getPhoneWork("VOICE"));
+
+            String query = getNumbersFromPhone(phoneNumber);
+            if ((homePhone != null && homePhone.contains(query)) || (workPhone != null && workPhone.contains(query))) {
+                return vcard;
+            }
+        }
+
+        return null;
+    }
+
+    public static String getNumbersFromPhone(String number) {
+        if (number == null) {
+            return null;
+        }
+
+        number = number.replace("-", "");
+        number = number.replace("(", "");
+        number = number.replace(")", "");
+        if (number.startsWith("1")) {
+            number = number.substring(1);
+        }
+        return number;
+    }
+
 }
