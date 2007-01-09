@@ -11,18 +11,17 @@
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
-import java.io.StringReader;
-import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -158,7 +157,8 @@ final public class ChatTranscripts {
         try {
             final MXParser parser = new MXParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            parser.setInput(new FileInputStream(transcriptFile), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(transcriptFile));
+            parser.setInput(bufferedReader);
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
