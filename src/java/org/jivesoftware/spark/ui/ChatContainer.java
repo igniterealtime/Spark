@@ -14,6 +14,7 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -45,9 +46,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -57,6 +58,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -97,9 +102,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Creates the ChatRooms to hold all ChatRooms.
      */
     public ChatContainer() {
-        // Have the chat start at the bottom.
         super(JTabbedPane.BOTTOM);
-
         // Set minimum size
         setMinimumSize(new Dimension(400, 200));
         // Don't allow tabs to shrink and allow scrolling.
@@ -132,8 +135,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         this.setFocusable(false);
 
         setOpaque(true);
+
         setBackground(Color.white);
     }
+
+
 
     /**
      * Adds navigation capability to chat rooms. Users can navigate using the alt-left or right arrow keys.
@@ -176,10 +182,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl W"), "escape");
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control W"), "escape");
-
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
 
         this.getActionMap().put("escape", new AbstractAction("escape") {
             public void actionPerformed(ActionEvent evt) {
@@ -192,7 +196,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String appleString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(appleStroke);
 
         // Handle Apple Key W
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(appleString + " W"), "appleStroke");
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(appleString + "w"), "appleStroke");
         this.getActionMap().put("appleStroke", new AbstractAction("appleStroke") {
             public void actionPerformed(ActionEvent evt) {
                 closeActiveRoom();
@@ -216,7 +220,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room the ChatRoom to add.
      */
-    public void addChatRoom(final ChatRoom room) {
+    public synchronized void addChatRoom(final ChatRoom room) {
         createFrameIfNeeded();
 
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
@@ -247,7 +251,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
         }
         else {
-            tooltip = ((GroupChatRoom)room).getRoomname();
+            tooltip = room.getRoomname();
         }
 
         // Create ChatRoom UI and dock
@@ -270,7 +274,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setTitle(room.getRoomTitle());
         }
 
-        SwingWorker worker = new SwingWorker() {
+        final SwingWorker visibilityThread = new SwingWorker() {
             public Object construct() {
                 try {
                     Thread.sleep(100);
@@ -286,13 +290,15 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         };
 
-        worker.start();
+        visibilityThread.start();
 
         // Add to ChatRoomList
         chatRoomList.add(room);
 
+        // Notify users that the chat room has been opened.
         fireChatRoomOpened(room);
 
+        // Focus Chat
         focusChat();
     }
 
@@ -377,7 +383,25 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             flashWindow(chatRoom);
         }
         else if (!chatFrame.isVisible()) {
-            handleHiddenChatFrame(chatRoom);
+            if (Spark.isWindows()) {
+                chatFrame.setFocusableWindowState(false);
+                chatFrame.setState(Frame.ICONIFIED);
+            }
+            chatFrame.setVisible(true);
+
+            // Set to new tab.
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+
+            // If the ContactList is in the tray, we need better notification by flashing
+            // the chatframe.
+            if (!SparkManager.getMainWindow().isVisible()) {
+                flashWindow(chatRoom);
+            }
+            else if (chatFrame.getState() == Frame.ICONIFIED) {
+                flashWindow(chatRoom);
+            }
+
         }
     }
 
@@ -398,17 +422,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         fireChatRoomClosed(room);
-
         room.removeMessageListener(this);
 
         // Remove mappings
         presenceMap.remove(room.getRoomname());
 
         chatRoomList.remove(room);
-
-        // Cleanup
-        room.getTranscriptWindow().clear();
-        room.getTranscripts().clear();
     }
 
     /**
@@ -583,9 +602,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     private void handleMessageNotification(final ChatRoom chatRoom) {
-        if (true) {
-            return;
-        }
         ChatRoom activeChatRoom = null;
         try {
             activeChatRoom = getActiveChatRoom();
@@ -623,29 +639,28 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             startFlashing(chatRoom);
         }
         else if (!chatFrame.isVisible()) {
-            handleHiddenChatFrame(chatRoom);
+            if (Spark.isWindows()) {
+                chatFrame.setFocusableWindowState(false);
+                chatFrame.setState(Frame.ICONIFIED);
+            }
+            chatFrame.setVisible(true);
+
+            // Set to new tab.
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+
+            // If the ContactList is in the tray, we need better notification by flashing
+            // the chatframe.
+            if (!SparkManager.getMainWindow().isVisible()) {
+                startFlashing(chatRoom);
+            }
+            else if (chatFrame.getState() == Frame.ICONIFIED) {
+                startFlashing(chatRoom);
+            }
+
         }
         else if (chatRoom != activeChatRoom) {
             startFlashing(chatRoom);
-        }
-    }
-
-    private void handleHiddenChatFrame(ChatRoom chatRoom) {
-        int tabLocation = indexOfComponent(chatRoom);
-        setSelectedIndex(tabLocation);
-        if (Spark.isWindows()) {
-            chatFrame.setState(Frame.ICONIFIED);
-        }
-
-        chatFrame.setVisible(true);
-
-        // If the ContactList is in the tray, we need better notification by flashing
-        // the chatframe.
-        if (!SparkManager.getMainWindow().isVisible()) {
-            flashWindow(chatRoom);
-        }
-        else if (chatFrame.getState() == Frame.ICONIFIED) {
-            flashWindow(chatRoom);
         }
     }
 
@@ -670,6 +685,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // Set the title of the room.
             chatFrame.setTitle(room.getRoomTitle());
+            chatFrame.setIconImage(SparkManager.getMainWindow().getIconImage());
         }
         catch (ChatRoomNotFoundException e1) {
             // Ignore
@@ -961,14 +977,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             if (room instanceof ChatRoomImpl) {
                 final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
                 if (!chatRoomImpl.isIconHandler()) {
-                    Icon icon = chatRoomImpl.getAlternativeIcon();
-
-                    // if an alternative icon is not used, get the icon based on the users
-                    // presence.
-                    if (icon == null) {
-                        Presence presence = chatRoomImpl.getPresence();
-                        icon = SparkManager.getUserManager().getTabIconForPresence(presence);
-                    }
+                    Presence presence = chatRoomImpl.getPresence();
+                    Icon icon = SparkManager.getUserManager().getTabIconForPresence(presence);
                     tab.setIcon(icon);
                 }
             }
@@ -1076,7 +1086,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
                     // Set the title of the room.
                     chatFrame.setTitle(room.getRoomTitle());
-                    chatFrame.setIconImage(SparkManager.getMainWindow().getIconImage());
                 }
                 catch (ChatRoomNotFoundException e1) {
                 }
@@ -1084,9 +1093,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
 
             public void windowDeactivated(WindowEvent windowEvent) {
-            }
-
-            public void windowClosing(WindowEvent e) {
             }
 
         });
@@ -1100,7 +1106,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException e1) {
                     Log.error(e1);

@@ -94,7 +94,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private final List packetIDList;
     private final List messageListeners;
-    private List transcript;
+    private List<Message> transcript;
     private List fileDropListeners;
 
     /**
@@ -110,7 +110,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel = new JPanel();
 
         messageListeners = new ArrayList();
-        transcript = new ArrayList();
+        transcript = new ArrayList<Message>();
         editorBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
         fileDropListeners = new ArrayList();
 
@@ -529,7 +529,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @return - the map of current chat responses.
      */
-    public List getTranscripts() {
+    public List<Message> getTranscripts() {
         return transcript;
     }
 

@@ -10,34 +10,35 @@
 
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+import org.xmlpull.mxp1.MXParser;
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-public class ChatTranscripts {
-    private static Map<String, ChatTranscript> TRANSCRIPTS = new HashMap<String, ChatTranscript>();
-    private static Map<String, ChatTranscript> CURRENT_TRANSCRIPTS = new HashMap<String, ChatTranscript>();
 
+/**
+ * A Utility class that manages the Chat Transcripts within Spark.
+ *
+ * @author Derek DeMoro
+ */
+final public class ChatTranscripts {
+
+    /**
+     * Default Date Formatter *
+     */
     private static DateFormat FORMATTER;
 
     static {
@@ -48,159 +49,131 @@ public class ChatTranscripts {
 
     }
 
-    public static ChatTranscript getChatTranscript(String jid) {
-        ChatTranscript transcript = TRANSCRIPTS.get(jid);
-        if (transcript == null) {
-            final File transcriptFile = getTranscriptFile(jid);
-            transcript = load(transcriptFile);
-            TRANSCRIPTS.put(jid, transcript);
+    /**
+     * Appends the given ChatTranscript to the transcript file associated with a JID.
+     *
+     * @param jid        the jid of the user.
+     * @param transcript the ChatTranscript.
+     */
+    public static void appendToTranscript(String jid, ChatTranscript transcript) {
+        final File transcriptFile = getTranscriptFile(jid);
+
+        // Write Full Transcript
+        writeToFile(transcriptFile, transcript.getMessages());
+
+        // Write to current history File
+        final File currentHistoryFile = getCurrentHistoryFile(jid);
+        writeToFile(currentHistoryFile, transcript.getNumberOfEntries(20));
+    }
+
+    private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages) {
+        final StringBuilder builder = new StringBuilder();
+
+        // Handle new transcript file.
+        if (!transcriptFile.exists()) {
+            builder.append("<transcript><messages>");
         }
-        return transcript;
-    }
 
-    public static ChatTranscript getCurrentChatTranscript(String jid) {
-        ChatTranscript transcript = CURRENT_TRANSCRIPTS.get(jid);
-        if (transcript == null) {
-            final File transcriptFile = getCurrentHistoryFile(jid);
-            transcript = load(transcriptFile);
-            CURRENT_TRANSCRIPTS.put(jid, transcript);
+        for (HistoryMessage m : messages) {
+            builder.append("<message>");
+            builder.append("<to>").append(m.getTo()).append("</to>");
+            builder.append("<from>").append(m.getFrom()).append("</from>");
+            builder.append("<body>").append(m.getBody()).append("</body>");
+
+            String dateString = FORMATTER.format(m.getDate());
+            builder.append("<date>").append(dateString).append("</date>");
+            builder.append("</message>");
         }
-        return transcript;
-    }
 
-    public static void addChatTranscript(String jid, ChatTranscript transcript) {
-        TRANSCRIPTS.put(jid, transcript);
-    }
-
-    public static void saveTranscript(String jid) {
-        try {
-            File transcriptFile = getTranscriptFile(jid);
-            transcriptFile.getParentFile().mkdirs();
-            ChatTranscript transcript = getChatTranscript(jid);
-            if (transcript.getMessages().size() == 0) {
-                return;
-            }
-
-            FileOutputStream fout = new FileOutputStream(transcriptFile);
-
-            Element root = DocumentHelper.createElement("transcript");
-            Element messages = root.addElement("messages");
-
-            for (HistoryMessage m : transcript.getMessages()) {
-                Element message = messages.addElement("message");
-
-                message.addElement("to").setText(m.getTo());
-                message.addElement("from").setText(m.getFrom());
-                message.addElement("body").setText(m.getBody());
-
-                String dateString = FORMATTER.format(m.getDate());
-                message.addElement("date").setText(dateString);
-            }
-
-            ChatTranscript t = new ChatTranscript();
-            for(HistoryMessage mes : transcript.getNumberOfEntries(20)){
-                t.addHistoryMessage(mes);
-            }
-            CURRENT_TRANSCRIPTS.put(jid, t);
+        if (!transcriptFile.exists()) {
+            builder.append("</messages></transcript>");
+        }
 
 
+        if (!transcriptFile.exists()) {
+            // Write out new File
             try {
-                // Write out main transcript
+                FileOutputStream fout = new FileOutputStream(transcriptFile);
                 OutputStreamWriter ow = new OutputStreamWriter(fout, "UTF-8");
-                XMLWriter saxWriter = new XMLWriter(ow);
-                saxWriter.write(root);
-                saxWriter.flush();
-                saxWriter.close();
-
-                // Write out current transcript
-                List list = messages.elements();
-                int size = list.size();
-                if (list.size() > 20) {
-                    for (int i = 0; i < size - 20; i++) {
-                        final Element ele = (Element)list.get(i);
-                        messages.remove(ele);
-                    }
-                }
-
-                // Write out current transcript
-                fout = new FileOutputStream(getCurrentHistoryFile(jid));
-
-                ow = new OutputStreamWriter(fout, "UTF-8");
-                saxWriter = new XMLWriter(ow);
-                saxWriter.write(root);
-                saxWriter.flush();
-                saxWriter.close();
+                ow.write(builder.toString());
+                ow.close();
             }
             catch (IOException e) {
                 Log.error(e);
             }
-
-        }
-        catch (Exception e) {
-            Log.error("Error saving settings.", e);
+            return;
         }
 
+        // Append to File
+        try {
+            RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
 
+            // Seek to end of file
+            raf.seek(transcriptFile.length() - 24);
+
+            builder.append("</messages></transcript>");
+
+            // Append to the end
+            raf.writeBytes(builder.toString());
+            raf.close();
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
     }
 
-    private static ChatTranscript load(File transcriptFile) {
-        final ChatTranscript transcript = new ChatTranscript();
+    /**
+     * Retrieve the current chat history.
+     *
+     * @param jid the jid of the user whos history you wish to retrieve.
+     * @return the ChatTranscript (last 20 messages max).
+     */
+    public static ChatTranscript getCurrentChatTranscript(String jid) {
+        return getTranscript(getCurrentHistoryFile(jid));
+    }
 
+    /**
+     * Retrieve the full chat history.
+     *
+     * @param jid the jid of the the user whos history you wish to retrieve.
+     * @return the ChatTranscript.
+     */
+    public static ChatTranscript getChatTranscript(String jid) {
+        return getTranscript(getTranscriptFile(jid));
+    }
+
+    /**
+     * Reads in the transcript file using the Xml Pull Parser.
+     *
+     * @param transcriptFile the transcript file to read.
+     * @return the ChatTranscript.
+     */
+    public static ChatTranscript getTranscript(File transcriptFile) {
+        final ChatTranscript transcript = new ChatTranscript();
         if (!transcriptFile.exists()) {
             return transcript;
         }
 
-
+        final String contents = URLFileSystem.getContents(transcriptFile);
         try {
-            FileInputStream fis = new FileInputStream(transcriptFile);
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            SAXReader saxReader = new SAXReader();
-            Document pluginXML = null;
-            try {
-                pluginXML = saxReader.read(isr);
-            }
-            catch (DocumentException e) {
-                Log.error(e);
-                return transcript;
-            }
-
-
-            List messages = pluginXML.selectNodes("/transcript/messages/message");
-            Iterator iter = messages.iterator();
-
-            while (iter.hasNext()) {
-                HistoryMessage message = new HistoryMessage();
-
-
-                try {
-                    Element messageElement = (Element)iter.next();
-
-                    String to = messageElement.selectSingleNode("to").getText();
-                    String from = messageElement.selectSingleNode("from").getText();
-                    String body = messageElement.selectSingleNode("body").getText();
-                    String date = messageElement.selectSingleNode("date").getText();
-
-                    message.setTo(to);
-                    message.setFrom(from);
-                    message.setBody(body);
-                    Date d = null;
-                    try {
-                        d = FORMATTER.parse(date);
-                    }
-                    catch (ParseException e) {
-                        d = new Date();
-                    }
-                    message.setDate(d);
-                    transcript.addHistoryMessage(message);
+            MXParser parser = new MXParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+            parser.setInput(new StringReader(contents));
+            boolean done = false;
+            while (!done) {
+                int eventType = parser.next();
+                if (eventType == XmlPullParser.START_TAG && "message".equals(parser.getName())) {
+                    transcript.addHistoryMessage(getHistoryMessage(parser));
                 }
-                catch (Exception ex) {
-
+                else if (eventType == XmlPullParser.END_TAG && "transcript".equals(parser.getName())) {
+                    done = true;
                 }
             }
         }
         catch (Exception e) {
-            // Ignore
+            e.printStackTrace();
         }
+
         return transcript;
     }
 
@@ -222,6 +195,41 @@ public class ChatTranscripts {
      */
     public static File getCurrentHistoryFile(String jid) {
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + "_current.xml");
+    }
+
+    private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
+        HistoryMessage message = new HistoryMessage();
+
+        // Check for nickname
+        boolean done = false;
+        while (!done) {
+            int eventType = parser.next();
+            if (eventType == XmlPullParser.START_TAG && "to".equals(parser.getName())) {
+                message.setTo(parser.nextText());
+            }
+            else if (eventType == XmlPullParser.START_TAG && "from".equals(parser.getName())) {
+                message.setFrom(parser.nextText());
+            }
+            else if (eventType == XmlPullParser.START_TAG && "body".equals(parser.getName())) {
+                message.setBody(parser.nextText());
+            }
+            else if (eventType == XmlPullParser.START_TAG && "date".equals(parser.getName())) {
+                Date d = null;
+                try {
+                    d = FORMATTER.parse(parser.nextText());
+                }
+                catch (ParseException e) {
+                    d = new Date();
+                }
+                message.setDate(d);
+            }
+            else if (eventType == XmlPullParser.END_TAG && "message".equals(parser.getName())) {
+                done = true;
+            }
+        }
+
+
+        return message;
     }
 
 

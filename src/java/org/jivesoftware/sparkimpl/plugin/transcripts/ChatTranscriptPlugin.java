@@ -189,13 +189,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         final String jid = room.getRoomname();
 
-        List transcripts = room.getTranscripts();
-
-        Iterator messages = transcripts.iterator();
-
-        ChatTranscript transcript = ChatTranscripts.getChatTranscript(jid);
-        while (messages.hasNext()) {
-            Message message = (Message)messages.next();
+        final List<Message> transcripts = room.getTranscripts();
+        ChatTranscript transcript = new ChatTranscript();
+        for(Message message : transcripts){
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
@@ -210,7 +206,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             transcript.addHistoryMessage(history);
         }
 
-        ChatTranscripts.saveTranscript(jid);
+        ChatTranscripts.appendToTranscript(jid, transcript);
     }
 
     public void chatRoomActivated(ChatRoom room) {
