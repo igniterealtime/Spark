@@ -14,7 +14,6 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -46,9 +45,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -58,10 +57,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Toolkit;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -138,7 +133,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         setBackground(Color.white);
     }
-
 
 
     /**
@@ -383,15 +377,19 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             flashWindow(chatRoom);
         }
         else if (!chatFrame.isVisible()) {
+            // Set to new tab.
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+
+            chatFrame.dispose();
             if (Spark.isWindows()) {
                 chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
+            chatFrame.setFocusableWindowState(true);
 
-            // Set to new tab.
-            int tabLocation = indexOfComponent(chatRoom);
-            setSelectedIndex(tabLocation);
+
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
@@ -639,15 +637,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             startFlashing(chatRoom);
         }
         else if (!chatFrame.isVisible()) {
+            // Set to new tab.
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+
             if (Spark.isWindows()) {
                 chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
-
-            // Set to new tab.
-            int tabLocation = indexOfComponent(chatRoom);
-            setSelectedIndex(tabLocation);
+            chatFrame.setFocusableWindowState(true);
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
@@ -936,6 +935,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
 
                     if (!chatFrame.isFocused() && invokeFlash) {
+                        chatFrame.setFocusableWindowState(true);
                         SparkManager.getAlertManager().flashWindow(chatFrame);
                     }
                 }
