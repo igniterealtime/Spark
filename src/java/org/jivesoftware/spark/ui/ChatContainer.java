@@ -123,7 +123,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             public void allTabsRemoved() {
                 chatFrame.setTitle("");
-                chatFrame.setVisible(false);
+                chatFrame.dispose();
             }
         });
 
@@ -384,7 +384,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         else if (!chatFrame.isVisible()) {
             if (Spark.isWindows()) {
-                //chatFrame.setFocusableWindowState(false);
+                chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
@@ -640,7 +640,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         else if (!chatFrame.isVisible()) {
             if (Spark.isWindows()) {
-                //chatFrame.setFocusableWindowState(false);
+                chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
@@ -723,7 +723,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         if (getTabCount() == 0) {
             chatFrame.setTitle("");
-            chatFrame.setVisible(false);
+            chatFrame.dispose();
         }
 
         this.removeTabAt(location);

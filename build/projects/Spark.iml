@@ -202,7 +202,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/syntheticaBlueMoon.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../crapola/bluelookandfeel/moon.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

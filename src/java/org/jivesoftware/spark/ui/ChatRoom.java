@@ -368,6 +368,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         scrollToBottom();
     }
 
+    public void addToTranscript(String to, String from, String body, Date date) {
+        final Message newMessage = new Message();
+        newMessage.setTo(to);
+        newMessage.setFrom(from);
+        newMessage.setBody(body);
+        newMessage.setProperty("date", date);
+        transcript.add(newMessage);
+    }
+
     /**
      * Scrolls the chat window to the bottom.
      */

@@ -11,8 +11,8 @@
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.StringUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -60,18 +60,18 @@ final public class ChatTranscripts {
         final File transcriptFile = getTranscriptFile(jid);
 
         // Write Full Transcript
-        writeToFile(transcriptFile, transcript.getMessages());
+        writeToFile(transcriptFile, transcript.getMessages(), true);
 
         // Write to current history File
         final File currentHistoryFile = getCurrentHistoryFile(jid);
-        writeToFile(currentHistoryFile, transcript.getNumberOfEntries(20));
+        writeToFile(currentHistoryFile, transcript.getNumberOfEntries(20), false);
     }
 
-    private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages) {
+    private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {
         final StringBuilder builder = new StringBuilder();
 
         // Handle new transcript file.
-        if (!transcriptFile.exists()) {
+        if (!transcriptFile.exists() || !append) {
             builder.append("<transcript><messages>");
         }
 
@@ -86,12 +86,12 @@ final public class ChatTranscripts {
             builder.append("</message>");
         }
 
-        if (!transcriptFile.exists()) {
+        if (!transcriptFile.exists() || !append) {
             builder.append("</messages></transcript>");
         }
 
 
-        if (!transcriptFile.exists()) {
+        if (!transcriptFile.exists() || !append) {
             // Write out new File
             try {
                 FileOutputStream fout = new FileOutputStream(transcriptFile);
@@ -105,23 +105,25 @@ final public class ChatTranscripts {
             return;
         }
 
-        // Append to File
-        try {
-            final RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
+        if (append) {
+            // Append to File
+            try {
+                final RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
 
-            // We want to append near the end of the document as the last
-            // child in the transcript.
-            final String endTag = "</messages></transcript>";
-            builder.append(endTag);
-            
-            raf.seek(transcriptFile.length() - endTag.length());
+                // We want to append near the end of the document as the last
+                // child in the transcript.
+                final String endTag = "</messages></transcript>";
+                builder.append(endTag);
 
-            // Append to the end
-            raf.writeBytes(builder.toString());
-            raf.close();
-        }
-        catch (IOException e) {
-            Log.error(e);
+                raf.seek(transcriptFile.length() - endTag.length());
+
+                // Append to the end
+                raf.writeBytes(builder.toString());
+                raf.close();
+            }
+            catch (IOException e) {
+                Log.error(e);
+            }
         }
     }
 
