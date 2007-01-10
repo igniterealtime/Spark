@@ -43,7 +43,6 @@ public class ShakeWindow extends Object {
             JFrame f = (JFrame)window;
             f.setState(Frame.NORMAL);
             f.setVisible(true);
-            f.setAlwaysOnTop(true);
         }
         SparkManager.getAlertManager().flashWindow(window);
 

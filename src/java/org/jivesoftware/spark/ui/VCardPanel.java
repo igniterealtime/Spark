@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
@@ -80,26 +81,29 @@ public class VCardPanel extends JPanel {
                     return;
                 }
 
+                ImageIcon icon = null;
 
                 byte[] bytes = vcard.getAvatar();
                 if (bytes != null) {
                     try {
-                        ImageIcon icon = new ImageIcon(bytes);
+                        icon = new ImageIcon(bytes);
                         Image aImage = icon.getImage();
                         if (icon.getIconHeight() > 32 || icon.getIconWidth() > 32) {
                             aImage = aImage.getScaledInstance(-1, 32, Image.SCALE_SMOOTH);
                         }
                         icon = new ImageIcon(aImage);
-
-                        if (icon.getIconWidth() > 0) {
-                            avatarImage.setIcon(icon);
-                            avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-                        }
-
                     }
                     catch (Exception e) {
                         Log.error(e);
                     }
+                }
+                else {
+                    icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
+                }
+
+                if (icon != null && icon.getIconWidth() > 0) {
+                    avatarImage.setIcon(icon);
+                    avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
                 }
 
                 vcard.setJabberId(jid);
@@ -156,32 +160,22 @@ public class VCardPanel extends JPanel {
         }
 
 
-        add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 5), 0, 0));
+        add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 0), 0, 0));
 
-        /*
-        final JLabel locationLabel = new JLabel();
 
-        if (ModelUtil.hasLength(city) && ModelUtil.hasLength(state) && ModelUtil.hasLength(country)) {
-            locationLabel.setText(" - " + city + ", " + state + " " + country);
-        }
-        add(locationLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
-        */
 
-        final JLabel titleLabel = new JLabel(title);
+        final JLabel titleLabel = new JLabel("("+title+")");
+        titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+
         if (ModelUtil.hasLength(title)) {
-            add(titleLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+            add(titleLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
         }
 
-        /*
-              String phone = vcard.getPhoneWork("VOICE");
-              if (ModelUtil.hasLength(phone)) {
-                  final JLabel phoneNumber = new JLabel("Work: " + phone);
-                  add(phoneNumber, new GridBagConstraints(1, 2, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
-              }
-        */
+       
 
         final JLabel localTime = new JLabel();
-        add(localTime, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        add(localTime, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 0), 0, 0));
+        localTime.setFont(new Font("Dialog", Font.PLAIN, 11));
 
         final Time time = new Time();
         time.setType(IQ.Type.GET);
