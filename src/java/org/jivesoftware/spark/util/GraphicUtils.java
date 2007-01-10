@@ -13,14 +13,6 @@ package org.jivesoftware.spark.util;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -49,6 +41,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 
 /**
  * <code>GraphicsUtils</code> class defines common user-interface related utility
@@ -97,7 +97,7 @@ public final class GraphicUtils {
         }
 
         window.setLocation((screenSize.width - size.width) / 2,
-                (screenSize.height - size.height) / 2);
+            (screenSize.height - size.height) / 2);
     }
 
     /**
@@ -176,8 +176,8 @@ public final class GraphicUtils {
         Component source = (Component)event.getSource();
         Point topLeftSource = source.getLocationOnScreen();
         Point ptRet = getPopupMenuShowPoint(popup,
-                topLeftSource.x + event.getX(),
-                topLeftSource.y + event.getY());
+            topLeftSource.x + event.getX(),
+            topLeftSource.y + event.getY());
         ptRet.translate(-topLeftSource.x, -topLeftSource.y);
         return ptRet;
     }
@@ -286,7 +286,7 @@ public final class GraphicUtils {
      *
      * @param c the root of the component hierarchy to search
      * @see #focusComponentOrChild
-     * @deprecated replaced by {@link #getFocusableComponentOrChild(Component, boolean)}
+     * @deprecated replaced by {@link #getFocusableComponentOrChild(Component,boolean)}
      */
     public static Component getFocusableComponentOrChild(Component c) {
         return getFocusableComponentOrChild(c, false);
@@ -419,7 +419,8 @@ public final class GraphicUtils {
         return screenBounds;
     }
 
-    public static final void makeSameSize(JComponent[] comps) {
+
+    public static final void makeSameSize(JComponent... comps) {
         if (comps.length == 0) {
             return;
         }
@@ -637,9 +638,9 @@ public final class GraphicUtils {
     }
 
 
-    public static BufferedImage getBufferedImage(File file){
+    public static BufferedImage getBufferedImage(File file) {
         Icon icon = null;
-         try {
+        try {
             sun.awt.shell.ShellFolder sf = sun.awt.shell.ShellFolder.getShellFolder(file);
 
             // Get large icon
@@ -647,7 +648,7 @@ public final class GraphicUtils {
         }
         catch (Exception e) {
             try {
-                icon =  new JFileChooser().getIcon(file);
+                icon = new JFileChooser().getIcon(file);
             }
             catch (Exception e1) {
             }

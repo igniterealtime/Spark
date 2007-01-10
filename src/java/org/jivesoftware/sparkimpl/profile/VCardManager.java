@@ -671,10 +671,11 @@ public class VCardManager {
         number = number.replace("-", "");
         number = number.replace("(", "");
         number = number.replace(")", "");
+        number = number.replace(" ", "");
         if (number.startsWith("1")) {
             number = number.substring(1);
         }
+
         return number;
     }
-
 }
