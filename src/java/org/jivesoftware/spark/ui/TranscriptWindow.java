@@ -18,7 +18,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -27,9 +26,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -79,17 +75,11 @@ public class TranscriptWindow extends ChatArea {
 
     private Date lastPost;
 
-    private Image customBackgroundImage;
-
-
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
      */
     public TranscriptWindow() {
         setEditable(false);
-
-        /* Load Preferences for this instance */
-        PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -163,15 +153,6 @@ public class TranscriptWindow extends ChatArea {
         catch (BadLocationException e) {
             Log.error(e);
         }
-    }
-
-    public void paintComponent(Graphics g) {
-        if (customBackgroundImage != null) {
-            Rectangle rec = getVisibleRect();
-            setOpaque(false);
-            g.drawImage(customBackgroundImage, getWidth() - customBackgroundImage.getWidth(null), (int)rec.getY(), customBackgroundImage.getWidth(null), customBackgroundImage.getHeight(null), this);
-        }
-        super.paintComponent(g);
     }
 
     /**
@@ -639,8 +620,5 @@ public class TranscriptWindow extends ChatArea {
         interceptors.remove(interceptor);
     }
 
-    public void setCustomBackgroundImage(Image customBackgroundImage) {
-        this.customBackgroundImage = customBackgroundImage;
-    }
 
 }
