@@ -302,7 +302,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void addContainerComponent(ContainerComponent comp) {
+        createFrameIfNeeded();
+
         addTab(comp.getTabTitle(), comp.getTabIcon(), comp.getGUI(), comp.getToolTipDescription());
+        chatFrame.setTitle(comp.getFrameTitle());
         checkVisibility(comp.getGUI());
     }
 
@@ -535,15 +538,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     /**
-     * Returns all the ChatRooms found in the UI.
-     *
-     * @return all ChatRooms found in the UI.
-     */
-    public Iterator getAllChatRooms() {
-        return chatRoomList.iterator();
-    }
-
-    /**
      * Activates the specified ChatRoom.
      *
      * @param room the ChatRoom to activate.
@@ -682,21 +676,20 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void stateChanged(ChangeEvent e) {
         stopFlashing();
 
-        // Request focus in Chat Area if selected
-        final ChatRoom room;
-        try {
-            room = getActiveChatRoom();
-
+        final Object o = getSelectedComponent();
+        if (o instanceof ChatRoom) {
+            final ChatRoom room = (ChatRoom)o;
             focusChat();
 
             // Set the title of the room.
             chatFrame.setTitle(room.getRoomTitle());
             chatFrame.setIconImage(SparkManager.getMainWindow().getIconImage());
         }
-        catch (ChatRoomNotFoundException e1) {
-            // Ignore
+        else if (o instanceof ContainerComponent) {
+            final ContainerComponent comp = (ContainerComponent)o;
+            chatFrame.setTitle(comp.getFrameTitle());
+            chatFrame.setIconImage(comp.getTabIcon().getImage());
         }
-
     }
 
 
@@ -1144,8 +1137,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public Collection<ChatRoom> getChatRooms() {
-        final List<ChatRoom> list = new ArrayList<ChatRoom>(chatRoomList);
-        return list;
+        return new ArrayList<ChatRoom>(chatRoomList);
     }
 
     public ChatFrame getChatFrame() {

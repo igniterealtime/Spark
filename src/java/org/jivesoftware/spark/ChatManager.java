@@ -40,15 +40,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -104,9 +104,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-                new ChatMessageEventRequestListener();
+            new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-                addMessageEventRequestListener(messageEventRequestListener);
+            addMessageEventRequestListener(messageEventRequestListener);
     }
 
 
@@ -154,11 +154,10 @@ public class ChatManager implements MessageEventNotificationListener {
      *
      * @param roomName the name of the chat room.
      * @return the MultiUserChat found for that room.
+     * @throws ChatNotFoundException thrown if no ChatRoom is found.
      */
     public GroupChatRoom getGroupChat(String roomName) throws ChatNotFoundException {
-        Iterator iter = getChatContainer().getAllChatRooms();
-        while (iter.hasNext()) {
-            ChatRoom chatRoom = (ChatRoom)iter.next();
+        for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
             if (chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom groupChat = (GroupChatRoom)chatRoom;
                 if (groupChat.getRoomname().equals(roomName)) {

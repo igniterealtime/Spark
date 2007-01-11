@@ -10,6 +10,7 @@ package org.jivesoftware.spark.ui;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -18,7 +19,9 @@ public interface ContainerComponent {
 
     public abstract String getTabTitle();
 
-    public abstract Icon getTabIcon();
+    public abstract String getFrameTitle();
+
+    public abstract ImageIcon getTabIcon();
 
     public abstract JComponent getGUI();
 

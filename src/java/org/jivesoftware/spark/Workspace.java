@@ -30,6 +30,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.conferences.Conferences;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -46,7 +47,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -124,13 +124,11 @@ public class Workspace extends JPanel implements PacketListener {
         // Add MainWindow listener
         mainWindow.addMainWindowListener(new MainWindowListener() {
             public void shutdown() {
+                final ChatContainer container = SparkManager.getChatManager().getChatContainer();
                 // Close all Chats.
-                final Iterator chatRooms = SparkManager.getChatManager().getChatContainer().getAllChatRooms();
-                while (chatRooms.hasNext()) {
-                    final ChatRoom chatRoom = (ChatRoom)chatRooms.next();
-
+                for (ChatRoom chatRoom : container.getChatRooms()) {
                     // Leave ChatRoom
-                    SparkManager.getChatManager().getChatContainer().leaveChatRoom(chatRoom);
+                    container.leaveChatRoom(chatRoom);
                 }
 
                 conferences.shutdown();
@@ -276,7 +274,7 @@ public class Workspace extends JPanel implements PacketListener {
             public void run() {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        for(Message offlineMessage : offlineMessages){
+                        for (Message offlineMessage : offlineMessages) {
                             handleOfflineMessage(offlineMessage);
                         }
 
