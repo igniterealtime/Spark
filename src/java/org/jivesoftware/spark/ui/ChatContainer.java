@@ -303,6 +303,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     public void addContainerComponent(ContainerComponent comp) {
         addTab(comp.getTabTitle(), comp.getTabIcon(), comp.getGUI(), comp.getToolTipDescription());
+        checkVisibility(comp.getGUI());
     }
 
     /**
@@ -363,31 +364,31 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
     }
 
-    private void checkVisibility(ChatRoom chatRoom) {
+    private void checkVisibility(Component component) {
         if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
         }
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            flashWindow(chatRoom);
+            flashWindow(component);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
-            int tabLocation = indexOfComponent(chatRoom);
+            int tabLocation = indexOfComponent(component);
             setSelectedIndex(tabLocation);
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            flashWindow(chatRoom);
+            flashWindow(component);
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible()) {
-            flashWindow(chatRoom);
+            flashWindow(component);
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
-            int tabLocation = indexOfComponent(chatRoom);
+            int tabLocation = indexOfComponent(component);
             setSelectedIndex(tabLocation);
 
             chatFrame.dispose();
@@ -401,10 +402,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                flashWindow(chatRoom);
+                flashWindow(component);
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                flashWindow(chatRoom);
+                flashWindow(component);
             }
 
         }
@@ -934,11 +935,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
     }
 
-    public void flashWindow(final ChatRoom room) {
+    public void flashWindow(final Component component) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
+                    boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(component instanceof GroupChatRoom);
 
                     if (!chatFrame.isFocused() && invokeFlash) {
                         chatFrame.setFocusableWindowState(true);
