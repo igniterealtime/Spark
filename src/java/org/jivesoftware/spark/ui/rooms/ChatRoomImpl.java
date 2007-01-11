@@ -552,7 +552,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     /**
-     * The last time this chat room sent or receieved a message.
+     * The last time this chat room sent or received a message.
      *
      * @return the last time this chat room sent or receieved a message.
      */
