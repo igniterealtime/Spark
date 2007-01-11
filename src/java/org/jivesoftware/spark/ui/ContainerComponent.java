@@ -8,16 +8,21 @@
 
 package org.jivesoftware.spark.ui;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
-
-import java.awt.Component;
 
 /**
  *
  */
-public abstract class ContainerComponent extends JComponent {
+public interface ContainerComponent {
 
     public abstract String getTabTitle();
+
+    public abstract Icon getTabIcon();
+
+    public abstract JComponent getGUI();
+
+    public abstract String getToolTipDescription();
 
     public abstract void closing();
 }
