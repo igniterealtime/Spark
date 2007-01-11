@@ -105,7 +105,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         addSparkTabbedPaneListener(new SparkTabbedPaneListener() {
             public void tabRemoved(SparkTab tab, Component component, int index) {
                 stateChanged(null);
-                cleanupChatRoom((ChatRoom)component);
+                if (component instanceof ChatRoom) {
+                    cleanupChatRoom((ChatRoom)component);
+                }
+                else if(component instanceof ContainerComponent) {
+                    ((ContainerComponent)component).closing();
+                }
             }
 
             public void tabAdded(SparkTab tab, Component component, int index) {
@@ -388,8 +393,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
             chatFrame.setVisible(true);
             chatFrame.setFocusableWindowState(true);
-
-
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.

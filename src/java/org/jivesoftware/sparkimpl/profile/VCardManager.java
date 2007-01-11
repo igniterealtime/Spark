@@ -13,6 +13,7 @@ package org.jivesoftware.sparkimpl.profile;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketInterceptor;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -678,4 +679,21 @@ public class VCardManager {
 
         return number;
     }
+    public static void main(String args[]) throws Exception {
+        XMPPConnection con = new XMPPConnection("jivesoftware.com", 5222);
+        con.connect();
+        con.login("test", "test");
+
+        VCard vcard = new VCard();
+        vcard.load(con, "matt@jivesoftware.com");
+
+        String avatarHash = org.jivesoftware.spark.util.StringUtils.hash(vcard.getAvatar());
+        String vcardXML = vcard.toXML();
+
+        System.out.println(avatarHash);
+        System.out.println(vcardXML);
+
+
+    }
+
 }
