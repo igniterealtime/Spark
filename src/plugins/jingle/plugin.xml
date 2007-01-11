@@ -1,0 +1,10 @@
+<plugin>
+<name>Jingle Client</name>
+<version>1.0</version>
+<author>JiveSoftware</author>
+<homePage>http://www.jivesoftware.org</homePage>
+<email>derek@jivesoftware.com</email>
+<description>JinglePhone</description>
+<class>org.jivesoftware.sparkplugin.JinglePlugin</class>
+<minSparkVersion>2.0.2</minSparkVersion>
+</plugin>
