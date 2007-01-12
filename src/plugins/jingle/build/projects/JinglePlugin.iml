@@ -15,7 +15,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/Speex.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/Speex.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -24,7 +24,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/JingleExtension.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/commons-logging-api-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -33,7 +33,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/jmf.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/jspeex-0.9.7-jfcom.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -42,7 +42,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/commons-logging-adapters-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/JingleMedia.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -51,7 +51,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/jstun-0.6.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/JingleExtension.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -60,7 +60,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/commons-logging-api-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/commons-logging-adapters-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -69,7 +69,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/jspeex-0.9.7-jfcom.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/jstun-0.6.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -78,16 +78,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/JingleMedia.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/commons-logging-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/commons-logging-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
