@@ -13,13 +13,15 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 import java.awt.event.ActionEvent;
@@ -41,6 +43,25 @@ public class BuzzPlugin implements Plugin {
                 if (packet instanceof Message) {
                     Message message = (Message)packet;
                     if (message.getExtension("buzz", "http://www.jivesoftware.com/spark") != null) {
+                        String bareJID = StringUtils.parseBareAddress(message.getFrom());
+                        ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
+                        String nickname = StringUtils.parseName(bareJID);
+                        if (contact != null) {
+                            nickname = contact.getNickname();
+                        }
+
+                        ChatRoom room = null;
+                        try {
+                            room = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
+                        }
+                        catch (ChatRoomNotFoundException e) {
+                            // Create the room if it does not exist.
+                            room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
+                        }
+
+                        // Insert offline message
+                        room.getTranscriptWindow().insertNotificationMessage("Buzz");
+
                         ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
                         if (chatFrame != null && chatFrame.isVisible()) {
                             chatFrame.buzz();
