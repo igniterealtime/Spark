@@ -5,8 +5,8 @@
     <!-- Optional add this file to override any of the properties below -->
     <property file="${basedir}/build.properties"/>
     <property name="version.major" value="2"/>
-    <property name="version.minor" value="0"/>
-    <property name="version.revision" value="5"/>
+    <property name="version.minor" value="5"/>
+    <property name="version.revision" value="0"/>
 
     <property name="version.period" value="${version.major}.${version.minor}.${version.revision}"/>
     <property name="version.underscore" value="${version.major}_${version.minor}_${version.revision}"/>
@@ -38,6 +38,7 @@
 
     <!-- Installer Ant Script -->
 
+    <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
     <property name="installer.dest.dir" value="${target}/installer"/>
     <property name="installer.install4j.srcfile" value="installer/spark.install4j"/>
     <property name="installer.app_name" value="Spark"/>
@@ -86,19 +87,22 @@
         <!-- Check for min build requirements -->
         <condition property="ant.not.ok" value="true">
             <not>
-                <contains string="${ant.version}" substring="1.6"/>
+                <or>
+                    <contains string="${ant.version}" substring="1.6"/>
+                    <contains string="${ant.version}" substring="1.7"/>
+                </or>
             </not>
         </condition>
-        <fail if="ant.not.ok" message="Must use Ant 1.6.x to build Spark"/>
-        <!--
-     <condition property="java.not.ok" value="true">
-         <not>
-             <contains string="${ant.java.version}" substring="1.4"/>
-         </not>
-     </condition>
-
-     <fail if="java.not.ok" message="Must use JDK 1.4.x to build Spark"/>
-     -->
+        <condition property="java.not.ok" value="true">
+            <not>
+                <or>
+                    <contains string="${ant.java.version}" substring="1.5"/>
+                    <contains string="${ant.java.version}" substring="1.6"/>
+                </or>
+            </not>
+        </condition>
+        <fail if="ant.not.ok" message="Must use Ant 1.6.x or 1.7.x to build Spark"/>
+        <fail if="java.not.ok" message="Must use JDK 1.5.x or higher to build Spark"/>
 
         <!-- Platform-specific initializations -->
         <condition property="windows">
@@ -347,17 +351,17 @@
     <target name="installer.win" depends="jar"
             description="build Install4J release executable and docs dirs for Windows">
 
-        <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
-        <condition property="install4j.not.ok" value="true">
+       <condition property="install4j.not.ok" value="true">
             <not>
                 <available file="${installer.install4j.home}/bin/install4j.jar"/>
             </not>
         </condition>
-        <fail if="install4j.not.ok" message="Path to Install4j not set, see build.properties.template file."/>
+        <fail if="install4j.not.ok"
+              message="Path to Install4j not set, see build.properties.template file."/>
 
         <taskdef name="install4j"
                  classname="com.install4j.Install4JTask"
-                 classpath="${installer.install4j.home}/bin/install4j.jar"/>
+                 classpath="${installer.install4j.home}/bin/ant.jar"/>
 
         <mkdir dir="${installer.dest.dir}"/>
 

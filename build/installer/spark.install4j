@@ -13,7 +13,7 @@
     </searchSequence>
     <variables>
       <variable name="VERSION_MAJOR" value="2" />
-      <variable name="VERSION_MINOR" value="1" />
+      <variable name="VERSION_MINOR" value="5" />
       <variable name="VERSION_REVISION" value="0" />
       <variable name="APP_NAME" value="Spark" />
       <variable name="APP_SHORT_NAME" value="Spark" />
@@ -348,7 +348,7 @@
     </uninstallerStartup>
   </installerGui>
   <mediaSets>
-    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="windows-x86-1.5.0_08" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="windows-x86-1.6.0" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers />
       <excludedComponents />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -360,14 +360,6 @@
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
     </win32>
-    <macos name="Mac OS X Single Bundle" id="6" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" launcherId="4">
-      <excludedComponents />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
-      <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
-    </macos>
     <win32 name="Updater" id="12" mediaFileName="CommunicatorUpdate" installDir="Jive Communicator" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="21" />
@@ -379,7 +371,7 @@
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
     </win32>
-    <unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="linux-x86-1.5.0_08_client_only" manualJREEntry="false">
+    <unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="linux-x86-1.6.0" manualJREEntry="false">
       <excludedLaunchers />
       <excludedComponents />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -390,7 +382,7 @@
       </exclude>
       <variables />
     </unixArchive>
-    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_${compiler:sys.version}_online" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="windows-x86-1.5.0_05_us_only" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.5.0_05.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_${compiler:sys.version}_online" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.5.0_05.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers />
       <excludedComponents />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
