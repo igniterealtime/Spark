@@ -84,7 +84,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     private void createUI() {
         setLayout(new BorderLayout());
 
-        tabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0)) {
+        tabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0)) {
             public Dimension getPreferredSize() {
                 if (getParent() == null)
                     return getPreferredSize();

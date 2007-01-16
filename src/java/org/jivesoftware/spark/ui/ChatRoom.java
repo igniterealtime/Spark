@@ -41,6 +41,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.BorderFactory;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -249,6 +250,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setLayout(new GridBagLayout());
         bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 15));
         bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+
+        // Set bottom panel border
+        bottomPanel.setBorder(BorderFactory.createMatteBorder(0,0,1,0, new Color(197, 213, 230)));
         verticalSplit.setOpaque(false);
 
         verticalSplit.setTopComponent(chatPanel);
