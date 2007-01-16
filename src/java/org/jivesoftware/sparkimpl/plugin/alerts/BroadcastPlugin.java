@@ -145,7 +145,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
         // Add Broadcast to roster
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        JPanel commandPanel = statusBar.getCommandPanel();
+        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));

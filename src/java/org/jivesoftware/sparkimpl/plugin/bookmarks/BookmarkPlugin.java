@@ -10,8 +10,8 @@
 
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.bookmark.BookmarkedConference;
@@ -25,17 +25,17 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 /**
  * Allows for adding and removal of Bookmarks within Spark.
@@ -66,7 +66,7 @@ public class BookmarkPlugin implements Plugin {
 
                 if (bookmarks != null) {
                     // Add to status bar
-                    final JPanel commandPanel = SparkManager.getWorkspace().getStatusBar().getCommandPanel();
+                    final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
                     final RolloverButton bookmarkButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
                     bookmarkButton.addMouseListener(new MouseAdapter() {
                         public void mouseClicked(MouseEvent mouseEvent) {

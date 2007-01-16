@@ -201,7 +201,7 @@ public class SparkTransferManager {
 
         // Add View Downloads to Command Panel
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        JPanel commandPanel = statusBar.getCommandPanel();
+        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
         RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
         viewDownloads.setToolTipText(Res.getString("menuitem.view.downloads"));

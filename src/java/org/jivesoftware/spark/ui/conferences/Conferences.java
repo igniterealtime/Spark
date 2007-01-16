@@ -81,8 +81,7 @@ public class Conferences {
 
             // Add Join Conference Button to StatusBar
             // Get command panel and add View Online/Offline, Add Contact
-            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-            JPanel commandPanel = statusBar.getCommandPanel();
+            JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
             RolloverButton joinConference = new RolloverButton(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
             joinConference.setToolTipText(Res.getString("message.join.conference.room"));

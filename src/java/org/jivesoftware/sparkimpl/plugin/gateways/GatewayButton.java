@@ -47,16 +47,12 @@ public class GatewayButton extends JPanel {
         this.transport = transport;
 
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        final JPanel commandPanel = statusBar.getCommandPanel();
+        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
         button.setIcon(transport.getInactiveIcon());
         button.setToolTipText(transport.getInstructions());
 
         commandPanel.add(button);
-
-        statusBar.invalidate();
-        statusBar.validate();
-        statusBar.repaint();
 
         button.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {

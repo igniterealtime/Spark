@@ -24,22 +24,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -58,6 +43,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+
 public class StatusBar extends JPanel {
     private List<StatusItem> statusList = new ArrayList<StatusItem>();
 
@@ -69,33 +67,11 @@ public class StatusBar extends JPanel {
 
     private Presence currentPresence;
 
-    private JPanel commandPanel;
-
     public StatusBar() {
         setLayout(new GridBagLayout());
 
-
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
-        // Initialze command panel
-        commandPanel = new JPanel() {
-
-            public Dimension getPreferredSize() {
-                Dimension dim = super.getPreferredSize();
-                Component[] comps = getComponents();
-                for (int i = 0; i < comps.length; i++) {
-                    if (comps[i].isVisible()) {
-
-                    }
-                    else {
-                        System.out.println("Nope");
-                    }
-                }
-                return dim;
-            }
-        };
-        commandPanel.setLayout(new BoxLayout(commandPanel, BoxLayout.X_AXIS));
-        commandPanel.setOpaque(false);
 
         ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);
         if (brandedImage != null && brandedImage.getIconWidth() > 1) {
@@ -108,9 +84,6 @@ public class StatusBar extends JPanel {
 
         add(nicknameLabel, new GridBagConstraints(1, 0, 2, 2, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 0, 0));
         add(statusPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
-
-        // Add Command Panel. We want adding command buttons to be simple.
-        add(commandPanel, new GridBagConstraints(1, 3, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
         nicknameLabel.setToolTipText(SparkManager.getConnection().getUser());
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -373,7 +346,7 @@ public class StatusBar extends JPanel {
 
             if (presence.getStatus() != null && item.getPresence().getStatus() != null) {
                 if ((presence.getMode() == item.getPresence().getMode()) && (presence.getType() == item.getPresence().getType()) &&
-                        (presence.getStatus().equals(item.getPresence().getStatus()))) {
+                    (presence.getStatus().equals(item.getPresence().getStatus()))) {
                     return item;
                 }
             }
@@ -566,11 +539,6 @@ public class StatusBar extends JPanel {
     public void setBackgroundImage(Image image) {
         this.backgroundImage = image;
     }
-
-    public JPanel getCommandPanel() {
-        return commandPanel;
-    }
-
 
     public Dimension getPreferredSize() {
         Dimension dim = super.getPreferredSize();
