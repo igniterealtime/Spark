@@ -10,15 +10,14 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.Res;
+import org.jdesktop.jdic.desktop.Desktop;
+import org.jdesktop.jdic.desktop.DesktopException;
+import org.jdesktop.jdic.desktop.Message;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smackx.packet.Time;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -29,13 +28,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -49,6 +47,9 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class VCardPanel extends JPanel {
+
+    private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+    private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
     private final String jid;
     private final JLabel avatarImage;
@@ -67,7 +68,7 @@ public class VCardPanel extends JPanel {
         this.jid = jid;
         avatarImage = new JLabel();
 
-        SwingWorker worker = new SwingWorker() {
+        final SwingWorker vcardLoader = new SwingWorker() {
             VCard vcard = null;
 
             public Object construct() {
@@ -88,9 +89,7 @@ public class VCardPanel extends JPanel {
                     try {
                         icon = new ImageIcon(bytes);
                         Image aImage = icon.getImage();
-                        if (icon.getIconHeight() > 32 || icon.getIconWidth() > 32) {
-                            aImage = aImage.getScaledInstance(-1, 32, Image.SCALE_SMOOTH);
-                        }
+                        aImage = aImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
                         icon = new ImageIcon(aImage);
                     }
                     catch (Exception e) {
@@ -111,11 +110,11 @@ public class VCardPanel extends JPanel {
             }
         };
 
-        worker.start();
+        vcardLoader.start();
     }
 
     private void buildUI(final VCard vcard) {
-        add(avatarImage, new GridBagConstraints(0, 0, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(5, 0, 5, 0), 0, 0));
 
         avatarImage.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
@@ -125,9 +124,6 @@ public class VCardPanel extends JPanel {
             }
         });
 
-        String city = vcard.getField("CITY");
-        String state = vcard.getField("STATE");
-        String country = vcard.getField("COUNTRY");
         String firstName = vcard.getFirstName();
         if (firstName == null) {
             firstName = "";
@@ -138,13 +134,12 @@ public class VCardPanel extends JPanel {
             lastName = "";
         }
 
-        String title = vcard.getField("TITLE");
 
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setHorizontalTextPosition(JLabel.LEFT);
-        usernameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
+        usernameLabel.setFont(new Font("Dialog", Font.BOLD, 15));
 
-        usernameLabel.setForeground(Color.DARK_GRAY);
+        usernameLabel.setForeground(Color.GRAY);
         if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
             usernameLabel.setText(firstName + " " + lastName);
         }
@@ -154,80 +149,72 @@ public class VCardPanel extends JPanel {
         }
 
 
-        Icon icon = SparkManager.getChatManager().getIconForContactHandler(vcard.getJabberId());
+        final Icon icon = SparkManager.getChatManager().getIconForContactHandler(vcard.getJabberId());
         if (icon != null) {
             usernameLabel.setIcon(icon);
         }
 
 
-        add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 0), 0, 0));
+        add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
 
-
-
-        final JLabel titleLabel = new JLabel("("+title+")");
-        titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
-
+        String title = vcard.getField("TITLE");
         if (ModelUtil.hasLength(title)) {
-            add(titleLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
+            final JLabel titleLabel = new JLabel(title);
+            titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+            add(titleLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
         }
 
-       
-
-        final JLabel localTime = new JLabel();
-        add(localTime, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 0), 0, 0));
-        localTime.setFont(new Font("Dialog", Font.PLAIN, 11));
-
-        final Time time = new Time();
-        time.setType(IQ.Type.GET);
-
-        String fullJID = SparkManager.getUserManager().getFullJID(jid);
-        if (fullJID == null) {
-            return;
+        String emailAddress = "";
+        if (ModelUtil.hasLength(vcard.getEmailHome())) {
+            emailAddress = vcard.getEmailHome();
         }
-        time.setTo(fullJID);
 
-
-        SwingWorker timeThread = new SwingWorker() {
-            IQ timeResult;
-
-            public Object construct() {
-                SparkManager.getConnection().sendPacket(time);
-                final PacketCollector packetCollector = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(time.getPacketID()));
-
-                timeResult = (IQ)packetCollector.nextResult();
-                return timeResult;
+        final Color linkColor = new Color(49, 89, 151);
+        final String unselectedText = "<html><body><font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>";
+        final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
+        final JLabel emailTime = new JLabel(unselectedText);
+        emailTime.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                startEmailClient(emailTime.getText());
             }
 
-            public void finished() {
-                // Wait up to 5 seconds for a result.
+            public void mouseEntered(MouseEvent e) {
+                emailTime.setText(hoverText);
+                setCursor(LINK_CURSOR);
 
-                if (timeResult != null && timeResult.getType() == IQ.Type.RESULT) {
-                    try {
-                        Time t = (Time)timeResult;
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTimeZone(TimeZone.getTimeZone(t.getTz()));
-                        // Convert the UTC time to local time.
-                        cal.setTime(new Date(utcFormat.parse(t.getUtc()).getTime() +
-                            cal.getTimeZone().getOffset(cal.getTimeInMillis())));
-                        Date date = cal.getTime();
+            }
 
-                        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+            public void mouseExited(MouseEvent e) {
+                emailTime.setText(unselectedText);
+                setCursor(DEFAULT_CURSOR);
+            }
+        });
 
 
-                        localTime.setText(Res.getString("label.time", formatter.format(date)));
-                    }
-                    catch (ParseException e) {
-                        Log.error(e);
-                    }
+        add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 7, 5, 0), 0, 0));
+    }
+
+    private void startEmailClient(String emailAddress) {
+        final Message message = new Message();
+
+        final List<String> list = new ArrayList<String>();
+        list.add(emailAddress);
+
+        message.setToAddrs(list);
+
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    Desktop.mail(message);
                 }
+                catch (DesktopException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
         };
 
-        timeThread.start();
-
-        localTime.setText("Retrieving time");
-        localTime.setText("");
-
+        worker.start();
     }
 
 

@@ -137,8 +137,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         setOpaque(true);
 
         setBackground(Color.white);
-
-        setActiveButtonBold(true);
     }
 
 
