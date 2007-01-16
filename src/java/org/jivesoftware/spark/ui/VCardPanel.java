@@ -67,7 +67,7 @@ public class VCardPanel extends JPanel {
 
         this.jid = jid;
         avatarImage = new JLabel();
-        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(5, 0, 5, 0), 0, 0));
+        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
 
 
         Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
@@ -198,7 +198,7 @@ public class VCardPanel extends JPanel {
         });
 
 
-        add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 7, 5, 0), 0, 0));
+        add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
     }
 
     private void startEmailClient(String emailAddress) {

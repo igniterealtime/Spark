@@ -91,32 +91,20 @@ public class TabPanelUI extends BasicPanelUI {
         int arc = 8;
 
 
-        Shape vButtonShape = new RoundRectangle2D.Double((double)x, (double)y, (double)w, (double)h, (double)arc, (double)arc);
         Shape vOldClip = g.getClip();
 
-        if (!Spark.isMac()) {
-            //   g2d.setClip(vButtonShape);
-        }
-        // g2d.setColor(backgroundColor);
-        BufferedImage theImage = null;
+
+        Color endColor;
 
         if (selected) {
-            try {
-                theImage = GraphicUtils.convert(Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage());
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+            endColor = new Color(220, 230, 240);
         }
         else {
-            try {
-                theImage = GraphicUtils.convert(SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage());
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+            endColor = Color.white;
         }
-        g2d.setPaint(new TexturePaint(theImage, new Rectangle(x, y, w, h)));
+
+        GradientPaint paint = new GradientPaint(0, 0, Color.white, 0, h, endColor, true);
+        g2d.setPaint(paint);
         g2d.fillRect(x, y, w, h);
 
         g2d.setClip(vOldClip);
