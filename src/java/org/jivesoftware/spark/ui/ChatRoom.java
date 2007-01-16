@@ -205,7 +205,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().setTransferHandler(transferHandler);
         getChatInputEditor().setTransferHandler(transferHandler);
 
-        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
 
         // Add Connection Listener
         SparkManager.getConnection().addConnectionListener(this);
@@ -215,13 +215,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private void init() {
         setLayout(new GridBagLayout());
 
-
         add(splitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        //   add(notificationLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 2, 5, 0), 0, 0));
 
         // Remove Default Beveled Borders
         splitPane.setBorder(null);
         verticalSplit.setBorder(null);
+        verticalSplit.setOneTouchExpandable(false);
         splitPane.setLeftComponent(verticalSplit);
 
         textScroller.setAutoscrolls(true);
@@ -236,7 +235,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
-        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 2, 0, 2), 0, 0));
+        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
 
         // Add edit buttons to Chat Room
         editorBar.setOpaque(false);
@@ -248,8 +247,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 15));
-        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 15));
+        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
         verticalSplit.setOpaque(false);
 
         verticalSplit.setTopComponent(chatPanel);

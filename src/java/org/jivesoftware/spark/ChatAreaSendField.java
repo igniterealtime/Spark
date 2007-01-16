@@ -44,7 +44,7 @@ public class ChatAreaSendField extends JPanel {
 
         textField = new ChatInputEditor();
         textField.setBorder(null);
-        setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.lightGray));
+        setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.lightGray));
         button = new JButton();
 
         if (Spark.isMac()) {
