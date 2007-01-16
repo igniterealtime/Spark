@@ -42,11 +42,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -57,6 +52,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -192,10 +192,6 @@ public class ChatRoomImpl extends ChatRoom {
 
         typingTimer.start();
         lastActivity = System.currentTimeMillis();
-
-        // Add VCard Panel
-        final VCardPanel vcardPanel = new VCardPanel(participantJID);
-        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
     }
 
 
@@ -646,6 +642,11 @@ public class ChatRoomImpl extends ChatRoom {
 
 
     private void loadHistory() {
+        // Add VCard Panel
+        final VCardPanel vcardPanel = new VCardPanel(participantJID);
+        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
+
+
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
             return;

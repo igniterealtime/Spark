@@ -23,12 +23,12 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
@@ -67,6 +67,14 @@ public class VCardPanel extends JPanel {
 
         this.jid = jid;
         avatarImage = new JLabel();
+        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(5, 0, 5, 0), 0, 0));
+
+
+        Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
+        aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+        ImageIcon ico = new ImageIcon(aImage);
+
+        avatarImage.setIcon(ico);
 
         final SwingWorker vcardLoader = new SwingWorker() {
             VCard vcard = null;
@@ -114,7 +122,6 @@ public class VCardPanel extends JPanel {
     }
 
     private void buildUI(final VCard vcard) {
-        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(5, 0, 5, 0), 0, 0));
 
         avatarImage.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
