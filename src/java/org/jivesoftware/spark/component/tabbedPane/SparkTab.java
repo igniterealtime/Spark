@@ -120,6 +120,10 @@ public class SparkTab extends TabPanel {
         this.boldWhenActive = boldWhenActive;
     }
 
+    public boolean isBoldWhenActive(){
+        return boldWhenActive;
+    }
+
     public Icon getPreviousIcon(){
         return previousIcon;
     }

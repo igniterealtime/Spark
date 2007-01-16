@@ -137,6 +137,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         setOpaque(true);
 
         setBackground(Color.white);
+
+        setActiveButtonBold(true);
     }
 
 
@@ -974,7 +976,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final int index = indexOfComponent(room);
         if (index != -1) {
             SparkTab tab = getTabAt(index);
+
             Font defaultFont = tab.getDefaultFont();
+            if(tab.isBoldWhenActive() && tab.isSelected()){
+                defaultFont = defaultFont.deriveFont(Font.BOLD);
+            }
 
             final JLabel titleLabel = tab.getTitleLabel();
 
