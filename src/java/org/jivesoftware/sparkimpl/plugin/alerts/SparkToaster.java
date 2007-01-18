@@ -381,7 +381,7 @@ public class SparkToaster {
      */
     public void showToaster(String title, Component comp) {
         SingleToaster singleToaster = new SingleToaster();
-        mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
+        mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 0, 0, 0), 0, 0));
 
         titleLabel.setTitle(title);
         singleToaster.animate();

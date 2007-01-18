@@ -60,6 +60,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -93,16 +96,14 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
      * component is responsible for monitoring all activity in the ChatRoom.
      */
     public GroupChatParticipantList() {
+        setLayout(new GridBagLayout());
         chatManager = SparkManager.getChatManager();
 
         agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
         participantsList = new ParticipantList();
 
         // Set the room to track
-        this.setOpaque(true);
-
-        this.setLayout(new BorderLayout());
-        this.setOpaque(true);
+        this.setOpaque(false);
         this.setBackground(Color.white);
 
         // Respond to Double-Click in Agent List to start a chat
@@ -136,8 +137,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         scroller.setBackground(Color.white);
         scroller.getViewport().setBackground(Color.white);
 
-
-        this.add(scroller, BorderLayout.CENTER);
+        add(scroller, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
     }
 
     public void setChatRoom(final ChatRoom chatRoom) {

@@ -49,6 +49,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -72,6 +73,8 @@ import javax.swing.text.Document;
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
+    private JSplitPane verticalSplit;
+
     private final JLabel notificationLabel;
     private final TranscriptWindow transcriptWindow;
     private final ChatAreaSendField chatAreaButton;
@@ -87,8 +90,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private List closingListeners = new ArrayList();
 
-
-    private JSplitPane verticalSplit;
 
     private ChatRoomTransferHandler transferHandler;
 
@@ -205,7 +206,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().setTransferHandler(transferHandler);
         getChatInputEditor().setTransferHandler(transferHandler);
 
-        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
 
         // Add Connection Listener
         SparkManager.getConnection().addConnectionListener(this);
@@ -215,16 +216,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private void init() {
         setLayout(new GridBagLayout());
 
-        add(splitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        splitPane.setOneTouchExpandable(false);
-
-        verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        verticalSplit.setOneTouchExpandable(false);
-
         // Remove Default Beveled Borders
         splitPane.setBorder(null);
+        splitPane.setOneTouchExpandable(false);
+
+        // Add Vertical Split Pane
+        verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        add(verticalSplit, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+
         verticalSplit.setBorder(null);
-        splitPane.setLeftComponent(verticalSplit);
+        verticalSplit.setOneTouchExpandable(false);
+
+        verticalSplit.setTopComponent(splitPane);
 
         textScroller.setAutoscrolls(true);
 
@@ -238,7 +241,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
-        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
+
+
+        // Add Chat Panel to Split Pane
+        splitPane.setLeftComponent(chatPanel);
 
         // Add edit buttons to Chat Room
         editorBar.setOpaque(false);
@@ -250,11 +257,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 15));
-        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 15));
+        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+
+        // Set bottom panel border
+        bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(197, 213, 230)));
         verticalSplit.setOpaque(false);
 
-        verticalSplit.setTopComponent(chatPanel);
         verticalSplit.setBottomComponent(bottomPanel);
         verticalSplit.setResizeWeight(1.0);
         verticalSplit.setDividerSize(2);
@@ -937,6 +946,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public JSplitPane getVerticalSlipPane() {
         return verticalSplit;
     }
+
 
     /**
      * Implementation of this method should return the last time this chat room
