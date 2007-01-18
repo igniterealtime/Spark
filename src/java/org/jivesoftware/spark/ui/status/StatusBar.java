@@ -24,6 +24,19 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,23 +56,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
 public class StatusBar extends JPanel {
     private List<StatusItem> statusList = new ArrayList<StatusItem>();
 
     private JLabel imageLabel = new JLabel();
+    private JLabel descriptiveLabel = new JLabel();
     private JLabel nicknameLabel = new JLabel();
     private StatusPanel statusPanel = new StatusPanel();
 
@@ -83,7 +84,9 @@ public class StatusBar extends JPanel {
         add(imageLabel, new GridBagConstraints(0, 0, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         add(nicknameLabel, new GridBagConstraints(1, 0, 2, 2, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 0, 0));
-        add(statusPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
+        add(descriptiveLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
+
+        add(statusPanel, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
 
         nicknameLabel.setToolTipText(SparkManager.getConnection().getUser());
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -346,7 +349,7 @@ public class StatusBar extends JPanel {
 
             if (presence.getStatus() != null && item.getPresence().getStatus() != null) {
                 if ((presence.getMode() == item.getPresence().getMode()) && (presence.getType() == item.getPresence().getType()) &&
-                    (presence.getStatus().equals(item.getPresence().getStatus()))) {
+                        (presence.getStatus().equals(item.getPresence().getStatus()))) {
                     return item;
                 }
             }
@@ -538,6 +541,10 @@ public class StatusBar extends JPanel {
 
     public void setBackgroundImage(Image image) {
         this.backgroundImage = image;
+    }
+
+    public void setDescriptiveText(String text) {
+        descriptiveLabel.setText(text);
     }
 
     public Dimension getPreferredSize() {

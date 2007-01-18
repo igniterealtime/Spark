@@ -41,6 +41,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -70,7 +72,7 @@ import javax.swing.text.Document;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private JSplitPane verticalSplit;
@@ -206,10 +208,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().setTransferHandler(transferHandler);
         getChatInputEditor().setTransferHandler(transferHandler);
 
-        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         // Add Connection Listener
         SparkManager.getConnection().addConnectionListener(this);
+
+        // Add Focus Listener
+        addFocusListener(this);
     }
 
     // Setup base layout.
@@ -767,7 +772,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public class ChatToolBar extends JPanel {
         private JPanel buttonPanel;
-        private JPanel rightPanel;
+
 
         /**
          * Default Constructor.
@@ -776,15 +781,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             buttonPanel = new JPanel();
             buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 
-            rightPanel = new JPanel();
-            rightPanel.setOpaque(false);
-            rightPanel.setLayout(new BorderLayout());
-
             // Set Layout
             setLayout(new GridBagLayout());
 
             buttonPanel.setOpaque(false);
-            add(buttonPanel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            add(buttonPanel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             setOpaque(false);
         }
 
@@ -820,14 +821,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             buttonPanel.remove(button);
         }
 
-        /**
-         * Sets the far-right component of the Commandbar.
-         *
-         * @param component the component.
-         */
-        public void setRightComponent(Component component) {
-            rightPanel.add(component, BorderLayout.CENTER);
-        }
+
 
 
     }
@@ -947,6 +941,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return verticalSplit;
     }
 
+
+    public void focusGained(FocusEvent focusEvent) {
+        validate();
+        invalidate();
+        repaint();
+    }
+
+    public void focusLost(FocusEvent focusEvent) {
+    }
 
     /**
      * Implementation of this method should return the last time this chat room
