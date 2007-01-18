@@ -19,6 +19,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -31,9 +32,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -43,7 +41,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -52,7 +49,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -73,7 +69,7 @@ import javax.swing.text.Document;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends JPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private final JLabel notificationLabel;
@@ -92,7 +88,7 @@ public abstract class ChatRoom extends JPanel implements ActionListener, PacketL
     private List closingListeners = new ArrayList();
 
 
-    final JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    private JSplitPane verticalSplit;
 
     private ChatRoomTransferHandler transferHandler;
 
@@ -209,7 +205,7 @@ public abstract class ChatRoom extends JPanel implements ActionListener, PacketL
         getTranscriptWindow().setTransferHandler(transferHandler);
         getChatInputEditor().setTransferHandler(transferHandler);
 
-        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         // Add Connection Listener
         SparkManager.getConnection().addConnectionListener(this);
@@ -220,11 +216,14 @@ public abstract class ChatRoom extends JPanel implements ActionListener, PacketL
         setLayout(new GridBagLayout());
 
         add(splitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        splitPane.setOneTouchExpandable(false);
+
+        verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        verticalSplit.setOneTouchExpandable(false);
 
         // Remove Default Beveled Borders
         splitPane.setBorder(null);
         verticalSplit.setBorder(null);
-        verticalSplit.setOneTouchExpandable(false);
         splitPane.setLeftComponent(verticalSplit);
 
         textScroller.setAutoscrolls(true);
@@ -239,7 +238,7 @@ public abstract class ChatRoom extends JPanel implements ActionListener, PacketL
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
-        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
+        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
         // Add edit buttons to Chat Room
         editorBar.setOpaque(false);
@@ -251,11 +250,8 @@ public abstract class ChatRoom extends JPanel implements ActionListener, PacketL
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 15));
-        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
-
-        // Set bottom panel border
-        bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(197, 213, 230)));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 15));
+        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         verticalSplit.setOpaque(false);
 
         verticalSplit.setTopComponent(chatPanel);
@@ -940,20 +936,6 @@ public abstract class ChatRoom extends JPanel implements ActionListener, PacketL
 
     public JSplitPane getVerticalSlipPane() {
         return verticalSplit;
-    }
-
-    public void paintComponent(Graphics g) {
-
-        BufferedImage cache = new BufferedImage(2, getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = cache.createGraphics();
-
-        GradientPaint paint = new GradientPaint(0, 0, Color.white, 0, getHeight(), new Color(220, 230, 240), true);
-
-        g2d.setPaint(paint);
-        g2d.fillRect(0, 0, getWidth(), getHeight());
-        g2d.dispose();
-
-        g.drawImage(cache, 0, 0, getWidth(), getHeight(), null);
     }
 
     /**

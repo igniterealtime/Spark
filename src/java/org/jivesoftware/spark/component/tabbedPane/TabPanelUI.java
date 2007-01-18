@@ -13,8 +13,6 @@ package org.jivesoftware.spark.component.tabbedPane;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
@@ -22,12 +20,8 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.TexturePaint;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.StringTokenizer;
 
 import javax.swing.JComponent;
@@ -97,7 +91,7 @@ public class TabPanelUI extends BasicPanelUI {
         Color endColor;
 
         if (selected) {
-            endColor = new Color(220, 230, 240);
+            endColor = new Color(152, 193, 234);
         }
         else {
             endColor = Color.white;
