@@ -136,7 +136,7 @@ public class VCardManager {
         avatarPanel = new AvatarPanel();
         tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 
-        loadVCard(SparkManager.getSessionManager().getJID());
+        loadVCard(SparkManager.getSessionManager().getBareAddress());
 
         final JOptionPane pane;
         final JDialog dlg;
@@ -591,6 +591,7 @@ public class VCardManager {
     }
 
     public void addVCard(String jid, VCard vcard) {
+        vcard.setJabberId(jid);
         vcardMap.put(jid, vcard);
     }
 
