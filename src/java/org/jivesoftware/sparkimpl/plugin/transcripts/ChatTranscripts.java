@@ -94,6 +94,7 @@ final public class ChatTranscripts {
         if (!transcriptFile.exists() || !append) {
             // Write out new File
             try {
+                transcriptFile.getParentFile().mkdirs();
                 FileOutputStream fout = new FileOutputStream(transcriptFile);
                 OutputStreamWriter ow = new OutputStreamWriter(fout, "UTF-8");
                 ow.write(builder.toString());
