@@ -1318,8 +1318,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     SparkTab tab = getTabAt(index);
 
                     final JLabel titleLabel = tab.getTitleLabel();
-                    titleLabel.setForeground(Color.gray);
-                    titleLabel.setFont(tab.getDefaultFont());
+                    if (!titleLabel.getForeground().equals(Color.red)) {
+                        titleLabel.setForeground(Color.gray);
+                        titleLabel.setFont(tab.getDefaultFont());
+                    }
+
 
                     if (chatRoom instanceof ChatRoomImpl) {
                         ChatRoomImpl impl = (ChatRoomImpl)chatRoom;
