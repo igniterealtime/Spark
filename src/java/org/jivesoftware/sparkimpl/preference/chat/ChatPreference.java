@@ -73,12 +73,13 @@ public class ChatPreference implements Preference {
                 boolean spellCheckerOn = localPreferences.isSpellCheckerEnabled();
                 boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
                 boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
+                boolean splitChatEnabled = localPreferences.isDockingEnabled();
+                
                 panel.setShowTime(showTime);
                 panel.setSpellCheckerOn(spellCheckerOn);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
                 panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
-
             }
         };
 

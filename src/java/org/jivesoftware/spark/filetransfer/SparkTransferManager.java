@@ -55,6 +55,22 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
@@ -81,22 +97,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -767,6 +767,8 @@ public class SparkTransferManager {
             if (Spark.isWindows()) {
                 fc.setFileSystemView(new WindowsFileSystemView());
             }
+
+            fc.setApproveButtonText(Res.getString("button.send"));
         }
         return fc;
     }

@@ -8,9 +8,8 @@
 
 package org.jivesoftware.spark.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 
 /**
  *
@@ -27,5 +26,5 @@ public interface ContainerComponent {
 
     public abstract String getToolTipDescription();
 
-    public abstract void closing();
+    public abstract boolean closing();
 }

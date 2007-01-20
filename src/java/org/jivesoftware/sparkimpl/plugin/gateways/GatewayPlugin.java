@@ -40,8 +40,11 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
+import org.jivesoftware.resource.SparkRes;
 
 import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,6 +85,12 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 Boolean transportExists = (Boolean)get();
                 if (!transportExists) {
                     return;
+                }
+
+                if(TransportUtils.getTransports().size() > 0){
+                    final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+                    final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
+                    commandPanel.add(dividerLabel);
                 }
 
                 for (final Transport transport : TransportUtils.getTransports()) {

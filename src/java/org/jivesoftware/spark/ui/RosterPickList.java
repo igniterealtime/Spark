@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
@@ -36,6 +36,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -67,14 +69,24 @@ public class RosterPickList extends JPanel {
      * @return all items choosen in the pick list.
      */
     public Collection showRoster(JDialog parent) {
+        final List<ContactItem> userList = new ArrayList<ContactItem>();
+
         // Populate Invite Panel with Available users.
-        Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = SparkManager.getConnection().getRoster();
         for (RosterEntry entry : roster.getEntries()) {
             Presence presence = roster.getPresence(entry.getUser());
             if (presence != null) {
                 ContactItem item = new ContactItem(entry.getName(), entry.getUser());
-                model.addElement(item);
+                item.setPresence(presence);
+                userList.add(item);
             }
+        }
+
+        // Sort Users
+        Collections.sort(userList, itemComparator);
+
+        for (ContactItem item : userList) {
+            model.addElement(item);
         }
 
         final JOptionPane pane;
@@ -140,5 +152,17 @@ public class RosterPickList extends JPanel {
         return selectedContacts;
     }
 
+
+    /**
+     * Sorts ContactItems.
+     */
+    final Comparator<ContactItem> itemComparator = new Comparator() {
+        public int compare(Object contactItemOne, Object contactItemTwo) {
+            final ContactItem item1 = (ContactItem)contactItemOne;
+            final ContactItem item2 = (ContactItem)contactItemTwo;
+            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+
+        }
+    };
 
 }

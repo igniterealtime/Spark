@@ -48,6 +48,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
@@ -712,17 +713,33 @@ public final class LoginDialog {
         // Creates the Spark  Workspace and add to MainWindow
         Workspace workspace = Workspace.getInstance();
 
-
-        mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
-
-        mainWindow.pack();
-
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         int x = settings.getMainWindowX();
         int y = settings.getMainWindowY();
         int width = settings.getMainWindowWidth();
         int height = settings.getMainWindowHeight();
 
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        if(pref.isDockingEnabled()) {
+        	JSplitPane splitPane = mainWindow.getSplitPane();
+        	workspace.getCardPanel().setMinimumSize(null);
+        	splitPane.setLeftComponent(workspace.getCardPanel());
+        	SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
+        	splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
+        	int dividerLoc = settings.getSplitPaneDividerLocation();
+        	if (dividerLoc != -1){
+            	mainWindow.getSplitPane().setDividerLocation(dividerLoc);
+        	}
+        	else{
+            	mainWindow.getSplitPane().setDividerLocation(240);
+        	}
+
+        	mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
+        }
+        else {
+            mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
+        }
+        
         if (x == 0 && y == 0) {
             // Use Default size
             mainWindow.setSize(310, 520);

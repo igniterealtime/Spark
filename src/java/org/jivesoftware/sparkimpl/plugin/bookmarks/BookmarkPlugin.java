@@ -28,6 +28,7 @@ import org.jivesoftware.spark.util.log.Log;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.PopupMenu;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 
 /**
  * Allows for adding and removal of Bookmarks within Spark.
@@ -62,20 +64,10 @@ public class BookmarkPlugin implements Plugin {
             public void finished() {
                 final Bookmarks bookmarks = (Bookmarks)get();
 
-                final JPopupMenu popup = new JPopupMenu();
+                final JMenu bookmarkMenu = new JMenu("Bookmarks");
 
                 if (bookmarks != null) {
-                    // Add to status bar
-                    final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
-                    final RolloverButton bookmarkButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
-                    bookmarkButton.addMouseListener(new MouseAdapter() {
-                        public void mouseClicked(MouseEvent mouseEvent) {
-                            popup.show(bookmarkButton, mouseEvent.getX(), mouseEvent.getY());
-                        }
-                    });
-
-                    bookmarkButton.setToolTipText(Res.getString("title.view.bookmarks"));
-                    commandPanel.add(bookmarkButton);
+                    bookmarkMenu.setToolTipText(Res.getString("title.view.bookmarks"));
                     SparkManager.getWorkspace().getStatusBar().invalidate();
                     SparkManager.getWorkspace().getStatusBar().validate();
                     SparkManager.getWorkspace().getStatusBar().repaint();
@@ -101,7 +93,7 @@ public class BookmarkPlugin implements Plugin {
 
                         urlAction.putValue(Action.NAME, link.getName());
                         urlAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.LINK_16x16));
-                        popup.add(urlAction);
+                        bookmarkMenu.add(urlAction);
                     }
 
 
@@ -132,8 +124,13 @@ public class BookmarkPlugin implements Plugin {
 
                         conferenceAction.putValue(Action.NAME, conferences.getName());
                         conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
-                        popup.add(conferenceAction);
+                        bookmarkMenu.add(conferenceAction);
                     }
+                }
+
+                if(bookmarkMenu.getMenuComponentCount() > 0){
+                    int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
+                    SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 1);
                 }
             }
         };

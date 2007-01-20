@@ -487,6 +487,13 @@ public class LocalPreferences {
         return getBoolean("notifyOnOnline", false);
     }
 
+    public void setDockingEnabled(boolean dockingEnabled) {
+		 setBoolean("dockingEnabled", dockingEnabled);
+	}
+    
+	public boolean isDockingEnabled() {
+		 return getBoolean("dockingEnabled", false);
+	}
 
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));

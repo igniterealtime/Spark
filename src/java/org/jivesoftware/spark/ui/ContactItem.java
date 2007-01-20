@@ -321,7 +321,7 @@ public class ContactItem extends JPanel {
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
         }
-        else
+
         if (presence != null && (presence.getMode() == Presence.Mode.dnd || presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa)) {
             statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
         }
@@ -472,6 +472,8 @@ public class ContactItem extends JPanel {
                     setStatus(itemStatus);
                 }
             }
+
+            setIcon(null);
 
             setAvailable(false);
             return;

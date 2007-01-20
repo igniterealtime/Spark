@@ -63,6 +63,8 @@ public final class TitlePanel extends JPanel {
 
         setLayout(gridBagLayout);
 
+        descriptionLabel.setBackground(Color.white);
+
         if (showDescription) {
             add(iconLabel, new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
             add(descriptionLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 5, 5), 0, 0));

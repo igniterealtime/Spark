@@ -28,10 +28,17 @@ public class LayoutPlugin implements Plugin {
                 int height = mainWindow.getHeight();
 
                 LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+               
                 settings.setMainWindowHeight(height);
                 settings.setMainWindowWidth(width);
                 settings.setMainWindowX(x);
                 settings.setMainWindowY(y);
+                if (mainWindow.isDocked()){
+                	settings.setSplitPaneDividerLocation(mainWindow.getSplitPane().getDividerLocation());
+                }
+                else{
+                	settings.setSplitPaneDividerLocation(-1);
+                }
                 LayoutSettingsManager.saveLayoutSettings();
             }
 

@@ -61,16 +61,20 @@ public class LayoutSettingsManager {
         String chatFrameY = Integer.toString(layoutSettings.getChatFrameY());
         String chatFrameWidth = Integer.toString(layoutSettings.getChatFrameWidth());
         String chatFrameHeight = Integer.toString(layoutSettings.getChatFrameHeight());
-
+        String splitDividerLocation = Integer.toString(layoutSettings.getSplitPaneDividerLocation());
+        
         props.setProperty("mainWindowX", mainWindowX);
         props.setProperty("mainWindowY", mainWindowY);
         props.setProperty("mainWindowHeight", mainWindowHeight);
-        props.setProperty("mainWindowWidth", mainWindowWidth);
+       	props.setProperty("mainWindowWidth", mainWindowWidth);
+        
         props.setProperty("chatFrameX", chatFrameX);
         props.setProperty("chatFrameY", chatFrameY);
         props.setProperty("chatFrameWidth", chatFrameWidth);
         props.setProperty("chatFrameHeight", chatFrameHeight);
-
+        
+        props.setProperty("splitDividerLocation", splitDividerLocation);
+        
         try {
             props.store(new FileOutputStream(getSettingsFile()), "Storing Spark Layout Settings");
         }
@@ -116,7 +120,8 @@ public class LayoutSettingsManager {
             String chatFrameY = props.getProperty("chatFrameY");
             String chatFrameWidth = props.getProperty("chatFrameWidth");
             String chatFrameHeight = props.getProperty("chatFrameHeight");
-
+            String splitDividerLocation = props.getProperty("splitDividerLocation");
+            
             settings = new LayoutSettings();
 
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -141,7 +146,8 @@ public class LayoutSettingsManager {
             int chatFrameYInt = Integer.parseInt(chatFrameY);
             int chatFrameWidthInt = Integer.parseInt(chatFrameWidth);
             int chatFrameHeightInt = Integer.parseInt(chatFrameHeight);
-
+            int splitDividerLocationInt = splitDividerLocation == null ? -1 : Integer.parseInt(splitDividerLocation);
+            
             if (chatFrameXInt + chatFrameWidthInt > width) {
                 chatFrameXInt = (width - chatFrameWidthInt) / 2;
             }
@@ -160,7 +166,7 @@ public class LayoutSettingsManager {
             settings.setChatFrameY(chatFrameYInt);
             settings.setChatFrameWidth(chatFrameWidthInt);
             settings.setChatFrameHeight(chatFrameHeightInt);
-
+            settings.setSplitPaneDividerLocation(splitDividerLocationInt);
             return settings;
         }
         catch (Exception e) {

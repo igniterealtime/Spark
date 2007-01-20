@@ -21,6 +21,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -153,6 +154,17 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         settings.setChatFrameY(getY());
         LayoutSettingsManager.saveLayoutSettings();
     }
+
+	public void activateChatRoom() {
+		if (!isVisible()) {
+			setVisible(true);
+		}
+
+		if (getState() == Frame.ICONIFIED) {
+			setState(Frame.NORMAL);
+		}
+		requestFocus();
+	}
 
     public void buzz(){
         ShakeWindow d = new ShakeWindow(this);

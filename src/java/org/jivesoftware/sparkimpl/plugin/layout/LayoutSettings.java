@@ -21,6 +21,7 @@ public class LayoutSettings {
     private int chatFrameY;
     private int chatFrameWidth;
     private int chatFrameHeight;
+	private int dividerLocation = -1;
 
     public int getMainWindowX() {
         return mainWindowX;
@@ -85,4 +86,15 @@ public class LayoutSettings {
     public void setChatFrameHeight(int chatFrameHeight) {
         this.chatFrameHeight = chatFrameHeight;
     }
+
+	public void setSplitPaneDividerLocation(int dividerLocation) {
+		this.dividerLocation = dividerLocation;
+		
+	}
+
+	public int getSplitPaneDividerLocation() {
+		return dividerLocation;
+	}
+
+	
 }

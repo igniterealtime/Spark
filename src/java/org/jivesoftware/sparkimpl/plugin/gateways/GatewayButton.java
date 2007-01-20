@@ -50,7 +50,7 @@ public class GatewayButton extends JPanel {
         final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
         button.setIcon(transport.getInactiveIcon());
-        button.setToolTipText(transport.getInstructions());
+        button.setToolTipText(transport.getName());
 
         commandPanel.add(button);
 

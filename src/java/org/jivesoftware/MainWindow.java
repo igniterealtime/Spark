@@ -17,6 +17,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -25,6 +26,7 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
 
@@ -52,6 +54,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 
@@ -61,7 +64,7 @@ import javax.swing.JToolBar;
  *
  * @version 1.0, 03/12/14
  */
-public final class MainWindow extends JFrame implements ActionListener {
+public final class MainWindow extends ChatFrame implements ActionListener {
     private final Set<MainWindowListener> listeners = new HashSet<MainWindowListener>();
 
     private final JMenu connectMenu = new JMenu();
@@ -83,6 +86,8 @@ public final class MainWindow extends JFrame implements ActionListener {
 
     private static MainWindow singleton;
     private static final Object LOCK = new Object();
+    
+    private JSplitPane splitPane = null;
 
     /**
      * Returns the singleton instance of <CODE>MainWindow</CODE>,
@@ -113,7 +118,8 @@ public final class MainWindow extends JFrame implements ActionListener {
      * @param icon  the icon used in the frame.
      */
     private MainWindow(String title, ImageIcon icon) {
-        // Initialize and dock the menus
+
+    	// Initialize and dock the menus
         buildMenu();
 
         // Add Workspace Container
@@ -340,6 +346,7 @@ public final class MainWindow extends JFrame implements ActionListener {
         mainWindowBar.add(connectMenu);
         mainWindowBar.add(contactsMenu);
         mainWindowBar.add(actionsMenu);
+        //mainWindowBar.add(pluginsMenu);
         mainWindowBar.add(helpMenu);
 
 
@@ -603,4 +610,16 @@ public final class MainWindow extends JFrame implements ActionListener {
 
     }
 
+	public boolean isDocked() {
+		LocalPreferences preferences = SettingsManager.getLocalPreferences();
+		return preferences.isDockingEnabled();
+	}
+	
+	public JSplitPane getSplitPane() {
+        // create the split pane only if required.
+		if (splitPane == null){
+	        splitPane = new JSplitPane();
+		}
+		return this.splitPane;
+	}
 }

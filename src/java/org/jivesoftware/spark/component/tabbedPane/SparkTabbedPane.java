@@ -131,6 +131,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         // Create mainPanel
         mainPanel = new JPanel(new CardLayout());
+        mainPanel.setBackground(Color.WHITE);
         add(mainPanel, BorderLayout.CENTER);
 
         //  mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
