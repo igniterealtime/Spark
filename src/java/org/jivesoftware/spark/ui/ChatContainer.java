@@ -148,7 +148,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String leftStrokeString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(leftStroke);
 
         // Handle Left Arrow
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
         this.getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
             public void actionPerformed(ActionEvent evt) {
                 int selectedIndex = getSelectedIndex();
@@ -165,7 +165,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String rightStrokeString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(rightStroke);
 
         // Handle Right Arrow
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + rightStrokeString + ""), "navigateRight");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString + ""), "navigateRight");
         this.getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
             public void actionPerformed(ActionEvent evt) {
                 int selectedIndex = getSelectedIndex();
@@ -181,8 +181,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
 
         this.getActionMap().put("escape", new AbstractAction("escape") {
             public void actionPerformed(ActionEvent evt) {
@@ -195,7 +195,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String appleString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(appleStroke);
 
         // Handle Apple Key W
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(appleString + "w"), "appleStroke");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(appleString + "w"), "appleStroke");
         this.getActionMap().put("appleStroke", new AbstractAction("appleStroke") {
             public void actionPerformed(ActionEvent evt) {
                 closeActiveRoom();
@@ -203,7 +203,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
 
         // Add KeyMappings
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getChatManager().getChatContainer().getChatFrame());
