@@ -1111,7 +1111,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (pref.isDockingEnabled()) {
-            chatFrame = MainWindow.getInstance();
+            //chatFrame = MainWindow.getInstance();
         }
         else {
             chatFrame = new ChatFrame();
