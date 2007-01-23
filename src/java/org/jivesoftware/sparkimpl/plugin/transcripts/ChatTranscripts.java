@@ -35,7 +35,7 @@ import java.util.Date;
  *
  * @author Derek DeMoro
  */
-final public class ChatTranscripts {
+public final class ChatTranscripts {
 
     /**
      * Default Date Formatter *
@@ -59,12 +59,16 @@ final public class ChatTranscripts {
     public static void appendToTranscript(String jid, ChatTranscript transcript) {
         final File transcriptFile = getTranscriptFile(jid);
 
-        // Write Full Transcript
+        // Write Full Transcript, appending the messages.
         writeToFile(transcriptFile, transcript.getMessages(), true);
 
         // Write to current history File
         final File currentHistoryFile = getCurrentHistoryFile(jid);
-        writeToFile(currentHistoryFile, transcript.getNumberOfEntries(20), false);
+        ChatTranscript tempTranscript = getCurrentChatTranscript(jid);
+        for (HistoryMessage message : transcript.getMessages()) {
+            tempTranscript.addHistoryMessage(message);
+        }
+        writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(20), false);
     }
 
     private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {

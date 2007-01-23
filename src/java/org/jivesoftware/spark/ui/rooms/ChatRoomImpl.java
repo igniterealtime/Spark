@@ -660,7 +660,6 @@ public class ChatRoomImpl extends ChatRoom {
             String nickname = StringUtils.parseName(from);
             Date date = message.getDate();
             getTranscriptWindow().insertHistoryMessage(nickname, message.getBody(), date);
-            addToTranscript(message.getTo(), message.getFrom(), message.getBody(), date);
         }
 
     }
