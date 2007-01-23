@@ -221,7 +221,7 @@ public class ContactItem extends JPanel {
 
                 final File imageFile = new File(contactsDir, hash);
 
-                VCard vcard = SparkManager.getVCardManager().getVCard(getFullJID());
+                VCard vcard = SparkManager.getVCardManager().getVCard(getFullJID(), false);
 
                 try {
                     byte[] bytes = vcard.getAvatar();

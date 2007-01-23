@@ -77,7 +77,7 @@ public class VCardManager {
     private JLabel avatarLabel;
     private VCard vcard = new VCard();
 
-    private Map<String, VCard> vcardMap = new HashMap<String, VCard>();
+    private Map<String, VCard> vcards = new HashMap<String, VCard>();
     private boolean vcardLoaded;
 
     final private File imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
@@ -568,18 +568,31 @@ public class VCardManager {
     }
 
     /**
-     * Returns the VCard associated with a jid.
+     * Returns the VCard. Will first look in VCard cache and only do a network
+     * operation if no vcard is found.
      *
-     * @param jid the jid.
+     * @param jid the users jid.
      * @return the VCard.
      */
     public VCard getVCard(String jid) {
-        if (!vcardMap.containsKey(jid)) {
+        return getVCard(jid, true);
+    }
+
+
+    /**
+     * Returns the VCard.
+     *
+     * @param jid      the users jid.
+     * @param useCache true to check in cache, otherwise false will do a new network vcard operation.
+     * @return the VCard.
+     */
+    public VCard getVCard(String jid, boolean useCache) {
+        if (!vcards.containsKey(jid) || !useCache) {
             VCard vcard = new VCard();
-            vcard.setJabberId(jid);
             try {
                 vcard.load(SparkManager.getConnection(), jid);
-                vcardMap.put(jid, vcard);
+                vcard.setJabberId(jid);
+                vcards.put(jid, vcard);
             }
             catch (XMPPException e) {
                 Log.warning("Unable to load vcard for " + jid, e);
@@ -587,12 +600,12 @@ public class VCardManager {
                 return vcard;
             }
         }
-        return (VCard)vcardMap.get(jid);
+        return (VCard)vcards.get(jid);
     }
 
     public void addVCard(String jid, VCard vcard) {
         vcard.setJabberId(jid);
-        vcardMap.put(jid, vcard);
+        vcards.put(jid, vcard);
     }
 
     /**
@@ -652,7 +665,7 @@ public class VCardManager {
     }
 
     public VCard searchPhoneNumber(String phoneNumber) {
-        for (VCard vcard : vcardMap.values()) {
+        for (VCard vcard : vcards.values()) {
             String homePhone = getNumbersFromPhone(vcard.getPhoneHome("VOICE"));
             String workPhone = getNumbersFromPhone(vcard.getPhoneWork("VOICE"));
 
@@ -680,6 +693,7 @@ public class VCardManager {
 
         return number;
     }
+
     public static void main(String args[]) throws Exception {
         XMPPConnection con = new XMPPConnection("jivesoftware.com", 5222);
         con.connect();
