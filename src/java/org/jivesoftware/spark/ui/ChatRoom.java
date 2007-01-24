@@ -27,28 +27,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -68,6 +46,27 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -158,7 +157,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
-
+        transcriptWindow.setBackground(Color.white);
+        
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
 
@@ -247,7 +247,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         // Layout Components
         chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
-
 
         // Add Chat Panel to Split Pane
         splitPane.setLeftComponent(chatPanel);
@@ -495,7 +494,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private void checkForEnter(KeyEvent e) {
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
         if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) &&
-            e.getKeyChar() == KeyEvent.VK_ENTER) {
+                e.getKeyChar() == KeyEvent.VK_ENTER) {
             e.consume();
             sendMessage();
             getChatInputEditor().setText("");
@@ -820,8 +819,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         public void removeChatRoomButton(ChatRoomButton button) {
             buttonPanel.remove(button);
         }
-
-
 
 
     }
