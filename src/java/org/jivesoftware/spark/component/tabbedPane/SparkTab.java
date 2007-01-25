@@ -40,6 +40,7 @@ public class SparkTab extends TabPanel {
     private Font defaultFont;
 
     private Icon previousIcon;
+    private Icon defaultIcon;
 
     public SparkTab(Icon icon, String text) {
         setLayout(new GridBagLayout());
@@ -47,7 +48,7 @@ public class SparkTab extends TabPanel {
 
         selectedBorderColor = new Color(173, 0, 0);
 
-        //  setBackground(backgroundColor);
+        this.defaultIcon = icon;
 
         this.actualText = text;
 
@@ -110,7 +111,7 @@ public class SparkTab extends TabPanel {
     }
 
     public void setIcon(Icon icon) {
-        if(iconLabel.getIcon() != null){
+        if (iconLabel.getIcon() != null) {
             previousIcon = iconLabel.getIcon();
         }
         iconLabel.setIcon(icon);
@@ -120,12 +121,16 @@ public class SparkTab extends TabPanel {
         this.boldWhenActive = boldWhenActive;
     }
 
-    public boolean isBoldWhenActive(){
+    public boolean isBoldWhenActive() {
         return boldWhenActive;
     }
 
-    public Icon getPreviousIcon(){
+    public Icon getPreviousIcon() {
         return previousIcon;
+    }
+
+    public Icon getDefaultIcon() {
+        return defaultIcon;
     }
 
 
