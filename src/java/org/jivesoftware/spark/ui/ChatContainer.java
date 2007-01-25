@@ -125,6 +125,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 chatFrame.setTitle("");
                 chatFrame.dispose();
             }
+
+
+            public boolean canTabClose(SparkTab tab, Component component) {
+                return true;
+            }
         });
 
         setCloseButtonEnabled(true);

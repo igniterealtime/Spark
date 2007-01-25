@@ -303,6 +303,12 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     }
 
     public void close(SparkTab tab, Component comp) {
+        boolean canClose = fireTabClosing(tab, comp);
+        if(!canClose){
+            // Cancel closing of tab.
+            return;
+        }
+        
         int index = getIndex(tab);
 
         // Close Tab
@@ -512,6 +518,20 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
             ((SparkTabbedPaneListener)list.next()).allTabsRemoved();
         }
     }
+
+    public boolean fireTabClosing(SparkTab tab, Component component) {
+        final Iterator list = ModelUtil.reverseListIterator(listeners.listIterator());
+        while (list.hasNext()) {
+            final SparkTabbedPaneListener listener = (SparkTabbedPaneListener)list.next();
+            boolean canClose = listener.canTabClose(tab, component);
+            if (!canClose) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     public boolean isActiveButtonBold() {
         return activeButtonBold;
