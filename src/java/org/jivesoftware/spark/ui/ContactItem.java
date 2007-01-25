@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.PacketExtension;
@@ -404,13 +405,12 @@ public class ContactItem extends JPanel {
 
         if (isAvailable) {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
-            if ("Online".equals(status) || "Available".equalsIgnoreCase(status)) {
+            if ("Online".equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
                 setStatusText("");
             }
             else {
                 setStatusText(status);
             }
-
         }
         else if (presence != null) {
             getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, 11));
@@ -515,12 +515,15 @@ public class ContactItem extends JPanel {
 
         if (isAvailable) {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
-            if ("Online".equals(status) || "Available".equalsIgnoreCase(status)) {
+            setStatusText(status);
+
+            if ("Online".equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
                 setStatusText("");
             }
             else {
                 setStatusText(status);
             }
+
 
         }
         else if (presence != null) {

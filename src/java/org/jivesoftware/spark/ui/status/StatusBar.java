@@ -95,8 +95,8 @@ public class StatusBar extends JPanel {
         populateDndList();
 
 
-        setStatus("Online");
-        currentPresence = new Presence(Presence.Type.available, "Online", -1, Presence.Mode.available);
+        setStatus(Res.getString("available"));
+        currentPresence = new Presence(Presence.Type.available, Res.getString("available"), -1, Presence.Mode.available);
 
 
         setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
@@ -319,7 +319,7 @@ public class StatusBar extends JPanel {
         final ImageIcon dndIcon = SparkRes.getImageIcon(SparkRes.IM_DND);
         final ImageIcon phoneIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
 
-        StatusItem online = new StatusItem(new Presence(Presence.Type.available, "Online", -1, Presence.Mode.available), availableIcon);
+        StatusItem online = new StatusItem(new Presence(Presence.Type.available, Res.getString("available"), -1, Presence.Mode.available), availableIcon);
         StatusItem freeToChat = new StatusItem(new Presence(Presence.Type.available, "Free To Chat", -1, Presence.Mode.chat), SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE));
         StatusItem away = new StatusItem(new Presence(Presence.Type.available, "Away", -1, Presence.Mode.away), awayIcon);
         StatusItem phone = new StatusItem(new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away), phoneIcon);

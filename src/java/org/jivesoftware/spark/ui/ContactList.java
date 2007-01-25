@@ -1835,7 +1835,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         timer.schedule(new TimerTask() {
             public void run() {
                 // Send presence to server.
-                final Presence presence = new Presence(Presence.Type.available, "Online", -1, Presence.Mode.available);
+                final Presence presence = new Presence(Presence.Type.available, Res.getString("available"), -1, Presence.Mode.available);
                 SparkManager.getSessionManager().changePresence(presence);
             }
         }, 3000);

@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -242,7 +243,7 @@ public class ContactInfoWindow extends JPanel {
                 status = "Offline";
             }
             else {
-                status = "Online";
+                status = Res.getString("available");
             }
         }
         statusLabel.setText(status);
