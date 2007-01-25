@@ -103,9 +103,9 @@ public class ContactInfoWindow extends JPanel {
         toolbar.setOpaque(false);
 
         // Add Toolbar to top of Contact Window
-        add(toolbar, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
 
-        add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 0, 2, 2), 0, 0));
+        add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
         add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
         add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
@@ -162,7 +162,7 @@ public class ContactInfoWindow extends JPanel {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();
@@ -297,6 +297,9 @@ public class ContactInfoWindow extends JPanel {
 
     public void addToolbarComponent(Component comp) {
         toolbar.add(comp);
+        window.invalidate();
+        window.validate();
+        window.repaint();
     }
 
     public JPanel getToolbar() {
