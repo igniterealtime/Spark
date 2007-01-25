@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -32,9 +31,6 @@ public class SparkTab extends TabPanel {
 
     private String actualText;
 
-    private Color backgroundColor;
-    private Color selectedBorderColor;
-    private boolean selected;
     private boolean boldWhenActive;
 
     private Font defaultFont;
@@ -44,9 +40,6 @@ public class SparkTab extends TabPanel {
 
     public SparkTab(Icon icon, String text) {
         setLayout(new GridBagLayout());
-
-
-        selectedBorderColor = new Color(173, 0, 0);
 
         this.defaultIcon = icon;
 
@@ -83,7 +76,6 @@ public class SparkTab extends TabPanel {
 
     public void setSelected(boolean selected) {
         super.setSelected(selected);
-        this.selected = selected;
 
         if (boldWhenActive && selected) {
             textLabel.setFont(textLabel.getFont().deriveFont(Font.BOLD));
