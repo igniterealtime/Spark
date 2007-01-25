@@ -10,13 +10,12 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.JMultilineLabel;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -25,17 +24,14 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,6 +41,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+import javax.swing.UIManager;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
@@ -98,13 +101,41 @@ public class ContactInfoWindow extends JPanel {
 
         setBackground(Color.white);
 
-        toolbar = new BackgroundPanel();
+        toolbar = new JPanel() {
+            public void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D)g;
+
+                // Initialize color
+                Color startColor = Color.white;
+                Color endColor = new Color(198, 211, 247);
+
+
+                int w = getWidth();
+                int h = getHeight();
+
+                Color customStartColor = (Color)UIManager.get("CollapsiblePane.startColor");
+                Color customEndColor = (Color)UIManager.get("CollapsiblePane.endColor");
+                if (customEndColor != null) {
+                    endColor = customEndColor;
+                }
+
+                if (customStartColor != null) {
+                    startColor = customStartColor;
+                }
+
+
+                GradientPaint gradient = new GradientPaint(0, 0, startColor, w, h, endColor, true);
+                g2.setPaint(gradient);
+                g2.fillRect(0, 0, w, h);
+            }
+
+        };
 
         toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         toolbar.setOpaque(false);
 
         // Add Toolbar to top of Contact Window
-        add(toolbar, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
         add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
@@ -316,7 +347,7 @@ public class ContactInfoWindow extends JPanel {
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 250;
-        size.height = 100;
+        size.height = 125;
         return size;
     }
 }
