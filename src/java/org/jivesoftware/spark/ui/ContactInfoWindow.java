@@ -15,6 +15,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.JMultilineLabel;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -96,18 +97,20 @@ public class ContactInfoWindow extends JPanel {
 
         setBackground(Color.white);
 
-        toolbar = new JPanel();
+        toolbar = new BackgroundPanel();
 
-        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         toolbar.setOpaque(false);
 
-        add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 0, 2, 2), 0, 0));
-        add(iconLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
-        add(nicknameLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
-        add(statusLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+        // Add Toolbar to top of Contact Window
+        add(toolbar, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
 
-        add(toolbar, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        add(fullJIDLabel, new GridBagConstraints(0, 4, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
+        add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 0, 2, 2), 0, 0));
+        add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
+        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+
+        add(fullJIDLabel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
 
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -208,14 +211,20 @@ public class ContactInfoWindow extends JPanel {
 
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((int)screenSize.getWidth() - getPreferredSize().getWidth() >= x) {
-            window.setLocation(x, (int)listLocation.getY() + (int)point.getY());
-            if (!window.isVisible())
+            int y = (int)listLocation.getY() + (int)point.getY();
+            y = y - 5;
+            window.setLocation(x, y);
+            if (!window.isVisible()) {
                 window.setVisible(true);
+            }
         }
         else {
-            window.setLocation((int)mainWindowLocation.getX() - (int)getPreferredSize().getWidth(), (int)listLocation.getY() + (int)point.getY());
-            if (!window.isVisible())
+            int y = (int)listLocation.getY() + (int)point.getY();
+            y = y - 5;
+            window.setLocation((int)mainWindowLocation.getX() - (int)getPreferredSize().getWidth(), y);
+            if (!window.isVisible()) {
                 window.setVisible(true);
+            }
         }
     }
 

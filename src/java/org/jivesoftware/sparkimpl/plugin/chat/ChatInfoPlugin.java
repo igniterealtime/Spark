@@ -68,6 +68,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
 
         final ChatRoomButton chatButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         chatButton.setToolTipText("Start a conversation.");
+        chatButton.setText("Chat");
 
         contactInfo.addChatRoomButton(chatButton);
 
@@ -95,6 +96,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
 
                 if (vcard != null && vcard.getEmailHome() != null) {
                     final ChatRoomButton emailButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.SEND_MAIL_IMAGE_16x16));
+                    emailButton.setText("Email");
                     emailButton.setToolTipText("Send an email");
                     contactInfoWindow.addChatRoomButton(emailButton);
                     contactInfoWindow.getToolbar().invalidate();
