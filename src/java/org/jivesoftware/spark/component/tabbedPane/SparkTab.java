@@ -38,6 +38,8 @@ public class SparkTab extends TabPanel {
     private Icon previousIcon;
     private Icon defaultIcon;
 
+    private boolean tabDefault = true;
+
     public SparkTab(Icon icon, String text) {
         setLayout(new GridBagLayout());
 
@@ -94,14 +96,29 @@ public class SparkTab extends TabPanel {
         textLabel.repaint();
     }
 
+    /**
+     * Returns the initial font for this tab.
+     *
+     * @return the initial font used for this tab.
+     */
     public Font getDefaultFont() {
         return defaultFont;
     }
 
+    /**
+     * Returns the label used to display text on the tab.
+     *
+     * @return the label.
+     */
     public JLabel getTitleLabel() {
         return textLabel;
     }
 
+    /**
+     * Sets the icon to be displayed on this tab.
+     *
+     * @param icon the icon to display.
+     */
     public void setIcon(Icon icon) {
         if (iconLabel.getIcon() != null) {
             previousIcon = iconLabel.getIcon();
@@ -109,20 +126,58 @@ public class SparkTab extends TabPanel {
         iconLabel.setIcon(icon);
     }
 
+    /**
+     * Specify if this tab should be bold when selected within the <code>SparkTabbedPane</code>
+     *
+     * @param boldWhenActive true to be bold when tab is active, otherwise false.
+     */
     public void setBoldWhenActive(boolean boldWhenActive) {
         this.boldWhenActive = boldWhenActive;
     }
 
+    /**
+     * Returns if this tab should be bold when active.
+     *
+     * @return true if the tab should be active.
+     */
     public boolean isBoldWhenActive() {
         return boldWhenActive;
     }
 
+    /**
+     * Returns the icon used before the latest icon.
+     *
+     * @return the previous icon used.
+     */
     public Icon getPreviousIcon() {
         return previousIcon;
     }
 
+    /**
+     * Returns the default icon. The default icon is the icon used when the tab was initially created.
+     *
+     * @return the default icon.
+     */
     public Icon getDefaultIcon() {
         return defaultIcon;
+    }
+
+    /**
+     * Set to false if you wish to handle the tabs ui behavior, otherwise true to allow Spark internal to handle it.
+     *
+     * @param allow false if you wish to handle the tabs ui.
+     */
+    public void setTabDefaultAllowed(boolean allow) {
+        tabDefault = allow;
+    }
+
+    /**
+     * Returns if the tab should follow default behavior.
+     *
+     * @return true to follow default behavior.
+     */
+    public boolean isTabDefaultAllowed() {
+        return tabDefault;
     }
 
 
