@@ -26,6 +26,7 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.VCardViewer;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -221,6 +222,7 @@ public class VCardManager {
 
     }
 
+    /*
     private void showUserProfile(String jid, VCard vcard, JComponent parent) {
         final JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -295,6 +297,64 @@ public class VCardManager {
         });
 
         createVCardUI(vcard);
+
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();
+    }
+    */
+
+     private void showUserProfile(String jid, VCard vcard, JComponent parent) {
+        VCardViewer viewer = new VCardViewer(jid);
+        final JOptionPane pane;
+        final JFrame dlg;
+
+        avatarLabel = new JLabel();
+        avatarLabel.setHorizontalAlignment(JButton.RIGHT);
+        avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+
+        // Construct main panel w/ layout.
+        final JPanel mainPanel = new JPanel();
+
+        // The user should only be able to close this dialog.
+        Object[] options = {Res.getString("close")};
+        pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+
+      //  mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
+
+        dlg = new JFrame(Res.getString("title.view.profile.for", jid));
+        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
+
+        dlg.pack();
+        dlg.setSize(350, 200);
+        dlg.setResizable(true);
+        dlg.setContentPane(pane);
+        dlg.setLocationRelativeTo(parent);
+
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                if (pane.getValue() instanceof Integer) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                    return;
+                }
+                String value = (String)pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                }
+            }
+        };
+
+        pane.addPropertyChangeListener(changeListener);
+
+        dlg.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    dlg.dispose();
+                }
+            }
+        });
 
         dlg.setVisible(true);
         dlg.toFront();

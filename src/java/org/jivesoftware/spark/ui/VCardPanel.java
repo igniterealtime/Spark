@@ -56,6 +56,8 @@ public class VCardPanel extends JPanel {
 
     private static SimpleDateFormat utcFormat = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
 
+    private String emailAddress = "";
+
     /**
      * Generate a VCard Panel using the specified jid.
      *
@@ -171,7 +173,6 @@ public class VCardPanel extends JPanel {
             add(titleLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
         }
 
-        String emailAddress = "";
         if (ModelUtil.hasLength(vcard.getEmailHome())) {
             emailAddress = vcard.getEmailHome();
         }
@@ -182,7 +183,7 @@ public class VCardPanel extends JPanel {
         final JLabel emailTime = new JLabel(unselectedText);
         emailTime.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                startEmailClient(emailTime.getText());
+                startEmailClient(emailAddress);
             }
 
             public void mouseEntered(MouseEvent e) {

@@ -22,13 +22,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JDialog;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -41,6 +34,12 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -56,6 +55,7 @@ public class VCardViewer extends JPanel {
     private final JLabel avatarImage;
 
     private static SimpleDateFormat utcFormat = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
+    private String emailAddress = "";
 
     /**
      * Generate a VCard Panel using the specified jid.
@@ -172,7 +172,7 @@ public class VCardViewer extends JPanel {
             add(titleLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
         }
 
-        String emailAddress = "";
+
         if (ModelUtil.hasLength(vcard.getEmailHome())) {
             emailAddress = vcard.getEmailHome();
         }
@@ -183,7 +183,7 @@ public class VCardViewer extends JPanel {
         final JLabel emailTime = new JLabel(unselectedText);
         emailTime.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                startEmailClient(emailTime.getText());
+                startEmailClient(emailAddress);
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -202,22 +202,27 @@ public class VCardViewer extends JPanel {
         add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
 
         // Add Home Phone
-        final String homeNumber = vcard.getPhoneHome("VOICE");
+        String homeNumber = vcard.getPhoneHome("VOICE");
+        if(!ModelUtil.hasLength(homeNumber)){
+            homeNumber = "n/a";
+        }
         final JLabel homePhoneLabel = new JLabel("Home: " + homeNumber);
         add(homePhoneLabel, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
 
         // Add Work Phone
-        final String workNumber = vcard.getPhoneWork("VOICE");
-        final JLabel workPhoneLabel = new JLabel("Home: " + workNumber);
+        String workNumber = vcard.getPhoneWork("VOICE");
+        if(!ModelUtil.hasLength(workNumber)){
+            workNumber = "n/a";
+        }
+        final JLabel workPhoneLabel = new JLabel("Work: " + workNumber);
         add(workPhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
 
         // Add Company
         String company = vcard.getOrganization();
         final JLabel orgLabel = new JLabel("Company: " + company);
         add(orgLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
-        
-    }
 
+    }
 
 
     private void startEmailClient(String emailAddress) {
