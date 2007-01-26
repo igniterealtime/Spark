@@ -9,6 +9,7 @@
 package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
+import org.jivesoftware.jingleaudio.jspeex.SpeexMediaManager;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.*;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
@@ -40,9 +41,11 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
 
     public void initialize() {
 
+        JMFInit.start(false);
+
         JingleTransportManager transportManager = new ICETransportManager();
 
-        final JingleManager jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
+        final JingleManager jm = new JingleManager(SparkManager.getConnection(), transportManager, new SpeexMediaManager());
 
         final JingleSessionListener jingleListener = this;
 
@@ -166,7 +169,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
             }
 
         } catch (Exception e) {
-              // Do Nothing
+            // Do Nothing
         }
     }
 
