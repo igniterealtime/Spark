@@ -29,6 +29,8 @@ import java.awt.event.ActionListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.SwingUtilities;
+
 /**
  *
  */
@@ -41,31 +43,13 @@ public class BuzzPlugin implements Plugin {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 if (packet instanceof Message) {
-                    Message message = (Message)packet;
+                    final Message message = (Message)packet;
                     if (message.getExtension("buzz", "http://www.jivesoftware.com/spark") != null) {
-                        String bareJID = StringUtils.parseBareAddress(message.getFrom());
-                        ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
-                        String nickname = StringUtils.parseName(bareJID);
-                        if (contact != null) {
-                            nickname = contact.getNickname();
-                        }
-
-                        ChatRoom room = null;
-                        try {
-                            room = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
-                        }
-                        catch (ChatRoomNotFoundException e) {
-                            // Create the room if it does not exist.
-                            room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
-                        }
-
-                        // Insert offline message
-                        room.getTranscriptWindow().insertNotificationMessage("Buzz");
-
-                        ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                        if (chatFrame != null && chatFrame.isVisible()) {
-                            chatFrame.buzz();
-                        }
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                shakeWindow(message);
+                            }
+                        });
                     }
                 }
             }
@@ -116,6 +100,32 @@ public class BuzzPlugin implements Plugin {
             public void userHasLeft(ChatRoom room, String userid) {
             }
         });
+    }
+
+    private void shakeWindow(Message message) {
+        String bareJID = StringUtils.parseBareAddress(message.getFrom());
+        ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
+        String nickname = StringUtils.parseName(bareJID);
+        if (contact != null) {
+            nickname = contact.getNickname();
+        }
+
+        ChatRoom room = null;
+        try {
+            room = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
+        }
+        catch (ChatRoomNotFoundException e) {
+            // Create the room if it does not exist.
+            room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
+        }
+
+        // Insert offline message
+        room.getTranscriptWindow().insertNotificationMessage("Buzz");
+
+        ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+        if (chatFrame != null && chatFrame.isVisible()) {
+            chatFrame.buzz();
+        }
     }
 
     public void shutdown() {
