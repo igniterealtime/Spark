@@ -17,10 +17,12 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.text.DateFormat;
@@ -99,10 +101,9 @@ public final class ChatTranscripts {
             // Write out new File
             try {
                 transcriptFile.getParentFile().mkdirs();
-                FileOutputStream fout = new FileOutputStream(transcriptFile);
-                OutputStreamWriter ow = new OutputStreamWriter(fout, "UTF-8");
-                ow.write(builder.toString());
-                ow.close();
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(transcriptFile), "UTF-8"));
+                out.write(builder.toString());
+                out.close();
             }
             catch (IOException e) {
                 Log.error(e);
@@ -167,8 +168,8 @@ public final class ChatTranscripts {
         try {
             final MXParser parser = new MXParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(transcriptFile));
-            parser.setInput(bufferedReader);
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(transcriptFile), "UTF-8"));
+            parser.setInput(in);
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
