@@ -124,7 +124,7 @@ public final class ChatTranscripts {
                 raf.seek(transcriptFile.length() - endTag.length());
 
                 // Append to the end
-                raf.writeUTF(builder.toString());
+                raf.write(builder.toString().getBytes("UTF-8"));
                 raf.close();
             }
             catch (IOException e) {
