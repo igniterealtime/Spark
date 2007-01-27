@@ -12,6 +12,7 @@ package org.jivesoftware.spark.component;
 
 import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
+import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
@@ -22,17 +23,6 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -49,6 +39,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 
 /**
  * Handles tray icon operations inside of Spark. Use to display incoming chat requests, incoming messages
@@ -74,6 +75,8 @@ public final class Notifications implements ActionListener, MainWindowListener {
     private ImageTitlePanel headerLabel = new ImageTitlePanel();
 
     private JFrame hideWindow = null;
+
+    private long madeVisibleTime = 0;
 
     /**
      * Creates a new instance of notifications.
@@ -239,6 +242,16 @@ public final class Notifications implements ActionListener, MainWindowListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (!(o instanceof JMenuItem)) {
+            MainWindow window = SparkManager.getMainWindow();
+            if (window.isVisible() && window.getState() == Frame.NORMAL) {
+                long now = System.currentTimeMillis();
+                if (now - madeVisibleTime > 1000) {
+                    window.setVisible(false);
+                    return;
+                }
+            }
+
+            madeVisibleTime = System.currentTimeMillis();
             showMainWindow();
             return;
         }
