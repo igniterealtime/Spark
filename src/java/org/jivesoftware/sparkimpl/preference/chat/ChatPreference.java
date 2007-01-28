@@ -10,8 +10,8 @@
 
 package org.jivesoftware.sparkimpl.preference.chat;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
@@ -47,7 +47,7 @@ public class ChatPreference implements Preference {
     }
 
     public String getTooltip() {
-          return Res.getString("title.general.chat.settings");
+        return Res.getString("title.general.chat.settings");
     }
 
     public Icon getIcon() {
@@ -73,13 +73,14 @@ public class ChatPreference implements Preference {
                 boolean spellCheckerOn = localPreferences.isSpellCheckerEnabled();
                 boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
                 boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
-                boolean splitChatEnabled = localPreferences.isDockingEnabled();
-                
+                boolean tabsOnTop = localPreferences.isTabTopPosition();
                 panel.setShowTime(showTime);
                 panel.setSpellCheckerOn(spellCheckerOn);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
                 panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
+                panel.setTabsOnTop(tabsOnTop);
+
             }
         };
 
@@ -94,6 +95,7 @@ public class ChatPreference implements Preference {
         pref.setChatRoomNotifications(panel.isGroupChatNotificationsOn());
         pref.setChatHistoryEnabled(!panel.isChatHistoryHidden());
         pref.setChatLengthDefaultTimeout(panel.getChatTimeoutTime());
+        pref.setTabsOnTop(panel.isTabsOnTop());
 
         SettingsManager.saveSettings();
 

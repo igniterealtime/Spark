@@ -15,6 +15,13 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -23,13 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
 /**
  * The Preference UI used to handle changing of Chat Preferences.
  */
@@ -37,7 +37,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     private JCheckBox showTimeBox = new JCheckBox();
     private JCheckBox spellCheckBox = new JCheckBox();
-
     private JCheckBox groupChatNotificationBox = new JCheckBox();
     private JPanel generalPanel = new JPanel();
     private JPanel chatWindowPanel = new JPanel();
@@ -48,7 +47,9 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private JLabel passwordLabel = new JLabel();
     private JLabel confirmationPasswordLabel = new JLabel();
     private JCheckBox hideChatHistory = new JCheckBox();
+    private JCheckBox tabsOnTopBox = new JCheckBox();
     private JTextField chatTimeoutField = new JTextField();
+
 
 
     /**
@@ -69,6 +70,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         ResourceUtils.resButton(spellCheckBox, Res.getString("checkbox.perform.spell.check"));
         ResourceUtils.resButton(groupChatNotificationBox, Res.getString("checkbox.show.notifications.in.conference"));
         ResourceUtils.resButton(hideChatHistory, Res.getString("checkbox.disable.chat.history"));
+        ResourceUtils.resButton(tabsOnTopBox, Res.getString("checkbox.tabs.on.top"));
 
         generalPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.general.information")));
         chatWindowPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.chat.window.information")));
@@ -84,12 +86,13 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(spellCheckBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
+        chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         JLabel chatTimeoutLabel = new JLabel();
         ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, Res.getString("label.minutes.before.stale.chat") + ":");
-        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+
 
         generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         generalPanel.add(passwordField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
@@ -164,6 +167,14 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatTimeoutField.setText(Integer.toString(time));
     }
 
+    public void setTabsOnTop(boolean top){
+        tabsOnTopBox.setSelected(top);
+    }
+
+    public boolean isTabsOnTop(){
+        return tabsOnTopBox.isSelected();
+    }
+
     public int getChatTimeoutTime() {
         try {
             return Integer.parseInt(chatTimeoutField.getText());
@@ -172,7 +183,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
             return 15;
         }
     }
-
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (hideChatHistory.isSelected()) {

@@ -495,6 +495,14 @@ public class LocalPreferences {
 		 return getBoolean("dockingEnabled", false);
 	}
 
+     public void setTabsOnTop(boolean onTop){
+        setBoolean("tabsOnTop", onTop);
+    }
+
+    public boolean isTabTopPosition(){
+        return getBoolean("tabsOnTop", true);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
