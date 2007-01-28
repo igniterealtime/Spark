@@ -10,11 +10,12 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
@@ -83,7 +84,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
     private JDialog dlg;
 
-    private Tree serviceTree;
+    private Conferences conferences;
     private String serviceName;
 
     private boolean partialDiscovery = false;
@@ -91,15 +92,15 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
     /**
      * Creates a new instance of ConferenceRooms.
      *
-     * @param serviceTree the service tree.
+     * @param conferences the conference ui.
      * @param serviceName the name of the conference service.
      *                    //TODO This needs to be refactored.
      */
-    public ConferenceRoomBrowser(final Tree serviceTree, final String serviceName) {
+    public ConferenceRoomBrowser(Conferences conferences, final String serviceName) {
 
         this.setLayout(new BorderLayout());
 
-        this.serviceTree = serviceTree;
+        this.conferences = conferences;
         this.serviceName = serviceName;
 
         // Add Toolbar
@@ -144,7 +145,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
         addRoomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                bookmarkRoom(serviceName, serviceTree);
+                bookmarkRoom(serviceName);
             }
         });
 
@@ -239,7 +240,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
         return roomList;
     }
 
-    private void bookmarkRoom(String serviceName, Tree serviceTree) {
+    private void bookmarkRoom(String serviceName) {
         int selectedRow = roomsTable.getSelectedRow();
         if (-1 == selectedRow) {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.select.add.room.to.add"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
@@ -258,9 +259,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             }
         }
         catch (Exception e) {
-           // Do not return
+            // Do not return
         }
 
+        Tree serviceTree = conferences.getTree();
         JiveTreeNode rootNode = (JiveTreeNode)serviceTree.getModel().getRoot();
 
         TreePath rootPath = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), serviceName});
@@ -283,6 +285,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             serviceTree.expandPath(rootPath);
             roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)), selectedRow, 0);
             addBookmarkUI(false);
+
+            conferences.addBookmark(roomName, roomJID, false);
         }
         else {
             // Remove bookmark
@@ -292,6 +296,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             model.removeNodeFromParent(node);
             roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
             addBookmarkUI(true);
+
+            String jid = (String)node.getAssociatedObject();
+            conferences.removeBookmark(jid);
         }
     }
 
@@ -352,7 +359,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
             public void finished() {
                 if (rooms == null) {
-                    JOptionPane.showMessageDialog(serviceTree, Res.getString("message.conference.info.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(conferences, Res.getString("message.conference.info.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     if (dlg != null) {
                         dlg.dispose();
                     }
@@ -639,22 +646,17 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
      * @return true if the room is bookmarked.
      */
     private boolean isBookmarked(String roomJID) {
-        JiveTreeNode rootNode = (JiveTreeNode)serviceTree.getModel().getRoot();
-        TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), serviceName});
-
-        JiveTreeNode serviceNode = (JiveTreeNode)path.getLastPathComponent();
-
-        // Otherwise, traverse through the path.
-        int childCount = serviceNode.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            JiveTreeNode node = (JiveTreeNode)serviceNode.getChildAt(i);
-
-            // If the jid (nodeObject) of the node equals the roomJID specified, then return true.
-            if (node.getAssociatedObject() != null && node.getAssociatedObject().equals(roomJID)) {
+        final Iterator bookmarks = conferences.getBookmarks().iterator();
+        while (bookmarks.hasNext()) {
+            BookmarkedConference bk = (BookmarkedConference)bookmarks.next();
+            String jid = bk.getJid();
+            if (jid != null && roomJID.equals(jid)){
                 return true;
             }
         }
+
         return false;
+
     }
 
     /**

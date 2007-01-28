@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -32,20 +31,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -62,10 +47,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
  */
-public class BookmarkedConferences extends JPanel {
+public class Conferences extends JPanel {
     private Tree tree;
 
     private JiveTreeNode rootNode;
@@ -76,10 +75,12 @@ public class BookmarkedConferences extends JPanel {
 
     private List listeners = new ArrayList();
 
+    private BookmarkManager manager;
+
     /**
      * Initialize Conference UI.
      */
-    public BookmarkedConferences() {
+    public Conferences() {
         setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         setLayout(new GridBagLayout());
 
@@ -147,20 +148,12 @@ public class BookmarkedConferences extends JPanel {
         );
         setBackground(Color.white);
 
-        // Add closing listener
-        SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            public void shutdown() {
-                saveConferenceData();
-            }
-
-            public void mainWindowActivated() {
-
-            }
-
-            public void mainWindowDeactivated() {
-
-            }
-        });
+        try {
+            manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+        }
+        catch (XMPPException e) {
+            e.printStackTrace();
+        }
     }
 
     private void checkPopup(MouseEvent mouseEvent) {
@@ -213,6 +206,7 @@ public class BookmarkedConferences extends JPanel {
                     treeModel.removeNodeFromParent(node);
                     String roomJID = node.getAssociatedObject().toString();
                     autoJoinRooms.remove(roomJID);
+                    removeBookmark(roomJID);
                 }
             };
             removeRoomAction.putValue(Action.NAME, Res.getString("menuitem.remove.bookmark"));
@@ -241,6 +235,9 @@ public class BookmarkedConferences extends JPanel {
                         else {
                             autoJoinRooms.add(roomJID);
                         }
+
+                        String name = node.getUserObject().toString();
+                        addBookmark(name, roomJID, autoJoinRooms.contains(roomJID));
                     }
                 };
 
@@ -274,7 +271,7 @@ public class BookmarkedConferences extends JPanel {
     }
 
     public void browseRooms(String serviceName) {
-        ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(tree, serviceName);
+        ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(this, serviceName);
         rooms.invoke();
     }
 
@@ -344,6 +341,24 @@ public class BookmarkedConferences extends JPanel {
         final DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         model.nodeStructureChanged(serviceNode);
         return roomNode;
+    }
+
+    public void addBookmark(String roomName, String roomJID, boolean autoJoin) {
+        try {
+            manager.addBookmarkedConference(roomName, roomJID, autoJoin, null, null);
+        }
+        catch (XMPPException e) {
+            Log.error(e);
+        }
+    }
+
+    public void removeBookmark(String roomJID) {
+        try {
+            manager.removeBookmarkedConference(roomJID);
+        }
+        catch (XMPPException e) {
+            Log.error(e);
+        }
     }
 
 
@@ -556,35 +571,14 @@ public class BookmarkedConferences extends JPanel {
         }
     }
 
-    private void saveConferenceData() {
-        BookmarkManager manager = null;
+    public Collection getBookmarks() {
         try {
-            manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+            return manager.getBookmarkedConferences();
         }
         catch (XMPPException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
-
-        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
-        JiveTreeNode rootNode = (JiveTreeNode)model.getRoot();
-
-        int children = rootNode.getChildCount();
-        for (int i = 0; i < children; i++) {
-            JiveTreeNode serviceNode = (JiveTreeNode)rootNode.getChildAt(i);
-            int bookmarks = serviceNode.getChildCount();
-            for (int j = 0; j < bookmarks; j++) {
-                JiveTreeNode node = (JiveTreeNode)serviceNode.getChildAt(j);
-
-                String name = node.getUserObject().toString();
-                String jid = (String)node.getAssociatedObject();
-                boolean autoJoin = autoJoinRooms.contains(jid);
-                try {
-                    manager.addBookmarkedConference(name, jid, autoJoin, null, null);
-                }
-                catch (XMPPException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        return null;
     }
+
 }

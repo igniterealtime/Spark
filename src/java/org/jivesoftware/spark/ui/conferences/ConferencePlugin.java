@@ -35,6 +35,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -59,7 +60,7 @@ import java.util.List;
  * you can remove from the plugins.xml file located in the classpath of Communicator.
  */
 public class ConferencePlugin {
-    private static BookmarkedConferences bookedMarkedConferences;
+    private static Conferences bookedMarkedConferences;
 
     private boolean mucSupported;
 
@@ -80,6 +81,7 @@ public class ConferencePlugin {
 
             // Add Join Conference Button to StatusBar
             // Get command panel and add View Online/Offline, Add Contact
+            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
             JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
             RolloverButton joinConference = new RolloverButton(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
@@ -87,7 +89,7 @@ public class ConferencePlugin {
             commandPanel.add(joinConference);
             joinConference.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookedMarkedConferences.getTree(), getDefaultServiceName());
+                    ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookedMarkedConferences, getDefaultServiceName());
                     rooms.invoke();
                 }
             });
@@ -172,7 +174,7 @@ public class ConferencePlugin {
             }
 
             public void finished() {
-                bookedMarkedConferences = new BookmarkedConferences();
+                bookedMarkedConferences = new Conferences();
 
                 workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookedMarkedConferences);
                 bookedMarkedConferences.setBookmarks((Collection)get());
@@ -350,7 +352,7 @@ public class ConferencePlugin {
      *
      * @return the BookedMarkedConferences UI.
      */
-    public static BookmarkedConferences getBookmarkedConferences() {
+    public static Conferences getBookmarkedConferences() {
         return bookedMarkedConferences;
     }
 
