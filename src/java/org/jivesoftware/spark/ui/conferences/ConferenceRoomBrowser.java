@@ -84,7 +84,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
     private JDialog dlg;
 
-    private Conferences conferences;
+    private BookmarksUI conferences;
     private String serviceName;
 
     private boolean partialDiscovery = false;
@@ -96,7 +96,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
      * @param serviceName the name of the conference service.
      *                    //TODO This needs to be refactored.
      */
-    public ConferenceRoomBrowser(Conferences conferences, final String serviceName) {
+    public ConferenceRoomBrowser(BookmarksUI conferences, final String serviceName) {
 
         this.setLayout(new BorderLayout());
 
@@ -572,7 +572,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
      * Create a new room based on room table selection.
      */
     private void createRoom() {
-        ConferenceCreator mucRoomDialog = new ConferenceCreator();
+        RoomCreationDialog mucRoomDialog = new RoomCreationDialog();
         final MultiUserChat groupChat = mucRoomDialog.createGroupChat(SparkManager.getMainWindow(), serviceName);
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 

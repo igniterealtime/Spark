@@ -64,7 +64,7 @@ import javax.swing.tree.TreePath;
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
  */
-public class Conferences extends JPanel {
+public class BookmarksUI extends JPanel {
     private Tree tree;
 
     private JiveTreeNode rootNode;
@@ -80,7 +80,7 @@ public class Conferences extends JPanel {
     /**
      * Initialize Conference UI.
      */
-    public Conferences() {
+    public BookmarksUI() {
         setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         setLayout(new GridBagLayout());
 

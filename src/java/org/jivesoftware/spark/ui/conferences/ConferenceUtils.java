@@ -364,7 +364,7 @@ public class ConferenceUtils {
      * @param jids        a collection of the users to invite.
      */
     public static final void inviteUsersToRoom(String serviceName, String roomName, Collection jids) {
-        ConferenceInviteDialog inviteDialog = new ConferenceInviteDialog();
+        InvitationDialog inviteDialog = new InvitationDialog();
         inviteDialog.inviteUsersToRoom(serviceName, roomName, jids);
     }
 

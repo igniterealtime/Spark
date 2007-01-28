@@ -36,7 +36,7 @@ import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class ConferenceCreator extends JPanel {
+public class RoomCreationDialog extends JPanel {
     private JLabel nameLabel = new JLabel();
     private JLabel topicLabel = new JLabel();
     private JLabel passwordLabel = new JLabel();
@@ -50,7 +50,7 @@ public class ConferenceCreator extends JPanel {
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
     private MultiUserChat groupChat = null;
 
-    public ConferenceCreator() {
+    public RoomCreationDialog() {
         try {
             jbInit();
         }

@@ -60,7 +60,7 @@ import java.util.List;
  * you can remove from the plugins.xml file located in the classpath of Communicator.
  */
 public class ConferencePlugin {
-    private static Conferences bookedMarkedConferences;
+    private static BookmarksUI bookmarksUI;
 
     private boolean mucSupported;
 
@@ -89,7 +89,7 @@ public class ConferencePlugin {
             commandPanel.add(joinConference);
             joinConference.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookedMarkedConferences, getDefaultServiceName());
+                    ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
                     rooms.invoke();
                 }
             });
@@ -174,10 +174,10 @@ public class ConferencePlugin {
             }
 
             public void finished() {
-                bookedMarkedConferences = new Conferences();
+                bookmarksUI = new BookmarksUI();
 
-                workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookedMarkedConferences);
-                bookedMarkedConferences.setBookmarks((Collection)get());
+                workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookmarksUI);
+                bookmarksUI.setBookmarks((Collection)get());
             }
         };
 
@@ -260,7 +260,7 @@ public class ConferencePlugin {
 
     public static String getDefaultServiceName() {
         String serviceName = null;
-        Collection services = bookedMarkedConferences.getMucServices();
+        Collection services = bookmarksUI.getMucServices();
         if (services != null) {
             Iterator serviceIterator = services.iterator();
             while (serviceIterator.hasNext()) {
@@ -352,8 +352,8 @@ public class ConferencePlugin {
      *
      * @return the BookedMarkedConferences UI.
      */
-    public static Conferences getBookmarkedConferences() {
-        return bookedMarkedConferences;
+    public static BookmarksUI getBookmarkedConferences() {
+        return bookmarksUI;
     }
 
 }

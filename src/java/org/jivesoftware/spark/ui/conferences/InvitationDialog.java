@@ -54,7 +54,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-final class ConferenceInviteDialog extends JPanel {
+final class InvitationDialog extends JPanel {
     private JLabel roomsLabel = new JLabel();
     private JTextField roomsField = new JTextField();
 
@@ -71,7 +71,7 @@ final class ConferenceInviteDialog extends JPanel {
 
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
 
-    public ConferenceInviteDialog() {
+    public InvitationDialog() {
         setLayout(gridBagLayout1);
 
         add(roomsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
