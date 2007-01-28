@@ -72,7 +72,7 @@ import javax.swing.tree.TreePath;
  * creation and joining of rooms for group chat discussions as well as the listing
  * of the creation times, number of occupants in a room, and the room name itself.
  */
-public class ConferenceRooms extends JPanel implements ActionListener {
+public class ConferenceRoomBrowser extends JPanel implements ActionListener {
     private final RoomList roomsTable;
     private final RolloverButton createButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
     private final RolloverButton joinRoomButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
@@ -95,7 +95,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
      * @param serviceName the name of the conference service.
      *                    //TODO This needs to be refactored.
      */
-    public ConferenceRooms(final Tree serviceTree, final String serviceName) {
+    public ConferenceRoomBrowser(final Tree serviceTree, final String serviceName) {
 
         this.setLayout(new BorderLayout());
 
@@ -272,7 +272,7 @@ public class ConferenceRooms extends JPanel implements ActionListener {
         if (!isBookmarked) {
             JiveTreeNode node = (JiveTreeNode)serviceTree.getLastSelectedPathComponent();
             if (node == null) {
-                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), Conferences.getDefaultServiceName()});
+                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), ConferencePlugin.getDefaultServiceName()});
                 node = (JiveTreeNode)path.getLastPathComponent();
             }
             JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));

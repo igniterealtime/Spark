@@ -274,7 +274,7 @@ public class BookmarkedConferences extends JPanel {
     }
 
     public void browseRooms(String serviceName) {
-        ConferenceRooms rooms = new ConferenceRooms(tree, serviceName);
+        ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(tree, serviceName);
         rooms.invoke();
     }
 

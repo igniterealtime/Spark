@@ -35,7 +35,6 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -59,7 +58,7 @@ import java.util.List;
  * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
  * you can remove from the plugins.xml file located in the classpath of Communicator.
  */
-public class Conferences {
+public class ConferencePlugin {
     private static BookmarkedConferences bookedMarkedConferences;
 
     private boolean mucSupported;
@@ -88,7 +87,7 @@ public class Conferences {
             commandPanel.add(joinConference);
             joinConference.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    ConferenceRooms rooms = new ConferenceRooms(bookedMarkedConferences.getTree(), getDefaultServiceName());
+                    ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookedMarkedConferences.getTree(), getDefaultServiceName());
                     rooms.invoke();
                 }
             });

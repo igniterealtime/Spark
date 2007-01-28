@@ -30,7 +30,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.CommandPanel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.conferences.Conferences;
+import org.jivesoftware.spark.ui.conferences.ConferencePlugin;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -77,7 +77,7 @@ public class Workspace extends JPanel implements PacketListener {
     private StatusBar statusBox;
     private CommandPanel commandPanel;
     private ContactList contactList;
-    private Conferences conferences;
+    private ConferencePlugin conferences;
 
     private static Workspace singleton;
     private static final Object LOCK = new Object();
@@ -186,7 +186,7 @@ public class Workspace extends JPanel implements PacketListener {
         // Load VCard information for status box
         statusBox.loadVCard();
 
-        conferences = new Conferences();
+        conferences = new ConferencePlugin();
         conferences.initialize();
 
         // Initialize Search Service
