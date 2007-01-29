@@ -168,16 +168,14 @@ public class ConferencePlugin {
                     return manager.getBookmarkedConferences();
                 }
                 catch (XMPPException e) {
-                    e.printStackTrace();
+                    Log.error(e);
                 }
                 return true;
             }
 
             public void finished() {
                 bookmarksUI = new BookmarksUI();
-
                 workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookmarksUI);
-                bookmarksUI.setBookmarks((Collection)get());
             }
         };
 

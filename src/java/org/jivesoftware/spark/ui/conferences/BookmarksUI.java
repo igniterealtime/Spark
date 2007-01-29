@@ -31,6 +31,20 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -46,20 +60,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
@@ -152,8 +152,31 @@ public class BookmarksUI extends JPanel {
             manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         }
         catch (XMPPException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
+
+
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    Thread.sleep(5000);
+                }
+                catch (InterruptedException e) {
+                    Log.error(e);
+                }
+                return true;
+            }
+
+            public void finished() {
+                try {
+                    setBookmarks(manager.getBookmarkedConferences());
+                }
+                catch (XMPPException e) {
+                    Log.error(e);
+                }
+            }
+        };
+        worker.start();
     }
 
     private void checkPopup(MouseEvent mouseEvent) {
