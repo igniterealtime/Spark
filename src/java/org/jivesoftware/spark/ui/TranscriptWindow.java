@@ -299,7 +299,7 @@ public class TranscriptWindow extends ChatArea {
         try {
             // Agent color is always blue
             StyleConstants.setBold(styles, true);
-            StyleConstants.setForeground(styles, Color.lightGray);
+            StyleConstants.setForeground(styles, Color.GRAY);
             final Document doc = getDocument();
             styles.removeAttribute("link");
 
@@ -309,7 +309,7 @@ public class TranscriptWindow extends ChatArea {
             // Reset Styles for message
             StyleConstants.setBold(styles, true);
             StyleConstants.setUnderline(styles, true);
-            setForeground(Color.lightGray);
+            setForeground(Color.GRAY);
             setText(timestamp);
             insertText("\n");
             StyleConstants.setUnderline(styles, false);

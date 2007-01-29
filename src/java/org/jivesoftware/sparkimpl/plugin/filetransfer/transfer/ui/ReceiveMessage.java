@@ -400,6 +400,10 @@ public class ReceiveMessage extends JPanel {
             public void mouseExited(MouseEvent e) {
                 openFileButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
+
+            public void mousePressed(MouseEvent e) {
+                openFile(downloadedFile);
+            }
         });
 
         openFolderButton.addMouseListener(new MouseAdapter() {
@@ -410,6 +414,26 @@ public class ReceiveMessage extends JPanel {
 
             public void mouseExited(MouseEvent e) {
                 openFolderButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+
+            public void mousePressed(MouseEvent event) {
+                try {
+                    Downloads downloads = Downloads.getInstance();
+                    if (!Spark.isMac()) {
+                        try {
+                            Desktop.open(downloads.getDownloadDirectory());
+                        }
+                        catch (DesktopException e) {
+                            Log.error(e);
+                        }
+                    }
+                    else if (Spark.isMac()) {
+                        Runtime.getRuntime().exec("open " + downloads.getDownloadDirectory().getCanonicalPath());
+                    }
+                }
+                catch (IOException e1) {
+                    Log.error(e1);
+                }
             }
         });
 
@@ -439,33 +463,6 @@ public class ReceiveMessage extends JPanel {
             }
         });
 
-        openFileButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                openFile(downloadedFile);
-            }
-        });
-
-        openFolderButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    Downloads downloads = Downloads.getInstance();
-                    if (!Spark.isMac()) {
-                        try {
-                            Desktop.open(downloads.getDownloadDirectory());
-                        }
-                        catch (DesktopException e) {
-                            Log.error(e);
-                        }
-                    }
-                    else if (Spark.isMac()) {
-                        Runtime.getRuntime().exec("open " + downloads.getDownloadDirectory().getCanonicalPath());
-                    }
-                }
-                catch (IOException e1) {
-                    Log.error(e1);
-                }
-            }
-        });
 
         if (isImage(downloadedFile.getName())) {
             try {
