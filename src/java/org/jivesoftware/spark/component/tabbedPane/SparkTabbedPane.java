@@ -14,12 +14,6 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ModelUtil;
 
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -38,6 +32,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 /**
  * Jive Software imlementation of a TabbedPane.
@@ -184,7 +184,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
                         closeButton.setIcon(closeInactiveButtonIcon);
                 }
 
-                public void mouseClicked(MouseEvent mouseEvent) {
+                public void mousePressed(MouseEvent mouseEvent) {
                     close(tab, component);
                 }
             });
@@ -304,11 +304,11 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     public void close(SparkTab tab, Component comp) {
         boolean canClose = fireTabClosing(tab, comp);
-        if(!canClose){
+        if (!canClose) {
             // Cancel closing of tab.
             return;
         }
-        
+
         int index = getIndex(tab);
 
         // Close Tab
