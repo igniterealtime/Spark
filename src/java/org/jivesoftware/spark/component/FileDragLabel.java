@@ -33,18 +33,21 @@ import java.io.StringReader;
 import java.util.Vector;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 /**
- * Allows for dragging of a file from the panel itself to the desktop.
+ * Allows for dragging of a file from the label to the desktop.
  */
-public class FileDropPanel extends JPanel implements DropTargetListener, DragSourceListener, DragGestureListener {
+public class FileDragLabel extends JLabel implements DropTargetListener, DragSourceListener, DragGestureListener {
     final DragSource dragSource = DragSource.getDefaultDragSource();
 
     private File file;
 
-    public FileDropPanel(File file) {
+    public FileDragLabel() {
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
+    }
+
+    public void setFile(File file) {
         this.file = file;
     }
 
@@ -152,7 +155,7 @@ public class FileDropPanel extends JPanel implements DropTargetListener, DragSou
 
     public static void main(String args[]) {
         JFrame f = new JFrame();
-        FileDropPanel p = new FileDropPanel(new File("c:\\skin.war"));
+        FileDragLabel p = new FileDragLabel();
         f.add(p);
         f.setVisible(true);
     }

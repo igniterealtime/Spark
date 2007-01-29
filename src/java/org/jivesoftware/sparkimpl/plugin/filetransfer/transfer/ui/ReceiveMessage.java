@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ByteFormat;
@@ -62,7 +63,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 
 public class ReceiveMessage extends JPanel {
-    private JLabel imageLabel = new JLabel();
+    private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
@@ -273,6 +274,7 @@ public class ReceiveMessage extends JPanel {
                     if (transfer.getAmountWritten() >= request.getFileSize()) {
                         transferDone(request, transfer);
 
+                        imageLabel.setFile(downloadedFile);
                         imageLabel.setToolTipText(Res.getString("message.click.to.open"));
                         titleLabel.setToolTipText(Res.getString("message.click.to.open"));
 
