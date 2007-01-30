@@ -13,6 +13,14 @@ package org.jivesoftware.spark.component.tabbedPane;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -32,12 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 /**
  * Jive Software imlementation of a TabbedPane.
@@ -184,11 +186,25 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
                         closeButton.setIcon(closeInactiveButtonIcon);
                 }
 
-                public void mouseClicked(MouseEvent mouseEvent) {
-                    close(tab, component);
+                public void mousePressed(MouseEvent mouseEvent) {
+                    final SwingWorker closeTimerThread = new SwingWorker() {
+                        public Object construct() {
+                            try {
+                                Thread.sleep(100);
+                            }
+                            catch (InterruptedException e) {
+                                Log.error(e);
+                            }
+                            return true;
+                        }
+
+                        public void finished() {
+                            close(tab, component);
+                        }
+                    };
+                    closeTimerThread.start();
                 }
             });
-
         }
 
 
