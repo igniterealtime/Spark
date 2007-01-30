@@ -184,7 +184,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
                         closeButton.setIcon(closeInactiveButtonIcon);
                 }
 
-                public void mousePressed(MouseEvent mouseEvent) {
+                public void mouseClicked(MouseEvent mouseEvent) {
                     close(tab, component);
                 }
             });
