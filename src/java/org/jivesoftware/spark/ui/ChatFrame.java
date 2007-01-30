@@ -155,7 +155,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         LayoutSettingsManager.saveLayoutSettings();
     }
 
-	public void activateChatRoom() {
+	public void bringFrameIntoFocus() {
 		if (!isVisible()) {
 			setVisible(true);
 		}

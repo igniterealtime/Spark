@@ -592,7 +592,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         int tabLocation = indexOfComponent(room);
         setSelectedIndex(tabLocation);
 
-        chatFrame.activateChatRoom();
+        chatFrame.bringFrameIntoFocus();
         focusChat();
     }
 
@@ -606,6 +606,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (tabLocation != -1) {
             setSelectedIndex(tabLocation);
         }
+
+        chatFrame.bringFrameIntoFocus();
+        focusChat();
     }
 
     /**
