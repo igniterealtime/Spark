@@ -157,7 +157,7 @@ public class SubscriptionDialog {
 
         // If User is already in roster, do not show.
         RosterEntry entry = roster.getEntry(jid);
-        if (entry != null && entry.getType() == RosterPacket.ItemType.TO) {
+        if (entry != null && entry.getType() == RosterPacket.ItemType.to) {
             Presence response = new Presence(Presence.Type.subscribed);
             response.setTo(jid);
 

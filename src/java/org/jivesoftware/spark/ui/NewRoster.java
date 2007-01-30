@@ -15,9 +15,7 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.spark.util.GraphicUtils;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -27,7 +25,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class NewRoster extends JPanel implements RosterListener {
 
@@ -78,7 +75,7 @@ public class NewRoster extends JPanel implements RosterListener {
 
         roster.addRosterListener(this);
 
-        for(RosterGroup group : roster.getGroups()){
+        for (RosterGroup group : roster.getGroups()) {
 
             // Create Group node.
             final RosterNode groupNode = new RosterNode(group.getName(), true);
@@ -86,7 +83,7 @@ public class NewRoster extends JPanel implements RosterListener {
                 rootNode.add(groupNode);
             }
 
-            for(RosterEntry entry : group.getEntries()){
+            for (RosterEntry entry : group.getEntries()) {
                 String nickname = entry.getName();
                 if (nickname == null) {
                     nickname = entry.getUser();
@@ -105,7 +102,7 @@ public class NewRoster extends JPanel implements RosterListener {
         rootNode.add(unfiledGroup);
 
         // Add Unfiled Group
-        for(RosterEntry entry : roster.getUnfiledEntries()){
+        for (RosterEntry entry : roster.getUnfiledEntries()) {
             String name = entry.getName();
             if (name == null) {
                 name = entry.getUser();
@@ -133,20 +130,5 @@ public class NewRoster extends JPanel implements RosterListener {
     }
 
     public void presenceChanged(String XMPPAddress) {
-    }
-
-    public static void main(String args[]) throws Exception {
-        final XMPPConnection con = new XMPPConnection("jivesoftware.com", 5222);
-        con.login("agent", "agent");
-
-        final JFrame frame = new JFrame();
-        frame.getContentPane().setLayout(new BorderLayout());
-        NewRoster roster = new NewRoster();
-        frame.getContentPane().add(roster);
-        frame.pack();
-        frame.setSize(600, 400);
-        GraphicUtils.centerWindowOnScreen(frame);
-        frame.setVisible(true);
-        roster.buildContactList(con);
     }
 }

@@ -12,11 +12,13 @@ package org.jivesoftware;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.AccountManager;
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -252,7 +254,7 @@ public class AccountCreationWizard extends JPanel {
 
     private XMPPConnection getConnection() throws XMPPException {
         LocalPreferences localPref = SettingsManager.getLocalPreferences();
-        XMPPConnection con;
+        XMPPConnection con = null;
 
         // Get connection
 
@@ -272,21 +274,34 @@ public class AccountCreationWizard extends JPanel {
         boolean useSSL = localPref.isSSL();
         boolean hostPortConfigured = localPref.isHostAndPortConfigured();
 
+        ConnectionConfiguration config = null;
+
         if (useSSL) {
             if (!hostPortConfigured) {
-                con = new XMPPConnection(serverName);
+                config = new ConnectionConfiguration(serverName, 5223);
+                config.setSocketFactory(new DummySSLSocketFactory());
             }
             else {
-                con = new XMPPConnection(localPref.getXmppHost(), port, serverName);
+                config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
+                config.setSocketFactory(new DummySSLSocketFactory());
             }
         }
         else {
             if (!hostPortConfigured) {
-                con = new XMPPConnection(serverName);
+                config = new ConnectionConfiguration(serverName);
             }
             else {
-                con = new XMPPConnection(localPref.getXmppHost(), port, serverName);
+                config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
             }
+
+
+        }
+
+        if (config != null) {
+            config.setReconnectionAllowed(true);
+            boolean compressionEnabled = localPref.isCompressionEnabled();
+            config.setCompressionEnabled(compressionEnabled);
+            con = new XMPPConnection(config);
         }
 
         if (con != null) {

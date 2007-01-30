@@ -15,8 +15,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.packet.PrivateData;
 import org.jivesoftware.smackx.provider.PrivateDataProvider;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class Tasks implements PrivateData {
             Task task = (Task)iter.next();
             buf.append("<task>");
             buf.append("<title>").append(task.getTitle()).append("</title>");
-            if(task.isCompleted()){
+            if (task.isCompleted()) {
                 buf.append("<completed>true</completed>");
             }
             buf.append("</task>");
@@ -141,7 +141,7 @@ public class Tasks implements PrivateData {
             }
             if (eventType == XmlPullParser.START_TAG && "completed".equals(parser.getName())) {
                 String completed = parser.nextText();
-                if(ModelUtil.hasLength(completed)){
+                if (ModelUtil.hasLength(completed)) {
                     task.setCompleted(Boolean.parseBoolean(completed));
                 }
             }
@@ -186,23 +186,5 @@ public class Tasks implements PrivateData {
         }
 
         return tasks;
-    }
-
-    public static void main(String args[]) throws Exception {
-        XMPPConnection.DEBUG_ENABLED = true;
-        XMPPConnection con = new XMPPConnection("derek", 5222);
-        con.login("derek", "test");
-
-        Tasks tasks = getTaskList(con);
-
-        Task task = new Task();
-        task.setTitle("Hi");
-        task.setCompleted(true);
-        tasks.addTask(task);
-
-        saveTasks(tasks, con);
-        System.out.println(tasks);
-
-
     }
 }

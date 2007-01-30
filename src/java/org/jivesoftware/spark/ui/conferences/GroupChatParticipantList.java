@@ -359,7 +359,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             int index = getIndex(nickname);
             if (index != -1) {
                 final JLabel userLabel = new JLabel(nickname, icon, JLabel.HORIZONTAL);
-                participantsList.getTableModel().setValueAt(userLabel, index, 0);
+                participantsList.setValueAt(userLabel, index, 0);
             }
         }
     }
@@ -389,7 +389,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
     private int getIndex(String nickname) {
         for (int i = 0; i < participantsList.getRowCount(); i++) {
-            final JLabel userLabel = (JLabel)participantsList.getTableModel().getValueAt(i, 0);
+            final JLabel userLabel = (JLabel)participantsList.getValueAt(i, 0);
             if (userLabel.getText().equals(nickname)) {
                 return i;
             }
@@ -580,7 +580,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                         int index = getIndex(selectedUser);
 
                         if (index != -1) {
-                            participantsList.getTableModel().removeRow(index);
+                            participantsList.removeRow(index);
                         }
                     }
                 };
@@ -650,7 +650,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
 
                     JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
-                    participantsList.getTableModel().setValueAt(label, index, 0);
+                    participantsList.setValueAt(label, index, 0);
                 }
             };
 
@@ -810,7 +810,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             for (int i = 0; i < getRowCount(); i++) {
                 JLabel label = (JLabel)getValueAt(i, 0);
                 if (label.getText().equals(nickname)) {
-                    getTableModel().removeRow(i);
+                    removeRow(i);
                 }
             }
         }
@@ -818,7 +818,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         public void addUser(ImageIcon userIcon, String nickname) {
             JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
             final Object[] userObject = new Object[]{user};
-            getTableModel().addRow(userObject);
+            addRow(userObject);
         }
 
         // Handle image rendering correctly

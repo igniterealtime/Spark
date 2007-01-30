@@ -289,7 +289,7 @@ public final class Spark {
     }
 
     public static void installBaseUIProperties() {
-        UIManager.put("TextField.lightforeground", Color.lightGray);
+        UIManager.put("TextField.lightforeground", Color.gray);
         UIManager.put("TextField.foreground", Color.BLACK);
         UIManager.put("TextField.caretForeground", Color.black);
 

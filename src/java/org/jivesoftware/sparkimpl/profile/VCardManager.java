@@ -13,7 +13,6 @@ package org.jivesoftware.sparkimpl.profile;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketInterceptor;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -53,10 +52,7 @@ import javax.swing.JTabbedPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -304,7 +300,7 @@ public class VCardManager {
     }
     */
 
-     private void showUserProfile(String jid, VCard vcard, JComponent parent) {
+    private void showUserProfile(String jid, VCard vcard, JComponent parent) {
         VCardViewer viewer = new VCardViewer(jid);
         final JOptionPane pane;
         final JFrame dlg;
@@ -320,7 +316,7 @@ public class VCardManager {
         Object[] options = {Res.getString("close")};
         pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
-      //  mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
+        //  mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
         dlg = new JFrame(Res.getString("title.view.profile.for", jid));
         dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
@@ -753,22 +749,4 @@ public class VCardManager {
 
         return number;
     }
-
-    public static void main(String args[]) throws Exception {
-        XMPPConnection con = new XMPPConnection("jivesoftware.com", 5222);
-        con.connect();
-        con.login("test", "test");
-
-        VCard vcard = new VCard();
-        vcard.load(con, "matt@jivesoftware.com");
-
-        String avatarHash = org.jivesoftware.spark.util.StringUtils.hash(vcard.getAvatar());
-        String vcardXML = vcard.toXML();
-
-        System.out.println(avatarHash);
-        System.out.println(vcardXML);
-
-
-    }
-
 }

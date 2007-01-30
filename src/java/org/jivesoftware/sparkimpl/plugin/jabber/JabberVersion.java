@@ -87,6 +87,11 @@ public class JabberVersion implements Plugin {
                     return;
                 }
 
+                ContactItem contactItem = (ContactItem)component;
+                if(contactItem.getPresence() == null){
+                    return;
+                }
+
                 Action versionRequest = new AbstractAction() {
                     public void actionPerformed(ActionEvent e) {
                         viewClient();

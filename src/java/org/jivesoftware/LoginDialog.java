@@ -28,6 +28,7 @@ import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -36,7 +37,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-import org.jivesoftware.sparkimpl.settings.SSLXMPPConnection;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -119,7 +119,7 @@ public final class LoginDialog {
 
         // Construct Dialog
         loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
-       
+
         loginDialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
 
         final JPanel mainPanel = new GrayBackgroundPanel();
@@ -578,10 +578,12 @@ public final class LoginDialog {
 
                     if (useSSL) {
                         if (!hostPortConfigured) {
-                            connection = new SSLXMPPConnection(serverName);
+                            config = new ConnectionConfiguration(serverName, 5223);
+                            config.setSocketFactory(new DummySSLSocketFactory());
                         }
                         else {
-                            connection = new SSLXMPPConnection(localPref.getXmppHost(), port, serverName);
+                            config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
+                            config.setSocketFactory(new DummySSLSocketFactory());
                         }
                     }
                     else {
@@ -720,26 +722,26 @@ public final class LoginDialog {
         int height = settings.getMainWindowHeight();
 
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if(pref.isDockingEnabled()) {
-        	JSplitPane splitPane = mainWindow.getSplitPane();
-        	workspace.getCardPanel().setMinimumSize(null);
-        	splitPane.setLeftComponent(workspace.getCardPanel());
-        	SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
-        	splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
-        	int dividerLoc = settings.getSplitPaneDividerLocation();
-        	if (dividerLoc != -1){
-            	mainWindow.getSplitPane().setDividerLocation(dividerLoc);
-        	}
-        	else{
-            	mainWindow.getSplitPane().setDividerLocation(240);
-        	}
+        if (pref.isDockingEnabled()) {
+            JSplitPane splitPane = mainWindow.getSplitPane();
+            workspace.getCardPanel().setMinimumSize(null);
+            splitPane.setLeftComponent(workspace.getCardPanel());
+            SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
+            splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
+            int dividerLoc = settings.getSplitPaneDividerLocation();
+            if (dividerLoc != -1) {
+                mainWindow.getSplitPane().setDividerLocation(dividerLoc);
+            }
+            else {
+                mainWindow.getSplitPane().setDividerLocation(240);
+            }
 
-        	mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
+            mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
         }
         else {
             mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
         }
-        
+
         if (x == 0 && y == 0) {
             // Use Default size
             mainWindow.setSize(310, 520);
@@ -874,7 +876,7 @@ public final class LoginDialog {
             // Delete settings File
             settingsXML.delete();
         }
-
-
     }
+
+
 }

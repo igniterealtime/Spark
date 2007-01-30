@@ -118,7 +118,7 @@ public class UserSearchResults extends JPanel {
                 modelList.add(modelValue);
             }
 
-            resultsTable.getTableModel().addRow(modelList.toArray());
+            resultsTable.addRow(modelList.toArray());
 
         }
     }

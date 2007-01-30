@@ -254,7 +254,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
         RosterEntry entry = roster.getEntry(bareJID);
-        boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
+        boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                 && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
 
         // If online, check to see if they are in the offline group.
@@ -417,7 +417,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                 ContactItem contactItem = new ContactItem(name, entry.getUser());
                 contactItem.setPresence(null);
-                if ((entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
+                if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                         && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                     // Add to contact group.
                     contactGroup.addContactItem(contactItem);
@@ -484,7 +484,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         newContactItem.setPresence(presence);
 
 
-        if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)) {
+        if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)) {
             // Ignore, since the new user is pending to be added.
             for (RosterGroup group : entry.getGroups()) {
                 ContactGroup contactGroup = getContactGroup(group.getName());
@@ -492,7 +492,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     contactGroup = addContactGroup(group.getName());
                 }
 
-                boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
+                boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                         && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
                 if (isPending) {
                     contactGroup.setVisible(true);
@@ -617,7 +617,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     item.setPresence(presence);
                                     updateUserPresence(presence);
 
-                                    if (entry != null && (entry.getType() == RosterPacket.ItemType.NONE || entry.getType() == RosterPacket.ItemType.FROM)
+                                    if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                                             && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                                         contactGroup.setVisible(true);
 
@@ -661,7 +661,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         else {
                             ContactItem offlineItem = offlineGroup.getContactItemByJID(jid);
                             if (offlineItem != null) {
-                                if ((rosterEntry.getType() == RosterPacket.ItemType.NONE || rosterEntry.getType() == RosterPacket.ItemType.FROM)
+                                if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)
                                         && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
                                     // Remove from offlineItem and add to unfiledItem.
                                     offlineGroup.removeContactItem(offlineItem);
@@ -1335,7 +1335,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         Roster roster = SparkManager.getConnection().getRoster();
         RosterEntry entry = roster.getEntry(item.getFullJID());
-        if (entry != null && entry.getType() == RosterPacket.ItemType.FROM) {
+        if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
         }
 
