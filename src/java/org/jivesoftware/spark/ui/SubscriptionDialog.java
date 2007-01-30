@@ -8,6 +8,7 @@
 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
@@ -42,6 +43,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -106,7 +108,6 @@ public class SubscriptionDialog {
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(rosterBox, rosterPanel, BorderFactory.createEtchedBorder());
 
 
-
         rosterPanel.add(usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(usernameLabelValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -127,9 +128,9 @@ public class SubscriptionDialog {
         ResourceUtils.resButton(viewInfoButton, Res.getString("button.profile"));
         ResourceUtils.resButton(denyButton, Res.getString("button.deny"));
 
-        mainPanel.add(acceptButton, new GridBagConstraints(3, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        mainPanel.add(viewInfoButton, new GridBagConstraints(4, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        mainPanel.add(denyButton, new GridBagConstraints(5, 2, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        mainPanel.add(acceptButton, new GridBagConstraints(3, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 5));
+        mainPanel.add(viewInfoButton, new GridBagConstraints(4, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 5));
+        mainPanel.add(denyButton, new GridBagConstraints(5, 2, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 5));
 
         // Set Group Box
         for (ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups()) {
@@ -220,13 +221,18 @@ public class SubscriptionDialog {
             }
         });
 
-        dialog = new JFrame("Subscription Request");
+        dialog = new JFrame("Subscription Request"){
+            public Dimension getPreferredSize() {
+                final Dimension dim = super.getPreferredSize();
+                dim.width = 400;
+                return dim;
+            }
+        };
 
 
         dialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
         dialog.getContentPane().add(mainPanel);
         dialog.pack();
-        dialog.setSize(400, 250);
         dialog.setLocationRelativeTo(SparkManager.getMainWindow());
 
 
@@ -235,11 +241,14 @@ public class SubscriptionDialog {
             dialog.setVisible(true);
         }
         else if (!SparkManager.getMainWindow().isVisible() || !SparkManager.getMainWindow().isFocused()) {
-            dialog.setFocusableWindowState(false);
-            dialog.setState(Frame.ICONIFIED);
+            dialog.dispose();
+            if (Spark.isWindows()) {
+                dialog.setFocusableWindowState(false);
+                dialog.setState(Frame.ICONIFIED);
+            }
             dialog.setVisible(true);
-            SparkManager.getAlertManager().flashWindowStopOnFocus(dialog);
             dialog.setFocusableWindowState(true);
+            SparkManager.getAlertManager().flashWindowStopOnFocus(dialog);
         }
     }
 
