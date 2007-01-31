@@ -636,7 +636,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
         }
 
         final Object[] insertRoom = new Object[]{bookmarkedLabel, roomName, StringUtils.parseName(jid), occupants};
-        roomsTable.addRow(insertRoom);
+        roomsTable.getTableModel().addRow(insertRoom);
     }
 
     /**

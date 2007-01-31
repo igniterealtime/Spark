@@ -10,8 +10,8 @@
 
 package org.jivesoftware.spark.component;
 
-import org.jdesktop.swingx.JXTable;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jdesktop.swingx.JXTable;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -46,7 +46,7 @@ import java.util.Map;
  * @version 1.0, 03/12/14
  */
 public abstract class Table extends JXTable {
-
+    private Table.JiveTableModel tableModel;
 
     /**
      * Define the color of row and column selections.
@@ -114,8 +114,9 @@ public abstract class Table extends JXTable {
      *
      * @param headers the table headers to use.
      */
-    protected Table(Object[] headers) {
-        ((DefaultTableModel)getModel()).setColumnIdentifiers(headers);
+    protected Table(String[] headers) {
+        tableModel = new Table.JiveTableModel(headers, 0, false);
+        setModel(tableModel);
 
         // Handle JDK 1.5 bug with preferred size on table headers.
         JTableHeader header = getTableHeader();
@@ -131,7 +132,6 @@ public abstract class Table extends JXTable {
         setSelectionBackground(SELECTION_COLOR);
         setSelectionForeground(Color.black);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setEditable(false);
 
         this.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
@@ -150,16 +150,6 @@ public abstract class Table extends JXTable {
         });
     }
 
-    public void setValueAt(Object object, int i, int i1) {
-        getModel().setValueAt(object, i, i1);
-    }
-
-
-    public Object getValueAt(int i, int i1) {
-        return getModel().getValueAt(i, i1);
-    }
-
-    
     public Component prepareRenderer(TableCellRenderer renderer,
                                      int rowIndex, int vColIndex) {
         Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
@@ -187,7 +177,7 @@ public abstract class Table extends JXTable {
         final Iterator iter = list.iterator();
         while (iter.hasNext()) {
             Object[] newRow = (Object[])iter.next();
-            ((DefaultTableModel)getModel()).addRow(newRow);
+            tableModel.addRow(newRow);
         }
     }
 
@@ -198,14 +188,6 @@ public abstract class Table extends JXTable {
      */
     public Object[] getSelectedRowObject() {
         return getRowObject(getSelectedRow());
-    }
-
-    public void addRow(Object[] row) {
-        ((DefaultTableModel)getModel()).addRow(row);
-    }
-
-    public void removeRow(int row) {
-        ((DefaultTableModel)getModel()).removeRow(row);
     }
 
     /**
@@ -223,7 +205,7 @@ public abstract class Table extends JXTable {
 
         Object[] obj = new Object[columnCount];
         for (int j = 0; j < columnCount; j++) {
-            Object objs = getModel().getValueAt(selectedRow, j);
+            Object objs = tableModel.getValueAt(selectedRow, j);
             obj[j] = objs;
         }
 
@@ -236,7 +218,7 @@ public abstract class Table extends JXTable {
     public void clearTable() {
         int rowCount = getRowCount();
         for (int i = 0; i < rowCount; i++) {
-            ((DefaultTableModel)getModel()).removeRow(0);
+            getTableModel().removeRow(0);
         }
     }
 
@@ -442,6 +424,15 @@ public abstract class Table extends JXTable {
         public MyComboBoxEditor(String[] items) {
             super(new JComboBox(items));
         }
+    }
+
+    /**
+     * Returns the table model.
+     *
+     * @return the table model.
+     */
+    public Table.JiveTableModel getTableModel() {
+        return tableModel;
     }
 
     /**

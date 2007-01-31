@@ -10,6 +10,10 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import org.jdesktop.swingx.JXList;
+import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
+import org.jdesktop.swingx.decorator.Highlighter;
+import org.jdesktop.swingx.decorator.HighlighterPipeline;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
@@ -29,7 +33,7 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.ImageTitlePanel;
-import org.jivesoftware.spark.component.Table;
+import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
@@ -42,23 +46,24 @@ import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
-import javax.swing.table.TableCellRenderer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -66,8 +71,12 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -82,7 +91,11 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
     private final Map<String, String> userMap = new HashMap<String, String>();
 
     private UserManager userManager = SparkManager.getUserManager();
-    private ParticipantList participantsList;
+
+    private DefaultListModel model = new DefaultListModel();
+
+    private JXList participantsList;
+
     private PacketListener listener = null;
 
     private Map<String, String> invitees = new HashMap<String, String>();
@@ -90,6 +103,8 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
     private boolean allowNicknameChange = true;
 
     private DiscoverInfo roomInformation;
+
+    private List<JLabel> users = new ArrayList<JLabel>();
 
     /**
      * Creates a new RoomInfo instance using the specified ChatRoom.  The RoomInfo
@@ -100,7 +115,8 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         chatManager = SparkManager.getChatManager();
 
         agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
-        participantsList = new ParticipantList();
+        participantsList = new JXList(model);
+        participantsList.setCellRenderer(new ParticipantRenderer());
 
         // Set the room to track
         this.setOpaque(false);
@@ -177,7 +193,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                             agentInfoPanel.setVisible(true);
                         }
                         else {
-                            participantsList.removeUser(nickname);
+                            removeUser(nickname);
                         }
                     }
                 });
@@ -288,7 +304,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
         final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.USER1_BACK_16x16);
 
-        participantsList.addUser(inviteIcon, nickname);
+        addUser(inviteIcon, nickname);
 
         invitees.put(nickname, message);
     }
@@ -309,7 +325,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             if (occ != null) {
                 String actualJID = occ.getJid();
                 if (actualJID.equals(jid)) {
-                    participantsList.removeUser(nick);
+                    removeUser(nick);
                 }
             }
         }
@@ -332,7 +348,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             }
 
             icon.setDescription(nickname);
-            participantsList.addUser(icon, nickname);
+            addUser(icon, nickname);
         }
         else {
             ImageIcon icon = null;
@@ -350,7 +366,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             int index = getIndex(nickname);
             if (index != -1) {
                 final JLabel userLabel = new JLabel(nickname, icon, JLabel.HORIZONTAL);
-                participantsList.setValueAt(userLabel, index, 0);
+                model.setElementAt(userLabel, index);
             }
         }
     }
@@ -363,14 +379,14 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         int index = getIndex(userid);
 
         if (index != -1) {
-            participantsList.removeUser(userid);
+            removeUser(userid);
             userMap.remove(userid);
         }
     }
 
     private boolean exists(String nickname) {
-        for (int i = 0; i < participantsList.getRowCount(); i++) {
-            final JLabel userLabel = (JLabel)participantsList.getValueAt(i, 0);
+        for (int i = 0; i < model.getSize(); i++) {
+            final JLabel userLabel = (JLabel)model.getElementAt(i);
             if (userLabel.getText().equals(nickname)) {
                 return true;
             }
@@ -378,24 +394,14 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         return false;
     }
 
-    private int getIndex(String nickname) {
-        for (int i = 0; i < participantsList.getRowCount(); i++) {
-            final JLabel userLabel = (JLabel)participantsList.getValueAt(i, 0);
-            if (userLabel.getText().equals(nickname)) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     private String getSelectedUser() {
-        int selectedRow = participantsList.getSelectedRow();
-        if (selectedRow == -1) {
-            return null;
+        JLabel label = (JLabel)participantsList.getSelectedValue();
+        if (label != null) {
+            return label.getText();
         }
 
-        JLabel label = (JLabel)participantsList.getValueAt(selectedRow, 0);
-        return label.getText();
+        return null;
     }
 
 
@@ -530,15 +536,14 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
     private void checkPopup(MouseEvent evt) {
         Point p = evt.getPoint();
-        final int index = participantsList.rowAtPoint(p);
+        final int index = participantsList.locationToIndex(p);
 
         final JPopupMenu popup = new JPopupMenu();
 
 
         if (index != -1) {
-            participantsList.setRowSelectionInterval(index, index);
-
-            final JLabel userLabel = (JLabel)participantsList.getValueAt(index, 0);
+            participantsList.setSelectedIndex(index);
+            final JLabel userLabel = (JLabel)model.getElementAt(index);
             final String selectedUser = userLabel.getText();
             final String groupJID = (String)userMap.get(selectedUser);
             String groupJIDNickname = StringUtils.parseResource(groupJID);
@@ -571,7 +576,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                         int index = getIndex(selectedUser);
 
                         if (index != -1) {
-                            participantsList.removeRow(index);
+                            model.removeElementAt(index);
                         }
                     }
                 };
@@ -641,7 +646,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
 
                     JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
-                    participantsList.setValueAt(label, index, 0);
+                    model.setElementAt(label, index);
                 }
             };
 
@@ -781,49 +786,81 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         allowNicknameChange = allowed;
     }
 
-    private final class ParticipantList extends Table {
-        public ParticipantList() {
-            super(new String[]{"Participants"});
-            setSelectionBackground(Table.SELECTION_COLOR);
-            setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            setRowSelectionAllowed(true);
-            getTableHeader().setOpaque(false);
-            Color borderHighlight = new Color(240, 240, 240);
-
-            Font f = getTableHeader().getFont().deriveFont(Font.BOLD);
-            getTableHeader().setFont(f);
-            getTableHeader().setBackground(borderHighlight);
-
-            getSortController().toggleSortOrder(0);
-        }
-
-        public void removeUser(String nickname) {
-            for (int i = 0; i < getRowCount(); i++) {
-                JLabel label = (JLabel)getValueAt(i, 0);
-                if (label.getText().equals(nickname)) {
-                    removeRow(i);
-                }
+    public int getIndex(String name) {
+        for (int i = 0; i < model.getSize(); i++) {
+            JLabel label = (JLabel)model.getElementAt(i);
+            if (label.getText().equals(name)) {
+                return i;
             }
         }
+        return -1;
+    }
 
-        public void addUser(ImageIcon userIcon, String nickname) {
-            JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
-            final Object[] userObject = new Object[]{user};
-            addRow(userObject);
-        }
-
-        // Handle image rendering correctly
-        public TableCellRenderer getCellRenderer(int row, int column) {
-            Object o = getValueAt(row, column);
-            if (o != null) {
-                if (o instanceof JLabel) {
-                    return new JLabelRenderer(false);
-                }
+    public void removeUser(String nickname) {
+        for (int i = 0; i < model.getSize(); i++) {
+            JLabel label = (JLabel)model.getElementAt(i);
+            if (label.getText().equals(nickname)) {
+                model.removeElement(label);
+                users.remove(label);
             }
-            return super.getCellRenderer(row, column);
         }
     }
 
+    public void addUser(ImageIcon userIcon, String nickname) {
+        JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
+        users.add(user);
+        Collections.sort(users, labelComp);
+        model.insertElementAt(user, users.indexOf(user));
+    }
+
+    /**
+     * Sorts ContactItems.
+     */
+    final Comparator<JLabel> labelComp = new Comparator() {
+        public int compare(Object labelOne, Object labelTwo) {
+            final JLabel item1 = (JLabel)labelOne;
+            final JLabel item2 = (JLabel)labelTwo;
+            return item1.getText().toLowerCase().compareTo(item2.getText().toLowerCase());
+
+        }
+    };
+
+
+    /**
+     * The <code>JLabelIconRenderer</code> is the an implementation of ListCellRenderer
+     * to add icons w/ associated text in JComboBox and JList.
+     *
+     * @author Derek DeMoro
+     */
+    public class ParticipantRenderer extends JLabel implements ListCellRenderer {
+
+        /**
+         * Construct Default JLabelIconRenderer.
+         */
+        public ParticipantRenderer() {
+            setOpaque(true);
+        }
+
+        public Component getListCellRendererComponent(JList list,
+                                                      Object value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            }
+            else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+
+            JLabel label = (JLabel)value;
+            setText(label.getText());
+            setIcon(label.getIcon());
+            return this;
+        }
+    }
 }
 
 
