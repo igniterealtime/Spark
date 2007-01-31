@@ -276,7 +276,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 moveToOfflineGroup(presence, bareJID);
             }
             else {
-                updateContactItemsPresence(presence, bareJID);
+                updateContactItemsPresence(rosterPresence, bareJID);
             }
         }
 
