@@ -55,14 +55,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -290,21 +289,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
     private ImageIcon getImageIcon(String participantJID) {
         String nickname = StringUtils.parseResource(participantJID);
-        Occupant occupant = SparkManager.getUserManager().getOccupant(groupChatRoom, nickname);
-        boolean isOwnerOrAdmin = SparkManager.getUserManager().isOwnerOrAdmin(occupant);
-        boolean isModerator = SparkManager.getUserManager().isModerator(occupant);
-
-
-        ImageIcon icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
-        if (!isOwnerOrAdmin) {
-            if (isModerator) {
-                icon = SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE);
-            }
-            else {
-                icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-            }
-        }
-
+        ImageIcon icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
         icon.setDescription(nickname);
         return icon;
     }
