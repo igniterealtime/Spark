@@ -138,7 +138,7 @@ public final class GroupChatRoom extends ChatRoom {
         subjectPanel = new SubjectPanel();
 
         // Do not show top toolbar
-        getToolBar().add(subjectPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
+        getToolBar().add(subjectPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
         // Add ContextMenuListener
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {

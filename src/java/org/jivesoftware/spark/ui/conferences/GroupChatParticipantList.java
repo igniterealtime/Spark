@@ -137,7 +137,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         scroller.setBackground(Color.white);
         scroller.getViewport().setBackground(Color.white);
 
-        add(scroller, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
+        add(scroller, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
 
     public void setChatRoom(final ChatRoom chatRoom) {

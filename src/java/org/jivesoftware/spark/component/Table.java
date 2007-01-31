@@ -131,6 +131,7 @@ public abstract class Table extends JXTable {
         setSelectionBackground(SELECTION_COLOR);
         setSelectionForeground(Color.black);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setEditable(false);
 
         this.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
