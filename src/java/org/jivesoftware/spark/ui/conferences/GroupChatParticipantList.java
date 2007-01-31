@@ -16,6 +16,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.Affiliate;
@@ -161,6 +162,11 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         Presence p = (Presence)packet;
+                        if (p.getError() != null) {
+                            if (p.getError().getCondition().equals(XMPPError.Condition.conflict.toString())) {
+                                return;
+                            }
+                        }
                         final String userid = p.getFrom();
 
                         String nickname = StringUtils.parseResource(userid);
