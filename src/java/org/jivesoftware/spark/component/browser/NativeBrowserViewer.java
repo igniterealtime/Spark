@@ -14,6 +14,7 @@ import org.jdesktop.jdic.browser.BrowserEngineManager;
 import org.jdesktop.jdic.browser.WebBrowser;
 import org.jdesktop.jdic.browser.WebBrowserEvent;
 import org.jdesktop.jdic.browser.WebBrowserListener;
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.BorderLayout;
@@ -29,6 +30,13 @@ class NativeBrowserViewer extends BrowserViewer implements WebBrowserListener {
     private WebBrowser browser;
 
     public void initializeBrowser() {
+        BrowserEngineManager bem = BrowserEngineManager.instance();
+        if (Spark.isWindows()) {
+            bem.setActiveEngine(BrowserEngineManager.IE);
+        }
+        else {
+            bem.setActiveEngine(BrowserEngineManager.MOZILLA);
+        }
         browser = new WebBrowser();
 
 
