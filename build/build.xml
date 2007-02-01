@@ -488,6 +488,7 @@
             <arg line="convert ${basedir}/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
         </exec>
         <delete file="${basedir}/tmp.dmg"/>
+        <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/>
     </target>
 
 </project>
