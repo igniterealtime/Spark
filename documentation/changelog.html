@@ -170,100 +170,172 @@ hr {
 
 <div id="pageContainer">
 
-	<div id="pageHeader">
-		<h1>Spark Changelog</h1>
-	</div>
-	<div class="navigation">
-	<a href="README.html">Readme</a>|<a href="changelog.html"><strong>Changelog</strong></a>|<a href="LICENSE.html">License</a>
-	</div>
+<div id="pageHeader">
+    <h1>Spark Changelog</h1>
+</div>
+<div class="navigation">
+    <a href="README.html">Readme</a>|<a href="changelog.html"><strong>Changelog</strong></a>|<a href="LICENSE.html">License</a>
+</div>
 
-	<div id="pageBody">
+<h2>2.5.0 Beta 1 -- <span style="font-weight: normal;">January 31st, 2007</span></h2>
+<h3>No Changes</h3>
 
-<h2>2.0.5 -- <span style="font-weight: normal;">October 30, 2006</span></h2>
+<div id="pageBody">
+<h2>2.0.8 -- <span style="font-weight: normal;">January 23rd, 2007</span></h2>
+
 <h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-358'>SPARK-358</a>] - Added a beta version of the MSI installer.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-402'>SPARK-402</a>] - Added ability to add new contacts through transports.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-462'>SPARK-462</a>] - Added notification preferences for user presence.</li>
 </ul>
 <h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-393'>SPARK-393</a>] - Fixed blank tab on MAC OSX when presence changed.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-400'>SPARK-400</a>] - Spark now checks for available real estate on monitor.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-403'>SPARK-403</a>] - Fixed private chats in group chat rooms.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-449'>SPARK-449</a>] - Fix chat transcript parsing error with UTF-8</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-450'>SPARK-450</a>] - Fixed tab refreshing problem.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-460'>SPARK-460</a>] - Remove old icons from group chat room.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-461'>SPARK-461</a>] - Improved Toaster popup UI</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-465'>SPARK-465</a>] - Conference Participant list becomes corrupted on presence changes.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-468'>SPARK-468</a>] - Logging out with Chat windows open does not save chat transcript.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-469'>SPARK-469</a>] - Spark needs to do update checks against the new Ignite site.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-470'>SPARK-470</a>] - VCard loading for email chat info should not be in own thread.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-475'>SPARK-475</a>] - Spark 2.0.8 custom skin w/ wildfire spark version set, always thinks there's a newer version</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-476'>SPARK-476</a>] - Asterisks plugin is fully functional.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-477'>SPARK-477</a>] - Users are being removed from the participant list on presence change.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-479'>SPARK-479</a>] - VCard caching not updating avatar.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-480'>SPARK-480</a>] - Stale chats logic removes incoming message notification.</li>
+</ul>
+
+<h2>2.0.7 -- <span style="font-weight: normal;">December 4th, 2006</span></h2>
+
+<h3>New Features</h3>
+<ul>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-444'>SPARK-444</a>] - Added one-click hide from system tray.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-445'>SPARK-445</a>] - Added simple log viewer.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-447'>SPARK-447</a>] - Added Typing notification to individual tabs and Frame.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-398'>SPARK-398</a>] - Nicknames should be sortable in group chat rooms.</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-428'>SPARK-428</a>] - Fixed issue with removing start on startup in preferences.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-435'>SPARK-435</a>] - Setting presence to DND works correctly.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-436'>SPARK-436</a>] - Verify new JID escaping with transports works correctly.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-437'>SPARK-437</a>] - Auto reconnect to notify each connection manager to reset themselves.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-438'>SPARK-438</a>] - Rooms need to be active when Reconnection was successfull</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-439'>SPARK-439</a>] - Yahoo! Logo shows up in vcard popup for offline users</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-440'>SPARK-440</a>] - No longer sending presence to Gateway if not signed in.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-441'>SPARK-441</a>] - Chat room send field no longer becomes disabled.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-442'>SPARK-442</a>] - Logging out causes temporary blank spark to appear.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-443'>SPARK-443</a>] - The Translator plug-in does not work</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-446'>SPARK-446</a>] - No longer show toast popups when a message has an error.</li>
+</ul>
+
+
+<h2>2.0.6 -- <span style="font-weight: normal;">November 20, 2006</span></h2>
+
+<h3>Bug Fixes</h3>
+<ul>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-414'>SPARK-414</a>] - Added Grabber icon to the bottom right of each frame.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-415'>SPARK-415</a>] - Removed background from JButtons for better UI on OSX.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-416'>SPARK-416</a>] - Replaced old icon for menu tray.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-418'>SPARK-418</a>] - Improved upon Members Only Group Chats.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-419'>SPARK-419</a>] - Fixed MSI build.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-425'>SPARK-425</a>] - Creating account with in-band registration caused NPE in spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-426'>SPARK-426</a>] - Improve compatibility with GTalk.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-428'>SPARK-428</a>] - Fixed issue with removing start on startup in preferences.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-429'>SPARK-429</a>] - Improved Gateway tooltips.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-430'>SPARK-430</a>] - MSN roster invites work.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-432'>SPARK-432</a>] - Adding new users will not offer gateway if the user is not from an external system.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-433'>SPARK-433</a>] - Fixed lost message issue with GTalk users.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-353'>SPARK-353</a>] - Improved upon conference invitations.</li>
+</ul>
+
+<h2>2.0.5 -- <span style="font-weight: normal;">October 30, 2006</span></h2>
+
+<h3>New Features</h3>
+<ul>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-358'>SPARK-358</a>] - Added a beta version of the MSI installer.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-402'>SPARK-402</a>] - Added ability to add new contacts through transports.</li>
+</ul>
+<h3>Bug Fixes</h3>
+<ul>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-393'>SPARK-393</a>] - Fixed blank tab on MAC OSX when presence changed.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-400'>SPARK-400</a>] - Spark now checks for available real estate on monitor.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-403'>SPARK-403</a>] - Fixed private chats in group chat rooms.</li>
 </ul>
 
 
 <h2>2.0.4 -- <span style="font-weight: normal;">October 18, 2006</span></h2>
+
 <h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-394'>SPARK-394</a>] - Fixed user search. </li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-395'>SPARK-395</a>] - Fixed issue with broadcasts.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-396'>SPARK-396</a>] - Auto discovery is now working with SRV lookup.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-397'>SPARK-397</a>] - Fixed some minor issues with group chat rooms.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-394'>SPARK-394</a>] - Fixed user search.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-395'>SPARK-395</a>] - Fixed issue with broadcasts.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-396'>SPARK-396</a>] - Auto discovery is now working with SRV lookup.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-397'>SPARK-397</a>] - Fixed some minor issues with group chat rooms.</li>
 </ul>
 
 <h2>2.0.3 -- <span style="font-weight: normal;">October 11, 2006</span></h2>
+
 <h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-364'>SPARK-364</a>] - Added French translation to Spark.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-385'>SPARK-385</a>] - Added Italian translation to Spark.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-386'>SPARK-386</a>] - Added Dutch translation to Spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-364'>SPARK-364</a>] - Added French translation to Spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-385'>SPARK-385</a>] - Added Italian translation to Spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-386'>SPARK-386</a>] - Added Dutch translation to Spark.</li>
 </ul>
 <h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-379'>SPARK-379</a>] - Fixed exception that occured when services could be loaded from the server.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-383'>SPARK-383</a>] - Gateway information is now based on disco and not the subdomain name.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-387'>SPARK-387</a>] - Fixed disconnect on illegal error packet.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-388'>SPARK-388</a>] - Fixed flaky gateway detection in contact list</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-392'>SPARK-392</a>] - Fixed removal of sames user in multiple rooms.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-379'>SPARK-379</a>] - Fixed exception that occured when services could be loaded from the server.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-383'>SPARK-383</a>] - Gateway information is now based on disco and not the subdomain name.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-387'>SPARK-387</a>] - Fixed disconnect on illegal error packet.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-388'>SPARK-388</a>] - Fixed flaky gateway detection in contact list</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-392'>SPARK-392</a>] - Fixed removal of sames user in multiple rooms.</li>
 </ul>
-
 
 
 <h2>2.0.2 -- <span style="font-weight: normal;">September 28, 2006</span></h2>
+
 <h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-363'>SPARK-363</a>] - Added screen selection capability to the screenshot feature.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-356'>SPARK-356</a>] - Added German translation to Spark.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-359'>SPARK-359</a>] - Updated icons and text in Spark to reflect functionallity better.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-370'>SPARK-370</a>] - Added sound preference for incoming chat invitations.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-374'>SPARK-374</a>] - Improved message notifications using sounds and toasters.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-363'>SPARK-363</a>] - Added screen selection capability to the screenshot feature.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-356'>SPARK-356</a>] - Added German translation to Spark.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-359'>SPARK-359</a>] - Updated icons and text in Spark to reflect functionallity better.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-370'>SPARK-370</a>] - Added sound preference for incoming chat invitations.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-374'>SPARK-374</a>] - Improved message notifications using sounds and toasters.</li>
 </ul>
 
 <h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-357'>SPARK-357</a>] - Spark Manager now handles the online spark distribution correctly.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-360'>SPARK-360</a>] - Added missing i18n properties.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-361'>SPARK-361</a>] - Fixed case where users were showing up as offline when they are online.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-362'>SPARK-362</a>] - Allow passwords with leading and trailing spaces.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-365'>SPARK-365</a>] - File transfers through a proxy no longer fails.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-366'>SPARK-366</a>] - Show login failure when Spark is in the system tray and login fails.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-367'>SPARK-367</a>] - Spark can now run with limited operating system permissions.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-368'>SPARK-368</a>] - Fixed error with wildcard searchs.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-369'>SPARK-369</a>] - Fixed connection issue with Facetime and Akonix.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-371'>SPARK-371</a>] - Added back ctrl+n (now ctrl+f) for user searching within contact list and chat window.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-357'>SPARK-357</a>] - Spark Manager now handles the online spark distribution correctly.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-360'>SPARK-360</a>] - Added missing i18n properties.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-361'>SPARK-361</a>] - Fixed case where users were showing up as offline when they are online.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-362'>SPARK-362</a>] - Allow passwords with leading and trailing spaces.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-365'>SPARK-365</a>] - File transfers through a proxy no longer fails.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-366'>SPARK-366</a>] - Show login failure when Spark is in the system tray and login fails.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-367'>SPARK-367</a>] - Spark can now run with limited operating system permissions.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-368'>SPARK-368</a>] - Fixed error with wildcard searchs.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-369'>SPARK-369</a>] - Fixed connection issue with Facetime and Akonix.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-371'>SPARK-371</a>] - Added back ctrl+n (now ctrl+f) for user searching within contact list and chat window.</li>
 </ul>
-
 
 
 <h2>2.0.1 -- <span style="font-weight: normal;">September 11, 2006</span></h2>
+
 <h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-350'>SPARK-350</a>] - Added icons and registration for ICQ gateways.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-350'>SPARK-350</a>] - Added icons and registration for ICQ gateways.</li>
 </ul>
 
 <h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-341'>SPARK-341</a>] - Changed online installer to require JRE 1.5.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-342'>SPARK-342</a>] - Spark will not start if the language settings do not match i18n.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-343'>SPARK-343</a>] - Spark handles upgrades with the online tag.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-344'>SPARK-344</a>] - Fixed invalid paths with sound preference.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-345'>SPARK-345</a>] - XMPP URI mapping now registers correctly with the registry.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-346'>SPARK-346</a>] - Search no longer crashes in Spark</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-347'>SPARK-347</a>] - Fixed multiple presence packets being sent on idle.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-348'>SPARK-348</a>] - Gateway plugin now checks the server on separate thread.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-351'>SPARK-351</a>] - Changed Spark to use default look and feel on OSX.</li>
-<li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-352'>SPARK-352</a>] - Display correct message on uninstalls of plugins in the plugin viewer.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-341'>SPARK-341</a>] - Changed online installer to require JRE 1.5.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-342'>SPARK-342</a>] - Spark will not start if the language settings do not match i18n.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-343'>SPARK-343</a>] - Spark handles upgrades with the online tag.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-344'>SPARK-344</a>] - Fixed invalid paths with sound preference.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-345'>SPARK-345</a>] - XMPP URI mapping now registers correctly with the registry.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-346'>SPARK-346</a>] - Search no longer crashes in Spark</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-347'>SPARK-347</a>] - Fixed multiple presence packets being sent on idle.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-348'>SPARK-348</a>] - Gateway plugin now checks the server on separate thread.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-351'>SPARK-351</a>] - Changed Spark to use default look and feel on OSX.</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-352'>SPARK-352</a>] - Display correct message on uninstalls of plugins in the plugin viewer.</li>
 </ul>
 
 <h2>2.0.0 -- <span style="font-weight: normal;">September 7, 2006</span></h2>
@@ -281,7 +353,9 @@ hr {
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-181'>SPARK-181</a>] - Improved the Mac installer.</li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-290'>SPARK-290</a>] - Added ability to resend files when transfer fails.</li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-291'>SPARK-291</a>] - Add file transfer timeout setting to preferences.</li>
-    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-292'>SPARK-292</a>] - starting conversations with "user" (not really a JID) is possible, Spark could attach "@server.com" to make it "user@server"</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-292'>SPARK-292</a>] - starting conversations with "user" (not really a JID) is possible, Spark could attach "@server.com" to make it
+        "user@server"
+    </li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-298'>SPARK-298</a>] - Presence updates now show timestamp.</li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-299'>SPARK-299</a>] - Incremental scroll units should be moved to 150 instead of 50.</li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-302'>SPARK-302</a>] - Added nested groups support.</li>
@@ -297,7 +371,8 @@ hr {
 <h3>Bug Fixes</h3>
 <ul>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-14'>SPARK-14</a>] - Spark no longer unchecks the auto-login feature on disconnects.</li>
-    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-88'>SPARK-88</a>] - The update process now checks to see if the update is already downloaded (in case the user never restarted Spark).</li>
+    <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-88'>SPARK-88</a>] - The update process now checks to see if the update is already downloaded (in case the user never restarted Spark).
+    </li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-101'>SPARK-101</a>] - The chat window now has proper Mac OS X menus.</li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-208'>SPARK-208</a>] - Allow VM params to be set for graphics rendering options.</li>
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-218'>SPARK-218</a>] - Non-English characters were noe displayed correctly in vCards.</li>
@@ -332,12 +407,12 @@ hr {
     <li>[<a href='http://www.jivesoftware.org/issues/browse/SPARK-331'>SPARK-331</a>] - Message of type HEADLINE can now popup as a toaster.</li>
 </ul>
 
-	<div class="footer">
-	Copyright &copy; Jive Software, 2006
-	</div>
+<div class="footer">
+    Copyright &copy; Jive Software, 2006
+</div>
 
 
-	</div>
+</div>
 </div>
 
 </body>
