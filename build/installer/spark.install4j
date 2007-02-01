@@ -119,7 +119,7 @@
     <customScreens />
   </installerGui>
   <mediaSets>
-    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" allLaunchers="true" includedJRE="windows-x86-1.6.0_us_only" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="false" launchExecutableId="" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="2" desktopLauncherId="4" programGroup="Spark" allowUserDisableStartMenuCreation="true" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="2">
+    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" allLaunchers="true" includedJRE="windows-x86-1.6.0" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="false" launchExecutableId="" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="2" desktopLauncherId="4" programGroup="Spark" allowUserDisableStartMenuCreation="true" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="2">
       <selectedLaunchers />
       <messageSet language="English" />
       <exclude>
