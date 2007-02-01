@@ -445,6 +445,7 @@
                 <exclude name="**/lib/"/>
                 <exclude name="**/jniwrap.*"/>
                 <exclude name="**/jniwrapper.*"/>
+                <exclude name="**/idlelinux.*"/>
             </fileset>
         </copy>
 
