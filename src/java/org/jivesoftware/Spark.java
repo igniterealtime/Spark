@@ -120,8 +120,6 @@ public final class Spark {
                 catch (ParseException e) {
                     e.printStackTrace();
                 }
-
-                installBaseUIProperties();
             }
             else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
                 UIManager.setLookAndFeel(classname);
@@ -130,6 +128,8 @@ public final class Spark {
                 UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
             }
 
+            // Update install ui properties.
+            installBaseUIProperties();
         }
         catch (Exception e) {
             Log.error(e);
