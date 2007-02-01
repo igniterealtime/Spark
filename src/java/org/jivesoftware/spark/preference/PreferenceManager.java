@@ -45,11 +45,6 @@ public class PreferenceManager {
         addPreference(localPreferences);
         localPreferences.load();
 
-        NotificationsPreference notifications = new NotificationsPreference();
-        addPreference(notifications);
-        notifications.load();
-
-
         getPreferences();
 
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {

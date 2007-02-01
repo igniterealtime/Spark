@@ -142,7 +142,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
 
         ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         if (item != null) {
-            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>has just signed in.</td></tr></table></body></html>");
+            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>"+Res.getString("user.has.signed.in")+"</td></tr></table></body></html>");
             label.setHorizontalTextPosition(JLabel.CENTER);
             label.setHorizontalAlignment(JLabel.CENTER);
             toaster.showToaster(Res.getString("title.notification"), label);
@@ -161,7 +161,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
         ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         if (item != null) {
-            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>has just signed out.</td></tr></table></body></html>");
+            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>"+Res.getString("user.has.signed.off")+"</td></tr></table></body></html>");
             label.setHorizontalTextPosition(JLabel.CENTER);
             label.setHorizontalAlignment(JLabel.CENTER);
             toaster.showToaster(Res.getString("title.notification"), label);
