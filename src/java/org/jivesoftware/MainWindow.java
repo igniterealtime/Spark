@@ -17,6 +17,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -28,20 +29,6 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -56,6 +43,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
@@ -81,12 +82,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     private boolean focused;
 
-    private JToolBar topBar = new JToolBar();
+    private JToolBar topToolbar = new JToolBar();
+
+    private JSplitPane splitPane;
 
     private static MainWindow singleton;
     private static final Object LOCK = new Object();
-
-    private JSplitPane splitPane = null;
 
     /**
      * Returns the singleton instance of <CODE>MainWindow</CODE>,
@@ -126,7 +127,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Add menubar
         this.setJMenuBar(mainWindowBar);
-        this.getContentPane().add(topBar, BorderLayout.NORTH);
+        this.getContentPane().add(topToolbar, BorderLayout.NORTH);
 
         setTitle(title + " - " + SparkManager.getSessionManager().getUsername());
 
@@ -170,9 +171,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
              */
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
-
-                // Show confirmation about hiding.
-                //   SparkManager.getNotificationsEngine().confirmHidingIfNecessary();
             }
         });
 
@@ -265,7 +263,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
             String status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
-                SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
+                    SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
 
             if (status != null) {
                 Presence presence = new Presence(Presence.Type.unavailable);
@@ -304,6 +302,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
     }
 
+    /**
+     * Closes the current connection and restarts Spark.
+     */
     private void closeConnectionAndInvoke() {
         final XMPPConnection con = SparkManager.getConnection();
         if (con.isConnected()) {
@@ -528,7 +529,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @return the MainWindows top toolbar.
      */
     public JToolBar getTopToolBar() {
-        return topBar;
+        return topToolbar;
     }
 
     /**
@@ -539,7 +540,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private void checkForUpdates(final boolean forced) {
         final CheckUpdates updater = new CheckUpdates();
         try {
-            SwingWorker stopWorker = new SwingWorker() {
+            final SwingWorker updateThread = new SwingWorker() {
                 public Object construct() {
                     try {
                         Thread.sleep(50);
@@ -560,7 +561,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 }
             };
 
-            stopWorker.start();
+            updateThread.start();
 
         }
         catch (Exception e) {
@@ -573,7 +574,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     private static void showAboutBox() {
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion(),
-            "About", JOptionPane.INFORMATION_MESSAGE);
+                "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -610,15 +611,23 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         GraphicUtils.centerWindowOnScreen(frame);
         frame.setVisible(true);
-
-
     }
 
+    /**
+     * Return true if the MainWindow is docked.
+     *
+     * @return true if the window is docked.
+     */
     public boolean isDocked() {
         LocalPreferences preferences = SettingsManager.getLocalPreferences();
         return preferences.isDockingEnabled();
     }
 
+    /**
+     * Returns the inner split pane.
+     *
+     * @return the split pane.
+     */
     public JSplitPane getSplitPane() {
         // create the split pane only if required.
         if (splitPane == null) {
