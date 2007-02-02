@@ -461,7 +461,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Close all chat rooms.
      */
     public void closeAllChatRooms() {
-        if (MainWindow.getInstance().isDocked()) {
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+
+        if (MainWindow.getInstance().isDocked() || !pref.isAutoCloseChatRoomsEnabled()) {
             return;
         }
 
@@ -1129,7 +1131,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (pref.isDockingEnabled()) {
-            //chatFrame = MainWindow.getInstance();
+            chatFrame = MainWindow.getInstance();
         }
         else {
             chatFrame = new ChatFrame();

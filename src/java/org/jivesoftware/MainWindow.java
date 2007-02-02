@@ -63,7 +63,7 @@ import javax.swing.JToolBar;
  *
  * @version 1.0, 03/12/14
  */
-public final class MainWindow extends JFrame implements ActionListener {
+public final class MainWindow extends ChatFrame implements ActionListener {
     private final Set<MainWindowListener> listeners = new HashSet<MainWindowListener>();
 
     private final JMenu connectMenu = new JMenu();

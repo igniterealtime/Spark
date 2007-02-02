@@ -43,8 +43,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(SparkManager.getChatManager().getChatContainer(), BorderLayout.CENTER);
-        pack();
-
+ 
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         if (settings.getChatFrameX() == 0 && settings.getChatFrameY() == 0) {
             // Use default settings.

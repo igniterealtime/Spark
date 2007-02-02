@@ -494,6 +494,14 @@ public class LocalPreferences {
 	public boolean isDockingEnabled() {
 		 return getBoolean("dockingEnabled", false);
 	}
+	
+	public void setAutoCloseChatRoomsEnabled(boolean autoCloseChatRoomsEnabled){
+		setBoolean("autoCloseChatRoomsEnabled", autoCloseChatRoomsEnabled);
+	}
+	
+	public boolean isAutoCloseChatRoomsEnabled(){
+		return getBoolean("autoCloseChatRoomsEnabled", true);
+	}
 
      public void setTabsOnTop(boolean onTop){
         setBoolean("tabsOnTop", onTop);
