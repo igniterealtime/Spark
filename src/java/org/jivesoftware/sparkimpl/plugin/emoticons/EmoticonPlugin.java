@@ -17,82 +17,107 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.themes.ThemePreference;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonUI.EmoticonPickListener;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URL;
+
 /**
  * Adds an EmoticonPickList to each ChatRoom.
  */
-public class EmoticonPlugin implements Plugin {
+public class EmoticonPlugin implements Plugin, ChatRoomListener {
 
+    private EmoticonManager emoticonManager;
+    private ChatManager chatManager;
 
     public void initialize() {
-        final ChatManager chatManager = SparkManager.getChatManager();
-        chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
-            public void chatRoomOpened(final ChatRoom room) {
-                final EmoticonManager manager = EmoticonManager.getInstance();
-                String name = manager.getActiveEmoticonSetName();
+        emoticonManager = EmoticonManager.getInstance();
+        chatManager = SparkManager.getChatManager();
+        addChatRoomListener();
+    }
 
-                final Emoticon smileEmoticon = manager.getEmoticon(name, ":)");
-                URL smileURL = manager.getEmoticonURL(smileEmoticon);
-
-                // Add Emoticon button
-                ImageIcon icon = new ImageIcon(smileURL);
-                final RolloverButton emoticonPicker = new RolloverButton(icon);
-                room.getEditorBar().add(emoticonPicker);
-
-                emoticonPicker.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        // Show popup
-                        final JPopupMenu popup = new JPopupMenu();
-                        EmoticonUI ui = new EmoticonUI();
-                        ui.setEmoticonPickListener(new EmoticonPickListener() {
-                            public void emoticonPicked(String emoticon) {
-                                try {
-                                    popup.setVisible(false);
-                                    final ChatInputEditor editor = room.getChatInputEditor();
-                                    String currentText = editor.getText();
-                                    if (currentText.length() == 0 || currentText.endsWith(" ")) {
-                                        room.getChatInputEditor().insertText(emoticon + " ");
-                                    }
-                                    else {
-                                        room.getChatInputEditor().insertText(" " + emoticon + " ");
-                                    }
-                                    room.getChatInputEditor().requestFocus();
-                                }
-                                catch (BadLocationException e1) {
-                                    Log.error(e1);
-                                }
-
-                            }
-                        });
-
-
-                        popup.add(ui);
-                        popup.show(emoticonPicker, e.getX(), e.getY());
-                    }
-                });
-
-                room.addClosingListener(new ChatRoomClosingListener() {
-                    public void closing() {
-                        room.getEditorBar().remove(emoticonPicker);
-                    }
-                });
-            }
-        });
+    /**
+     * Listen for rooms opening to add emoticon picker.
+     */
+    private void addChatRoomListener() {
+        // Adds the listener
+        chatManager.addChatRoomListener(this);
 
         // Add Preferences
         SparkManager.getPreferenceManager().addPreference(new ThemePreference());
+    }
+
+    public void chatRoomOpened(final ChatRoom room) {
+        final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
+
+        final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
+        URL smileURL = emoticonManager.getEmoticonURL(smileEmoticon);
+
+        // Add Emoticon button
+        ImageIcon icon = new ImageIcon(smileURL);
+        final RolloverButton emoticonPicker = new RolloverButton(icon);
+        room.getEditorBar().add(emoticonPicker);
+
+        emoticonPicker.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                // Show popup
+                final JPopupMenu popup = new JPopupMenu();
+                EmoticonUI emoticonUI = new EmoticonUI();
+                emoticonUI.setEmoticonPickListener(new EmoticonPickListener() {
+                    public void emoticonPicked(String emoticon) {
+                        try {
+                            popup.setVisible(false);
+                            final ChatInputEditor editor = room.getChatInputEditor();
+                            String currentText = editor.getText();
+                            if (currentText.length() == 0 || currentText.endsWith(" ")) {
+                                room.getChatInputEditor().insertText(emoticon + " ");
+                            }
+                            else {
+                                room.getChatInputEditor().insertText(" " + emoticon + " ");
+                            }
+                            room.getChatInputEditor().requestFocus();
+                        }
+                        catch (BadLocationException e1) {
+                            Log.error(e1);
+                        }
+
+                    }
+                });
+
+
+                popup.add(emoticonUI);
+                popup.show(emoticonPicker, e.getX(), e.getY());
+            }
+        });
+
+        room.addClosingListener(new ChatRoomClosingListener() {
+            public void closing() {
+                room.getEditorBar().remove(emoticonPicker);
+            }
+        });
+    }
+
+    public void chatRoomLeft(ChatRoom room) {
+    }
+
+    public void chatRoomClosed(ChatRoom room) {
+    }
+
+    public void chatRoomActivated(ChatRoom room) {
+    }
+
+    public void userHasJoined(ChatRoom room, String userid) {
+    }
+
+    public void userHasLeft(ChatRoom room, String userid) {
     }
 
     public void shutdown() {
