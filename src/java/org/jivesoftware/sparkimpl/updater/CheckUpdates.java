@@ -83,7 +83,7 @@ public class CheckUpdates {
         xstream.alias("Version", SparkVersion.class);
 
         // Specify the main update url for JiveSoftware
-        this.mainUpdateURL = "http://www.jivesoftware.org/updater/updater";
+        this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
 
         sparkPluginInstalled = isSparkPluginInstalled(SparkManager.getConnection());
     }
@@ -374,7 +374,7 @@ public class CheckUpdates {
         boolean dayOrLonger = weekAgo.getTime() >= lastChecked.getTime();
 
 
-        if (dayOrLonger || explicit) {
+        if (dayOrLonger || explicit || sparkPluginInstalled) {
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);
@@ -432,7 +432,7 @@ public class CheckUpdates {
                                         BrowserLauncher.openURL(serverVersion.getDownloadURL());
                                     }
                                     else {
-                                        BrowserLauncher.openURL("http://www.jivesoftware.org/downloads.jsp#spark");
+                                        BrowserLauncher.openURL("http://www.igniterealtime.org/downloads/index.jsp#spark");
                                     }
                                 }
 

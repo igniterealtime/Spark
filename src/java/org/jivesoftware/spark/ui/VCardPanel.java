@@ -13,6 +13,7 @@ package org.jivesoftware.spark.ui;
 import org.jdesktop.jdic.desktop.Desktop;
 import org.jdesktop.jdic.desktop.DesktopException;
 import org.jdesktop.jdic.desktop.Message;
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -21,6 +22,12 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -34,12 +41,6 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -213,7 +214,9 @@ public class VCardPanel extends JPanel {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    Desktop.mail(message);
+                    if (!Spark.isMac()) {
+                        Desktop.mail(message);
+                    }
                 }
                 catch (DesktopException e) {
                     e.printStackTrace();

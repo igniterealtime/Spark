@@ -54,7 +54,7 @@ import java.awt.event.MouseEvent;
 public class PhonePlugin implements Plugin {
     public static PhoneClient phoneClient;
     private DialPanel dialPanel;
-//    private Alert incomingDialog;
+    //    private Alert incomingDialog;
     private JFrame dialDialog;
 
     public void initialize() {
@@ -63,7 +63,7 @@ public class PhonePlugin implements Plugin {
 
         final XMPPConnection con = SparkManager.getConnection();
 
-        /*
+
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
@@ -87,7 +87,6 @@ public class PhonePlugin implements Plugin {
         };
 
         worker.start();
-        */
     }
 
     private void setupPhoneSystem() {
