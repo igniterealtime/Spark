@@ -14,10 +14,20 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.text.BadLocationException;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,16 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.text.BadLocationException;
-
 /**
- *
+ * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
  */
 public class ThemePanel extends JPanel {
     private TranscriptWindow transcript;
@@ -51,6 +53,9 @@ public class ThemePanel extends JPanel {
 
     private JFileChooser fc;
 
+    /**
+     * Construct UI
+     */
     public ThemePanel() {
         setLayout(new GridBagLayout());
 
@@ -76,6 +81,9 @@ public class ThemePanel extends JPanel {
         buildUI();
     }
 
+    /**
+     * Builds the UI.
+     */
     private void buildUI() {
         // Add Viewer
         add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
@@ -113,18 +121,26 @@ public class ThemePanel extends JPanel {
 
         addEmoticonButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addEmoticon();
+                addEmoticonPack();
             }
         });
 
         showSelectedEmoticon();
     }
 
+    /**
+     * Adds a <code>TranscriptWindow</code> theme.
+     *
+     * @param dir the theme directory.
+     */
     private void addTheme(File dir) {
         messageStyleBox.addItem(dir.getName());
     }
 
 
+    /**
+     * Displays the active emoticon pack.
+     */
     protected void showSelectedEmoticon() {
         EmoticonManager emoticonManager = EmoticonManager.getInstance();
         String activeEmoticonName = emoticonManager.getActiveEmoticonSetName();
@@ -135,7 +151,7 @@ public class ThemePanel extends JPanel {
             transcript.insertText("\n");
         }
         catch (BadLocationException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
 
         StringBuilder builder = new StringBuilder();
@@ -149,20 +165,32 @@ public class ThemePanel extends JPanel {
             transcript.insert(builder.toString());
         }
         catch (BadLocationException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
+    /**
+     * Returns the name of the theme selected.
+     *
+     * @return the name of the selected theme.
+     */
     public String getSelectedTheme() {
         return (String)messageStyleBox.getSelectedItem();
     }
 
+    /**
+     * Returns the name of the selected emoticon pack.
+     *
+     * @return the name of the emoticon pack.
+     */
     public String getSelectedEmoticonPack() {
         return (String)emoticonBox.getSelectedItem();
     }
 
-
-    private void addEmoticon() {
+    /**
+     * Adds a new Emoticon pack to Spark.
+     */
+    private void addEmoticonPack() {
         if (fc == null) {
             fc = new JFileChooser();
             if (Spark.isWindows()) {
@@ -181,9 +209,14 @@ public class ThemePanel extends JPanel {
                 EmoticonManager emoticonManager = EmoticonManager.getInstance();
                 String name = emoticonManager.installPack(pack);
 
+                if (name == null) {
+                    JOptionPane.showMessageDialog(this, "Not a valid emoticon pack.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 // If the name does not exists, add it to the message box.
                 for (int i = 0; i < emoticonBox.getItemCount(); i++) {
-                    String n = (String)messageStyleBox.getItemAt(i);
+                    String n = (String)emoticonBox.getItemAt(i);
                     if (name.equals(n)) {
                         return;
                     }
@@ -195,11 +228,15 @@ public class ThemePanel extends JPanel {
                 emoticonBox.setSelectedItem(name);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Log.error(e);
             }
         }
     }
 
+    /**
+     * The ZipFilter class is used by the emoticon file picker to filter out all
+     * other files besides *.zip files.
+     */
     private class ZipFilter extends javax.swing.filechooser.FileFilter {
         public boolean accept(File file) {
             String filename = file.getName();

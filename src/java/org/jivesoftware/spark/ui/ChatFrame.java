@@ -43,7 +43,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(SparkManager.getChatManager().getChatContainer(), BorderLayout.CENTER);
- 
+
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         if (settings.getChatFrameX() == 0 && settings.getChatFrameY() == 0) {
             // Use default settings.
@@ -92,21 +92,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
             public void windowDeiconified(WindowEvent e) {
                 setFocusableWindowState(true);
             }
-
-
-            /**
-             * This event fires when the application is closing.
-             * This allows Plugins to do any persistence or other
-             * work before exiting.
-             *
-             * @param e WindowEvent is never used.
-             */
-            public void windowClosing(WindowEvent e) {
-                // Save layout
-                saveLayout();
-
-                SparkManager.getChatManager().getChatContainer().closeAllChatRooms();
-            }
         });
     }
 
@@ -145,7 +130,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     /**
      * Saves the layout on closing of the chat frame.
      */
-    private void saveLayout() {
+    public void saveLayout() {
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         settings.setChatFrameHeight(getHeight());
         settings.setChatFrameWidth(getWidth());
@@ -154,18 +139,18 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         LayoutSettingsManager.saveLayoutSettings();
     }
 
-	public void bringFrameIntoFocus() {
-		if (!isVisible()) {
-			setVisible(true);
-		}
+    public void bringFrameIntoFocus() {
+        if (!isVisible()) {
+            setVisible(true);
+        }
 
-		if (getState() == Frame.ICONIFIED) {
-			setState(Frame.NORMAL);
-		}
-		requestFocus();
-	}
+        if (getState() == Frame.ICONIFIED) {
+            setState(Frame.NORMAL);
+        }
+        requestFocus();
+    }
 
-    public void buzz(){
+    public void buzz() {
         ShakeWindow d = new ShakeWindow(this);
         d.startShake();
     }

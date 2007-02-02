@@ -21,6 +21,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.ImageIcon;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -39,8 +41,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
-import javax.swing.ImageIcon;
-
 /**
  * Responsible for the handling of all Emoticon packs. Using the EmoticonManager, you can specify
  * any defined Emoticon Pack, retrieve any emoticon based on its text equivalant, and retrieve its
@@ -54,7 +54,7 @@ public class EmoticonManager {
     private static final Object LOCK = new Object();
 
 
-    private Map<String, List> emoticonMap = new HashMap<String, List>();
+    private Map<String, Collection<Emoticon>> emoticonMap = new HashMap<String, Collection<Emoticon>>();
     private Map<String, ImageIcon> imageMap = new HashMap<String, ImageIcon>();
 
     /**
@@ -82,6 +82,9 @@ public class EmoticonManager {
         return singleton;
     }
 
+    /**
+     * Initialize the EmoticonManager
+     */
     private EmoticonManager() {
         EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/emoticons").getAbsoluteFile();
 
@@ -94,30 +97,55 @@ public class EmoticonManager {
             addEmoticonPack(emoticonPack);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
+    /**
+     * Returns the active emoticon set within Spark.
+     *
+     * @return the active set of emoticons.
+     */
     public Collection<Emoticon> getActiveEmoticonSet() {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         String emoticonPack = pref.getEmoticonPack();
         return emoticonMap.get(emoticonPack);
     }
 
+    /**
+     * Returns the name of the active emoticon set.
+     *
+     * @return the name of the active emoticon set.
+     */
     public String getActiveEmoticonSetName() {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        String emoticonPack = pref.getEmoticonPack();
-        return emoticonPack;
+        return pref.getEmoticonPack();
     }
 
+    /**
+     * Sets the active emoticon set.
+     *
+     * @param pack the archive containing the emotiocon pack.
+     */
     public void setActivePack(String pack) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setEmoticonPack(pack);
         imageMap.clear();
     }
 
+    /**
+     * Installs a new Adium style emoticon pack into Spark.
+     *
+     * @param pack the emotiocn pack (contains Emotiocons.plist)
+     * @return the name of the newly installed emoticon set.
+     */
     public String installPack(File pack) {
+        if (!containsEmoticonPList(pack)) {
+            return null;
+        }
+
         String name = null;
+
         // Copy to the emoticon area
         try {
             URLFileSystem.copy(pack.toURL(), new File(EMOTICON_DIRECTORY, pack.getName()));
@@ -127,7 +155,7 @@ public class EmoticonManager {
             addEmoticonPack(name);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
 
         return name;
@@ -211,11 +239,12 @@ public class EmoticonManager {
     /**
      * Retrieves the associated key emoticon.
      *
-     * @param key the key.
+     * @param packName the name of the Archive Pack File.
+     * @param key      the key.
      * @return the emoticon.
      */
     public Emoticon getEmoticon(String packName, String key) {
-        final List<Emoticon> emoticons = emoticonMap.get(packName);
+        final Collection<Emoticon> emoticons = emoticonMap.get(packName);
 
         for (Emoticon emoticon : emoticons) {
             for (String string : emoticon.getEquivalants()) {
@@ -228,8 +257,15 @@ public class EmoticonManager {
         return null;
     }
 
+    /**
+     * Returns the <code>Emoticon</code> associated with the given key. Note: This gets the emoticon from
+     * the active emoticon pack.
+     *
+     * @param key the key.
+     * @return the Emoticon found. If no emoticon is found, null is returned.
+     */
     public Emoticon getEmoticon(String key) {
-        final List<Emoticon> emoticons = emoticonMap.get(getActiveEmoticonSetName());
+        final Collection<Emoticon> emoticons = emoticonMap.get(getActiveEmoticonSetName());
 
         for (Emoticon emoticon : emoticons) {
             for (String string : emoticon.getEquivalants()) {
@@ -242,6 +278,12 @@ public class EmoticonManager {
         return null;
     }
 
+    /**
+     * Returns the Icon that is mapped to a given key.
+     *
+     * @param key the key to search for.
+     * @return the Icon representing the key.
+     */
     public ImageIcon getEmoticonImage(String key) {
         final Emoticon emoticon = getEmoticon(key);
         if (emoticon != null) {
@@ -258,6 +300,11 @@ public class EmoticonManager {
         return null;
     }
 
+    /**
+     * Returns a list of all available emoticon packs.
+     *
+     * @return Collection of Emoticon Pack names.
+     */
     public Collection<String> getEmoticonPacks() {
         final List<String> emoticonList = new ArrayList<String>();
 
@@ -279,7 +326,9 @@ public class EmoticonManager {
         return emoticonList;
     }
 
-
+    /**
+     * Expands any zipped Emoticon Packs.
+     */
     private void expandNewPacks() {
         File[] jars = EMOTICON_DIRECTORY.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -323,6 +372,28 @@ public class EmoticonManager {
                 }
             }
         }
+    }
+
+    /**
+     * Checks zip file for the Emoticons.plist file. This is Sparks way of detecting a valid file.
+     *
+     * @param zip the zip file to check.
+     * @return true if the EmoticonPlist exists in the archive.
+     */
+    private boolean containsEmoticonPList(File zip) {
+        try {
+            ZipFile zipFile = new JarFile(zip);
+            for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+                JarEntry entry = (JarEntry)e.nextElement();
+                if (entry.getName().contains("Emoticons.plist")) {
+                    return true;
+                }
+            }
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+        return false;
     }
 
     /**

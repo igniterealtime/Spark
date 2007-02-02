@@ -12,6 +12,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
@@ -105,6 +106,7 @@ public class ConferenceUtils {
         return creationDate;
     }
 
+    
     public static void autoJoinConferenceRoom(final String roomName, String roomJID, String password) {
         ChatManager chatManager = SparkManager.getChatManager();
 
@@ -398,7 +400,8 @@ public class ConferenceUtils {
      * @param jids        a collection of the user JIDs to invite.
      */
     public static void createPrivateConference(String serviceName, String message, String roomName, Collection jids) {
-        final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomName + "@" + serviceName);
+        final String roomJID = StringUtils.escapeNode(roomName) + "@"+serviceName;
+        final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomJID);
 
         final GroupChatRoom room = new GroupChatRoom(chatRoom);
 
