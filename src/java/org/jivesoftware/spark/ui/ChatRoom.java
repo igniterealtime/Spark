@@ -65,8 +65,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -89,15 +89,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private boolean mousePressed;
 
-    private List closingListeners = new ArrayList();
+    private List<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<ChatRoomClosingListener>();
 
 
     private ChatRoomTransferHandler transferHandler;
 
-    private final List packetIDList;
-    private final List messageListeners;
+    private final List<String> packetIDList;
+    private final List<MessageListener> messageListeners;
     private List<Message> transcript;
-    private List fileDropListeners;
+    private List<FileDropListener> fileDropListeners;
 
     /**
      * Initializes the base layout and base background color.
@@ -106,15 +106,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatPanel = new JPanel(new GridBagLayout());
         transcriptWindow = new TranscriptWindow();
         splitPane = new JSplitPane();
-        packetIDList = new ArrayList();
+        packetIDList = new ArrayList<String>();
         notificationLabel = new JLabel();
         toolbar = new ChatToolBar();
         bottomPanel = new JPanel();
 
-        messageListeners = new ArrayList();
+        messageListeners = new ArrayList<MessageListener>();
         transcript = new ArrayList<Message>();
         editorBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        fileDropListeners = new ArrayList();
+        fileDropListeners = new ArrayList<FileDropListener>();
 
         transcriptWindow.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -158,7 +158,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
-        
+
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
 
@@ -383,6 +383,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         scrollToBottom();
     }
 
+    /**
+     * Adds a new message to the transcript history.
+     *
+     * @param to   who the message is to.
+     * @param from who the message was from.
+     * @param body the body of the message.
+     * @param date when the message was received.
+     */
     public void addToTranscript(String to, String from, String body, Date date) {
         final Message newMessage = new Message();
         newMessage.setTo(to);
@@ -400,32 +408,16 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             return;
         }
 
-        int chatLength = transcriptWindow.getDocument().getLength();
-        transcriptWindow.setCaretPosition(chatLength);
+        int lengthOfChat = transcriptWindow.getDocument().getLength();
+        transcriptWindow.setCaretPosition(lengthOfChat);
 
         try {
-            JScrollBar sb = textScroller.getVerticalScrollBar();
-            sb.setValue(sb.getMaximum());
+            JScrollBar scrollBar = textScroller.getVerticalScrollBar();
+            scrollBar.setValue(scrollBar.getMaximum());
         }
         catch (Exception e) {
             Log.error(e);
         }
-
-        /*
-           try {
-            JScrollBar vbar = textScroller.getVerticalScrollBar();
-            int whereWeAt = vbar.getValue() + vbar.getVisibleAmount();
-            if (whereWeAt < vbar.getMaximum() - 50) {
-
-            }
-            else {
-                vbar.setValue(vbar.getMaximum());
-            }
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
-        */
     }
 
 
@@ -490,7 +482,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
 
-    // Check to see if an enter key was pressed.
+    /**
+     * Checks to see if enter was pressed and validates room.
+     *
+     * @param e the KeyEvent
+     */
     private void checkForEnter(KeyEvent e) {
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
         if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) &&
@@ -510,7 +506,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             catch (BadLocationException badLoc) {
                 Log.error("Error when checking for enter:", badLoc);
             }
-
         }
     }
 
@@ -532,17 +527,25 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         messageListeners.remove(listener);
     }
 
+    /**
+     * Notifies all message listeners that
+     *
+     * @param message the message received.
+     */
     private void fireMessageReceived(Message message) {
-        final Iterator iter = messageListeners.iterator();
-        while (iter.hasNext()) {
-            ((MessageListener)iter.next()).messageReceived(this, message);
+        for (MessageListener messageListener : messageListeners) {
+            messageListener.messageReceived(this, message);
         }
     }
 
+    /**
+     * Notifies all <code>MessageListener</code> that a message has been sent.
+     *
+     * @param message the message sent.
+     */
     protected void fireMessageSent(Message message) {
-        final Iterator iter = messageListeners.iterator();
-        while (iter.hasNext()) {
-            ((MessageListener)iter.next()).messageSent(this, message);
+        for (MessageListener messageListener : messageListeners) {
+            messageListener.messageSent(this, message);
         }
     }
 
@@ -800,11 +803,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             Component[] comps = buttonPanel.getComponents();
             final int no = comps != null ? comps.length : 0;
 
-            List buttons = new ArrayList();
+            final List<Component> buttons = new ArrayList<Component>();
             for (int i = 0; i < no; i++) {
                 Component component = comps[i];
                 if (component instanceof JButton) {
-                    buttons.add((JButton)component);
+                    buttons.add(component);
                 }
             }
 
@@ -819,8 +822,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         public void removeChatRoomButton(ChatRoomButton button) {
             buttonPanel.remove(button);
         }
-
-
     }
 
     /**
@@ -889,9 +890,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param files the files dropped.
      */
     public void fireFileDropListeners(Collection files) {
-        Iterator iter = new ArrayList(fileDropListeners).iterator();
-        while (iter.hasNext()) {
-            ((FileDropListener)iter.next()).filesDropped(files, this);
+        for (FileDropListener fileDropListener : fileDropListeners) {
+            fileDropListener.filesDropped(files, this);
         }
     }
 
@@ -904,23 +904,40 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return editorBar;
     }
 
+    /**
+     * Adds a <code>ChatRoomClosingListener</code> to this ChatRoom. A ChatRoomClosingListener
+     * is notified whenever this room is closing.
+     *
+     * @param listener the ChatRoomClosingListener.
+     */
     public void addClosingListener(ChatRoomClosingListener listener) {
         closingListeners.add(listener);
     }
 
+    /**
+     * Removes a <code>ChatRoomClosingListener</code> from this ChatRoom.
+     *
+     * @param listener the ChatRoomClosingListener.
+     */
     public void removeClosingListener(ChatRoomClosingListener listener) {
         closingListeners.remove(listener);
     }
 
+    /**
+     * Notifies all <code>ChatRoomClosingListener</code> that this ChatRoom is closing.
+     */
     private void fireClosingListeners() {
-        Iterator iter = new ArrayList(closingListeners).iterator();
-        while (iter.hasNext()) {
-            ChatRoomClosingListener listener = (ChatRoomClosingListener)iter.next();
-            closingListeners.remove(listener);
-            listener.closing();
+        for (ChatRoomClosingListener chatRoomClosingListener : closingListeners) {
+            chatRoomClosingListener.closing();
+            removeClosingListener(chatRoomClosingListener);
         }
     }
 
+    /**
+     * Returns the ScrollPane that contains the TranscriptWindow.
+     *
+     * @return the <code>TranscriptWindow</code> ScrollPane.
+     */
     public JScrollPane getScrollPaneForTranscriptWindow() {
         return textScroller;
     }
@@ -934,6 +951,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return chatAreaButton.getButton();
     }
 
+    /**
+     * Returns the VerticalSplitPane used in this ChatRoom.
+     *
+     * @return the VerticalSplitPane.
+     */
     public JSplitPane getVerticalSlipPane() {
         return verticalSplit;
     }
@@ -943,10 +965,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         validate();
         invalidate();
         repaint();
+
+        verticalSplit.setDividerLocation(-1);
     }
 
     public void focusLost(FocusEvent focusEvent) {
     }
+
 
     /**
      * Implementation of this method should return the last time this chat room
