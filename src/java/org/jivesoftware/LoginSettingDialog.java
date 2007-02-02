@@ -19,6 +19,17 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Properties;
+
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,17 +42,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Properties;
 
 /**
  * Allows users to configure startup options.
@@ -70,9 +70,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
     private JCheckBox autoLoginBox = new JCheckBox();
 
-
     private JCheckBox useSSLBox = new JCheckBox();
-    private JLabel sslLabel = new JLabel();
 
     private JCheckBox compressionBox = new JCheckBox();
 
@@ -168,7 +166,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("ok"), Res.getString("cancel"), Res.getString("use.default")};
         optionPane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-                JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
@@ -211,7 +209,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             catch (NumberFormatException numberFormatException) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.timeout"),
-                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 timeOutField.requestFocus();
                 errors = true;
             }
@@ -221,14 +219,14 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             catch (NumberFormatException numberFormatException) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.port"),
-                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 portField.requestFocus();
                 errors = true;
             }
 
             if (!ModelUtil.hasLength(resource)) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.resource"),
-                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 resourceField.requestFocus();
                 errors = true;
             }
@@ -242,7 +240,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
                 optionsDialog.setVisible(false);
                 localPreferences.setResource(resource);
-                proxyPanel.save();
+                proxyPanel.saveProxySettings();
             }
             else {
                 optionPane.removePropertyChangeListener(this);
@@ -261,6 +259,9 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Internal class to allow setting of proxies within Spark.
+     */
     private class ProxyPanel extends JPanel {
         private JCheckBox useProxyBox = new JCheckBox();
         private JComboBox protocolBox = new JComboBox();
@@ -269,6 +270,9 @@ public class LoginSettingDialog implements PropertyChangeListener {
         private JTextField usernameField = new JTextField();
         private JPasswordField passwordField = new JPasswordField();
 
+        /**
+         * Construct UI.
+         */
         public ProxyPanel() {
             JLabel protocolLabel = new JLabel();
             JLabel hostLabel = new JLabel();
@@ -341,6 +345,11 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
         }
 
+        /**
+         * Enables the fields of the proxy panel.
+         *
+         * @param enable true if all fields should be enabled, otherwise false.
+         */
         private void enableFields(boolean enable) {
             Component[] comps = getComponents();
             for (int i = 0; i < comps.length; i++) {
@@ -351,31 +360,64 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
         }
 
+        /**
+         * Returns true if a proxy is set.
+         *
+         * @return true if a proxy is set.
+         */
         public boolean useProxy() {
             return useProxyBox.isSelected();
         }
 
+        /**
+         * Returns the protocol to use for this proxy.
+         *
+         * @return the protocol.
+         */
         public String getProtocol() {
             return (String)protocolBox.getSelectedItem();
         }
 
+        /**
+         * Returns the host to use for this proxy.
+         *
+         * @return the host.
+         */
         public String getHost() {
             return hostField.getText();
         }
 
+        /**
+         * Returns the port to use with this proxy.
+         *
+         * @return the port to use.
+         */
         public String getPort() {
             return portField.getText();
         }
 
+        /**
+         * Returns the username to use with this proxy.
+         *
+         * @return the username.
+         */
         public String getUsername() {
             return usernameField.getText();
         }
 
+        /**
+         * Returns the password to use with this proxy.
+         *
+         * @return the password.
+         */
         public String getPassword() {
             return new String(passwordField.getPassword());
         }
 
-        public void save() {
+        /**
+         * Persist the proxy settings to local preferences.
+         */
+        public void saveProxySettings() {
             localPreferences.setProxyEnabled(useProxyBox.isSelected());
             if (ModelUtil.hasLength(getProtocol())) {
                 localPreferences.setProtocol(getProtocol());
@@ -432,7 +474,9 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
     }
 
-
+    /**
+     * Updates local preferences with auto discovery settings.
+     */
     private void updateAutoDiscovery() {
         boolean isSelected = autoDiscoverBox.isSelected();
         xmppHostField.setEnabled(!isSelected);

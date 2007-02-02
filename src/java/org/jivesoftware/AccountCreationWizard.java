@@ -25,6 +25,14 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -35,14 +43,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+/**
+ * Allows the creation of accounts on an XMPP server.
+ */
 public class AccountCreationWizard extends JPanel {
     private JLabel usernameLabel = new JLabel();
     private JTextField usernameField = new JTextField();
@@ -65,7 +68,9 @@ public class AccountCreationWizard extends JPanel {
     private XMPPConnection connection = null;
     private JProgressBar progressBar;
 
-
+    /**
+     * Construct the AccountCreationWizard UI.
+     */
     public AccountCreationWizard() {
         // Associate Mnemonics
         ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username") + ":");
@@ -114,27 +119,55 @@ public class AccountCreationWizard extends JPanel {
         });
     }
 
+    /**
+     * Returns the username to use for the new account.
+     *
+     * @return the username.
+     */
     public String getUsername() {
         return StringUtils.escapeNode(usernameField.getText().toLowerCase());
     }
 
+    /**
+     * Returns the password to use for the new account.
+     *
+     * @return the password to use for the new account.
+     */
     public String getPassword() {
         return new String(passwordField.getPassword());
     }
 
+    /**
+     * Returns the confirmation password to use for the new account.
+     *
+     * @return the password to use for the new account.
+     */
     public String getConfirmPassword() {
         return new String(confirmPasswordField.getPassword());
     }
 
+    /**
+     * Returns the server to use with the new account.
+     *
+     * @return the server to use.
+     */
     public String getServer() {
         return serverField.getText();
     }
 
+    /**
+     * Returns true if the passwords match.
+     *
+     * @return true if the passwords match.
+     */
     public boolean isPasswordValid() {
         return getPassword().equals(getConfirmPassword());
     }
 
-    public void createAccount() {
+    /**
+     * Creates the new account using the supplied information.
+     */
+    private void createAccount() {
         boolean errors = false;
         String errorMessage = "";
 
@@ -170,6 +203,7 @@ public class AccountCreationWizard extends JPanel {
         progressBar.setStringPainted(true);
         progressBar.setString(Res.getString("message.registering", getServer()));
         progressBar.setVisible(true);
+
         final SwingWorker worker = new SwingWorker() {
             int errorCode;
 
@@ -222,6 +256,11 @@ public class AccountCreationWizard extends JPanel {
         worker.start();
     }
 
+    /**
+     * Called if the account creation failed.
+     *
+     * @param errorCode the error code.
+     */
     private void accountCreationFailed(int errorCode) {
         String message = Res.getString("message.create.account");
         if (errorCode == 409) {
@@ -233,12 +272,20 @@ public class AccountCreationWizard extends JPanel {
         createAccountButton.setEnabled(true);
     }
 
+    /**
+     * Called if the account was created succesfully.
+     */
     private void accountCreationSuccessful() {
         registered = true;
         JOptionPane.showMessageDialog(this, Res.getString("message.account.created"), Res.getString("title.account.created"), JOptionPane.INFORMATION_MESSAGE);
         dialog.dispose();
     }
 
+    /**
+     * Invokes the AccountCreationWizard.
+     *
+     * @param parent the parent frame to use.
+     */
     public void invoke(JFrame parent) {
         dialog = new JDialog(parent, Res.getString("title.create.new.account"), true);
 
@@ -252,13 +299,19 @@ public class AccountCreationWizard extends JPanel {
         dialog.setVisible(true);
     }
 
+    /**
+     * Creates an XMPPConnection based on the users settings.
+     *
+     * @return the XMPPConnection created.
+     * @throws XMPPException thrown if an exception occured creating the connection.
+     */
     private XMPPConnection getConnection() throws XMPPException {
-        LocalPreferences localPref = SettingsManager.getLocalPreferences();
-        XMPPConnection con = null;
+        final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        XMPPConnection connection = null;
 
         // Get connection
 
-        int port = localPref.getXmppPort();
+        int port = localPreferences.getXmppPort();
 
         String serverName = getServer();
 
@@ -271,8 +324,8 @@ public class AccountCreationWizard extends JPanel {
             }
         }
 
-        boolean useSSL = localPref.isSSL();
-        boolean hostPortConfigured = localPref.isHostAndPortConfigured();
+        boolean useSSL = localPreferences.isSSL();
+        boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
         ConnectionConfiguration config = null;
 
@@ -282,7 +335,7 @@ public class AccountCreationWizard extends JPanel {
                 config.setSocketFactory(new DummySSLSocketFactory());
             }
             else {
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
+                config = new ConnectionConfiguration(localPreferences.getXmppHost(), port, serverName);
                 config.setSocketFactory(new DummySSLSocketFactory());
             }
         }
@@ -291,7 +344,7 @@ public class AccountCreationWizard extends JPanel {
                 config = new ConnectionConfiguration(serverName);
             }
             else {
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
+                config = new ConnectionConfiguration(localPreferences.getXmppHost(), port, serverName);
             }
 
 
@@ -299,18 +352,23 @@ public class AccountCreationWizard extends JPanel {
 
         if (config != null) {
             config.setReconnectionAllowed(true);
-            boolean compressionEnabled = localPref.isCompressionEnabled();
+            boolean compressionEnabled = localPreferences.isCompressionEnabled();
             config.setCompressionEnabled(compressionEnabled);
-            con = new XMPPConnection(config);
+            connection = new XMPPConnection(config);
         }
 
-        if (con != null) {
-            con.connect();
+        if (connection != null) {
+            connection.connect();
         }
-        return con;
+        return connection;
 
     }
 
+    /**
+     * Returns true if the user is registered.
+     *
+     * @return true if the user is registered.
+     */
     public boolean isRegistered() {
         return registered;
     }

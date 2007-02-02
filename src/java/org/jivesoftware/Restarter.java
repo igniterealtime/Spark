@@ -22,6 +22,11 @@ import java.io.IOException;
  */
 public class Restarter {
 
+    /**
+     * Is called on a restart of Spark. This is the format for restarting Spark in Log out.
+     *
+     * @param args the array of arguments.
+     */
     public static void main(String args[]) {
         if (args.length == 0) {
             return;

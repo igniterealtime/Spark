@@ -71,9 +71,8 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
      * Factory method to handle different types of URI Mappings.
      *
      * @param uriMapping the uri mapping string.
-     * @throws Exception thrown if an exception occurs.
      */
-    public void handleJID(String uriMapping) throws Exception {
+    public void handleJID(String uriMapping)  {
         int index = uriMapping.indexOf("xmpp:");
         int messageIndex = uriMapping.indexOf("?message");
 
@@ -113,7 +112,7 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
      * @param uriMapping the uri mapping.
      * @throws Exception thrown if the conference cannot be joined.
      */
-    public void handleConference(String uriMapping) throws Exception {
+    public void handleConference(String uriMapping)  {
         int index = uriMapping.indexOf("xmpp:");
         int join = uriMapping.indexOf("?join");
 
@@ -121,8 +120,4 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
         ConferenceUtils.autoJoinConferenceRoom(conference, conference, null);
     }
 
-    public static void main(String args[]) {
-        SparkStartupListener l = new SparkStartupListener();
-        l.startupPerformed("xmpp:jorge@jivesoftware.com?message;body=hello%20there");
-    }
 }

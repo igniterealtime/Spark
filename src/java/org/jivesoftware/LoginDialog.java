@@ -49,7 +49,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -65,7 +64,6 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -122,7 +120,7 @@ public final class LoginDialog {
 
         loginDialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
 
-        final JPanel mainPanel = new GrayBackgroundPanel();
+        final JPanel mainPanel = new LoginBackgroundPanel();
         final GridBagLayout mainLayout = new GridBagLayout();
         mainPanel.setLayout(mainLayout);
 
@@ -302,7 +300,7 @@ public final class LoginDialog {
             advancedButton.addActionListener(this);
 
             // Make same size
-            GraphicUtils.makeSameSize(new JComponent[]{usernameField, passwordField});
+            GraphicUtils.makeSameSize(usernameField, passwordField);
 
             // Set progress bar description
             progressBar.setText(Res.getString("message.autenticating"));
@@ -374,14 +372,29 @@ public final class LoginDialog {
             }
         }
 
+        /**
+         * Returns the username the user defined.
+         *
+         * @return the username.
+         */
         private String getUsername() {
             return StringUtils.escapeNode(usernameField.getText().trim());
         }
 
+        /**
+         * Returns the password specified by the user.
+         *
+         * @return the password.
+         */
         private String getPassword() {
             return new String(passwordField.getPassword());
         }
 
+        /**
+         * Returns the server name specified by the user.
+         *
+         * @return the server name.
+         */
         private String getServerName() {
             return serverField.getText().trim();
         }
@@ -446,11 +459,19 @@ public final class LoginDialog {
             validateDialog();
         }
 
+        /**
+         * Checks the users input and enables/disables the login button depending on state.
+         */
         private void validateDialog() {
             loginButton.setEnabled(ModelUtil.hasLength(getUsername()) && ModelUtil.hasLength(getPassword())
                 && ModelUtil.hasLength(getServerName()));
         }
 
+        /**
+         * Validates key input.
+         *
+         * @param e the keyEvent.
+         */
         private void validate(KeyEvent e) {
             if (loginButton.isEnabled() && e.getKeyChar() == KeyEvent.VK_ENTER) {
                 validateLogin();
@@ -467,6 +488,11 @@ public final class LoginDialog {
         public void focusLost(FocusEvent e) {
         }
 
+        /**
+         * Enables/Disables the editable components in the login screen.
+         *
+         * @param editable true to enable components, otherwise false to disable.
+         */
         private void enableComponents(boolean editable) {
 
             // Need to set both editable and enabled for best behavior.
@@ -480,14 +506,18 @@ public final class LoginDialog {
             serverField.setEnabled(editable);
 
             if (editable) {
-
                 // Reapply focus to username field
                 passwordField.requestFocus();
             }
         }
 
-        private void showProgressBar(boolean show) {
-            if (show) {
+        /**
+         * Displays the progress bar.
+         *
+         * @param visible true to display progress bar, false to hide it.
+         */
+        private void setProgressBarVisible(boolean visible) {
+            if (visible) {
                 cardLayout.show(cardPanel, PROGRESS_BAR);
                 // progressBar.setIndeterminate(true);
             }
@@ -496,9 +526,11 @@ public final class LoginDialog {
             }
         }
 
+        /**
+         * Validates the users login information.
+         */
         private void validateLogin() {
-
-            SwingWorker worker = new SwingWorker() {
+            final SwingWorker loginValidationThread = new SwingWorker() {
                 public Object construct() {
 
                     boolean loginSuccessfull = login();
@@ -518,7 +550,7 @@ public final class LoginDialog {
                         savePasswordBox.setEnabled(true);
                         autoLoginBox.setEnabled(true);
                         enableComponents(true);
-                        showProgressBar(false);
+                        setProgressBarVisible(false);
                     }
                     return Boolean.valueOf(loginSuccessfull);
                 }
@@ -529,9 +561,9 @@ public final class LoginDialog {
             enableComponents(false);
 
             // Show progressbar
-            showProgressBar(true);
+            setProgressBarVisible(true);
 
-            worker.start();
+            loginValidationThread.start();
         }
 
         public JPasswordField getPasswordField() {
@@ -672,7 +704,6 @@ public final class LoginDialog {
             // Persist information
             localPref.setUsername(getUsername());
 
-
             // Check to see if the password should be saved.
             if (savePasswordBox.isSelected()) {
                 String encodedPassword = null;
@@ -687,7 +718,7 @@ public final class LoginDialog {
             else {
                 localPref.setPassword("");
             }
-            
+
             localPref.setSavePassword(savePasswordBox.isSelected());
             localPref.setAutoLogin(autoLoginBox.isSelected());
             localPref.setServer(serverField.getText());
@@ -771,6 +802,11 @@ public final class LoginDialog {
         workspace.buildLayout();
     }
 
+    /**
+     * Updates System properties with Proxy configuration.
+     *
+     * @throws Exception thrown if an exception occurs.
+     */
     private void updateProxyConfig() throws Exception {
         if (ModelUtil.hasLength(Default.getString(Default.PROXY_PORT)) && ModelUtil.hasLength(Default.getString(Default.PROXY_HOST))) {
             String port = Default.getString(Default.PROXY_PORT);
@@ -799,17 +835,24 @@ public final class LoginDialog {
         }
     }
 
-    public class GrayBackgroundPanel extends JPanel {
+    /**
+     * Defines the background to use with the Login panel.
+     */
+    public class LoginBackgroundPanel extends JPanel {
         final ImageIcon icons = Default.getImageIcon(Default.LOGIN_DIALOG_BACKGROUND_IMAGE);
 
-        public GrayBackgroundPanel() {
+        /**
+         * Empty constructor.
+         */
+        public LoginBackgroundPanel() {
 
         }
 
-        public GrayBackgroundPanel(LayoutManager layout) {
-            super(layout);
-        }
-
+        /**
+         * Uses an image to paint on background.
+         *
+         * @param g the graphics.
+         */
         public void paintComponent(Graphics g) {
             Image backgroundImage = icons.getImage();
             double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
@@ -819,21 +862,22 @@ public final class LoginDialog {
         }
     }
 
+    /**
+     * The image panel to display the Spark Logo.
+     */
     public class ImagePanel extends JPanel {
-        final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
 
-        public ImagePanel() {
+        private final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
 
-        }
-
-        public ImagePanel(LayoutManager layout) {
-            super(layout);
-        }
-
+        /**
+         * Uses the Spark logo to paint as the background.
+         *
+         * @param g the graphics to use.
+         */
         public void paintComponent(Graphics g) {
-            Image backgroundImage = icons.getImage();
-            double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-            double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+            final Image backgroundImage = icons.getImage();
+            final double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
+            final double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
             AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
             ((Graphics2D)g).drawImage(backgroundImage, xform, this);
         }
@@ -846,6 +890,11 @@ public final class LoginDialog {
         }
     }
 
+    /**
+     * Checks for historic Spark settings and upgrades the user.
+     *
+     * @throws Exception thrown if an error occurs.
+     */
     private void checkForOldSettings() throws Exception {
         // Check for old settings.xml
         File settingsXML = new File(Spark.getUserHome(), "/Spark/settings.xml");

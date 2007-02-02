@@ -32,6 +32,11 @@ public class Uninstaller extends UninstallAction {
         return super.performAction(context, progressInterface);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
+    /**
+     * Removes Spark from the start up registration in the registry.
+     *
+     * @param dir the directory where Spark resides.
+     */
     public void removeStartup(File dir) {
         WinRegistry.deleteValue(WinRegistry.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark");
     }

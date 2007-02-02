@@ -19,6 +19,10 @@ import com.install4j.api.windows.WinRegistry;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The installer class is used by the Install4j Installer to setup registry entries
+ * during the setup process.
+ */
 public class Installer extends InstallAction {
 
     private InstallerWizardContext context;
@@ -38,24 +42,34 @@ public class Installer extends InstallAction {
             return true;
         }
 
-        addStartup(installerWizardContext.getInstallationDirectory());
+        addSparkToStartup(installerWizardContext.getInstallationDirectory());
         return true;
     }
 
-    public void addStartup(File dir) {
-        File jivec = new File(dir, "Spark.exe");
+    /**
+     * Adds Spark to the users registry.
+     *
+     * @param dir the installation directory of Spark.
+     */
+    public void addSparkToStartup(File dir) {
+        final File sparkDirectory = new File(dir, "Spark.exe");
         try {
-            String path = jivec.getCanonicalPath();
-            WinRegistry.setValue(WinRegistry.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", path);
+            final String sparkPath = sparkDirectory.getCanonicalPath();
+            WinRegistry.setValue(WinRegistry.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", sparkPath);
 
-            addURIMapping(dir, path);
+            setURI(sparkPath);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void addURIMapping(File dir, String path) {
+    /**
+     * Adds Spark to the users registry to allow for XMPP URI mapping.
+     *
+     * @param path the installation directory of spark.
+     */
+    private void setURI(String path) {
         boolean exists = WinRegistry.keyExists(WinRegistry.HKEY_CLASSES_ROOT, "xmpp");
         if (exists) {
         }

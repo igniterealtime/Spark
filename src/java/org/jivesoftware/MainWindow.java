@@ -17,7 +17,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -86,7 +85,7 @@ public final class MainWindow extends JFrame implements ActionListener {
 
     private static MainWindow singleton;
     private static final Object LOCK = new Object();
-    
+
     private JSplitPane splitPane = null;
 
     /**
@@ -119,7 +118,7 @@ public final class MainWindow extends JFrame implements ActionListener {
      */
     private MainWindow(String title, ImageIcon icon) {
 
-    	// Initialize and dock the menus
+        // Initialize and dock the menus
         buildMenu();
 
         // Add Workspace Container
@@ -244,6 +243,9 @@ public final class MainWindow extends JFrame implements ActionListener {
         try {
             fireWindowShutdown();
         }
+        catch (Exception ex) {
+            Log.error(ex);
+        }
         finally {
             // Close application.
             System.exit(1);
@@ -253,6 +255,8 @@ public final class MainWindow extends JFrame implements ActionListener {
     /**
      * Prepares Spark for shutting down by first calling all {@link MainWindowListener}s and
      * setting the Agent to be offline.
+     *
+     * @param sendStatus true if Spark should send a presence with a status message.
      */
     public void logout(boolean sendStatus) {
         final XMPPConnection con = SparkManager.getConnection();
@@ -610,16 +614,16 @@ public final class MainWindow extends JFrame implements ActionListener {
 
     }
 
-	public boolean isDocked() {
-		LocalPreferences preferences = SettingsManager.getLocalPreferences();
-		return preferences.isDockingEnabled();
-	}
-	
-	public JSplitPane getSplitPane() {
+    public boolean isDocked() {
+        LocalPreferences preferences = SettingsManager.getLocalPreferences();
+        return preferences.isDockingEnabled();
+    }
+
+    public JSplitPane getSplitPane() {
         // create the split pane only if required.
-		if (splitPane == null){
-	        splitPane = new JSplitPane();
-		}
-		return this.splitPane;
-	}
+        if (splitPane == null) {
+            splitPane = new JSplitPane();
+        }
+        return this.splitPane;
+    }
 }
