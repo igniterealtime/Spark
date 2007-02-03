@@ -41,6 +41,10 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+/**
+ * ConferenceUtils allow for basic joining and inviting of users.
+ * 
+ */
 public class ConferenceUtils {
     private ConferenceUtils() {
     }
