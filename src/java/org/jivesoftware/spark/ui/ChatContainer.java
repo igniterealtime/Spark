@@ -720,7 +720,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param e the ChangeEvent.
      */
     public void stateChanged(ChangeEvent e) {
-        stopFlashing();
+        if (chatFrame.hasFocus()) {
+            stopFlashing();
+        }
 
         final Object o = getSelectedComponent();
         if (o instanceof ChatRoom) {
