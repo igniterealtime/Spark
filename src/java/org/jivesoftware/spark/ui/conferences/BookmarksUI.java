@@ -132,7 +132,7 @@ public class BookmarksUI extends JPanel {
                     else if (node != null) {
                         String roomJID = node.getAssociatedObject().toString();
 
-                        ConferenceUtils.autoJoinConferenceRoom(node.getUserObject().toString(), roomJID, null);
+                        ConferenceUtils.joinConferenceOnSeperateThread(node.getUserObject().toString(), roomJID, null);
                     }
                 }
             }
@@ -216,7 +216,7 @@ public class BookmarksUI extends JPanel {
                 public void actionPerformed(ActionEvent actionEvent) {
                     String roomName = node.getUserObject().toString();
                     String roomJID = node.getAssociatedObject().toString();
-                    ConferenceUtils.autoJoinConferenceRoom(roomName, roomJID, null);
+                    ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null);
                 }
             };
 
@@ -538,7 +538,7 @@ public class BookmarksUI extends JPanel {
             String roomName = bookmark.getName();
 
             if (bookmark.isAutoJoin()) {
-                ConferenceUtils.autoJoinConferenceRoom(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+                ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
                 autoJoinRooms.add(bookmark.getJid());
             }
 

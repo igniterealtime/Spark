@@ -552,7 +552,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             chatManager.getChatContainer().getChatRoom(roomJID);
         }
         catch (ChatRoomNotFoundException e1) {
-            ConferenceUtils.autoJoinConferenceRoom(roomDescription, roomJID, null);
+            ConferenceUtils.joinConferenceOnSeperateThread(roomDescription, roomJID, null);
         }
     }
 

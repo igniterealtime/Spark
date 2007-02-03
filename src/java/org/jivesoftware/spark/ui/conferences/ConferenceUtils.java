@@ -31,6 +31,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.JOptionPane;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,13 +41,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
- * 
  */
 public class ConferenceUtils {
+
     private ConferenceUtils() {
     }
 
@@ -110,15 +110,22 @@ public class ConferenceUtils {
         return creationDate;
     }
 
-    
-    public static void autoJoinConferenceRoom(final String roomName, String roomJID, String password) {
+
+    /**
+     * Joins a conference room using another thread. This allows for a smoother opening of rooms.
+     *
+     * @param roomName the name of the room.
+     * @param roomJID  the jid of the room.
+     * @param password the rooms password if required.
+     */
+    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
         ChatManager chatManager = SparkManager.getChatManager();
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
         final String nickname = pref.getNickname().trim();
 
-
+        // Check if room already exists. If so, join room again.
         try {
             GroupChatRoom chatRoom = (GroupChatRoom)chatManager.getChatContainer().getChatRoom(roomJID);
             MultiUserChat muc = chatRoom.getMultiUserChat();
@@ -130,6 +137,7 @@ public class ConferenceUtils {
         }
         catch (ChatRoomNotFoundException e) {
         }
+
 
         final GroupChatRoom room = new GroupChatRoom(groupChat);
         room.setTabTitle(roomName);
@@ -144,7 +152,7 @@ public class ConferenceUtils {
         }
 
 
-        final List errors = new ArrayList();
+        final List<String> errors = new ArrayList<String>();
         final String userPassword = password;
 
         final SwingWorker startChat = new SwingWorker() {
@@ -203,7 +211,7 @@ public class ConferenceUtils {
 
             public void finished() {
                 if (errors.size() > 0) {
-                    String error = (String)errors.get(0);
+                    String error = errors.get(0);
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -220,15 +228,27 @@ public class ConferenceUtils {
         };
 
         startChat.start();
-
-
     }
 
+    /**
+     * Presents the user with a dialog pre-filled with the room name and the jid.
+     *
+     * @param roomName the name of the room.
+     * @param roomJID  the rooms jid.
+     */
     public static void joinConferenceRoom(final String roomName, String roomJID) {
         JoinConferenceRoomDialog joinDialog = new JoinConferenceRoomDialog();
         joinDialog.joinRoom(roomJID, roomName);
     }
 
+    /**
+     * Joins a chat room.
+     *
+     * @param groupChat the MultiUserChat to join.
+     * @param tabTitle  the title of the tab.
+     * @param nickname  the nickname to join with.
+     * @param password  the users password.
+     */
     public static void enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password) {
         final GroupChatRoom room = new GroupChatRoom(groupChat);
         room.setTabTitle(tabTitle);
@@ -307,6 +327,14 @@ public class ConferenceUtils {
 
     }
 
+    /**
+     * Joins a chat room without using the UI.
+     *
+     * @param groupChat the <code>MultiUserChat</code>
+     * @param nickname  the nickname of the user.
+     * @param password  the password to join the room with.
+     * @return a List of errors, if any.
+     */
     public static List joinRoom(MultiUserChat groupChat, String nickname, String password) {
         final List errors = new ArrayList();
         if (!groupChat.isJoined()) {
@@ -403,8 +431,8 @@ public class ConferenceUtils {
      * @param roomName    the name of the room to create.
      * @param jids        a collection of the user JIDs to invite.
      */
-    public static void createPrivateConference(String serviceName, String message, String roomName, Collection jids) {
-        final String roomJID = StringUtils.escapeNode(roomName) + "@"+serviceName;
+    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) {
+        final String roomJID = StringUtils.escapeNode(roomName) + "@" + serviceName;
         final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomJID);
 
         final GroupChatRoom room = new GroupChatRoom(chatRoom);
@@ -418,7 +446,7 @@ public class ConferenceUtils {
             submitForm.setAnswer("muc#roomconfig_publicroom", false);
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 
-            List owners = new ArrayList();
+            final List<String> owners = new ArrayList<String>();
             owners.add(SparkManager.getSessionManager().getBareAddress());
             submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 
@@ -440,15 +468,20 @@ public class ConferenceUtils {
             chatManager.getChatContainer().activateChatRoom(room);
         }
 
-        final Iterator jidsToInvite = jids.iterator();
-        while (jidsToInvite.hasNext()) {
-            String jid = (String)jidsToInvite.next();
+        for (String jid : jids) {
             chatRoom.invite(jid, message);
-
             room.getTranscriptWindow().insertNotificationMessage("Waiting for " + jid + " to join.");
         }
     }
 
+    /**
+     * Enters a GroupChatRoom on the event thread.
+     *
+     * @param roomName the name of the room.
+     * @param roomJID  the rooms jid.
+     * @param password the rooms password (if any).
+     * @return the GroupChatRoom created.
+     */
     public static GroupChatRoom enterRoomOnSameThread(final String roomName, String roomJID, String password) {
         ChatManager chatManager = SparkManager.getChatManager();
 

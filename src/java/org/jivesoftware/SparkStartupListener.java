@@ -117,7 +117,7 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
         int join = uriMapping.indexOf("?join");
 
         String conference = uriMapping.substring(index + 5, join);
-        ConferenceUtils.autoJoinConferenceRoom(conference, conference, null);
+        ConferenceUtils.joinConferenceOnSeperateThread(conference, conference, null);
     }
 
 }

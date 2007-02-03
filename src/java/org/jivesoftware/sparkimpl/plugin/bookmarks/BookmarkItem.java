@@ -99,7 +99,7 @@ public class BookmarkItem extends JPanel {
                     }
 
                     public void finished() {
-                        ConferenceUtils.autoJoinConferenceRoom(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+                        ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
                     }
                 };
                 worker.start();

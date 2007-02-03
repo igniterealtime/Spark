@@ -18,7 +18,6 @@ import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.bookmark.BookmarkedURL;
 import org.jivesoftware.smackx.bookmark.Bookmarks;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.BrowserLauncher;
@@ -26,17 +25,12 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.PopupMenu;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JMenu;
 
 /**
@@ -115,7 +109,7 @@ public class BookmarkPlugin implements Plugin {
                                     }
 
                                     public void finished() {
-                                        ConferenceUtils.autoJoinConferenceRoom(conferences.getName(), conferences.getJid(), conferences.getPassword());
+                                        ConferenceUtils.joinConferenceOnSeperateThread(conferences.getName(), conferences.getJid(), conferences.getPassword());
                                     }
                                 };
                                 worker.start();
