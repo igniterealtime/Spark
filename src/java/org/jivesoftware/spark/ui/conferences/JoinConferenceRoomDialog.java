@@ -127,7 +127,7 @@ final class JoinConferenceRoomDialog extends JPanel {
             boolean requiresPassword;
 
             public Object construct() {
-                requiresPassword = ConferenceUtils.requiresPassword(roomJID);
+                requiresPassword = ConferenceUtils.isPasswordRequired(roomJID);
                 return new Boolean(requiresPassword);
             }
 
