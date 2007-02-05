@@ -13,9 +13,9 @@ package org.jivesoftware.sparkimpl.profile;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
-import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Color;
@@ -41,14 +41,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * UI to view/edit avatar.
+ */
 public class AvatarPanel extends JPanel implements ActionListener {
     private JLabel avatar;
     private byte[] bytes;
     private File avatarFile;
     final JButton browseButton = new JButton();
     final JButton clearButton = new JButton();
-    private JFileChooser fc;
+    private JFileChooser fileChooser;
 
+    /**
+     * Default Constructor
+     */
     public AvatarPanel() {
         setLayout(new GridBagLayout());
 
@@ -78,74 +84,90 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
         avatar.setText(Res.getString("message.no.avatar.found"));
 
-        GraphicUtils.makeSameSize(new JComponent[]{browseButton, clearButton});
+        GraphicUtils.makeSameSize(browseButton, clearButton);
         avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-
-
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-                if (fc == null) {
-                    fc = new JFileChooser(Spark.getUserHome());
-                    if (Spark.isWindows()) {
-                        fc.setFileSystemView(new WindowsFileSystemView());
-                    }
-                }
-            }
-        });
-
-        thread.start();
     }
 
+    /**
+     * Sets if the Avatar can be edited.
+     *
+     * @param editable true if edtiable.
+     */
     public void setEditable(boolean editable) {
         browseButton.setVisible(editable);
         clearButton.setVisible(editable);
     }
 
+    /**
+     * Sets the displayable icon with the users avatar.
+     *
+     * @param icon the icon.
+     */
     public void setAvatar(ImageIcon icon) {
         avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 48, Image.SCALE_SMOOTH)));
         avatar.setText("");
     }
 
+    /**
+     * Sets the avatar bytes.
+     *
+     * @param bytes the bytes.
+     */
     public void setAvatarBytes(byte[] bytes) {
         this.bytes = bytes;
     }
 
+    /**
+     * Returns the avatars bytes.
+     *
+     * @return the bytes.
+     */
     public byte[] getAvatarBytes() {
         return bytes;
     }
 
+    /**
+     * Returns the Icon representation of the Avatar.
+     *
+     * @return
+     */
     public Icon getAvatar() {
         return avatar.getIcon();
     }
 
+    /**
+     * Returns the image file to use as the avatar.
+     *
+     * @return
+     */
     public File getAvatarFile() {
         return avatarFile;
     }
 
     public void actionPerformed(ActionEvent e) {
+        // init file chooser (if not already done)
+        initFileChooser();
 
-        fc.setFileFilter(new ImageFilter());
-
-        int result = fc.showOpenDialog(this);
+        int result = fileChooser.showOpenDialog(this);
         // Determine which button was clicked to close the dialog
         switch (result) {
             case JFileChooser.APPROVE_OPTION:
                 final JComponent parent = this;
                 SwingWorker worker = new SwingWorker() {
-                    File file = null;
+                    File selectedFile = null;
 
                     public Object construct() {
-                        file = fc.getSelectedFile();
+                        selectedFile = fileChooser.getSelectedFile();
                         try {
-                            ImageIcon imageOnDisk = new ImageIcon(file.getCanonicalPath());
+                            ImageIcon imageOnDisk = new ImageIcon(selectedFile.getCanonicalPath());
                             Image avatarImage = imageOnDisk.getImage();
                             if (avatarImage.getHeight(null) > 96 || avatarImage.getWidth(null) > 96) {
                                 avatarImage = avatarImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
                             }
                             return avatarImage;
                         }
-                        catch (IOException e1) {
-                            Log.error(e1);
+                        catch (IOException ex) {
+                            Log.error(ex);
                         }
                         return null;
                     }
@@ -166,7 +188,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                         }
 
                         setAvatar(new ImageIcon(avatarImage));
-                        avatarFile = file;
+                        avatarFile = selectedFile;
                     }
                 };
 
@@ -232,6 +254,17 @@ public class AvatarPanel extends JPanel implements ActionListener {
             if (comp instanceof JTextField) {
                 ((JTextField)comp).setEditable(allowEditing);
             }
+        }
+    }
+
+    public void initFileChooser() {
+        if (fileChooser == null) {
+            fileChooser = new JFileChooser(Spark.getUserHome());
+            if (Spark.isWindows()) {
+                fileChooser.setFileSystemView(new WindowsFileSystemView());
+            }
+            fileChooser.setFileFilter(new ImageFilter());
+
         }
     }
 
