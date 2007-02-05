@@ -133,7 +133,7 @@ public class VCardManager {
         avatarPanel = new AvatarPanel();
         tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 
-        loadVCard(SparkManager.getSessionManager().getBareAddress());
+        createVCardUI(vcard);
 
         final JOptionPane pane;
         final JDialog dlg;
