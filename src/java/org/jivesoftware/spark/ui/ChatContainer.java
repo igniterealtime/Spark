@@ -720,7 +720,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param e the ChangeEvent.
      */
     public void stateChanged(ChangeEvent e) {
-        if (chatFrame.hasFocus()) {
+        // Stop the flashing only if the chat frame is in focus.
+        if (chatFrame.isInFocus()) {
             stopFlashing();
         }
 
@@ -1045,8 +1046,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             }
 
-            titleLabel.setForeground(Color.black);
-            titleLabel.setFont(defaultFont);
+            // Should only set the icon to default if the frame is in focus
+            // and the tab is the selected component.
+            if (getSelectedIndex() == index && chatFrame.isInFocus()) {
+                titleLabel.setForeground(Color.black);
+                titleLabel.setFont(defaultFont);
+            }
         }
     }
 
