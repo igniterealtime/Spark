@@ -505,6 +505,84 @@ public class ConferenceUtils {
         return room;
     }
 
+    public static void enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password) {
+        final GroupChatRoom room = new GroupChatRoom(groupChat);
+        room.setTabTitle(tabTitle);
+        if (room == null) {
+            return;
+        }
+
+
+        final List errors = new ArrayList();
+
+
+        if (!groupChat.isJoined()) {
+            int groupChatCounter = 0;
+            while (true) {
+                groupChatCounter++;
+                String joinName = nickname;
+                if (groupChatCounter > 1) {
+                    joinName = joinName + groupChatCounter;
+                }
+                if (groupChatCounter < 10) {
+                    try {
+                        if (ModelUtil.hasLength(password)) {
+                            groupChat.join(joinName, password);
+                        }
+                        else {
+                            groupChat.join(joinName);
+                        }
+                        break;
+                    }
+                    catch (XMPPException ex) {
+                        int code = 0;
+                        if (ex.getXMPPError() != null) {
+                            code = ex.getXMPPError().getCode();
+                        }
+
+                        if (code == 0) {
+                            errors.add("No response from server.");
+                        }
+                        else if (code == 401) {
+                            errors.add("A Password is required to enter this room.");
+                        }
+                        else if (code == 403) {
+                            errors.add("You have been banned from this room.");
+                        }
+                        else if (code == 404) {
+                            errors.add("The room you are trying to enter does not exist.");
+                        }
+                        else if (code == 407) {
+                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
+                        }
+                        else if (code != 409) {
+                            break;
+                        }
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        if (errors.size() > 0) {
+            String error = (String)errors.get(0);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Could Not Join Room", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        else if (groupChat.isJoined()) {
+            ChatManager chatManager = SparkManager.getChatManager();
+            chatManager.getChatContainer().addChatRoom(room);
+            chatManager.getChatContainer().activateChatRoom(room);
+        }
+        else {
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join room.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+    }
+
 
 }
 
