@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="3.2.1">
+<install4j version="4.0.4" transformSequenceNumber="1">
   <directoryPresets config="../../documentation" />
-  <application name="${compiler:APP_NAME}" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_${compiler:sys.version}" compression="6" lzmaCompression="true" keepModificationTimes="false" shortName="${compiler:APP_SHORT_NAME}" publisher="${compiler:PUBLISHER}" publisherWeb="${compiler:PUBLISHER_URL}" version="${compiler:VERSION_MAJOR}.${compiler:VERSION_MINOR}.${compiler:VERSION_REVISION}" allPathsRelative="true" backupOnSave="false" autoSave="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
+  <application name="${compiler:APP_NAME}" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_${compiler:sys.version}" compression="6" lzmaCompression="true" pack200Compression="false" keepModificationTimes="false" shortName="${compiler:APP_SHORT_NAME}" publisher="${compiler:PUBLISHER}" publisherWeb="${compiler:PUBLISHER_URL}" version="${compiler:VERSION_MAJOR}.${compiler:VERSION_MINOR}.${compiler:VERSION_REVISION}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
+    <languages skipLanguageSelection="false">
+      <principalLanguage id="en" customLocalizationFile="" />
+      <additionalLanguages />
+    </languages>
     <searchSequence>
       <registry />
       <envVar name="JAVA_HOME" />
@@ -23,11 +27,12 @@
     </variables>
   </application>
   <files>
+    <roots />
     <mountPoints>
-      <mountPoint name="" id="1" location="" mode="755" />
+      <mountPoint id="1" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="1" file="../../target/build" overwrite="1" shared="false" mode="644" dontUninstall="false" excludeSuffixes="" dirMode="755">
+      <dirEntry mountPoint="1" file="../../target/build" overwrite="1" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="resources/version.xml~" launcher="false" />
         </exclude>
@@ -36,9 +41,9 @@
     <components />
   </files>
   <launchers>
-    <launcher name="Spark" id="4" external="false" excludeFromMenu="false" menuName="" icnsFile="../../src/resources/images/message.icns" pngIcon16File="../../src/resources/images/message.png" pngIcon32File="../../src/resources/images/message-32x32.png" macServiceDependencies="" allowUserChangeServiceStartType="true">
-      <executable name="Spark" type="1" iconSet="true" iconFile="../../src/resources/images/message.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" redirectStdout="true" stdoutFile="logs/output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="">
-        <versionInfo include="true" fileVersion="${compiler:sys.version}" companyName="" fileDescription="Spark" legalCopyright="Jive Software" productVersion="" internalName="${compiler:PRODUCT_NAME}" />
+    <launcher name="Spark" id="4" external="false" excludeFromMenu="false" menuName="" icnsFile="../../src/resources/images/message.icns" pngIcon16File="../../src/resources/images/message.png" pngIcon32File="../../src/resources/images/message-32x32.png" macServiceDependencies="" swtApp="false">
+      <executable name="Spark" type="1" iconSet="true" iconFile="../../src/resources/images/message.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" redirectStdout="true" stdoutFile="logs/output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="" executionLevel="asInvoker">
+        <versionInfo include="true" fileVersion="${compiler:sys.version}" fileDescription="Spark" legalCopyright="Jive Software" internalName="${compiler:PRODUCT_NAME}" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="">
         <text>
@@ -46,12 +51,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
-        <searchSequence>
-          <registry />
-          <envVar name="JAVA_HOME" />
-          <envVar name="JDK_HOME" />
-        </searchSequence>
+      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" preferredVM="client">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
           <directory location="resources" failOnError="false" />
@@ -64,10 +64,14 @@
         </nativeLibraryDirectories>
       </java>
       <includedFiles />
+      <unextractableFiles />
+      <customScript mode="1" file="">
+        <scriptLines />
+      </customScript>
     </launcher>
-    <launcher name="starter" id="21" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="" pngIcon32File="" macServiceDependencies="" allowUserChangeServiceStartType="true">
-      <executable name="starter" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="">
-        <versionInfo include="false" fileVersion="" companyName="" fileDescription="" legalCopyright="" productVersion="" internalName="" />
+    <launcher name="starter" id="21" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="" pngIcon32File="" macServiceDependencies="" swtApp="false">
+      <executable name="starter" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker">
+        <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="">
         <text>
@@ -75,92 +79,286 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="org.jivesoftware.Restarter" vmParameters="" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="" allowBetaVM="false" jdkOnly="false">
-        <searchSequence>
-          <registry />
-          <envVar name="JAVA_HOME" />
-          <envVar name="JDK_HOME" />
-        </searchSequence>
+      <java mainClass="org.jivesoftware.Restarter" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="">
         <classPath>
           <scanDirectory location="lib" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
       <includedFiles />
+      <unextractableFiles />
+      <customScript mode="1" file="">
+        <scriptLines />
+      </customScript>
     </launcher>
   </launchers>
-  <installerGui installerType="1" runUninstallerOnUpdate="false" addOnAppId="" suggestPreviousLocations="true" allowUnattendedInstall="false" useCustomHeaderImage="false" customHeaderImage="" customSize="false" customWidth="500" customHeight="390">
-    <customCode preAction="false" preActionClass="" postAction="false" postActionClass="" preUninstallAction="false" preUninstallActionClass="" postUninstallAction="false" postUninstallActionClass="" initHandler="false" initHandlerClass="" directoryValidator="false" directoryValidatorClass="" installationHandler="false" installationHandlerClass="">
+  <installerGui installerType="1" suggestPreviousProgramGroup="true" addOnAppId="" suggestPreviousLocations="true" allowUnattended="true" allowConsole="true" useCustomInstallerHeaderImage="false" customInstallerHeaderImage="" useCustomUninstallerHeaderImage="false" customUninstallerHeaderImage="" customSize="false" customWidth="500" customHeight="390" useCustomIcon="false" customIcnsFile="" customPngIcon16File="" customPngIcon32File="" customIcoFile="" vmParameters="" watermark="false" resizable="true">
+    <customCode useInstalledFiles="false">
       <archive location="../../target/build/lib/spark.jar" />
     </customCode>
-    <standardScreens>
-      <screen id="welcome" enabled="true" useCustomBanner="false" bannerImageFile="" background="255,255,255" />
-      <screen id="license" enabled="false" file="" />
-      <screen id="location" enabled="true" showSpace="true" suggestAppDir="true" />
-      <screen id="components" enabled="true" allSelected="true" firstMandatory="true">
-        <selectedComponents />
-        <mandatoryComponents />
+    <installerScreens>
+      <screen name="" id="22" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.WelcomeScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
       </screen>
-      <screen id="programGroup" enabled="true" />
-      <screen id="fileAssociations" enabled="true">
-        <associations />
+      <screen name="" id="23" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
       </screen>
-      <screen id="services" enabled="true" allSelected="true">
-        <selectedServiceLaunchers />
+      <screen name="" id="24" beanClass="com.install4j.runtime.beans.screens.ComponentsScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.ComponentsScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
       </screen>
-      <screen id="additionalTasks" enabled="true" customTasksPlacement="1">
-        <customTasks />
+      <screen name="" id="25" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
       </screen>
-      <screen id="preInfo" enabled="false" file="" />
-      <screen id="install" enabled="true" />
-      <screen id="postInfo" enabled="false" file="" />
-      <screen id="finished" enabled="true" useCustomBanner="false" bannerImageFile="" background="255,255,255" />
-    </standardScreens>
-    <customScreens />
+      <screen name="" id="26" beanClass="com.install4j.runtime.beans.screens.FileAssociationsScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.FileAssociationsScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
+      </screen>
+      <screen name="" id="27" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions>
+          <action name="" id="28" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.InstallFilesAction" />
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
+          <action name="" id="29" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
+                  <void property="programGroupName">
+                    <string>${compiler:sys.fullName}</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
+          <action name="" id="30" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
+                  <void property="itemName">
+                    <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
+        </actions>
+        <formComponents />
+      </screen>
+      <screen name="" id="31" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions>
+          <action name="" id="41" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
+                  <void property="launcherId">
+                    <string>4</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
+          </action>
+        </actions>
+        <formComponents>
+          <formComponent name="Execute launcher" id="42" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                  <void property="checkboxText">
+                    <string>${i18n:RunEntryExec("${compiler:sys.fullName}")}</string>
+                  </void>
+                  <void property="initiallySelected">
+                    <boolean>true</boolean>
+                  </void>
+                  <void property="variableName">
+                    <string>executeLauncherAction</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <initScript />
+          </formComponent>
+        </formComponents>
+      </screen>
+    </installerScreens>
+    <uninstallerScreens>
+      <screen name="" id="32" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
+      </screen>
+      <screen name="" id="33" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.UninstallationScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions>
+          <action name="" id="34" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.UninstallFilesAction" />
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
+        </actions>
+        <formComponents />
+      </screen>
+      <screen name="" id="35" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.UninstallFailureScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
+      </screen>
+      <screen name="" id="36" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
+      </screen>
+    </uninstallerScreens>
+    <installerStartup>
+      <screen name="" id="15" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.StartupScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
+      </screen>
+    </installerStartup>
+    <uninstallerStartup>
+      <screen name="" id="16" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.StartupScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents />
+      </screen>
+    </uninstallerStartup>
   </installerGui>
   <mediaSets>
-    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" allLaunchers="true" includedJRE="windows-x86-1.6.0" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="false" launchExecutableId="" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="2" desktopLauncherId="4" programGroup="Spark" allowUserDisableStartMenuCreation="true" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="2">
-      <selectedLaunchers />
-      <messageSet language="English" />
+    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="windows-x86-1.6.0" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers />
+      <excludedComponents />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="bin/startup.bat" launcher="false" />
         <entry location="lib/linux" launcher="false" />
         <entry location="plugins/idlelinux.jar" launcher="false" />
       </exclude>
       <variables />
-      <excludedScreenIds />
-      <additionalStartMenuEntries />
+      <excludedInstallerScreens />
+      <excludedUninstallerScreens />
     </win32>
-    <win32 name="Updater" id="12" mediaFileName="CommunicatorUpdate" installDir="Jive Communicator" allLaunchers="true" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="false" launchExecutableId="" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="1" desktopLauncherId="" programGroup="" allowUserDisableStartMenuCreation="false" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="1">
-      <selectedLaunchers />
-      <messageSet language="English" />
-      <exclude />
-      <variables />
-      <excludedScreenIds />
-      <additionalStartMenuEntries />
-    </win32>
-    <unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" allLaunchers="true" includedJRE="linux-x86-1.6.0" manualJREEntry="false" customScriptMode="1" customScriptFile="">
-      <selectedLaunchers />
-      <messageSet language="English" />
+    <unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="linux-x86-1.6.0" manualJREEntry="false">
+      <excludedLaunchers />
+      <excludedComponents />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="bin/startup.bat" launcher="false" />
         <entry location="lib/windows" launcher="false" />
         <entry location="plugins/jniwrapper.jar" launcher="false" />
       </exclude>
       <variables />
-      <customScriptLines />
     </unixArchive>
-    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_${compiler:sys.version}_online" installDir="Spark" allLaunchers="true" includedJRE="" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.5.0_05.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="false" launchExecutableId="" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="2" desktopLauncherId="4" programGroup="Spark" allowUserDisableStartMenuCreation="false" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="2">
-      <selectedLaunchers />
-      <messageSet language="English" />
+    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_${compiler:sys.version}_online" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" includedJRE="" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.5.0_05.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers />
+      <excludedComponents />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="bin/startup.bat" launcher="false" />
         <entry location="lib/linux" launcher="false" />
         <entry location="plugins/idlelinux.jar" launcher="false" />
       </exclude>
       <variables />
-      <excludedScreenIds />
-      <additionalStartMenuEntries />
+      <excludedInstallerScreens />
+      <excludedUninstallerScreens />
     </win32>
   </mediaSets>
   <buildIds buildAll="false">

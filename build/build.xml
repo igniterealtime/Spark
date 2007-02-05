@@ -1,25 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Spark" default="jar" basedir=".">
+
+<project name="Spark" default="jar" basedir="..">
+
+    <description>
+        Spark build script.
+    </description>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${basedir}/build/lib/ant-contrib.jar"/>
+        </classpath>
+    </taskdef>
+
+    <taskdef name="pack200" classname="com.sun.tools.apache.ant.pack200.Pack200Task">
+        <classpath>
+            <pathelement location="${basedir}/build/lib/pack200task.jar"/>
+        </classpath>
+    </taskdef>
 
 
     <!-- Optional add this file to override any of the properties below -->
-    <property file="${basedir}/build.properties"/>
+    <property file="${basedir}/build/build.properties"/>
     <property name="version.major" value="2"/>
-    <property name="version.minor" value="4"/>
-    <property name="version.revision" value="1"/>
+    <property name="version.minor" value="5"/>
+    <property name="version.revision" value="0"/>
+    <property name="version.extra" value="beta2"/>    <!-- For 'beta' or 'alpha' -->
 
-    <property name="version.period" value="${version.major}.${version.minor}.${version.revision}"/>
-    <property name="version.underscore" value="${version.major}_${version.minor}_${version.revision}"/>
+    <!-- Setup the full version property correctly -->
+    <if>
+        <equals arg1="${version.extra}" arg2=""/>
+        <then>
+            <property name="version"
+                      value="${version.major}.${version.minor}.${version.revision}"/>
+            <property name="version.filename"
+                      value="${version.major}_${version.minor}_${version.revision}"/>
+        </then>
+        <else>
+            <property name="version"
+                      value="${version.major}.${version.minor}.${version.revision}.${version.extra}"/>
+            <property name="version.filename"
+                      value="${version.major}_${version.minor}_${version.revision}_${version.extra}"/>
+        </else>
+    </if>
 
     <description>Spark Build</description>
     <!--set global properties for this build-->
-    <property name="src" location="../src/java"/>
-    <property name="lib.dir" location="./lib"/>
-    <property name="dist.libs.dir" location="./lib/dist"/>
-    <property name="merge.libs.dir" location="./lib/merge"/>
+    <property name="src" location="${basedir}/src/java"/>
+    <property name="lib.dir" location="${basedir}/build/lib"/>
+    <property name="dist.libs.dir" location="${basedir}/build/lib/dist"/>
+    <property name="merge.libs.dir" location="${basedir}/build/lib/merge"/>
     <property name="libs.windows.dir" location="${dist.libs.dir}/windows"/>
     <property name="libs.linux.dir" location="${dist.libs.dir}/linux"/>
-    <property name="target" location="../target"/>
+    <property name="target" location="${basedir}/target"/>
     <property name="classes" location="${target}/classes"/>
     <property name="target.build" location="${target}/build"/>
     <property name="sparkplugs.build" location="${target}/sparkplugs"/>
@@ -30,9 +62,9 @@
     <property name="targetdocsapi" location="${targetdocs}/api"/>
     <property name="plugins" location="${target.build}/plugins"/>
     <property name="bin" location="${target.build}/bin"/>
-    <property name="resources.dir" location="../src/resources"/>
-    <property name="commercial.plugin.dir" location="../src/commercial"/>
-    <property name="xtra.dir" location="../src/xtra"/>
+    <property name="resources.dir" location="${basedir}/src/resources"/>
+    <property name="commercial.plugin.dir" location="${basedir}/src/commercial"/>
+    <property name="xtra.dir" location="${basedir}/src/xtra"/>
     <property name="target.xtra" location="${target.build}/xtra"/>
 
 
@@ -40,7 +72,7 @@
 
     <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
     <property name="installer.dest.dir" value="${target}/installer"/>
-    <property name="installer.install4j.srcfile" value="installer/spark.install4j"/>
+    <property name="installer.install4j.srcfile" value="${basedir}/build/installer/spark.install4j"/>
     <property name="installer.app_name" value="Spark"/>
     <property name="installer.app_short_name" value="Spark"/>
     <property name="installer.product_name" value="Spark"/>
@@ -49,22 +81,11 @@
     <property name="installer.file_prefix" value="${installer.app_short_name}"/>
     <property name="installer.release_root_path" value="${target.build}"/>
 
-    <property name="mac.build.dir" value="${target}/spark_${version.underscore}"/>
+    <property name="mac.build.dir" value="${target}/spark_${version.filename}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
-    <property name="mac.dmg.file" value="${target}/spark_${version.underscore}.dmg"/>
+    <property name="mac.dmg.file" value="${target}/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-        <classpath>
-            <pathelement location="${lib.dir}/ant-contrib.jar"/>
-        </classpath>
-    </taskdef>
-
-    <taskdef name="pack200" classname="com.sun.tools.apache.ant.pack200.Pack200Task">
-        <classpath>
-            <pathelement location="${lib.dir}/pack200task.jar"/>
-        </classpath>
-    </taskdef>
 
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
@@ -141,7 +162,7 @@
             <fileset dir="${resources.dir}">
                 <include name="**/*"/>
             </fileset>
-            <fileset dir="../src/java">
+            <fileset dir="${basedir}/src/java">
                 <include name="**/*.properties"/>
             </fileset>
         </copy>
@@ -186,7 +207,7 @@
         </javac>
         <touch file="${targetlogs}/error.log"/>
         <copy todir="${targetdocs}">
-            <fileset dir="../documentation" includes="**/*" excludes="changes.*">
+            <fileset dir="${basedir}/documentation" includes="**/*" excludes="changes.*">
             </fileset>
         </copy>
         <copy todir="${targetlib}/windows">
@@ -205,7 +226,7 @@
             </fileset>
         </copy>
         <copy todir="${targetlib}">
-            <fileset dir="${basedir}/lib">
+            <fileset dir="${basedir}/build/lib">
                 <include name="i4jruntime.jar"/>
             </fileset>
         </copy>
@@ -289,7 +310,7 @@
     <!-- changelog =============================================================================== -->
     <target name="changelog"
             description="Generates an incremental changelog file based upon the XML/RSS feed from JIRA">
-        <xslt in="../documentation/changes.xml" out="../target/changes.html" style="../documentation/changes.xsl"/>
+        <xslt in="${basedir}/documentation/changes.xml" out="${basedir}/target/changes.html" style="${basedir}/documentation/changes.xsl"/>
     </target>
 
 
@@ -342,7 +363,7 @@
         </copy>
 
         <copy todir="${sparkplugs.build}/builder">
-            <fileset file="${basedir}/builder/**"/>
+            <fileset file="${basedir}/build/builder/**"/>
         </copy>
     </target>
 
@@ -365,10 +386,22 @@
 
         <mkdir dir="${installer.dest.dir}"/>
 
+        <!-- Install4j doesn't support extra version info (like beta) correctly, so
+             define a special revision number.  -->
+        <if>
+            <equals arg1="${version.extra}" arg2=""/>
+            <then>
+                <property name="install4j.revision" value="${version.revision}"/>
+            </then>
+            <else>
+                <property name="install4j.revision" value="${version.revision}.${version.extra}"/>
+            </else>
+        </if>
+
         <install4j projectfile="${installer.install4j.srcfile}" destination="${installer.dest.dir}">
             <variable name="VERSION_MAJOR" value="${version.major}"/>
             <variable name="VERSION_MINOR" value="${version.minor}"/>
-            <variable name="VERSION_REVISION" value="${version.revision}"/>
+            <variable name="VERSION_REVISION" value="${install4j.revision}"/>
             <variable name="APP_NAME" value="${installer.app_name}"/>
             <variable name="APP_SHORT_NAME" value="${installer.app_short_name}"/>
             <variable name="PRODUCT_NAME" value="${installer.product_name}"/>
@@ -391,19 +424,19 @@
 
     <target name="mac.build.plugin" depends="jar">
         <!-- build the apple jar and place it in the plugins -->
-        <ant antfile="../src/plugins/apple/build.xml" inheritall="no" target="clean"/>
-        <ant antfile="../src/plugins/apple/build.xml" inheritall="no" target="jar"/>
+        <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="clean"/>
+        <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="jar"/>
 
         <!-- build the growl jar and place it in the plugins -->
-        <ant antfile="../src/plugins/growl/build.xml" inheritall="no" target="clean"/>
-        <ant antfile="../src/plugins/growl/build.xml" inheritall="no" target="jar"/>
+        <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="clean"/>
+        <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
     </target>
 
     <target name="mac.app" depends="mac.clean,mac.build.plugin">
 
         <!-- http://www.loomcom.com/jarbundler/ -->
         <taskdef name="jarbundler"
-                 classpath="${basedir}/lib/jarbundler-1.4.jar"
+                 classpath="${basedir}/build/lib/jarbundler-1.4.jar"
                  classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
 
         <mkdir dir="${mac.build.dir}"/>
@@ -412,8 +445,8 @@
                     name="Spark"
                     mainclass="org.jivesoftware.Spark"
                     icon="${target}/classes/images/message.icns"
-                    version="${version.period}"
-                    infostring="Spark ${version.period}, (c) Jive Software 2005"
+                    version="${version}"
+                    infostring="Spark ${version}, (c) Jive Software 2005"
                     aboutmenuname="Spark"
                     bundleid="com.jivesoftware.SparkBundle"
                     developmentregion="English"
@@ -435,7 +468,7 @@
             <jarfileset dir="${target.build}/lib/windows">
                 <include name="jdic.jar"/>
             </jarfileset>
-            <jarfileset dir="${basedir}/lib">
+            <jarfileset dir="${basedir}/build/lib">
                 <include name="i4jruntime.jar"/>
             </jarfileset>
         </jarbundler>
@@ -464,12 +497,12 @@
         <symlink link="${mac.build.dir}/Applications" resource="/Applications"/>
 
         <exec executable="hdiutil" failonerror="true">
-            <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${basedir}/tmp.dmg'"/>
+            <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${basedir}/build/tmp.dmg'"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
-            <arg line="attach '${basedir}/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${basedir}/tmp'"/>
+            <arg line="attach '${basedir}/build/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${basedir}/build/tmp'"/>
         </exec>
-        <exec executable="osascript" dir="${basedir}/installer/" failonerror="true">
+        <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
             <arg value="mac/dmg_spark.scpt"/>
             <arg value="${mac.volname}"/>
             <arg value="images/mac/background/"/>
@@ -482,12 +515,12 @@
             <arg value="80"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
-            <arg line="detach ${basedir}/tmp -quiet -force"/>
+            <arg line="detach ${basedir}/build/tmp -quiet -force"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
-            <arg line="convert ${basedir}/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
+            <arg line="convert ${basedir}/build/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
         </exec>
-        <delete file="${basedir}/tmp.dmg"/>
+        <delete file="${basedir}/build/tmp.dmg"/>
         <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/>
     </target>
 
