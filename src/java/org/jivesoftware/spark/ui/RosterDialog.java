@@ -24,10 +24,23 @@ import org.jivesoftware.spark.component.borders.ComponentTitledBorder;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,18 +58,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 
 /**
@@ -108,7 +109,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
 
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(publicBox, networkPanel
-            , BorderFactory.createEtchedBorder());
+                , BorderFactory.createEtchedBorder());
 
 
         networkPanel.add(accountsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
@@ -158,7 +159,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             }
 
             public void focusLost(FocusEvent e) {
-                String jid = jidField.getText();
+                String jid = getJID();
 
                 String nickname = nicknameField.getText();
                 if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(jid)) {
@@ -257,7 +258,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
         Object[] options = {
-            Res.getString("add"), Res.getString("cancel")
+                Res.getString("add"), Res.getString("cancel")
         };
         pane = new JOptionPane(panel, -1, 2, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
@@ -296,7 +297,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             dialog.setVisible(false);
         }
         else if (Res.getString("add").equals(value)) {
-            String contact = UserManager.escapeJID(jidField.getText());
+            String jid = getJID();
+            String contact = UserManager.escapeJID(jid);
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
 
@@ -368,7 +370,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             transport = item.getTransport();
         }
         if (transport == null) {
-            String jid = jidField.getText();
+            String jid = getJID();
             if (jid.indexOf("@") == -1) {
                 jid = jid + "@" + SparkManager.getConnection().getServiceName();
             }
@@ -378,10 +380,10 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             jid = UserManager.escapeJID(jid);
 
             // Add as a new entry
-            addEntry(jid, nickname, group);
+            addRosterEntry(jid, nickname, group);
         }
         else {
-            String jid = jidField.getText();
+            String jid = getJID();
             try {
                 jid = Gateway.getJID(transport.getServiceName(), jid);
             }
@@ -391,9 +393,34 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
-            addEntry(jid, nickname, group);
-
+            addRosterEntry(jid, nickname, group);
         }
+    }
+
+    /**
+     * Returns the trimmed version of the JID.
+     *
+     * @return the trimmed version.
+     */
+    private String getJID() {
+        return jidField.getText().trim();
+    }
+
+    private void addRosterEntry(final String jid, final String nickname, final String group) {
+        final SwingWorker rosterEntryThread = new SwingWorker() {
+            public Object construct() {
+                return addEntry(jid, nickname, group);
+            }
+
+            public void finished() {
+                if (get() == null) {
+                    JOptionPane.showMessageDialog(dialog, Res.getString("label.unable.to.add.contact"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        };
+
+        rosterEntryThread.start();
     }
 
     /**
