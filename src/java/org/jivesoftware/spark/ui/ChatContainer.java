@@ -1039,7 +1039,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             if (room instanceof ChatRoomImpl) {
                 final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
-                if (!chatRoomImpl.isIconHandler()) {
+                if(chatRoomImpl.getAlternativeIcon() != null){
+                    tab.setIcon(chatRoomImpl.getAlternativeIcon());
+                }
+                else if (!chatRoomImpl.isIconHandler()) {
                     Presence presence = chatRoomImpl.getPresence();
                     Icon icon = SparkManager.getUserManager().getTabIconForPresence(presence);
                     tab.setIcon(icon);

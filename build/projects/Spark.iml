@@ -97,7 +97,9 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../smack/source" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -169,7 +171,9 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../smack/source" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -185,15 +189,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/synthetica.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/syntheticaBlackMoon.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
