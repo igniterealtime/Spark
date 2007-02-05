@@ -82,7 +82,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
     private boolean loaded = false;
 
-    private String retrieveListURL = "http://www.jivesoftware.org/updater/plugins.jsp";
+    private String retrieveListURL = "http://www.igniterealtime.org/updater/plugins.jsp";
 
     private JProgressBar progressBar;
     private PluginViewer viewer;

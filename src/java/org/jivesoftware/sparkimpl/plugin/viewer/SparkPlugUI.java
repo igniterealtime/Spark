@@ -59,7 +59,7 @@ public class SparkPlugUI extends JPanel {
 
         if (getFilename() != null) {
             try {
-                URL url = new URL("http://www.jivesoftware.org/updater/sparkplugs?filename=" + getFilename());
+                URL url = new URL("http://www.igniterealtime.org/updater/sparkplugs?filename=" + getFilename());
                 Image image = ImageIO.read(url);
                 ImageIcon icon = new ImageIcon(image);
                 imageIcon.setIcon(icon);
@@ -99,7 +99,7 @@ public class SparkPlugUI extends JPanel {
             changeLogButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        BrowserLauncher.openURL("http://www.jivesoftware.org/updater/retrieve.jsp?filename=" + getFilename() + "&changeLog=true");
+                        BrowserLauncher.openURL("http://www.igniterealtime.org/updater/retrieve.jsp?filename=" + getFilename() + "&changeLog=true");
                     }
                     catch (IOException e1) {
                         Log.error(e1);
@@ -110,7 +110,7 @@ public class SparkPlugUI extends JPanel {
             readMeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        BrowserLauncher.openURL("http://www.jivesoftware.org/updater/retrieve.jsp?filename=" + getFilename() + "&readme=true");
+                        BrowserLauncher.openURL("http://www.igniterealtime.org/updater/retrieve.jsp?filename=" + getFilename() + "&readme=true");
                     }
                     catch (IOException e1) {
                         Log.error(e1);
