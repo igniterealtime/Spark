@@ -117,7 +117,7 @@ public final class Spark {
 
                 try {
                     UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
-                    SyntheticaLookAndFeel.setFont("Dialog", 12);
+                    SyntheticaLookAndFeel.setFont("Dialog", 11);
                 }
                 catch (ParseException e) {
                     e.printStackTrace();
