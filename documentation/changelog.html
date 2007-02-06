@@ -181,62 +181,79 @@ hr {
 
 <h2>2.5.0 Beta 2 -- <span style="font-weight: normal;">February 7th, 2007</span></h2>
 
-<h3>New Features</h2>
+<h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-200'>SPARK-200</a>] - Drag and drop out of the chat window after file transfer now works.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-200'>SPARK-200</a>] - Allow drag and drop out of the chat window before and after file transfer</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-517'>SPARK-517</a>] - Simplified the viewing of users vCard information.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-519'>SPARK-519</a>] - Bookmarks are now located in the Spark main window menu bar.</li>
 </ul>
 
-<h3>Bug Fixes</h2>
+<h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-497'>SPARK-497</a>] - Fixed "Away due to idle" always being on.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-499'>SPARK-499</a>] - Fixed invalid emoticon packs breaking Spark.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-505'>SPARK-505</a>] - Fixed caching of personal vCards.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-508'>SPARK-508</a>] - Creating temporary rooms now escapes room JID.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-513'>SPARK-513</a>] - Fixed inconsistent behavior in tab notifications.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-497'>SPARK-497</a>] - Fixed "Away due to idle" on/off preference issue.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-499'>SPARK-499</a>] - Fixed error occuring when choosing invalid emoticon packs.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-505'>SPARK-505</a>] - Fixed loading of cached vcard when editing personal profile.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-508'>SPARK-508</a>] - Conference rooms jids are now escaped.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-513'>SPARK-513</a>] - Fixed inconsistent behavior in tab notifications.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-514'>SPARK-514</a>] - Fixed loading of file chooser in avatar panel.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-516'>SPARK-516</a>] - Spark now uses default look and feel when running on Windows Vista.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-520'>SPARK-520</a>] - Fixed hanging of Spark when adding new contacts.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-521'>SPARK-521</a>] - Group chat rooms now ignore presences with type error.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-522'>SPARK-522</a>] - Tabs within Spark are now easier to determine active/inactive.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-525'>SPARK-525</a>] - Spark no longer persists password if user requests password to not be saved.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-526'>SPARK-526</a>] - Fixed "Join on startup" in Conference room tab.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-527'>SPARK-527</a>] - Auto-joined rooms now display spell-checker and emoticon picklist.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-529'>SPARK-529</a>] - Conference invitation dialog now shows names in alphabetical order along with their presence.</li>
 </ul>
 
 
 <h2>2.5.0 Beta 1 -- <span style="font-weight: normal;">January 31st, 2007</span></h2>
 
-<h3>New Features</h2>
+<h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-235'>SPARK-235</a>] - Emoticon packs are now supported.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-427'>SPARK-427</a>] - Added action buttons in roster during user rollover.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-515'>SPARK-515</a>] - Spar now has an Enhanced Look and Feel.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-518'>SPARK-518</a>] - Added new auto-grow send field box.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-523'>SPARK-523</a>] - Added support for chat and email options in contact tooltips.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-524'>SPARK-524</a>] - Spark now shows full address of conference room.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-528'>SPARK-528</a>] - Message history is now grouped by Day, Month, Year.</li>
 </ul>
 
-<h3>Bug Fixes</h2>
+<h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-390'>SPARK-390</a>] - Presence no longer breaks with gateways installed</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-405'>SPARK-405</a>] - Conference bookmarks are now saved on the server and not locally.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-420'>SPARK-420</a>] - Fixed window repainting on tab transition with HTML Viewer.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-424'>SPARK-424</a>] - Auto-reconnect clears contact list on shutdown.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-473'>SPARK-473</a>] - Fixed Group chat presence issue.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-492'>SPARK-492</a>] - Presence priority is now set to 1 by default, not 0.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-506'>SPARK-506</a>] - Resizing of chat frame does not resize the send field properly.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-507'>SPARK-507</a>] - Asterisk plugin is now functional.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-235'>SPARK-235</a>] - Spark now supports Adium emoticon packs.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-390'>SPARK-390</a>] - Fixed presence issue caused by installed gateways.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-405'>SPARK-405</a>] - Conference bookmarks are now persisted on the server.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-420'>SPARK-420</a>] - Fixed window repainting on tab transitions.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-424'>SPARK-424</a>] - Fixed contact list error occuring on reconnect.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-427'>SPARK-427</a>] - Spark now allows for actions to occur on tooltips.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-473'>SPARK-473</a>] - Fixed presence issue in group chat rooms.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-492'>SPARK-492</a>] - Spark now defaults presence priority to 1 rather than 0.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-506'>SPARK-506</a>] - Fixed send field resize issue when chat frame was resized.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-507'>SPARK-507</a>] - Fixed asterisks plugin. Asterisks is now fully functional.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-530'>SPARK-530</a>] - Improved performance of loading and persisting of transcripts.</li>
 </ul>
 
 <h2>2.0.8 -- <span style="font-weight: normal;">January 23rd, 2007</span></h2>
 
 <h3>New Features</h3>
 <ul>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-462'>SPARK-462</a>] - Added notification preferences for user presence.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-462'>SPARK-462</a>] - Added notification preferences for user presence.</li>
 </ul>
 <h3>Bug Fixes</h3>
 <ul>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-449'>SPARK-449</a>] - Fix chat transcript parsing error with UTF-8</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-450'>SPARK-450</a>] - Fixed tab refreshing problem.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-460'>SPARK-460</a>] - Remove old icons from group chat room.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-461'>SPARK-461</a>] - Improved Toaster popup UI</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-465'>SPARK-465</a>] - Conference Participant list becomes corrupted on presence changes.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-468'>SPARK-468</a>] - Logging out with Chat windows open does not save chat transcript.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-469'>SPARK-469</a>] - Spark needs to do update checks against the new Ignite site.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-470'>SPARK-470</a>] - VCard loading for email chat info should not be in own thread.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-475'>SPARK-475</a>] - Spark 2.0.8 custom skin w/ wildfire spark version set, always thinks there's a newer version</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-476'>SPARK-476</a>] - Asterisks plugin is fully functional.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-477'>SPARK-477</a>] - Users are being removed from the participant list on presence change.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-479'>SPARK-479</a>] - VCard caching not updating avatar.</li>
-<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-480'>SPARK-480</a>] - Stale chats logic removes incoming message notification.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-449'>SPARK-449</a>] - Fix chat transcript parsing error with UTF-8</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-450'>SPARK-450</a>] - Fixed tab refreshing problem.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-460'>SPARK-460</a>] - Remove old icons from group chat room.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-461'>SPARK-461</a>] - Improved Toaster popup UI</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-465'>SPARK-465</a>] - Conference Participant list becomes corrupted on presence changes.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-468'>SPARK-468</a>] - Logging out with Chat windows open does not save chat transcript.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-469'>SPARK-469</a>] - Spark needs to do update checks against the new Ignite site.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-470'>SPARK-470</a>] - VCard loading for email chat info should not be in own thread.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-475'>SPARK-475</a>] - Spark 2.0.8 custom skin w/ wildfire spark version set, always thinks there's a newer version</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-476'>SPARK-476</a>] - Asterisks plugin is fully functional.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-477'>SPARK-477</a>] - Users are being removed from the participant list on presence change.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-479'>SPARK-479</a>] - VCard caching not updating avatar.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-480'>SPARK-480</a>] - Stale chats logic removes incoming message notification.</li>
 </ul>
 
 <h2>2.0.7 -- <span style="font-weight: normal;">December 4th, 2006</span></h2>
