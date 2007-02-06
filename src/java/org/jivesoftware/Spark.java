@@ -292,6 +292,7 @@ public final class Spark {
         UIManager.put("TextField.lightforeground", Color.gray);
         UIManager.put("TextField.foreground", Color.BLACK);
         UIManager.put("TextField.caretForeground", Color.black);
+        UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
 
         UIManager.put("List.selectionBackground", new Color(217, 232, 250));
         UIManager.put("List.selectionForeground", Color.black);
