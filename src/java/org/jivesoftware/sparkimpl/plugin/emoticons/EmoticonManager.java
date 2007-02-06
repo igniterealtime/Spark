@@ -176,6 +176,8 @@ public class EmoticonManager {
 
         final File plist = new File(emoticonSet, "Emoticons.plist");
         SAXReader saxReader = new SAXReader();
+        saxReader.setValidation(false);
+        
         Document emoticonFile = null;
         try {
             emoticonFile = saxReader.read(plist);
