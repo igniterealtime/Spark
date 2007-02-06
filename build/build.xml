@@ -491,7 +491,7 @@
         <mkdir dir="${mac.build.dir}/.background"/>
         
         <copy todir="${mac.build.dir}/.background">
-            <fileset file="installer/images/mac/dmgBackground.png"/>
+            <fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
         </copy>
         
         <symlink link="${mac.build.dir}/Applications" resource="/Applications"/>
