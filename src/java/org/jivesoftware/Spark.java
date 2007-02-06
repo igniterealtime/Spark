@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -114,12 +113,16 @@ public final class Spark {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
-
                 try {
-                    UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
-                    SyntheticaLookAndFeel.setFont("Dialog", 11);
+                    if (isVista()) {
+                        UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
+                    }
+                    else {
+                        UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
+                        SyntheticaLookAndFeel.setFont("Dialog", 11);
+                    }
                 }
-                catch (ParseException e) {
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -174,6 +177,16 @@ public final class Spark {
     public static boolean isWindows() {
         final String osName = System.getProperty("os.name").toLowerCase();
         return osName.startsWith("windows");
+    }
+
+    /**
+     * Returns true if Spark is running on vista.
+     *
+     * @return true if running on Vista.
+     */
+    public static boolean isVista() {
+        final String osName = System.getProperty("os.name").toLowerCase();
+        return osName.contains("vista");
     }
 
     /**
