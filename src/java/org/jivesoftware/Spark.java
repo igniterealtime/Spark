@@ -11,6 +11,7 @@
 package org.jivesoftware;
 
 import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
@@ -116,6 +117,7 @@ public final class Spark {
 
                 try {
                     UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
+                    SyntheticaLookAndFeel.setFont("Dialog", 12);
                 }
                 catch (ParseException e) {
                     e.printStackTrace();
