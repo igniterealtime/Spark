@@ -481,6 +481,11 @@
                 <exclude name="**/idlelinux.*"/>
             </fileset>
         </copy>
+        
+        <!-- When building on PowerPC Macs we get a PowerPC binary for the JavaApplicationStub. We've gotten a few requests to fix that from the forums, so we'll manually copy one from an Intel Mac -->
+        <copy todir="${mac.app.file}/Contents/MacOS">
+            <fileset file="${basedir}/src/resources/JavaApplicationStub"/>
+        </copy>
 
         <delete file="${plugins}/jniwrapper.jar"/>
     </target>
