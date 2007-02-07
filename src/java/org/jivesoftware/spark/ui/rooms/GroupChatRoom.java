@@ -38,9 +38,10 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
+import org.jivesoftware.spark.ui.GroupChatRoomTransferHandler;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.DataFormDialog;
+import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -98,6 +99,7 @@ public final class GroupChatRoom extends ChatRoom {
     private GroupChatParticipantList roomInfo;
 
     private long lastActivity;
+    private GroupChatRoomTransferHandler transferHandler;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -237,6 +239,9 @@ public final class GroupChatRoom extends ChatRoom {
 
         // set last activity to be right now
         lastActivity = System.currentTimeMillis();
+
+        transferHandler = new GroupChatRoomTransferHandler(this);
+        getTranscriptWindow().setTransferHandler(transferHandler);
     }
 
     /**
@@ -631,8 +636,16 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
+    /**
+     * Handle all presence packets being sent to this Group Chat Room.
+     * @param packet the presence packet.
+     */
     private void handlePresencePacket(Packet packet) {
         Presence presence = (Presence)packet;
+        if(presence.getError() != null){
+            return;
+        }
+        
         final String from = presence.getFrom();
         final String nickname = StringUtils.parseResource(from);
 
@@ -672,6 +685,9 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
+    /**
+     * Set up the participant listeners and status change listeners.
+     */
     private void setupListeners() {
         chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
             public void kicked(String participant) {
@@ -921,6 +937,11 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
+    /**
+     * Invite a user to this conference room.
+     * @param jid the jid of the user to invite.
+     * @param message the message to send with the invitation.
+     */
     public void inviteUser(String jid, String message) {
         message = message != null ? message : Res.getString("message.please.join.in.conference");
 
@@ -1003,6 +1024,10 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
+    /**
+     * Returns the GroupChatParticpantList which displays all users within a conference room.
+     * @return the GroupChatParticipantList.
+     */
     public GroupChatParticipantList getConferenceRoomInfo() {
         return roomInfo;
     }
@@ -1033,14 +1058,19 @@ public final class GroupChatRoom extends ChatRoom {
         getTranscriptWindow().insertErrorMessage(message);
     }
 
-
+    /**
+     * Is called whenever Spark was unexpectadly disconnected.
+     */
     private void handleDisconnect() {
         getChatInputEditor().setEnabled(false);
         getSendButton().setEnabled(false);
         SparkManager.getChatManager().getChatContainer().useTabDefault(this);
     }
 
-
+    /**
+     * An internal UI implementation for display subjects
+     * within the conference room.
+     */
     private class SubjectPanel extends JPanel {
 
         private JLabel iconLabel;
