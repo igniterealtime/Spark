@@ -9,7 +9,6 @@
 package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
-import org.jivesoftware.jingleaudio.jspeex.SpeexMediaManager;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.*;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
@@ -24,9 +23,14 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.text.StyledDocument;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -35,19 +39,22 @@ import java.util.Map;
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
-public class JinglePlugin implements Plugin, JingleSessionListener {
+public class JinglePlugin implements Plugin, JingleSessionListener, CallMessageCallback {
 
     final Map<String, JingleSession> sessions = new HashMap<String, JingleSession>();
+
+    JingleManager jm = null;
+
+    final JingleSessionListener jingleListener = this;
+    final CallMessageCallback callMessageCallback = this;
 
     public void initialize() {
 
         JMFInit.start(false);
 
-        JingleTransportManager transportManager = new ICETransportManager();
+        JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
 
-        final JingleManager jm = new JingleManager(SparkManager.getConnection(), transportManager, new SpeexMediaManager());
-
-        final JingleSessionListener jingleListener = this;
+        jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
         if (transportManager instanceof BridgedTransportManager)
             jm.addCreationListener((BridgedTransportManager) transportManager);
@@ -60,23 +67,29 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                     return;
                 }
 
-                // Accept the call
-                IncomingJingleSession session = null;
-                try {
-                    session = request.accept();
-                } catch (XMPPException e) {
-                    e.printStackTrace();
-                }
+                ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom());
 
-                // Start the call
-                if (session != null) {
+                if (room != null) {
+
+                    TranscriptWindow transcriptWindow = room.getTranscriptWindow();
+                    StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+                    Style style = doc.addStyle("StyleName", null);
+                    CallMessage callMessage = new CallMessage(callMessageCallback, request);
+                    callMessage.call(null, request.getFrom());
+                    StyleConstants.setComponent(style, callMessage);
+
+                    // Insert the image at the end of the text
                     try {
-                        session.start();
-                    } catch (XMPPException e) {
-                        e.printStackTrace();
+                        doc.insertString(doc.getLength(), "ignored text", style);
+                        doc.insertString(doc.getLength(), "\n", null);
                     }
-                    session.addListener(jingleListener);
-                    sessions.put(session.getInitiator(), session);
+                    catch (BadLocationException e) {
+                        Log.error(e);
+                    }
+
+                    acceptCall(callMessage);
+
+                    room.scrollToBottom();
                 }
             }
         });
@@ -88,28 +101,10 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                 }
                 final ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                 final ChatRoomButton callButton = new ChatRoomButton("Call");
+
                 callButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
-
-                        if (sessions.containsKey(roomImpl.getJID())) return;
-
-                        // Create a new Jingle Call with a full JID
-                        OutgoingJingleSession session = null;
-                        try {
-                            session = jm.createOutgoingJingleSession(roomImpl.getJID());
-                        }
-                        catch (XMPPException e) {
-                            Log.error(e);
-                        }
-
-                        // Start the call
-                        if (session != null) {
-                            System.out.println("OUT");
-                            session.addListener(jingleListener);
-                            session.start();
-                            sessions.put(roomImpl.getJID(), session);
-                        }
-
+                        placeCall(roomImpl);
                     }
                 });
 
@@ -119,16 +114,85 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
             public void chatRoomClosed(ChatRoom room) {
                 final ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                 if (sessions.containsKey(roomImpl.getJID())) {
-                    JingleSession session = sessions.get(roomImpl.getJID());
-                    try {
-                        session.terminate();
-                    } catch (XMPPException e) {
-                        e.printStackTrace();
-                    }
-                    sessions.remove(roomImpl.getJID());
+                    endCall(roomImpl);
                 }
             }
         });
+    }
+
+    public void acceptCall(CallMessage callMessage) {
+        // Accept the call
+        IncomingJingleSession session = null;
+        JingleSessionRequest request = callMessage.getRequest();
+
+        try {
+            session = request.accept();
+            callMessage.setSession(session);
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+
+        // Start the call
+        if (session != null) {
+            try {
+                session.start();
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            }
+            session.addListener(jingleListener);
+            sessions.put(session.getInitiator(), session);
+        }
+    }
+
+    public void endCall(ChatRoomImpl room) {
+        JingleSession session = sessions.get(room.getJID());
+        if (session == null) return;
+        try {
+            session.terminate();
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+        sessions.remove(room.getJID());
+    }
+
+    public void placeCall(ChatRoomImpl room) {
+
+        if (sessions.containsKey(room.getJID())) return;
+
+        // Create a new Jingle Call with a full JID
+        OutgoingJingleSession session = null;
+        try {
+            session = jm.createOutgoingJingleSession(room.getJID());
+        }
+        catch (XMPPException e) {
+            Log.error(e);
+        }
+
+        // Start the call
+        if (session != null) {
+            session.addListener(jingleListener);
+            session.start();
+            sessions.put(room.getJID(), session);
+        }
+
+        TranscriptWindow transcriptWindow = room.getTranscriptWindow();
+        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+        Style style = doc.addStyle("StyleName", null);
+
+        CallMessage callMessage = new CallMessage(callMessageCallback);
+        callMessage.call(session, room.getJID());
+        StyleConstants.setComponent(style, callMessage);
+
+        // Insert the image at the end of the text
+        try {
+            doc.insertString(doc.getLength(), "ignored text", style);
+            doc.insertString(doc.getLength(), "\n", null);
+        }
+        catch (BadLocationException e) {
+            Log.error(e);
+        }
+
+        room.scrollToBottom();
     }
 
     public void shutdown() {
@@ -176,4 +240,5 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
 
     }
+
 }
