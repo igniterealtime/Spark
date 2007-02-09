@@ -39,20 +39,19 @@ import java.util.Map;
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
-public class JinglePlugin implements Plugin, JingleSessionListener, CallMessageCallback {
+public class JinglePlugin implements Plugin, JingleSessionListener {
 
     final Map<String, JingleSession> sessions = new HashMap<String, JingleSession>();
 
     JingleManager jm = null;
 
     final JingleSessionListener jingleListener = this;
-    final CallMessageCallback callMessageCallback = this;
 
     public void initialize() {
 
         JMFInit.start(false);
 
-        JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
+        JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "jivesoftware.com", 3478);
 
         jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
@@ -63,33 +62,49 @@ public class JinglePlugin implements Plugin, JingleSessionListener, CallMessageC
             public void sessionRequested(JingleSessionRequest request) {
 
                 if (sessions.containsKey(request.getFrom())) {
-                    request.reject();
+                    IncomingJingleSession session = null;
+                    try {
+                        session = request.accept();
+                        session.setInitialSessionRequest(request);
+                        session.terminate();
+                    } catch (XMPPException e) {
+                        e.printStackTrace();
+                    }
                     return;
                 }
 
-                ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom());
+                ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom().split("/")[0]);
 
                 if (room != null) {
 
                     TranscriptWindow transcriptWindow = room.getTranscriptWindow();
                     StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
                     Style style = doc.addStyle("StyleName", null);
-                    CallMessage callMessage = new CallMessage(callMessageCallback, request);
-                    callMessage.call(null, request.getFrom());
-                    StyleConstants.setComponent(style, callMessage);
 
-                    // Insert the image at the end of the text
                     try {
-                        doc.insertString(doc.getLength(), "ignored text", style);
-                        doc.insertString(doc.getLength(), "\n", null);
-                    }
-                    catch (BadLocationException e) {
-                        Log.error(e);
-                    }
+                        IncomingJingleSession session = request.accept();
+                        session.setInitialSessionRequest(request);
 
-                    acceptCall(callMessage);
+                        session.addListener(jingleListener);
+                        sessions.put(session.getInitiator(), session);
 
-                    room.scrollToBottom();
+                        CallMessage callMessage = new CallMessage();
+                        callMessage.call(session, request.getFrom());
+                        StyleConstants.setComponent(style, callMessage);
+
+                        // Insert the image at the end of the text
+                        try {
+                            doc.insertString(doc.getLength(), "ignored text", style);
+                            doc.insertString(doc.getLength(), "\n", null);
+                        }
+                        catch (BadLocationException e) {
+                            Log.error(e);
+                        }
+
+                        room.scrollToBottom();
+                    } catch (XMPPException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -118,30 +133,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener, CallMessageC
                 }
             }
         });
-    }
-
-    public void acceptCall(CallMessage callMessage) {
-        // Accept the call
-        IncomingJingleSession session = null;
-        JingleSessionRequest request = callMessage.getRequest();
-
-        try {
-            session = request.accept();
-            callMessage.setSession(session);
-        } catch (XMPPException e) {
-            e.printStackTrace();
-        }
-
-        // Start the call
-        if (session != null) {
-            try {
-                session.start();
-            } catch (XMPPException e) {
-                e.printStackTrace();
-            }
-            session.addListener(jingleListener);
-            sessions.put(session.getInitiator(), session);
-        }
     }
 
     public void endCall(ChatRoomImpl room) {
@@ -179,7 +170,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, CallMessageC
         StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
-        CallMessage callMessage = new CallMessage(callMessageCallback);
+        CallMessage callMessage = new CallMessage();
         callMessage.call(session, room.getJID());
         StyleConstants.setComponent(style, callMessage);
 
@@ -210,7 +201,23 @@ public class JinglePlugin implements Plugin, JingleSessionListener, CallMessageC
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
+        try {
+            if (sessions.containsValue(jingleSession)) {
+                String found = null;
+                for (String key : sessions.keySet()) {
+                    System.err.println("D:" + key);
+                    if (jingleSession.equals(sessions.get(key))) {
+                        found = key;
+                    }
+                }
+                System.err.println("REMOVED:" + found);
+                if (found != null)
+                    sessions.remove(found);
+            }
 
+        } catch (Exception e) {
+            // Do Nothing
+        }
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
