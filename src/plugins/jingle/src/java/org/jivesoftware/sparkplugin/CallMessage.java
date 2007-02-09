@@ -166,12 +166,15 @@ public class CallMessage extends JPanel {
             cancelButton.setVisible(false);
             retryButton.setVisible(false);
             acceptButton.setVisible(false);
+            if (ringing != null) ringing.stop();
         } else if (session.getState() == null) {
             showAlert(true);
             titleLabel.setText("Incoming Call");
             cancelButton.setVisible(true);
             retryButton.setVisible(false);
             acceptButton.setVisible(true);
+            if ((lastState == null))
+                if (ringing != null) ringing.loop();
         } else if (session instanceof OutgoingJingleSession) {
             acceptButton.setVisible(false);
             showAlert(false);
@@ -184,12 +187,13 @@ public class CallMessage extends JPanel {
                 cancelButton.setVisible(true);
                 retryButton.setVisible(false);
                 titleLabel.setText("Ringing...");
+                if (!(lastState instanceof OutgoingJingleSession.Inviting))
+                    if (ringing != null) ringing.loop();
             } else if (session.getState() instanceof OutgoingJingleSession.Pending) {
                 titleLabel.setText("Establishing...");
                 cancelButton.setVisible(true);
                 retryButton.setVisible(false);
-                if (!(lastState instanceof OutgoingJingleSession.Pending))
-                    if (ringing != null) ringing.loop();
+                if (ringing != null) ringing.stop();
             }
             lastState = session.getState();
         } else if (session instanceof IncomingJingleSession) {
@@ -197,22 +201,23 @@ public class CallMessage extends JPanel {
             showAlert(false);
             if (session.getState() instanceof IncomingJingleSession.Accepting) {
                 titleLabel.setText("Accepting...");
-                if (!(lastState instanceof IncomingJingleSession.Accepting))
-                    if (ringing != null) ringing.loop();
                 cancelButton.setVisible(true);
             } else if (session.getState() instanceof IncomingJingleSession.Pending) {
                 titleLabel.setText("Establishing...");
                 cancelButton.setVisible(true);
+                if (ringing != null) ringing.stop();
             } else if (session.getState() instanceof IncomingJingleSession.Active) {
                 titleLabel.setText("On Phone");
                 cancelButton.setVisible(true);
-                if (ringing != null) ringing.stop();
                 lastState = session.getState();
+                if (ringing != null) ringing.stop();
             } else {
+                showAlert(true);
                 titleLabel.setText("Call Ended");
                 cancelButton.setVisible(false);
                 retryButton.setVisible(false);
                 acceptButton.setVisible(false);
+                if (ringing != null) ringing.stop();
             }
         }
     }
