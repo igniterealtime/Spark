@@ -20,6 +20,7 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.xml.sax.SAXException;
 
 import javax.swing.ImageIcon;
 
@@ -175,12 +176,29 @@ public class EmoticonManager {
         List<Emoticon> emoticons = new ArrayList<Emoticon>();
 
         final File plist = new File(emoticonSet, "Emoticons.plist");
-        SAXReader saxReader = new SAXReader();
-        saxReader.setValidation(false);
-        
+
+        // Create SaxReader and set to non-validating parser.
+        // This will allow for non-http problems to not break spark :)
+        final SAXReader saxParser = new SAXReader();
+        saxParser.setValidation(false);
+        try {
+            saxParser.setFeature("http://xml.org/sax/features/validation", false);
+            saxParser.setFeature("http://xml.org/sax/features/namespaces", false);
+            saxParser.setFeature("http://apache.org/xml/features/validation/schema", false);
+            saxParser.setFeature("http://apache.org/xml/features/validation/schema-full-checking", false);
+            saxParser.setFeature("http://apache.org/xml/features/validation/dynamic", false);
+            saxParser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
+            saxParser.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
+            saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        }
+        catch (SAXException e) {
+            e.printStackTrace();
+        }
+
         Document emoticonFile = null;
         try {
-            emoticonFile = saxReader.read(plist);
+            emoticonFile = saxParser.read(plist);
         }
         catch (DocumentException e) {
             Log.error(e);
