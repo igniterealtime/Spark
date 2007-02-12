@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.mxp1.MXParser;
@@ -195,6 +196,9 @@ public final class ChatTranscripts {
      * @return the settings file.
      */
     public static File getTranscriptFile(String jid) {
+        // Unescape Node
+        jid = UserManager.unescapeJID(jid);
+
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + ".xml");
     }
 
@@ -205,6 +209,9 @@ public final class ChatTranscripts {
      * @return the current transcript file.
      */
     public static File getCurrentHistoryFile(String jid) {
+        // Unescape Node
+        jid = UserManager.unescapeJID(jid);
+
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + "_current.xml");
     }
 

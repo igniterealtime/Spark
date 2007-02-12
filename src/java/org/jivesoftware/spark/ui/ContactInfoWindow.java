@@ -283,6 +283,7 @@ public class ContactInfoWindow extends JPanel {
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
             String name = StringUtils.parseName(contactItem.getFullJID());
+            name = StringUtils.unescapeNode(name);
             fullJIDLabel.setText(transport.getName() + " - " + name);
         }
         else {
