@@ -19,17 +19,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Properties;
-
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -42,6 +31,17 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Properties;
 
 /**
  * Allows users to configure startup options.
@@ -166,7 +166,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("ok"), Res.getString("cancel"), Res.getString("use.default")};
         optionPane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+                JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
@@ -209,7 +209,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             catch (NumberFormatException numberFormatException) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.timeout"),
-                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 timeOutField.requestFocus();
                 errors = true;
             }
@@ -219,14 +219,14 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             catch (NumberFormatException numberFormatException) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.port"),
-                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 portField.requestFocus();
                 errors = true;
             }
 
             if (!ModelUtil.hasLength(resource)) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.resource"),
-                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 resourceField.requestFocus();
                 errors = true;
             }
@@ -461,6 +461,12 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     }
                     else {
                         System.setProperty("http.proxySet", "true");
+
+                        // Set https settings
+                        System.setProperty("https.proxyHost", host);
+                        System.setProperty("https.proxyPort", port);
+
+                        // Set http settings
                         System.setProperty("http.proxyHost", host);
                         System.setProperty("http.proxyPort", port);
                     }
