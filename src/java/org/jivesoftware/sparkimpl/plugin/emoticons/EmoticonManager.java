@@ -295,7 +295,7 @@ public class EmoticonManager {
 
         for (Emoticon emoticon : emoticons) {
             for (String string : emoticon.getEquivalants()) {
-                if (key.equals(string)) {
+                if (key.toLowerCase().equals(string.toLowerCase())) {
                     return emoticon;
                 }
             }
