@@ -15,16 +15,17 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
+import org.jivesoftware.smack.packet.Presence;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Collection;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeModel;
 
 public class NewRoster extends JPanel implements RosterListener {
 
@@ -129,6 +130,6 @@ public class NewRoster extends JPanel implements RosterListener {
     public void entriesDeleted(Collection addresses) {
     }
 
-    public void presenceChanged(String XMPPAddress) {
+    public void presenceChanged(Presence presence) {
     }
 }

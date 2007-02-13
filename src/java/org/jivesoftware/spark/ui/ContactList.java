@@ -681,7 +681,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         });
     }
 
-    public void presenceChanged(final String user) {
+    public void presenceChanged(Presence presence) {
 
     }
 
