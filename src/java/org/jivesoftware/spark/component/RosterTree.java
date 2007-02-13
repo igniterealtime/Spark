@@ -98,8 +98,8 @@ public final class RosterTree extends JPanel {
 
             }
 
-            public void presenceChanged(Presence presence) {
-                changePresence(presence.getFrom(), presence.getMode() == Presence.Mode.available);
+            public void presenceChanged(String user) {
+                //changePresence(presence.getFrom(), presence.getMode() == Presence.Mode.available);
 
             }
         });

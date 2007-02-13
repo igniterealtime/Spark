@@ -130,6 +130,6 @@ public class NewRoster extends JPanel implements RosterListener {
     public void entriesDeleted(Collection addresses) {
     }
 
-    public void presenceChanged(Presence presence) {
+    public void presenceChanged(String address) {
     }
 }

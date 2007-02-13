@@ -461,6 +461,7 @@ public class StatusBar extends JPanel {
         }
         else {
             imageLabel.setIcon(null);
+            imageLabel.setBorder(null);
             imageLabel.invalidate();
             imageLabel.validate();
             imageLabel.repaint();

@@ -18,17 +18,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,6 +29,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * UI to view/edit avatar.
@@ -85,7 +85,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
         avatar.setText(Res.getString("message.no.avatar.found"));
 
         GraphicUtils.makeSameSize(browseButton, clearButton);
-        avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
     }
 
     /**
@@ -104,6 +103,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
      * @param icon the icon.
      */
     public void setAvatar(ImageIcon icon) {
+        avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
         avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 48, Image.SCALE_SMOOTH)));
         avatar.setText("");
     }
@@ -211,11 +211,11 @@ public class AvatarPanel extends JPanel implements ActionListener {
             String extension = getExtension(f);
             if (extension != null) {
                 if (
-                    extension.equals(gif) ||
-                        extension.equals(jpeg) ||
-                        extension.equals(jpg) ||
-                        extension.equals(png)
-                    ) {
+                        extension.equals(gif) ||
+                                extension.equals(jpeg) ||
+                                extension.equals(jpg) ||
+                                extension.equals(png)
+                        ) {
                     return true;
                 }
                 else {
