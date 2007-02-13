@@ -128,6 +128,7 @@ public class StatusBar extends JPanel {
 
     public void setAvatar(Icon icon) {
         imageLabel.setIcon(icon);
+        imageLabel.setBorder(null);
         invalidate();
         validateTree();
     }

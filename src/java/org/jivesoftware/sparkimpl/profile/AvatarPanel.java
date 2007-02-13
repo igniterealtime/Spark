@@ -79,6 +79,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 avatar.setIcon(null);
                 bytes = null;
                 avatarFile = null;
+                avatar.setBorder(null);
             }
         });
 

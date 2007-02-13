@@ -478,6 +478,8 @@ public class VCardManager {
 
                 // Save Avatar
                 final File avatarFile = avatarPanel.getAvatarFile();
+                byte[] avatarBytes = avatarPanel.getAvatarBytes();
+
                 if (avatarFile != null) {
                     try {
                         // Make it 48x48
@@ -491,15 +493,10 @@ public class VCardManager {
                         Log.error("Unable to set avatar.", e);
                     }
                 }
-                else {
-                    vcard.setAvatar(avatarPanel.getAvatarBytes());
-                }
 
                 try {
                     vcard.save(SparkManager.getConnection());
                     saved = true;
-
-                    byte[] avatarBytes = vcard.getAvatar();
 
                     // Notify users.
                     if (avatarFile != null || avatarBytes != null) {
