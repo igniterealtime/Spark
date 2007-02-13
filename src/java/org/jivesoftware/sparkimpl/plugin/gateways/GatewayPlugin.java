@@ -131,7 +131,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 info = discoveryManager.discoverInfo(item.getEntityID());
             }
             catch (XMPPException e) {
-                Log.error(e);
+                Log.debug("Unable to locate "+item);
                 continue;
             }
             Iterator identities = info.getIdentities();

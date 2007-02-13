@@ -24,19 +24,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -55,6 +42,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 public class StatusBar extends JPanel {
     private List<StatusItem> statusList = new ArrayList<StatusItem>();
@@ -349,7 +349,7 @@ public class StatusBar extends JPanel {
 
             if (presence.getStatus() != null && item.getPresence().getStatus() != null) {
                 if ((presence.getMode() == item.getPresence().getMode()) && (presence.getType() == item.getPresence().getType()) &&
-                        (presence.getStatus().equals(item.getPresence().getStatus()))) {
+                    (presence.getStatus().equals(item.getPresence().getStatus()))) {
                     return item;
                 }
             }
@@ -414,14 +414,18 @@ public class StatusBar extends JPanel {
         if (vCard.getError() == null) {
             String firstName = vCard.getFirstName();
             String lastName = vCard.getLastName();
+            String nickname = vCard.getNickName();
             if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
                 setNickname(firstName + " " + lastName);
             }
             else if (ModelUtil.hasLength(firstName)) {
                 setNickname(firstName);
             }
+            else if (ModelUtil.hasLength(nickname)) {
+                setNickname(nickname);
+            }
             else {
-                String nickname = SparkManager.getSessionManager().getUsername();
+                nickname = SparkManager.getSessionManager().getUsername();
                 setNickname(nickname);
             }
         }
@@ -454,6 +458,12 @@ public class StatusBar extends JPanel {
             catch (Exception e) {
                 // no issue
             }
+        }
+        else {
+            imageLabel.setIcon(null);
+            imageLabel.invalidate();
+            imageLabel.validate();
+            imageLabel.repaint();
         }
     }
 

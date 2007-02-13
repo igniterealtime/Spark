@@ -36,20 +36,6 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
@@ -65,6 +51,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 public class VCardManager {
     private BusinessPanel businessPanel;
@@ -491,9 +491,10 @@ public class VCardManager {
                         Log.error("Unable to set avatar.", e);
                     }
                 }
-                else if (avatarPanel.getAvatarBytes() != null) {
+                else {
                     vcard.setAvatar(avatarPanel.getAvatarBytes());
                 }
+
                 try {
                     vcard.save(SparkManager.getConnection());
                     saved = true;
@@ -518,6 +519,8 @@ public class VCardManager {
                         else if (ModelUtil.hasLength(firstName)) {
                             statusBar.setNickname(firstName);
                         }
+
+                        statusBar.setAvatar(null);
                     }
                 }
                 catch (XMPPException e) {
