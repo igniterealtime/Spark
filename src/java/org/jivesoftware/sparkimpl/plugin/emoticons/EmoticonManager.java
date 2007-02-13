@@ -173,6 +173,12 @@ public class EmoticonManager {
             emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".AdiumEmoticonset");
         }
 
+        if(!emoticonSet.exists()){
+            emoticonSet = new File(EMOTICON_DIRECTORY, "Default.adiumemoticonset");
+            packName = "Default";
+            setActivePack("Default");
+        }
+
         List<Emoticon> emoticons = new ArrayList<Emoticon>();
 
         final File plist = new File(emoticonSet, "Emoticons.plist");

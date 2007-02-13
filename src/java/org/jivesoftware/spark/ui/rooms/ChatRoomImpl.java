@@ -42,6 +42,11 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -52,11 +57,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -656,8 +656,20 @@ public class ChatRoomImpl extends ChatRoom {
         final ChatTranscript transcript = ChatTranscripts.getCurrentChatTranscript(bareJID);
 
         for (HistoryMessage message : transcript.getMessages()) {
-            String from = message.getFrom();
-            String nickname = StringUtils.parseName(from);
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+            if (nickname.equals(message.getFrom())) {
+                String otherJID = StringUtils.parseBareAddress(message.getFrom());
+                String myJID = SparkManager.getSessionManager().getBareAddress();
+
+                if (otherJID.equals(myJID)) {
+                    nickname = "Me";
+                }
+                else {
+                    nickname = StringUtils.parseName(nickname);
+                }
+            }
+            
+
             Date date = message.getDate();
             getTranscriptWindow().insertHistoryMessage(nickname, message.getBody(), date);
         }

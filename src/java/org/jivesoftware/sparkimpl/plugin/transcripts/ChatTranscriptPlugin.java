@@ -40,8 +40,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -49,7 +49,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -192,7 +191,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         final List<Message> transcripts = room.getTranscripts();
         ChatTranscript transcript = new ChatTranscript();
-        for(Message message : transcripts){
+        for (Message message : transcripts) {
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
@@ -261,7 +260,19 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 StringBuffer buf = new StringBuffer();
                 for (HistoryMessage message : list) {
                     String from = message.getFrom();
-                    String nickname = StringUtils.parseName(from);
+                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+                    if (nickname.equals(message.getFrom())) {
+                        String otherJID = StringUtils.parseBareAddress(message.getFrom());
+                        String myJID = SparkManager.getSessionManager().getBareAddress();
+
+                        if (otherJID.equals(myJID)) {
+                            nickname = "Me";
+                        }
+                        else {
+                            nickname = StringUtils.parseName(nickname);
+                        }
+                    }
+
                     final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
                     final String date = formatter.format(message.getDate());
 
