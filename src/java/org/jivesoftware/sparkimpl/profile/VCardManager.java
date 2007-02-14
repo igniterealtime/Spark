@@ -40,6 +40,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ import javax.swing.JOptionPane;
  */
 public class VCardManager {
 
-    private VCard personalVCard = new VCard();
+    private VCard personalVCard;
 
     private Map<String, VCard> vcards = new HashMap<String, VCard>();
 
@@ -72,6 +73,10 @@ public class VCardManager {
      * Initialize VCardManager.
      */
     public VCardManager() {
+
+        // Initialize vCard.
+        personalVCard = new VCard();
+
         initializeUI();
 
         // Intercept all presence packets being sent and append vcard information.
@@ -267,6 +272,9 @@ public class VCardManager {
                 vcard.load(SparkManager.getConnection(), jid);
                 vcard.setJabberId(jid);
                 vcards.put(jid, vcard);
+
+                // Persist XML
+                persistVCard(jid, vcard);
             }
             catch (XMPPException e) {
                 Log.warning("Unable to load vcard for " + jid, e);
@@ -393,6 +401,24 @@ public class VCardManager {
      */
     public void setPersonalVCard(VCard vcard) {
         this.personalVCard = vcard;
+    }
+
+    /**
+     * Persist vCard information out for caching.
+     *
+     * @param jid   the users jid.
+     * @param vcard the users vcard.
+     */
+    private void persistVCard(String jid, VCard vcard) {
+        final String xml = vcard.toXML();
+
+        final StringBuilder builder = new StringBuilder();
+        builder.append("<spark-vcard-cache timestamp=\"");
+        builder.append(new Date().getTime());
+        builder.append("\">");
+        builder.append(xml);
+        builder.append("</spark-vcard-cache>");
+        System.out.println(builder.toString());
     }
 
 }
