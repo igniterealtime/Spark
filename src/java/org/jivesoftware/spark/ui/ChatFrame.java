@@ -147,6 +147,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         if (getState() == Frame.ICONIFIED) {
             setState(Frame.NORMAL);
         }
+		if(Spark.isMac()) {
+			toFront();
+		}
         requestFocus();
     }
 
