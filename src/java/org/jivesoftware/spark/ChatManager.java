@@ -31,6 +31,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageFilter;
+import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -61,6 +62,9 @@ public class ChatManager implements MessageEventNotificationListener {
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
 
     private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
+
+    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
+
 
     private final ChatContainer chatContainer;
     private String conferenceService;
@@ -535,5 +539,32 @@ public class ChatManager implements MessageEventNotificationListener {
         public void offlineNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
             // The XMPP server should take care of this request. Do nothing.
         }
+    }
+
+    /**
+     * Adds a TranscriptWindowInterceptor.
+     *
+     * @param interceptor the interceptor.
+     */
+    public void addTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
+        interceptors.add(interceptor);
+    }
+
+    /**
+     * Removes a TranscriptWindowInterceptor.
+     *
+     * @param interceptor the interceptor.
+     */
+    public void removeTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
+        interceptors.remove(interceptor);
+    }
+
+    /**
+     * Returns the list of <code>TranscriptWindowInterceptors</code>.
+     *
+     * @return the list of interceptors.
+     */
+    public Collection<TranscriptWindowInterceptor> getTranscriptWindowInterceptors() {
+        return interceptors;
     }
 }

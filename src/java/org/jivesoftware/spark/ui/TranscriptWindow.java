@@ -23,22 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -54,6 +38,21 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
  * of a Chat Window. In general, extensions could override this class
@@ -61,7 +60,7 @@ import javax.swing.text.StyledDocument;
  */
 public class TranscriptWindow extends ChatArea {
 
-    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
+
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
 
@@ -164,8 +163,8 @@ public class TranscriptWindow extends ChatArea {
     public void insertMessage(String userid, Message message) {
 
         // Check interceptors.
-        for (TranscriptWindowInterceptor interceptor : interceptors) {
-            boolean handled = interceptor.handleInsertMessage(userid, message);
+        for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
+            boolean handled = interceptor.interceptToMessage(this, userid, message);
             if (handled) {
                 // Do nothing.
                 return;
@@ -247,8 +246,8 @@ public class TranscriptWindow extends ChatArea {
      */
     public void insertOthersMessage(String userid, Message message) {
         // Check interceptors.
-        for (TranscriptWindowInterceptor in : interceptors) {
-            boolean handled = in.handleOtherMessage(userid, message);
+        for (TranscriptWindowInterceptor in : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
+            boolean handled = in.interceptFromMessage(this, userid, message);
             if (handled) {
                 // Do nothing.
                 return;
@@ -362,6 +361,36 @@ public class TranscriptWindow extends ChatArea {
 
             Color notificationColor = (Color)UIManager.get("Notification.foreground");
 
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, notificationColor);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, font.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setForeground(notificationColor);
+            setText(message);
+            insertText("\n");
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
+    }
+
+    /**
+     * Create and insert a notification message. A notification message generally is a
+     * presence update, but can be used for most anything related to the room.
+     *
+     * @param message the information message to insert.
+     * @param notificationColor the color of the text.
+     */
+    public synchronized void insertCustomNotification(String message, Color notificationColor) {
+        try {
             // Agent color is always blue
             StyleConstants.setBold(styles, false);
             StyleConstants.setForeground(styles, notificationColor);
@@ -594,7 +623,7 @@ public class TranscriptWindow extends ChatArea {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -611,14 +640,4 @@ public class TranscriptWindow extends ChatArea {
     public Font getFont() {
         return font;
     }
-
-    public void addTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
-        interceptors.add(interceptor);
-    }
-
-    public void removeTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
-        interceptors.remove(interceptor);
-    }
-
-
 }

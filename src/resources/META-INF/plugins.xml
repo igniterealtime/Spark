@@ -149,7 +149,7 @@
         <description>Handles basic Chat Info operation.</description>
         <class>org.jivesoftware.sparkimpl.plugin.chat.ChatInfoPlugin</class>
     </plugin>
-        <plugin>
+    <plugin>
         <name>Notifications Plugin</name>
         <version>1.0</version>
         <author>Derek DeMoro</author>
@@ -157,5 +157,14 @@
         <email>derek@jivesoftware.com</email>
         <description>Adds generic notification handling to Spark.</description>
         <class>org.jivesoftware.sparkimpl.preference.notifications.NotificationPlugin</class>
+    </plugin>
+      <plugin>
+        <name>Shortcut Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds simple IRC style shortcuts.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ShortcutPlugin</class>
     </plugin>
 </plugins>
