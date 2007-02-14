@@ -242,7 +242,7 @@ public class ChatRoomImpl extends ChatRoom {
         lastActivity = System.currentTimeMillis();
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message);
+            getTranscriptWindow().insertToMessage(getNickname(), message);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();

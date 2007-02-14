@@ -135,8 +135,12 @@ public class TranscriptWindow extends ChatArea {
         messageDateFormatter = new SimpleDateFormat("h:mm a");
     }
 
+    /**
+     * Inserts a component into the transcript window.
+     * @param component the component to insert.
+     */
     public void addComponent(Component component) {
-        StyledDocument doc = (StyledDocument)getDocument();
+        final StyledDocument doc = (StyledDocument)getDocument();
 
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
@@ -160,7 +164,7 @@ public class TranscriptWindow extends ChatArea {
      * @param userid  the userid of the current user.
      * @param message the message to insert.
      */
-    public void insertMessage(String userid, Message message) {
+    public void insertToMessage(String userid, Message message) {
 
         // Check interceptors.
         for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {

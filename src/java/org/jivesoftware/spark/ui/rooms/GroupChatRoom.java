@@ -298,7 +298,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message);
+            getTranscriptWindow().insertToMessage(getNickname(), message);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -341,7 +341,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message);
+            getTranscriptWindow().insertToMessage(getNickname(), message);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
