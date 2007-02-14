@@ -55,7 +55,9 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/JingleExtension.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../../../smack/jingle/extension/source" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -89,6 +91,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../../../../build/lib/dist/jmf.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../../../build/projects/classes/org/jivesoftware/resource" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -12,14 +12,12 @@ package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.jingle.*;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
-import org.jivesoftware.smackx.jingle.nat.BridgedTransportManager;
-import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
-import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
-import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
+import org.jivesoftware.smackx.jingle.nat.*;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -53,7 +51,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
 
         JMFInit.start(false);
 
-        JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "jivesoftware.com", 3478);
+        JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
 
         jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
@@ -63,32 +61,19 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         jm.addJingleSessionRequestListener(new JingleSessionRequestListener() {
             public void sessionRequested(JingleSessionRequest request) {
 
-                if (sessions.containsKey(request.getFrom())) {
+                if (!sessions.containsKey(request.getFrom())) {
                     IncomingJingleSession session = null;
                     try {
                         session = request.accept();
-                        session.setInitialSessionRequest(request);
-                        session.terminate();
-                    } catch (XMPPException e) {
-                        e.printStackTrace();
-                    }
-                    return;
-                }
-
-                ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom().split("/")[0]);
-
-                if (room != null) {
-
-                    TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-                    StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
-                    Style style = doc.addStyle("StyleName", null);
-
-                    try {
-                        IncomingJingleSession session = request.accept();
-                        session.setInitialSessionRequest(request);
-
                         session.addListener(jingleListener);
-                        sessions.put(session.getInitiator(), session);
+                        session.start(request);
+                        sessions.put(request.getFrom(), session);
+
+                        ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom().split("/")[0]);
+
+                        TranscriptWindow transcriptWindow = room.getTranscriptWindow();
+                        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+                        Style style = doc.addStyle("StyleName", null);
 
                         CallMessage callMessage = new CallMessage();
                         callMessage.call(session, request.getFrom());
@@ -104,9 +89,12 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                         }
 
                         room.scrollToBottom();
+
+
                     } catch (XMPPException e) {
                         e.printStackTrace();
                     }
+
                 }
             }
         });
@@ -247,7 +235,22 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
+        try {
+            if (sessions.containsValue(jingleSession)) {
+                String found = null;
+                for (String key : sessions.keySet()) {
+                    System.err.println("D:" + key);
+                    if (jingleSession.equals(sessions.get(key))) {
+                        found = key;
+                    }
+                }
+                System.err.println("REMOVED:" + found);
+                if (found != null)
+                    sessions.remove(found);
+            }
 
+        } catch (Exception e) {
+            // Do Nothing
+        }
     }
-
 }
