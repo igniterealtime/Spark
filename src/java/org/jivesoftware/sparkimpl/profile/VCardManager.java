@@ -23,10 +23,7 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.VCardViewer;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -36,52 +33,46 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+/**
+ * VCardManager handles all VCard loading/caching within Spark.
+ *
+ * @author Derek DeMoro
+ */
 public class VCardManager {
-    private BusinessPanel businessPanel;
-    private PersonalPanel personalPanel;
-    private HomePanel homePanel;
-    private AvatarPanel avatarPanel;
-    private JLabel avatarLabel;
+
     private VCard personalVCard = new VCard();
 
     private Map<String, VCard> vcards = new HashMap<String, VCard>();
+
     private boolean vcardLoaded;
 
     final private File imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
 
+    private final VCardEditor editor;
 
+
+    /**
+     * Initialize VCardManager.
+     */
     public VCardManager() {
-        initialize();
+        initializeUI();
 
         // Intercept all presence packets being sent and append vcard information.
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
@@ -114,250 +105,14 @@ public class VCardManager {
 
             }
         }, presenceFilter);
+
+        editor = new VCardEditor();
     }
 
-    public void showProfile(JComponent parent) {
-        final JTabbedPane tabbedPane = new JTabbedPane();
-
-        personalPanel = new PersonalPanel();
-        personalPanel.showJID(false);
-
-        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
-
-        businessPanel = new BusinessPanel();
-        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
-
-        homePanel = new HomePanel();
-        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
-
-        avatarPanel = new AvatarPanel();
-        tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
-
-        createVCardUI(personalVCard);
-
-        final JOptionPane pane;
-        final JDialog dlg;
-
-        TitlePanel titlePanel;
-
-        ImageIcon icon = getAvatarIcon();
-        if (icon == null) {
-            icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
-        }
-
-        // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.edit.profile"), Res.getString("message.save.profile"), icon, true);
-
-        // Construct main panel w/ layout.
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
-
-        // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("save"), Res.getString("cancel")};
-        pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
-        mainPanel.add(pane, BorderLayout.CENTER);
-
-        JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, Res.getString("title.profile.information"));
-        dlg.setModal(false);
-
-        dlg.pack();
-        dlg.setSize(600, 400);
-        dlg.setResizable(true);
-        dlg.setContentPane(mainPanel);
-        dlg.setLocationRelativeTo(parent);
-
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if (Res.getString("cancel").equals(value)) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                }
-                else if (Res.getString("save").equals(value)) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                    saveVCard();
-                }
-            }
-        };
-
-        pane.addPropertyChangeListener(changeListener);
-
-        dlg.setVisible(true);
-        dlg.toFront();
-        dlg.requestFocus();
-
-        personalPanel.focus();
-    }
-
-    public void viewProfile(final String jid, final JComponent parent) {
-        SwingWorker worker = new SwingWorker() {
-            VCard userVCard = new VCard();
-
-            public Object construct() {
-                userVCard = getVCard(jid);
-                return userVCard;
-            }
-
-            public void finished() {
-                if (userVCard.getError() != null || userVCard == null) {
-                    // Show vcard not found
-                    JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                else {
-                    showUserProfile(jid, userVCard, parent);
-                }
-            }
-        };
-
-        worker.start();
-
-    }
-
-    /*
-    private void showUserProfile(String jid, VCard vcard, JComponent parent) {
-        final JTabbedPane tabbedPane = new JTabbedPane();
-
-        personalPanel = new PersonalPanel();
-        personalPanel.showJID(true);
-
-        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
-
-        businessPanel = new BusinessPanel();
-        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
-
-        homePanel = new HomePanel();
-        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
-
-        avatarPanel = new AvatarPanel();
-        avatarPanel.setEditable(false);
-
-        personalPanel.allowEditing(false);
-        businessPanel.allowEditing(false);
-        homePanel.allowEditing(false);
-
-        final JOptionPane pane;
-        final JFrame dlg;
-
-        avatarLabel = new JLabel();
-        avatarLabel.setHorizontalAlignment(JButton.RIGHT);
-        avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-
-        // Construct main panel w/ layout.
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridBagLayout());
-        mainPanel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
-
-        // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
-        mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
-
-        dlg = new JFrame(Res.getString("title.view.profile.for", jid));
-        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
-
-        dlg.pack();
-        dlg.setSize(500, 400);
-        dlg.setResizable(true);
-        dlg.setContentPane(mainPanel);
-        dlg.setLocationRelativeTo(parent);
-
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                if (pane.getValue() instanceof Integer) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                    return;
-                }
-                String value = (String)pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                }
-            }
-        };
-
-        pane.addPropertyChangeListener(changeListener);
-
-        dlg.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    dlg.dispose();
-                }
-            }
-        });
-
-        createVCardUI(vcard);
-
-        dlg.setVisible(true);
-        dlg.toFront();
-        dlg.requestFocus();
-    }
-    */
-
-    private void showUserProfile(String jid, VCard vcard, JComponent parent) {
-        VCardViewer viewer = new VCardViewer(jid);
-        final JOptionPane pane;
-        final JFrame dlg;
-
-        avatarLabel = new JLabel();
-        avatarLabel.setHorizontalAlignment(JButton.RIGHT);
-        avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-
-        // Construct main panel w/ layout.
-        final JPanel mainPanel = new JPanel();
-
-        // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
-        //  mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
-
-        dlg = new JFrame(Res.getString("title.view.profile.for", jid));
-        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
-
-        dlg.pack();
-        dlg.setSize(350, 200);
-        dlg.setResizable(true);
-        dlg.setContentPane(pane);
-        dlg.setLocationRelativeTo(parent);
-
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                if (pane.getValue() instanceof Integer) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                    return;
-                }
-                String value = (String)pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                }
-            }
-        };
-
-        pane.addPropertyChangeListener(changeListener);
-
-        dlg.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    dlg.dispose();
-                }
-            }
-        });
-
-        dlg.setVisible(true);
-        dlg.toFront();
-        dlg.requestFocus();
-    }
-
-    public void initialize() {
+    /**
+     * Adds VCard capabilities to menus and other components in Spark.
+     */
+    private void initializeUI() {
         boolean enabled = Enterprise.containsFeature(Enterprise.VCARD_FEATURE);
         if (!enabled) {
             return;
@@ -387,7 +142,7 @@ public class VCardManager {
                     }
 
                     public void finished() {
-                        showProfile(SparkManager.getWorkspace());
+                        editor.editProfile(personalVCard, SparkManager.getWorkspace());
                     }
                 };
                 vcardLoaderWorker.start();
@@ -410,186 +165,42 @@ public class VCardManager {
         });
     }
 
-    public void shutdown() {
 
-    }
+    /**
+     * Displays <code>VCardViewer</code> for a particular JID.
+     *
+     * @param jid    the jid of the user to display.
+     * @param parent the parent component to use for displaying dialog.
+     */
+    public void viewProfile(final String jid, final JComponent parent) {
+        final SwingWorker vcardThread = new SwingWorker() {
+            VCard vcard = new VCard();
 
-    public boolean canShutDown() {
-        return true;
-    }
-
-    private void loadVCard(final String jid) {
-        SwingWorker worker = new SwingWorker() {
             public Object construct() {
-                return getVCard(jid);
+                vcard = getVCard(jid);
+                return vcard;
             }
 
             public void finished() {
-                VCard vcard = (VCard)get();
-                if (vcard.getError() == null) {
-                    createVCardUI(vcard);
+                if (vcard.getError() != null || vcard == null) {
+                    // Show vcard not found
+                    JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    editor.displayProfile(jid, vcard, parent);
                 }
             }
         };
 
-        worker.start();
-    }
-
-
-    private void saveVCard() {
-        final VCard vcard = new VCard();
-
-        // Save personal info
-        vcard.setFirstName(personalPanel.getFirstName());
-        vcard.setLastName(personalPanel.getLastName());
-        vcard.setMiddleName(personalPanel.getMiddleName());
-        vcard.setEmailHome(personalPanel.getEmailAddress());
-        vcard.setNickName(personalPanel.getNickname());
-
-        // Save business info
-        vcard.setOrganization(businessPanel.getCompany());
-        vcard.setAddressFieldWork("STREET", businessPanel.getStreetAddress());
-        vcard.setAddressFieldWork("LOCALITY", businessPanel.getCity());
-        vcard.setAddressFieldWork("REGION", businessPanel.getState());
-        vcard.setAddressFieldWork("PCODE", businessPanel.getZipCode());
-        vcard.setAddressFieldWork("CTRY", businessPanel.getCountry());
-        vcard.setField("TITLE", businessPanel.getJobTitle());
-        vcard.setOrganizationUnit(businessPanel.getDepartment());
-        vcard.setPhoneWork("VOICE", businessPanel.getPhone());
-        vcard.setPhoneWork("FAX", businessPanel.getFax());
-        vcard.setPhoneWork("PAGER", businessPanel.getPager());
-        vcard.setPhoneWork("CELL", businessPanel.getMobile());
-        vcard.setField("URL", businessPanel.getWebPage());
-
-        // Save Home Info
-        vcard.setAddressFieldHome("STREET", homePanel.getStreetAddress());
-        vcard.setAddressFieldHome("LOCALITY", homePanel.getCity());
-        vcard.setAddressFieldHome("REGION", homePanel.getState());
-        vcard.setAddressFieldHome("PCODE", homePanel.getZipCode());
-        vcard.setAddressFieldHome("CTRY", homePanel.getCountry());
-        vcard.setPhoneHome("VOICE", homePanel.getPhone());
-        vcard.setPhoneHome("FAX", homePanel.getFax());
-        vcard.setPhoneHome("PAGER", homePanel.getPager());
-        vcard.setPhoneHome("CELL", homePanel.getMobile());
-
-
-        final SwingWorker worker = new SwingWorker() {
-            boolean saved = false;
-
-            public Object construct() {
-
-                // Save Avatar
-                final File avatarFile = avatarPanel.getAvatarFile();
-                byte[] avatarBytes = avatarPanel.getAvatarBytes();
-
-                if (avatarFile != null) {
-                    try {
-                        // Make it 48x48
-                        ImageIcon icon = new ImageIcon(avatarFile.toURL());
-                        Image image = icon.getImage();
-                        image = image.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
-                        byte[] imageBytes = GraphicUtils.getBytesFromImage(image);
-                        vcard.setAvatar(imageBytes);
-                    }
-                    catch (MalformedURLException e) {
-                        Log.error("Unable to set avatar.", e);
-                    }
-                }
-
-                try {
-                    personalVCard = vcard;
-                    vcard.save(SparkManager.getConnection());
-                    saved = true;
-
-                    // Notify users.
-                    if (avatarFile != null || avatarBytes != null) {
-                        Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
-                        Presence newPresence = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
-
-                        // Change my own presence
-                        SparkManager.getSessionManager().changePresence(newPresence);
-                    }
-                    else {
-                        String firstName = vcard.getFirstName();
-                        String lastName = vcard.getLastName();
-                        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-                        if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                            statusBar.setNickname(firstName + " " + lastName);
-                        }
-                        else if (ModelUtil.hasLength(firstName)) {
-                            statusBar.setNickname(firstName);
-                        }
-
-                        statusBar.setAvatar(null);
-                    }
-                }
-                catch (XMPPException e) {
-                    Log.error(e);
-                }
-
-                return new Boolean(saved);
-            }
-
-            public void finished() {
-                if (!saved) {
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.vcard.not.supported"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-        };
-
-        worker.start();
-
+        vcardThread.start();
 
     }
 
-    private void createVCardUI(VCard vcard) {
-        personalPanel.setFirstName(vcard.getFirstName());
-        personalPanel.setMiddleName(vcard.getMiddleName());
-        personalPanel.setLastName(vcard.getLastName());
-        personalPanel.setEmailAddress(vcard.getEmailHome());
-        personalPanel.setNickname(vcard.getNickName());
-        personalPanel.setJID(vcard.getJabberId());
-
-        businessPanel.setCompany(vcard.getOrganization());
-        businessPanel.setDepartment(vcard.getOrganizationUnit());
-        businessPanel.setStreetAddress(vcard.getAddressFieldWork("STREET"));
-        businessPanel.setCity(vcard.getAddressFieldWork("LOCALITY"));
-        businessPanel.setState(vcard.getAddressFieldWork("REGION"));
-        businessPanel.setZipCode(vcard.getAddressFieldWork("PCODE"));
-        businessPanel.setCountry(vcard.getAddressFieldWork("CTRY"));
-        businessPanel.setJobTitle(vcard.getField("TITLE"));
-        businessPanel.setPhone(vcard.getPhoneWork("VOICE"));
-        businessPanel.setFax(vcard.getPhoneWork("FAX"));
-        businessPanel.setPager(vcard.getPhoneWork("PAGER"));
-        businessPanel.setMobile(vcard.getPhoneWork("CELL"));
-        businessPanel.setWebPage(vcard.getField("URL"));
-
-        // Load Home Info
-        homePanel.setStreetAddress(vcard.getAddressFieldHome("STREET"));
-        homePanel.setCity(vcard.getAddressFieldHome("LOCALITY"));
-        homePanel.setState(vcard.getAddressFieldHome("REGION"));
-        homePanel.setZipCode(vcard.getAddressFieldHome("PCODE"));
-        homePanel.setCountry(vcard.getAddressFieldHome("CTRY"));
-        homePanel.setPhone(vcard.getPhoneHome("VOICE"));
-        homePanel.setFax(vcard.getPhoneHome("FAX"));
-        homePanel.setPager(vcard.getPhoneHome("PAGER"));
-        homePanel.setMobile(vcard.getPhoneHome("CELL"));
-
-        // Set avatar
-        byte[] bytes = vcard.getAvatar();
-        if (bytes != null) {
-            ImageIcon icon = new ImageIcon(bytes);
-            avatarPanel.setAvatar(icon);
-            avatarPanel.setAvatarBytes(bytes);
-            if (avatarLabel != null) {
-                icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
-
-                avatarLabel.setIcon(icon);
-            }
-        }
-    }
-
+    /**
+     * Returns the VCard for this Spark user. This information will be cached after loading.
+     *
+     * @return this users VCard.
+     */
     public VCard getVCard() {
         if (!vcardLoaded) {
             try {
@@ -607,15 +218,22 @@ public class VCardManager {
                 }
             }
             catch (Exception e) {
+                Log.error(e);
             }
             vcardLoaded = true;
         }
         return personalVCard;
     }
 
-    private ImageIcon getAvatarIcon() {
+    /**
+     * Returns the Avatar in the form of an <code>ImageIcon</code>.
+     *
+     * @param vcard the vCard containing the avatar.
+     * @return the ImageIcon or null if no avatar was present.
+     */
+    public static ImageIcon getAvatarIcon(VCard vcard) {
         // Set avatar
-        byte[] bytes = personalVCard.getAvatar();
+        byte[] bytes = vcard.getAvatar();
         if (bytes != null) {
             ImageIcon icon = new ImageIcon(bytes);
             return GraphicUtils.scaleImageIcon(icon, 40, 40);
@@ -656,9 +274,15 @@ public class VCardManager {
                 return vcard;
             }
         }
-        return (VCard)vcards.get(jid);
+        return vcards.get(jid);
     }
 
+    /**
+     * Adds a new vCard to the cache.
+     *
+     * @param jid   the jid of the user.
+     * @param vcard the users vcard to cache.
+     */
     public void addVCard(String jid, VCard vcard) {
         vcard.setJabberId(jid);
         vcards.put(jid, vcard);
@@ -693,7 +317,7 @@ public class VCardManager {
                     return imageFile.toURL();
                 }
                 catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    Log.error(e);
                 }
             }
             else {
@@ -709,7 +333,7 @@ public class VCardManager {
                 avatarURL = item.getAvatarURL();
             }
             catch (MalformedURLException e) {
-                e.printStackTrace();
+                Log.error(e);
             }
         }
 
@@ -720,6 +344,12 @@ public class VCardManager {
         return avatarURL;
     }
 
+    /**
+     * Searches all vCards for a specified phone number.
+     *
+     * @param phoneNumber the phoneNumber.
+     * @return the vCard which contains the phone number.
+     */
     public VCard searchPhoneNumber(String phoneNumber) {
         for (VCard vcard : vcards.values()) {
             String homePhone = getNumbersFromPhone(vcard.getPhoneHome("VOICE"));
@@ -734,6 +364,12 @@ public class VCardManager {
         return null;
     }
 
+    /**
+     * Parses out the numbers only from a phone number.
+     *
+     * @param number the full phone number.
+     * @return the phone number only (5551212)
+     */
     public static String getNumbersFromPhone(String number) {
         if (number == null) {
             return null;
@@ -749,4 +385,14 @@ public class VCardManager {
 
         return number;
     }
+
+    /**
+     * Sets the personal vcard of the user.
+     *
+     * @param vcard the users vCard.
+     */
+    public void setPersonalVCard(VCard vcard) {
+        this.personalVCard = vcard;
+    }
+
 }

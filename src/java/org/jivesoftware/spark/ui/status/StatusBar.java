@@ -23,6 +23,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.sparkimpl.profile.VCardEditor;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -112,7 +113,8 @@ public class StatusBar extends JPanel {
             public void mouseClicked(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 1) {
                     VCardManager vcardManager = SparkManager.getVCardManager();
-                    vcardManager.showProfile(SparkManager.getWorkspace());
+                    VCardEditor editor = new VCardEditor();
+                    editor.editProfile(vcardManager.getVCard(), SparkManager.getWorkspace());
                 }
             }
 
