@@ -207,7 +207,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String appleString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(appleStroke);
 
         // Handle Apple Key W
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(appleString + "w"), "appleStroke");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStroke");
         this.getActionMap().put("appleStroke", new AbstractAction("appleStroke") {
             public void actionPerformed(ActionEvent evt) {
                 closeActiveRoom();
