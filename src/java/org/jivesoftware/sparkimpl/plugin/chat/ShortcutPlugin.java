@@ -39,26 +39,11 @@ public class ShortcutPlugin implements Plugin, TranscriptWindowInterceptor {
     }
 
 
-    public boolean interceptToMessage(TranscriptWindow window, String userid, Message message) {
-        return checkForME(window, userid, message);
-    }
-
-    public boolean interceptFromMessage(TranscriptWindow window, String userid, Message message) {
-        return checkForME(window, userid, message);
-    }
-
-    /**
-     * Returns true if the message was handled by this interceptor.
-     * @param window the TranscriptWindow.
-     * @param userid the userid.
-     * @param message the message being handled.
-     * @return true if the message was handled.
-     */
-    private boolean checkForME(TranscriptWindow window, String userid, Message message) {
+    public boolean isMessageIntercepted(TranscriptWindow window, String userid, Message message) {
         String body = message.getBody();
         if (ModelUtil.hasLength(body) && body.startsWith("/me ")) {
             body = body.replaceAll("/me", userid);
-            window.insertCustomNotification(body, Color.MAGENTA);
+            window.insertNotificationMessage(body, Color.MAGENTA);
             return true;
         }
         return false;

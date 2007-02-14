@@ -115,7 +115,7 @@ public class PresenceChangePlugin implements Plugin {
                         String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
 
                         String infoText = Res.getString("message.user.now.available.to.chat", item.getNickname(), time);
-                        chatRoom.getTranscriptWindow().insertNotificationMessage(infoText);
+                        chatRoom.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
                         Message message = new Message();
                         message.setFrom(item.getFullJID());
                         message.setBody(infoText);

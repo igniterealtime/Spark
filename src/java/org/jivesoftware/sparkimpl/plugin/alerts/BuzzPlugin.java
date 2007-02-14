@@ -15,6 +15,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -69,7 +70,7 @@ public class BuzzPlugin implements Plugin {
                             message.addExtension(new BuzzPacket());
                             SparkManager.getConnection().sendPacket(message);
 
-                            room.getTranscriptWindow().insertNotificationMessage("BUZZ!");
+                            room.getTranscriptWindow().insertNotificationMessage("BUZZ", ChatManager.NOTIFICATION_COLOR);
                             Timer timer = new Timer();
                             timer.schedule(new TimerTask() {
                                 public void run() {
@@ -120,7 +121,7 @@ public class BuzzPlugin implements Plugin {
         }
 
         // Insert offline message
-        room.getTranscriptWindow().insertNotificationMessage("Buzz");
+        room.getTranscriptWindow().insertNotificationMessage("BUZZ", ChatManager.NOTIFICATION_COLOR);
 
         ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
         if (chatFrame != null && chatFrame.isVisible()) {

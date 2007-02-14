@@ -385,7 +385,7 @@ public class ConferenceUtils {
 
         for (String jid : jids) {
             chatRoom.invite(jid, message);
-            room.getTranscriptWindow().insertNotificationMessage("Waiting for " + jid + " to join.");
+            room.getTranscriptWindow().insertNotificationMessage("Waiting for " + jid + " to join.", ChatManager.NOTIFICATION_COLOR);
         }
     }
 

@@ -589,7 +589,7 @@ public class SparkTransferManager {
                 chatRoom = SparkManager.getChatManager().createChatRoom(bJID, bJID, bJID);
             }
 
-            chatRoom.getTranscriptWindow().insertErrorMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.");
+            chatRoom.getTranscriptWindow().insertNotificationMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.", ChatManager.ERROR_COLOR);
             return null;
         }
 

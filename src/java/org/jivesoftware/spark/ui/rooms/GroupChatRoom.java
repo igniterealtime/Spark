@@ -33,6 +33,7 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -298,7 +299,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertToMessage(getNickname(), message);
+            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -341,7 +342,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertToMessage(getNickname(), message);
+            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -453,7 +454,7 @@ public final class GroupChatRoom extends ChatRoom {
         getToolBar().setVisible(false);
 
         // Update Room Notice To Inform Agent that he has left the chat.
-        getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", getNickname()));
+        getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", getNickname()), ChatManager.NOTIFICATION_COLOR);
 
         // Leave the Chat.
         try {
@@ -464,7 +465,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         // Set window as greyed out.
-        getTranscriptWindow().showDisabledWindowUI();
+        getTranscriptWindow().showWindowDisabled();
 
         // Update Notification Label
         getNotificationLabel().setText(Res.getString("message.chat.session.ended", SparkManager.DATE_SECOND_FORMATTER.format(new java.util.Date())));
@@ -590,7 +591,7 @@ public final class GroupChatRoom extends ChatRoom {
                         return;
                     }
 
-                    getTranscriptWindow().insertOthersMessage(from, message);
+                    getTranscriptWindow().insertMessage(from, message, ChatManager.FROM_COLOR);
                 }
 
                 if (typingTimer != null) {
@@ -631,7 +632,7 @@ public final class GroupChatRoom extends ChatRoom {
             }
 
             if (ModelUtil.hasLength(errorMessage)) {
-                getTranscriptWindow().insertErrorMessage(errorMessage);
+                getTranscriptWindow().insertNotificationMessage(errorMessage,  ChatManager.ERROR_COLOR);
             }
         }
     }
@@ -667,7 +668,7 @@ public final class GroupChatRoom extends ChatRoom {
         if (presence.getType() == Presence.Type.unavailable && !"303".equals(code)) {
             if (currentUserList.contains(from)) {
                 if (showPresenceMessages) {
-                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", nickname));
+                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", nickname), ChatManager.NOTIFICATION_COLOR);
                     scrollToBottom();
                 }
                 currentUserList.remove(from);
@@ -678,7 +679,7 @@ public final class GroupChatRoom extends ChatRoom {
                 currentUserList.add(from);
                 getChatInputEditor().setEnabled(true);
                 if (showPresenceMessages) {
-                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.joined.room", nickname));
+                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.joined.room", nickname), ChatManager.NOTIFICATION_COLOR);
                     scrollToBottom();
                 }
             }
@@ -820,7 +821,7 @@ public final class GroupChatRoom extends ChatRoom {
      * @param text the text to insert.
      */
     public void insertText(String text) {
-        getTranscriptWindow().insertNotificationMessage(text);
+        getTranscriptWindow().insertNotificationMessage(text, ChatManager.NOTIFICATION_COLOR);
     }
 
     /**
@@ -833,7 +834,7 @@ public final class GroupChatRoom extends ChatRoom {
             subjectPanel.setToolTipText(subject);
 
             String insertMessage = Res.getString("message.subject.has.been.changed.to", subject);
-            getTranscriptWindow().insertNotificationMessage(insertMessage);
+            getTranscriptWindow().insertNotificationMessage(insertMessage, ChatManager.NOTIFICATION_COLOR);
 
         }
     }
@@ -1055,7 +1056,7 @@ public final class GroupChatRoom extends ChatRoom {
             }
         }
 
-        getTranscriptWindow().insertErrorMessage(message);
+        getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
 
     /**

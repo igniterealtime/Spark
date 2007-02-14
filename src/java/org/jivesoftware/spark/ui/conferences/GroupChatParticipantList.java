@@ -11,9 +11,6 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jdesktop.swingx.JXList;
-import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterPipeline;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
@@ -33,7 +30,6 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.ImageTitlePanel;
-import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
@@ -168,7 +164,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                 String nickname = userManager.getUserNicknameFromJID(jid);
                 userHasLeft(chatRoom, nickname);
 
-                chatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has rejected the invitation.");
+                chatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has rejected the invitation.", ChatManager.NOTIFICATION_COLOR);
             }
         });
 
@@ -295,7 +291,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
         String nickname = userManager.getUserNicknameFromJID(jid);
 
-        groupChatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has been invited to join this room.");
+        groupChatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has been invited to join this room.", ChatManager.NOTIFICATION_COLOR);
 
         if (roomInformation != null && !roomInformation.containsFeature("muc_nonanonymous")) {
             return;

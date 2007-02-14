@@ -23,21 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -52,6 +37,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -70,7 +70,7 @@ public class TranscriptWindow extends ChatArea {
     /**
      * The default font used in the chat window for all messages.
      */
-    private Font font = new Font("Dialog", Font.PLAIN, 12);
+    private Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
 
     private Date lastPost;
 
@@ -86,7 +86,7 @@ public class TranscriptWindow extends ChatArea {
 
         final TranscriptWindow window = this;
         addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object component, JPopupMenu popup) {
+            public void poppingUp(Object object, JPopupMenu popup) {
                 Action printAction = new AbstractAction() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         SparkManager.printChatTranscript(window);
@@ -137,6 +137,7 @@ public class TranscriptWindow extends ChatArea {
 
     /**
      * Inserts a component into the transcript window.
+     *
      * @param component the component to insert.
      */
     public void addComponent(Component component) {
@@ -161,97 +162,14 @@ public class TranscriptWindow extends ChatArea {
     /**
      * Create and insert a message from the current user.
      *
-     * @param userid  the userid of the current user.
-     * @param message the message to insert.
+     * @param nickname   the nickname of the current user.
+     * @param message    the message to insert.
+     * @param foreground the color to use for the message foreground.
      */
-    public void insertToMessage(String userid, Message message) {
-
+    public void insertMessage(String nickname, Message message, Color foreground) {
         // Check interceptors.
         for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
-            boolean handled = interceptor.interceptToMessage(this, userid, message);
-            if (handled) {
-                // Do nothing.
-                return;
-            }
-        }
-
-        String body = message.getBody();
-
-        try {
-            String date = getDate(null);
-
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), date + userid + ": ", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setText(body);
-            insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
-        }
-    }
-
-
-    public void insertCustomMessage(String prefix, String message) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("User.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            if (prefix != null) {
-                doc.insertString(doc.getLength(), prefix + ": ", styles);
-            }
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setText(message);
-            insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
-        }
-    }
-
-    public void insertCustomOtherMessage(String prefix, String message) {
-        try {
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), prefix + ": ", styles);
-
-            StyleConstants.setBold(styles, false);
-            setText(message);
-            insertText("\n");
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-    /**
-     * Create and insert a message from a customer.
-     *
-     * @param userid  the userid of the customer.
-     * @param message the message from the customer.
-     */
-    public void insertOthersMessage(String userid, Message message) {
-        // Check interceptors.
-        for (TranscriptWindowInterceptor in : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
-            boolean handled = in.interceptFromMessage(this, userid, message);
+            boolean handled = interceptor.isMessageIntercepted(this, nickname, message);
             if (handled) {
                 // Do nothing.
                 return;
@@ -272,204 +190,120 @@ public class TranscriptWindow extends ChatArea {
                 sentDate = new Date();
             }
 
-            String theDate = getDate(sentDate);
+            String date = getDate(sentDate);
 
+            // Agent color is always blue
             StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("OtherUser.foreground"));
+            StyleConstants.setForeground(styles, foreground);
             final Document doc = getDocument();
             styles.removeAttribute("link");
 
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), theDate + userid + ": ", styles);
+            StyleConstants.setFontSize(styles, defaultFont.getSize());
+            doc.insertString(doc.getLength(), date + nickname + ": ", styles);
 
+            // Reset Styles for message
             StyleConstants.setBold(styles, false);
             setText(body);
-            insertText("\n");
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-
-    /**
-     * Create and insert a notification message. A notification message generally is a
-     * presence update, but can be used for most anything related to the room.
-     *
-     * @param timestamp the information message to insert.
-     */
-    public synchronized void insertTimestamp(String timestamp) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, true);
-            StyleConstants.setForeground(styles, Color.GRAY);
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, true);
-            StyleConstants.setUnderline(styles, true);
-            setForeground(Color.GRAY);
-            setText(timestamp);
-            insertText("\n");
-            StyleConstants.setUnderline(styles, false);
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-    /**
-     * Creates and inserts a title notification message.
-     *
-     * @param title the title to insert into the chat transcript.
-     */
-    public synchronized void insertTitle(String title) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, true);
-            StyleConstants.setForeground(styles, Color.gray);
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, true);
-            StyleConstants.setUnderline(styles, true);
-            setForeground(Color.gray);
-            setText(title);
-            insertText("\n");
-            StyleConstants.setUnderline(styles, false);
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-
-    /**
-     * Create and insert a notification message. A notification message generally is a
-     * presence update, but can be used for most anything related to the room.
-     *
-     * @param message the information message to insert.
-     */
-    public synchronized void insertNotificationMessage(String message) {
-        try {
-
-            Color notificationColor = (Color)UIManager.get("Notification.foreground");
-
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, notificationColor);
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setForeground(notificationColor);
-            setText(message);
-            insertText("\n");
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-    /**
-     * Create and insert a notification message. A notification message generally is a
-     * presence update, but can be used for most anything related to the room.
-     *
-     * @param message the information message to insert.
-     * @param notificationColor the color of the text.
-     */
-    public synchronized void insertCustomNotification(String message, Color notificationColor) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, notificationColor);
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setForeground(notificationColor);
-            setText(message);
-            insertText("\n");
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-    /**
-     * Creates and inserts an error message.
-     *
-     * @param message the information message to insert.
-     */
-    public void insertErrorMessage(String message) {
-        try {
-            // Agent color is always blue
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("Error.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            doc.insertString(doc.getLength(), "", styles);
-
-            // Reset Styles for message
-            StyleConstants.setBold(styles, false);
-            setForeground(Color.red);
-            setText(message);
-            insertText("\n");
-            setForeground(Color.black);
-        }
-        catch (BadLocationException ex) {
-            Log.error("Error message.", ex);
-        }
-    }
-
-    /**
-     * Create and insert a question message. A question message is specified by the
-     * end customer during the initial request.
-     *
-     * @param question the question asked by the customer.
-     */
-    public void insertQuestionMessage(String question) {
-
-        try {
-            StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, (Color)UIManager.get("Question.foreground"));
-            final Document doc = getDocument();
-            styles.removeAttribute("link");
-
-            StyleConstants.setFontSize(styles, font.getSize());
-            StyleConstants.setFontFamily(styles, font.getFamily());
-            doc.insertString(doc.getLength(), "Question - ", styles);
-
-            StyleConstants.setBold(styles, false);
-            setText(question);
             insertText("\n");
         }
         catch (BadLocationException e) {
             Log.error("Error message.", e);
         }
+    }
 
+    /**
+     * Inserts a full line using a prefix and message.
+     *
+     * @param prefix     the prefix to use. If null is used, then only the message will be inserted.
+     * @param message    the message to insert.
+     * @param foreground the foreground color for the message.
+     */
+    public void insertPrefixAndMessage(String prefix, String message, Color foreground) {
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, foreground);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, defaultFont.getSize());
+            if (prefix != null) {
+                doc.insertString(doc.getLength(), prefix + ": ", styles);
+            }
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setText(message);
+            insertText("\n");
+        }
+        catch (BadLocationException e) {
+            Log.error("Error message.", e);
+        }
+    }
+
+
+    /**
+     * Create and insert a notification message. A notification message generally is a
+     * presence update, but can be used for most anything related to the room.
+     *
+     * @param message         the information message to insert.
+     * @param foregroundColor the foreground color to use.
+     */
+    public synchronized void insertNotificationMessage(String message, Color foregroundColor) {
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, false);
+            StyleConstants.setForeground(styles, foregroundColor);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, defaultFont.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, false);
+            setForeground(foregroundColor);
+            setText(message);
+            insertText("\n");
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
+    }
+
+    /**
+     * Create and insert a notification message. A notification message generally is a
+     * presence update, but can be used for most anything related to the room.
+     *
+     * @param text      the text to insert.
+     * @param bold      true to use bold text.
+     * @param underline true to have text underlined.
+     * @param foreground the foreground color.
+     */
+    public synchronized void insertCustomText(String text, boolean bold, boolean underline, Color foreground) {
+        try {
+            // Agent color is always blue
+            StyleConstants.setBold(styles, true);
+            StyleConstants.setForeground(styles, foreground);
+            final Document doc = getDocument();
+            styles.removeAttribute("link");
+
+            StyleConstants.setFontSize(styles, defaultFont.getSize());
+            doc.insertString(doc.getLength(), "", styles);
+
+            // Reset Styles for message
+            StyleConstants.setBold(styles, bold);
+            StyleConstants.setUnderline(styles, underline);
+            setForeground(foreground);
+            setText(text);
+            insertText("\n");
+            StyleConstants.setUnderline(styles, false);
+            setForeground(Color.black);
+        }
+        catch (BadLocationException ex) {
+            Log.error("Error message.", ex);
+        }
     }
 
 
@@ -486,8 +320,8 @@ public class TranscriptWindow extends ChatArea {
             insertDate = new Date();
         }
 
-        StyleConstants.setFontFamily(styles, font.getFontName());
-        StyleConstants.setFontSize(styles, font.getSize());
+        StyleConstants.setFontFamily(styles, defaultFont.getFontName());
+        StyleConstants.setFontSize(styles, defaultFont.getSize());
 
         if (pref.isTimeDisplayedInChat()) {
             final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
@@ -523,7 +357,7 @@ public class TranscriptWindow extends ChatArea {
             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
             int diff = DateUtils.getDaysDiff(lastPostTime, date.getTime());
             if (diff != 0) {
-                insertTimestamp(notificationDateFormatter.format(date));
+                insertCustomText(notificationDateFormatter.format(date), true, true, Color.GRAY);
             }
 
             value = "[" + messageDateFormatter.format(date) + "] ";
@@ -538,7 +372,7 @@ public class TranscriptWindow extends ChatArea {
             final Document doc = getDocument();
             styles.removeAttribute("link");
 
-            StyleConstants.setFontSize(styles, font.getSize());
+            StyleConstants.setFontSize(styles, defaultFont.getSize());
             doc.insertString(doc.getLength(), value, styles);
 
             // Reset Styles for message
@@ -557,7 +391,7 @@ public class TranscriptWindow extends ChatArea {
      * Disable the entire <code>TranscriptWindow</code> and visually represent
      * it as disabled.
      */
-    public void showDisabledWindowUI() {
+    public void showWindowDisabled() {
         final Document document = getDocument();
         final SimpleAttributeSet attrs = new SimpleAttributeSet();
         StyleConstants.setForeground(attrs, Color.LIGHT_GRAY);
@@ -627,7 +461,7 @@ public class TranscriptWindow extends ChatArea {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -637,11 +471,12 @@ public class TranscriptWindow extends ChatArea {
 
     }
 
+ 
     public void setFont(Font font) {
-        this.font = font;
+        this.defaultFont = font;
     }
 
     public Font getFont() {
-        return font;
+        return defaultFont;
     }
 }

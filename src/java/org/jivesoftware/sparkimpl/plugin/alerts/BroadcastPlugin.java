@@ -234,7 +234,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
         String from = message.getFrom() != null ? message.getFrom() : "";
 
         final TranscriptWindow window = new TranscriptWindow();
-        window.insertCustomMessage(null, buf.toString());
+        window.insertPrefixAndMessage(null, buf.toString(), ChatManager.TO_COLOR);
 
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());

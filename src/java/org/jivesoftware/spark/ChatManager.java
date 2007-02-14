@@ -41,9 +41,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,13 +49,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
  * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
  */
 public class ChatManager implements MessageEventNotificationListener {
+
     private static ChatManager singleton;
     private static final Object LOCK = new Object();
+
+    // Define Default Colors
+    public static Color TO_COLOR = (Color)UIManager.get("User.foreground");
+    public static Color FROM_COLOR = (Color)UIManager.get("OtherUser.foreground");
+    public static Color NOTIFICATION_COLOR = (Color)UIManager.get("Notification.foreground");
+    public static Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
+
 
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
 
@@ -108,9 +118,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-                new ChatMessageEventRequestListener();
+            new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-                addMessageEventRequestListener(messageEventRequestListener);
+            addMessageEventRequestListener(messageEventRequestListener);
     }
 
 

@@ -312,7 +312,7 @@ final class InvitationDialog extends JPanel {
                         String jid = (String)values[i];
                         chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
                         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                        chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname);
+                        chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
                     }
 
                 }

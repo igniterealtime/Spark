@@ -26,6 +26,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.packet.MessageEvent;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -242,7 +243,7 @@ public class ChatRoomImpl extends ChatRoom {
         lastActivity = System.currentTimeMillis();
 
         try {
-            getTranscriptWindow().insertToMessage(getNickname(), message);
+            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -361,13 +362,13 @@ public class ChatRoomImpl extends ChatRoom {
 
                     if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
                         if (isOnline) {
-                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time));
+                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                         }
                         isOnline = false;
                     }
                     else if (presence.getType() == Presence.Type.available) {
                         if (!isOnline) {
-                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time));
+                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                         }
                         isOnline = true;
                     }
@@ -382,7 +383,7 @@ public class ChatRoomImpl extends ChatRoom {
                             // Check to see if the user is online to recieve this message.
                             RosterEntry entry = roster.getEntry(participantJID);
                             if (presence == null && !offlineSent && entry != null) {
-                                getTranscriptWindow().insertErrorMessage(Res.getString("message.offline.error"));
+                                getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
                                 offlineSent = true;
                             }
                         }
@@ -392,7 +393,7 @@ public class ChatRoomImpl extends ChatRoom {
                     // Check to see if the user is online to recieve this message.
                     RosterEntry entry = roster.getEntry(participantJID);
                     if (presence == null && !offlineSent && entry != null) {
-                        getTranscriptWindow().insertErrorMessage(Res.getString("message.offline"));
+                        getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
                         offlineSent = true;
                     }
 
@@ -476,7 +477,7 @@ public class ChatRoomImpl extends ChatRoom {
             checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
         }
 
-        getTranscriptWindow().insertOthersMessage(participantNickname, message);
+        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR);
 
         // Set the participant jid to their full JID.
         participantJID = message.getFrom();
@@ -582,7 +583,7 @@ public class ChatRoomImpl extends ChatRoom {
         handleDisconnect();
 
         String message = Res.getString("message.disconnected.error");
-        getTranscriptWindow().insertErrorMessage(message);
+        getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
 
     public void connectionClosedOnError(Exception ex) {
@@ -599,7 +600,7 @@ public class ChatRoomImpl extends ChatRoom {
             }
         }
 
-        getTranscriptWindow().insertErrorMessage(message);
+        getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
 
     public void reconnectionSuccessful() {

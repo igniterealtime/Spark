@@ -32,6 +32,7 @@ import javax.swing.text.BadLocationException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -146,7 +147,7 @@ public class ThemePanel extends JPanel {
         String activeEmoticonName = emoticonManager.getActiveEmoticonSetName();
 
         transcript.clear();
-        transcript.insertTitle(activeEmoticonName + " Emoticons");
+        transcript.insertCustomText(activeEmoticonName + " Emoticons", true, true, Color.GRAY);
         try {
             transcript.insertText("\n");
         }
