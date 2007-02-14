@@ -22,7 +22,9 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -32,17 +34,9 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
-
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.xmlpull.mxp1.MXParser;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -50,6 +44,23 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -64,18 +75,36 @@ public class VCardManager {
 
     private boolean vcardLoaded;
 
-    final private File imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
+    private File imageFile;
 
     private final VCardEditor editor;
+
+    private File vcardStorageDirectory;
+
+    final MXParser parser;
 
 
     /**
      * Initialize VCardManager.
      */
     public VCardManager() {
+        // Initialize parser
+        parser = new MXParser();
+        try {
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+        }
+        catch (XmlPullParserException e) {
+            Log.error(e);
+        }
+
+        imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
 
         // Initialize vCard.
         personalVCard = new VCard();
+
+        // Set VCard Storage
+        vcardStorageDirectory = new File(SparkManager.getUserDirectory(), "vcards");
+        vcardStorageDirectory.mkdirs();
 
         initializeUI();
 
@@ -269,6 +298,24 @@ public class VCardManager {
         if (!vcards.containsKey(jid) || !useCache) {
             VCard vcard = new VCard();
             try {
+                // Check File system first
+                VCard localVCard = loadFromFileSystem(jid);
+                if (localVCard != null) {
+                    String timestamp = localVCard.getField("timestamp");
+
+                    long time = Long.parseLong(timestamp);
+                    long now = System.currentTimeMillis();
+
+                    // Check to see if the file is older than a day.
+                    long day = 1000 * 60 * 60 * 24;
+                    if (now - time < day) {
+                        localVCard.setJabberId(jid);
+                        vcards.put(jid, localVCard);
+                        return localVCard;
+                    }
+                }
+
+                // Otherwise retrieve vCard from server and persist back out.
                 vcard.load(SparkManager.getConnection(), jid);
                 vcard.setJabberId(jid);
                 vcards.put(jid, vcard);
@@ -410,15 +457,54 @@ public class VCardManager {
      * @param vcard the users vcard.
      */
     private void persistVCard(String jid, VCard vcard) {
-        final String xml = vcard.toXML();
+        jid = UserManager.unescapeJID(jid);
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<spark-vcard-cache timestamp=\"");
-        builder.append(new Date().getTime());
-        builder.append("\">");
-        builder.append(xml);
-        builder.append("</spark-vcard-cache>");
-        System.out.println(builder.toString());
+        // Set timestamp
+        vcard.setField("timestamp", Long.toString(System.currentTimeMillis()));
+
+        final String xml = vcard.toString();
+
+        File vcardFile = new File(vcardStorageDirectory, jid);
+
+        // write xml to file
+        try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), "UTF-8"));
+            out.write(xml);
+            out.close();
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+    }
+
+    /**
+     * Attempts to load
+     *
+     * @param jid the jid of the user.
+     * @return the VCard if found, otherwise null.
+     */
+    private VCard loadFromFileSystem(String jid) {
+        // Unescape JID
+        jid = UserManager.unescapeJID(jid);
+
+        final File vcardFile = new File(vcardStorageDirectory, jid);
+        if (!vcardFile.exists()) {
+            return null;
+        }
+
+        try {
+            // Otherwise load from file system.
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
+            VCardProvider provider = new VCardProvider();
+            parser.setInput(in);
+            return (VCard)provider.parseIQ(parser);
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
+        return null;
     }
 
 }
