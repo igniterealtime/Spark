@@ -36,6 +36,20 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
@@ -52,27 +66,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 public class VCardManager {
     private BusinessPanel businessPanel;
     private PersonalPanel personalPanel;
     private HomePanel homePanel;
     private AvatarPanel avatarPanel;
     private JLabel avatarLabel;
-    private VCard vcard = new VCard();
+    private VCard personalVCard = new VCard();
 
     private Map<String, VCard> vcards = new HashMap<String, VCard>();
     private boolean vcardLoaded;
@@ -133,7 +133,7 @@ public class VCardManager {
         avatarPanel = new AvatarPanel();
         tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 
-        createVCardUI(vcard);
+        createVCardUI(personalVCard);
 
         final JOptionPane pane;
         final JDialog dlg;
@@ -199,7 +199,7 @@ public class VCardManager {
 
             public Object construct() {
                 userVCard = getVCard(jid);
-                return vcard;
+                return userVCard;
             }
 
             public void finished() {
@@ -378,7 +378,7 @@ public class VCardManager {
                 SwingWorker vcardLoaderWorker = new SwingWorker() {
                     public Object construct() {
                         try {
-                            vcard.load(SparkManager.getConnection());
+                            personalVCard.load(SparkManager.getConnection());
                         }
                         catch (XMPPException e) {
                             Log.error("Error loading vcard information.", e);
@@ -437,6 +437,8 @@ public class VCardManager {
 
 
     private void saveVCard() {
+        final VCard vcard = new VCard();
+
         // Save personal info
         vcard.setFirstName(personalPanel.getFirstName());
         vcard.setLastName(personalPanel.getLastName());
@@ -495,6 +497,7 @@ public class VCardManager {
                 }
 
                 try {
+                    personalVCard = vcard;
                     vcard.save(SparkManager.getConnection());
                     saved = true;
 
@@ -531,9 +534,6 @@ public class VCardManager {
                 if (!saved) {
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.vcard.not.supported"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
-                }
-                else {
-
                 }
             }
         };
@@ -593,10 +593,10 @@ public class VCardManager {
     public VCard getVCard() {
         if (!vcardLoaded) {
             try {
-                vcard.load(SparkManager.getConnection());
+                personalVCard.load(SparkManager.getConnection());
 
                 // If VCard is loaded, then save the avatar to the personal folder.
-                byte[] bytes = vcard.getAvatar();
+                byte[] bytes = personalVCard.getAvatar();
                 if (bytes != null) {
                     ImageIcon icon = new ImageIcon(bytes);
                     icon = VCardManager.scale(icon);
@@ -610,12 +610,12 @@ public class VCardManager {
             }
             vcardLoaded = true;
         }
-        return vcard;
+        return personalVCard;
     }
 
     private ImageIcon getAvatarIcon() {
         // Set avatar
-        byte[] bytes = vcard.getAvatar();
+        byte[] bytes = personalVCard.getAvatar();
         if (bytes != null) {
             ImageIcon icon = new ImageIcon(bytes);
             return GraphicUtils.scaleImageIcon(icon, 40, 40);
