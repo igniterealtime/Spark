@@ -18,6 +18,17 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -29,17 +40,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * UI to view/edit avatar.
@@ -212,11 +212,11 @@ public class AvatarPanel extends JPanel implements ActionListener {
             String extension = getExtension(f);
             if (extension != null) {
                 if (
-                        extension.equals(gif) ||
-                                extension.equals(jpeg) ||
-                                extension.equals(jpg) ||
-                                extension.equals(png)
-                        ) {
+                    extension.equals(gif) ||
+                        extension.equals(jpeg) ||
+                        extension.equals(jpg) ||
+                        extension.equals(png)
+                    ) {
                     return true;
                 }
                 else {
@@ -260,7 +260,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     public void initFileChooser() {
         if (fileChooser == null) {
-            fileChooser = new JFileChooser(Spark.getUserHome());
+            fileChooser = new JFileChooser(Spark.getUserHome()) {
+                public void updateUI() {
+                    putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
+                    super.updateUI();
+                }
+            };
+
             if (Spark.isWindows()) {
                 fileChooser.setFileSystemView(new WindowsFileSystemView());
             }
