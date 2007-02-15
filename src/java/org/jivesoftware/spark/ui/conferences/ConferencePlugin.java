@@ -137,7 +137,7 @@ public class ConferencePlugin {
                         }
 
                         // If no listeners handled the invitation, default to generic invite.
-                        new InvitationUI(conn, room, inviter, reason, password, message);
+                        new ConversationInvitation(conn, room, inviter, reason, password, message);
                     }
                 });
 
