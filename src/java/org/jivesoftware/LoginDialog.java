@@ -40,6 +40,17 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -61,17 +72,6 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -127,26 +127,26 @@ public final class LoginDialog {
         final ImagePanel imagePanel = new ImagePanel();
 
         mainPanel.add(imagePanel,
-            new GridBagConstraints(0, 0, 4, 1,
-                1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                new Insets(0, 0, 0, 0), 0, 0));
+                new GridBagConstraints(0, 0, 4, 1,
+                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
 
         final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
         if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
             // Handle Powered By for custom clients.
             final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
             mainPanel.add(poweredBy,
-                new GridBagConstraints(0, 1, 4, 1,
-                    1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 2, 0), 0, 0));
+                    new GridBagConstraints(0, 1, 4, 1,
+                            1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
+                            new Insets(0, 0, 2, 0), 0, 0));
 
         }
 
         loginPanel.setOpaque(false);
         mainPanel.add(loginPanel,
-            new GridBagConstraints(0, 2, 2, 1,
-                1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-                new Insets(0, 0, 0, 0), 0, 0));
+                new GridBagConstraints(0, 2, 2, 1,
+                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                        new Insets(0, 0, 0, 0), 0, 0));
 
         loginDialog.setContentPane(mainPanel);
         loginDialog.setLocationRelativeTo(parentFrame);
@@ -218,37 +218,37 @@ public final class LoginDialog {
 
 
             add(usernameLabel,
-                new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0));
             add(usernameField,
-                new GridBagConstraints(1, 1, 2, 1,
-                    1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                    new Insets(15, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(1, 1, 2, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(15, 5, 5, 5), 0, 0));
 
             add(passwordField,
-                new GridBagConstraints(1, 2, 2, 1,
-                    1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(1, 2, 2, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(0, 5, 5, 5), 0, 0));
             add(passwordLabel,
-                new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 5, 0));
+                    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 5, 0));
 
             // Add Server Field Properties
             add(serverField,
-                new GridBagConstraints(1, 4, 2, 1,
-                    1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(1, 4, 2, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(0, 5, 5, 5), 0, 0));
             add(serverLabel,
-                new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 5, 0));
+                    new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 5, 0));
 
 
             add(savePasswordBox,
-                new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
             add(autoLoginBox,
-                new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
-                    GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
 
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);
@@ -261,15 +261,15 @@ public final class LoginDialog {
             */
             if (!"true".equals(Default.getString(Default.ACCOUNT_DISABLED))) {
                 buttonPanel.add(createAccountButton,
-                    new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
+                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
             }
             buttonPanel.add(advancedButton,
-                new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
+                    new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
             buttonPanel.add(loginButton,
-                new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
-                    GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
+                    new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
 
             cardPanel.add(buttonPanel, BUTTON_PANEL);
 
@@ -280,9 +280,9 @@ public final class LoginDialog {
             cardPanel.add(progressBar, PROGRESS_BAR);
 
             add(cardPanel,
-                new GridBagConstraints(0, 7, 4, 1,
-                    1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                    new Insets(5, 5, 5, 5), 0, 0));
+                    new GridBagConstraints(0, 7, 4, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(5, 5, 5, 5), 0, 0));
             loginButton.setEnabled(false);
 
             // Add KeyListener
@@ -464,7 +464,7 @@ public final class LoginDialog {
          */
         private void validateDialog() {
             loginButton.setEnabled(ModelUtil.hasLength(getUsername()) && ModelUtil.hasLength(getPassword())
-                && ModelUtil.hasLength(getServerName()));
+                    && ModelUtil.hasLength(getServerName()));
         }
 
         /**
@@ -670,6 +670,9 @@ public final class LoginDialog {
                         else if (errorCode == 502 || errorCode == 504) {
                             errorMessage = SparkRes.getString(SparkRes.SERVER_UNAVAILABLE);
                         }
+                        else if (errorCode == 409) {
+                            errorMessage = Res.getString("label.conflict.error");
+                        }
                         else {
                             errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
                         }
@@ -691,7 +694,7 @@ public final class LoginDialog {
                 if (loginDialog.isVisible()) {
 
                     JOptionPane.showMessageDialog(loginDialog, errorMessage, SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
-                        JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
 
                 }
                 setEnabled(true);
