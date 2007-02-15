@@ -47,6 +47,7 @@ public class RetryPanel extends JPanel {
 
         // Init Components
         pane = new JEditorPane();
+        pane.setBackground(Color.white);
         pane.setEditorKit(new HTMLEditorKit());
         pane.setEditable(false);
 
