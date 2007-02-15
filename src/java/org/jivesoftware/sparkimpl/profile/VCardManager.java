@@ -459,6 +459,11 @@ public class VCardManager {
     private void persistVCard(String jid, VCard vcard) {
         jid = UserManager.unescapeJID(jid);
 
+        byte[] bytes = vcard.getAvatar();
+        if (bytes != null) {
+            vcard.setAvatar(bytes);
+        }
+
         // Set timestamp
         vcard.setField("timestamp", Long.toString(System.currentTimeMillis()));
 
