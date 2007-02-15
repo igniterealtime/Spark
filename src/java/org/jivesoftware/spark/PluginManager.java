@@ -21,8 +21,8 @@ import org.jivesoftware.spark.plugin.PluginClassLoader;
 import org.jivesoftware.spark.plugin.PublicPlugin;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import java.io.File;
@@ -201,17 +201,34 @@ public class PluginManager implements MainWindowListener {
 
             String clazz = null;
             String name = null;
+            String minVersion;
+            String operatingSystem;
+
             try {
                 Element plugin = (Element)iter.next();
 
                 name = plugin.selectSingleNode("name").getText();
                 clazz = plugin.selectSingleNode("class").getText();
 
+                // Check for minimum Spark version
                 try {
-                    plugin.selectSingleNode("minSparkVersion").getText();
+                    minVersion = plugin.selectSingleNode("minSparkVersion").getText();
+
+                    String buildNumber = JiveInfo.getBuildNumber();
+                    boolean ok = buildNumber.compareTo(minVersion) >= 0;
+
+                    if (!ok) {
+                        return null;
+                    }
                 }
                 catch (Exception e) {
                     Log.error("Unable to load plugin " + name + " due to no minSparkVersion.");
+                    return null;
+                }
+
+                // Do operating system check.
+                boolean operatingSystemOK = isOperatingSystemOK(plugin);
+                if (!operatingSystemOK) {
                     return null;
                 }
 
@@ -262,6 +279,11 @@ public class PluginManager implements MainWindowListener {
         return pluginClass;
     }
 
+    /**
+     * Loads an internal plugin.
+     *
+     * @param reader the inputstreamreader for an internal plugin.
+     */
     private void loadInternalPlugins(InputStreamReader reader) {
         SAXReader saxReader = new SAXReader();
         Document pluginXML = null;
@@ -284,7 +306,6 @@ public class PluginManager implements MainWindowListener {
 
                 name = plugin.selectSingleNode("name").getText();
                 clazz = plugin.selectSingleNode("class").getText();
-
 
                 Plugin pluginClass = (Plugin)Class.forName(clazz).newInstance();
                 Log.debug(name + " has been loaded. Internal plugin.");
@@ -417,6 +438,9 @@ public class PluginManager implements MainWindowListener {
         return parent;
     }
 
+    /**
+     * Expands all plugin packs (.jar files located in the plugin dir with plugin.xml).
+     */
     private void expandNewPlugins() {
         File[] jars = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -628,6 +652,46 @@ public class PluginManager implements MainWindowListener {
         }
 
         return false;
+    }
+
+    /**
+     * Checks the plugin for required operating system.
+     *
+     * @param plugin the Plugin element to check.
+     * @return true if the operating system is ok for the plugin to run on.
+     */
+    private boolean isOperatingSystemOK(Element plugin) {
+        // Check for operating systems
+        try {
+
+            final Element osElement = (Element)plugin.selectSingleNode("os");
+            if (osElement != null) {
+                String operatingSystem = osElement.getText();
+
+                boolean ok = false;
+
+                final String currentOS = JiveInfo.getOS().toLowerCase();
+
+                // Iterate through comma delimited string
+                StringTokenizer tkn = new StringTokenizer(operatingSystem, ",");
+                while (tkn.hasMoreTokens()) {
+                    String os = tkn.nextToken().toLowerCase();
+                    if (currentOS.contains(os)) {
+                        ok = true;
+                    }
+                }
+
+                if (!ok) {
+                    Log.debug("Unable to load plugin " + plugin.selectSingleNode("name").getText() + " due to invalid operating system. Required OS = " + operatingSystem);
+                    return false;
+                }
+            }
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
+        return true;
     }
 
 

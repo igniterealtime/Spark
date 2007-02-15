@@ -20,6 +20,10 @@ public class JiveInfo {
         return "2.5.0 Beta 2";
     }
 
+    public static String getBuildNumber(){
+        return "2.5.0";
+    }
+
     public static String getOS() {
         return System.getProperty("os.name");
     }
