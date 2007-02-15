@@ -959,8 +959,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                         tab.getTitleLabel().setText(room.getTabTitle() + appendedMessage);
 
                         // Check notifications.
-                        if (room instanceof ChatRoomImpl) {
-                            checkNotificationPreferences(room);
+                        if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom)) {
+                           checkNotificationPreferences(room);
                         }
 
 
@@ -1108,10 +1108,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             toaster.setDisplayTime(5000);
             toaster.setBorder(BorderFactory.createBevelBorder(0));
 
-            String nickname = ((ChatRoomImpl)room).getParticipantNickname();
-            toaster.setTitle(nickname);
+            String nickname = nickname = room.getRoomTitle();
+    		toaster.setTitle(nickname);
             toaster.setToasterHeight(150);
             toaster.setToasterWidth(200);
+
 
             int size = room.getTranscripts().size();
             if (size > 0) {
