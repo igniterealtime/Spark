@@ -506,7 +506,7 @@ public class VCardManager {
             return (VCard)provider.parseIQ(parser);
         }
         catch (Exception e) {
-            Log.error(e);
+            Log.error("Unable to load vCard for "+jid, e);
         }
 
         return null;
