@@ -324,8 +324,9 @@ public class VCardManager {
                 persistVCard(jid, vcard);
             }
             catch (XMPPException e) {
-                Log.warning("Unable to load vcard for " + jid, e);
+                //Log.warning("Unable to load vcard for " + jid, e);
                 vcard.setError(new XMPPError(409));
+                vcards.put(jid, vcard);
                 return vcard;
             }
         }
@@ -506,7 +507,7 @@ public class VCardManager {
             return (VCard)provider.parseIQ(parser);
         }
         catch (Exception e) {
-            Log.error("Unable to load vCard for "+jid, e);
+            Log.error("Unable to load vCard for " + jid, e);
         }
 
         return null;
