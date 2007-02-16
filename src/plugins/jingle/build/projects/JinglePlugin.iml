@@ -46,7 +46,9 @@
           <root url="jar://$MODULE_DIR$/../lib/dist/JingleMedia.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../../../smack/jingle/media/source" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

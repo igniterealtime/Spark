@@ -17,6 +17,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.smackx.jingle.*;
+import org.jivesoftware.smackx.jingle.listeners.JingleSessionStateListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 
@@ -29,7 +30,7 @@ import java.awt.event.MouseEvent;
 import java.applet.Applet;
 import java.applet.AudioClip;
 
-public class CallMessage extends JPanel {
+public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
@@ -46,6 +47,7 @@ public class CallMessage extends JPanel {
 
     private AudioClip ringing = null;
 
+    private boolean answer = false;
 
     public CallMessage() {
         buildUI();
@@ -88,11 +90,7 @@ public class CallMessage extends JPanel {
         final CallMessage callMessage = this;
         acceptButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    ((IncomingJingleSession) session).start();
-                } catch (XMPPException e1) {
-                    e1.printStackTrace();
-                }
+                setAnswer(true);
             }
         });
 
@@ -112,6 +110,14 @@ public class CallMessage extends JPanel {
 
     }
 
+    public boolean isAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(boolean answer) {
+        this.answer = answer;
+    }
+
     public void call(final JingleSession session, final String jid) {
 
         cancelButton.setVisible(true);
@@ -119,6 +125,8 @@ public class CallMessage extends JPanel {
         this.fullJID = jid;
 
         this.session = session;
+
+        this.session.addStateListener(this);
 
         fileLabel.setText(fullJID);
 
@@ -141,34 +149,11 @@ public class CallMessage extends JPanel {
             }
         });
 
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                while (true) {
-                    try {
-                        Thread.sleep(100);
-                        if (getSession() == null || getSession().isClosed())
-                            break;
-                    }
-                    catch (InterruptedException e) {
-                        Log.error("Unable to sleep thread.", e);
-                    }
-                    updateBar(getSession());
-                }
-                return "";
-            }
-
-            public void finished() {
-                updateBar(getSession());
-            }
-        };
-
-        worker.start();
-
         makeClickable(imageLabel);
         makeClickable(titleLabel);
     }
 
-    private void updateBar(final JingleSession session) {
+    private void updateBar() {
 
         if (session == null || session.isClosed()) {
             showAlert(true);
@@ -177,14 +162,6 @@ public class CallMessage extends JPanel {
             retryButton.setVisible(false);
             acceptButton.setVisible(false);
             if (ringing != null) ringing.stop();
-        } else if (session.getState() == null) {
-            showAlert(true);
-            titleLabel.setText("Incoming Call");
-            cancelButton.setVisible(true);
-            retryButton.setVisible(false);
-            acceptButton.setVisible(true);
-            if ((lastState == null))
-                if (ringing != null) ringing.loop();
         } else if (session instanceof OutgoingJingleSession) {
             acceptButton.setVisible(false);
             showAlert(false);
@@ -192,30 +169,17 @@ public class CallMessage extends JPanel {
                 cancelButton.setVisible(true);
                 retryButton.setVisible(false);
                 titleLabel.setText("On Phone");
-                if (ringing != null) ringing.stop();
-            } else if (session.getState() instanceof OutgoingJingleSession.Inviting) {
-                cancelButton.setVisible(true);
-                retryButton.setVisible(false);
-                titleLabel.setText("Ringing...");
-                if (!(lastState instanceof OutgoingJingleSession.Inviting))
-                    if (ringing != null) ringing.loop();
             } else if (session.getState() instanceof OutgoingJingleSession.Pending) {
-                titleLabel.setText("Establishing...");
+                titleLabel.setText("Ringing...");
                 cancelButton.setVisible(true);
                 retryButton.setVisible(false);
-                if (ringing != null) ringing.stop();
             }
             lastState = session.getState();
         } else if (session instanceof IncomingJingleSession) {
             acceptButton.setVisible(false);
             showAlert(false);
-            if (session.getState() instanceof IncomingJingleSession.Accepting) {
-                titleLabel.setText("Accepting...");
-                cancelButton.setVisible(true);
-            } else if (session.getState() instanceof IncomingJingleSession.Pending) {
+            if (session.getState() instanceof IncomingJingleSession.Pending) {
                 titleLabel.setText("Establishing...");
-                cancelButton.setVisible(true);
-                if (ringing != null) ringing.stop();
             } else if (session.getState() instanceof IncomingJingleSession.Active) {
                 titleLabel.setText("On Phone");
                 cancelButton.setVisible(true);
@@ -304,6 +268,37 @@ public class CallMessage extends JPanel {
 
     public void setSession(JingleSession session) {
         this.session = session;
+    }
+
+    public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
+        if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
+
+            showAlert(true);
+            titleLabel.setText("Incoming Call");
+            cancelButton.setVisible(true);
+            retryButton.setVisible(false);
+            acceptButton.setVisible(true);
+            if ((lastState == null))
+                if (ringing != null) ringing.loop();
+
+            while (!answer && (session != null && !session.isClosed())) {
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            if (!answer) {
+                cancelCall();
+                throw new JingleNegotiator.JingleException("Not Accepted");
+            }
+        }
+    }
+
+    public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
+        updateBar();
     }
 
 }
