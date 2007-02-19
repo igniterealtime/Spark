@@ -627,7 +627,7 @@ public class SparkTransferManager {
         final PacketListener packetListener = new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence == null || presence.getType() == Presence.Type.unavailable) {
+                if (!presence.isAvailable()) {
                     if (transfer != null) {
                         transfer.cancel();
                     }

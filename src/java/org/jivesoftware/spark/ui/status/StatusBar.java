@@ -284,7 +284,7 @@ public class StatusBar extends JPanel {
     }
 
     public void changeAvailability(final Presence presence) {
-        if (presence == null) {
+        if (!presence.isAvailable()) {
             return;
         }
 
@@ -342,7 +342,7 @@ public class StatusBar extends JPanel {
 
     public StatusItem getItemFromPresence(Presence presence) {
         // Handle offline presence
-        if (presence == null) {
+        if (!presence.isAvailable()) {
             return null;
         }
 

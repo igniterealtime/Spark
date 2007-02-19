@@ -97,7 +97,7 @@ public class PresenceChangePlugin implements Plugin {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence == null || presence.getType() != Type.available) {
+                if (!presence.isAvailable()) {
                     return;
                 }
                 String from = presence.getFrom();

@@ -380,7 +380,7 @@ public class ChatRoomImpl extends ChatRoom {
                         if (message.getError().getCode() == 404) {
                             // Check to see if the user is online to recieve this message.
                             RosterEntry entry = roster.getEntry(participantJID);
-                            if (presence == null && !offlineSent && entry != null) {
+                            if (!presence.isAvailable() && !offlineSent && entry != null) {
                                 getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
                                 offlineSent = true;
                             }
@@ -390,7 +390,7 @@ public class ChatRoomImpl extends ChatRoom {
 
                     // Check to see if the user is online to recieve this message.
                     RosterEntry entry = roster.getEntry(participantJID);
-                    if (presence == null && !offlineSent && entry != null) {
+                    if (!presence.isAvailable() && !offlineSent && entry != null) {
                         getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
                         offlineSent = true;
                     }
