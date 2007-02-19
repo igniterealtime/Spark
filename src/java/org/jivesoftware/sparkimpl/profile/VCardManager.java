@@ -303,15 +303,17 @@ public class VCardManager {
                 if (localVCard != null) {
                     String timestamp = localVCard.getField("timestamp");
 
-                    long time = Long.parseLong(timestamp);
-                    long now = System.currentTimeMillis();
+                    if (timestamp != null) {
+                        long time = Long.parseLong(timestamp);
+                        long now = System.currentTimeMillis();
 
-                    // Check to see if the file is older than a day.
-                    long day = 1000 * 60 * 60 * 24;
-                    if (now - time < day) {
-                        localVCard.setJabberId(jid);
-                        vcards.put(jid, localVCard);
-                        return localVCard;
+                        // Check to see if the file is older than a day.
+                        long day = 1000 * 60 * 60 * 24;
+                        if (now - time < day) {
+                            localVCard.setJabberId(jid);
+                            vcards.put(jid, localVCard);
+                            return localVCard;
+                        }
                     }
                 }
 
