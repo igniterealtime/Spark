@@ -16,6 +16,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -74,8 +75,8 @@ public class RosterPickList extends JPanel {
         // Populate Invite Panel with Available users.
         final Roster roster = SparkManager.getConnection().getRoster();
         for (RosterEntry entry : roster.getEntries()) {
-            Presence presence = roster.getPresence(entry.getUser());
-            if (presence != null) {
+            Presence presence = PresenceManager.getPresence(entry.getUser());
+            if (presence.isAvailable()) {
                 ContactItem item = new ContactItem(entry.getName(), entry.getUser());
                 item.setPresence(presence);
                 userList.add(item);

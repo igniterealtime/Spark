@@ -25,8 +25,9 @@ import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.packet.MessageEvent;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -130,10 +131,10 @@ public class ChatRoomImpl extends ChatRoom {
         getSplitPane().setDividerSize(0);
 
 
+        presence = PresenceManager.getPresence(participantJID);
+
         roster = SparkManager.getConnection().getRoster();
-        presence = roster.getPresence(participantJID);
-
-
+        
         RosterEntry entry = roster.getEntry(participantJID);
 
         tabIcon = SparkManager.getUserManager().getTabIconForPresence(presence);
@@ -334,10 +335,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @return the users Full JID.
      */
     public String getJID() {
-        presence = roster.getPresence(getParticipantJID());
-        if (presence == null) {
-            return getParticipantJID();
-        }
+        presence = PresenceManager.getPresence(getParticipantJID());
         return presence.getFrom();
     }
 
@@ -604,10 +602,9 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public void reconnectionSuccessful() {
-        Roster roster = SparkManager.getConnection().getRoster();
-        Presence p = roster.getPresence(getParticipantJID());
-        if (p != null) {
-            presence = p;
+        Presence usersPresence = PresenceManager.getPresence(getParticipantJID());
+        if (usersPresence.isAvailable()) {
+            presence = usersPresence;
         }
 
         SparkManager.getChatManager().getChatContainer().useTabDefault(this);
@@ -669,7 +666,7 @@ public class ChatRoomImpl extends ChatRoom {
                     nickname = StringUtils.parseName(nickname);
                 }
             }
-            
+
 
             Date date = message.getDate();
             getTranscriptWindow().insertHistoryMessage(nickname, message.getBody(), date);

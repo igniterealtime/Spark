@@ -33,6 +33,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.SharedGroupManager;
 import org.jivesoftware.smackx.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
@@ -48,32 +49,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -91,6 +66,32 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -206,9 +207,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
         });
-		
-		// Handle Command-F on Macs
-		SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
+
+        // Handle Command-F on Macs
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
             public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
@@ -255,25 +256,18 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param presence the user to update.
      */
     private void updateUserPresence(Presence presence) {
-        if (presence == null) {
-            return;
-        }
-
-        Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = SparkManager.getConnection().getRoster();
 
         final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
 
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
         // belong to.
-        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null) {
-            changeOfflineToOnline(bareJID, entry, presence);
-        }
-        else if (presence.getFrom().indexOf("workgroup.") != -1) {
+        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || (presence.getFrom().indexOf("workgroup.") != -1)) {
             changeOfflineToOnline(bareJID, entry, presence);
         }
         else if (presence.getType() == Presence.Type.available) {
@@ -281,8 +275,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
         else if (presence.getType() == Presence.Type.unavailable && !isPending) {
             // If not available, move to offline group.
-            Presence rosterPresence = roster.getPresence(bareJID);
-            if (rosterPresence == null) {
+            Presence rosterPresence = PresenceManager.getPresence(bareJID);
+            if (!rosterPresence.isAvailable()) {
                 moveToOfflineGroup(presence, bareJID);
             }
             else {
@@ -314,16 +308,17 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
 
                 // Only run through if the users presence was online before.
-                if (item.getPresence() != null) {
+                if (item.getPresence().isAvailable()) {
                     item.showUserGoingOfflineOnline();
                     item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                     group.fireContactGroupUpdated();
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
+
+                    final Timer offlineTimer = new Timer();
+                    offlineTimer.schedule(new TimerTask() {
                         public void run() {
-                            Roster roster = SparkManager.getConnection().getRoster();
-                            Presence userPresence = roster.getPresence(bareJID);
-                            if (userPresence != null) {
+                            // Check to see if the user is offline, if so, move them to the offline group.
+                            Presence userPresence = PresenceManager.getPresence(bareJID);
+                            if (userPresence.isAvailable()) {
                                 return;
                             }
 
@@ -430,9 +425,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 }
 
                 ContactItem contactItem = new ContactItem(name, entry.getUser());
-                contactItem.setPresence(null);
+                contactItem.setPresence(new Presence(Presence.Type.unavailable));
                 if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                     // Add to contact group.
                     contactGroup.addContactItem(contactItem);
                     contactGroup.setVisible(true);
@@ -507,7 +502,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 }
 
                 boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
                 if (isPending) {
                     contactGroup.setVisible(true);
                 }
@@ -521,7 +516,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
 
-        if (presence != null) {
+        if (!presence.isAvailable()) {
             updateUserPresence(presence);
         }
     }
@@ -593,9 +588,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                                 ContactItem contactItem = new ContactItem(name, rosterEntry.getUser());
                                 contactGroup.addContactItem(contactItem);
-                                Presence presence = roster.getPresence(jid);
+                                Presence presence = PresenceManager.getPresence(jid);
                                 contactItem.setPresence(presence);
-                                if (presence != null) {
+                                if (presence.isAvailable()) {
                                     contactGroup.setVisible(true);
                                 }
                             }
@@ -612,9 +607,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                         name = rosterEntry.getUser();
                                     }
                                     item = new ContactItem(name, rosterEntry.getUser());
-                                    Presence presence = roster.getPresence(jid);
+                                    Presence presence = PresenceManager.getPresence(jid);
                                     item.setPresence(presence);
-                                    if (presence != null) {
+                                    if (presence.isAvailable()) {
                                         contactGroup.addContactItem(item);
                                         contactGroup.fireContactGroupUpdated();
                                     }
@@ -627,12 +622,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                 // If not, just update their presence.
                                 else {
                                     RosterEntry entry = roster.getEntry(jid);
-                                    Presence presence = roster.getPresence(jid);
+                                    Presence presence = PresenceManager.getPresence(jid);
                                     item.setPresence(presence);
                                     updateUserPresence(presence);
 
                                     if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                                            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                                         contactGroup.setVisible(true);
 
                                     }
@@ -676,7 +671,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             ContactItem offlineItem = offlineGroup.getContactItemByJID(jid);
                             if (offlineItem != null) {
                                 if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)
-                                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
+                                        && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
                                     // Remove from offlineItem and add to unfiledItem.
                                     offlineGroup.removeContactItem(offlineItem);
                                     unfiledGroup.addContactItem(offlineItem);
@@ -691,7 +686,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         });
     }
 
-    public void presenceChanged(String user){
+    public void presenceChanged(Presence presence) {
 
     }
 
@@ -1478,14 +1473,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         PacketListener subscribeListener = new PacketListener() {
             public void processPacket(Packet packet) {
                 final Presence presence = (Presence)packet;
-                if (presence != null && presence.getType() == Presence.Type.subscribe) {
+                if (presence.getType() == Presence.Type.subscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             subscriptionRequest(presence.getFrom());
                         }
                     });
                 }
-                else if (presence != null && presence.getType() == Presence.Type.unsubscribe) {
+                else if (presence.getType() == Presence.Type.unsubscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             Roster roster = SparkManager.getConnection().getRoster();
@@ -1507,7 +1502,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
                 }
-                else if (presence != null && presence.getType() == Presence.Type.subscribe) {
+                else if (presence.getType() == Presence.Type.subscribe) {
                     // Find Contact in Contact List
                     String jid = StringUtils.parseBareAddress(presence.getFrom());
                     ContactItem item = getContactItemByJID(jid);
@@ -1527,7 +1522,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         }
                     }
                 }
-                else if (presence != null && presence.getType() == Presence.Type.unsubscribed) {
+                else if (presence.getType() == Presence.Type.unsubscribed) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             Roster roster = SparkManager.getConnection().getRoster();

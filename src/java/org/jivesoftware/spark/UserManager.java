@@ -12,7 +12,6 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.Occupant;
@@ -27,6 +26,12 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -48,12 +53,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * Handles all users in the agent application. Each user or chatting user can be referenced from the User
@@ -351,14 +350,8 @@ public class UserManager {
      * @return the full jid with resource.
      */
     public String getFullJID(String jid) {
-        Roster roster = SparkManager.getConnection().getRoster();
-        Presence presence = roster.getPresence(jid);
-        if (presence != null) {
-            return presence.getFrom();
-        }
-
-        return null;
-
+        Presence presence = PresenceManager.getPresence(jid);
+        return presence.getFrom();
     }
 
     /**

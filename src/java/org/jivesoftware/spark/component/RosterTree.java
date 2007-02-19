@@ -17,6 +17,7 @@ import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 
 import javax.swing.BorderFactory;
@@ -65,13 +66,13 @@ public final class RosterTree extends JPanel {
         }
     }
 
-    private void changePresence(String user, boolean available) {
+    private void changePresence(String user, Presence presence){
         final Iterator iter = addressMap.keySet().iterator();
         while (iter.hasNext()) {
             final JiveTreeNode node = (JiveTreeNode)iter.next();
             final String nodeUser = (String)addressMap.get(node);
             if (user.startsWith(nodeUser)) {
-                if (!available) {
+                if (!presence.isAvailable()) {
                     node.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                 }
                 else {
@@ -98,21 +99,21 @@ public final class RosterTree extends JPanel {
 
             }
 
-            public void presenceChanged(String user) {
+            public void presenceChanged(Presence presence) {
                 //changePresence(presence.getFrom(), presence.getMode() == Presence.Mode.available);
 
             }
         });
 
 
-        for(RosterGroup group : roster.getGroups()){
+        for (RosterGroup group : roster.getGroups()) {
             final JiveTreeNode groupNode = new JiveTreeNode(group.getName(), true);
             groupNode.setAllowsChildren(true);
             if (group.getEntryCount() > 0) {
                 rootNode.add(groupNode);
             }
 
-            for(RosterEntry entry : group.getEntries()){
+            for (RosterEntry entry : group.getEntries()) {
                 String name = entry.getName();
                 if (name == null) {
                     name = entry.getUser();
@@ -120,16 +121,16 @@ public final class RosterTree extends JPanel {
 
 
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
-                final Presence p = roster.getPresence(entry.getUser());
+                final Presence usersPresence = PresenceManager.getPresence(entry.getUser());
                 addressMap.put(entryNode, entry.getUser());
-                if (p != null && p.getType() == Presence.Type.available && p.getMode() == Presence.Mode.available) {
+                if (usersPresence.isAvailable() && !usersPresence.isAway()) {
                     groupNode.add(entryNode);
                 }
-                else if ((p == null || p.getType() == Presence.Type.unavailable) && showUnavailableAgents) {
+                else if (showUnavailableAgents) {
                     groupNode.add(entryNode);
                 }
 
-                changePresence(entry.getUser(), p != null);
+                changePresence(entry.getUser(), usersPresence);
                 final DefaultTreeModel model = (DefaultTreeModel)rosterTree.getModel();
                 model.nodeStructureChanged(groupNode);
             }

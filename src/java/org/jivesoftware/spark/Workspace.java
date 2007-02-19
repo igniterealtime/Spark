@@ -215,7 +215,7 @@ public class Workspace extends JPanel implements PacketListener {
         PacketListener workspacePresenceListener = new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence != null && presence.getProperty("anonymous") != null) {
+                if (presence.getProperty("anonymous") != null) {
                     boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
                     Presence reply = new Presence(Presence.Type.available);
                     if (!isAvailable) {

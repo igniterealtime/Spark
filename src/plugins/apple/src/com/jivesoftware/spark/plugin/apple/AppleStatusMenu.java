@@ -199,7 +199,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 Roster roster = SparkManager.getConnection().getRoster();
                 Presence presence = roster.getPresence(user);
 
-                if (presence != null) {
+
                     if (Presence.Mode.away.equals(presence.getMode())) {
                         RosterEntry entry = roster.getEntry(user);
                         removeEntry(entry);
@@ -209,7 +209,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                         RosterEntry entry = roster.getEntry(user);
                         addEntry(entry);
                     }
-                }
+
 
             }
         });

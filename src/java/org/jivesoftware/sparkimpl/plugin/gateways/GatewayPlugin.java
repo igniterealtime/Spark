@@ -26,6 +26,7 @@ import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -172,7 +173,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 Presence presence = (Presence)packet;
                 Transport transport = TransportUtils.getTransport(packet.getFrom());
                 if (transport != null) {
-                    boolean registered = presence != null && presence.getMode() != null;
+                    boolean registered = presence.getMode() != null;
                     if (presence.getType() == Presence.Type.unavailable) {
                         registered = false;
                     }
@@ -194,7 +195,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem contactItem : contactGroup.getContactItems()) {
                 Presence presence = contactItem.getPresence();
-                if (presence != null) {
+                if (presence.isAvailable()) {
                     String domain = StringUtils.parseServer(presence.getFrom());
                     Transport transport = TransportUtils.getTransport(domain);
                     if (transport != null) {
@@ -222,7 +223,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
 
     public boolean handlePresence(ContactItem item, Presence presence) {
-        if (presence != null) {
+        if (presence.isAvailable()) {
             String domain = StringUtils.parseServer(presence.getFrom());
             Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
@@ -244,12 +245,10 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     public Icon getIcon(String jid) {
-        Roster roster = SparkManager.getConnection().getRoster();
-        Presence presence = roster.getPresence(jid);
         String domain = StringUtils.parseServer(jid);
         Transport transport = TransportUtils.getTransport(domain);
         if (transport != null) {
-            if (presence != null && presence.getType() == Presence.Type.available) {
+            if (PresenceManager.isOnline(jid)) {
                 return transport.getIcon();
             }
             else {

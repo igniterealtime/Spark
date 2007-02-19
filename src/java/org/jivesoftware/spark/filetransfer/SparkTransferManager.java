@@ -29,6 +29,7 @@ import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.PreferenceManager;
@@ -530,7 +531,7 @@ public class SparkTransferManager {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence != null) {
+                if (presence.isAvailable()) {
                     String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
                     // Iterate through map.
@@ -562,31 +563,30 @@ public class SparkTransferManager {
      * Send a file to a user.
      *
      * @param file the file to send.
-     * @param bJID the bare jid of the user to send the file to.
+     * @param jid the jid of the user to send the file to.
      * @return the ChatRoom of the user.
      */
-    public ChatRoom sendFile(File file, String bJID) {
-        Roster roster = SparkManager.getConnection().getRoster();
-        Presence presence = roster.getPresence(bJID);
-
+    public ChatRoom sendFile(File file, String jid) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        String bareJID = StringUtils.parseBareAddress(jid);
+        String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
-        if (presence == null) {
-            List list = (List)waitMap.get(bJID);
+        if (PresenceManager.isOnline(jid)){
+            List list = (List)waitMap.get(jid);
             if (list == null) {
                 list = new ArrayList();
             }
 
             list.add(file);
-            waitMap.put(bJID, list);
+            waitMap.put(jid, list);
 
             ChatRoom chatRoom;
-            ContactItem contactItem = contactList.getContactItemByJID(bJID);
+            ContactItem contactItem = contactList.getContactItemByJID(jid);
             if (contactItem != null) {
-                chatRoom = SparkManager.getChatManager().createChatRoom(bJID, contactItem.getNickname(), contactItem.getNickname());
+                chatRoom = SparkManager.getChatManager().createChatRoom(jid, contactItem.getNickname(), contactItem.getNickname());
             }
             else {
-                chatRoom = SparkManager.getChatManager().createChatRoom(bJID, bJID, bJID);
+                chatRoom = SparkManager.getChatManager().createChatRoom(jid, jid, jid);
             }
 
             chatRoom.getTranscriptWindow().insertNotificationMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.", ChatManager.ERROR_COLOR);
@@ -594,10 +594,8 @@ public class SparkTransferManager {
         }
 
 
-        String bareJID = StringUtils.parseBareAddress(presence.getFrom());
-
         // Create the outgoing file transfer
-        final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(presence.getFrom());
+        final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);
 
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
@@ -650,7 +648,7 @@ public class SparkTransferManager {
             }
         });
 
-        sendingUI.sendFile(transfer, transferManager, presence.getFrom(), contactItem.getNickname());
+        sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getNickname());
         StyleConstants.setComponent(style, sendingUI);
 
         // Insert the image at the end of the text

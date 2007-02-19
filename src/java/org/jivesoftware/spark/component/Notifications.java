@@ -20,6 +20,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
@@ -166,7 +167,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
         }
 
         // Get Status Text
-        if (presence != null) {
+        if (presence.isAvailable()) {
             String status = presence.getStatus();
             trayIcon.setToolTip("Spark Client\n" + status);
         }

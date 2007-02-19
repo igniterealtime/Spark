@@ -11,16 +11,15 @@
 package org.jivesoftware.sparkimpl.preference.sounds;
 
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -41,13 +40,10 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (presence != null && presence.getType() == Presence.Type.unavailable) {
+                if (!presence.isAvailable()) {
                     SoundPreferences preferences = soundPreference.getPreferences();
                     if (preferences != null && preferences.isPlayOfflineSound()) {
-                        Roster roster = SparkManager.getConnection().getRoster();
-                        final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
-                        presence = roster.getPresence(bareJID);
-                        if (presence == null) {
+                        if (!PresenceManager.isOnline(presence.getFrom())) {
                             String offline = preferences.getOfflineSound();
                             File offlineFile = new File(offline);
                             SparkManager.getSoundManager().playClip(offlineFile);

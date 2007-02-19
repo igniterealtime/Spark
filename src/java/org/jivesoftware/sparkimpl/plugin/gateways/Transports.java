@@ -21,18 +21,18 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  *
@@ -63,7 +63,7 @@ public class Transports extends JPanel {
                 if (e.getClickCount() == 2) {
                     TransportItem item = (TransportItem)list.getSelectedValue();
                     Presence presence = con.getRoster().getPresence(item.getTransport().getServiceName());
-                    boolean registered = presence != null && presence.getMode() != null;
+                    boolean registered = presence.getMode() != null;
                     if (registered) {
                         int confirm = JOptionPane.showConfirmDialog(item, Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                         if (confirm == JOptionPane.YES_OPTION) {

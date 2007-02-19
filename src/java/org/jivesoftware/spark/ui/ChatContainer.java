@@ -23,6 +23,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
@@ -1365,12 +1366,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                         }
 
                         String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
-                        Presence presence = SparkManager.getConnection().getRoster().getPresence(jid);
+                        Presence presence = PresenceManager.getPresence(jid);
 
-                        if (presence == null || presence.getType() == Presence.Type.unavailable) {
+                        if (!presence.isAvailable()) {
                             tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_UNAVAILABLE_STALE_IMAGE));
                         }
-                        else if (presence != null) {
+                        else {
                             Presence.Mode mode = presence.getMode();
                             if (mode == Presence.Mode.available) {
                                 tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AVAILABLE_STALE_IMAGE));
