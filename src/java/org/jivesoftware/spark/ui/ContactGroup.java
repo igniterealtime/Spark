@@ -17,11 +17,6 @@ import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -44,6 +39,11 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
 /**
  * Container representing a RosterGroup within the Contact List.
  */
@@ -53,8 +53,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private List<ContactGroupListener> listeners = new ArrayList<ContactGroupListener>();
 
     private String groupName;
-    private DefaultListModel model = new DefaultListModel();
-    private JList list;
+    private DefaultListModel model;
+    private JList contactItemList;
     private boolean sharedGroup;
     private JPanel listPanel;
 
@@ -78,22 +78,24 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         // ContactInfoWindow
         contactWindow = ContactInfoWindow.getInstance();
 
-        list = new JList(model);
+        // Initialize Model and UI
+        model = new DefaultListModel();
+        contactItemList = new JList(model);
 
         setTitle(getGroupTitle(groupName));
 
         // Use JPanel Renderer
-        list.setCellRenderer(new JPanelRenderer());
+        contactItemList.setCellRenderer(new JPanelRenderer());
 
         this.groupName = groupName;
 
         listPanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-        listPanel.add(list, listPanel);
+        listPanel.add(contactItemList, listPanel);
         this.setContentPane(listPanel);
 
         if (!isOfflineGroup()) {
-            list.setDragEnabled(true);
-            list.setTransferHandler(new ContactGroupTransferHandler());
+            contactItemList.setDragEnabled(true);
+            contactItemList.setTransferHandler(new ContactGroupTransferHandler());
         }
 
         // Allow for mouse events to take place on the title bar
@@ -115,16 +117,16 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         });
 
         // Items should have selection listener
-        list.addMouseListener(this);
+        contactItemList.addMouseListener(this);
 
-        list.addKeyListener(new KeyListener() {
+        contactItemList.addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent keyEvent) {
 
             }
 
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
-                    ContactItem item = (ContactItem)list.getSelectedValue();
+                    ContactItem item = (ContactItem)contactItemList.getSelectedValue();
                     fireContactItemDoubleClicked(item);
                 }
             }
@@ -169,7 +171,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         int index = tempItems.indexOf(item);
 
 
-        Object[] objs = list.getSelectedValues();
+        Object[] objs = contactItemList.getSelectedValues();
 
         model.insertElementAt(item, index);
 
@@ -180,7 +182,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
 
         if (intList.length > 0) {
-            list.setSelectedIndices(intList);
+            contactItemList.setSelectedIndices(intList);
         }
 
         fireContactItemAdded(item);
@@ -190,8 +192,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * Call whenever the UI needs to be updated.
      */
     public void fireContactGroupUpdated() {
-        list.validate();
-        list.repaint();
+        contactItemList.validate();
+        contactItemList.repaint();
         updateTitle();
     }
 
@@ -328,7 +330,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     public void mouseClicked(MouseEvent e) {
 
-        Object o = list.getSelectedValue();
+        Object o = contactItemList.getSelectedValue();
         if (!(o instanceof ContactItem)) {
             return;
         }
@@ -345,7 +347,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public void mouseEntered(MouseEvent e) {
-        int loc = list.locationToIndex(e.getPoint());
+        int loc = contactItemList.locationToIndex(e.getPoint());
 
         Object o = model.getElementAt(loc);
         if (!(o instanceof ContactItem)) {
@@ -357,7 +359,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             return;
         }
 
-        list.setCursor(GraphicUtils.HAND_CURSOR);
+        contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
     }
 
     public void mouseExited(MouseEvent e) {
@@ -365,7 +367,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         Object o = null;
         try {
-            int loc = list.locationToIndex(e.getPoint());
+            int loc = contactItemList.locationToIndex(e.getPoint());
 
             o = model.getElementAt(loc);
             if (!(o instanceof ContactItem)) {
@@ -381,7 +383,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (item == null) {
             return;
         }
-        list.setCursor(GraphicUtils.DEFAULT_CURSOR);
+        contactItemList.setCursor(GraphicUtils.DEFAULT_CURSOR);
 
     }
 
@@ -396,7 +398,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private void checkPopup(MouseEvent e) {
         if (e.isPopupTrigger()) {
             // Check for multi selection
-            int[] indeces = list.getSelectedIndices();
+            int[] indeces = contactItemList.getSelectedIndices();
             List selection = new ArrayList();
             for (int i = 0; i < indeces.length; i++) {
                 selection.add(model.getElementAt(indeces[i]));
@@ -408,14 +410,14 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
 
             // Otherwise, handle single selection
-            int index = list.locationToIndex(e.getPoint());
+            int index = contactItemList.locationToIndex(e.getPoint());
 
             Object o = model.getElementAt(index);
             if (!(o instanceof ContactItem)) {
                 return;
             }
             ContactItem item = (ContactItem)o;
-            list.setSelectedIndex(index);
+            contactItemList.setSelectedIndex(index);
 
             firePopupEvent(e, item);
         }
@@ -519,14 +521,14 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the JList.
      */
     public JList getList() {
-        return list;
+        return contactItemList;
     }
 
     /**
      * Clears all selections within this group.
      */
     public void clearSelection() {
-        list.clearSelection();
+        contactItemList.clearSelection();
     }
 
     /**
@@ -616,7 +618,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public List getSelectedContacts() {
         final List items = new ArrayList();
-        Object[] selections = list.getSelectedValues();
+        Object[] selections = contactItemList.getSelectedValues();
         final int no = selections != null ? selections.length : 0;
         for (int i = 0; i < no; i++) {
             ContactItem item = (ContactItem)selections[i];
@@ -678,7 +680,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         });
 
-        list.addMouseListener(new MouseAdapter() {
+        contactItemList.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent mouseEvent) {
                 timer.start();
             }
@@ -690,7 +692,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         });
 
 
-        list.addMouseMotionListener(motionListener);
+        contactItemList.addMouseMotionListener(motionListener);
     }
 
 
