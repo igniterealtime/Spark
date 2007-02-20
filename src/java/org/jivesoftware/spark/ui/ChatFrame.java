@@ -22,6 +22,8 @@ import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -93,6 +95,13 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
                 setFocusableWindowState(true);
             }
         });
+
+        // Adding a Resize Listener to validate component sizes in a Chat Room.
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                SparkManager.getChatManager().getChatContainer().focusChat();
+            }
+        });
     }
 
     public void windowGainedFocus(WindowEvent e) {
@@ -147,9 +156,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         if (getState() == Frame.ICONIFIED) {
             setState(Frame.NORMAL);
         }
-		if(Spark.isMac()) {
-			toFront();
-		}
+        if (Spark.isMac()) {
+            toFront();
+        }
         requestFocus();
     }
 
@@ -157,6 +166,5 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         ShakeWindow d = new ShakeWindow(this);
         d.startShake();
     }
-
 
 }
