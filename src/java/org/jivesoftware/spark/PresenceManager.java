@@ -134,7 +134,7 @@ public class PresenceManager {
         else if (presenceMode.equals(Presence.Mode.chat)) {
             icon = SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE);
         }
-        else if (presence.getStatus() != null && presence.getStatus().contains("phone")) {
+        else if (presence.getStatus() != null && presence.getStatus().toLowerCase().contains("phone")) {
             icon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
         }
         else if (presenceMode.equals(Presence.Mode.away)) {
