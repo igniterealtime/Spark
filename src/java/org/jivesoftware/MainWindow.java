@@ -281,6 +281,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Closes the current connection and restarts Spark.
+     *
+     * @param reason the reason for logging out. This can be if user gave no reason.
      */
     private void closeConnectionAndInvoke(String reason) {
         final XMPPConnection con = SparkManager.getConnection();
