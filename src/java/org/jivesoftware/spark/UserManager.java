@@ -11,7 +11,6 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.Occupant;
@@ -27,7 +26,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -353,7 +351,6 @@ public class UserManager {
         return presence.getFrom();
     }
 
-    
 
     public void searchContacts(String contact, final JFrame parent) {
         if (parents.get(parent) == null) {
