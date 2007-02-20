@@ -173,7 +173,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 Presence presence = (Presence)packet;
                 Transport transport = TransportUtils.getTransport(packet.getFrom());
                 if (transport != null) {
-                    boolean registered = presence.getMode() != null;
+                    boolean registered = true;
                     if (presence.getType() == Presence.Type.unavailable) {
                         registered = false;
                     }
