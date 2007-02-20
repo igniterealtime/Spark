@@ -43,6 +43,7 @@
             <fileset dir="${java.dir}" includes="**/*.gif"/>
             <fileset dir="${java.dir}" includes="**/*.jpg"/>
             <fileset dir="${java.dir}" includes="**/*.jpeg"/>
+			<fileset dir="${java.dir}" includes="**/*.properties" />
         </copy>
     </target>
 
@@ -66,9 +67,6 @@
         </copy>
 
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
-
-
-
         <zip zipfile="${target.dir}/jingle.jar" basedir="${target.dir}"/>
     </target>
 
