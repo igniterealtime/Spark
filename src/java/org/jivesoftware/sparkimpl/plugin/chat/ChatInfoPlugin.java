@@ -83,7 +83,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
 
 
     private void lookupEmailAddress(final String jid) {
-        final VCard vcard = SparkManager.getVCardManager().getVCard(jid);
+        final VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
         if (contactInfoWindow.getContactItem() == null || !contactInfoWindow.getContactItem().getContactJID().equals(jid)) {
             return;
         }

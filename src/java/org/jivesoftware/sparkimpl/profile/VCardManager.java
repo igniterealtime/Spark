@@ -54,6 +54,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -83,6 +84,8 @@ public class VCardManager {
 
     final MXParser parser;
 
+    private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+
 
     /**
      * Initialize VCardManager.
@@ -90,6 +93,7 @@ public class VCardManager {
     public VCardManager() {
         // Initialize parser
         parser = new MXParser();
+
         try {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         }
@@ -141,6 +145,41 @@ public class VCardManager {
         }, presenceFilter);
 
         editor = new VCardEditor();
+
+        // Start Listener
+        startQueueListener();
+    }
+
+    /**
+     * Listens for new VCards to lookup in a queue.
+     */
+    private void startQueueListener() {
+        final Thread thread = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        String jid = queue.take();
+                        getVCard(jid);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+        thread.start();
+    }
+
+    /**
+     * Adds a jid to lookup vCard.
+     *
+     * @param jid the jid to lookup.
+     */
+    private void addToQueue(String jid) {
+        if (!queue.contains(jid)) {
+            queue.add(jid);
+        }
     }
 
     /**
@@ -284,6 +323,27 @@ public class VCardManager {
      */
     public VCard getVCard(String jid) {
         return getVCard(jid, true);
+    }
+
+    /**
+     * Loads the vCard from memory. If no vCard is found in memory,
+     * will add it to a loading queue for future loading. Users of this method
+     * should only use it if the correct vCard is not important the first time around.
+     *
+     * @param jid the users jid.
+     * @return the users VCard or an empty VCard.
+     */
+    public VCard getVCardFromMemory(String jid) {
+        VCard vcard = loadFromFileSystem(jid);
+        if (vcard == null && !vcards.containsKey(jid)) {
+            addToQueue(jid);
+            vcard = new VCard();
+            vcard.setJabberId(jid);
+        }
+        else if (vcard == null) {
+            vcard = getVCard(jid);
+        }
+        return vcard;
     }
 
     /**
@@ -458,7 +518,6 @@ public class VCardManager {
      * @param vcard the users vcard.
      */
     private void persistVCard(String jid, VCard vcard) {
-        System.out.println("Persist "+jid);
         jid = UserManager.unescapeJID(jid);
 
         byte[] bytes = vcard.getAvatar();
