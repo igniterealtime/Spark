@@ -571,7 +571,7 @@ public class SparkTransferManager {
         String bareJID = StringUtils.parseBareAddress(jid);
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
-        if (PresenceManager.isOnline(jid)){
+        if (!PresenceManager.isOnline(jid)){
             List list = (List)waitMap.get(jid);
             if (list == null) {
                 list = new ArrayList();
