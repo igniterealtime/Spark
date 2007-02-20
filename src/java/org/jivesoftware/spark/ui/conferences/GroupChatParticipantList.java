@@ -27,6 +27,7 @@ import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.UserStatusListener;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.ImageTitlePanel;
@@ -35,8 +36,6 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -332,32 +331,20 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         boolean isModerator = SparkManager.getUserManager().isModerator(occupant);
 
         if (!exists(nickname)) {
-            ImageIcon icon = null;
+            Icon icon = null;
 
-            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-            StatusItem item = statusBar.getItemFromPresence(presence);
-            if (item != null) {
-                icon = new ImageIcon(item.getImageIcon().getImage());
-            }
-            else {
+            icon = PresenceManager.getIconFromPresence(presence);
+            if (icon == null) {
                 icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
             }
 
-            icon.setDescription(nickname);
             addUser(icon, nickname);
         }
         else {
-            ImageIcon icon = null;
-            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-            StatusItem item = statusBar.getItemFromPresence(presence);
-            if (item != null) {
-                icon = new ImageIcon(item.getImageIcon().getImage());
-            }
-            else {
+            Icon icon = PresenceManager.getIconFromPresence(presence);
+            if (icon == null) {
                 icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
             }
-
-            icon.setDescription(nickname);
 
             int index = getIndex(nickname);
             if (index != -1) {
@@ -802,7 +789,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         }
     }
 
-    public void addUser(ImageIcon userIcon, String nickname) {
+    public void addUser(Icon userIcon, String nickname) {
         JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
         users.add(user);
         Collections.sort(users, labelComp);

@@ -20,6 +20,7 @@ import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -344,9 +345,9 @@ public class ContactItem extends JPanel {
             return;
         }
 
-        StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
-        if (statusItem != null) {
-            setIcon(statusItem.getIcon());
+        Icon sIcon = PresenceManager.getIconFromPresence(presence);
+        if (sIcon != null) {
+            setIcon(sIcon);
         }
         else {
             setIcon(statusIcon);

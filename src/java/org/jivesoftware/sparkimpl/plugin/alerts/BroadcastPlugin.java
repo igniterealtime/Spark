@@ -22,6 +22,7 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -317,7 +318,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
             String jid = StringUtils.parseBareAddress(room.getParticipantJID());
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 
-            Icon icon = SparkManager.getUserManager().getTabIconForPresence(room.getPresence());
+            Icon icon = PresenceManager.getIconFromPresence(room.getPresence());
             room.setTabIcon(icon);
             room.setTabTitle(nickname);
 

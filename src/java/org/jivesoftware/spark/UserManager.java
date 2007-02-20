@@ -22,7 +22,6 @@ import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
@@ -354,36 +353,7 @@ public class UserManager {
         return presence.getFrom();
     }
 
-    /**
-     * Returns the Icon associated with the presence.
-     *
-     * @param presence the presence.
-     * @return the icon.
-     */
-    public Icon getTabIconForPresence(Presence presence) {
-        StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(presence);
-        Icon tabIcon = null;
-
-        if (statusItem == null) {
-            tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
-        }
-        else {
-            String status = presence.getStatus();
-            if (status != null && status.indexOf("phone") != -1) {
-                tabIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
-            }
-            else {
-                tabIcon = statusItem.getIcon();
-            }
-        }
-
-        Icon icon = SparkManager.getChatManager().getTabIconForContactHandler(presence);
-        if (icon != null) {
-            tabIcon = icon;
-        }
-
-        return tabIcon;
-    }
+    
 
     public void searchContacts(String contact, final JFrame parent) {
         if (parents.get(parent) == null) {

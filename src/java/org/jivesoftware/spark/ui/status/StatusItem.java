@@ -12,26 +12,34 @@ package org.jivesoftware.spark.ui.status;
 
 import org.jivesoftware.smack.packet.Presence;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 
+/**
+ * Represents a single UI instance in the status bar.
+ */
 public class StatusItem extends JLabel {
     private Presence presence;
-    private ImageIcon icon;
 
-    public StatusItem(Presence presence, ImageIcon icon) {
+    /**
+     * Creates a single StatusItem UI object.
+     *
+     * @param presence the presence.
+     * @param icon     the icon
+     */
+    public StatusItem(Presence presence, Icon icon) {
         this.presence = presence;
-        this.icon = icon;
         setIcon(icon);
         setText(presence.getStatus());
     }
 
+    /**
+     * Returns the Presence related to this item.
+     *
+     * @return the presence associated with this item.
+     */
     public Presence getPresence() {
         return presence;
-    }
-
-    public ImageIcon getImageIcon() {
-        return icon;
     }
 
 

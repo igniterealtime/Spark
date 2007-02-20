@@ -348,12 +348,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         // Change tab icon
         if (chatRoom instanceof ChatRoomImpl) {
-            StatusItem statusItem = SparkManager.getWorkspace().getStatusBar().getItemFromPresence(p);
-            Icon tabIcon = null;
-            if (statusItem == null && p == null) {
+            Icon tabIcon = PresenceManager.getIconFromPresence(p);
+            if (tabIcon == null) {
                 tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
             }
-            else if (statusItem == null && p != null && p.getType() == Presence.Type.available) {
+            else if (tabIcon == null && p.getType() == Presence.Type.available) {
                 tabIcon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
             }
             else {
@@ -361,11 +360,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 if (status != null && status.indexOf("phone") != -1) {
                     tabIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
                 }
-                else if (statusItem == null) {
+                else if (tabIcon == null) {
                     tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
                 }
                 else {
-                    tabIcon = statusItem.getIcon();
+                    tabIcon = PresenceManager.getIconFromPresence(p);
                 }
             }
 
@@ -1041,7 +1040,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
                 else if (!chatRoomImpl.isIconHandler()) {
                     Presence presence = chatRoomImpl.getPresence();
-                    Icon icon = SparkManager.getUserManager().getTabIconForPresence(presence);
+                    Icon icon = PresenceManager.getIconFromPresence(presence);
                     tab.setIcon(icon);
                 }
             }

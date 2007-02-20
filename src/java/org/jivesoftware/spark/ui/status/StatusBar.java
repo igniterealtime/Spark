@@ -16,14 +16,28 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
+import org.jivesoftware.sparkimpl.profile.VCardManager;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,19 +58,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
+//TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel {
     private List<StatusItem> statusList = new ArrayList<StatusItem>();
 
@@ -93,7 +95,7 @@ public class StatusBar extends JPanel {
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
 
 
-        populateDndList();
+        buildStatusItemList();
 
 
         setStatus(Res.getString("available"));
@@ -303,9 +305,9 @@ public class StatusBar extends JPanel {
                 currentPresence = presence;
 
                 setStatus(presence.getStatus());
-                StatusItem item = getItemFromPresence(currentPresence);
-                if (item != null) {
-                    statusPanel.setIcon(item.getIcon());
+                Icon icon = PresenceManager.getIconFromPresence(presence);
+                if (icon != null) {
+                    statusPanel.setIcon(icon);
                 }
             }
         };
@@ -316,60 +318,19 @@ public class StatusBar extends JPanel {
     /**
      * Populates the current Dnd List.
      */
-    private void populateDndList() {
-        final ImageIcon availableIcon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-        final ImageIcon awayIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
-        final ImageIcon dndIcon = SparkRes.getImageIcon(SparkRes.IM_DND);
-        final ImageIcon phoneIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
+    private void buildStatusItemList() {
+        for (Presence presence : PresenceManager.getPresences()) {
+            Icon icon = PresenceManager.getIconFromPresence(presence);
+            StatusItem item = new StatusItem(presence, icon);
+            statusList.add(item);
+        }
 
-        StatusItem online = new StatusItem(new Presence(Presence.Type.available, Res.getString("available"), 1, Presence.Mode.available), availableIcon);
-        StatusItem freeToChat = new StatusItem(new Presence(Presence.Type.available, "Free To Chat", 1, Presence.Mode.chat), SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE));
-        StatusItem away = new StatusItem(new Presence(Presence.Type.available, "Away", -1, Presence.Mode.away), awayIcon);
-        StatusItem phone = new StatusItem(new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away), phoneIcon);
-        StatusItem dnd = new StatusItem(new Presence(Presence.Type.available, "Do Not Disturb", -1, Presence.Mode.dnd), dndIcon);
-        StatusItem extendedAway = new StatusItem(new Presence(Presence.Type.available, "Extended Away", -1, Presence.Mode.xa), awayIcon);
-
-        statusList.add(freeToChat);
-        statusList.add(online);
-        statusList.add(away);
-        statusList.add(phone);
-        statusList.add(extendedAway);
-        statusList.add(dnd);
+        final Icon availableIcon = PresenceManager.getIconFromPresence(new Presence(Presence.Type.available));
 
         // Set default presence icon (Avaialble)
         statusPanel.setIcon(availableIcon);
     }
 
-    public StatusItem getItemFromPresence(Presence presence) {
-        // Handle offline presence
-        if (!presence.isAvailable()) {
-            return null;
-        }
-
-        Iterator statusItemIterator = statusList.iterator();
-        while (statusItemIterator.hasNext()) {
-            StatusItem item = (StatusItem)statusItemIterator.next();
-
-            if (presence.getStatus() != null && item.getPresence().getStatus() != null) {
-                if ((presence.getMode() == item.getPresence().getMode()) && (presence.getType() == item.getPresence().getType()) &&
-                    (presence.getStatus().equals(item.getPresence().getStatus()))) {
-                    return item;
-                }
-            }
-        }
-
-        statusItemIterator = statusList.iterator();
-        while (statusItemIterator.hasNext()) {
-            StatusItem item = (StatusItem)statusItemIterator.next();
-
-            if ((presence.getMode() == item.getPresence().getMode()) && (presence.getType() == item.getPresence().getType())) {
-                return item;
-            }
-        }
-
-
-        return null;
-    }
 
     public Collection getStatusList() {
         return statusList;

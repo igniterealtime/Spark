@@ -137,7 +137,7 @@ public class ChatRoomImpl extends ChatRoom {
         
         RosterEntry entry = roster.getEntry(participantJID);
 
-        tabIcon = SparkManager.getUserManager().getTabIconForPresence(presence);
+        tabIcon = PresenceManager.getIconFromPresence(presence);
 
         // Create toolbar buttons.
         ChatRoomButton infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));

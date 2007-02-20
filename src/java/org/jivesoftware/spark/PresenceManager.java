@@ -8,8 +8,15 @@
 
 package org.jivesoftware.spark;
 
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
+
+import javax.swing.Icon;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles the most common presence checks.
@@ -18,8 +25,28 @@ import org.jivesoftware.smack.packet.Presence;
  */
 public class PresenceManager {
 
+    private static final List<Presence> PRESENCES = new ArrayList<Presence>();
+
+
+    static {
+        // Add Available Presence
+        Presence availablePresence = new Presence(Presence.Type.available, Res.getString("available"), 1, Presence.Mode.available);
+        Presence freeToChatPresence = new Presence(Presence.Type.available, "Free To Chat", 1, Presence.Mode.chat);
+        Presence awayPresence = new Presence(Presence.Type.available, "Away", -1, Presence.Mode.away);
+        Presence phonePresence = new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away);
+        Presence dndPresence = new Presence(Presence.Type.available, "Do Not Disturb", -1, Presence.Mode.dnd);
+        Presence extendedAway = new Presence(Presence.Type.available, "Extended Away", -1, Presence.Mode.xa);
+
+        PRESENCES.add(availablePresence);
+        PRESENCES.add(freeToChatPresence);
+        PRESENCES.add(awayPresence);
+        PRESENCES.add(phonePresence);
+        PRESENCES.add(dndPresence);
+        PRESENCES.add(extendedAway);
+    }
+
     /**
-     * Empty private constructor.
+     * Building Presence related data.
      */
     private PresenceManager() {
 
@@ -80,5 +107,62 @@ public class PresenceManager {
         final Roster roster = SparkManager.getConnection().getRoster();
         Presence presence = roster.getPresence(jid);
         return presence.getFrom();
+    }
+
+    /**
+     * Returns the icon associated with a users presence.
+     *
+     * @param presence the users presence.
+     * @return the icon associated with it.
+     */
+    public static Icon getIconFromPresence(Presence presence) {
+        // Handle offline presence
+        if (!presence.isAvailable()) {
+            return null;
+        }
+
+        Presence.Mode presenceMode = presence.getMode();
+        if (presenceMode == null) {
+            presenceMode = Presence.Mode.available;
+        }
+
+        Icon icon = null;
+
+        if (presenceMode.equals(Presence.Mode.available)) {
+            icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+        }
+        else if (presenceMode.equals(Presence.Mode.chat)) {
+            icon = SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE);
+        }
+        else if (presence.getStatus() != null && presence.getStatus().contains("phone")) {
+            icon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
+        }
+        else if (presenceMode.equals(Presence.Mode.away)) {
+            icon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+        }
+        else if (presenceMode.equals(Presence.Mode.dnd)) {
+            icon = SparkRes.getImageIcon(SparkRes.IM_DND);
+        }
+        else if (presenceMode.equals(Presence.Mode.xa)) {
+            icon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+        }
+
+        // Check For ContactItem handlers
+        Icon handlerIcon = SparkManager.getChatManager().getTabIconForContactHandler(presence);
+        if (handlerIcon != null) {
+            icon = handlerIcon;
+        }
+
+
+        return icon;
+    }
+
+    /**
+     * Returns the Presence Map.
+     *
+     * @return the Presence Map.
+     */
+    public static List<Presence> getPresences() {
+        return PRESENCES;
     }
 }
