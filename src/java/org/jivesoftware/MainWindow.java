@@ -258,18 +258,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     public void logout(boolean sendStatus) {
         final XMPPConnection con = SparkManager.getConnection();
-
+        String status = null;
 
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
-            String status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
+            status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
                     SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
-
-            if (status != null) {
-                Presence presence = new Presence(Presence.Type.unavailable);
-                presence.setStatus(status);
-                con.sendPacket(presence);
-            }
         }
 
         // Notify all MainWindowListeners
@@ -281,34 +275,23 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             setVisible(false);
         }
         finally {
-
-            final SwingWorker shutdownThread = new SwingWorker() {
-                public Object construct() {
-                    try {
-                        Thread.sleep(10);
-                    }
-                    catch (InterruptedException e) {
-                        Log.error(e);
-                    }
-                    return true;
-                }
-
-                public void finished() {
-                    closeConnectionAndInvoke();
-                }
-            };
-
-            shutdownThread.start();
+            closeConnectionAndInvoke(status);
         }
     }
 
     /**
      * Closes the current connection and restarts Spark.
      */
-    private void closeConnectionAndInvoke() {
+    private void closeConnectionAndInvoke(String reason) {
         final XMPPConnection con = SparkManager.getConnection();
         if (con.isConnected()) {
-            con.disconnect();
+            if (reason != null) {
+                Presence byePresence = new Presence(Presence.Type.unavailable, reason, -1, null);
+                con.disconnect(byePresence);
+            }
+            else {
+                con.disconnect();
+            }
         }
 
         try {
