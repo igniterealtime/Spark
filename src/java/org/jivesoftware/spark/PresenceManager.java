@@ -30,15 +30,15 @@ public class PresenceManager {
 
     static {
         // Add Available Presence
-        Presence availablePresence = new Presence(Presence.Type.available, Res.getString("available"), 1, Presence.Mode.available);
-        Presence freeToChatPresence = new Presence(Presence.Type.available, "Free To Chat", 1, Presence.Mode.chat);
-        Presence awayPresence = new Presence(Presence.Type.available, "Away", -1, Presence.Mode.away);
-        Presence phonePresence = new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away);
-        Presence dndPresence = new Presence(Presence.Type.available, "Do Not Disturb", -1, Presence.Mode.dnd);
-        Presence extendedAway = new Presence(Presence.Type.available, "Extended Away", -1, Presence.Mode.xa);
+        final Presence availablePresence = new Presence(Presence.Type.available, Res.getString("available"), 1, Presence.Mode.available);
+        final Presence freeToChatPresence = new Presence(Presence.Type.available, "Free To Chat", 1, Presence.Mode.chat);
+        final Presence awayPresence = new Presence(Presence.Type.available, "Away", -1, Presence.Mode.away);
+        final Presence phonePresence = new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away);
+        final Presence dndPresence = new Presence(Presence.Type.available, "Do Not Disturb", -1, Presence.Mode.dnd);
+        final Presence extendedAway = new Presence(Presence.Type.available, "Extended Away", -1, Presence.Mode.xa);
 
-        PRESENCES.add(availablePresence);
         PRESENCES.add(freeToChatPresence);
+        PRESENCES.add(availablePresence);
         PRESENCES.add(awayPresence);
         PRESENCES.add(phonePresence);
         PRESENCES.add(dndPresence);

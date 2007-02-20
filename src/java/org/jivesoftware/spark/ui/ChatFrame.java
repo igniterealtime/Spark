@@ -148,6 +148,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         LayoutSettingsManager.saveLayoutSettings();
     }
 
+    /**
+     * Brings the ChatFrame into focus on the desktop.
+     */
     public void bringFrameIntoFocus() {
         if (!isVisible()) {
             setVisible(true);
@@ -162,6 +165,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         requestFocus();
     }
 
+    /**
+     * Shake it, come on now, shake that frame.
+     */
     public void buzz() {
         ShakeWindow d = new ShakeWindow(this);
         d.startShake();
