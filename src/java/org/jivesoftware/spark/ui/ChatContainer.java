@@ -22,14 +22,13 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -59,8 +58,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -204,17 +203,17 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 closeActiveRoom();
             }
         });
-		
-		this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_MASK), "shiftCmdW");
-		this.getActionMap().put("shiftCmdW", new AbstractAction("shiftCmdW") {
-			public void actionPerformed(ActionEvent evt) {
-				closeAllChatRooms();
-			}
-		});
+
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_MASK), "shiftCmdW");
+        this.getActionMap().put("shiftCmdW", new AbstractAction("shiftCmdW") {
+            public void actionPerformed(ActionEvent evt) {
+                closeAllChatRooms();
+            }
+        });
 
         // Add KeyMappings
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "searchContacts");		
-		getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "searchContacts");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getChatManager().getChatContainer().getChatFrame());
@@ -349,29 +348,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Change tab icon
         if (chatRoom instanceof ChatRoomImpl) {
             Icon tabIcon = PresenceManager.getIconFromPresence(p);
-            if (tabIcon == null) {
-                tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
-            }
-            else if (tabIcon == null && p.getType() == Presence.Type.available) {
-                tabIcon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-            }
-            else {
-                String status = p.getStatus();
-                if (status != null && status.indexOf("phone") != -1) {
-                    tabIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
-                }
-                else if (tabIcon == null) {
-                    tabIcon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
-                }
-                else {
-                    tabIcon = PresenceManager.getIconFromPresence(p);
-                }
-            }
-
-            Icon icon = SparkManager.getChatManager().getTabIconForContactHandler(p);
-            if (icon != null) {
-                tabIcon = icon;
-            }
             int tabLoc = indexOfComponent(chatRoom);
             if (tabLoc != -1) {
                 getTabAt(tabLoc).setIcon(tabIcon);
@@ -960,7 +936,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
                         // Check notifications.
                         if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom)) {
-                           checkNotificationPreferences(room);
+                            checkNotificationPreferences(room);
                         }
 
 
@@ -1035,7 +1011,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             if (room instanceof ChatRoomImpl) {
                 final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
-                if(chatRoomImpl.getAlternativeIcon() != null){
+                if (chatRoomImpl.getAlternativeIcon() != null) {
                     tab.setIcon(chatRoomImpl.getAlternativeIcon());
                 }
                 else if (!chatRoomImpl.isIconHandler()) {
@@ -1109,7 +1085,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             toaster.setBorder(BorderFactory.createBevelBorder(0));
 
             String nickname = nickname = room.getRoomTitle();
-    		toaster.setTitle(nickname);
+            toaster.setTitle(nickname);
             toaster.setToasterHeight(150);
             toaster.setToasterWidth(200);
 

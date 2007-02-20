@@ -118,7 +118,7 @@ public class PresenceManager {
     public static Icon getIconFromPresence(Presence presence) {
         // Handle offline presence
         if (!presence.isAvailable()) {
-            return null;
+            return SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
         }
 
         Presence.Mode presenceMode = presence.getMode();
