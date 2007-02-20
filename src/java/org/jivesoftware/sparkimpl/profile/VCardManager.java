@@ -38,13 +38,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +54,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -286,7 +286,6 @@ public class VCardManager {
         return getVCard(jid, true);
     }
 
-
     /**
      * Returns the VCard.
      *
@@ -321,16 +320,15 @@ public class VCardManager {
                 vcard.load(SparkManager.getConnection(), jid);
                 vcard.setJabberId(jid);
                 vcards.put(jid, vcard);
-
-                // Persist XML
-                persistVCard(jid, vcard);
             }
             catch (XMPPException e) {
                 //Log.warning("Unable to load vcard for " + jid, e);
                 vcard.setError(new XMPPError(409));
                 vcards.put(jid, vcard);
-                return vcard;
             }
+            // Persist XML
+            persistVCard(jid, vcard);
+
         }
         return vcards.get(jid);
     }
@@ -460,6 +458,7 @@ public class VCardManager {
      * @param vcard the users vcard.
      */
     private void persistVCard(String jid, VCard vcard) {
+        System.out.println("Persist "+jid);
         jid = UserManager.unescapeJID(jid);
 
         byte[] bytes = vcard.getAvatar();

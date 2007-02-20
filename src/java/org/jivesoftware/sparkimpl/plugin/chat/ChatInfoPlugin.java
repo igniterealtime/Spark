@@ -78,40 +78,30 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
             }
         });
 
-        checkForEmailAddress(contactInfoWindow.getContactItem().getContactJID());
+        lookupEmailAddress(contactInfoWindow.getContactItem().getContactJID());
     }
 
 
-    private void checkForEmailAddress(final String jid) {
-        final SwingWorker vcardCheckThread = new SwingWorker() {
-            public Object construct() {
-                return SparkManager.getVCardManager().getVCard(jid);
-            }
+    private void lookupEmailAddress(final String jid) {
+        final VCard vcard = SparkManager.getVCardManager().getVCard(jid);
+        if (contactInfoWindow.getContactItem() == null || !contactInfoWindow.getContactItem().getContactJID().equals(jid)) {
+            return;
+        }
 
-            public void finished() {
-                final VCard vcard = (VCard)get();
-                if (contactInfoWindow.getContactItem() == null || !contactInfoWindow.getContactItem().getContactJID().equals(jid)) {
-                    return;
+        if (vcard != null && vcard.getEmailHome() != null) {
+            final ChatRoomButton emailButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.SEND_MAIL_IMAGE_16x16));
+            emailButton.setText("Email");
+            emailButton.setToolTipText("Send an email");
+            contactInfoWindow.addChatRoomButton(emailButton);
+            contactInfoWindow.getToolbar().invalidate();
+            contactInfoWindow.getToolbar().validate();
+            contactInfoWindow.getToolbar().repaint();
+            emailButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    sendEmail(contactInfoWindow.getContactItem());
                 }
-
-                if (vcard != null && vcard.getEmailHome() != null) {
-                    final ChatRoomButton emailButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.SEND_MAIL_IMAGE_16x16));
-                    emailButton.setText("Email");
-                    emailButton.setToolTipText("Send an email");
-                    contactInfoWindow.addChatRoomButton(emailButton);
-                    contactInfoWindow.getToolbar().invalidate();
-                    contactInfoWindow.getToolbar().validate();
-                    contactInfoWindow.getToolbar().repaint();
-                    emailButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            sendEmail(contactInfoWindow.getContactItem());
-                        }
-                    });
-                }
-            }
-        };
-
-        vcardCheckThread.start();
+            });
+        }
     }
 
     /**

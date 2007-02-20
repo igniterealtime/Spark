@@ -23,12 +23,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -41,6 +35,12 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -79,49 +79,40 @@ public class VCardPanel extends JPanel {
 
         avatarImage.setIcon(ico);
 
-        final SwingWorker vcardLoader = new SwingWorker() {
-            VCard vcard = null;
 
-            public Object construct() {
-                vcard = SparkManager.getVCardManager().getVCard(jid);
-                return vcard;
+        VCard vcard = SparkManager.getVCardManager().getVCard(jid);
+
+
+        if (vcard == null) {
+            // Do nothing.
+            return;
+        }
+
+        ImageIcon icon = null;
+
+        byte[] bytes = vcard.getAvatar();
+        if (bytes != null) {
+            try {
+                icon = new ImageIcon(bytes);
+                Image newImage = icon.getImage();
+                newImage = newImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(newImage);
             }
-
-            public void finished() {
-                if (vcard == null) {
-                    // Do nothing.
-                    return;
-                }
-
-                ImageIcon icon = null;
-
-                byte[] bytes = vcard.getAvatar();
-                if (bytes != null) {
-                    try {
-                        icon = new ImageIcon(bytes);
-                        Image aImage = icon.getImage();
-                        aImage = aImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
-                        icon = new ImageIcon(aImage);
-                    }
-                    catch (Exception e) {
-                        Log.error(e);
-                    }
-                }
-                else {
-                    icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
-                }
-
-                if (icon != null && icon.getIconWidth() > 0) {
-                    avatarImage.setIcon(icon);
-                    avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-                }
-
-                vcard.setJabberId(jid);
-                buildUI(vcard);
+            catch (Exception e) {
+                Log.error(e);
             }
-        };
+        }
+        else {
+            icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
+        }
 
-        vcardLoader.start();
+        if (icon != null && icon.getIconWidth() > 0) {
+            avatarImage.setIcon(icon);
+            avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+        }
+
+        vcard.setJabberId(jid);
+        buildUI(vcard);
     }
 
     private void buildUI(final VCard vcard) {
