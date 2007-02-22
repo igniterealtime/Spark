@@ -38,6 +38,13 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,13 +62,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -470,9 +470,12 @@ public class VCardManager {
         for (VCard vcard : vcards.values()) {
             String homePhone = getNumbersFromPhone(vcard.getPhoneHome("VOICE"));
             String workPhone = getNumbersFromPhone(vcard.getPhoneWork("VOICE"));
+            String cellPhone = getNumbersFromPhone(vcard.getPhoneWork("CELL"));
 
             String query = getNumbersFromPhone(phoneNumber);
-            if ((homePhone != null && homePhone.contains(query)) || (workPhone != null && workPhone.contains(query))) {
+            if ((homePhone != null && homePhone.contains(query)) ||
+                    (workPhone != null && workPhone.contains(query)) ||
+                    (cellPhone != null && cellPhone.contains(query))) {
                 return vcard;
             }
         }
@@ -564,7 +567,10 @@ public class VCardManager {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
-            return (VCard)provider.parseIQ(parser);
+            VCard vcard = (VCard)provider.parseIQ(parser);
+            vcard.setJabberId(jid);
+            vcards.put(jid, vcard);
+            return vcard;
         }
         catch (Exception e) {
             Log.error("Unable to load vCard for " + jid, e);
