@@ -1,4 +1,4 @@
-<project name="sparkplug" default="jar" basedir="..">
+<project name="Jingle" default="jar" basedir="..">
 
     <property name="plug.dir" value="${basedir}"/>
     <property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
