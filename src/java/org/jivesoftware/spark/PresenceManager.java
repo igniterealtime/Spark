@@ -40,9 +40,9 @@ public class PresenceManager {
         PRESENCES.add(freeToChatPresence);
         PRESENCES.add(availablePresence);
         PRESENCES.add(awayPresence);
+        PRESENCES.add(extendedAway);
         PRESENCES.add(phonePresence);
         PRESENCES.add(dndPresence);
-        PRESENCES.add(extendedAway);
     }
 
     /**
