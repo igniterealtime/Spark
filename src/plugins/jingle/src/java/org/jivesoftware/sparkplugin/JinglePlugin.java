@@ -12,6 +12,7 @@ package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.jingle.IncomingJingleSession;
 import org.jivesoftware.smackx.jingle.JingleManager;
 import org.jivesoftware.smackx.jingle.JingleSession;
@@ -34,15 +35,15 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
@@ -51,7 +52,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
 
     final Map<String, JingleSession> sessions = new HashMap<String, JingleSession>();
 
-    JingleManager jm = null;
+    JingleManager jm;
 
     final JingleSessionListener jingleListener = this;
 
@@ -80,14 +81,15 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
 
     private void initUI() {
         if (jm == null) {
-            Log.error("Unable to resolove Jingle Connection");
+            Log.error("Unable to resolve Jingle Connection");
             return;
         }
 
         jm.addJingleSessionRequestListener(new JingleSessionRequestListener() {
             public void sessionRequested(JingleSessionRequest request) {
+                final String from = request.getFrom();
 
-                if (!sessions.containsKey(request.getFrom())) {
+                if (!sessions.containsKey(from)) {
                     IncomingJingleSession session = null;
                     try {
                         session = request.accept();
@@ -95,7 +97,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                         session.start(request);
                         sessions.put(request.getFrom(), session);
 
-                        ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom().split("/")[0]);
+                        final ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(from));
 
                         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
                         StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
@@ -115,8 +117,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                         }
 
                         room.scrollToBottom();
-
-
                     }
                     catch (XMPPException e) {
                         Log.error(e);
@@ -132,7 +132,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                     return;
                 }
                 final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
-                final ChatRoomButton callButton = new ChatRoomButton("Call");
+                final ChatRoomButton callButton = new ChatRoomButton(JinglePhoneRes.getImageIcon("CHAT_ROOM_DIAL_BUTTON"));
 
                 callButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -167,7 +167,9 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
 
     public void placeCall(ChatRoomImpl room) {
 
-        if (sessions.containsKey(room.getJID())) return;
+        if (sessions.containsKey(room.getJID())) {
+            return;
+        }
 
         // Create a new Jingle Call with a full JID
         OutgoingJingleSession session = null;
