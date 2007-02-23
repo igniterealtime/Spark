@@ -12,12 +12,18 @@ package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smackx.jingle.*;
+import org.jivesoftware.smackx.jingle.IncomingJingleSession;
+import org.jivesoftware.smackx.jingle.JingleManager;
+import org.jivesoftware.smackx.jingle.JingleSession;
+import org.jivesoftware.smackx.jingle.JingleSessionRequest;
+import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
-import org.jivesoftware.smackx.jingle.nat.*;
+import org.jivesoftware.smackx.jingle.nat.BridgedTransportManager;
+import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
+import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
+import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -25,16 +31,18 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.text.StyledDocument;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
@@ -48,15 +56,33 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
     final JingleSessionListener jingleListener = this;
 
     public void initialize() {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                JMFInit.start(false);
 
-        JMFInit.start(false);
+                JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
 
-        JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
+                jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
-        jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
+                if (transportManager instanceof BridgedTransportManager)
+                    jm.addCreationListener((BridgedTransportManager)transportManager);
+                return true;
+            }
 
-        if (transportManager instanceof BridgedTransportManager)
-            jm.addCreationListener((BridgedTransportManager) transportManager);
+            public void finished() {
+                initUI();
+            }
+        };
+
+        worker.start();
+    }
+
+
+    private void initUI() {
+        if (jm == null) {
+            Log.error("Unable to resolove Jingle Connection");
+            return;
+        }
 
         jm.addJingleSessionRequestListener(new JingleSessionRequestListener() {
             public void sessionRequested(JingleSessionRequest request) {
@@ -72,7 +98,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                         ChatRoom room = SparkManager.getChatManager().getChatRoom(request.getFrom().split("/")[0]);
 
                         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-                        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+                        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
                         Style style = doc.addStyle("StyleName", null);
 
                         CallMessage callMessage = new CallMessage();
@@ -91,8 +117,9 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                         room.scrollToBottom();
 
 
-                    } catch (XMPPException e) {
-                        e.printStackTrace();
+                    }
+                    catch (XMPPException e) {
+                        Log.error(e);
                     }
 
                 }
@@ -104,7 +131,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                 if (!(room instanceof ChatRoomImpl)) {
                     return;
                 }
-                final ChatRoomImpl roomImpl = (ChatRoomImpl) room;
+                final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                 final ChatRoomButton callButton = new ChatRoomButton("Call");
 
                 callButton.addActionListener(new ActionListener() {
@@ -117,7 +144,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
             }
 
             public void chatRoomClosed(ChatRoom room) {
-                final ChatRoomImpl roomImpl = (ChatRoomImpl) room;
+                final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                 if (sessions.containsKey(roomImpl.getJID())) {
                     endCall(roomImpl);
                 }
@@ -125,13 +152,15 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         });
     }
 
+
     public void endCall(ChatRoomImpl room) {
         JingleSession session = sessions.get(room.getJID());
         if (session == null) return;
         try {
             session.terminate();
-        } catch (XMPPException e) {
-            e.printStackTrace();
+        }
+        catch (XMPPException e) {
+            Log.error(e);
         }
         sessions.remove(room.getJID());
     }
@@ -157,7 +186,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         }
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         CallMessage callMessage = new CallMessage();
@@ -205,7 +234,8 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                     sessions.remove(found);
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // Do Nothing
         }
     }
@@ -229,7 +259,8 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                     sessions.remove(found);
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // Do Nothing
         }
     }
@@ -249,7 +280,8 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
                     sessions.remove(found);
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // Do Nothing
         }
     }
