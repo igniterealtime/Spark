@@ -18,8 +18,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 
-import javax.swing.JFrame;
-
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ComponentAdapter;
@@ -27,6 +25,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+
+import javax.swing.JFrame;
 
 /**
  * The Window used to display the ChatRoom container.
@@ -99,7 +99,13 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         // Adding a Resize Listener to validate component sizes in a Chat Room.
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
-                SparkManager.getChatManager().getChatContainer().focusChat();
+                try {
+                    ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
+                    chatRoom.getVerticalSlipPane().setDividerLocation(-1);
+                }
+                catch (ChatRoomNotFoundException e1) {
+                    // Ignore, because I don't care if it's not a chat room.
+                }
             }
         });
     }
