@@ -20,7 +20,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
@@ -174,48 +173,6 @@ public final class Notifications implements ActionListener, MainWindowListener {
     }
 
     /**
-     * Displays an incoming message.
-     *
-     * @param from    who the message was from.
-     * @param message the message body.
-     */
-    public void showMessageReceived(String from, String message) {
-        try {
-            if (isDisposed) {
-                return;
-            }
-            if (Spark.isMac()) {
-                return;
-            }
-            trayIcon.getLocationOnScreen();
-            showNotificationDialog(Res.getString("message.new.message", from), message);
-        }
-        catch (Exception e) {
-        }
-    }
-
-    /**
-     * Displays an incoming message.
-     *
-     * @param title   the title to use.
-     * @param message the message to display.
-     */
-    public void showMessage(String title, String message) {
-        try {
-            if (isDisposed) {
-                return;
-            }
-            if (Spark.isMac()) {
-                return;
-            }
-            showNotificationDialog(title, message);
-        }
-        catch (Exception e) {
-        }
-    }
-
-
-    /**
      * Notify agent that there is a new incoming chat request.
      */
     public final void showIncomingRequest() {
@@ -224,7 +181,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
             return;
         }
 
-        showNotificationDialog("Incoming Request", "You have a new incoming chat request.");
+        displayBubble("Incoming Request", "You have a new incoming chat request.");
     }
 
     /**
@@ -392,21 +349,16 @@ public final class Notifications implements ActionListener, MainWindowListener {
     /**
      * Shows notification dialog for incoming messages.
      *
-     * @param from who the body is from.
-     * @param body the body of the body.
+     * @param title who the body is from.
+     * @param body  the body of the body.
      */
-    public void showNotificationDialog(String from, String body) {
+    public void displayBubble(String title, String body) {
         // Tray only works in windows and mac.
         if (!Spark.isWindows()) {
-
             return;
         }
 
-        //trayIcon.displayMessage(from, body, TrayIcon.INFO_MESSAGE_TYPE);
-    }
-
-    public void showWindow(JPanel panel, int timeout) {
-
+        trayIcon.displayMessage(title, body, TrayIcon.INFO_MESSAGE_TYPE);
     }
 
 
