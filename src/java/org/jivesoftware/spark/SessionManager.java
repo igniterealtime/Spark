@@ -29,13 +29,13 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.SwingUtilities;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.SwingUtilities;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
@@ -57,7 +57,7 @@ public final class SessionManager implements ConnectionListener {
     private List presenceListeners = new ArrayList();
 
     private String userBareAddress;
-    private boolean unavaliable = false;
+    private boolean unavailable = false;
     private DiscoverItems discoverItems;
 
     private int previousPriority = -1;
@@ -82,7 +82,7 @@ public final class SessionManager implements ConnectionListener {
         // create workgroup session
         personalDataManager = new PrivateDataManager(getConnection());
 
-
+        // Use Idle Listener if running on windows.
         if (Spark.isWindows()) {
             try {
                 setIdleListener();
@@ -258,6 +258,8 @@ public final class SessionManager implements ConnectionListener {
 
     /**
      * Sets the Idle Timeout for this instance of Spark.
+     *
+     * @throws Exception thrown is an error occurs loading native library.
      */
     private void setIdleListener() throws Exception {
 
@@ -266,7 +268,7 @@ public final class SessionManager implements ConnectionListener {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 LocalPreferences localPref = SettingsManager.getLocalPreferences();
-                int delay = 0;
+                int delay;
                 if (localPref.isIdleOn()) {
                     delay = localPref.getIdleTime() * 60000;
                 }
@@ -287,7 +289,7 @@ public final class SessionManager implements ConnectionListener {
                         Workspace workspace = SparkManager.getWorkspace();
                         Presence presence = workspace.getStatusBar().getPresence();
                         if (workspace != null && presence.getMode() == Presence.Mode.available) {
-                            unavaliable = true;
+                            unavailable = true;
                             StatusItem away = workspace.getStatusBar().getStatusItem("Away");
                             Presence p = away.getPresence();
                             if (isLocked) {
@@ -309,12 +311,12 @@ public final class SessionManager implements ConnectionListener {
                     }
                 }
                 else {
-                    if (unavaliable) {
+                    if (unavailable) {
                         setAvailableIfActive();
                     }
                 }
             }
-        }, 1000, 1000);
+        }, 11000, 500);
     }
 
     private void setAvailableIfActive() {
@@ -333,7 +335,7 @@ public final class SessionManager implements ConnectionListener {
             }
 
             changePresence(presence);
-            unavaliable = false;
+            unavailable = false;
         }
     }
 
