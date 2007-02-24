@@ -10,6 +10,9 @@
 
 package org.jivesoftware.spark;
 
+import org.jdesktop.jdic.systeminfo.SystemInfo;
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -20,14 +23,19 @@ import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.spark.ui.PresenceListener;
+import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Features;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.SwingUtilities;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
@@ -46,10 +54,14 @@ public final class SessionManager implements ConnectionListener {
 
     private String JID;
 
-    private List<PresenceListener> presenceListeners = new ArrayList<PresenceListener>();
+    private List presenceListeners = new ArrayList();
 
     private String userBareAddress;
+    private boolean unavaliable = false;
     private DiscoverItems discoverItems;
+
+    private int previousPriority = -1;
+
 
     public SessionManager() {
     }
@@ -69,6 +81,16 @@ public final class SessionManager implements ConnectionListener {
 
         // create workgroup session
         personalDataManager = new PrivateDataManager(getConnection());
+
+
+        if (Spark.isWindows()) {
+            try {
+                setIdleListener();
+            }
+            catch (Exception e) {
+                Log.error(e);
+            }
+        }
 
         // Discover items
         discoverItems();
@@ -234,6 +256,86 @@ public final class SessionManager implements ConnectionListener {
         return userBareAddress;
     }
 
+    /**
+     * Sets the Idle Timeout for this instance of Spark.
+     */
+    private void setIdleListener() throws Exception {
+
+        final Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                LocalPreferences localPref = SettingsManager.getLocalPreferences();
+                int delay = 0;
+                if (localPref.isIdleOn()) {
+                    delay = localPref.getIdleTime() * 60000;
+                }
+                else {
+                    return;
+                }
+
+                long idleTime = SystemInfo.getSessionIdleTime();
+                boolean isLocked = false;
+                if (idleTime > delay) {
+                    try {
+                        // Handle if spark is not connected to the server.
+                        if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
+                            return;
+                        }
+
+                        // Change Status
+                        Workspace workspace = SparkManager.getWorkspace();
+                        Presence presence = workspace.getStatusBar().getPresence();
+                        if (workspace != null && presence.getMode() == Presence.Mode.available) {
+                            unavaliable = true;
+                            StatusItem away = workspace.getStatusBar().getStatusItem("Away");
+                            Presence p = away.getPresence();
+                            if (isLocked) {
+                                p.setStatus(Res.getString("message.locked.workstation"));
+                            }
+                            else {
+                                p.setStatus(Res.getString("message.away.idle"));
+                            }
+
+                            previousPriority = presence.getPriority();
+
+                            p.setPriority(0);
+                            SparkManager.getSessionManager().changePresence(p);
+                        }
+                    }
+                    catch (Exception e) {
+                        Log.error("Error with IDLE status.", e);
+                        timer.cancel();
+                    }
+                }
+                else {
+                    if (unavaliable) {
+                        setAvailableIfActive();
+                    }
+                }
+            }
+        }, 1000, 1000);
+    }
+
+    private void setAvailableIfActive() {
+
+        // Handle if spark is not connected to the server.
+        if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
+            return;
+        }
+
+        // Change Status
+        Workspace workspace = SparkManager.getWorkspace();
+        if (workspace != null) {
+            Presence presence = workspace.getStatusBar().getStatusItem(Res.getString("available")).getPresence();
+            if (previousPriority != -1) {
+                presence.setPriority(previousPriority);
+            }
+
+            changePresence(presence);
+            unavaliable = false;
+        }
+    }
 
     /**
      * Returns the Discovered Items.
