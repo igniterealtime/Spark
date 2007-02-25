@@ -188,6 +188,33 @@ public class ContactInfoWindow extends JPanel {
 
         window.getContentPane().add(this);
 
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        contactList.addContactListListener(new ContactListListener() {
+            public void contactItemAdded(ContactItem item) {
+            }
+
+            public void contactItemRemoved(ContactItem item) {
+            }
+
+            public void contactGroupAdded(ContactGroup group) {
+            }
+
+            public void contactGroupRemoved(ContactGroup group) {
+            }
+
+            public void contactItemClicked(ContactItem item) {
+                if (window != null) {
+                    window.dispose();
+                }
+            }
+
+            public void contactItemDoubleClicked(ContactItem item) {
+                if (window != null) {
+                    window.dispose();
+                }
+            }
+        });
+
     }
 
     public void checkWindow() {

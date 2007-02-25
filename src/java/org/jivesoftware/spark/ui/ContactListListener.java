@@ -45,4 +45,18 @@ public interface ContactListListener {
      * @param group the ContactGroup.
      */
     void contactGroupRemoved(ContactGroup group);
+
+    /**
+     * Called when a <code>ContactItem</code> has been clicked in the Contact List.
+     *
+     * @param item         the <code>ContactItem</code> double clicked.
+     */
+    void contactItemClicked(ContactItem item);
+
+     /**
+     * Called when a <code>ContactItem</code> has been double clicked in the Contact List.
+     *
+     * @param item         the <code>ContactItem</code> double clicked.
+     */
+    void contactItemDoubleClicked(ContactItem item);
 }

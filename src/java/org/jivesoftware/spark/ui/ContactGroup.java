@@ -67,7 +67,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private MouseEvent mouseEvent;
 
-    private ContactInfoWindow contactWindow;
 
     /**
      * Create a new ContactGroup.
@@ -75,9 +74,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param groupName the name of the new ContactGroup.
      */
     public ContactGroup(String groupName) {
-        // ContactInfoWindow
-        contactWindow = ContactInfoWindow.getInstance();
-
         // Initialize Model and UI
         model = new DefaultListModel();
         contactItemList = new JList(model);
@@ -363,7 +359,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        contactWindow.checkWindow();
+        ContactInfoWindow.getInstance().checkWindow();
 
         Object o = null;
         try {
@@ -716,7 +712,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void displayWindow(MouseEvent e) {
-        contactWindow.display(this, e);
+        ContactInfoWindow.getInstance().display(this, e);
     }
 }
 
