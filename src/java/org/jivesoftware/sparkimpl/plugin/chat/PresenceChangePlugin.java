@@ -73,7 +73,7 @@ public class PresenceChangePlugin implements Plugin {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
-                    if (item.getPresence() == null || (item.getPresence().getMode() != Presence.Mode.available && item.getPresence().getMode() != Presence.Mode.chat)) {
+                    if (!item.isAvailable() || (item.getPresence().getMode() != Presence.Mode.available && item.getPresence().getMode() != Presence.Mode.chat)) {
                         if (contacts.contains(item)) {
                             popup.add(removeAction);
                         }
