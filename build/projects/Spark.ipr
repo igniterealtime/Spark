@@ -81,15 +81,15 @@
         <used_levels>
           <error>
             <option name="myName" value="ERROR" />
-            <option name="myVal" value="400" />
+            <option name="myVal" value="200" />
           </error>
           <warning>
             <option name="myName" value="WARNING" />
-            <option name="myVal" value="300" />
+            <option name="myVal" value="100" />
           </warning>
           <information>
             <option name="myName" value="INFO" />
-            <option name="myVal" value="200" />
+            <option name="myVal" value="100" />
           </information>
           <server>
             <option name="myName" value="SERVER PROBLEM" />
@@ -409,10 +409,12 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../sparkPhone/SparkPhone.iml" filepath="$PROJECT_DIR$/../../../sparkPhone/SparkPhone.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="JDK 1.5.0" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK" />
   <component name="ProjectRunConfigurationManager" />
   <component name="RmicSettings">
     <option name="IS_EANABLED" value="false" />
