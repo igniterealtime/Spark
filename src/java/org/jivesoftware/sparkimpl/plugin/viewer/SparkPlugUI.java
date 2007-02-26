@@ -10,14 +10,22 @@
 
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.PublicPlugin;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -32,14 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class SparkPlugUI extends JPanel {
     private PublicPlugin plugin;
@@ -58,8 +58,9 @@ public class SparkPlugUI extends JPanel {
 
 
         if (getFilename() != null) {
+            URL url = null;
             try {
-                URL url = new URL("http://www.igniterealtime.org/updater/sparkplugs?filename=" + getFilename());
+                url = new URL("http://www.igniterealtime.org/updater/sparkplugs?filename=" + getFilename());
                 Image image = ImageIO.read(url);
                 ImageIcon icon = new ImageIcon(image);
                 imageIcon.setIcon(icon);
@@ -68,7 +69,7 @@ public class SparkPlugUI extends JPanel {
                 }
             }
             catch (Exception e) {
-                Log.error(e);
+                Log.error("Unable to find image for " + url, e);
             }
         }
         else {

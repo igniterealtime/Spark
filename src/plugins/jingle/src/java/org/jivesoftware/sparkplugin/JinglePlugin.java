@@ -59,8 +59,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
     public void initialize() {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
-                JMFInit.start(false);
-
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
 
                 jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());

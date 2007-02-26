@@ -259,6 +259,8 @@ public class SparkRes {
     public static final String DEFAULT_AVATAR_64x64_IMAGE = "DEFAULT_AVATAR_64x64_IMAGE";
     public static final String DEFAULT_AVATAR_32x32_IMAGE = "DEFAULT_AVATAR_32x32_IMAGE";
     public static final String DEFAULT_AVATAR_16x16_IMAGE = "DEFAULT_AVATAR_16x16_IMAGE";
+    public static final String DIAL_PHONE_IMAGE_24x24 = "DIAL_PHONE_IMAGE_24x24";
+    public static final String DIAL_PHONE_IMAGE_16x16 = "DIAL_PHONE_IMAGE_16x16";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

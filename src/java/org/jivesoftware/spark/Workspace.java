@@ -34,6 +34,7 @@ import org.jivesoftware.spark.ui.conferences.ConferencePlugin;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
@@ -197,6 +198,8 @@ public class Workspace extends JPanel implements PacketListener {
 
         ChatTranscriptPlugin transcriptPlugin = new ChatTranscriptPlugin();
         transcriptPlugin.initialize();
+
+        PhoneManager.getInstance();
     }
 
     /**
