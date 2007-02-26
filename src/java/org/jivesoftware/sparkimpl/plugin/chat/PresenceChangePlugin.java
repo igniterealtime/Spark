@@ -17,7 +17,6 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -73,7 +72,7 @@ public class PresenceChangePlugin implements Plugin {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
-                    if (!item.isAvailable() || (item.getPresence().getMode() != Presence.Mode.available && item.getPresence().getMode() != Presence.Mode.chat)) {
+                    if (!item.getPresence().isAvailable() || item.getPresence().isAway()) {
                         if (contacts.contains(item)) {
                             popup.add(removeAction);
                         }
