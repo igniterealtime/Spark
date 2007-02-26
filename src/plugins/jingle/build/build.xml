@@ -72,12 +72,6 @@
                 <include name="**/*.properties"/>
             </fileset>
         </copy>
-        <copy todir="${target.dir}">
-            <fileset dir="${plug.dir}/src/">
-                <include name="**/*.png"/>
-                <include name="**/*.wav"/>
-            </fileset>
-        </copy>
         
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
