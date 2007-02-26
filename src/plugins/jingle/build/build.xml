@@ -13,7 +13,7 @@
     <property name="target.lib.dir" value="${plug.dir}/target/lib"/>
     <property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
 
-    <property name="spark.home" value="c:\code\spark"/>
+    <property name="spark.home" value="../../../"/>
     <property name="spark.libs.dir" value="${spark.home}/target/build/lib"/>
 
     <path id="lib.classpath">
@@ -60,15 +60,42 @@
             <fileset file="${plug.dir}/plugin.xml"/>
         </copy>
 
-         <copy todir="${target.dir}">
+        <copy todir="${target.dir}">
             <fileset dir="${plug.dir}">
                 <include name="**/*.html"/>
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
 
+        <copy todir="${target.dir}">
+            <fileset dir="${plug.dir}/src/java/">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${target.dir}">
+            <fileset dir="${plug.dir}/src/">
+                <include name="**/*.png"/>
+                <include name="**/*.wav"/>
+            </fileset>
+        </copy>
+        
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
-        <zip zipfile="${target.dir}/jingle.jar" basedir="${target.dir}"/>
+
+        <!--<zip zipfile="${target.dir}/jingle.jar" basedir="${target.dir}"/>-->
+        <jar file="${target.dir}/jingle.jar" basedir="${target.dir}">
+            <manifest>
+                <attribute name="Class-Path" value="
+                    ./
+                    ./lib/JingleExtenion.jar
+                    ./lib/JingleMedia.jar
+                    ./lib/Speex.jar
+                    ./lib/jspeex-0.9.7-jfcom.jar
+                    ./lib/jstun-0.6.1.jar
+                    ./lib/plugin-classes.jar
+                    " />
+            </manifest>
+        </jar>
+
     </target>
 
 </project>
