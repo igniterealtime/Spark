@@ -10,11 +10,13 @@ package org.jivesoftware.sparkplugin;
 
 import jvolume.JVolume;
 import jvolume.JavaMixerHelper;
+import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.smack.XMPPException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -76,7 +78,10 @@ public class JingleRoomUI extends JPanel {
 
     private ChatRoom chatRoom;
 
-    public JingleRoomUI(ChatRoom chatRoom) {
+    private JingleSession session;
+
+    public JingleRoomUI(JingleSession session, ChatRoom chatRoom) {
+        this.session = session;
         this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createLineBorder(Color.lightGray));
@@ -223,13 +228,14 @@ public class JingleRoomUI extends JPanel {
         hangUpButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 hangUpButton.setEnabled(false);
-                removeFromRoom();
+                try {
+                    session.terminate();
+                }
+                catch (XMPPException e) {
+                    e.printStackTrace();
+                }
             }
         });
-    }
-
-    private void removeFromRoom(){
-        chatRoom.getSplitPane().setRightComponent(null);
     }
 
 
@@ -417,5 +423,6 @@ public class JingleRoomUI extends JPanel {
         int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(chatRoom);
         return SparkManager.getChatManager().getChatContainer().getTabAt(index);
     }
+
 
 }

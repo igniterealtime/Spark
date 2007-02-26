@@ -67,14 +67,15 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         // Add to PhoneManager
         PhoneManager.getInstance().addPhone(this);
 
-        SwingWorker worker = new SwingWorker() {
+        final SwingWorker jingleLoadingThread = new SwingWorker() {
             public Object construct() {
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
 
                 jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
-                if (transportManager instanceof BridgedTransportManager)
+                if (transportManager instanceof BridgedTransportManager) {
                     jm.addCreationListener((BridgedTransportManager)transportManager);
+                }
                 return true;
             }
 
@@ -83,7 +84,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             }
         };
 
-        worker.start();
+        jingleLoadingThread.start();
     }
 
 
@@ -112,7 +113,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                         Style style = doc.addStyle("StyleName", null);
 
                         CallMessage callMessage = new CallMessage();
-                        callMessage.call(session, request.getFrom());
+                        callMessage.call(session, room, request.getFrom());
                         StyleConstants.setComponent(style, callMessage);
 
                         // Insert the image at the end of the text
@@ -185,10 +186,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jid));
         SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
 
-        JingleRoomUI ui = new JingleRoomUI(room);
-        room.getSplitPane().setRightComponent(ui);
-        room.getSplitPane().setResizeWeight(.60);
-
         // Create a new Jingle Call with a full JID
         OutgoingJingleSession session = null;
         try {
@@ -211,7 +208,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         Style style = doc.addStyle("StyleName", null);
 
         CallMessage callMessage = new CallMessage();
-        callMessage.call(session, jid);
+        callMessage.call(session, room, jid);
         StyleConstants.setComponent(style, callMessage);
 
         // Insert the image at the end of the text

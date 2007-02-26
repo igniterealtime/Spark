@@ -19,6 +19,7 @@ import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionStateListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 
@@ -59,6 +60,9 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
     private AudioClip ringing = null;
 
     private boolean answer = false;
+
+    private JingleRoomUI roomUI;
+    private ChatRoom chatRoom;
 
     public CallMessage() {
         buildUI();
@@ -130,8 +134,8 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         this.answer = answer;
     }
 
-    public void call(final JingleSession session, final String jid) {
-
+    public void call(final JingleSession session, ChatRoom chatRoom, final String jid) {
+        this.chatRoom = chatRoom;
         cancelButton.setVisible(true);
         retryButton.setVisible(false);
         this.fullJID = jid;
@@ -174,6 +178,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
             retryButton.setVisible(false);
             acceptButton.setVisible(false);
             if (ringing != null) ringing.stop();
+            chatRoom.getSplitPane().setRightComponent(null);
         }
         else if (session instanceof OutgoingJingleSession) {
             acceptButton.setVisible(false);
@@ -182,6 +187,9 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
                 cancelButton.setVisible(true);
                 retryButton.setVisible(false);
                 titleLabel.setText("On Phone");
+                roomUI = new JingleRoomUI(session, chatRoom);
+                chatRoom.getSplitPane().setRightComponent(roomUI);
+                chatRoom.getSplitPane().setResizeWeight(.60);
             }
             else if (session.getState() instanceof OutgoingJingleSession.Pending) {
                 titleLabel.setText("Ringing...");
@@ -201,6 +209,10 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
                 cancelButton.setVisible(true);
                 lastState = session.getState();
                 if (ringing != null) ringing.stop();
+                roomUI = new JingleRoomUI(session, chatRoom);
+                chatRoom.getSplitPane().setRightComponent(roomUI);
+                chatRoom.getSplitPane().setResizeWeight(.60);
+
             }
             else {
                 showAlert(true);
@@ -209,6 +221,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
                 retryButton.setVisible(false);
                 acceptButton.setVisible(false);
                 if (ringing != null) ringing.stop();
+                chatRoom.getSplitPane().setRightComponent(null);
             }
         }
     }
