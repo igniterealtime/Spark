@@ -185,6 +185,10 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jid));
         SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
 
+        JingleRoomUI ui = new JingleRoomUI(room);
+        room.getSplitPane().setRightComponent(ui);
+        room.getSplitPane().setResizeWeight(.60);
+
         // Create a new Jingle Call with a full JID
         OutgoingJingleSession session = null;
         try {
