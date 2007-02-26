@@ -28,6 +28,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -86,15 +87,16 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+       // add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         cancelButton.setText(Res.getString("cancel"));
         retryButton.setText(Res.getString("retry"));
         acceptButton.setText("Accept");
 
-        add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(retryButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-        add(acceptButton, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(acceptButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(cancelButton, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+
         retryButton.setVisible(false);
         acceptButton.setVisible(false);
 
@@ -103,12 +105,12 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
             }
         });
 
-        final CallMessage callMessage = this;
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        acceptButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
                 setAnswer(true);
             }
         });
+
 
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -149,10 +151,16 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
-        titleLabel.setText("Calling: " + contactItem.getNickname());
+        if(session instanceof IncomingJingleSession){
+            titleLabel.setText("Incoming Call From "+chatRoom.getNickname()+". Establishing connection...");
+        }
+        else {
+            titleLabel.setText("Outgoing Call To " + contactItem.getNickname());
+        }
+
 
         cancelButton.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
+            public void mousePressed(MouseEvent mouseEvent) {
                 cancelCall();
             }
 
@@ -167,6 +175,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
         makeClickable(imageLabel);
         makeClickable(titleLabel);
+        makeClickable(acceptButton);
     }
 
     private void updateBar() {
@@ -226,17 +235,17 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         }
     }
 
-    private void makeClickable(final JLabel label) {
-        label.addMouseListener(new MouseAdapter() {
+    private void makeClickable(final JComponent component) {
+        component.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
             }
 
             public void mouseEntered(MouseEvent e) {
-                label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                component.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             public void mouseExited(MouseEvent e) {
-                label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
     }
@@ -306,7 +315,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
 
             showAlert(true);
-            titleLabel.setText("Incoming Call");
+            titleLabel.setText("Incoming Call From "+chatRoom.getNickname());
             cancelButton.setVisible(true);
             retryButton.setVisible(false);
             acceptButton.setVisible(true);
