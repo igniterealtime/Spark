@@ -354,6 +354,7 @@ public class VCardManager {
      * @return the VCard.
      */
     public VCard getVCard(String jid, boolean useCache) {
+        jid = StringUtils.parseBareAddress(jid);
         if (!vcards.containsKey(jid) || !useCache) {
             VCard vcard = new VCard();
             try {

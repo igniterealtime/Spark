@@ -47,10 +47,10 @@ import javax.swing.text.StyledDocument;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
@@ -146,7 +146,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
 
     public Collection<Action> getPhoneActions(final String jid) {
-        if(jm == null){
+        if (jm == null) {
             return Collections.emptyList();
         }
 
@@ -177,10 +177,13 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
     public void placeCall(String jid) {
         jid = SparkManager.getUserManager().getFullJID(jid);
-        
+
         if (sessions.containsKey(jid)) {
             return;
         }
+
+        ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jid));
+        SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
 
         // Create a new Jingle Call with a full JID
         OutgoingJingleSession session = null;
@@ -198,7 +201,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             sessions.put(jid, session);
         }
 
-        ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
         StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();

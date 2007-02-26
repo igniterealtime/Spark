@@ -9,7 +9,6 @@
 package org.jivesoftware.spark.phone;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -109,17 +108,18 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
             final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24));
             dialButton.setToolTipText("Place a phone call to this user.");
 
+            final List<Action> actions = new ArrayList<Action>();
+            for (Phone phone : phones) {
+                final Collection<Action> phoneActions = phone.getPhoneActions(chatRoomImpl.getParticipantJID());
+                if (phoneActions != null) {
+                    for (Action action : phoneActions) {
+                        actions.add(action);
+                    }
+                }
+            }
+
             dialButton.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
-                    final List<Action> actions = new ArrayList<Action>();
-                    for (Phone phone : phones) {
-                        final Collection<Action> phoneActions = phone.getPhoneActions(chatRoomImpl.getParticipantJID());
-                        if (phoneActions != null) {
-                            for (Action action : phoneActions) {
-                                actions.add(action);
-                            }
-                        }
-                    }
 
                     // Handle actions.
                     if (actions.size() == 1) {
@@ -136,11 +136,13 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
                         menu.show(dialButton, e.getX(), e.getY());
                     }
 
-                    if (!actions.isEmpty()) {
-                        room.getToolBar().addChatRoomButton(dialButton);
-                    }
                 }
             });
+
+
+            if (!actions.isEmpty()) {
+                room.getToolBar().addChatRoomButton(dialButton);
+            }
         }
     }
 
