@@ -113,7 +113,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
                 public void mousePressed(MouseEvent e) {
                     final List<Action> actions = new ArrayList<Action>();
                     for (Phone phone : phones) {
-                        final Collection<Action> phoneActions = phone.getPhoneActions(StringUtils.parseBareAddress(chatRoomImpl.getParticipantJID()));
+                        final Collection<Action> phoneActions = phone.getPhoneActions(chatRoomImpl.getParticipantJID());
                         if (phoneActions != null) {
                             for (Action action : phoneActions) {
                                 actions.add(action);
@@ -166,7 +166,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
                 ContactItem contactItem = (ContactItem)object;
                 final List<Action> actions = new ArrayList<Action>();
                 for (Phone phone : phones) {
-                    final Collection<Action> itemActions = phone.getPhoneActions(StringUtils.parseBareAddress(contactItem.getFullJID()));
+                    final Collection<Action> itemActions = phone.getPhoneActions(contactItem.getFullJID());
                     for (Action action : itemActions) {
                         actions.add(action);
                     }
@@ -209,7 +209,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
         final String jid = contactItem.getContactJID();
         final List<Action> actions = new ArrayList<Action>();
         for (Phone phone : phones) {
-            final Collection<Action> itemActions = phone.getPhoneActions(StringUtils.parseBareAddress(jid));
+            final Collection<Action> itemActions = phone.getPhoneActions(jid);
             for (Action action : itemActions) {
                 actions.add(action);
             }

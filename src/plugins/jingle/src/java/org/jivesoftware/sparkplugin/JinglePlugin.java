@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.jingle.IncomingJingleSession;
@@ -26,29 +27,35 @@ import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
 import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.phone.Phone;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
-public class JinglePlugin implements Plugin, JingleSessionListener {
+public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
     final Map<String, JingleSession> sessions = new HashMap<String, JingleSession>();
 
@@ -57,6 +64,9 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
     final JingleSessionListener jingleListener = this;
 
     public void initialize() {
+        // Add to PhoneManager
+        PhoneManager.getInstance().addPhone(this);
+
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
@@ -125,22 +135,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         });
 
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
-            public void chatRoomOpened(ChatRoom room) {
-                if (!(room instanceof ChatRoomImpl)) {
-                    return;
-                }
-                final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
-                final ChatRoomButton callButton = new ChatRoomButton(JinglePhoneRes.getImageIcon("CHAT_ROOM_DIAL_BUTTON"));
-
-                callButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        placeCall(roomImpl);
-                    }
-                });
-
-                room.getToolBar().addChatRoomButton(callButton);
-            }
-
             public void chatRoomClosed(ChatRoom room) {
                 final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                 if (sessions.containsKey(roomImpl.getJID())) {
@@ -150,6 +144,24 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         });
     }
 
+
+    public Collection<Action> getPhoneActions(final String jid) {
+        if(jm == null){
+            return Collections.emptyList();
+        }
+
+        final List<Action> actions = new ArrayList<Action>();
+        Action action = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                placeCall(jid);
+            }
+        };
+
+        action.putValue(Action.NAME, "<html><b>Computer To Computer</b></html>");
+        action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COMPUTER_IMAGE_16x16));
+        actions.add(action);
+        return actions;
+    }
 
     public void endCall(ChatRoomImpl room) {
         JingleSession session = sessions.get(room.getJID());
@@ -163,16 +175,17 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         sessions.remove(room.getJID());
     }
 
-    public void placeCall(ChatRoomImpl room) {
-
-        if (sessions.containsKey(room.getJID())) {
+    public void placeCall(String jid) {
+        jid = SparkManager.getUserManager().getFullJID(jid);
+        
+        if (sessions.containsKey(jid)) {
             return;
         }
 
         // Create a new Jingle Call with a full JID
         OutgoingJingleSession session = null;
         try {
-            session = jm.createOutgoingJingleSession(room.getJID());
+            session = jm.createOutgoingJingleSession(jid);
         }
         catch (XMPPException e) {
             Log.error(e);
@@ -182,15 +195,17 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
         if (session != null) {
             session.addListener(jingleListener);
             session.start();
-            sessions.put(room.getJID(), session);
+            sessions.put(jid, session);
         }
+
+        ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
         StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         CallMessage callMessage = new CallMessage();
-        callMessage.call(session, room.getJID());
+        callMessage.call(session, jid);
         StyleConstants.setComponent(style, callMessage);
 
         // Insert the image at the end of the text
@@ -285,4 +300,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener {
             // Do Nothing
         }
     }
+
+
 }
