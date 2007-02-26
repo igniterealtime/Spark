@@ -256,8 +256,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public void insertText(String text) throws BadLocationException {
         final Document doc = getDocument();
         styles.removeAttribute("link");
-        StyleConstants.setForeground(styles, getForeground());
-
         doc.insertString(doc.getLength(), text, styles);
     }
 

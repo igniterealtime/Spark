@@ -16,6 +16,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -24,6 +25,7 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -31,25 +33,22 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -241,11 +240,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final VCardPanel topPanel = new VCardPanel(jid);
                 mainPanel.add(topPanel, BorderLayout.NORTH);
 
-                final JTextArea window = new JTextArea();
-                window.setWrapStyleWord(true);
-                window.setLineWrap(true);
+                final TranscriptWindow window = new TranscriptWindow();
                 window.setBackground(Color.white);
-                window.setFont(new Font("Dialog", Font.PLAIN, 11));
                 final JScrollPane pane = new JScrollPane(window);
                 pane.getVerticalScrollBar().setBlockIncrement(50);
                 pane.getVerticalScrollBar().setUnitIncrement(20);
@@ -253,51 +249,10 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 mainPanel.add(pane, BorderLayout.CENTER);
 
 
-                ChatTranscript transcript = (ChatTranscript)get();
-                List<HistoryMessage> list = transcript.getMessages();
-                //Collections.sort(list, dateComparator);
+                final ChatTranscript transcript = (ChatTranscript)get();
+                final List<HistoryMessage> list = transcript.getMessages();
+                final String personalNickname = SparkManager.getUserManager().getNickname();
 
-                StringBuffer buf = new StringBuffer();
-                for (HistoryMessage message : list) {
-                    String from = message.getFrom();
-                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-                    if (nickname.equals(message.getFrom())) {
-                        String otherJID = StringUtils.parseBareAddress(message.getFrom());
-                        String myJID = SparkManager.getSessionManager().getBareAddress();
-
-                        if (otherJID.equals(myJID)) {
-                            nickname = "Me";
-                        }
-                        else {
-                            nickname = StringUtils.parseName(nickname);
-                        }
-                    }
-
-                    final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-                    final String date = formatter.format(message.getDate());
-
-                    String prefix = nickname + " [" + date + "]";
-
-                    if (from.equals(SparkManager.getSessionManager().getJID())) {
-                        //   window.insertCustomMessage(prefix, message.getBody());
-                        buf.append(prefix + ": " + message.getBody());
-                        buf.append("\n");
-                    }
-                    else {
-                        buf.append(prefix + ": " + message.getBody());
-                        buf.append("\n");
-                        //    window.insertCustomOtherMessage(prefix, message.getBody());
-                    }
-
-                }
-
-                window.setText(buf.toString());
-                window.setEditable(false);
-
-                // Handle no history
-                if (transcript.getMessages().size() == 0) {
-                    window.setText(Res.getString("message.no.history.found"));
-                }
 
                 final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
                 frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16).getImage());
@@ -310,6 +265,45 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
 
+                SwingWorker transcriptWorker = new SwingWorker() {
+                    public Object construct() {
+                        try {
+                            Thread.sleep(500);
+                        }
+                        catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return true;
+                    }
+
+                    public void finished() {
+                        for (HistoryMessage message : list) {
+                            String from = message.getFrom();
+                            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+                            String body = message.getBody();
+                            if (nickname.equals(message.getFrom())) {
+                                String otherJID = StringUtils.parseBareAddress(message.getFrom());
+                                String myJID = SparkManager.getSessionManager().getBareAddress();
+
+                                if (otherJID.equals(myJID)) {
+                                    nickname = personalNickname;
+                                }
+                                else {
+                                    nickname = StringUtils.parseName(nickname);
+                                }
+                            }
+
+                            window.insertHistoryMessage(nickname, body, message.getDate());
+                        }
+
+                        // Handle no history
+                        if (transcript.getMessages().size() == 0) {
+                            window.insertNotificationMessage(Res.getString("message.no.history.found"), ChatManager.NOTIFICATION_COLOR);
+                        }
+                    }
+                };
+
+                transcriptWorker.start();
             }
         };
 

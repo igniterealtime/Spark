@@ -44,11 +44,7 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -59,6 +55,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -107,6 +108,7 @@ public class ChatRoomImpl extends ChatRoom {
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
 
+        // Loads the current history for this user.
         loadHistory();
 
         // Register PacketListeners
@@ -134,7 +136,7 @@ public class ChatRoomImpl extends ChatRoom {
         presence = PresenceManager.getPresence(participantJID);
 
         roster = SparkManager.getConnection().getRoster();
-        
+
         RosterEntry entry = roster.getEntry(participantJID);
 
         tabIcon = PresenceManager.getIconFromPresence(presence);
@@ -645,31 +647,36 @@ public class ChatRoomImpl extends ChatRoom {
         getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
 
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if (!pref.isChatHistoryEnabled()) {
+        final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        if (!localPreferences.isChatHistoryEnabled()) {
             return;
         }
 
-        String bareJID = StringUtils.parseBareAddress(getParticipantJID());
-        final ChatTranscript transcript = ChatTranscripts.getCurrentChatTranscript(bareJID);
+        final String bareJID = StringUtils.parseBareAddress(getParticipantJID());
+        final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(bareJID);
+        final String personalNickname = SparkManager.getUserManager().getNickname();
 
-        for (HistoryMessage message : transcript.getMessages()) {
+        for (HistoryMessage message : chatTranscript.getMessages()) {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+            String messageBody = message.getBody();
             if (nickname.equals(message.getFrom())) {
                 String otherJID = StringUtils.parseBareAddress(message.getFrom());
                 String myJID = SparkManager.getSessionManager().getBareAddress();
 
                 if (otherJID.equals(myJID)) {
-                    nickname = "Me";
+                    nickname = personalNickname;
                 }
                 else {
                     nickname = StringUtils.parseName(nickname);
                 }
             }
 
+            if (ModelUtil.hasLength(messageBody) && messageBody.startsWith("/me ")) {
+                messageBody = messageBody.replaceAll("/me", nickname);
+            }
 
-            Date date = message.getDate();
-            getTranscriptWindow().insertHistoryMessage(nickname, message.getBody(), date);
+            final Date messageDate = message.getDate();
+            getTranscriptWindow().insertHistoryMessage(nickname, messageBody, messageDate);
         }
 
     }

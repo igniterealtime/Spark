@@ -203,6 +203,8 @@ public class TranscriptWindow extends ChatArea {
 
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
+
+            StyleConstants.setForeground(styles, Color.black);
             setText(body);
             insertText("\n");
         }
@@ -233,6 +235,8 @@ public class TranscriptWindow extends ChatArea {
 
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
+
+            StyleConstants.setForeground(styles, Color.black);
             setText(message);
             insertText("\n");
         }
@@ -262,10 +266,12 @@ public class TranscriptWindow extends ChatArea {
 
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
-            setForeground(foregroundColor);
+            StyleConstants.setForeground(styles, foregroundColor);
             setText(message);
             insertText("\n");
-            setForeground(Color.black);
+
+            // Default back to black
+            StyleConstants.setForeground(styles, Color.black);
         }
         catch (BadLocationException ex) {
             Log.error("Error message.", ex);
@@ -276,9 +282,9 @@ public class TranscriptWindow extends ChatArea {
      * Create and insert a notification message. A notification message generally is a
      * presence update, but can be used for most anything related to the room.
      *
-     * @param text      the text to insert.
-     * @param bold      true to use bold text.
-     * @param underline true to have text underlined.
+     * @param text       the text to insert.
+     * @param bold       true to use bold text.
+     * @param underline  true to have text underlined.
      * @param foreground the foreground color.
      */
     public synchronized void insertCustomText(String text, boolean bold, boolean underline, Color foreground) {
@@ -295,11 +301,11 @@ public class TranscriptWindow extends ChatArea {
             // Reset Styles for message
             StyleConstants.setBold(styles, bold);
             StyleConstants.setUnderline(styles, underline);
-            setForeground(foreground);
+            StyleConstants.setForeground(styles, foreground);
             setText(text);
             insertText("\n");
             StyleConstants.setUnderline(styles, false);
-            setForeground(Color.black);
+            StyleConstants.setForeground(styles, Color.black);
         }
         catch (BadLocationException ex) {
             Log.error("Error message.", ex);
@@ -377,9 +383,9 @@ public class TranscriptWindow extends ChatArea {
 
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
-            setForeground((Color)UIManager.get("History.foreground"));
+            StyleConstants.setForeground(styles, (Color)UIManager.get("History.foreground"));
             setText(message);
-            setForeground(Color.BLACK);
+            StyleConstants.setForeground(styles, Color.BLACK);
             insertText("\n");
         }
         catch (BadLocationException ex) {
@@ -471,7 +477,7 @@ public class TranscriptWindow extends ChatArea {
 
     }
 
- 
+
     public void setFont(Font font) {
         this.defaultFont = font;
     }
