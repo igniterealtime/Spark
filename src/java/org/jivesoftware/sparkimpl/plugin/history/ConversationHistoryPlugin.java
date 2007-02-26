@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.history;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -172,6 +173,7 @@ public class ConversationHistoryPlugin implements Plugin {
         if (room instanceof ChatRoomImpl) {
             ChatRoomImpl roomImpl = (ChatRoomImpl)room;
             String jid = roomImpl.getParticipantJID();
+            jid = StringUtils.parseBareAddress(jid);
             historyList.remove(jid);
             historyList.add(0, jid);
         }
@@ -245,7 +247,8 @@ public class ConversationHistoryPlugin implements Plugin {
             while (!done) {
                 int eventType = parser.next();
                 if (eventType == XmlPullParser.START_TAG && "user".equals(parser.getName())) {
-                    historyList.add(parser.nextText());
+                    String jid = StringUtils.parseBareAddress(parser.nextText());
+                    historyList.add(jid);
                 }
                 else if (eventType == XmlPullParser.END_TAG && "conversations".equals(parser.getName())) {
                     done = true;
