@@ -265,7 +265,7 @@ public class PluginManager implements MainWindowListener {
 
                     registerPlugin(pluginClass);
                 }
-                catch (Exception e) {
+                catch (Throwable e) {
                     Log.error("Unable to load plugin " + clazz + ".", e);
                 }
             }
