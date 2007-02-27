@@ -71,10 +71,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
                 JMFInit.start(false);
                 return true;
             }
-
-            public void finished() {
-                addListeners();
-            }
         };
 
         worker.start();
@@ -94,6 +90,10 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
     }
 
     public void addPhone(Phone phone) {
+        if(phones.isEmpty()){
+            addListeners();
+        }
+        
         phones.add(phone);
     }
 
