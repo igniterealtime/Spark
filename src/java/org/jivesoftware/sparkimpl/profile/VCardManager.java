@@ -38,13 +38,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,6 +55,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -261,6 +261,36 @@ public class VCardManager {
                 }
                 else {
                     editor.displayProfile(jid, vcard, parent);
+                }
+            }
+        };
+
+        vcardThread.start();
+
+    }
+
+    /**
+     * Displays the full profile for a particular JID.
+     *
+     * @param jid    the jid of the user to display.
+     * @param parent the parent component to use for displaying dialog.
+     */
+    public void viewFullProfile(final String jid, final JComponent parent) {
+        final SwingWorker vcardThread = new SwingWorker() {
+            VCard vcard = new VCard();
+
+            public Object construct() {
+                vcard = getVCard(jid);
+                return vcard;
+            }
+
+            public void finished() {
+                if (vcard.getError() != null || vcard == null) {
+                    // Show vcard not found
+                    JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    editor.viewFullProfile(vcard, parent);
                 }
             }
         };
@@ -475,8 +505,8 @@ public class VCardManager {
 
             String query = getNumbersFromPhone(phoneNumber);
             if ((homePhone != null && homePhone.contains(query)) ||
-                    (workPhone != null && workPhone.contains(query)) ||
-                    (cellPhone != null && cellPhone.contains(query))) {
+                (workPhone != null && workPhone.contains(query)) ||
+                (cellPhone != null && cellPhone.contains(query))) {
                 return vcard;
             }
         }

@@ -141,16 +141,102 @@ public class VCardEditor {
     }
 
     /**
+     * Displays the VCard for an individual.
+     *
+     * @param vCard  the users vcard.
+     * @param parent the parent component, used for location.
+     */
+    public void viewFullProfile(final VCard vCard, JComponent parent) {
+        final JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Initialize Panels
+        personalPanel = new PersonalPanel();
+        personalPanel.allowEditing(false);
+        personalPanel.showJID(false);
+
+        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
+
+        businessPanel = new BusinessPanel();
+        businessPanel.allowEditing(false);
+        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
+
+        homePanel = new HomePanel();
+        homePanel.allowEditing(false);
+        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
+
+        avatarPanel = new AvatarPanel();
+        avatarPanel.allowEditing(false);
+        tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
+
+        // Build the UI
+        buildUI(vCard);
+
+        final JOptionPane pane;
+        final JDialog dlg;
+
+        TitlePanel titlePanel;
+
+        ImageIcon icon = VCardManager.getAvatarIcon(vCard);
+        if (icon == null) {
+            icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
+        }
+
+        // Create the title panel for this dialog
+        titlePanel = new TitlePanel(Res.getString("title.edit.profile"), Res.getString("message.save.profile"), icon, true);
+
+        // Construct main panel w/ layout.
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
+
+        // The user should only be able to close this dialog.
+        Object[] options = {Res.getString("close")};
+        pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+
+        mainPanel.add(pane, BorderLayout.CENTER);
+
+        JOptionPane p = new JOptionPane();
+        dlg = p.createDialog(parent, Res.getString("title.profile.information"));
+        dlg.setModal(false);
+
+        dlg.pack();
+        dlg.setSize(600, 400);
+        dlg.setResizable(true);
+        dlg.setContentPane(mainPanel);
+        dlg.setLocationRelativeTo(parent);
+
+
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                String value = (String)pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                }
+            }
+        };
+
+        pane.addPropertyChangeListener(changeListener);
+
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();
+
+        personalPanel.focus();
+    }
+
+    /**
      * Displays a users profile.
      *
      * @param jid    the jid of the user.
      * @param vcard  the users vcard.
      * @param parent the parent component, used for location handling.
      */
-    public void displayProfile(String jid, VCard vcard, JComponent parent) {
+    public void displayProfile(final String jid, VCard vcard, JComponent parent) {
         VCardViewer viewer = new VCardViewer(jid);
-        final JOptionPane pane;
-        final JFrame dlg;
+
+        final JFrame dlg = new JFrame(Res.getString("title.view.profile.for", jid));
+
 
         avatarLabel = new JLabel();
         avatarLabel.setHorizontalAlignment(JButton.RIGHT);
@@ -160,16 +246,16 @@ public class VCardEditor {
         final JPanel mainPanel = new JPanel();
 
         // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        Object[] options = {"View Full Profile", Res.getString("close")};
+        final JOptionPane pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         //  mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
-        dlg = new JFrame(Res.getString("title.view.profile.for", jid));
+
         dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
 
         dlg.pack();
-        dlg.setSize(350, 200);
+        dlg.setSize(350, 250);
         dlg.setResizable(true);
         dlg.setContentPane(pane);
         dlg.setLocationRelativeTo(parent);
@@ -185,6 +271,10 @@ public class VCardEditor {
                 if (Res.getString("close").equals(value)) {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
+                }
+                else if ("View Full Profile".equals(value)) {
+                    SparkManager.getVCardManager().viewFullProfile(jid, pane);
+                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 }
             }
         };
