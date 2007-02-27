@@ -21,6 +21,7 @@
         <fileset dir="${plug.lib.dist.dir}" includes="**/*.jar, **/*.zip"/>
         <fileset dir="${spark.home}/build/lib/dist" includes="**/*.jar, **/*.zip"/>
         <fileset dir="${spark.home}/build/lib/dist/windows" includes="**/*.jar"/>
+		<fileset dir="${spark.home}/build/lib/dist/mac" includes="**/*.jar"/>
     </path>
 
     <target name="clean" description="Cleans all build related output">
