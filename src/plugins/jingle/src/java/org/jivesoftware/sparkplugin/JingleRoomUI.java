@@ -119,10 +119,6 @@ public class JingleRoomUI extends JPanel {
         phoneLabel.setForeground(new Color(64, 103, 162));
         panel.add(phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
-        // Add Dial Pad
-        final RolloverButton dialPadButton = new RolloverButton(JinglePhoneRes.getImageIcon("ICON_NUMBERPAD_IMAGE"));
-        panel.add(dialPadButton, new GridBagConstraints(1, 0, 1, 3, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
-
         // Add Connected Label
         connectedLabel = new JLabel(CONNECTED);
         connectedLabel.setFont(new Font("Arial", Font.BOLD, 13));

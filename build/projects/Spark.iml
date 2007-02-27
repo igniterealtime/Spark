@@ -203,7 +203,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/systeminfo.jar!/" />
@@ -216,6 +216,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/windows/jmf.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../lib/dist/windows" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
