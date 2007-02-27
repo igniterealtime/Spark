@@ -203,7 +203,7 @@ public class VCardViewer extends JPanel {
 
         // Add Home Phone
         String homeNumber = vcard.getPhoneHome("VOICE");
-        if(!ModelUtil.hasLength(homeNumber)){
+        if (!ModelUtil.hasLength(homeNumber)) {
             homeNumber = "n/a";
         }
         final JLabel homePhoneLabel = new JLabel("Home: " + homeNumber);
@@ -211,16 +211,25 @@ public class VCardViewer extends JPanel {
 
         // Add Work Phone
         String workNumber = vcard.getPhoneWork("VOICE");
-        if(!ModelUtil.hasLength(workNumber)){
+        if (!ModelUtil.hasLength(workNumber)) {
             workNumber = "n/a";
         }
         final JLabel workPhoneLabel = new JLabel("Work: " + workNumber);
         add(workPhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
 
+        // Add Cell Phone
+        String cellNumber = vcard.getPhoneWork("CELL");
+        if (!ModelUtil.hasLength(cellNumber)) {
+            cellNumber = "n/a";
+        }
+
+        final JLabel cellPhoneLabel = new JLabel("Cell: " + cellNumber);
+        add(cellPhoneLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+
         // Add Company
         String company = vcard.getOrganization();
         final JLabel orgLabel = new JLabel("Company: " + company);
-        add(orgLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+        add(orgLabel, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
 
     }
 
