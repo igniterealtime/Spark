@@ -86,14 +86,14 @@ public class PluginClassLoader extends URLClassLoader {
                 try {
                     checkForSmackProviders(url);
                 }
-                catch (Exception e) {
+                catch (Throwable e) {
                     Log.error(e);
                 }
             }
         }
     }
 
-    private void checkForSmackProviders(URL jarURL) throws Exception {
+    private void checkForSmackProviders(URL jarURL) throws Throwable {
         ZipFile zipFile = new JarFile(URLFileSystem.url2File(jarURL));
 
         ZipEntry entry = zipFile.getEntry("META-INF/smack.providers");
