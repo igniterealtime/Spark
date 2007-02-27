@@ -89,7 +89,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/nist-sdp-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/log4j-1.2.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -98,7 +98,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/concurrent.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/jstun-0.6.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -116,25 +116,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/log4j-1.2.8.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/sip-sdp.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/JainSipApi1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/concurrent.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
