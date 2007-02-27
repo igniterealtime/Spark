@@ -43,8 +43,8 @@
             <fileset dir="${java.dir}" includes="**/*.gif"/>
             <fileset dir="${java.dir}" includes="**/*.jpg"/>
             <fileset dir="${java.dir}" includes="**/*.jpeg"/>
-			<fileset dir="${java.dir}" includes="**/*.properties" />
-            <fileset dir="${resources.dir}" includes="**/*" />
+            <fileset dir="${java.dir}" includes="**/*.properties"/>
+            <fileset dir="${resources.dir}" includes="**/*"/>
         </copy>
     </target>
 
@@ -72,7 +72,7 @@
                 <include name="**/*.properties"/>
             </fileset>
         </copy>
-        
+
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
         <!--<zip zipfile="${target.dir}/jingle.jar" basedir="${target.dir}"/>-->
@@ -86,9 +86,13 @@
                     ./lib/jspeex-0.9.7-jfcom.jar
                     ./lib/jstun-0.6.1.jar
                     ./lib/plugin-classes.jar
-                    " />
+                    "/>
             </manifest>
         </jar>
+
+        <copy todir="${spark.home}/src/commercial">
+            <fileset file="${target.dir}/jingle.jar"/>
+        </copy>
 
     </target>
 
