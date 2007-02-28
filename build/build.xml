@@ -51,6 +51,7 @@
     <property name="merge.libs.dir" location="${basedir}/build/lib/merge"/>
     <property name="libs.windows.dir" location="${dist.libs.dir}/windows"/>
     <property name="libs.linux.dir" location="${dist.libs.dir}/linux"/>
+	<property name="libs.mac.dir" location="${dist.libs.dir}/mac"/>
     <property name="target" location="${basedir}/target"/>
     <property name="classes" location="${target}/classes"/>
     <property name="target.build" location="${target}/build"/>
@@ -85,7 +86,6 @@
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
-
 
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
@@ -217,6 +217,11 @@
         </copy>
         <copy todir="${targetlib}/linux">
             <fileset dir="${libs.linux.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${targetlib}/mac">
+            <fileset dir="${libs.mac.dir}">
                 <include name="**/*.*"/>
             </fileset>
         </copy>
@@ -464,6 +469,7 @@
             <jarfileset dir="${target.build}/lib">
                 <include name="**/*.jar"/>
                 <exclude name="**/windows/"/>
+				<exclude name="**/linux/"/>
             </jarfileset>
             <jarfileset dir="${target.build}/lib/windows">
                 <include name="jdic.jar"/>
