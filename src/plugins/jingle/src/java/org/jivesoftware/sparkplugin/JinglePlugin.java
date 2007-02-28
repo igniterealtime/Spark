@@ -126,6 +126,8 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                         }
 
                         room.scrollToBottom();
+                        
+                        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(room);
                     }
                     catch (XMPPException e) {
                         Log.error(e);

@@ -10,13 +10,13 @@ package org.jivesoftware.sparkplugin;
 
 import jvolume.JVolume;
 import jvolume.JavaMixerHelper;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.smack.XMPPException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -155,6 +155,7 @@ public class JingleRoomUI extends JPanel {
         final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
         JVolume outputVolume = new JVolume(javaMixerHelper.getMasterPlaybackJavaMixer());
         outputVolume.setOrientation(JSlider.VERTICAL);
+
 
         final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
         outputPanel.add(outputVolume, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
