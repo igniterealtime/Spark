@@ -43,7 +43,7 @@
       <splashScreen show="true" autoOff="true" alwaysOnTop="true" width="244" height="188" bitmapFile="../../src/resources/images/spark.png">
         <text>
           <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
-          <versionLine x="148" y="167" text="${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+          <versionLine x="148" y="167" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
       <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
