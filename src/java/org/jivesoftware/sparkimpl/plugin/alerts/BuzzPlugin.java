@@ -14,8 +14,8 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -24,6 +24,7 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +62,9 @@ public class BuzzPlugin implements Plugin {
             public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
                     // Add Button to toolbar
+                    if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
+                        return;
+                    }
                     final RolloverButton chatRoomButton = new RolloverButton("Buzz");
                     chatRoomButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
@@ -104,6 +108,9 @@ public class BuzzPlugin implements Plugin {
     }
 
     private void shakeWindow(Message message) {
+        if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
+            return;
+        }
         String bareJID = StringUtils.parseBareAddress(message.getFrom());
         ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
         String nickname = StringUtils.parseName(bareJID);

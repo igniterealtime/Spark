@@ -74,13 +74,14 @@ public class ChatPreference implements Preference {
                 boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
                 boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
                 boolean tabsOnTop = localPreferences.isTabTopPosition();
+                boolean buzzAllowed = localPreferences.isBuzzEnabled();
                 panel.setShowTime(showTime);
                 panel.setSpellCheckerOn(spellCheckerOn);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
                 panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
                 panel.setTabsOnTop(tabsOnTop);
-
+                panel.setBuzzEnabled(buzzAllowed);
             }
         };
 
@@ -96,6 +97,7 @@ public class ChatPreference implements Preference {
         pref.setChatHistoryEnabled(!panel.isChatHistoryHidden());
         pref.setChatLengthDefaultTimeout(panel.getChatTimeoutTime());
         pref.setTabsOnTop(panel.isTabsOnTop());
+        pref.setBuzzEnabled(panel.isBuzzEnabled());
 
         SettingsManager.saveSettings();
 

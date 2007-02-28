@@ -511,6 +511,14 @@ public class LocalPreferences {
         return getBoolean("tabsOnTop", true);
     }
 
+    public void setBuzzEnabled(boolean enabled){
+        setBoolean("buzzEnabled", enabled);
+    }
+
+    public boolean isBuzzEnabled(){
+        return getBoolean("buzzEnabled", true);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
