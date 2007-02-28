@@ -20,7 +20,6 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.MessageEventManager;
@@ -32,8 +31,8 @@ import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -632,21 +631,22 @@ public final class GroupChatRoom extends ChatRoom {
             }
 
             if (ModelUtil.hasLength(errorMessage)) {
-                getTranscriptWindow().insertNotificationMessage(errorMessage,  ChatManager.ERROR_COLOR);
+                getTranscriptWindow().insertNotificationMessage(errorMessage, ChatManager.ERROR_COLOR);
             }
         }
     }
 
     /**
      * Handle all presence packets being sent to this Group Chat Room.
+     *
      * @param packet the presence packet.
      */
     private void handlePresencePacket(Packet packet) {
         Presence presence = (Presence)packet;
-        if(presence.getError() != null){
+        if (presence.getError() != null) {
             return;
         }
-        
+
         final String from = presence.getFrom();
         final String nickname = StringUtils.parseResource(from);
 
@@ -940,7 +940,8 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Invite a user to this conference room.
-     * @param jid the jid of the user to invite.
+     *
+     * @param jid     the jid of the user to invite.
      * @param message the message to send with the invitation.
      */
     public void inviteUser(String jid, String message) {
@@ -1027,6 +1028,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Returns the GroupChatParticpantList which displays all users within a conference room.
+     *
      * @return the GroupChatParticipantList.
      */
     public GroupChatParticipantList getConferenceRoomInfo() {
@@ -1045,16 +1047,10 @@ public final class GroupChatRoom extends ChatRoom {
     public void connectionClosedOnError(Exception ex) {
         handleDisconnect();
 
-        String message = Res.getString("message.disconnected.error");
+        getTranscriptWindow().showWindowDisabled();
+        getSplitPane().setRightComponent(null);
 
-        if (ex instanceof XMPPException) {
-            XMPPException xmppEx = (XMPPException)ex;
-            StreamError error = xmppEx.getStreamError();
-            String reason = error.getCode();
-            if ("conflict".equals(reason)) {
-                message = Res.getString("message.disconnected.conflict.error");
-            }
-        }
+        String message = Res.getString("message.disconnected.group.chat.error");
 
         getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
