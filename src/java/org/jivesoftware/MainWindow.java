@@ -45,6 +45,8 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -576,6 +578,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         frame.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
 
         final JTextPane pane = new JTextPane();
+        pane.setBackground(Color.white);
+        pane.setFont(new Font("Dialog", Font.PLAIN, 12));
         pane.setEditable(false);
         pane.setText(errorLogs);
 

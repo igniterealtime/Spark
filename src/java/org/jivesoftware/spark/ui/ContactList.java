@@ -95,7 +95,7 @@ import java.util.TimerTask;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
-    private JScrollPane treeScroller;
+    private JScrollPane contactListScrollPane;
     private final List<ContactGroup> groupList = new ArrayList<ContactGroup>();
     private final RolloverButton addingGroupButton;
 
@@ -169,10 +169,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground((Color)UIManager.get("List.background"));
-        treeScroller = new JScrollPane(mainPanel);
-        treeScroller.setBorder(BorderFactory.createEmptyBorder());
-        treeScroller.getVerticalScrollBar().setBlockIncrement(50);
-        treeScroller.getVerticalScrollBar().setUnitIncrement(20);
+        contactListScrollPane = new JScrollPane(mainPanel);
+        contactListScrollPane.setAutoscrolls(true);
+
+        contactListScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        contactListScrollPane.getVerticalScrollBar().setBlockIncrement(50);
+        contactListScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         retryPanel = new RetryPanel();
 
@@ -181,7 +183,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         workspace.getCardPanel().add(RETRY_PANEL, retryPanel);
 
 
-        add(treeScroller, BorderLayout.CENTER);
+        add(contactListScrollPane, BorderLayout.CENTER);
 
         // Load Properties file
         props = new Properties();
@@ -900,12 +902,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         try {
-            if (rootGroup == offlineGroup) {
-                mainPanel.add(rootGroup, tempList.size() - 1);
-            }
-            else {
-                mainPanel.add(rootGroup, loc);
-            }
+            mainPanel.add(rootGroup, loc);
         }
         catch (Exception e) {
             Log.error(e);
@@ -925,7 +922,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             parent.removeContactGroup(contactGroup);
         }
 
-        treeScroller.validate();
+        contactListScrollPane.validate();
         mainPanel.invalidate();
         mainPanel.repaint();
 
@@ -1648,17 +1645,16 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * Sorts ContactGroups
      */
     final Comparator groupComparator = new Comparator() {
-        public int compare(Object contactGroupOne, Object contactGroup2) {
+        public int compare(Object contactGroupOne, Object contactGroupTwo) {
             final ContactGroup group1 = (ContactGroup)contactGroupOne;
-            final ContactGroup group2 = (ContactGroup)contactGroup2;
+            final ContactGroup group2 = (ContactGroup)contactGroupTwo;
 
             // Make sure that offline group is always on bottom.
             if (group2 == offlineGroup) {
                 return -1;
             }
 
-            return group1.getGroupName().toLowerCase().compareTo(group2.getGroupName().toLowerCase());
-
+            return group1.getGroupName().trim().toLowerCase().compareTo(group2.getGroupName().trim().toLowerCase());
         }
     };
 
