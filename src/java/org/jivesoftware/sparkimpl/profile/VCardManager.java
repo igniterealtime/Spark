@@ -24,8 +24,8 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.util.Base64;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -37,6 +37,13 @@ import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -55,13 +62,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -364,15 +364,21 @@ public class VCardManager {
      * @return the users VCard or an empty VCard.
      */
     public VCard getVCardFromMemory(String jid) {
+        // Check in memory first.
+        if (vcards.containsKey(jid)) {
+            return vcards.get(jid);
+        }
+
+        // if not in memory
         VCard vcard = loadFromFileSystem(jid);
-        if (vcard == null && !vcards.containsKey(jid)) {
+        if (vcard == null) {
             addToQueue(jid);
+
+            // Create temp vcard.
             vcard = new VCard();
             vcard.setJabberId(jid);
         }
-        else if (vcard == null) {
-            vcard = getVCard(jid);
-        }
+
         return vcard;
     }
 
@@ -505,8 +511,8 @@ public class VCardManager {
 
             String query = getNumbersFromPhone(phoneNumber);
             if ((homePhone != null && homePhone.contains(query)) ||
-                (workPhone != null && workPhone.contains(query)) ||
-                (cellPhone != null && cellPhone.contains(query))) {
+                    (workPhone != null && workPhone.contains(query)) ||
+                    (cellPhone != null && cellPhone.contains(query))) {
                 return vcard;
             }
         }
@@ -552,7 +558,7 @@ public class VCardManager {
      * @param vcard the users vcard.
      */
     private void persistVCard(String jid, VCard vcard) {
-        jid = UserManager.unescapeJID(jid);
+        String fileName = Base64.encodeBytes(jid.getBytes());
 
         byte[] bytes = vcard.getAvatar();
         if (bytes != null) {
@@ -564,7 +570,7 @@ public class VCardManager {
 
         final String xml = vcard.toString();
 
-        File vcardFile = new File(vcardStorageDirectory, jid);
+        File vcardFile = new File(vcardStorageDirectory, fileName);
 
         // write xml to file
         try {
@@ -585,9 +591,9 @@ public class VCardManager {
      */
     private VCard loadFromFileSystem(String jid) {
         // Unescape JID
-        jid = UserManager.unescapeJID(jid);
+        String fileName = Base64.encodeBytes(jid.getBytes());
 
-        final File vcardFile = new File(vcardStorageDirectory, jid);
+        final File vcardFile = new File(vcardStorageDirectory, fileName);
         if (!vcardFile.exists()) {
             return null;
         }
