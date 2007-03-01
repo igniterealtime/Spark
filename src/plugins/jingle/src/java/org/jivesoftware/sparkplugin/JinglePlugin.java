@@ -37,13 +37,6 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +44,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
@@ -126,7 +126,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                         }
 
                         room.scrollToBottom();
-                        
+
                         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(room);
                     }
                     catch (XMPPException e) {
@@ -139,9 +139,11 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomClosed(ChatRoom room) {
-                final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
-                if (sessions.containsKey(roomImpl.getJID())) {
-                    endCall(roomImpl);
+                if (room instanceof ChatRoomImpl) {
+                    final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                    if (sessions.containsKey(roomImpl.getJID())) {
+                        endCall(roomImpl);
+                    }
                 }
             }
         });
