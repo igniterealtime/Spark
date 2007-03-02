@@ -8,7 +8,7 @@
  * a copy of which is included in this distribution.
  */
 
-package org.jivesoftware;
+package org.jivesoftware.launcher;
 
 import com.install4j.api.Context;
 import com.install4j.api.ProgressInterface;

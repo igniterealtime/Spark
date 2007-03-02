@@ -8,7 +8,7 @@
  * a copy of which is included in this distribution.
  */
 
-package org.jivesoftware;
+package org.jivesoftware.launcher;
 
 import com.install4j.api.InstallAction;
 import com.install4j.api.InstallerWizardContext;
