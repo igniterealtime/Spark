@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install4j version="3.2.1">
+  <directoryPresets config="../../target/build/lib" />
+  <application name="%APP_NAME%" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_%VERSION%" compression="6" lzmaCompression="true" keepModificationTimes="false" shortName="%APP_SHORT_NAME%" publisher="%PUBLISHER%" publisherWeb="%PUBLISHER_URL%" version="%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_REVISION%" allPathsRelative="true" backupOnSave="false" autoSave="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
+    <searchSequence>
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <variables>
+      <variable name="VERSION_MAJOR" value="2" />
+      <variable name="VERSION_MINOR" value="5" />
+      <variable name="VERSION_REVISION" value="0" />
+      <variable name="APP_NAME" value="Spark" />
+      <variable name="APP_SHORT_NAME" value="Spark" />
+      <variable name="PUBLISHER" value="Jive Software" />
+      <variable name="PUBLISHER_URL" value="http://www.jivesoftware.com" />
+      <variable name="PRODUCT_NAME" value="Spark" />
+      <variable name="FILE_PREFIX" value="" />
+      <variable name="RELEASE_ROOT_PATH" value="../target/installer" />
+      <variable name="VARIABLE" value="" />
+      <variable name="MACSYSTEM" value="/System/Library/Java" />
+    </variables>
+  </application>
+  <files>
+    <mountPoints>
+      <mountPoint name="" id="1" location="" mode="755" />
+    </mountPoints>
+    <entries>
+      <dirEntry mountPoint="1" file="../../target/build" overwrite="1" shared="false" mode="644" dontUninstall="false" excludeSuffixes="" dirMode="755">
+        <exclude>
+          <entry location="resources/version.xml~" launcher="false" />
+        </exclude>
+      </dirEntry>
+    </entries>
+    <components />
+  </files>
+  <launchers>
+    <launcher name="Spark" id="4" external="false" excludeFromMenu="false" menuName="" icnsFile="../../src/resources/images/message.icns" pngIcon16File="../../src/resources/images/message.png" pngIcon32File="../../src/resources/images/message-32x32.png" macServiceDependencies="" allowUserChangeServiceStartType="true">
+      <executable name="Spark" type="1" iconSet="true" iconFile="../../src/resources/images/message.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" redirectStdout="true" stdoutFile="logs/output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="">
+        <versionInfo include="true" fileVersion="%VERSION%" companyName="" fileDescription="Spark" legalCopyright="Jive Software" productVersion="" internalName="%PRODUCT_NAME%" />
+      </executable>
+      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="244" height="188" bitmapFile="../../src/resources/images/spark.png">
+        <text>
+          <statusLine x="4" y="64" text="" font="Arial" fontSize="10" fontColor="0,0,0" fontWeight="500" />
+          <versionLine x="146" y="167" text="%VERSION%" font="Arial" fontSize="10" fontColor="0,0,0" fontWeight="600" />
+        </text>
+      </splashScreen>
+      <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=%INSTALL4J_EXEDIR%&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="client" allowBetaVM="false" jdkOnly="false">
+        <searchSequence>
+          <registry />
+          <envVar name="JAVA_HOME" />
+          <envVar name="JDK_HOME" />
+        </searchSequence>
+        <classPath>
+          <scanDirectory location="lib" failOnError="true" />
+          <directory location="resources" failOnError="false" />
+          <scanDirectory location="lib/windows" failOnError="false" />
+          <envVar name="macSystem" failOnError="false" />
+          <scanDirectory location="lib/linux" failOnError="false" />
+        </classPath>
+        <nativeLibraryDirectories>
+          <directory name="resources" />
+          <directory name="lib/windows" />
+        </nativeLibraryDirectories>
+      </java>
+      <includedFiles />
+    </launcher>
+    <launcher name="starter" id="21" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="" pngIcon32File="" macServiceDependencies="" allowUserChangeServiceStartType="true">
+      <executable name="starter" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="">
+        <versionInfo include="false" fileVersion="" companyName="" fileDescription="" legalCopyright="" productVersion="" internalName="" />
+      </executable>
+      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="">
+        <text>
+          <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+          <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+        </text>
+      </splashScreen>
+      <java mainClass="org.jivesoftware.Restarter" vmParameters="" arguments="" allowVMPassthroughParameters="true" minVersion="" maxVersion="" preferredVM="" allowBetaVM="false" jdkOnly="false">
+        <searchSequence>
+          <registry />
+          <envVar name="JAVA_HOME" />
+          <envVar name="JDK_HOME" />
+        </searchSequence>
+        <classPath>
+          <scanDirectory location="lib" failOnError="false" />
+        </classPath>
+        <nativeLibraryDirectories />
+      </java>
+      <includedFiles />
+    </launcher>
+  </launchers>
+  <installerGui installerType="1" runUninstallerOnUpdate="true" addOnAppId="" suggestPreviousLocations="true" allowUnattendedInstall="true" useCustomHeaderImage="false" customHeaderImage="" customSize="false" customWidth="500" customHeight="390">
+    <customCode preAction="false" preActionClass="" postAction="true" postActionClass="org.jivesoftware.launcher.Installer" preUninstallAction="false" preUninstallActionClass="" postUninstallAction="true" postUninstallActionClass="org.jivesoftware.launcher.Uninstaller" initHandler="false" initHandlerClass="" directoryValidator="false" directoryValidatorClass="" installationHandler="false" installationHandlerClass="">
+      <archive location="../../target/build/lib/startup.jar" />
+    </customCode>
+    <standardScreens>
+      <screen id="welcome" enabled="true" useCustomBanner="false" bannerImageFile="" background="255,255,255" />
+      <screen id="license" enabled="true" file="../../documentation/LICENSE.html" />
+      <screen id="location" enabled="true" showSpace="true" suggestAppDir="true" />
+      <screen id="components" enabled="true" allSelected="true" firstMandatory="true">
+        <selectedComponents />
+        <mandatoryComponents />
+      </screen>
+      <screen id="programGroup" enabled="true" />
+      <screen id="fileAssociations" enabled="true">
+        <associations />
+      </screen>
+      <screen id="services" enabled="true" allSelected="true">
+        <selectedServiceLaunchers />
+      </screen>
+      <screen id="additionalTasks" enabled="true" customTasksPlacement="1">
+        <customTasks />
+      </screen>
+      <screen id="preInfo" enabled="false" file="" />
+      <screen id="install" enabled="true" />
+      <screen id="postInfo" enabled="false" file="" />
+      <screen id="finished" enabled="true" useCustomBanner="false" bannerImageFile="" background="255,255,255" />
+    </standardScreens>
+    <customScreens />
+  </installerGui>
+  <mediaSets>
+    <win32 name="Windows" id="2" mediaFileName="" installDir="Spark" allLaunchers="true" includedJRE="windows-x86-1.6.0" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="true" launchExecutableId="4" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="3" desktopLauncherId="4" programGroup="Spark" allowUserDisableStartMenuCreation="false" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="3">
+      <selectedLaunchers />
+      <messageSet language="English" />
+      <exclude>
+        <entry location="bin/startup.bat" launcher="false" />
+        <entry location="lib/linux" launcher="false" />
+        <entry location="lib/mac" launcher="false" />
+        <entry location="plugins/idlelinux.jar.pack" launcher="false" />
+      </exclude>
+      <variables />
+      <excludedScreenIds />
+      <additionalStartMenuEntries />
+    </win32>
+    <macos name="Mac OS X Single Bundle" id="6" mediaFileName="" installDir="%APP_SHORT_NAME%" allLaunchers="false" customInstallBaseDir="" allowUserStartAfterFinish="true" launchExecutableId="4" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="1" desktopLauncherId="">
+      <selectedLaunchers>
+        <launcher id="4" />
+      </selectedLaunchers>
+      <messageSet language="English" />
+      <exclude />
+      <variables />
+      <excludedScreenIds />
+    </macos>
+    <win32 name="Updater" id="12" mediaFileName="CommunicatorUpdate" installDir="Jive Communicator" allLaunchers="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="true" launchExecutableId="4" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="1" desktopLauncherId="" programGroup="Jive IM" allowUserDisableStartMenuCreation="false" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="1">
+      <selectedLaunchers>
+        <launcher id="4" />
+      </selectedLaunchers>
+      <messageSet language="English" />
+      <exclude />
+      <variables />
+      <excludedScreenIds />
+      <additionalStartMenuEntries />
+    </win32>
+    <unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="%APP_SHORT_NAME%" allLaunchers="true" includedJRE="linux-x86-1.6.0_client_only" manualJREEntry="false" customScriptMode="1" customScriptFile="">
+      <selectedLaunchers />
+      <messageSet language="English" />
+      <exclude>
+        <entry location="bin/startup.bat" launcher="false" />
+        <entry location="lib/windows" launcher="false" />
+        <entry location="plugins/jniwrapper.jar" launcher="false" />
+      </exclude>
+      <variables />
+      <customScriptLines />
+    </unixArchive>
+    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_%VERSION%_online" installDir="Spark" allLaunchers="true" includedJRE="windows-x86-1.5.0_05_us_only" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.5.0_05.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" allowUserStartAfterFinish="true" launchExecutableId="4" createUninstallIcon="true" overrideLicenseFile="false" licenseFile="" overridePreInformationFile="false" preInformationFile="" overridePostInformationFile="false" postInformationFile="" adminRequired="false" languageID="en" modeDesktopIcon="3" desktopLauncherId="4" programGroup="Spark" allowUserDisableStartMenuCreation="false" reboot="false" rebootUninstaller="false" modeQuickLaunchIon="2">
+      <selectedLaunchers />
+      <messageSet language="English" />
+      <exclude>
+        <entry location="bin/startup.bat" launcher="false" />
+        <entry location="lib/linux" launcher="false" />
+      </exclude>
+      <variables />
+      <excludedScreenIds />
+      <additionalStartMenuEntries />
+    </win32>
+  </mediaSets>
+  <buildIds buildAll="false">
+    <mediaSet refId="2" />
+  </buildIds>
+</install4j>
+

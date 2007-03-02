@@ -46,7 +46,15 @@ public class Startup {
             // Load up the bootstrap container
             final ClassLoader parent = findParentClassLoader();
 
-            File libDir = new File(DEFAULT_LIB_DIR);
+            File libDir = null;
+            final String workingDirectory = System.getProperty("appdir");
+            if (workingDirectory == null) {
+                libDir = new File(DEFAULT_LIB_DIR);
+            }
+            else {
+                libDir = new File(new File(workingDirectory), "lib");
+            }
+            
             File pluginDir = new File(libDir.getParentFile(), "plugins");
 
             // Unpack any pack files in lib.
@@ -121,7 +129,7 @@ public class Startup {
         for (File packedFile : packedFiles) {
             try {
                 String jarName = packedFile.getName().substring(0,
-                        packedFile.getName().length() - ".pack".length());
+                    packedFile.getName().length() - ".pack".length());
                 // Delete JAR file with same name if it exists (could be due to upgrade
                 // from old Wildfire release).
                 File jarFile = new File(libDir, jarName);
@@ -131,7 +139,7 @@ public class Startup {
 
                 InputStream in = new BufferedInputStream(new FileInputStream(packedFile));
                 JarOutputStream out = new JarOutputStream(new BufferedOutputStream(
-                        new FileOutputStream(new File(libDir, jarName))));
+                    new FileOutputStream(new File(libDir, jarName))));
                 Pack200.Unpacker unpacker = Pack200.newUnpacker();
                 // Print something so the user knows something is happening.
                 if (printStatus) {
