@@ -7,7 +7,7 @@
     <content url="file://$MODULE_DIR$/../..">
       <sourceFolder url="file://$MODULE_DIR$/../../src/java" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="JDK 1.5.0" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Spark" />
     <orderEntry type="module-library">
@@ -122,6 +122,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="SparkPhone" />
     <orderEntryProperties />
   </component>
   <component name="VcsManagerConfiguration">

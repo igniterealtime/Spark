@@ -8,8 +8,6 @@
 
 package org.jivesoftware.sparkplugin;
 
-import jvolume.JVolume;
-import jvolume.JavaMixerHelper;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.spark.ChatManager;
@@ -41,6 +39,9 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.jivesoftware.sparkplugin.ui.components.*;
+import com.jivesoftware.sparkplugin.ui.components.JavaMixer;
 
 
 /**
@@ -79,6 +80,8 @@ public class JingleRoomUI extends JPanel {
     private ChatRoom chatRoom;
 
     private JingleSession session;
+
+    private JavaMixer mixer = new JavaMixer();
 
     public JingleRoomUI(JingleSession session, ChatRoom chatRoom) {
         this.session = session;
@@ -139,26 +142,18 @@ public class JingleRoomUI extends JPanel {
         final JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setOpaque(false);
 
-        // Initialize Mixer.
-        final JavaMixerHelper javaMixerHelper = new JavaMixerHelper();
-
         // Add Input Volume To Control Panel
         final ControlPanel inputPanel = new ControlPanel(new GridBagLayout());
-        JVolume inputVolume = new JVolume(javaMixerHelper.getMicInputJavaMixer());
-        inputVolume.setOrientation(JSlider.VERTICAL);
 
-        final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
-        inputPanel.add(inputVolume, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+        final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
+        inputPanel.add(mixer.getPrefferedInputVolume(), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
         inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         // Add Output Volume To Control Panel
         final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
-        JVolume outputVolume = new JVolume(javaMixerHelper.getMasterPlaybackJavaMixer());
-        outputVolume.setOrientation(JSlider.VERTICAL);
 
-
-        final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
-        outputPanel.add(outputVolume, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+        final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
+        outputPanel.add(mixer.getPrefferedMasterVolume(), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
         outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         // Build ControlPanel List
@@ -297,8 +292,7 @@ public class JingleRoomUI extends JPanel {
             if (tab != null) {
                 tab.getTitleLabel().setForeground(Color.gray);
             }
-        }
-        else {
+        } else {
             if (tab != null) {
                 tab.setTabDefaultAllowed(true);
                 tab.setIcon(tab.getDefaultIcon());
@@ -309,8 +303,7 @@ public class JingleRoomUI extends JPanel {
     private void setStatus(String status, boolean alert) {
         if (alert) {
             connectedLabel.setForeground(orangeColor);
-        }
-        else {
+        } else {
             connectedLabel.setForeground(greenColor);
         }
         connectedLabel.setText(status);
@@ -333,8 +326,7 @@ public class JingleRoomUI extends JPanel {
             muteButton.setButtonSelected(false);
             setStatus(CONNECTED, false);
             useDefaultIconOnTab();
-        }
-        else {
+        } else {
             muted = true;
             muteButton.setToolTipText("Unmute");
             muteButton.setButtonSelected(true);
@@ -359,8 +351,7 @@ public class JingleRoomUI extends JPanel {
             holdButton.setButtonSelected(false);
             setStatus(CONNECTED, false);
             useDefaultIconOnTab();
-        }
-        else {
+        } else {
             onHold = true;
             holdButton.setToolTipText("Unhold");
             holdButton.setButtonSelected(true);
