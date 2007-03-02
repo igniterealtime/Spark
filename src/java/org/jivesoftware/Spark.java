@@ -17,16 +17,16 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.io.File;
-import java.io.IOException;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -49,17 +49,11 @@ public final class Spark {
      * Private constructor that invokes the LoginDialog and
      * the Spark Main Application.
      */
-    private Spark() {
-        final LoginDialog dialog = new LoginDialog();
-        dialog.invoke(new JFrame());
+    public Spark() {
+
     }
 
-    /**
-     * Invocation method.
-     *
-     * @param args - Will receive arguments from Java Web Start.
-     */
-    public static void main(final String[] args) {
+    public void startup() {
         EnhancedDebuggerWindow.PERSISTED_DEBUGGER = true;
         EnhancedDebuggerWindow.MAX_TABLE_ROWS = 10;
         XMPPConnection.DEBUG_ENABLED = true;
@@ -157,10 +151,9 @@ public final class Spark {
             }
         });
 
-        // Handle arguments
-        if (args.length > 0) {
-            argument = args[0];
-        }
+
+        final LoginDialog dialog = new LoginDialog();
+        dialog.invoke(new JFrame());
     }
 
 
@@ -234,6 +227,10 @@ public final class Spark {
 
 
         return value;
+    }
+
+    public void setArgument(String arguments){
+        argument = arguments;
     }
 
     /**

@@ -24,7 +24,8 @@
     <property name="version.major" value="2"/>
     <property name="version.minor" value="5"/>
     <property name="version.revision" value="0"/>
-    <property name="version.extra" value="beta3"/>    <!-- For 'beta' or 'alpha' -->
+    <property name="version.extra" value="beta3"/>
+    <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
     <if>
@@ -51,7 +52,7 @@
     <property name="merge.libs.dir" location="${basedir}/build/lib/merge"/>
     <property name="libs.windows.dir" location="${dist.libs.dir}/windows"/>
     <property name="libs.linux.dir" location="${dist.libs.dir}/linux"/>
-	<property name="libs.mac.dir" location="${dist.libs.dir}/mac"/>
+    <property name="libs.mac.dir" location="${dist.libs.dir}/mac"/>
     <property name="target" location="${basedir}/target"/>
     <property name="classes" location="${target}/classes"/>
     <property name="target.build" location="${target}/build"/>
@@ -86,6 +87,7 @@
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
+    <property name="pack200.excludes" value="mail.jar,activation.jar,startup.jar,base.jar"/>
 
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
@@ -98,8 +100,8 @@
     <!-- clean =================================================================================== -->
     <target name="clean" description="Deletes files generated during the build.">
         <!--Delete created directory trees-->
-        <delete failonerror="false" >
-            <fileset dir="${target}" followsymlinks="false" />
+        <delete failonerror="false">
+            <fileset dir="${target}" followsymlinks="false"/>
         </delete>
     </target>
 
@@ -189,7 +191,20 @@
             </fileset>
         </copy>
 
-
+        <!-- Pack200 all plugins -->
+        <for param="jar">
+            <path>
+                <fileset dir="${plugins}" includes="*.jar"/>
+            </path>
+            <sequential>
+                <delete file="@{jar}.pack"/>
+                <pack200 src="@{jar}"
+                         destfile="@{jar}.pack"
+                         gzipoutput="false"
+                        />
+                <delete file="@{jar}"/>
+            </sequential>
+        </for>
     </target>
 
     <!-- build =================================================================================== -->
@@ -199,7 +214,7 @@
                debug="on"
                source="1.5"
                target="1.5"
-            >
+                >
             <classpath>
                 <path refid="agent.dependencies"/>
             </classpath>
@@ -249,36 +264,35 @@
     <target name="jar" depends="build">
         <!--Put everything in ${classes} into the MyProject-${DSTAMP}.jar file-->
         <tstamp/>
-        <jar jarfile="${targetlib}/spark.jar" basedir="${classes}"/>
-        <!--
-         <for param="jar">
-            <path>
-                <fileset dir="${targetlib}" includes="*.jar" />
-            </path>
-            <sequential>
-                <delete file="@{jar}.pack" />
-                <pack200 src="@{jar}"
-                    destfile="@{jar}.pack"
-                    gzipoutput="false"
-                />
-                <delete file="@{jar}" />
-            </sequential>
-        </for>
 
-         <for param="jar">
+        <!-- Make startup jar -->
+        <jar jarfile="${targetlib}/startup.jar">
+            <fileset dir="${classes}">
+                <include name="org/jivesoftware/launcher/*.class"/>
+            </fileset>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="org.jivesoftware.launcher.Startup"/>
+                <attribute name="Built-By" value="Jive Software (www.igniterealtime.org)"/>
+            </manifest>
+        </jar>
+
+        <jar jarfile="${targetlib}/spark.jar" basedir="${classes}" excludes="org/jivesoftware/Startup.class"/>
+
+        <!-- Pack200 on all jars -->
+        <for param="jar">
             <path>
-                <fileset dir="${commercial.plugin.dir}" includes="*.jar" />
+                <fileset dir="${targetlib}" includes="*.jar" excludes="${pack200.excludes}"/>
             </path>
             <sequential>
-                <delete file="@{jar}.pack" />
+                <delete file="@{jar}.pack"/>
                 <pack200 src="@{jar}"
-                    destfile="@{jar}.pack"
-                    gzipoutput="false"
-                />
-                <delete file="@{jar}" />
+                         destfile="@{jar}.pack"
+                         gzipoutput="false"
+                        />
+                <delete file="@{jar}"/>
             </sequential>
         </for>
-        -->
     </target>
 
     <!-- javadocs =================================================================================== -->
@@ -315,7 +329,8 @@
     <!-- changelog =============================================================================== -->
     <target name="changelog"
             description="Generates an incremental changelog file based upon the XML/RSS feed from JIRA">
-        <xslt in="${basedir}/documentation/changes.xml" out="${basedir}/target/changes.html" style="${basedir}/documentation/changes.xsl"/>
+        <xslt in="${basedir}/documentation/changes.xml" out="${basedir}/target/changes.html"
+              style="${basedir}/documentation/changes.xsl"/>
     </target>
 
 
@@ -377,7 +392,7 @@
     <target name="installer.win" depends="jar"
             description="build Install4J release executable and docs dirs for Windows">
 
-       <condition property="install4j.not.ok" value="true">
+        <condition property="install4j.not.ok" value="true">
             <not>
                 <available file="${installer.install4j.home}/bin/install4j.jar"/>
             </not>
@@ -469,7 +484,7 @@
             <jarfileset dir="${target.build}/lib">
                 <include name="**/*.jar"/>
                 <exclude name="**/windows/"/>
-				<exclude name="**/linux/"/>
+                <exclude name="**/linux/"/>
             </jarfileset>
             <jarfileset dir="${target.build}/lib/windows">
                 <include name="jdic.jar"/>
@@ -487,7 +502,7 @@
                 <exclude name="**/idlelinux.*"/>
             </fileset>
         </copy>
-        
+
         <!-- When building on PowerPC Macs we get a PowerPC binary for the JavaApplicationStub. We've gotten a few requests to fix that from the forums, so we'll manually copy one from an Intel Mac -->
         <copy todir="${mac.app.file}/Contents/MacOS">
             <fileset file="${basedir}/src/resources/JavaApplicationStub"/>
@@ -500,11 +515,11 @@
         <fileset file="*.dmg"/>
 
         <mkdir dir="${mac.build.dir}/.background"/>
-        
+
         <copy todir="${mac.build.dir}/.background">
             <fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
         </copy>
-        
+
         <symlink link="${mac.build.dir}/Applications" resource="/Applications"/>
 
         <exec executable="hdiutil" failonerror="true">
@@ -536,4 +551,5 @@
     </target>
 
 </project>
+
 
