@@ -16,22 +16,8 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -39,9 +25,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.jivesoftware.sparkplugin.ui.components.*;
-import com.jivesoftware.sparkplugin.ui.components.JavaMixer;
 
 
 /**
