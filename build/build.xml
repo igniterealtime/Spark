@@ -279,7 +279,10 @@
 
         <jar jarfile="${targetlib}/spark.jar" basedir="${classes}" excludes="org/jivesoftware/Startup.class"/>
 
-        <!-- Pack200 on all jars -->
+     </target>
+	
+     <target name="pack200">
+    	<!-- Pack200 on all jars -->
         <for param="jar">
             <path>
                 <fileset dir="${targetlib}" includes="*.jar" excludes="${pack200.excludes}"/>
@@ -463,7 +466,7 @@
 
         <jarbundler dir="${mac.build.dir}"
                     name="Spark"
-                    mainclass="org.jivesoftware.Spark"
+                    mainclass="org.jivesoftware.launcher.Startup"
                     icon="${target}/classes/images/message.icns"
                     version="${version}"
                     infostring="Spark ${version}, (c) Jive Software 2005"
