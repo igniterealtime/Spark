@@ -267,7 +267,7 @@
 
      </target>
 	
-     <target name="pack200">
+     <target name="release" depends="jar">
     	<!-- Pack200 on all jars -->
         <for param="jar">
             <path>

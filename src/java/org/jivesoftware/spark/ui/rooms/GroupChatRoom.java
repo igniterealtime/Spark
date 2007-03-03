@@ -33,6 +33,7 @@ import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -594,8 +595,7 @@ public final class GroupChatRoom extends ChatRoom {
                 }
 
                 if (typingTimer != null) {
-                    getNotificationLabel().setText("");
-                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+                    showDefaultTabIcon();
                 }
             }
         }
@@ -924,8 +924,7 @@ public final class GroupChatRoom extends ChatRoom {
         if (sendAndReceiveTypingNotifications) {
             typingTimer = new Timer(10000, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    getNotificationLabel().setText("");
-                    getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+                    showDefaultTabIcon();
                 }
             });
             SparkManager.getMessageEventManager().addMessageEventNotificationListener(messageManager);
@@ -970,18 +969,12 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         public void composingNotification(final String from, String packetID) {
-
-
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     String bareAddress = StringUtils.parseBareAddress(from);
 
                     if (bareAddress.equals(getRoomname())) {
-                        String nickname = StringUtils.parseResource(from);
-                        String isTypingText = Res.getString("message.is.typing.a.message", nickname);
-                        getNotificationLabel().setText(isTypingText);
-                        getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-                        typingTimer.restart();
+                        showUserIsTyping();
                     }
                 }
             });
@@ -992,6 +985,19 @@ public final class GroupChatRoom extends ChatRoom {
 
         public void cancelledNotification(String from, String packetID) {
         }
+    }
+
+    private void showUserIsTyping() {
+        int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(this);
+        SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
+        tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+        typingTimer.restart();
+    }
+
+    private void showDefaultTabIcon() {
+        int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(this);
+        SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
+        tab.setIcon(getTabIcon());
     }
 
     /**
