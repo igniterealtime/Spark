@@ -987,6 +987,10 @@ public final class GroupChatRoom extends ChatRoom {
         }
     }
 
+
+    /**
+     * Displays a typing icon in the tab.
+     */
     private void showUserIsTyping() {
         int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(this);
         SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
@@ -994,10 +998,15 @@ public final class GroupChatRoom extends ChatRoom {
         typingTimer.restart();
     }
 
+    /**
+     * Displays the default icon for the chat room.
+     */
     private void showDefaultTabIcon() {
         int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(this);
         SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
-        tab.setIcon(getTabIcon());
+        if (tab != null) {
+            tab.setIcon(getTabIcon());
+        }
     }
 
     /**
