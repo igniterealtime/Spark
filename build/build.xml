@@ -190,21 +190,7 @@
                 <include name="**/*.*"/>
             </fileset>
         </copy>
-
-        <!-- Pack200 all plugins -->
-        <for param="jar">
-            <path>
-                <fileset dir="${plugins}" includes="*.jar"/>
-            </path>
-            <sequential>
-                <delete file="@{jar}.pack"/>
-                <pack200 src="@{jar}"
-                         destfile="@{jar}.pack"
-                         gzipoutput="false"
-                        />
-                <delete file="@{jar}"/>
-            </sequential>
-        </for>
+       
     </target>
 
     <!-- build =================================================================================== -->
@@ -286,6 +272,20 @@
         <for param="jar">
             <path>
                 <fileset dir="${targetlib}" includes="*.jar" excludes="${pack200.excludes}"/>
+            </path>
+            <sequential>
+                <delete file="@{jar}.pack"/>
+                <pack200 src="@{jar}"
+                         destfile="@{jar}.pack"
+                         gzipoutput="false"
+                        />
+                <delete file="@{jar}"/>
+            </sequential>
+        </for>
+		 <!-- Pack200 all plugins -->
+        <for param="jar">
+            <path>
+                <fileset dir="${plugins}" includes="*.jar"/>
             </path>
             <sequential>
                 <delete file="@{jar}.pack"/>
