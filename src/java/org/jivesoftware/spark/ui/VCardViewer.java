@@ -22,6 +22,12 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -34,12 +40,6 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -199,7 +199,28 @@ public class VCardViewer extends JPanel {
         });
 
 
-        add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+        add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 10, 0), 0, 0));
+
+        // Add JID Label
+        final String jid = vcard.getJabberId();
+        final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>");
+        jidLabel.setToolTipText("Click to copy jid to clipboard.");
+        jidLabel.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent mouseEvent) {
+                jidLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            public void mouseExited(MouseEvent mouseEvent) {
+                jidLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+            }
+
+            public void mouseClicked(MouseEvent mouseEvent) {
+                SparkManager.setClipboard(jid);
+            }
+        });
+
+        add(jidLabel, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Home Phone
         String homeNumber = vcard.getPhoneHome("VOICE");
@@ -207,7 +228,7 @@ public class VCardViewer extends JPanel {
             homeNumber = "n/a";
         }
         final JLabel homePhoneLabel = new JLabel("Home: " + homeNumber);
-        add(homePhoneLabel, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+        add(homePhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Work Phone
         String workNumber = vcard.getPhoneWork("VOICE");
@@ -215,7 +236,7 @@ public class VCardViewer extends JPanel {
             workNumber = "n/a";
         }
         final JLabel workPhoneLabel = new JLabel("Work: " + workNumber);
-        add(workPhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+        add(workPhoneLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Cell Phone
         String cellNumber = vcard.getPhoneWork("CELL");
@@ -224,12 +245,12 @@ public class VCardViewer extends JPanel {
         }
 
         final JLabel cellPhoneLabel = new JLabel("Cell: " + cellNumber);
-        add(cellPhoneLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+        add(cellPhoneLabel, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Company
         String company = vcard.getOrganization();
         final JLabel orgLabel = new JLabel("Company: " + company);
-        add(orgLabel, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
+        add(orgLabel, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
     }
 
