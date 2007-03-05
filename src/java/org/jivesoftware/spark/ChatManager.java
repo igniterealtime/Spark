@@ -43,19 +43,20 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -83,6 +84,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
 
     private final ChatContainer chatContainer;
+
     private String conferenceService;
 
     private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
@@ -123,9 +125,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-            new ChatMessageEventRequestListener();
+                new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-            addMessageEventRequestListener(messageEventRequestListener);
+                addMessageEventRequestListener(messageEventRequestListener);
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
@@ -198,6 +200,7 @@ public class ChatManager implements MessageEventNotificationListener {
      *
      * @param userJID  the jid of the user to chat with.
      * @param nickname the nickname to use for the user.
+     * @return the newly created <code>ChatRoom</code>.
      */
     public ChatRoom createChatRoom(String userJID, String nickname, String title) {
         ChatRoom chatRoom = null;
@@ -273,9 +276,12 @@ public class ChatManager implements MessageEventNotificationListener {
 
     /**
      * Activate a chat room with the selected user.
+     *
+     * @param jid      the jid of the user to chat with.
+     * @param nickname the nickname of the user.
      */
-    public void activateChat(final String userJID, final String nickname) {
-        if (!ModelUtil.hasLength(userJID)) {
+    public void activateChat(final String jid, final String nickname) {
+        if (!ModelUtil.hasLength(jid)) {
             return;
         }
 
@@ -294,7 +300,7 @@ public class ChatManager implements MessageEventNotificationListener {
                 ChatContainer chatRooms = chatManager.getChatContainer();
 
                 try {
-                    chatRoom = chatRooms.getChatRoom(userJID);
+                    chatRoom = chatRooms.getChatRoom(jid);
                 }
                 catch (ChatRoomNotFoundException e) {
 
@@ -304,7 +310,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
             public void finished() {
                 if (chatRoom == null) {
-                    chatRoom = new ChatRoomImpl(userJID, nickname, nickname);
+                    chatRoom = new ChatRoomImpl(jid, nickname, nickname);
                     chatManager.getChatContainer().addChatRoom(chatRoom);
                 }
                 chatManager.getChatContainer().activateChatRoom(chatRoom);
@@ -342,6 +348,12 @@ public class ChatManager implements MessageEventNotificationListener {
         return messageFilters;
     }
 
+    /**
+     * Filters all incoming messages.
+     *
+     * @param room    the room the message belongs to.
+     * @param message the message to filter.
+     */
     public void filterIncomingMessage(ChatRoom room, Message message) {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
@@ -367,6 +379,12 @@ public class ChatManager implements MessageEventNotificationListener {
         }
     }
 
+    /**
+     * Notifies all <code>MessageFilter</code>s about a new outgoing message.
+     *
+     * @param room    the <code>ChatRoom</code> the message belongs too.
+     * @param message the <code>Message</code> being sent.
+     */
     public void filterOutgoingMessage(ChatRoom room, Message message) {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
@@ -376,18 +394,38 @@ public class ChatManager implements MessageEventNotificationListener {
         }
     }
 
+    /**
+     * Adds a <code>RoomInvitationListener</code>. A RoomInvitationListener is
+     *
+     * @param listener the listener.
+     */
     public void addInvitationListener(RoomInvitationListener listener) {
         invitationListeners.add(listener);
     }
 
+    /**
+     * Removes a <code>RoomInvitationListener</code>.
+     *
+     * @param listener the listener to remove.
+     */
     public void removeInvitationListener(RoomInvitationListener listener) {
         invitationListeners.remove(listener);
     }
 
-    public Collection getInvitationListeners() {
-        return invitationListeners;
+    /**
+     * Returns all registered <code>RoomInvitationListener</code>s.
+     *
+     * @return the Collection of listeners.
+     */
+    public Collection<RoomInvitationListener> getInvitationListeners() {
+        return Collections.unmodifiableCollection(invitationListeners);
     }
 
+    /**
+     * Returns the default conference service. (ex. conference.jivesoftware.com)
+     *
+     * @return the default conference service to interact with MUC.
+     */
     public String getDefaultConferenceService() {
         if (conferenceService == null) {
             try {
@@ -404,14 +442,31 @@ public class ChatManager implements MessageEventNotificationListener {
         return conferenceService;
     }
 
+    /**
+     * Adds a new <code>ContactItemHandler</code>.
+     *
+     * @param handler the ContactItemHandler to add.
+     */
     public void addContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.add(handler);
     }
 
+    /**
+     * Removes a <code>ContactItemHandler</code>.
+     *
+     * @param handler the ContactItemHandler to remove.
+     */
     public void removeContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.remove(handler);
     }
 
+    /**
+     * Notifies all <code>ContactItemHandler</code>s of presence changes.
+     *
+     * @param item     the ContactItem where the presence changed.
+     * @param presence the new presence.
+     * @return true if it was handled.
+     */
     public boolean fireContactItemPresenceChanged(ContactItem item, Presence presence) {
         for (ContactItemHandler handler : contactItemHandlers) {
             if (handler.handlePresence(item, presence)) {
@@ -422,6 +477,12 @@ public class ChatManager implements MessageEventNotificationListener {
         return false;
     }
 
+    /**
+     * Notifies all <code>ContactItemHandlers</code> that a <code>ContactItem</code> was double-clicked.
+     *
+     * @param item the ContactItem that was double clicked.
+     * @return true if the event was intercepted and handled.
+     */
     public boolean fireContactItemDoubleClicked(ContactItem item) {
         for (ContactItemHandler handler : contactItemHandlers) {
             if (handler.handleDoubleClick(item)) {
@@ -432,6 +493,12 @@ public class ChatManager implements MessageEventNotificationListener {
         return false;
     }
 
+    /**
+     * Returns the icon from a <code>ContactItemHandler</code>.
+     *
+     * @param jid the jid.
+     * @return the icon of the handler.
+     */
     public Icon getIconForContactHandler(String jid) {
         for (ContactItemHandler handler : contactItemHandlers) {
             Icon icon = handler.getIcon(jid);
@@ -443,7 +510,12 @@ public class ChatManager implements MessageEventNotificationListener {
         return null;
     }
 
-
+    /**
+     * Returns the icon to use in the tab.
+     *
+     * @param presence the presence.
+     * @return the icon.
+     */
     public Icon getTabIconForContactHandler(Presence presence) {
         for (ContactItemHandler handler : contactItemHandlers) {
             Icon icon = handler.getTabIcon(presence);
@@ -455,14 +527,29 @@ public class ChatManager implements MessageEventNotificationListener {
         return null;
     }
 
+    /**
+     * Adds a new <code>ContactInfoHandler</code>
+     *
+     * @param handler the handler to add.
+     */
     public void addContactInfoHandler(ContactInfoHandler handler) {
         contactInfoHandlers.add(handler);
     }
 
+    /**
+     * Removes a <code>ContactInfoHandler</code>
+     *
+     * @param handler the handler to remove.
+     */
     public void removeContactInfoHandler(ContactInfoHandler handler) {
         contactInfoHandlers.remove(handler);
     }
 
+    /**
+     * Notifies all <code>ContactInfoHandler</code>s.
+     *
+     * @param contactInfo the ContactInfoWindow.
+     */
     public synchronized void notifyContactInfoHandlers(ContactInfoWindow contactInfo) {
         for (ContactInfoHandler handler : contactInfoHandlers) {
             handler.handleContactInfo(contactInfo);

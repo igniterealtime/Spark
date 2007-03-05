@@ -22,13 +22,13 @@ public interface RoomInvitationListener {
     /**
      * Return true if you wish to handle this invitation.
      *
-     * @param conn
-     * @param room
-     * @param inviter
-     * @param reason
-     * @param password
-     * @param message
-     * @return true if handled.
+     * @param connection the XMPPConnection.
+     * @param room       the room the invitation was sent from.
+     * @param inviter    the person who is inviting the user.
+     * @param reason     the reason for the invitation.
+     * @param password   the password of the room, if any. This value can be null.
+     * @param message    the appened message.
+     * @return true if you wish to intercept this invitation.
      */
-    boolean handleInvitation(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message);
+    boolean handleInvitation(final XMPPConnection connection, final String room, final String inviter, final String reason, final String password, final Message message);
 }
