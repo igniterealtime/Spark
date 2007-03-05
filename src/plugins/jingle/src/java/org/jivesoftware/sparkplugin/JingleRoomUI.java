@@ -16,8 +16,20 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -181,12 +193,6 @@ public class JingleRoomUI extends JPanel {
 
 
     public void setupDefaults() {
-        holdButton.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
-                toggleHold();
-            }
-        });
-
         muteButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 toggleMute();
@@ -265,28 +271,13 @@ public class JingleRoomUI extends JPanel {
 
             chatRoom.getTranscriptWindow().insertNotificationMessage("Call ended at " + time, ChatManager.NOTIFICATION_COLOR);
         }
-
-        // If this is a standalone phone call with no associated ChatRoom
-        // gray out title and show off-phone icon.
-        int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(chatRoom);
-        SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
-        if (chatRoom == null) {
-            setTabIcon(JinglePhoneRes.getImageIcon("HANG_UP_PHONE_16x16_IMAGE"));
-            if (tab != null) {
-                tab.getTitleLabel().setForeground(Color.gray);
-            }
-        } else {
-            if (tab != null) {
-                tab.setTabDefaultAllowed(true);
-                tab.setIcon(tab.getDefaultIcon());
-            }
-        }
     }
 
     private void setStatus(String status, boolean alert) {
         if (alert) {
             connectedLabel.setForeground(orangeColor);
-        } else {
+        }
+        else {
             connectedLabel.setForeground(greenColor);
         }
         connectedLabel.setText(status);
@@ -299,50 +290,33 @@ public class JingleRoomUI extends JPanel {
 
 
     private void toggleMute() {
-        if (onHold) {
-            toggleHold();
-        }
-
         if (muted) {
             muted = false;
             muteButton.setToolTipText("Mute");
             muteButton.setButtonSelected(false);
             setStatus(CONNECTED, false);
-            useDefaultIconOnTab();
-        } else {
+
+            // Change state
+            JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
+        }
+        else {
             muted = true;
             muteButton.setToolTipText("Unmute");
             muteButton.setButtonSelected(true);
             setStatus("Muted", true);
-            setTabIcon(JinglePhoneRes.getImageIcon("MUTE_IMAGE"));
+
+            // Change state
+            JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.muted);
         }
 
         muteButton.invalidate();
         muteButton.validate();
         muteButton.repaint();
+
+        // Notify state change
+        SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
     }
 
-
-    private void toggleHold() {
-        if (muted) {
-            toggleMute();
-        }
-
-        if (onHold) {
-            onHold = false;
-            holdButton.setToolTipText("Hold");
-            holdButton.setButtonSelected(false);
-            setStatus(CONNECTED, false);
-            useDefaultIconOnTab();
-        } else {
-            onHold = true;
-            holdButton.setToolTipText("Unhold");
-            holdButton.setButtonSelected(true);
-            setStatus("On Hold", true);
-            setTabIcon(JinglePhoneRes.getImageIcon("ON_HOLD_IMAGE"));
-        }
-
-    }
 
     public void actionPerformed(ActionEvent e) {
 
@@ -362,27 +336,6 @@ public class JingleRoomUI extends JPanel {
         g.drawImage(cache, 0, 0, getWidth(), getHeight(), null);
     }
 
-    /**
-     * Changes the tab icon associated with this room.
-     *
-     * @param icon the icon to display.
-     */
-    private void setTabIcon(Icon icon) {
-        SparkTab tab = getSparkTab();
-        if (tab != null) {
-            tab.setIcon(icon);
-        }
-    }
-
-    /**
-     * Use the default icon of the tab.
-     */
-    private void useDefaultIconOnTab() {
-        SparkTab tab = getSparkTab();
-        if (tab != null) {
-            tab.setIcon(JinglePhoneRes.getImageIcon("RECEIVER2_IMAGE"));
-        }
-    }
 
     public Dimension getPreferredSize() {
         Dimension dim = super.getPreferredSize();

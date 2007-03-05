@@ -27,16 +27,17 @@ import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
 import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.phone.Phone;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
@@ -64,9 +66,17 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
     final JingleSessionListener jingleListener = this;
 
+    private JingleStateManager stateManager;
+
     public void initialize() {
         // Add to PhoneManager
         PhoneManager.getInstance().addPhone(this);
+
+        // Initialize state manager.
+        stateManager = JingleStateManager.getInstance();
+
+        // Adds a tab handler.
+        SparkManager.getChatManager().addSparkTabHandler(new JingleTabHandler());
 
         final SwingWorker jingleLoadingThread = new SwingWorker() {
             public Object construct() {
@@ -128,13 +138,14 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
                         room.scrollToBottom();
 
+                        // Notify new incoming message.
                         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(room);
-                        int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(room);
-                        SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
-                        if (tab != null) {
-                            tab.setIcon(JinglePhoneRes.getImageIcon("ANSWER_PHONE_IMAGE"));
-                        }
 
+                        // Add state
+                        stateManager.addJingleSession(room, JingleRoomState.ringing);
+
+                        // Notify state change
+                        SparkManager.getChatManager().notifySparkTabHandlers(room);
                     }
                     catch (XMPPException e) {
                         Log.error(e);
@@ -185,6 +196,12 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             Log.error(e);
         }
         sessions.remove(room.getJID());
+
+        // Update state
+        stateManager.removeJingleSession(room);
+
+        // Notify state changed.
+        SparkManager.getChatManager().notifySparkTabHandlers(room);
     }
 
     public void placeCall(String jid) {
@@ -231,6 +248,12 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             Log.error(e);
         }
 
+        // Update state
+        stateManager.addJingleSession(room, JingleRoomState.ringing);
+
+        // Notify state change
+        SparkManager.getChatManager().notifySparkTabHandlers(room);
+
         room.scrollToBottom();
     }
 
@@ -249,24 +272,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
-        try {
-            if (sessions.containsValue(jingleSession)) {
-                String found = null;
-                for (String key : sessions.keySet()) {
-                    System.err.println("D:" + key);
-                    if (jingleSession.equals(sessions.get(key))) {
-                        found = key;
-                    }
-                }
-                System.err.println("REMOVED:" + found);
-                if (found != null)
-                    sessions.remove(found);
-            }
-
-        }
-        catch (Exception e) {
-            // Do Nothing
-        }
+        removeJingleSession(jingleSession);
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
@@ -274,27 +280,14 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
-        try {
-            if (sessions.containsValue(jingleSession)) {
-                String found = null;
-                for (String key : sessions.keySet()) {
-                    System.err.println("D:" + key);
-                    if (jingleSession.equals(sessions.get(key))) {
-                        found = key;
-                    }
-                }
-                System.err.println("REMOVED:" + found);
-                if (found != null)
-                    sessions.remove(found);
-            }
-
-        }
-        catch (Exception e) {
-            // Do Nothing
-        }
+        removeJingleSession(jingleSession);
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
+        removeJingleSession(jingleSession);
+    }
+
+    private void removeJingleSession(JingleSession jingleSession) {
         try {
             if (sessions.containsValue(jingleSession)) {
                 String found = null;
@@ -312,6 +305,21 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         }
         catch (Exception e) {
             // Do Nothing
+        }
+
+        // Remove from room
+        String jid = jingleSession.getResponder();
+        ChatRoom chatRoom = null;
+        try {
+            chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(StringUtils.parseBareAddress(jid));
+            // Update state
+            stateManager.removeJingleSession(chatRoom);
+
+            // Notify state changed.
+            SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+        }
+        catch (ChatRoomNotFoundException e) {
+          // Ignore
         }
     }
 

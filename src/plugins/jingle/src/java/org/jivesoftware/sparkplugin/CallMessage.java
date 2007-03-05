@@ -23,6 +23,13 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Color;
@@ -35,13 +42,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class CallMessage extends JPanel implements JingleSessionStateListener {
 
@@ -205,6 +205,12 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         chatRoom.getSplitPane().setRightComponent(roomUI);
         chatRoom.getSplitPane().setResizeWeight(.60);
         chatRoom.getSplitPane().setDividerSize(5);
+
+        // Add state
+        JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
+
+        // Notify state change
+        SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
     }
 
     private void showCallEndedState() {
@@ -218,6 +224,12 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         }
         chatRoom.getSplitPane().setRightComponent(null);
         chatRoom.getSplitPane().setDividerSize(0);
+
+         // Add state
+        JingleStateManager.getInstance().removeJingleSession(chatRoom);
+
+        // Notify state change
+        SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
     }
 
     private void makeClickable(final JComponent component) {
