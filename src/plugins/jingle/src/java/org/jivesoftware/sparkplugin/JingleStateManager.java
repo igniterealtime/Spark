@@ -24,7 +24,7 @@ public class JingleStateManager {
     private Map<ChatRoom, JingleRoomState> jingleRooms = new HashMap<ChatRoom, JingleRoomState>();
 
     /**
-     * Type of states a fastpath room can be in.
+     * Type of states a jingle call can be in.
      */
     public static enum JingleRoomState {
         /**
