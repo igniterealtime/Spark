@@ -39,8 +39,6 @@ public class SparkTab extends TabPanel {
     private Icon previousIcon;
     private Icon defaultIcon;
 
-    private boolean tabDefault = true;
-
     /**
      * Creates a SparkTab.
      *
@@ -244,24 +242,4 @@ public class SparkTab extends TabPanel {
     public Icon getDefaultIcon() {
         return defaultIcon;
     }
-
-    /**
-     * Set to false if you wish to handle the tabs ui behavior, otherwise true to allow Spark internal to handle it.
-     *
-     * @param allow false if you wish to handle the tabs ui.
-     */
-    public void setTabDefaultAllowed(boolean allow) {
-        tabDefault = allow;
-    }
-
-    /**
-     * Returns if the tab should follow default behavior.
-     *
-     * @return true to follow default behavior.
-     */
-    public boolean isTabDefaultAllowed() {
-        return tabDefault;
-    }
-
-
 }

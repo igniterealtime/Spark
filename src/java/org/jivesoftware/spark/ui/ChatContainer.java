@@ -35,6 +35,19 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -56,19 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -716,17 +716,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
 
     private void stopFlashing() {
-        // Get current tab
-        int sel = getSelectedIndex();
-        if (sel != -1) {
-            final ChatRoom room;
-            try {
-                room = getChatRoom(sel);
-                stopFlashing(room);
+        try {
+            // Get current tab
+            int selectedIndex = getSelectedIndex();
+            if (selectedIndex != -1) {
+                Component comp = getComponentAt(selectedIndex);
+                if (comp != null) {
+                    stopFlashing(comp);
+                }
             }
-            catch (ChatRoomNotFoundException e1) {
-                //AgentLog.logError("Could not find chat room.", e1);
-            }
+        }
+        catch (Exception e) {
+            Log.error(e);
         }
     }
 
@@ -770,7 +771,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         boolean isGroupChat = room.getChatType() == Message.Type.groupchat;
         if (isGroupChat) {
             final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
-                Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
+                    Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
@@ -975,11 +976,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     /**
-     * Checks to see if the MainWindow should stop flashing.
+     * Checks to see if the <code>ChatFrame</code> should stop flashing.
      *
-     * @param room the ChatRoom to check.
+     * @param component the component that should be notified.
      */
-    public void stopFlashing(final ChatRoom room) {
+    public void stopFlashing(final Component component) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -987,10 +988,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     SparkManager.getAlertManager().stopFlashing(chatFrame);
 
                     // Notify decorators
-                    SparkManager.getChatManager().notifySparkTabHandlers(room);
+                    SparkManager.getChatManager().notifySparkTabHandlers(component);
                 }
                 catch (Exception ex) {
-                    Log.error("Could not stop flashing for " + room + " because " + ex.getMessage(), ex);
+                    Log.error("Could not stop flashing because " + ex.getMessage(), ex);
                 }
 
 
