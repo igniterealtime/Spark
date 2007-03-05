@@ -10,6 +10,10 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -17,12 +21,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
 /**
- * Represent one tab in a SparkTabbedPane.
+ * Represent the TabUI within the <code>SparkTabbedPane</code>.
  *
  * @author Derek DeMoro
  */
@@ -41,6 +41,12 @@ public class SparkTab extends TabPanel {
 
     private boolean tabDefault = true;
 
+    /**
+     * Creates a SparkTab.
+     *
+     * @param icon the icon to use.
+     * @param text the text to display.
+     */
     public SparkTab(Icon icon, String text) {
         setLayout(new GridBagLayout());
 
@@ -63,6 +69,11 @@ public class SparkTab extends TabPanel {
         textLabel.setFont(defaultFont);
     }
 
+    /**
+     * Adds a new component on the right side of the SparkTab.
+     *
+     * @param component the component to add.
+     */
     public void addComponent(Component component) {
         // add Component
         add(component, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 3, 2), 0, 0));
@@ -170,17 +181,19 @@ public class SparkTab extends TabPanel {
 
     /**
      * Sets the text of the tab.
+     *
      * @param title the title of the tab.
      */
-    public void setTabTitle(String title){
+    public void setTabTitle(String title) {
         textLabel.setText(title);
     }
 
     /**
      * Returns the text of the tab.
+     *
      * @return the text of the tab.
      */
-    public String getTabTitle(){
+    public String getTabTitle() {
         return textLabel.getText();
     }
 
