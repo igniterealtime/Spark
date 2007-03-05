@@ -22,7 +22,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
@@ -36,25 +35,9 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -73,6 +56,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -312,12 +308,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void addContainerComponent(ContainerComponent comp) {
         createFrameIfNeeded();
 
-        addTab(comp.getTabTitle(), comp.getTabIcon(), comp.getGUI(), comp.getToolTipDescription());
+        SparkTab tab = addTab(comp.getTabTitle(), comp.getTabIcon(), comp.getGUI(), comp.getToolTipDescription());
         chatFrame.setTitle(comp.getFrameTitle());
         checkVisibility(comp.getGUI());
 
         if (getSelectedComponent() != comp) {
-            makeTabRed(comp.getGUI());
+            // Notify Decorators
+            SparkManager.getChatManager().notifySparkTabHandlers(comp.getGUI());
         }
     }
 
@@ -347,10 +344,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         // Change tab icon
         if (chatRoom instanceof ChatRoomImpl) {
-            Icon tabIcon = PresenceManager.getIconFromPresence(p);
+            // Notify state change.
             int tabLoc = indexOfComponent(chatRoom);
             if (tabLoc != -1) {
-                getTabAt(tabLoc).setIcon(tabIcon);
+                SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
             }
         }
     }
@@ -592,6 +589,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param message the message received.
      */
     public void messageReceived(ChatRoom room, Message message) {
+        room.increaseUnreadMessageCount();
+
         // Check to see if it's a room update.
         String from = message.getFrom();
         String insertMessage = message.getBody();
@@ -683,7 +682,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void messageSent(ChatRoom room, Message message) {
-        useTabDefault(room);
+        fireChatRoomStateUpdated(room);
     }
 
     /**
@@ -710,6 +709,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             final ContainerComponent comp = (ContainerComponent)o;
             chatFrame.setTitle(comp.getFrameTitle());
             chatFrame.setIconImage(comp.getTabIcon().getImage());
+
+            SparkManager.getChatManager().notifySparkTabHandlers(comp.getGUI());
         }
     }
 
@@ -769,7 +770,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         boolean isGroupChat = room.getChatType() == Message.Type.groupchat;
         if (isGroupChat) {
             final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
-                    Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
+                Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
@@ -924,28 +925,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 try {
                     final int index = indexOfComponent(room);
                     if (index != -1) {
-                        room.increaseUnreadMessageCount();
-                        int unreadMessageCount = room.getUnreadMessageCount();
-                        String appendedMessage = "";
-                        if (unreadMessageCount > 1) {
-                            appendedMessage = " (" + unreadMessageCount + ")";
-                        }
-
-                        SparkTab tab = getTabAt(index);
-                        tab.getTitleLabel().setText(room.getTabTitle() + appendedMessage);
-
                         // Check notifications.
                         if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom)) {
                             checkNotificationPreferences(room);
                         }
 
-
-                        makeTabRed(room);
+                        // Notify decorators
+                        SparkManager.getChatManager().notifySparkTabHandlers(room);
                     }
 
-                    boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
+                    boolean shouldFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
 
-                    if (!chatFrame.isFocused() && invokeFlash) {
+                    if (!chatFrame.isFocused() && shouldFlash) {
                         SparkManager.getAlertManager().flashWindow(chatFrame);
                     }
                 }
@@ -974,59 +965,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
     }
 
-    public void makeTabRed(final Component comp) {
-        final int index = indexOfComponent(comp);
-        if (index != -1) {
-            SparkTab tab = getTabAt(index);
-            final JLabel titleLabel = tab.getTitleLabel();
-            Font oldFont = titleLabel.getFont();
-            Font newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
-            titleLabel.setFont(newFont);
-            titleLabel.setForeground(Color.red);
-            titleLabel.validate();
-            titleLabel.repaint();
-        }
-    }
 
-    public void useTabDefault(final ChatRoom room) {
-        // Check if room is stale
-        boolean containsRoom = getStaleChatRooms().contains(room);
-        if (containsRoom) {
-            return;
-        }
-
+    public void fireChatRoomStateUpdated(final ChatRoom room) {
         final int index = indexOfComponent(room);
         if (index != -1) {
             SparkTab tab = getTabAt(index);
-            if (!tab.isTabDefaultAllowed()) {
-                return;
-            }
-
-            Font defaultFont = tab.getDefaultFont();
-            if (tab.isBoldWhenActive() && tab.isSelected()) {
-                defaultFont = defaultFont.deriveFont(Font.BOLD);
-            }
-
-            final JLabel titleLabel = tab.getTitleLabel();
-
-            if (room instanceof ChatRoomImpl) {
-                final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
-                if (chatRoomImpl.getAlternativeIcon() != null) {
-                    tab.setIcon(chatRoomImpl.getAlternativeIcon());
-                }
-                else if (!chatRoomImpl.isIconHandler()) {
-                    Presence presence = chatRoomImpl.getPresence();
-                    Icon icon = PresenceManager.getIconFromPresence(presence);
-                    tab.setIcon(icon);
-                }
-            }
-
-            // Should only set the icon to default if the frame is in focus
-            // and the tab is the selected component.
-            if (getSelectedIndex() == index && chatFrame.isInFocus()) {
-                titleLabel.setForeground(Color.black);
-                titleLabel.setFont(defaultFont);
-            }
+            SparkManager.getChatManager().notifySparkTabHandlers(room);
         }
     }
 
@@ -1039,19 +983,17 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    int index = indexOfComponent(room);
-                    if (index != -1) {
-                        SparkTab tab = getTabAt(index);
-                        useTabDefault(room);
-                        tab.getTitleLabel().setText(room.getTabTitle());
-                        room.clearUnreadMessageCount();
-                    }
+                    // Stop the flashing
+                    SparkManager.getAlertManager().stopFlashing(chatFrame);
+
+                    // Notify decorators
+                    SparkManager.getChatManager().notifySparkTabHandlers(room);
                 }
                 catch (Exception ex) {
                     Log.error("Could not stop flashing for " + room + " because " + ex.getMessage(), ex);
                 }
 
-                SparkManager.getAlertManager().stopFlashing(chatFrame);
+
             }
         });
     }
@@ -1103,8 +1045,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         int index = indexOfComponent(room);
         if (index != -1) {
             SparkTab tab = getTabAt(index);
-            useTabDefault(room);
-            tab.getTitleLabel().setText(room.getTabTitle());
+            fireChatRoomStateUpdated(room);
+            tab.setTabTitle(room.getTabTitle());
         }
     }
 
@@ -1160,7 +1102,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
 
         // Start timer
-        checkForStaleRooms();
+        handleStaleChats();
     }
 
 
@@ -1311,63 +1253,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * Checks every room every 30 seconds to see if it's timed out.
      */
-    private void checkForStaleRooms() {
+    private void handleStaleChats() {
         int delay = 1000;   // delay for 1 minute
         int period = 60000;  // repeat every 30 seconds.
-        Timer timer = new Timer();
+        final Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 for (ChatRoom chatRoom : getStaleChatRooms()) {
-                    // Turn tab gray
-                    int index = indexOfComponent(chatRoom);
-                    if (index == -1) {
-                        return;
-                    }
-
-                    SparkTab tab = getTabAt(index);
-
-                    final JLabel titleLabel = tab.getTitleLabel();
-                    if (!titleLabel.getForeground().equals(Color.red)) {
-                        titleLabel.setForeground(Color.gray);
-                        titleLabel.setFont(tab.getDefaultFont());
-                    }
-
-
-                    if (chatRoom instanceof ChatRoomImpl) {
-                        ChatRoomImpl impl = (ChatRoomImpl)chatRoom;
-                        if (impl.isIconHandler()) {
-                            return;
-                        }
-
-                        String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
-                        Presence presence = PresenceManager.getPresence(jid);
-
-                        if (!presence.isAvailable()) {
-                            tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_UNAVAILABLE_STALE_IMAGE));
-                        }
-                        else {
-                            Presence.Mode mode = presence.getMode();
-                            if (mode == Presence.Mode.available) {
-                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AVAILABLE_STALE_IMAGE));
-                            }
-                            else if (mode == Presence.Mode.away) {
-                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AWAY_STALE_IMAGE));
-                            }
-                            else if (mode == Presence.Mode.chat) {
-                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_FREE_CHAT_STALE_IMAGE));
-                            }
-                            else if (mode == Presence.Mode.dnd) {
-                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
-                            }
-                            else if (mode == Presence.Mode.xa) {
-                                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
-                            }
-                        }
-                    }
-
-                    titleLabel.validate();
-                    titleLabel.repaint();
+                    // Notify decorators
+                    SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
                 }
             }
         }, delay, period);

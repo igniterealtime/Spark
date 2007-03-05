@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.smackx.MessageEventRequestListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
+import org.jivesoftware.spark.decorator.DefaultTabHandler;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
@@ -31,6 +32,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageFilter;
+import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
@@ -42,12 +44,14 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
@@ -75,13 +79,15 @@ public class ChatManager implements MessageEventNotificationListener {
 
     private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
 
+    private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<SparkTabHandler>();
+
 
     private final ChatContainer chatContainer;
     private String conferenceService;
 
     private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
 
-    private Set<String> customList = new HashSet<String>();
+    private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
 
     private List<ContactInfoHandler> contactInfoHandlers = new ArrayList<ContactInfoHandler>();
 
@@ -114,13 +120,15 @@ public class ChatManager implements MessageEventNotificationListener {
         chatContainer = new ChatContainer();
 
         // Add a Message Handler
-
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
             new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
             addMessageEventRequestListener(messageEventRequestListener);
+
+        // Add Default Chat Room Decorator
+        addSparkTabHandler(new DefaultTabHandler());
     }
 
 
@@ -339,9 +347,17 @@ public class ChatManager implements MessageEventNotificationListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
         try {
-            if (customList.contains(StringUtils.parseBareAddress(message.getFrom()))) {
-                cancelledNotification(message.getFrom(), "");
+            ChatRoom chatRoom = null;
+            try {
+                chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(StringUtils.parseBareAddress(message.getFrom())));
+                if (typingNotificationList.contains(chatRoom)) {
+                    cancelledNotification(message.getFrom(), "");
+                }
             }
+            catch (ChatRoomNotFoundException e) {
+            }
+
+
         }
         catch (Exception e) {
             Log.error(e);
@@ -471,21 +487,17 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        final ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
-
-                        // Get Tab
-                        int index = getChatContainer().indexOfComponent(chatRoom);
-                        SparkTab tab = getChatContainer().getTabAt(index);
-                        tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-
-                        roomImpl.setAlternativeIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                        typingNotificationList.add(chatRoom);
+                        // Notify Decorators
+                        notifySparkTabHandlers(chatRoom);
                     }
+
                 }
                 catch (ChatRoomNotFoundException e) {
                 }
 
+
                 contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-                customList.add(StringUtils.parseBareAddress(from));
             }
         });
     }
@@ -503,23 +515,61 @@ public class ChatManager implements MessageEventNotificationListener {
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        final ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
-                        roomImpl.setAlternativeIcon(null);
+                        typingNotificationList.remove(chatRoom);
 
-                        // Get Tab
-                        int index = getChatContainer().indexOfComponent(chatRoom);
-                        SparkTab tab = getChatContainer().getTabAt(index);
-                        tab.setIcon(tab.getPreviousIcon());
-                        getChatContainer().useTabDefault(chatRoom);
+                        // Notify Decorators
+                        notifySparkTabHandlers(chatRoom);
                     }
+
                 }
                 catch (ChatRoomNotFoundException e) {
                 }
 
+
                 contactList.useDefaults(from);
-                customList.remove(StringUtils.parseBareAddress(from));
+
             }
         });
+    }
+
+    /**
+     * Adds a room where the user is typing.
+     *
+     * @param chatRoom the room where the user is typing.
+     */
+    public void addTypingNotification(ChatRoom chatRoom) {
+        typingNotificationList.add(chatRoom);
+    }
+
+    /**
+     * Removes a room from the typing notification list.
+     *
+     * @param chatRoom the room to remove.
+     */
+    public void removeTypingNotification(ChatRoom chatRoom) {
+        typingNotificationList.remove(chatRoom);
+    }
+
+    /**
+     * Returns true if the <code>ChatRoom</code> state is in typing mode.
+     *
+     * @param chatRoom the ChatRoom to check.
+     * @return true if in typing mode.
+     */
+    public boolean containsTypingNotification(ChatRoom chatRoom) {
+        return typingNotificationList.contains(chatRoom);
+    }
+
+    /**
+     * Returns true if the room is "stale". A stale room is a room that has
+     * not been active for a specific amount of time.
+     *
+     * @param chatRoom the ChatRoom.
+     * @return true if the room is stale.
+     */
+    public boolean isStaleRoom(ChatRoom chatRoom) {
+        // Check if room is stale
+        return chatContainer.getStaleChatRooms().contains(chatRoom);
     }
 
 
@@ -576,5 +626,44 @@ public class ChatManager implements MessageEventNotificationListener {
      */
     public Collection<TranscriptWindowInterceptor> getTranscriptWindowInterceptors() {
         return interceptors;
+    }
+
+    /**
+     * Adds a new <code>ContainerDecorator</code>. The ContainerDecorator will be added to the top of the stack and will therefore
+     * take priority on notification calls. If all decorators return false, the <code>DefaultChatRoomDecorator</code> will be used.
+     *
+     * @param decorator the decorator to add.
+     */
+    public void addSparkTabHandler(SparkTabHandler decorator) {
+        sparkTabHandlers.add(0, decorator);
+    }
+
+    /**
+     * Removes a <code>ContainerDecorator</code>
+     *
+     * @param decorator the decorator to remove.
+     */
+    public void removeSparkTabHandler(SparkTabHandler decorator) {
+        sparkTabHandlers.remove(decorator);
+    }
+
+    /**
+     * Notifies all <code>ContainerDecorator</code>
+     *
+     * @param component the component within the tab.
+     */
+    public void notifySparkTabHandlers(Component component) {
+        final SparkTab tab = chatContainer.getTabContainingComponent(component);
+        if (tab == null) {
+            return;
+        }
+        boolean isChatFrameInFocus = getChatContainer().getChatFrame().isInFocus();
+        boolean isSelectedTab = getChatContainer().getSelectedComponent() == component;
+        for (SparkTabHandler decorator : sparkTabHandlers) {
+            boolean isHandled = decorator.isTabHandled(tab, component, isSelectedTab, isChatFrameInFocus);
+            if (isHandled) {
+                return;
+            }
+        }
     }
 }

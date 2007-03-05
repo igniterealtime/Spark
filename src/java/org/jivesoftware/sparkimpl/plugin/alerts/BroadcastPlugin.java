@@ -22,7 +22,6 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -34,6 +33,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
@@ -45,16 +45,18 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -65,13 +67,19 @@ import javax.swing.SwingUtilities;
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
  */
-public class BroadcastPlugin implements Plugin, PacketListener {
+public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketListener {
+
+    private Set<ChatRoom> broadcastRooms = new HashSet<ChatRoom>();
 
     public void initialize() {
         boolean enabled = Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE);
         if (!enabled) {
             return;
         }
+
+        // Add as ContainerDecoratr
+        SparkManager.getChatManager().addSparkTabHandler(this);
+
         PacketFilter serverFilter = new PacketTypeFilter(Message.class);
         SparkManager.getConnection().addPacketListener(this, serverFilter);
 
@@ -258,8 +266,6 @@ public class BroadcastPlugin implements Plugin, PacketListener {
             }
             catch (ChatRoomNotFoundException e) {
                 chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("broadcast"));
-                chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-                chatRoom.setIconHandler(true);
                 chatRoom.getBottomPanel().setVisible(false);
                 chatRoom.getToolBar().setVisible(false);
                 SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
@@ -267,8 +273,7 @@ public class BroadcastPlugin implements Plugin, PacketListener {
 
 
             chatRoom.insertMessage(message);
-            container.makeTabRed(chatRoom);
-
+            broadcastRooms.add(chatRoom);
         }
         else if (message.getFrom() != null) {
             String jid = StringUtils.parseBareAddress(from);
@@ -281,56 +286,34 @@ public class BroadcastPlugin implements Plugin, PacketListener {
                 chatRoom = (ChatRoomImpl)container.getChatRoom(jid);
             }
             catch (ChatRoomNotFoundException e) {
-                chatRoom = new ChatRoomImpl(jid, nickname, Res.getString("message.broadcast.from", nickname));
-                chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-                chatRoom.setIconHandler(true);
+                chatRoom = new ChatRoomImpl(jid, nickname, nickname);
                 SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
             }
 
             chatRoom.insertMessage(message);
-            container.makeTabRed(chatRoom);
+            broadcastRooms.add(chatRoom);
 
             chatRoom.addMessageListener(new MessageListener() {
                 boolean waiting = true;
 
                 public void messageReceived(ChatRoom room, Message message) {
-                    if (waiting) {
-                        useDefaultRoomSettings((ChatRoomImpl)room);
-                        waiting = false;
-                    }
-
+                    removeAsBroadcast(room);
                 }
 
                 public void messageSent(ChatRoom room, Message message) {
+                    removeAsBroadcast(room);
+                }
+
+                private void removeAsBroadcast(ChatRoom room) {
                     if (waiting) {
-                        useDefaultRoomSettings((ChatRoomImpl)room);
+                        broadcastRooms.remove(room);
+
+                        // Notify decorators
+                        SparkManager.getChatManager().notifySparkTabHandlers(room);
                         waiting = false;
                     }
                 }
             });
-        }
-    }
-
-    private void useDefaultRoomSettings(ChatRoomImpl room) {
-        try {
-            room.setIconHandler(false);
-
-            String jid = StringUtils.parseBareAddress(room.getParticipantJID());
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-
-            Icon icon = PresenceManager.getIconFromPresence(room.getPresence());
-            room.setTabIcon(icon);
-            room.setTabTitle(nickname);
-
-            int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(room);
-            if (index != -1) {
-                SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
-                tab.getTitleLabel().setText(nickname);
-                tab.setIcon(icon);
-            }
-        }
-        catch (Exception e) {
-            Log.error(e);
         }
     }
 
@@ -388,4 +371,26 @@ public class BroadcastPlugin implements Plugin, PacketListener {
     }
 
 
+    public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
+        if (broadcastRooms.contains(component)) {
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+            String nickname = ((ChatRoomImpl)component).getTabTitle();
+            nickname = Res.getString("message.broadcast.from", nickname);
+            tab.setTabTitle(nickname);
+
+            if (!chatFrameFocused || !isSelectedTab) {
+                // Make tab red.
+                tab.setTitleColor(Color.red);
+                tab.setTabBold(true);
+            }
+            else {
+                tab.setTitleColor(Color.black);
+                tab.setTabFont(tab.getDefaultFont());
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

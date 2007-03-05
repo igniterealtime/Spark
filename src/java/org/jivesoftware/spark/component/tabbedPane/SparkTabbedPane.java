@@ -16,12 +16,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -40,6 +34,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 /**
  * Jive Software imlementation of a TabbedPane.
@@ -299,6 +299,15 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         return null;
     }
 
+    public SparkTab getTabContainingComponent(Component comp) {
+        int index = indexOfComponent(comp);
+        if (index != -1) {
+            return getTabAt(index);
+        }
+
+        return null;
+    }
+
     public void removeComponent(Component comp) {
         int index = indexOfComponent(comp);
         if (index != -1) {
@@ -356,7 +365,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
             Component c = comps[i];
             if (c instanceof SparkTab) {
                 SparkTab tab = (SparkTab)c;
-                if (tab.getTitleLabel().getText().equals(title)) {
+                if (tab.getTabTitle().equals(title)) {
                     return i;
                 }
             }

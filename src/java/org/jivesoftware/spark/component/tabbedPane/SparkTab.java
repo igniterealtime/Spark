@@ -10,6 +10,7 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -71,8 +72,61 @@ public class SparkTab extends TabPanel {
         add(comp, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 2, 3, 2), 0, 0));
     }
 
+    /**
+     * Returns the actual text of the tab.
+     *
+     * @return the actual text.
+     */
     public String getActualText() {
         return actualText;
+    }
+
+    /**
+     * Change the color of the tab text.
+     *
+     * @param color the new color.
+     */
+    public void setTitleColor(Color color) {
+        textLabel.setForeground(color);
+        textLabel.validate();
+        textLabel.repaint();
+    }
+
+    /**
+     * Changes the tab to display as bold or plain.
+     *
+     * @param bold true if the tab should be displayed as bold, otherwise false.
+     */
+    public void setTabBold(boolean bold) {
+        Font oldFont = textLabel.getFont();
+        Font newFont;
+        if (bold) {
+            newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont.getSize());
+        }
+        else {
+            newFont = new Font(oldFont.getFontName(), Font.PLAIN, oldFont.getSize());
+        }
+
+        textLabel.setFont(newFont);
+        textLabel.validate();
+        textLabel.repaint();
+    }
+
+    /**
+     * Sets the font of the title text.
+     *
+     * @param font the font to use for the title text.
+     */
+    public void setTabFont(Font font) {
+        textLabel.setFont(font);
+    }
+
+    /**
+     * Validates the tab UI.
+     */
+    public void validateTab() {
+        textLabel.validate();
+        textLabel.repaint();
     }
 
 
@@ -112,6 +166,22 @@ public class SparkTab extends TabPanel {
      */
     public JLabel getTitleLabel() {
         return textLabel;
+    }
+
+    /**
+     * Sets the text of the tab.
+     * @param title the title of the tab.
+     */
+    public void setTabTitle(String title){
+        textLabel.setText(title);
+    }
+
+    /**
+     * Returns the text of the tab.
+     * @return the text of the tab.
+     */
+    public String getTabTitle(){
+        return textLabel.getText();
     }
 
     /**

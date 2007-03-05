@@ -44,7 +44,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -91,11 +90,6 @@ public class ChatRoomImpl extends ChatRoom {
     private String threadID;
 
     private long lastActivity;
-
-    private boolean iconHandler;
-
-    private Icon alternativeIcon;
-
 
     /**
      * Constructs a 1-to-1 ChatRoom.
@@ -566,14 +560,6 @@ public class ChatRoomImpl extends ChatRoom {
         return presence;
     }
 
-    public boolean isIconHandler() {
-        return iconHandler;
-    }
-
-    public void setIconHandler(boolean iconHandler) {
-        this.iconHandler = iconHandler;
-    }
-
     public void setSendTypingNotification(boolean isSendTypingNotification) {
         this.sendTypingNotification = isSendTypingNotification;
     }
@@ -609,7 +595,7 @@ public class ChatRoomImpl extends ChatRoom {
             presence = usersPresence;
         }
 
-        SparkManager.getChatManager().getChatContainer().useTabDefault(this);
+        SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
         getChatInputEditor().setEnabled(true);
         getSendButton().setEnabled(true);
     }
@@ -618,27 +604,9 @@ public class ChatRoomImpl extends ChatRoom {
         presence = null;
         getChatInputEditor().setEnabled(false);
         getSendButton().setEnabled(false);
-        SparkManager.getChatManager().getChatContainer().useTabDefault(this);
+        SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
     }
 
-    /**
-     * Sets the alternative icon to use for the chat room. If null,
-     * then the default icon will be used.
-     *
-     * @param icon the alternative icon
-     */
-    public void setAlternativeIcon(Icon icon) {
-        this.alternativeIcon = icon;
-    }
-
-    /**
-     * Returns the alternative icon. This can be null.
-     *
-     * @return the alternative icon.
-     */
-    public Icon getAlternativeIcon() {
-        return alternativeIcon;
-    }
 
 
     private void loadHistory() {

@@ -18,13 +18,10 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.WrappedLabel;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -48,7 +45,7 @@ import javax.swing.JPanel;
  *
  * @author Derek DeMoro
  */
-public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener, SparkTabbedPaneListener {
+public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener {
 
     private JButton joinButton;
     private JButton declineButton;
@@ -150,8 +147,6 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         // Add to Chat window
         ChatManager chatManager = SparkManager.getChatManager();
         chatManager.getChatContainer().addContainerComponent(this);
-
-        SparkManager.getChatManager().getChatContainer().addSparkTabbedPaneListener(this);
     }
 
 
@@ -192,38 +187,6 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     }
 
     public boolean closing() {
-        SparkManager.getChatManager().getChatContainer().removeSparkTabbedPaneListener(this);
-        return true;
-    }
-
-
-    public void tabRemoved(SparkTab tab, Component component, int index) {
-
-    }
-
-    public void tabAdded(SparkTab tab, Component component, int index) {
-    }
-
-    public void tabSelected(SparkTab tab, Component component, int index) {
-        // Make sure tab is black.
-        if (component == this) {
-            Font defaultFont = tab.getDefaultFont();
-            if (tab.isBoldWhenActive() && tab.isSelected()) {
-                defaultFont = defaultFont.deriveFont(Font.BOLD);
-            }
-
-            final JLabel titleLabel = tab.getTitleLabel();
-
-            titleLabel.setForeground(Color.black);
-            titleLabel.setFont(defaultFont);
-        }
-
-    }
-
-    public void allTabsRemoved() {
-    }
-
-    public boolean canTabClose(SparkTab tab, Component component) {
         return true;
     }
 }

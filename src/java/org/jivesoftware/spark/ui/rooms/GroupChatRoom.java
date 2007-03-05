@@ -33,7 +33,6 @@ import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -992,21 +991,21 @@ public final class GroupChatRoom extends ChatRoom {
      * Displays a typing icon in the tab.
      */
     private void showUserIsTyping() {
-        int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(this);
-        SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
-        tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+        SparkManager.getChatManager().addTypingNotification(this);
         typingTimer.restart();
+
+        // Notify handlers
+        SparkManager.getChatManager().notifySparkTabHandlers(this);
     }
 
     /**
      * Displays the default icon for the chat room.
      */
     private void showDefaultTabIcon() {
-        int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(this);
-        SparkTab tab = SparkManager.getChatManager().getChatContainer().getTabAt(index);
-        if (tab != null) {
-            tab.setIcon(getTabIcon());
-        }
+        SparkManager.getChatManager().removeTypingNotification(this);
+
+        // Notify handlers
+        SparkManager.getChatManager().notifySparkTabHandlers(this);
     }
 
     /**
@@ -1076,7 +1075,7 @@ public final class GroupChatRoom extends ChatRoom {
     private void handleDisconnect() {
         getChatInputEditor().setEnabled(false);
         getSendButton().setEnabled(false);
-        SparkManager.getChatManager().getChatContainer().useTabDefault(this);
+        SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
     }
 
     /**
