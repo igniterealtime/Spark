@@ -54,9 +54,7 @@ public class JingleRoomUI extends JPanel {
     private boolean onHold;
     private boolean muted;
 
-    private RosterMemberCallButton muteButton;
-    private RosterMemberCallButton holdButton;
-    private RosterMemberCallButton transferButton;
+    private CallPanelButton muteButton;
 
     private RolloverButton hangUpButton;
 
@@ -152,32 +150,14 @@ public class JingleRoomUI extends JPanel {
         outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         // Build ControlPanel List
-        final ControlPanel controlPanel = new ControlPanel(new GridBagLayout());
-        final JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
-        sep.setBackground(new Color(219, 228, 238));
 
-        muteButton = new RosterMemberCallButton(JinglePhoneRes.getImageIcon("MUTE_IMAGE").getImage(), "Mute");
+        muteButton = new CallPanelButton(JinglePhoneRes.getImageIcon("MUTE_IMAGE").getImage(), "Mute");
         muteButton.setToolTipText("Mute this call.");
-        controlPanel.add(muteButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        controlPanel.add(sep, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-
-        holdButton = new RosterMemberCallButton(JinglePhoneRes.getImageIcon("ON_HOLD_IMAGE").getImage(), "Hold");
-        holdButton.setToolTipText("Place this call on hold.");
-        controlPanel.add(holdButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-
-
-        final JSeparator sep2 = new JSeparator(JSeparator.HORIZONTAL);
-        sep2.setBackground(new Color(219, 228, 238));
-        controlPanel.add(sep2, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-
-        transferButton = new RosterMemberCallButton(JinglePhoneRes.getImageIcon("TRANSFER_IMAGE").getImage(), "Transfer");
-        transferButton.setToolTipText("Transfer this call.");
-        controlPanel.add(transferButton, new GridBagConstraints(0, 4, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
         // Add Components to Main Panel
-        mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 0));
-        mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 0));
-        mainPanel.add(controlPanel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 1, 2, 1), 0, 0));
+        mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
+        mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
+        mainPanel.add(muteButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 1, 2, 1), 0, 0));
 
         // Add End Call button
         hangUpButton = new RolloverButton("     End Call", JinglePhoneRes.getImageIcon("HANG_UP_PHONE_77x24_IMAGE"));
@@ -200,10 +180,6 @@ public class JingleRoomUI extends JPanel {
 
         });
 
-        transferButton.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
-            }
-        });
 
 
         hangUpButton.addActionListener(new ActionListener() {
@@ -230,8 +206,6 @@ public class JingleRoomUI extends JPanel {
 
         hangUpButton.setEnabled(true);
         muteButton.setEnabled(true);
-        holdButton.setEnabled(true);
-        transferButton.setEnabled(true);
         setStatus(CONNECTED, false);
 
         // Add notification to ChatRoom if one exists.
@@ -258,10 +232,6 @@ public class JingleRoomUI extends JPanel {
         muteButton.setEnabled(false);
         muteButton.setOpaque(false);
 
-        holdButton.setEnabled(false);
-        holdButton.setOpaque(false);
-
-        transferButton.setEnabled(false);
         setStatus("Call Ended", redColor);
 
         // Add notification to ChatRoom if one exists.

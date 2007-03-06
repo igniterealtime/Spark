@@ -135,10 +135,10 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
         if (session instanceof IncomingJingleSession) {
-            titleLabel.setText("Incoming Call From " + contactItem.getNickname() + ". Establishing connection...");
+            titleLabel.setText("Incoming Voice Chat From " + contactItem.getNickname() + ". Establishing connection...");
         }
         else {
-            titleLabel.setText("Outgoing Call To " + contactItem.getNickname());
+            titleLabel.setText("Outgoing Voice Chat To " + contactItem.getNickname());
         }
 
 
@@ -195,7 +195,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     private void showCallAnsweredState() {
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-        titleLabel.setText("Phone call started on " + formatter.format(new Date()));
+        titleLabel.setText("Voice chat started on " + formatter.format(new Date()));
         cancelButton.setVisible(false);
         lastState = session.getState();
         if (ringing != null) {
@@ -215,7 +215,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     private void showCallEndedState() {
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-        titleLabel.setText("Phone call ended on " + formatter.format(new Date()));
+        titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
         showAlert(true);
         cancelButton.setVisible(false);
         answerButton.setVisible(false);
@@ -311,7 +311,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
         if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
             showAlert(true);
-            titleLabel.setText("Incoming Call From " + SparkManager.getUserManager().getUserNicknameFromJID(fullJID));
+            titleLabel.setText("Incoming Voice Chat From " + SparkManager.getUserManager().getUserNicknameFromJID(fullJID));
             cancelButton.setText("Reject");
             cancelButton.setVisible(true);
             answerButton.setVisible(true);

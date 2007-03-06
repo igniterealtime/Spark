@@ -78,7 +78,7 @@ public class JingleTabHandler extends SparkTabHandler {
 
 
         if (!chatFrameFocused || !isSelectedTab) {
-            if (room.getUnreadMessageCount() > 0) {
+            if (room.getUnreadMessageCount() > 0 || JingleRoomState.ringing == state) {
                 // Make tab red.
                 tab.setTitleColor(Color.red);
                 tab.setTabBold(true);
