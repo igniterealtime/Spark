@@ -176,4 +176,13 @@
         <description>Adds a simple shortcut to view most previous conversations.</description>
         <class>org.jivesoftware.sparkimpl.plugin.history.ConversationHistoryPlugin</class>
     </plugin>
+    <plugin>
+        <name>Contact List Assistant</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds simple extras to use with the Contact List.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ContactListAssistantPlugin</class>
+    </plugin>
 </plugins>

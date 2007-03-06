@@ -20,6 +20,7 @@ import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
@@ -343,6 +344,15 @@ public final class SparkManager {
      */
     public static SearchManager getSearchManager() {
         return SearchManager.getInstance();
+    }
+
+    /**
+     * Returns the <code>ContactList</code> used within Spark.
+     *
+     * @return the ContactList.
+     */
+    public static ContactList getContactList() {
+        return getWorkspace().getContactList();
     }
 
     /**

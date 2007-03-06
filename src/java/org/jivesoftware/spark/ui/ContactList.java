@@ -66,6 +66,8 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.PopupMenuListener;
+import javax.swing.event.PopupMenuEvent;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -779,7 +781,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private void addContactGroup(ContactGroup group) {
         groupList.add(group);
 
-        Collections.sort(groupList, groupComparator);
+        Collections.sort(groupList, GROUP_COMPARATOR);
 
         try {
             mainPanel.add(group, groupList.indexOf(group));
@@ -896,7 +898,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         groupList.add(rootGroup);
 
-        Collections.sort(tempList, groupComparator);
+        Collections.sort(tempList, GROUP_COMPARATOR);
 
         int loc = tempList.indexOf(rootGroup);
 
@@ -1644,13 +1646,13 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     /**
      * Sorts ContactGroups
      */
-    final Comparator groupComparator = new Comparator() {
+    public static final Comparator GROUP_COMPARATOR = new Comparator() {
         public int compare(Object contactGroupOne, Object contactGroupTwo) {
             final ContactGroup group1 = (ContactGroup)contactGroupOne;
             final ContactGroup group2 = (ContactGroup)contactGroupTwo;
 
             // Make sure that offline group is always on bottom.
-            if (group2 == offlineGroup) {
+            if (group2.isOfflineGroup()) {
                 return -1;
             }
 
@@ -1866,8 +1868,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 SparkManager.getSessionManager().changePresence(presence);
             }
         }, 3000);
-
-
     }
 
     public void connectionClosedOnError(final Exception ex) {
