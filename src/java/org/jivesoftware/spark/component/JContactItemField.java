@@ -158,6 +158,11 @@ public class JContactItemField extends JPanel {
             popup.setVisible(true);
         }
 
+        // set initial selection
+        if(validItems.size() > 0){
+            list.setSelectedIndex(0);
+        }
+
     }
 
     /**
