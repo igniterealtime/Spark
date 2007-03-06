@@ -22,22 +22,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -47,10 +31,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class CallMessage extends JPanel implements JingleSessionStateListener {
-
-    private SparkToaster toasterManager;
+/**
+ * Handles UI controls for outgoing jingle calls.
+ */
+public class OutgoingCall extends JPanel implements JingleSessionStateListener {
 
     private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
@@ -58,30 +55,26 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     private CallButton cancelButton = new CallButton();
     private CallButton answerButton = new CallButton();
-    private String fullJID;
 
     private JingleNegotiator.State lastState;
     private JingleSession session;
 
     private AudioClip ringing;
 
-    private boolean answer = false;
+    private boolean answered;
 
-    private JingleRoomUI roomUI;
     private ChatRoom chatRoom;
 
-    public CallMessage() {
-        buildUI();
-    }
-
-    public void buildUI() {
+    /**
+     * Creates a new instance of OutgoingCall.
+     */
+    public OutgoingCall() {
         try {
             ringing = Applet.newAudioClip(JinglePhoneRes.getURL("RINGING"));
         }
         catch (Exception e) {
             Log.error(e);
         }
-        System.out.println(ringing != null ? "RRR" : "NNN");
 
         setLayout(new GridBagLayout());
 
@@ -102,7 +95,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
         answerButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                setAnswer(true);
+                answered = true;
             }
         });
 
@@ -119,38 +112,27 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     }
 
-    public boolean isAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(boolean answer) {
-        this.answer = answer;
-    }
-
-    public void handleIncomingCall(final JingleSession session, String jid){
-        this.fullJID = jid;
-
-        this.session = session;
-
-        this.session.addStateListener(this);
-    }
-
+    /**
+     * Handles a new outgoing call.
+     * @param session the JingleSession for the outgoing call.
+     * @param chatRoom the room the session is associated with.
+     * @param jid the users jid.
+     */
     public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
         this.chatRoom = chatRoom;
         cancelButton.setVisible(true);
-        this.fullJID = jid;
 
         this.session = session;
 
         this.session.addStateListener(this);
 
-        fileLabel.setText(fullJID);
+        fileLabel.setText(jid);
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
         if (session instanceof IncomingJingleSession) {
-            titleLabel.setText("Incoming Voice Chat From " + contactItem.getNickname() + ". Establishing connection...");
+
         }
         else {
             titleLabel.setText("Outgoing Voice Chat To " + contactItem.getNickname());
@@ -159,7 +141,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
         cancelButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                cancelCall();
+                cancel();
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -176,7 +158,10 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         makeClickable(answerButton);
     }
 
-    private void updateBar() {
+    /**
+     * Updates the UI to reflect the current state.
+     */
+    private void updateOutgoingCallPanel() {
 
         if (session == null || session.isClosed()) {
             showCallEndedState();
@@ -188,7 +173,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
                 showCallAnsweredState();
             }
             else if (session.getState() instanceof OutgoingJingleSession.Pending) {
-                titleLabel.setText("User is being notified...");
+                titleLabel.setText("Calling user. Please wait...");
                 cancelButton.setVisible(true);
             }
             lastState = session.getState();
@@ -208,6 +193,11 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         }
     }
 
+
+    /**
+     * Called when the call has been answered. Will append the JingleRoom to the
+     * associated ChatRoom.
+     */
     private void showCallAnsweredState() {
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         titleLabel.setText("Voice chat started on " + formatter.format(new Date()));
@@ -216,8 +206,9 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         if (ringing != null) {
             ringing.stop();
         }
-        roomUI = new JingleRoomUI(session, chatRoom);
-        chatRoom.getSplitPane().setRightComponent(roomUI);
+
+        final JingleRoom jingleRoom = new JingleRoom(session, chatRoom);
+        chatRoom.getSplitPane().setRightComponent(jingleRoom);
         chatRoom.getSplitPane().setResizeWeight(.60);
         chatRoom.getSplitPane().setDividerSize(5);
 
@@ -228,6 +219,9 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
     }
 
+    /**
+     * Called when the call has ended. 
+     */
     private void showCallEndedState() {
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
@@ -292,6 +286,11 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     }
 
+    /**
+     * Changes the background color. If alert is true, the background will reflect that the ui
+     * needs attention.
+     * @param alert true to notify users that their attention is needed.
+     */
     private void showAlert(boolean alert) {
         if (alert) {
             titleLabel.setForeground(new Color(211, 174, 102));
@@ -303,12 +302,10 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         }
     }
 
-    public void cancelCall() {
-        // Close toaster if it's up.
-        if (toasterManager != null) {
-            toasterManager.close();
-        }
-
+    /**
+     * Call to cancel phone conversation.
+     */
+    public void cancel() {
         if (session != null) {
             try {
                 session.terminate();
@@ -320,44 +317,26 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         }
     }
 
-    public JingleSession getSession() {
-        return session;
-    }
-
-    public void setSession(JingleSession session) {
-        this.session = session;
-    }
-
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
         if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    showIncomingCall(session);
+                    if (lastState == null && ringing != null) {
+                        ringing.loop();
+                    }
                 }
             });
 
-            showAlert(true);
-            titleLabel.setText("Incoming Voice Chat From " + SparkManager.getUserManager().getUserNicknameFromJID(fullJID));
-            cancelButton.setText("Reject");
-            cancelButton.setVisible(true);
-            answerButton.setVisible(true);
-            if ((lastState == null))
-                if (ringing != null) {
-                    ringing.loop();
-                }
-
-            while (!answer && (session != null && !session.isClosed())) {
-
+            while (!answered && (session != null && !session.isClosed())) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 }
                 catch (InterruptedException e) {
                     Log.error(e);
                 }
-
             }
-            if (!answer) {
-                cancelCall();
+            if (!answered) {
+                cancel();
                 throw new JingleNegotiator.JingleException("Not Accepted");
             }
         }
@@ -366,31 +345,13 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
     }
 
     public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
-        updateBar();
-    }
-
-    private void showIncomingCall(final JingleSession jingleSession) {
-        toasterManager = new SparkToaster();
-        final IncomingCallUI incomingCall = new IncomingCallUI(jingleSession.getInitiator());
-        toasterManager.setToasterHeight(230);
-        toasterManager.setToasterWidth(300);
-        toasterManager.setDisplayTime(500000000);
-
-        toasterManager.showToaster("Incoming Voice Chat", incomingCall);
-        toasterManager.hideTitle();
-
-        incomingCall.getAcceptButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cancelCall();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
             }
         });
 
-        incomingCall.getRejectButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toasterManager.close();
-                answer = true;
-            }
-        });
     }
+
 
 }

@@ -199,9 +199,9 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
-        CallMessage callMessage = new CallMessage();
-        callMessage.handleOutgoingCall(session, room, jid);
-        StyleConstants.setComponent(style, callMessage);
+        OutgoingCall outgoingCall = new OutgoingCall();
+        outgoingCall.handleOutgoingCall(session, room, jid);
+        StyleConstants.setComponent(style, outgoingCall);
 
         // Insert the image at the end of the text
         try {

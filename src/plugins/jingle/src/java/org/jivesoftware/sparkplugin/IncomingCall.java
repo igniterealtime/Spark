@@ -55,7 +55,7 @@ public class IncomingCall implements JingleSessionStateListener {
         this.session = session;
 
         this.session.addStateListener(this);
-        
+
         try {
             ringing = Applet.newAudioClip(JinglePhoneRes.getURL("RINGING"));
         }
@@ -171,6 +171,17 @@ public class IncomingCall implements JingleSessionStateListener {
     }
 
     public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateState();
+            }
+        });
+    }
+
+    /**
+     * Updates the state of the call.
+     */
+    private void updateState() {
         if (session == null || session.isClosed()) {
             showCallEndedState();
         }
@@ -218,7 +229,6 @@ public class IncomingCall implements JingleSessionStateListener {
                     SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
                 }
                 answered = true;
-
             }
         });
 
