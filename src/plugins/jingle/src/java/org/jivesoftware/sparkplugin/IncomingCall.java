@@ -103,8 +103,10 @@ public class IncomingCall implements JingleSessionStateListener {
             ringing.stop();
         }
 
-        chatRoom.getSplitPane().setRightComponent(null);
-        chatRoom.getSplitPane().setDividerSize(0);
+        if (chatRoom != null) {
+            chatRoom.getSplitPane().setRightComponent(null);
+            chatRoom.getSplitPane().setDividerSize(0);
+        }
 
         // Add state
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
@@ -213,7 +215,7 @@ public class IncomingCall implements JingleSessionStateListener {
         toasterManager.setHidable(false);
 
         final IncomingCallUI incomingCall = new IncomingCallUI(jingleSession.getInitiator());
-        toasterManager.setToasterHeight(230);
+        toasterManager.setToasterHeight(175);
         toasterManager.setToasterWidth(300);
         toasterManager.setDisplayTime(500000000);
 
@@ -223,6 +225,10 @@ public class IncomingCall implements JingleSessionStateListener {
         incomingCall.getAcceptButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 toasterManager.close();
+                if(ringing != null){
+                    ringing.stop();
+                }
+                
                 if (chatRoom == null) {
                     chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jingleSession.getInitiator()));
                     SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);

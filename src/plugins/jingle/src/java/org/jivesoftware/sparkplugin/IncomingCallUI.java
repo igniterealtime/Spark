@@ -10,12 +10,19 @@
 
 package org.jivesoftware.sparkplugin;
 
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -27,21 +34,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class IncomingCallUI extends JPanel {
     private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel professionLabel = new JLabel();
-    private JLabel nicknameLabel = new JLabel();
-    private JLabel lastCalledLabel = new JLabel();
-    private JLabel durationLabel = new JLabel();
 
     private RolloverButton acceptButton;
     private RolloverButton rejectButton;
@@ -55,16 +52,16 @@ public class IncomingCallUI extends JPanel {
     public IncomingCallUI(String jid) {
         setLayout(new GridBagLayout());
 
-        this.jid = jid;
+        this.jid = StringUtils.parseBareAddress(jid);
 
-        vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
+        vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(jid));
 
         final JLabel topLabel = new JLabel();
         topLabel.setIcon(JinglePhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));
         topLabel.setHorizontalTextPosition(JLabel.RIGHT);
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        topLabel.setText("Incoming call from...");
-        topLabel.setForeground(Color.gray);
+        topLabel.setText("Voice chat request from ...");
+        topLabel.setForeground(Color.DARK_GRAY);
 
         // Add Top Label
         add(topLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -93,11 +90,10 @@ public class IncomingCallUI extends JPanel {
         // Add Avatar information
         panel.add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
         panel.add(professionLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
-        panel.add(nicknameLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
 
         // Add History labels
-        panel.add(lastCalledLabel, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 0, 0), 0, 0));
-        panel.add(durationLabel, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
+        // panel.add(lastCalledLabel, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 0, 0), 0, 0));
+        //  panel.add(durationLabel, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
 
         // Set default settings
         titleLabel.setForeground(new Color(64, 103, 162));
@@ -108,35 +104,7 @@ public class IncomingCallUI extends JPanel {
             handleVCardInformation(vcard);
         }
 
-        // Update with previous call history.
-        Date lastDate = null;
-        long callLength = 0;
-        /*
-        CallList callList = SoftPhoneManager.getInstance().getLogManager().getCallList();
-        for (HistoryCall call : callList.getList()) {
-            String number = TelephoneUtils.getNumbersFromPhone(call.getNumber());
-            if (number.equals(TelephoneUtils.getNumbersFromPhone(phoneNumber))) {
-                lastDate = new Date(call.getTime());
-            }
-
-            callLength = call.getCallLength();
-        }
-
-        */
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Last called: ");
-        if (lastDate == null) {
-            builder.append("Never");
-            durationLabel.setVisible(false);
-        }
-        else {
-            builder.append(formatter.format(lastDate));
-            durationLabel.setText("Duration: " + ModelUtil.getTimeFromLong(callLength));
-        }
-
-        lastCalledLabel.setText(builder.toString());
-
-        // Add To Panel
+        // Add to panel
         add(panel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
     }
 
@@ -182,8 +150,7 @@ public class IncomingCallUI extends JPanel {
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
         Icon icon = PresenceManager.getIconFromPresence(PresenceManager.getPresence(jid));
 
-        nicknameLabel.setIcon(icon);
-        nicknameLabel.setText(nickname);
+        titleLabel.setIcon(icon);
 
 
         String jobTitle = vcard.getField("TITLE");

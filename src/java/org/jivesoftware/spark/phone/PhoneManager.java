@@ -90,10 +90,10 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
     }
 
     public void addPhone(Phone phone) {
-        if(phones.isEmpty()){
+        if (phones.isEmpty()) {
             addListeners();
         }
-        
+
         phones.add(phone);
     }
 
@@ -119,22 +119,37 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
             }
 
             dialButton.addMouseListener(new MouseAdapter() {
-                public void mousePressed(MouseEvent e) {
-
-                    // Handle actions.
-                    if (actions.size() == 1) {
-                        final Action action = actions.get(0);
-                        action.actionPerformed(null);
-                    }
-                    else if (actions.size() > 1) {
-                        // Display PopupMenu
-                        final JPopupMenu menu = new JPopupMenu();
-                        for (Action action : actions) {
-                            menu.add(action);
+                public void mousePressed(final MouseEvent e) {
+                    SwingWorker worker = new SwingWorker() {
+                        public Object construct() {
+                            try {
+                                Thread.sleep(50);
+                            }
+                            catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            return true;
                         }
 
-                        menu.show(dialButton, e.getX(), e.getY());
-                    }
+                        public void finished() {
+                            // Handle actions.
+                            if (actions.size() == 1) {
+                                final Action action = actions.get(0);
+                                action.actionPerformed(null);
+                            }
+                            else if (actions.size() > 1) {
+                                // Display PopupMenu
+                                final JPopupMenu menu = new JPopupMenu();
+                                for (Action action : actions) {
+                                    menu.add(action);
+                                }
+
+                                menu.show(dialButton, e.getX(), e.getY());
+                            }
+                        }
+                    };
+                    worker.start();
+
 
                 }
             });
