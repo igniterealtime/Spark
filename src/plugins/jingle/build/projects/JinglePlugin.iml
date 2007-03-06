@@ -122,7 +122,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="SparkPhone" />
     <orderEntryProperties />
   </component>
   <component name="VcsManagerConfiguration">

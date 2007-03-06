@@ -39,13 +39,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,17 +47,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
 public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
-    final Map<String, JingleSession> sessions = new HashMap<String, JingleSession>();
+    private final Map<String, JingleSession> sessions = new HashMap<String, JingleSession>();
 
-    JingleManager jm;
-
-    final JingleSessionListener jingleListener = this;
+    private JingleManager jingleManager;
 
     private JingleStateManager stateManager;
 
@@ -82,16 +81,16 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             public Object construct() {
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
 
-                jm = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
+                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
                 if (transportManager instanceof BridgedTransportManager) {
-                    jm.addCreationListener((BridgedTransportManager)transportManager);
+                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
                 }
                 return true;
             }
 
             public void finished() {
-                initUI();
+                addListeners();
             }
         };
 
@@ -99,62 +98,27 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     }
 
 
-    private void initUI() {
-        if (jm == null) {
+    /**
+     * Adds Jingle and ChatRoom listeners.
+     */
+    private void addListeners() {
+        if (jingleManager == null) {
             Log.error("Unable to resolve Jingle Connection");
             return;
         }
 
-        jm.addJingleSessionRequestListener(new JingleSessionRequestListener() {
-            public void sessionRequested(JingleSessionRequest request) {
-                final String from = request.getFrom();
-
-                if (!sessions.containsKey(from)) {
-                    IncomingJingleSession session = null;
-                    try {
-                        session = request.accept();
-                        session.addListener(jingleListener);
-                        session.start(request);
-                        sessions.put(request.getFrom(), session);
-
-                        final ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(from));
-
-                        TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-                        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
-                        Style style = doc.addStyle("StyleName", null);
-
-                        CallMessage callMessage = new CallMessage();
-                        callMessage.call(session, room, request.getFrom());
-                        StyleConstants.setComponent(style, callMessage);
-
-                        // Insert the image at the end of the text
-                        try {
-                            doc.insertString(doc.getLength(), "ignored text", style);
-                            doc.insertString(doc.getLength(), "\n", null);
-                        }
-                        catch (BadLocationException e) {
-                            Log.error(e);
-                        }
-
-                        room.scrollToBottom();
-
-                        // Notify new incoming message.
-                        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(room);
-
-                        // Add state
-                        stateManager.addJingleSession(room, JingleRoomState.ringing);
-
-                        // Notify state change
-                        SparkManager.getChatManager().notifySparkTabHandlers(room);
+        // Listen in for new incoming Jingle requests.
+        jingleManager.addJingleSessionRequestListener(new JingleSessionRequestListener() {
+            public void sessionRequested(final JingleSessionRequest request) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        incomingJingleSession(request);
                     }
-                    catch (XMPPException e) {
-                        Log.error(e);
-                    }
-
-                }
+                });
             }
         });
 
+        // If a ChatRoom containing a JingleSession is closed, end the jingle session.
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomClosed(ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
@@ -169,7 +133,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
 
     public Collection<Action> getPhoneActions(final String jid) {
-        if (jm == null) {
+        if (jingleManager == null) {
             return Collections.emptyList();
         }
 
@@ -217,7 +181,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         // Create a new Jingle Call with a full JID
         OutgoingJingleSession session = null;
         try {
-            session = jm.createOutgoingJingleSession(jid);
+            session = jingleManager.createOutgoingJingleSession(jid);
         }
         catch (XMPPException e) {
             Log.error(e);
@@ -225,7 +189,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
         // Start the call
         if (session != null) {
-            session.addListener(jingleListener);
+            session.addListener(this);
             session.start();
             sessions.put(jid, session);
         }
@@ -236,7 +200,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         Style style = doc.addStyle("StyleName", null);
 
         CallMessage callMessage = new CallMessage();
-        callMessage.call(session, room, jid);
+        callMessage.handleOutgoingCall(session, room, jid);
         StyleConstants.setComponent(style, callMessage);
 
         // Insert the image at the end of the text
@@ -319,7 +283,29 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
         }
         catch (ChatRoomNotFoundException e) {
-          // Ignore
+            // Ignore
+        }
+    }
+
+    private void incomingJingleSession(JingleSessionRequest request) {
+        final String from = request.getFrom();
+
+        if (!sessions.containsKey(from)) {
+            IncomingJingleSession session = null;
+            try {
+                session = request.accept();
+                session.addListener(this);
+                session.start(request);
+                sessions.put(request.getFrom(), session);
+
+                // Handle
+                CallMessage callMessage = new CallMessage();
+                callMessage.handleIncomingCall(session, request.getFrom());
+            }
+            catch (XMPPException e) {
+                Log.error(e);
+            }
+
         }
     }
 

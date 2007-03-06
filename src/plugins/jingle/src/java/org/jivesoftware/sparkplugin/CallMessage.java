@@ -22,13 +22,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -38,12 +32,25 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+
 public class CallMessage extends JPanel implements JingleSessionStateListener {
+
+    private SparkToaster toasterManager;
 
     private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
@@ -120,7 +127,15 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         this.answer = answer;
     }
 
-    public void call(final JingleSession session, ChatRoom chatRoom, final String jid) {
+    public void handleIncomingCall(final JingleSession session, String jid){
+        this.fullJID = jid;
+
+        this.session = session;
+
+        this.session.addStateListener(this);
+    }
+
+    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
         this.chatRoom = chatRoom;
         cancelButton.setVisible(true);
         this.fullJID = jid;
@@ -225,7 +240,7 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
         chatRoom.getSplitPane().setRightComponent(null);
         chatRoom.getSplitPane().setDividerSize(0);
 
-         // Add state
+        // Add state
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
 
         // Notify state change
@@ -289,6 +304,11 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
     }
 
     public void cancelCall() {
+        // Close toaster if it's up.
+        if (toasterManager != null) {
+            toasterManager.close();
+        }
+
         if (session != null) {
             try {
                 session.terminate();
@@ -310,6 +330,12 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
 
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
         if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    showIncomingCall(session);
+                }
+            });
+
             showAlert(true);
             titleLabel.setText("Incoming Voice Chat From " + SparkManager.getUserManager().getUserNicknameFromJID(fullJID));
             cancelButton.setText("Reject");
@@ -335,10 +361,36 @@ public class CallMessage extends JPanel implements JingleSessionStateListener {
                 throw new JingleNegotiator.JingleException("Not Accepted");
             }
         }
+
+
     }
 
     public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
         updateBar();
+    }
+
+    private void showIncomingCall(final JingleSession jingleSession) {
+        toasterManager = new SparkToaster();
+        final IncomingCallUI incomingCall = new IncomingCallUI(jingleSession.getInitiator());
+        toasterManager.setToasterHeight(230);
+        toasterManager.setToasterWidth(300);
+        toasterManager.setDisplayTime(500000000);
+
+        toasterManager.showToaster("Incoming Voice Chat", incomingCall);
+        toasterManager.hideTitle();
+
+        incomingCall.getAcceptButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cancelCall();
+            }
+        });
+
+        incomingCall.getRejectButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                toasterManager.close();
+                answer = true;
+            }
+        });
     }
 
 }

@@ -23,8 +23,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 
-import javax.swing.SwingUtilities;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -43,6 +41,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
+
+import javax.swing.SwingUtilities;
 
 /**
  * This manager is responsible for the loading of all Plugins and Workspaces within Spark environment.
@@ -517,15 +517,12 @@ public class PluginManager implements MainWindowListener {
             if (pluginXML.exists()) {
                 try {
                     classLoader.addPlugin(file);
+                    loadPublicPlugin(file);
                 }
-                catch (MalformedURLException e) {
+                catch (Throwable e) {
                     Log.error("Unable to load dirs", e);
                 }
-
-                loadPublicPlugin(file);
             }
-
-
         }
     }
 

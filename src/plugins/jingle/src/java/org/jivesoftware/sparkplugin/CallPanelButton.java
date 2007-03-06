@@ -8,21 +8,18 @@
 
 package org.jivesoftware.sparkplugin;
 
-import com.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import com.jivesoftware.sparkplugin.components.EndCallButton;
 
-import javax.swing.JButton;
-import javax.swing.Icon;
-import javax.swing.JFrame;
-
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
 
 /**
  *
@@ -42,9 +39,9 @@ public class CallPanelButton extends JButton implements MouseListener {
 
         this.text = text;
 
-        normalIcon = PhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON");
-        hoverIcon = PhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_HOVER");
-        downIcon = PhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_DOWN");
+        normalIcon = JinglePhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON");
+        hoverIcon = JinglePhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_HOVER");
+        downIcon = JinglePhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_DOWN");
         backgroundImage = image;
 
         setIcon(normalIcon);
@@ -141,14 +138,6 @@ public class CallPanelButton extends JButton implements MouseListener {
         else {
             addMouseListener(this);
         }
-    }
-
-
-    public static void main(String args[]) {
-        JFrame frame = new JFrame();
-        frame.add(new EndCallButton());
-        frame.pack();
-        frame.setVisible(true);
     }
 }
 
