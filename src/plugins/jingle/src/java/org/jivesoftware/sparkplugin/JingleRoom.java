@@ -44,7 +44,7 @@ import java.util.Date;
  *
  * @author Derek DeMoro
  */
-public class JingleRoomUI extends JPanel {
+public class JingleRoom extends JPanel {
 
     private JLabel connectedLabel;
     private String phoneNumber;
@@ -76,7 +76,7 @@ public class JingleRoomUI extends JPanel {
 
     private JavaMixer mixer = new JavaMixer();
 
-    public JingleRoomUI(JingleSession session, ChatRoom chatRoom) {
+    public JingleRoom(JingleSession session, ChatRoom chatRoom) {
         this.session = session;
         this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());

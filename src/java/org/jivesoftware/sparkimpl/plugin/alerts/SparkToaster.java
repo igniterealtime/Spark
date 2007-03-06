@@ -138,6 +138,8 @@ public class SparkToaster {
 
     private TitleLabel titleLabel;
 
+    private boolean hideable = true;
+
     /**
      * Constructor to initialized toaster component...
      */
@@ -234,8 +236,10 @@ public class SparkToaster {
                     customAction.actionPerformed(null);
                 }
 
-                setVisible(false);
-                dispose();
+                if (hideable) {
+                    setVisible(false);
+                    dispose();
+                }
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -649,6 +653,10 @@ public class SparkToaster {
             AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
             ((Graphics2D)g).drawImage(backgroundImage, xform, this);
         }
+    }
+
+    public void setHidable(boolean hideable) {
+        this.hideable = hideable;
     }
 
     /**

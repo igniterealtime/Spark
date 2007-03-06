@@ -39,14 +39,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
@@ -54,6 +46,14 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -287,6 +287,11 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         }
     }
 
+    /**
+     * Notify user that a new incoming jingle request has been receieved.
+     *
+     * @param request the <code>JingleSessionRequest</code>.
+     */
     private void incomingJingleSession(JingleSessionRequest request) {
         final String from = request.getFrom();
 
@@ -298,9 +303,8 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                 session.start(request);
                 sessions.put(request.getFrom(), session);
 
-                // Handle
-                CallMessage callMessage = new CallMessage();
-                callMessage.handleIncomingCall(session, request.getFrom());
+                // Notify user of incoming call.
+                new IncomingCall(session);
             }
             catch (XMPPException e) {
                 Log.error(e);
