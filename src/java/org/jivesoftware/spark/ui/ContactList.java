@@ -1167,6 +1167,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         while (groups.hasNext()) {
             ContactGroup group = (ContactGroup)groups.next();
             ContactItem item = group.getContactItemByJID(jid);
+            group.removeOfflineContactItem(jid);
             if (item != null) {
                 group.removeContactItem(item);
                 checkGroup(group);
