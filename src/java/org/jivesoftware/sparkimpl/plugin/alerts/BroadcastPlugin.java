@@ -33,8 +33,8 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.MessageListener;
+import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
@@ -42,6 +42,16 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -53,16 +63,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -373,12 +373,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         if (broadcastRooms.contains(component)) {
+            final ChatRoomImpl room = (ChatRoomImpl)component;
             tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-            String nickname = ((ChatRoomImpl)component).getTabTitle();
+            String nickname = room.getTabTitle();
             nickname = Res.getString("message.broadcast.from", nickname);
             tab.setTabTitle(nickname);
 
-            if (!chatFrameFocused || !isSelectedTab) {
+
+            if ((!chatFrameFocused || !isSelectedTab) && room.getUnreadMessageCount() > 0) {
                 // Make tab red.
                 tab.setTitleColor(Color.red);
                 tab.setTabBold(true);
@@ -386,7 +388,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
             else {
                 tab.setTitleColor(Color.black);
                 tab.setTabFont(tab.getDefaultFont());
+                room.clearUnreadMessageCount();
             }
+
 
             return true;
         }
