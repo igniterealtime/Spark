@@ -1683,7 +1683,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         });
 
-        showOfflineGroupMenu.setText("Show offline contacts in Offline Group");
+        ResourceUtils.resButton(showOfflineGroupMenu, Res.getString("menuitem.show.offline.group"));
         contactsMenu.add(showOfflineGroupMenu);
 
         showOfflineGroupMenu.addActionListener(new ActionListener() {
