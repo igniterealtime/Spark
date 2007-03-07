@@ -519,6 +519,14 @@ public class LocalPreferences {
         return getBoolean("buzzEnabled", true);
     }
 
+    public void setOfflineGroupVisible(boolean visible){
+        setBoolean("offlineGroupVisible", visible);
+    }
+
+    public boolean isOfflineGroupVisible(){
+        return getBoolean("offlineGroupVisible", true);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }

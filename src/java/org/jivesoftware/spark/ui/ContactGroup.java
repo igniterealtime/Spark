@@ -11,11 +11,20 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -39,11 +48,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
 /**
  * Container representing a RosterGroup within the Contact List.
  */
@@ -51,6 +55,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private List<ContactItem> contactItems = new ArrayList<ContactItem>();
     private List<ContactGroup> contactGroups = new ArrayList<ContactGroup>();
     private List<ContactGroupListener> listeners = new ArrayList<ContactGroupListener>();
+    private List<ContactItem> offlineContacts = new ArrayList<ContactItem>();
 
     private String groupName;
     private DefaultListModel model;
@@ -67,6 +72,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private MouseEvent mouseEvent;
 
+    private LocalPreferences preferences;
+
 
     /**
      * Create a new ContactGroup.
@@ -77,6 +84,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         // Initialize Model and UI
         model = new DefaultListModel();
         contactItemList = new JList(model);
+
+        preferences = SettingsManager.getLocalPreferences();
 
         setTitle(getGroupTitle(groupName));
 
@@ -141,12 +150,112 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     /**
+     * Adds a new offline contact.
+     *
+     * @param nickname the nickname of the offline contact.
+     * @param jid      the jid of the offline contact.
+     */
+    public void addOfflineContactItem(String nickname, String jid) {
+        // Build new ContactItem
+        final ContactItem offlineItem = new ContactItem(nickname, jid);
+        offlineItem.setGroupName(getGroupName());
+
+        final Presence offlinePresence = PresenceManager.getPresence(jid);
+        offlineItem.setPresence(offlinePresence);
+
+        // set offline icon
+        offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
+
+        // Add to offlien contacts.
+        offlineContacts.add(offlineItem);
+
+        insertOfflineContactItem(offlineItem);
+    }
+
+    /**
+     * Inserts a new offline <code>ContactItem</code> into the ui model.
+     *
+     * @param offlineItem the ContactItem to add.
+     */
+    public void insertOfflineContactItem(ContactItem offlineItem) {
+        if (model.contains(offlineItem)) {
+            return;
+        }
+
+        if (!preferences.isOfflineGroupVisible()) {
+            Collections.sort(offlineContacts, itemComparator);
+            int index = offlineContacts.indexOf(offlineItem);
+
+            int totalListSize = contactItems.size();
+            int newPos = totalListSize + index;
+
+            if (newPos > model.size()) {
+                newPos = model.size();
+            }
+
+            model.insertElementAt(offlineItem, newPos);
+
+            if (model.contains(noContacts)) {
+                model.removeElement(noContacts);
+            }
+        }
+    }
+
+    /**
+     * Removes an offline <code>ContactItem</code> from the Offline contact
+     * model and ui.
+     *
+     * @param item the offline contact item to remove.
+     */
+    public void removeOfflineContactItem(ContactItem item) {
+        offlineContacts.remove(item);
+        removeContactItem(item);
+    }
+
+    /**
+     * Removes an offline <code>ContactItem</code> from the offline contact model and ui.
+     *
+     * @param jid the offline contact item to remove.
+     */
+    public void removeOfflineContactItem(String jid) {
+        final List<ContactItem> items = new ArrayList<ContactItem>(offlineContacts);
+        for (ContactItem item : items) {
+            if (item.getFullJID().equals(jid)) {
+                removeOfflineContactItem(item);
+            }
+        }
+    }
+
+    /**
+     * Toggles the visibility of Offline Contacts.
+     *
+     * @param show true if offline contacts should be shown, otherwise false.
+     */
+    public void toggleOfflineVisibility(boolean show) {
+        final List<ContactItem> items = new ArrayList<ContactItem>(offlineContacts);
+        for (ContactItem item : items) {
+            if (show) {
+                insertOfflineContactItem(item);
+            }
+            else {
+                model.removeElement(item);
+            }
+        }
+
+
+    }
+
+
+    /**
      * Adds a <code>ContactItem</code> to the ContactGroup.
      *
      * @param item the ContactItem.
      */
     public void addContactItem(ContactItem item) {
-        if (model.getSize() == 1 && model.getElementAt(0) == noContacts) {
+        // Remove from offline group if it exists
+        removeOfflineContactItem(item.getFullJID());
+
+        if (model.contains(noContacts)) {
             model.remove(0);
         }
 
@@ -560,7 +669,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             final ContactItem item1 = (ContactItem)contactItemOne;
             final ContactItem item2 = (ContactItem)contactItemTwo;
             return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
-
         }
     };
 
