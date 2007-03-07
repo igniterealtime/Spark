@@ -16,10 +16,17 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -34,12 +41,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 /**
  * Jive Software imlementation of a TabbedPane.
@@ -67,6 +68,16 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     private Color backgroundColor;
     private Color borderColor;
+
+    /**
+     * The default Hand cursor.
+     */
+    public static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
+
+    /**
+     * The default Text Cursor.
+     */
+    public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 
     /**
      * Listeners
@@ -177,13 +188,19 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
             tab.addComponent(closeButton);
             closeButton.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent mouseEvent) {
-                    if (Spark.isWindows())
+                    if (Spark.isWindows()) {
                         closeButton.setIcon(closeActiveButtonIcon);
+                    }
+
+                    setCursor(HAND_CURSOR);
                 }
 
                 public void mouseExited(MouseEvent mouseEvent) {
-                    if (Spark.isWindows())
+                    if (Spark.isWindows()) {
                         closeButton.setIcon(closeInactiveButtonIcon);
+                    }
+                    
+                    setCursor(DEFAULT_CURSOR);
                 }
 
                 public void mousePressed(MouseEvent mouseEvent) {

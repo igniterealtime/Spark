@@ -233,7 +233,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                ||  textFound.startsWith("https://") || textFound.startsWith("www.") || 
+                    textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
                 insertLink(textFound);
             }
             else if (!insertImage(textFound)) {
