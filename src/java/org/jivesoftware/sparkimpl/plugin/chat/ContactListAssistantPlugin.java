@@ -8,6 +8,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.chat;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -20,13 +21,12 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.resource.Res;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -46,8 +46,8 @@ public class ContactListAssistantPlugin implements Plugin {
 
     public void initialize() {
 
-        moveToMenu = new JMenu("Move to");
-        copyToMenu = new JMenu("Copy to");
+        moveToMenu = new JMenu(Res.getString("menuitem.move.to"));
+        copyToMenu = new JMenu(Res.getString("menuitem.copy.to"));
 
         final ContactList contactList = SparkManager.getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
@@ -98,9 +98,9 @@ public class ContactListAssistantPlugin implements Plugin {
                     });
 
                     int index = -1;
-                    for(int i=0; i<popup.getComponentCount(); i++){
+                    for (int i = 0; i < popup.getComponentCount(); i++) {
                         Object o = popup.getComponent(i);
-                        if(o instanceof JMenuItem && ((JMenuItem)o).getText().equals(Res.getString("menuitem.rename"))){
+                        if (o instanceof JMenuItem && ((JMenuItem)o).getText().equals(Res.getString("menuitem.rename"))) {
                             index = i;
                             break;
                         }
