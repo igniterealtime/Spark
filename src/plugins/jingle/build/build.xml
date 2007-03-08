@@ -68,12 +68,6 @@
             </fileset>
         </copy>
 
-        <copy todir="${target.dir}">
-            <fileset dir="${plug.dir}/src/java/">
-                <include name="**/*.properties"/>
-            </fileset>
-        </copy>
-
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
         <!--<zip zipfile="${target.dir}/jingle.jar" basedir="${target.dir}"/>-->

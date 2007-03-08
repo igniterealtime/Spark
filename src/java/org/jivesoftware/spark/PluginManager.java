@@ -312,7 +312,7 @@ public class PluginManager implements MainWindowListener {
 
                 registerPlugin(pluginClass);
             }
-            catch (Exception ex) {
+            catch (Throwable ex) {
                 Log.error("Unable to load plugin " + clazz + ".", ex);
             }
         }
@@ -591,7 +591,7 @@ public class PluginManager implements MainWindowListener {
             zipFile.close();
             zipFile = null;
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             Log.error("Error unzipping plugin", e);
         }
     }
