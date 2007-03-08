@@ -751,10 +751,21 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         return size;
     }
 
+    /**
+     * Sets the name of group.
+     *
+     * @param groupName the contact group name.
+     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
 
+    /**
+     * Returns the "pretty" title of the ContactGroup.
+     *
+     * @param title the title.
+     * @return the new title.
+     */
     public String getGroupTitle(String title) {
         int lastIndex = title.lastIndexOf("::");
         if (lastIndex != -1) {
@@ -764,23 +775,42 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         return title;
     }
 
+    /**
+     * Returns true if the group is nested.
+     *
+     * @param groupName the name of the group.
+     * @return true if the group is nested.
+     */
     public boolean isSubGroup(String groupName) {
         return groupName.indexOf("::") != -1;
     }
 
+    /**
+     * Returns true if this group is nested.
+     *
+     * @return true if nested.
+     */
     public boolean isSubGroup() {
         return isSubGroup(getGroupName());
     }
 
+    /**
+     * Returns the underlying container for the JList.
+     *
+     * @return the underlying container of the JList.
+     */
     public JPanel getListPanel() {
         return listPanel;
     }
 
+    /**
+     * Adds an internal popup listesner.
+     */
     private void addPopupWindow() {
         final Timer timer = new Timer(500, new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 canShowPopup = true;
-                motionListener.mouseMoved(mouseEvent);
+
             }
         });
 
@@ -792,6 +822,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             public void mouseExited(MouseEvent mouseEvent) {
                 timer.stop();
                 canShowPopup = false;
+                ContactInfoWindow.getInstance().checkWindow();
             }
         });
 
@@ -819,6 +850,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
     }
 
+    /**
+     * Displays the <code>ContactInfoWindow</code>.
+     *
+     * @param e the mouseEvent that triggered this event.
+     */
     private void displayWindow(MouseEvent e) {
         ContactInfoWindow.getInstance().display(this, e);
     }

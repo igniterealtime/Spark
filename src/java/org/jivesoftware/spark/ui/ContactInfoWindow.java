@@ -24,6 +24,13 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+import javax.swing.UIManager;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -37,24 +44,17 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-import javax.swing.UIManager;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
  *
  * @author Derek DeMoro
  */
-public class ContactInfoWindow extends JPanel {
+public class ContactInfoWindow extends JPanel implements MouseListener {
     private final JLabel nicknameLabel = new JLabel();
     private final JMultilineLabel statusLabel = new JMultilineLabel();
     private final JLabel fullJIDLabel = new JLabel();
@@ -156,35 +156,7 @@ public class ContactInfoWindow extends JPanel {
 
         setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 
-        window.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                inWindow = true;
-            }
-
-            public void mouseExited(MouseEvent e) {
-                Point point = e.getPoint();
-
-                Dimension dim = window.getSize();
-
-                int x = (int)point.getX();
-                int y = (int)point.getY();
-
-                boolean close = false;
-
-                if (x < 0 || x >= dim.getWidth()) {
-                    close = true;
-                }
-
-                if (y < 0 || y >= dim.getHeight()) {
-                    close = true;
-                }
-
-                if (close) {
-                    inWindow = false;
-                    checkWindow();
-                }
-            }
-        });
+        window.addMouseListener(this);
 
         window.getContentPane().add(this);
 
@@ -233,6 +205,9 @@ public class ContactInfoWindow extends JPanel {
                 if (!inWindow) {
                     window.setVisible(false);
                     contactItem = null;
+                }
+                else {
+                    System.out.println("In window");
                 }
             }
         };
@@ -341,7 +316,7 @@ public class ContactInfoWindow extends JPanel {
             Log.error(e);
         }
 
-        toolbar.removeAll();
+        clearToolbar();
     }
 
     public ContactItem getContactItem() {
@@ -349,14 +324,12 @@ public class ContactInfoWindow extends JPanel {
     }
 
     public void addChatRoomButton(ChatRoomButton button) {
-        toolbar.add(button);
-        window.invalidate();
-        window.validate();
-        window.repaint();
+       addToolbarComponent(button);
     }
 
     public void addToolbarComponent(Component comp) {
         toolbar.add(comp);
+        comp.addMouseListener(this);
         window.invalidate();
         window.validate();
         window.repaint();
@@ -377,5 +350,54 @@ public class ContactInfoWindow extends JPanel {
         size.width = 250;
         size.height = 125;
         return size;
+    }
+
+    public void mouseEntered(MouseEvent e) {
+        inWindow = true;
+    }
+
+    public void mouseExited(MouseEvent e) {
+        Point point = e.getPoint();
+
+        Dimension dim = window.getSize();
+
+        int x = (int)point.getX();
+        int y = (int)point.getY();
+
+        boolean close = false;
+
+        if (x < 0 || x >= dim.getWidth()) {
+            close = true;
+        }
+
+        if (y < 0 || y >= dim.getHeight()) {
+            close = true;
+        }
+
+        if (close) {
+            inWindow = false;
+            checkWindow();
+        }
+
+        System.out.println("Mouse Exited");
+    }
+
+
+    public void mouseClicked(MouseEvent mouseEvent) {
+    }
+
+    public void mousePressed(MouseEvent mouseEvent) {
+    }
+
+    public void mouseReleased(MouseEvent mouseEvent) {
+    }
+
+    private void clearToolbar() {
+        for (int i = 0; i < toolbar.getComponentCount(); i++) {
+            Component comp = toolbar.getComponent(i);
+            comp.removeMouseListener(this);
+        }
+
+        toolbar.removeAll();
     }
 }
