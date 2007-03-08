@@ -261,6 +261,8 @@ public class SparkTransferManager {
             Log.error(e);
         }
 
+        chatRoom.increaseUnreadMessageCount();
+
         chatRoom.scrollToBottom();
 
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
