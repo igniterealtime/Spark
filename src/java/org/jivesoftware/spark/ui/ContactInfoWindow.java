@@ -206,9 +206,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
                     window.setVisible(false);
                     contactItem = null;
                 }
-                else {
-                    System.out.println("In window");
-                }
             }
         };
 
@@ -324,7 +321,7 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
     }
 
     public void addChatRoomButton(ChatRoomButton button) {
-       addToolbarComponent(button);
+        addToolbarComponent(button);
     }
 
     public void addToolbarComponent(Component comp) {
@@ -378,8 +375,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
             inWindow = false;
             checkWindow();
         }
-
-        System.out.println("Mouse Exited");
     }
 
 
