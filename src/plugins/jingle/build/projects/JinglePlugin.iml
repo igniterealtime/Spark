@@ -40,28 +40,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/JingleMedia.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../../smack/jingle/media/source" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/JingleExtension.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../../smack/jingle/extension/source" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/dist/commons-logging-adapters-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -107,7 +85,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/JVolume.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/concurrent.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -116,7 +94,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/dist/concurrent.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/dist/smackx-jingle.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
