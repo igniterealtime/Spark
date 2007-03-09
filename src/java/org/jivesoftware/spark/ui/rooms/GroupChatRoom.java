@@ -15,6 +15,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
+import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -45,6 +46,17 @@ import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -57,27 +69,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
  */
 public final class GroupChatRoom extends ChatRoom {
     private final MultiUserChat chat;
-
-    // Define Listeners
-    private final AndFilter chatFilter;
-    private final AndFilter presenceFilter;
-
 
     private final String roomname;
     private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
@@ -108,15 +104,15 @@ public final class GroupChatRoom extends ChatRoom {
      */
     public GroupChatRoom(final MultiUserChat chat) {
         this.chat = chat;
+
         // Create the filter and register with the current connection
         // making sure to filter by room
-        chatFilter = new AndFilter(new PacketTypeFilter(Message.class), new FromContainsFilter(chat.getRoom()));
-        // We only want to listen to the presence in this room, no other.
-        presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(chat.getRoom()));
+        PacketFilter fromFilter = new FromContainsFilter(chat.getRoom());
+        PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
+        PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
 
-        // Register PacketListeners
-        SparkManager.getConnection().addPacketListener(this, chatFilter);
-        SparkManager.getConnection().addPacketListener(this, presenceFilter);
+        // Add packet Listener.
+        SparkManager.getConnection().addPacketListener(this, andFilter);
 
         // Thie Room Name is the same as the ChatRoom name
         roomname = chat.getRoom();
@@ -377,15 +373,6 @@ public final class GroupChatRoom extends ChatRoom {
      */
     public String getNickname() {
         return chat.getNickname();
-    }
-
-    /**
-     * Returns the ChatFilter.
-     *
-     * @return the chatfilter for this groupchat.
-     */
-    public PacketFilter getPacketFilter() {
-        return chatFilter;
     }
 
     /**
