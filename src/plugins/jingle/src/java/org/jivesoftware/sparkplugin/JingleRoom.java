@@ -19,7 +19,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -88,12 +87,12 @@ public class JingleRoom extends JPanel {
 
         // Build Control Panel
         final JPanel controlPanel = buildControlPanel();
-        add(controlPanel, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+        add(controlPanel, new GridBagConstraints(1, 6, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
 
         // Add Previous Conversation
         historyPanel = new PreviousConversationPanel();
         historyPanel.addPreviousConversations("");
-        add(historyPanel, new GridBagConstraints(1, 8, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 100));
+        //  add(historyPanel, new GridBagConstraints(1, 8, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 100));
 
         // Setup default settings
         setupDefaults();
@@ -179,7 +178,6 @@ public class JingleRoom extends JPanel {
             }
 
         });
-
 
 
         hangUpButton.addActionListener(new ActionListener() {
