@@ -17,34 +17,58 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="Default.adiumemoticonset_DIR" Directory_Parent="emoticons_DIR" DefaultDir="Defaul~1.adi|Default.adiumemoticonset"/>
     <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="Deskto~1|DesktopFolder" IsPseudoRoot="1"/>
+    <ROW Directory="GTalk.AdiumEmoticonset_DIR" Directory_Parent="emoticons_DIR" DefaultDir="GTalk~1.Adi|GTalk.AdiumEmoticonset"/>
+    <ROW Directory="POPO.adiumemoticonset_DIR" Directory_Parent="emoticons_DIR" DefaultDir="POPO~1.adi|POPO.adiumemoticonset"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
     <ROW Directory="bin_DIR" Directory_Parent="APPDIR" DefaultDir="bin"/>
     <ROW Directory="documentation_DIR" Directory_Parent="APPDIR" DefaultDir="docume~1|documentation"/>
     <ROW Directory="emoticons_DIR" Directory_Parent="xtra_DIR" DefaultDir="emotic~1|emoticons"/>
+    <ROW Directory="fastpath_DIR" Directory_Parent="plugins_DIR" DefaultDir="fastpath"/>
+    <ROW Directory="idlelinux_DIR" Directory_Parent="plugins_DIR" DefaultDir="idleli~1|idlelinux"/>
     <ROW Directory="images_DIR" Directory_Parent="documentation_DIR" DefaultDir="images"/>
+    <ROW Directory="jingle_DIR" Directory_Parent="plugins_DIR" DefaultDir="jingle"/>
+    <ROW Directory="jniwrapper_DIR" Directory_Parent="plugins_DIR" DefaultDir="jniwra~1|jniwrapper"/>
+    <ROW Directory="lib_1_DIR" Directory_Parent="fastpath_DIR" DefaultDir="lib"/>
+    <ROW Directory="lib_2_DIR" Directory_Parent="idlelinux_DIR" DefaultDir="lib"/>
+    <ROW Directory="lib_3_DIR" Directory_Parent="jingle_DIR" DefaultDir="lib"/>
+    <ROW Directory="lib_4_DIR" Directory_Parent="jniwrapper_DIR" DefaultDir="lib"/>
+    <ROW Directory="lib_5_DIR" Directory_Parent="sparkphone_DIR" DefaultDir="lib"/>
+    <ROW Directory="lib_6_DIR" Directory_Parent="spelling_plugin_DIR" DefaultDir="lib"/>
     <ROW Directory="lib_DIR" Directory_Parent="APPDIR" DefaultDir="lib"/>
     <ROW Directory="linux_DIR" Directory_Parent="lib_DIR" DefaultDir="linux"/>
     <ROW Directory="logs_DIR" Directory_Parent="APPDIR" DefaultDir="logs"/>
+    <ROW Directory="mac_DIR" Directory_Parent="lib_DIR" DefaultDir="mac"/>
     <ROW Directory="plugins_DIR" Directory_Parent="APPDIR" DefaultDir="plugins"/>
     <ROW Directory="resources_DIR" Directory_Parent="APPDIR" DefaultDir="resour~1|resources"/>
     <ROW Directory="sounds_DIR" Directory_Parent="resources_DIR" DefaultDir="sounds"/>
+    <ROW Directory="sparkEmoticonSet_DIR" Directory_Parent="emoticons_DIR" DefaultDir="sparkE~1|sparkEmoticonSet"/>
+    <ROW Directory="sparkphone_DIR" Directory_Parent="plugins_DIR" DefaultDir="sparkp~1|sparkphone"/>
+    <ROW Directory="spelling_plugin_DIR" Directory_Parent="plugins_DIR" DefaultDir="spelli~1|spelling-plugin"/>
     <ROW Directory="windows_DIR" Directory_Parent="lib_DIR" DefaultDir="windows"/>
     <ROW Directory="xtra_DIR" Directory_Parent="APPDIR" DefaultDir="xtra"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="Default.adiumemoticonset.zip" ComponentId="{C18F300F-EF44-4D92-845F-1B2C6387C048}" Directory_="emoticons_DIR" Attributes="0" KeyPath="Default.adiumemoticonset.zip" FullKeyPath="APPDIR\xtra\emoticons"/>
     <ROW Component="IeEmbed.exe" ComponentId="{2552E216-7836-4ED2-8676-8F0DAC7CFBE4}" Directory_="windows_DIR" Attributes="0" KeyPath="IeEmbed.exe" FullKeyPath="APPDIR\lib\windows\IeEmbed.exe"/>
     <ROW Component="Info.plist" ComponentId="{DFF8C4AC-6AF8-48D8-8960-7D2930A4B487}" Directory_="resources_DIR" Attributes="0" KeyPath="Info.plist" FullKeyPath="APPDIR\resources"/>
+    <ROW Component="JavaSoundStream.fix.jar" ComponentId="{04EE1532-7F86-4D68-B358-506EE4FA03BD}" Directory_="mac_DIR" Attributes="0" KeyPath="JavaSoundStream.fix.jar" FullKeyPath="APPDIR\lib\mac"/>
     <ROW Component="MozEmbed.exe" ComponentId="{80FB601E-4D1E-47CC-8900-72DAF42B0771}" Directory_="windows_DIR" Attributes="0" KeyPath="MozEmbed.exe" FullKeyPath="APPDIR\lib\windows\MozEmbed.exe"/>
     <ROW Component="Spark" ComponentId="{EBD3450E-80F9-4F19-9AC6-A3750F7BD93B}" Directory_="APPDIR" Attributes="4" KeyPath="Spark" FullKeyPath="HK_UM\Software\Spark"/>
     <ROW Component="Spark.exe" ComponentId="{64B04163-3A7C-4F9F-9F72-2E2FEDB7FE4D}" Directory_="APPDIR" Attributes="0" KeyPath="Spark.exe" FullKeyPath="APPDIR\Spark.exe"/>
     <ROW Component="Your_Product.exe" ComponentId="{0CCEE694-7AA5-4D78-BA82-A5001AF3489F}" Directory_="APPDIR" Attributes="0" KeyPath="Your_Product.exe" FullKeyPath="APPDIR\starter.exe"/>
     <ROW Component="activation.jar" ComponentId="{4AA0D33E-9C25-4CA7-8C10-4CE4FBF116A0}" Directory_="lib_DIR" Attributes="0" KeyPath="activation.jar" FullKeyPath="APPDIR\lib"/>
+    <ROW Component="adore.png" ComponentId="{3F15B341-6F34-44C3-A645-BEF54DC9EBC0}" Directory_="POPO.adiumemoticonset_DIR" Attributes="0" KeyPath="adore.png" FullKeyPath="APPDIR\xtra\emoticons\POPO.adiumemoticonset"/>
+    <ROW Component="angry.gif" ComponentId="{916C9A34-9DE8-44F6-BEFF-1438BCC91D43}" Directory_="GTalk.AdiumEmoticonset_DIR" Attributes="0" KeyPath="angry.gif" FullKeyPath="APPDIR\xtra\emoticons\GTalk.AdiumEmoticonset"/>
+    <ROW Component="angry.png" ComponentId="{E7DC932A-BD68-4DDC-8C56-28806DB1151C}" Directory_="Default.adiumemoticonset_DIR" Attributes="0" KeyPath="angry.png" FullKeyPath="APPDIR\xtra\emoticons\Default.adiumemoticonset"/>
+    <ROW Component="angry.png_1" ComponentId="{506133C3-CA17-4F56-BD1E-EA8E88115F2B}" Directory_="sparkEmoticonSet_DIR" Attributes="0" KeyPath="angry.png_1" FullKeyPath="APPDIR\xtra\emoticons\sparkEmoticonSet"/>
     <ROW Component="banner_spark.gif" ComponentId="{73562780-810A-49E3-B2D2-F77E2C2F837E}" Directory_="images_DIR" Attributes="0" KeyPath="banner_spark.gif" FullKeyPath="APPDIR\documentation\images"/>
     <ROW Component="bell.wav" ComponentId="{EF2B5A55-1F75-4FD9-AA4A-D74E2E68E693}" Directory_="sounds_DIR" Attributes="0" KeyPath="bell.wav" FullKeyPath="APPDIR\resources\sounds"/>
     <ROW Component="builder.jar" ComponentId="{795A80F8-B5ED-4AD1-936D-C899D0372A3D}" Directory_="documentation_DIR" Attributes="0" KeyPath="builder.jar" FullKeyPath="APPDIR\documentation"/>
+    <ROW Component="commons_logging_1.1.jar" ComponentId="{60AA8A87-CDE6-4DE1-BFB3-6FEE07A165EA}" Directory_="lib_3_DIR" Attributes="0" KeyPath="commons_logging_1.1.jar" FullKeyPath="APPDIR\plugins\jingle\lib"/>
+    <ROW Component="concurrent.jar" ComponentId="{A1202362-96D9-4670-BEEA-1866B39133BB}" Directory_="lib_5_DIR" Attributes="0" KeyPath="concurrent.jar_1" FullKeyPath="APPDIR\plugins\sparkphone\lib"/>
+    <ROW Component="emoticons" ComponentId="{18FACE0B-277B-448D-B000-7CDADC025402}" Directory_="emoticons_DIR" Attributes="0"/>
     <ROW Component="error.log" ComponentId="{70AD4F3B-9CDF-4026-AA4D-5F36707989ED}" Directory_="logs_DIR" Attributes="0" KeyPath="error.log" FullKeyPath="APPDIR\logs"/>
     <ROW Component="fastpath.jar" ComponentId="{503F9197-8958-4BEC-822A-94E0E6E1D4C4}" Directory_="plugins_DIR" Attributes="0" KeyPath="fastpath.jar" FullKeyPath="APPDIR\plugins"/>
     <ROW Component="jdic.dll" ComponentId="{17D3EE65-D6C1-467E-B25A-676C0EEFAD93}" Directory_="windows_DIR" Attributes="0" KeyPath="jdic.dll" FullKeyPath="APPDIR\lib\windows\jdic.dll"/>
@@ -60,6 +84,7 @@
     <ROW Component="jmg723.dll" ComponentId="{884A36AB-FCD1-4F54-B50D-53D9AA6E9BD6}" Directory_="windows_DIR" Attributes="0" KeyPath="jmg723.dll" FullKeyPath="APPDIR\lib\windows\jmg723.dll"/>
     <ROW Component="jmgdi.dll" ComponentId="{5FD803C6-2D99-4911-BD62-83CD51C3795B}" Directory_="windows_DIR" Attributes="0" KeyPath="jmgdi.dll" FullKeyPath="APPDIR\lib\windows\jmgdi.dll"/>
     <ROW Component="jmgsm.dll" ComponentId="{C75223CF-98AD-42E0-99EE-9530BA464D79}" Directory_="windows_DIR" Attributes="0" KeyPath="jmgsm.dll" FullKeyPath="APPDIR\lib\windows\jmgsm.dll"/>
+    <ROW Component="jmh261.dll" ComponentId="{0A4025DF-828E-4223-9B58-F91C63135104}" Directory_="windows_DIR" Attributes="0" KeyPath="jmh261.dll" FullKeyPath="APPDIR\lib\windows\jmh261.dll"/>
     <ROW Component="jmh263enc.dll" ComponentId="{A2EF2811-6D94-4F96-8FE3-E3C9AF940FA4}" Directory_="windows_DIR" Attributes="0" KeyPath="jmh263enc.dll" FullKeyPath="APPDIR\lib\windows\jmh263enc.dll"/>
     <ROW Component="jmjpeg.dll" ComponentId="{D00EC1E7-33F6-46B0-8E52-5734E5B856B4}" Directory_="windows_DIR" Attributes="0" KeyPath="jmjpeg.dll" FullKeyPath="APPDIR\lib\windows\jmjpeg.dll"/>
     <ROW Component="jmmci.dll" ComponentId="{3DFF550E-85FF-456C-A756-0E71DE8BAEF8}" Directory_="windows_DIR" Attributes="0" KeyPath="jmmci.dll" FullKeyPath="APPDIR\lib\windows\jmmci.dll"/>
@@ -70,46 +95,102 @@
     <ROW Component="jmvfw.dll" ComponentId="{74EFBC0E-CD17-4FC0-8B9A-59698E9066D7}" Directory_="windows_DIR" Attributes="0" KeyPath="jmvfw.dll" FullKeyPath="APPDIR\lib\windows\jmvfw.dll"/>
     <ROW Component="jmvh263.dll" ComponentId="{DCAF46F2-9CCF-4032-A38E-3782372EE08B}" Directory_="windows_DIR" Attributes="0" KeyPath="jmvh263.dll" FullKeyPath="APPDIR\lib\windows\jmvh263.dll"/>
     <ROW Component="jniwrap.dll" ComponentId="{CB50B6AC-1A6C-4603-A7E9-5FA0699A8487}" Directory_="resources_DIR" Attributes="0" KeyPath="jniwrap.dll" FullKeyPath="APPDIR\resources\jniwrap.dll"/>
+    <ROW Component="jniwrap_3.5.jar" ComponentId="{3CC7714E-C4EC-408C-B472-3C9E36579961}" Directory_="lib_4_DIR" Attributes="0" KeyPath="jniwrap_3.5.jar" FullKeyPath="APPDIR\plugins\jniwrapper\lib"/>
+    <ROW Component="jsound.dll" ComponentId="{6C41EA93-7D81-4295-AB49-1BC0F5B9B420}" Directory_="windows_DIR" Attributes="0" KeyPath="jsound.dll" FullKeyPath="APPDIR\lib\windows\jsound.dll"/>
+    <ROW Component="libLinuxIdle.so" ComponentId="{1CD59769-FAB9-4A05-8A31-B1916B50E5AF}" Directory_="lib_2_DIR" Attributes="0" KeyPath="libLinuxIdle.so" FullKeyPath="APPDIR\plugins\idlelinux\lib"/>
+    <ROW Component="plugin.xml" ComponentId="{BAD594A7-6E96-4AE1-AF91-574D0760EF53}" Directory_="fastpath_DIR" Attributes="0" KeyPath="plugin.xml" FullKeyPath="APPDIR\plugins\fastpath"/>
+    <ROW Component="plugin.xml_1" ComponentId="{F9EC3546-AD86-4FEE-9493-43B857697E57}" Directory_="idlelinux_DIR" Attributes="0" KeyPath="plugin.xml_1" FullKeyPath="APPDIR\plugins\idlelinux"/>
+    <ROW Component="plugin.xml_2" ComponentId="{986EF66A-C8E0-486E-B58B-5C24746ADA3E}" Directory_="jingle_DIR" Attributes="0" KeyPath="plugin.xml_2" FullKeyPath="APPDIR\plugins\jingle"/>
+    <ROW Component="plugin.xml_3" ComponentId="{0C4248FA-EF2D-42F3-A7AA-94DC0F8E5D5D}" Directory_="jniwrapper_DIR" Attributes="0" KeyPath="plugin.xml_3" FullKeyPath="APPDIR\plugins\jniwrapper"/>
+    <ROW Component="plugin.xml_4" ComponentId="{5FF50482-43B5-46A9-B8F6-5E2084035C16}" Directory_="sparkphone_DIR" Attributes="0" KeyPath="plugin.xml_4" FullKeyPath="APPDIR\plugins\sparkphone"/>
+    <ROW Component="plugin.xml_5" ComponentId="{40AC027C-85EE-4360-AB00-8CF28DA76C7B}" Directory_="spelling_plugin_DIR" Attributes="0" KeyPath="plugin.xml_5" FullKeyPath="APPDIR\plugins\spelling-plugin"/>
+    <ROW Component="plugin_classes.jar" ComponentId="{FE73B66A-49E0-41AF-A6EF-5C66FA3E5275}" Directory_="lib_1_DIR" Attributes="0" KeyPath="plugin_classes.jar" FullKeyPath="APPDIR\plugins\fastpath\lib"/>
+    <ROW Component="plugin_classes.jar_1" ComponentId="{9BFC91E6-002C-4635-9376-44A8CD83E138}" Directory_="lib_6_DIR" Attributes="0" KeyPath="plugin_classes.jar_5" FullKeyPath="APPDIR\plugins\spelling-plugin\lib"/>
     <ROW Component="startup.bat" ComponentId="{FE572BF0-B831-45A0-9011-65560A86D090}" Directory_="bin_DIR" Attributes="0" KeyPath="startup.bat" FullKeyPath="APPDIR\bin"/>
+    <ROW Component="systeminfo.dll" ComponentId="{82FE331B-ACA1-4660-98B0-B1D90268BF48}" Directory_="resources_DIR" Attributes="0" KeyPath="systeminfo.dll" FullKeyPath="APPDIR\resources\systeminfo.dll"/>
     <ROW Component="tray.dll" ComponentId="{9111ECAE-92BB-4C1C-BFBF-BF4A76C93CC1}" Directory_="windows_DIR" Attributes="0" KeyPath="tray.dll" FullKeyPath="APPDIR\lib\windows\tray.dll"/>
     <ROW Component="xtra" ComponentId="{50DC827D-F369-41B1-A8BD-426956FA71FB}" Directory_="xtra_DIR" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="startup.bat builder.jar banner_spark.gif activation.jar IeEmbed.exe jdic.dll jdic.jar MozEmbed.exe tray.dll error.log fastpath.jar Info.plist jniwrap.dll bell.wav Spark.exe Your_Product.exe Spark jmacm.dll jmam.dll jmcvid.dll jmdaud.dll jmdaudc.dll jmddraw.dll jmfjawt.dll jmg723.dll jmgdi.dll jmgsm.dll jmh263enc.dll jmjpeg.dll jmmci.dll jmmpa.dll jmmpegv.dll jmutil.dll jmvcm.dll jmvfw.dll jmvh263.dll xtra Default.adiumemoticonset.zip jdic.jar_1"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="startup.bat builder.jar banner_spark.gif activation.jar IeEmbed.exe jdic.dll jdic.jar MozEmbed.exe tray.dll error.log fastpath.jar Info.plist jniwrap.dll bell.wav Spark.exe Your_Product.exe Spark jmacm.dll jmam.dll jmcvid.dll jmdaud.dll jmdaudc.dll jmddraw.dll jmfjawt.dll jmg723.dll jmgdi.dll jmgsm.dll jmh263enc.dll jmjpeg.dll jmmci.dll jmmpa.dll jmmpegv.dll jmutil.dll jmvcm.dll jmvfw.dll jmvh263.dll xtra jdic.jar_1 JavaSoundStream.fix.jar jmh261.dll jsound.dll plugin_classes.jar plugin.xml libLinuxIdle.so plugin.xml_1 commons_logging_1.1.jar plugin.xml_2 jniwrap_3.5.jar plugin.xml_3 concurrent.jar plugin.xml_4 plugin_classes.jar_1 plugin.xml_5 systeminfo.dll angry.png angry.gif adore.png angry.png_1 emoticons"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Default.adiumemoticonset.zip" Component_="Default.adiumemoticonset.zip" FileName="Defaul~1.zip|Default.adiumemoticonset.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset.zip" SelfReg="false" Sequence="70"/>
-    <ROW File="GTalk.AdiumEmoticonset.zip" Component_="Default.adiumemoticonset.zip" FileName="GTalkA~1.zip|GTalk.AdiumEmoticonset.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset.zip" SelfReg="false" Sequence="71"/>
+    <ROW File="Emoticons.plist" Component_="angry.png" FileName="Emotic~1.pli|Emoticons.plist" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\Emoticons.plist" SelfReg="false" Sequence="125"/>
+    <ROW File="Emoticons.plist_1" Component_="angry.gif" FileName="Emotic~1.pli|Emoticons.plist" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\Emoticons.plist" SelfReg="false" Sequence="142"/>
+    <ROW File="Emoticons.plist_2" Component_="adore.png" FileName="Emotic~1.pli|Emoticons.plist" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\Emoticons.plist" SelfReg="false" Sequence="163"/>
+    <ROW File="Emoticons.plist_3" Component_="angry.png_1" FileName="Emotic~1.pli|Emoticons.plist" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\Emoticons.plist" SelfReg="false" Sequence="181"/>
     <ROW File="IeEmbed.exe" Component_="IeEmbed.exe" FileName="IeEmbed.exe" Attributes="0" SourcePath="..\..\target\build\lib\windows\IeEmbed.exe" SelfReg="false" Sequence="23"/>
     <ROW File="Info.plist" Component_="Info.plist" FileName="Info~1.pli|Info.plist" Attributes="0" SourcePath="..\..\target\build\resources\Info.plist" SelfReg="false" Sequence="34"/>
+    <ROW File="JainSipApi1.2.jar" Component_="concurrent.jar" FileName="JainSi~1.jar|JainSipApi1.2.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\JainSipApi1.2.jar" SelfReg="false" Sequence="108"/>
+    <ROW File="JavaSoundStream.fix.jar" Component_="JavaSoundStream.fix.jar" FileName="JavaSo~1.jar|JavaSoundStream.fix.jar" Attributes="0" SourcePath="..\..\target\build\lib\mac\JavaSoundStream.fix.jar" SelfReg="false" Sequence="78"/>
     <ROW File="LICENSE.html" Component_="builder.jar" FileName="LICENS~1.htm|LICENSE.html" Attributes="0" SourcePath="..\..\target\build\documentation\LICENSE.html" SelfReg="false" Sequence="9"/>
     <ROW File="MozEmbed.exe" Component_="MozEmbed.exe" FileName="MozEmbed.exe" Attributes="0" SourcePath="..\..\target\build\lib\windows\MozEmbed.exe" SelfReg="false" Sequence="26"/>
-    <ROW File="POPO.adiumemoticonset.zip" Component_="Default.adiumemoticonset.zip" FileName="POPOad~1.zip|POPO.adiumemoticonset.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset.zip" SelfReg="false" Sequence="72"/>
     <ROW File="README.html" Component_="builder.jar" FileName="README~1.htm|README.html" Attributes="0" SourcePath="..\..\target\build\documentation\README.html" SelfReg="false" Sequence="10"/>
     <ROW File="Spark.exe" Component_="Spark.exe" FileName="Spark.exe" Attributes="0" SourcePath="&lt;aijclw.exe&gt;" SelfReg="false" Sequence="43"/>
+    <ROW File="Speex.jar" Component_="commons_logging_1.1.jar" FileName="Speex.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\Speex.jar" SelfReg="false" Sequence="100"/>
     <ROW File="Your_Product.exe" Component_="Your_Product.exe" FileName="starter.exe" Attributes="0" SourcePath="&lt;aijcl.exe&gt;" SelfReg="false" Sequence="44"/>
     <ROW File="activation.jar" Component_="activation.jar" FileName="activa~1.jar|activation.jar" Attributes="0" SourcePath="..\..\target\build\lib\activation.jar" SelfReg="false" Sequence="13"/>
+    <ROW File="adore.png" Component_="adore.png" FileName="adore.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\adore.png" SelfReg="false" Sequence="154"/>
+    <ROW File="amazed.png" Component_="adore.png" FileName="amazed.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\amazed.png" SelfReg="false" Sequence="155"/>
+    <ROW File="angry.gif" Component_="angry.gif" FileName="angry.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\angry.gif" SelfReg="false" Sequence="139"/>
+    <ROW File="angry.png" Component_="angry.png" FileName="angry.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\angry.png" SelfReg="false" Sequence="119"/>
+    <ROW File="angry.png_1" Component_="angry.png_1" FileName="angry.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\angry.png" SelfReg="false" Sequence="175"/>
     <ROW File="asterisk_im_client.jar" Component_="activation.jar" FileName="asteri~1.jar|asterisk-im-client.jar" Attributes="0" SourcePath="..\..\target\build\lib\asterisk-im-client.jar" SelfReg="false" Sequence="14"/>
     <ROW File="banner_spark.gif" Component_="banner_spark.gif" FileName="banner~1.gif|banner-spark.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spark.gif" SelfReg="false" Sequence="4"/>
     <ROW File="banner_spring.gif" Component_="banner_spark.gif" FileName="banner~2.gif|banner-spring.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spring.gif" SelfReg="false" Sequence="5"/>
     <ROW File="base.jar" Component_="activation.jar" FileName="base.jar" Attributes="0" SourcePath="..\..\target\build\lib\base.jar" SelfReg="false" Sequence="15"/>
+    <ROW File="beat_brick.png" Component_="adore.png" FileName="beat_b~1.png|beat_brick.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\beat_brick.png" SelfReg="false" Sequence="156"/>
     <ROW File="bell.wav" Component_="bell.wav" FileName="bell.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\bell.wav" SelfReg="false" Sequence="37"/>
+    <ROW File="big_smile.png" Component_="adore.png" FileName="big_sm~1.png|big_smile.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\big_smile.png" SelfReg="false" Sequence="157"/>
+    <ROW File="blush.png" Component_="angry.png" FileName="blush.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\blush.png" SelfReg="false" Sequence="120"/>
+    <ROW File="blush.png_1" Component_="angry.png_1" FileName="blush.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\blush.png" SelfReg="false" Sequence="176"/>
+    <ROW File="boss.png" Component_="adore.png" FileName="boss.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\boss.png" SelfReg="false" Sequence="158"/>
     <ROW File="builder.jar" Component_="builder.jar" FileName="builder.jar" Attributes="0" SourcePath="..\..\target\build\documentation\builder.jar" SelfReg="false" Sequence="2"/>
+    <ROW File="canny.png" Component_="adore.png" FileName="canny.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\canny.png" SelfReg="false" Sequence="159"/>
     <ROW File="changelog.html" Component_="builder.jar" FileName="change~1.htm|changelog.html" Attributes="0" SourcePath="..\..\target\build\documentation\changelog.html" SelfReg="false" Sequence="3"/>
     <ROW File="chat_request.wav" Component_="bell.wav" FileName="chat_r~1.wav|chat_request.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\chat_request.wav" SelfReg="false" Sequence="38"/>
     <ROW File="chat_room.png" Component_="banner_spark.gif" FileName="chat-r~1.png|chat-room.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\chat-room.png" SelfReg="false" Sequence="6"/>
+    <ROW File="choler.png" Component_="adore.png" FileName="choler.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\choler.png" SelfReg="false" Sequence="160"/>
     <ROW File="comfyj.lic" Component_="Info.plist" FileName="comfyj.lic" Attributes="0" SourcePath="..\..\target\build\resources\comfyj.lic" SelfReg="false" Sequence="68"/>
+    <ROW File="commons_logging_1.1.jar" Component_="commons_logging_1.1.jar" FileName="common~1.jar|commons-logging-1.1.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\commons-logging-1.1.jar" SelfReg="false" Sequence="91"/>
+    <ROW File="commons_logging_adapters_1.1.jar" Component_="commons_logging_1.1.jar" FileName="common~2.jar|commons-logging-adapters-1.1.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\commons-logging-adapters-1.1.jar" SelfReg="false" Sequence="92"/>
+    <ROW File="commons_logging_api_1.1.jar" Component_="commons_logging_1.1.jar" FileName="common~3.jar|commons-logging-api-1.1.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\commons-logging-api-1.1.jar" SelfReg="false" Sequence="93"/>
+    <ROW File="concurrent.jar" Component_="commons_logging_1.1.jar" FileName="concur~1.jar|concurrent.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\concurrent.jar" SelfReg="false" Sequence="94"/>
+    <ROW File="concurrent.jar_1" Component_="concurrent.jar" FileName="concur~1.jar|concurrent.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\concurrent.jar" SelfReg="false" Sequence="107"/>
+    <ROW File="confuse.png" Component_="adore.png" FileName="confuse.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\confuse.png" SelfReg="false" Sequence="161"/>
+    <ROW File="confused.png" Component_="angry.png" FileName="confused.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\confused.png" SelfReg="false" Sequence="121"/>
+    <ROW File="confused.png_1" Component_="angry.png_1" FileName="confused.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\confused.png" SelfReg="false" Sequence="177"/>
     <ROW File="contact_list.png" Component_="banner_spark.gif" FileName="contac~1.png|contact-list.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\contact-list.png" SelfReg="false" Sequence="7"/>
+    <ROW File="cool.gif" Component_="angry.gif" FileName="cool.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\cool.gif" SelfReg="false" Sequence="140"/>
+    <ROW File="cool.png" Component_="angry.png" FileName="cool.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\cool.png" SelfReg="false" Sequence="122"/>
+    <ROW File="cool.png_1" Component_="angry.png_1" FileName="cool.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\cool.png" SelfReg="false" Sequence="178"/>
+    <ROW File="cry.gif" Component_="angry.gif" FileName="cry.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\cry.gif" SelfReg="false" Sequence="141"/>
+    <ROW File="cry.png" Component_="angry.png" FileName="cry.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\cry.png" SelfReg="false" Sequence="123"/>
+    <ROW File="cry.png_1" Component_="angry.png_1" FileName="cry.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\cry.png" SelfReg="false" Sequence="179"/>
+    <ROW File="devil.png" Component_="angry.png" FileName="devil.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\devil.png" SelfReg="false" Sequence="124"/>
+    <ROW File="devil.png_1" Component_="angry.png_1" FileName="devil.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\devil.png" SelfReg="false" Sequence="180"/>
     <ROW File="dom4j.jar" Component_="activation.jar" FileName="dom4j.jar" Attributes="0" SourcePath="..\..\target\build\lib\dom4j.jar" SelfReg="false" Sequence="16"/>
+    <ROW File="embarrassed.png" Component_="adore.png" FileName="embarr~1.png|embarrassed.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\embarrassed.png" SelfReg="false" Sequence="162"/>
     <ROW File="error.log" Component_="error.log" FileName="error.log" Attributes="0" SourcePath="..\..\target\build\logs\error.log" SelfReg="false" Sequence="30"/>
+    <ROW File="eyeRoll.gif" Component_="angry.png" FileName="eyeRoll.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\eyeRoll.gif" SelfReg="false" Sequence="126"/>
+    <ROW File="eyeRoll.gif_1" Component_="angry.png_1" FileName="eyeRoll.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\eyeRoll.gif" SelfReg="false" Sequence="182"/>
     <ROW File="fastpath.jar" Component_="fastpath.jar" FileName="fastpath.jar" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar" SelfReg="false" Sequence="31"/>
+    <ROW File="frown.gif" Component_="angry.gif" FileName="frown.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\frown.gif" SelfReg="false" Sequence="143"/>
+    <ROW File="grin.gif" Component_="angry.gif" FileName="grin.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\grin.gif" SelfReg="false" Sequence="144"/>
+    <ROW File="grin.png" Component_="angry.png" FileName="grin.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\grin.png" SelfReg="false" Sequence="127"/>
+    <ROW File="grin.png_1" Component_="angry.png_1" FileName="grin.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\grin.png" SelfReg="false" Sequence="183"/>
+    <ROW File="happy.png" Component_="angry.png" FileName="happy.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\happy.png" SelfReg="false" Sequence="128"/>
+    <ROW File="happy.png_1" Component_="angry.png_1" FileName="happy.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\happy.png" SelfReg="false" Sequence="184"/>
+    <ROW File="heart.gif" Component_="angry.gif" FileName="heart.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\heart.gif" SelfReg="false" Sequence="145"/>
+    <ROW File="hell_boy.png" Component_="adore.png" FileName="hell_boy.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\hell_boy.png" SelfReg="false" Sequence="164"/>
     <ROW File="i4jruntime.jar" Component_="activation.jar" FileName="i4jrun~1.jar|i4jruntime.jar" Attributes="0" SourcePath="..\..\target\build\lib\i4jruntime.jar" SelfReg="false" Sequence="17"/>
-    <ROW File="idlelinux.jar" Component_="fastpath.jar" FileName="idleli~1.jar|idlelinux.jar" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar" SelfReg="false" Sequence="80"/>
+    <ROW File="idlelinux.jar" Component_="fastpath.jar" FileName="idleli~1.jar|idlelinux.jar" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar" SelfReg="false" Sequence="76"/>
     <ROW File="incoming.wav" Component_="bell.wav" FileName="incoming.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\incoming.wav" SelfReg="false" Sequence="39"/>
     <ROW File="jdic.dll" Component_="jdic.dll" FileName="jdic.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.dll" SelfReg="false" Sequence="24"/>
     <ROW File="jdic.jar" Component_="jdic.jar" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.jar" SelfReg="false" Sequence="25"/>
-    <ROW File="jdic.jar_1" Component_="jdic.jar_1" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\linux\jdic.jar" SelfReg="false" Sequence="74"/>
+    <ROW File="jdic.jar_1" Component_="jdic.jar_1" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\linux\jdic.jar" SelfReg="false" Sequence="70"/>
+    <ROW File="jingle.jar" Component_="fastpath.jar" FileName="jingle.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle.jar" SelfReg="false" Sequence="102"/>
     <ROW File="jmacm.dll" Component_="jmacm.dll" FileName="jmacm.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmacm.dll" SelfReg="false" Sequence="49"/>
     <ROW File="jmam.dll" Component_="jmam.dll" FileName="jmam.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmam.dll" SelfReg="false" Sequence="50"/>
     <ROW File="jmcvid.dll" Component_="jmcvid.dll" FileName="jmcvid.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmcvid.dll" SelfReg="false" Sequence="51"/>
@@ -117,10 +198,14 @@
     <ROW File="jmdaudc.dll" Component_="jmdaudc.dll" FileName="jmdaudc.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmdaudc.dll" SelfReg="false" Sequence="53"/>
     <ROW File="jmddraw.dll" Component_="jmddraw.dll" FileName="jmddraw.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmddraw.dll" SelfReg="false" Sequence="54"/>
     <ROW File="jmf.jar" Component_="activation.jar" FileName="jmf.jar" Attributes="0" SourcePath="..\..\target\build\lib\jmf.jar" SelfReg="false" Sequence="46"/>
+    <ROW File="jmf.jar_1" Component_="jdic.jar_1" FileName="jmf.jar" Attributes="0" SourcePath="..\..\target\build\lib\linux\jmf.jar" SelfReg="false" Sequence="77"/>
+    <ROW File="jmf.jar_2" Component_="JavaSoundStream.fix.jar" FileName="jmf.jar" Attributes="0" SourcePath="..\..\target\build\lib\mac\jmf.jar" SelfReg="false" Sequence="79"/>
+    <ROW File="jmf.jar_3" Component_="jdic.jar" FileName="jmf.jar" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmf.jar" SelfReg="false" Sequence="82"/>
     <ROW File="jmfjawt.dll" Component_="jmfjawt.dll" FileName="jmfjawt.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmfjawt.dll" SelfReg="false" Sequence="55"/>
     <ROW File="jmg723.dll" Component_="jmg723.dll" FileName="jmg723.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmg723.dll" SelfReg="false" Sequence="56"/>
     <ROW File="jmgdi.dll" Component_="jmgdi.dll" FileName="jmgdi.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmgdi.dll" SelfReg="false" Sequence="57"/>
     <ROW File="jmgsm.dll" Component_="jmgsm.dll" FileName="jmgsm.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmgsm.dll" SelfReg="false" Sequence="58"/>
+    <ROW File="jmh261.dll" Component_="jmh261.dll" FileName="jmh261.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmh261.dll" SelfReg="false" Sequence="83"/>
     <ROW File="jmh263enc.dll" Component_="jmh263enc.dll" FileName="jmh263~1.dll|jmh263enc.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmh263enc.dll" SelfReg="false" Sequence="59"/>
     <ROW File="jmjpeg.dll" Component_="jmjpeg.dll" FileName="jmjpeg.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmjpeg.dll" SelfReg="false" Sequence="60"/>
     <ROW File="jmmci.dll" Component_="jmmci.dll" FileName="jmmci.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmmci.dll" SelfReg="false" Sequence="61"/>
@@ -132,31 +217,97 @@
     <ROW File="jmvh263.dll" Component_="jmvh263.dll" FileName="jmvh263.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmvh263.dll" SelfReg="false" Sequence="67"/>
     <ROW File="jniwrap.dll" Component_="jniwrap.dll" FileName="jniwrap.dll" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.dll" SelfReg="false" Sequence="35"/>
     <ROW File="jniwrap.lic" Component_="Info.plist" FileName="jniwrap.lic" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.lic" SelfReg="false" Sequence="36"/>
+    <ROW File="jniwrap_3.5.jar" Component_="jniwrap_3.5.jar" FileName="jniwra~1.jar|jniwrap-3.5.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper\lib\jniwrap-3.5.jar" SelfReg="false" Sequence="103"/>
     <ROW File="jniwrapper.jar" Component_="fastpath.jar" FileName="jniwra~1.jar|jniwrapper.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper.jar" SelfReg="false" Sequence="32"/>
-    <ROW File="libjdic.so" Component_="jdic.jar_1" FileName="libjdic.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libjdic.so" SelfReg="false" Sequence="75"/>
-    <ROW File="libmozembed_linux_gtk1.2.so" Component_="jdic.jar_1" FileName="libmoz~1.so|libmozembed-linux-gtk1.2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk1.2.so" SelfReg="false" Sequence="76"/>
-    <ROW File="libmozembed_linux_gtk2.so" Component_="jdic.jar_1" FileName="libmoz~2.so|libmozembed-linux-gtk2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk2.so" SelfReg="false" Sequence="77"/>
-    <ROW File="libtray.so" Component_="jdic.jar_1" FileName="libtray.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libtray.so" SelfReg="false" Sequence="78"/>
+    <ROW File="jsound.dll" Component_="jsound.dll" FileName="jsound.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jsound.dll" SelfReg="false" Sequence="84"/>
+    <ROW File="jspeex_0.9.7_jfcom.jar" Component_="commons_logging_1.1.jar" FileName="jspeex~1.jar|jspeex-0.9.7-jfcom.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\jspeex-0.9.7-jfcom.jar" SelfReg="false" Sequence="95"/>
+    <ROW File="jstun_0.6.1.jar" Component_="commons_logging_1.1.jar" FileName="jstun-~1.jar|jstun-0.6.1.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\jstun-0.6.1.jar" SelfReg="false" Sequence="96"/>
+    <ROW File="jstun_0.6.1.jar_1" Component_="concurrent.jar" FileName="jstun-~1.jar|jstun-0.6.1.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\jstun-0.6.1.jar" SelfReg="false" Sequence="109"/>
+    <ROW File="laugh.png" Component_="angry.png" FileName="laugh.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\laugh.png" SelfReg="false" Sequence="129"/>
+    <ROW File="laugh.png_1" Component_="angry.png_1" FileName="laugh.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\laugh.png" SelfReg="false" Sequence="185"/>
+    <ROW File="libLinuxIdle.so" Component_="libLinuxIdle.so" FileName="libLin~1.so|libLinuxIdle.so" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux\lib\libLinuxIdle.so" SelfReg="false" Sequence="88"/>
+    <ROW File="libjdic.so" Component_="jdic.jar_1" FileName="libjdic.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libjdic.so" SelfReg="false" Sequence="71"/>
+    <ROW File="libmozembed_linux_gtk1.2.so" Component_="jdic.jar_1" FileName="libmoz~1.so|libmozembed-linux-gtk1.2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk1.2.so" SelfReg="false" Sequence="72"/>
+    <ROW File="libmozembed_linux_gtk2.so" Component_="jdic.jar_1" FileName="libmoz~2.so|libmozembed-linux-gtk2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk2.so" SelfReg="false" Sequence="73"/>
+    <ROW File="libtray.so" Component_="jdic.jar_1" FileName="libtray.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libtray.so" SelfReg="false" Sequence="74"/>
+    <ROW File="log4j_1.2.8.jar" Component_="commons_logging_1.1.jar" FileName="log4j-~1.jar|log4j-1.2.8.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\log4j-1.2.8.jar" SelfReg="false" Sequence="97"/>
+    <ROW File="log4j_1.2.8.jar_1" Component_="concurrent.jar" FileName="log4j-~1.jar|log4j-1.2.8.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\log4j-1.2.8.jar" SelfReg="false" Sequence="110"/>
     <ROW File="login_dialog.png" Component_="banner_spark.gif" FileName="login-~1.png|login-dialog.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\login-dialog.png" SelfReg="false" Sequence="8"/>
-    <ROW File="mozembed_linux_gtk1.2" Component_="jdic.jar_1" FileName="mozemb~1.2|mozembed-linux-gtk1.2" Attributes="0" SourcePath="..\..\target\build\lib\linux\mozembed-linux-gtk1.2" SelfReg="false" Sequence="79"/>
+    <ROW File="look_down.png" Component_="adore.png" FileName="look_d~1.png|look_down.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\look_down.png" SelfReg="false" Sequence="165"/>
+    <ROW File="love.png" Component_="angry.png" FileName="love.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\love.png" SelfReg="false" Sequence="130"/>
+    <ROW File="love.png_1" Component_="angry.png_1" FileName="love.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\love.png" SelfReg="false" Sequence="186"/>
+    <ROW File="matrix.png" Component_="adore.png" FileName="matrix.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\matrix.png" SelfReg="false" Sequence="166"/>
+    <ROW File="mischief.png" Component_="angry.png" FileName="mischief.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\mischief.png" SelfReg="false" Sequence="131"/>
+    <ROW File="mischief.png_1" Component_="angry.png_1" FileName="mischief.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\mischief.png" SelfReg="false" Sequence="187"/>
+    <ROW File="monkey.gif" Component_="angry.gif" FileName="monkey.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\monkey.gif" SelfReg="false" Sequence="146"/>
+    <ROW File="mozembed_linux_gtk1.2" Component_="jdic.jar_1" FileName="mozemb~1.2|mozembed-linux-gtk1.2" Attributes="0" SourcePath="..\..\target\build\lib\linux\mozembed-linux-gtk1.2" SelfReg="false" Sequence="75"/>
+    <ROW File="nist_sdp_1.0.jar" Component_="concurrent.jar" FileName="nist-s~1.jar|nist-sdp-1.0.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\nist-sdp-1.0.jar" SelfReg="false" Sequence="111"/>
     <ROW File="outgoing.wav" Component_="bell.wav" FileName="outgoing.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\outgoing.wav" SelfReg="false" Sequence="40"/>
+    <ROW File="party.gif" Component_="angry.png" FileName="party.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\party.gif" SelfReg="false" Sequence="132"/>
+    <ROW File="party.gif_1" Component_="angry.png_1" FileName="party.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\party.gif" SelfReg="false" Sequence="188"/>
+    <ROW File="plain.png" Component_="angry.png" FileName="plain.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\plain.png" SelfReg="false" Sequence="133"/>
+    <ROW File="plain.png_1" Component_="angry.png_1" FileName="plain.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\plain.png" SelfReg="false" Sequence="189"/>
+    <ROW File="plugin.xml" Component_="plugin.xml" FileName="plugin.xml" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath\plugin.xml" SelfReg="false" Sequence="87"/>
+    <ROW File="plugin.xml_1" Component_="plugin.xml_1" FileName="plugin.xml" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux\plugin.xml" SelfReg="false" Sequence="90"/>
+    <ROW File="plugin.xml_2" Component_="plugin.xml_2" FileName="plugin.xml" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\plugin.xml" SelfReg="false" Sequence="101"/>
+    <ROW File="plugin.xml_3" Component_="plugin.xml_3" FileName="plugin.xml" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper\plugin.xml" SelfReg="false" Sequence="106"/>
+    <ROW File="plugin.xml_4" Component_="plugin.xml_4" FileName="plugin.xml" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\plugin.xml" SelfReg="false" Sequence="114"/>
+    <ROW File="plugin.xml_5" Component_="plugin.xml_5" FileName="plugin.xml" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin\plugin.xml" SelfReg="false" Sequence="117"/>
+    <ROW File="plugin_classes.jar" Component_="plugin_classes.jar" FileName="plugin~1.jar|plugin-classes.jar" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath\lib\plugin-classes.jar" SelfReg="false" Sequence="85"/>
+    <ROW File="plugin_classes.jar_1" Component_="libLinuxIdle.so" FileName="plugin~1.jar|plugin-classes.jar" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux\lib\plugin-classes.jar" SelfReg="false" Sequence="89"/>
+    <ROW File="plugin_classes.jar_2" Component_="commons_logging_1.1.jar" FileName="plugin~1.jar|plugin-classes.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\plugin-classes.jar" SelfReg="false" Sequence="98"/>
+    <ROW File="plugin_classes.jar_3" Component_="jniwrap_3.5.jar" FileName="plugin~1.jar|plugin-classes.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper\lib\plugin-classes.jar" SelfReg="false" Sequence="104"/>
+    <ROW File="plugin_classes.jar_4" Component_="concurrent.jar" FileName="plugin~1.jar|plugin-classes.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\plugin-classes.jar" SelfReg="false" Sequence="112"/>
+    <ROW File="plugin_classes.jar_5" Component_="plugin_classes.jar_1" FileName="plugin~1.jar|plugin-classes.jar" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin\lib\plugin-classes.jar" SelfReg="false" Sequence="115"/>
     <ROW File="presence_changed.wav" Component_="bell.wav" FileName="presen~1.wav|presence_changed.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\presence_changed.wav" SelfReg="false" Sequence="41"/>
+    <ROW File="rockout.gif" Component_="angry.gif" FileName="rockout.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\rockout.gif" SelfReg="false" Sequence="147"/>
+    <ROW File="sad.png" Component_="angry.png" FileName="sad.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\sad.png" SelfReg="false" Sequence="134"/>
+    <ROW File="sad.png_1" Component_="adore.png" FileName="sad.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\sad.png" SelfReg="false" Sequence="167"/>
+    <ROW File="sad.png_2" Component_="angry.png_1" FileName="sad.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\sad.png" SelfReg="false" Sequence="190"/>
+    <ROW File="shocked.gif" Component_="angry.gif" FileName="shocked.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\shocked.gif" SelfReg="false" Sequence="148"/>
+    <ROW File="shocked.png" Component_="angry.png" FileName="shocked.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\shocked.png" SelfReg="false" Sequence="135"/>
+    <ROW File="shocked.png_1" Component_="angry.png_1" FileName="shocked.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\shocked.png" SelfReg="false" Sequence="191"/>
+    <ROW File="silly.png" Component_="angry.png" FileName="silly.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\silly.png" SelfReg="false" Sequence="136"/>
+    <ROW File="silly.png_1" Component_="angry.png_1" FileName="silly.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\silly.png" SelfReg="false" Sequence="192"/>
+    <ROW File="sip_sdp.jar" Component_="concurrent.jar" FileName="sip-sdp.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone\lib\sip-sdp.jar" SelfReg="false" Sequence="113"/>
+    <ROW File="slant.gif" Component_="angry.gif" FileName="slant.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\slant.gif" SelfReg="false" Sequence="149"/>
+    <ROW File="sleepy.gif" Component_="angry.png" FileName="sleepy.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\sleepy.gif" SelfReg="false" Sequence="137"/>
+    <ROW File="sleepy.gif_1" Component_="angry.png_1" FileName="sleepy.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\sleepy.gif" SelfReg="false" Sequence="193"/>
     <ROW File="smack.jar" Component_="activation.jar" FileName="smack.jar" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar" SelfReg="false" Sequence="18"/>
     <ROW File="smackx.jar" Component_="activation.jar" FileName="smackx.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar" SelfReg="false" Sequence="20"/>
     <ROW File="smackx_debug.jar" Component_="activation.jar" FileName="smackx~1.jar|smackx-debug.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar" SelfReg="false" Sequence="19"/>
+    <ROW File="smackx_jingle.jar" Component_="commons_logging_1.1.jar" FileName="smackx~1.jar|smackx-jingle.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle\lib\smackx-jingle.jar" SelfReg="false" Sequence="99"/>
+    <ROW File="smile.gif" Component_="angry.gif" FileName="smile.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\smile.gif" SelfReg="false" Sequence="150"/>
+    <ROW File="smile.png" Component_="adore.png" FileName="smile.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\smile.png" SelfReg="false" Sequence="168"/>
     <ROW File="spark.jar" Component_="activation.jar" FileName="spark.jar" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar" SelfReg="false" Sequence="21"/>
-    <ROW File="sparkEmoticonSet.zip" Component_="Default.adiumemoticonset.zip" FileName="sparkE~1.zip|sparkEmoticonSet.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet.zip" SelfReg="false" Sequence="73"/>
     <ROW File="sparkphone.jar" Component_="fastpath.jar" FileName="sparkp~1.jar|sparkphone.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone.jar" SelfReg="false" Sequence="69"/>
     <ROW File="sparkplug_dev_guide.html" Component_="builder.jar" FileName="sparkp~1.htm|sparkplug_dev_guide.html" Attributes="0" SourcePath="..\..\target\build\documentation\sparkplug_dev_guide.html" SelfReg="false" Sequence="11"/>
     <ROW File="spelling_plugin.jar" Component_="fastpath.jar" FileName="spelli~1.jar|spelling-plugin.jar" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin.jar" SelfReg="false" Sequence="33"/>
+    <ROW File="spidy.png" Component_="adore.png" FileName="spidy.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\spidy.png" SelfReg="false" Sequence="169"/>
     <ROW File="startup.bat" Component_="startup.bat" FileName="startup.bat" Attributes="0" SourcePath="..\..\target\build\bin\startup.bat" SelfReg="false" Sequence="1"/>
+    <ROW File="startup.jar" Component_="activation.jar" FileName="startup.jar" Attributes="0" SourcePath="..\..\target\build\lib\startup.jar" SelfReg="false" Sequence="80"/>
     <ROW File="startup.sh" Component_="Info.plist" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\resources\startup.sh" SelfReg="false" Sequence="42"/>
     <ROW File="startup.sh_1" Component_="startup.bat" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\bin\startup.sh" SelfReg="false" Sequence="45"/>
+    <ROW File="straightface.gif" Component_="angry.gif" FileName="straig~1.gif|straightface.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\straightface.gif" SelfReg="false" Sequence="151"/>
     <ROW File="style.css" Component_="builder.jar" FileName="style.css" Attributes="0" SourcePath="..\..\target\build\documentation\style.css" SelfReg="false" Sequence="12"/>
+    <ROW File="sweet_kiss.png" Component_="adore.png" FileName="sweet_~1.png|sweet_kiss.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\sweet_kiss.png" SelfReg="false" Sequence="170"/>
     <ROW File="swingx.jar" Component_="activation.jar" FileName="swingx.jar" Attributes="0" SourcePath="..\..\target\build\lib\swingx.jar" SelfReg="false" Sequence="22"/>
     <ROW File="synthetica.jar" Component_="activation.jar" FileName="synthe~1.jar|synthetica.jar" Attributes="0" SourcePath="..\..\target\build\lib\synthetica.jar" SelfReg="false" Sequence="47"/>
     <ROW File="syntheticaBlueMoon.jar" Component_="activation.jar" FileName="synthe~2.jar|syntheticaBlueMoon.jar" Attributes="0" SourcePath="..\..\target\build\lib\syntheticaBlueMoon.jar" SelfReg="false" Sequence="48"/>
+    <ROW File="systeminfo.dll" Component_="systeminfo.dll" FileName="system~1.dll|systeminfo.dll" Attributes="0" SourcePath="..\..\target\build\resources\systeminfo.dll" SelfReg="false" Sequence="118"/>
+    <ROW File="systeminfo.jar" Component_="activation.jar" FileName="system~1.jar|systeminfo.jar" Attributes="0" SourcePath="..\..\target\build\lib\systeminfo.jar" SelfReg="false" Sequence="81"/>
+    <ROW File="thbbbpt.png" Component_="adore.png" FileName="thbbbpt.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\thbbbpt.png" SelfReg="false" Sequence="171"/>
+    <ROW File="tire.png" Component_="adore.png" FileName="tire.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\tire.png" SelfReg="false" Sequence="172"/>
+    <ROW File="tongue.gif" Component_="angry.gif" FileName="tongue.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\tongue.gif" SelfReg="false" Sequence="152"/>
+    <ROW File="too_sad.png" Component_="adore.png" FileName="too_sad.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\too_sad.png" SelfReg="false" Sequence="173"/>
     <ROW File="tray.dll" Component_="tray.dll" FileName="tray.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\tray.dll" SelfReg="false" Sequence="27"/>
+    <ROW File="waaaht.png" Component_="adore.png" FileName="waaaht.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset\waaaht.png" SelfReg="false" Sequence="174"/>
+    <ROW File="wink.gif" Component_="angry.gif" FileName="wink.gif" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset\wink.gif" SelfReg="false" Sequence="153"/>
+    <ROW File="wink.png" Component_="angry.png" FileName="wink.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset\wink.png" SelfReg="false" Sequence="138"/>
+    <ROW File="wink.png_1" Component_="angry.png_1" FileName="wink.png" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet\wink.png" SelfReg="false" Sequence="194"/>
+    <ROW File="winpack_3.5.jar" Component_="jniwrap_3.5.jar" FileName="winpac~1.jar|winpack-3.5.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper\lib\winpack-3.5.jar" SelfReg="false" Sequence="105"/>
+    <ROW File="wintertree.jar" Component_="plugin_classes.jar_1" FileName="winter~1.jar|wintertree.jar" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin\lib\wintertree.jar" SelfReg="false" Sequence="116"/>
+    <ROW File="workgroup.jar" Component_="plugin_classes.jar" FileName="workgr~1.jar|workgroup.jar" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath\lib\workgroup.jar" SelfReg="false" Sequence="86"/>
     <ROW File="xpp.jar" Component_="activation.jar" FileName="xpp.jar" Attributes="0" SourcePath="..\..\target\build\lib\xpp.jar" SelfReg="false" Sequence="28"/>
     <ROW File="xstream.jar" Component_="activation.jar" FileName="xstream.jar" Attributes="0" SourcePath="..\..\target\build\lib\xstream.jar" SelfReg="false" Sequence="29"/>
   </COMPONENT>
@@ -189,6 +340,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="xtra_DIR" Component_="xtra"/>
+    <ROW Directory_="emoticons_DIR" Component_="emoticons"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
@@ -212,7 +364,7 @@
     <ROW IniFile="Failure_Check" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Failure Check" Value="yes" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="JVM_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JVM Type" Value="favor_client" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="JVM_Type_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JVM Type" Value="favor_client" Action="0" Component_="Your_Product.exe"/>
-    <ROW IniFile="Main_Class" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.Spark" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Main_Class" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.launcher.Startup" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Main_Class_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.Restarter" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Maximum_Version" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Maximum Version" Value="1.6" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Maximum_Version_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Maximum Version" Value="1.6" Action="0" Component_="Your_Product.exe"/>
