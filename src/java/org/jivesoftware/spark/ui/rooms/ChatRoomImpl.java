@@ -196,6 +196,14 @@ public class ChatRoomImpl extends ChatRoom {
     public void closeChatRoom() {
         super.closeChatRoom();
 
+        // Send a cancel notification event on closing if listening.
+        if (!sendNotification) {
+            // send cancel
+            SparkManager.getMessageEventManager().sendCancelledNotification(getParticipantJID(), threadID);
+
+            sendNotification = true;
+        }
+
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removePacketListener(this);
@@ -606,7 +614,6 @@ public class ChatRoomImpl extends ChatRoom {
         getSendButton().setEnabled(false);
         SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
     }
-
 
 
     private void loadHistory() {
