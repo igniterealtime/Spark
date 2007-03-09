@@ -13,6 +13,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -187,7 +188,12 @@ public class ContactListAssistantPlugin implements Plugin {
             return;
         }
 
-        contactGroup.addContactItem(newContact);
+        if (!PresenceManager.isOnline(item.getJID())) {
+            contactGroup.addOfflineContactItem(item.getNickname(), item.getJID());
+        }
+        else {
+            contactGroup.addContactItem(newContact);
+        }
         contactGroup.clearSelection();
 
         final ContactGroup oldGroup = getContactGroup(item.getGroupName());
