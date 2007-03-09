@@ -10,15 +10,11 @@
 
 package org.jivesoftware.sparkplugin;
 
-import org.jivesoftware.jingleaudio.jmf.JmfMediaManager;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.jingle.IncomingJingleSession;
-import org.jivesoftware.smackx.jingle.JingleManager;
-import org.jivesoftware.smackx.jingle.JingleSession;
-import org.jivesoftware.smackx.jingle.JingleSessionRequest;
-import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
+import org.jivesoftware.smackx.jingle.*;
+import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
@@ -39,21 +35,13 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -84,7 +72,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
                 if (transportManager instanceof BridgedTransportManager) {
-                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
+                    jingleManager.addCreationListener((BridgedTransportManager) transportManager);
                 }
                 return true;
             }
@@ -122,7 +110,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomClosed(ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
-                    final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                    final ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                     if (sessions.containsKey(roomImpl.getJID())) {
                         endCall(roomImpl);
                     }
@@ -196,7 +184,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         OutgoingCall outgoingCall = new OutgoingCall();
