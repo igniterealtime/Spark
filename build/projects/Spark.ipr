@@ -411,7 +411,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../sparkPhone/SparkPhone.iml" filepath="$PROJECT_DIR$/../../../sparkPhone/SparkPhone.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK" />
