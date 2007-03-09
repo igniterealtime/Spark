@@ -176,7 +176,7 @@ public class PhonePlugin implements Plugin {
 
 
                     try {
-                        phoneEnabled = phoneClient.isPhoneEnabled(item.getFullJID());
+                        phoneEnabled = phoneClient.isPhoneEnabled(item.getJID());
                     }
                     catch (Exception e) {
                         Log.error("There was an error retrieving phone information.", e);
@@ -185,7 +185,7 @@ public class PhonePlugin implements Plugin {
                     if (phoneEnabled) {
                         Action callAction = new AbstractAction() {
                             public void actionPerformed(ActionEvent e) {
-                                callJID(item.getFullJID());
+                                callJID(item.getJID());
                             }
                         };
 

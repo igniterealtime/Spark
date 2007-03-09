@@ -169,11 +169,24 @@ public class ContactListAssistantPlugin implements Plugin {
     public void uninstall() {
     }
 
+    /**
+     * Copies or moves a new <code>ContactItem</code> into the <code>ContactGroup</code>.
+     *
+     * @param contactGroup the ContactGroup.
+     * @param item         the ContactItem to move.
+     * @param move         true if the ContactItem should be moved, otherwise false.
+     */
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item, final boolean move) {
-        ContactItem newContact = new ContactItem(item.getNickname(), item.getFullJID());
+        ContactItem newContact = new ContactItem(item.getNickname(), item.getJID());
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
+
+        // Do not copy/move a contact item only if it is not already in the Group.
+        if (contactGroup.getContactItemByJID(item.getJID()) != null) {
+            return;
+        }
+
         contactGroup.addContactItem(newContact);
         contactGroup.clearSelection();
 
@@ -182,7 +195,7 @@ public class ContactListAssistantPlugin implements Plugin {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 Roster roster = SparkManager.getConnection().getRoster();
-                RosterEntry entry = roster.getEntry(item.getFullJID());
+                RosterEntry entry = roster.getEntry(item.getJID());
 
                 RosterGroup groupFound = null;
 
@@ -240,7 +253,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
         // Remove entry from Roster Group
         Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(item.getFullJID());
+        RosterEntry entry = roster.getEntry(item.getJID());
 
         RosterGroup rosterGroup = null;
 

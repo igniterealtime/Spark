@@ -217,7 +217,7 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
 
 
         ContactItem item = (ContactItem)group.getList().getModel().getElementAt(loc);
-        if (item == null || item.getFullJID() == null) {
+        if (item == null || item.getJID() == null) {
             return;
         }
 
@@ -278,15 +278,15 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
         }
         statusLabel.setText(status);
 
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(contactItem.getFullJID()));
+        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(contactItem.getJID()));
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            String name = StringUtils.parseName(contactItem.getFullJID());
+            String name = StringUtils.parseName(contactItem.getJID());
             name = StringUtils.unescapeNode(name);
             fullJIDLabel.setText(transport.getName() + " - " + name);
         }
         else {
-            fullJIDLabel.setText(contactItem.getFullJID());
+            fullJIDLabel.setText(contactItem.getJID());
             fullJIDLabel.setIcon(null);
         }
 

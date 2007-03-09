@@ -130,7 +130,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     if (o instanceof java.util.Collection) {
                         Collection files = (Collection)o;
                         ContactItem source = (ContactItem)list.getSelectedValue();
-                        if (source == null || source.getFullJID() == null) {
+                        if (source == null || source.getJID() == null) {
                             return false;
                         }
 
@@ -219,7 +219,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item) {
-        ContactItem newContact = new ContactItem(item.getNickname(), item.getFullJID());
+        ContactItem newContact = new ContactItem(item.getNickname(), item.getJID());
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
@@ -231,7 +231,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 Roster roster = SparkManager.getConnection().getRoster();
-                RosterEntry entry = roster.getEntry(item.getFullJID());
+                RosterEntry entry = roster.getEntry(item.getJID());
 
                 RosterGroup groupFound = null;
 
@@ -287,7 +287,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
         // Remove entry from Roster Group
         Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(item.getFullJID());
+        RosterEntry entry = roster.getEntry(item.getJID());
 
         RosterGroup rosterGroup = null;
 

@@ -104,11 +104,11 @@ public class PresenceChangePlugin implements Plugin {
                 final Iterator contactItems = new ArrayList(contacts).iterator();
                 while (contactItems.hasNext()) {
                     ContactItem item = (ContactItem)contactItems.next();
-                    if (item.getFullJID().equals(StringUtils.parseBareAddress(from))) {
+                    if (item.getJID().equals(StringUtils.parseBareAddress(from))) {
                         contacts.remove(item);
 
                         ChatManager chatManager = SparkManager.getChatManager();
-                        ChatRoom chatRoom = chatManager.createChatRoom(item.getFullJID(), item.getNickname(), item.getNickname());
+                        ChatRoom chatRoom = chatManager.createChatRoom(item.getJID(), item.getNickname(), item.getNickname());
 
 
                         String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
@@ -116,7 +116,7 @@ public class PresenceChangePlugin implements Plugin {
                         String infoText = Res.getString("message.user.now.available.to.chat", item.getNickname(), time);
                         chatRoom.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
                         Message message = new Message();
-                        message.setFrom(item.getFullJID());
+                        message.setFrom(item.getJID());
                         message.setBody(infoText);
                         chatManager.getChatContainer().messageReceived(chatRoom, message);
                     }

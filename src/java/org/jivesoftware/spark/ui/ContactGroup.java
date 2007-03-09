@@ -220,7 +220,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     public void removeOfflineContactItem(String jid) {
         final List<ContactItem> items = new ArrayList<ContactItem>(offlineContacts);
         for (ContactItem item : items) {
-            if (item.getFullJID().equals(jid)) {
+            if (item.getJID().equals(jid)) {
                 removeOfflineContactItem(item);
             }
         }
@@ -253,7 +253,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public void addContactItem(ContactItem item) {
         // Remove from offline group if it exists
-        removeOfflineContactItem(item.getFullJID());
+        removeOfflineContactItem(item.getJID());
 
         if (model.contains(noContacts)) {
             model.remove(0);
@@ -407,7 +407,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         final Iterator iter = new ArrayList(contactItems).iterator();
         while (iter.hasNext()) {
             ContactItem item = (ContactItem)iter.next();
-            if (item.getFullJID().equals(bareJID)) {
+            if (item.getJID().equals(bareJID)) {
                 return item;
             }
         }

@@ -78,13 +78,13 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
             }
         });
 
-        lookupEmailAddress(contactInfoWindow.getContactItem().getContactJID());
+        lookupEmailAddress(contactInfoWindow.getContactItem().getJID());
     }
 
 
     private void lookupEmailAddress(final String jid) {
         final VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
-        if (contactInfoWindow.getContactItem() == null || !contactInfoWindow.getContactItem().getContactJID().equals(jid)) {
+        if (contactInfoWindow.getContactItem() == null || !contactInfoWindow.getContactItem().getJID().equals(jid)) {
             return;
         }
 
@@ -111,7 +111,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
      */
     private void startConversation(ContactItem item) {
         contactInfoWindow.dispose();
-        chatManager.activateChat(item.getContactJID(), item.getNickname());
+        chatManager.activateChat(item.getJID(), item.getNickname());
     }
 
     /**
@@ -122,7 +122,7 @@ public class ChatInfoPlugin implements Plugin, ContactInfoHandler {
     private void sendEmail(ContactItem item) {
         contactInfoWindow.dispose();
 
-        final VCard vcard = SparkManager.getVCardManager().getVCard(item.getContactJID());
+        final VCard vcard = SparkManager.getVCardManager().getVCard(item.getJID());
 
         String emailHome = vcard.getEmailHome();
 

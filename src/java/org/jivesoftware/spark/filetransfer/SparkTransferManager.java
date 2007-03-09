@@ -15,7 +15,6 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;
@@ -184,7 +183,7 @@ public class SparkTransferManager {
                     ChatRoom chatRoom = null;
                     Iterator iter = files.iterator();
                     while (iter.hasNext()) {
-                        chatRoom = sendFile((File)iter.next(), item.getFullJID());
+                        chatRoom = sendFile((File)iter.next(), item.getJID());
                     }
 
                     if (chatRoom != null) {
@@ -282,7 +281,7 @@ public class SparkTransferManager {
             File file = files[i];
             if (file.exists()) {
                 defaultDirectory = file.getParentFile();
-                sendFile(file, item.getFullJID());
+                sendFile(file, item.getJID());
             }
         }
     }

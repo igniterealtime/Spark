@@ -68,7 +68,7 @@ public class GroupChatRoomTransferHandler extends TransferHandler {
                 if (o instanceof ContactItem) {
                     // Invite User
                     final ContactItem contactItem = (ContactItem)o;
-                    String jid = contactItem.getFullJID();
+                    String jid = contactItem.getJID();
                     groupChatRoom.inviteUser(jid, "Please join the conference room.");
 
                     return true;

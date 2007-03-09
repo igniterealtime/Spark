@@ -332,7 +332,7 @@ public class ConferencePlugin {
             contactGroup.clearSelection();
 
             if (item.isAvailable()) {
-                jids.add(item.getFullJID());
+                jids.add(item.getJID());
             }
         }
 

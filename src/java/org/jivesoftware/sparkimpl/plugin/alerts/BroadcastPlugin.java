@@ -106,7 +106,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 Iterator selectedUsersIterator = selectedUsers.iterator();
                 if (selectedUsersIterator.hasNext()) {
                     ContactItem contactItem = (ContactItem)selectedUsersIterator.next();
-                    selectedUser = contactItem.getFullJID();
+                    selectedUser = contactItem.getJID();
                 }
 
                 String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
@@ -327,9 +327,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             for (ContactGroup contactGroup : contactList.getContactGroups()) {
                 for (ContactItem item : contactGroup.getContactItems()) {
-                    if (item != null && item.getFullJID() != null) {
+                    if (item != null && item.getJID() != null) {
                         final Message message = new Message();
-                        message.setTo(item.getFullJID());
+                        message.setTo(item.getJID());
                         message.setBody(messageText);
                         message.setProperty("broadcast", true);
                         SparkManager.getConnection().sendPacket(message);
@@ -355,7 +355,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         if (ModelUtil.hasLength(messageText)) {
             for (ContactItem item : group.getContactItems()) {
                 final Message message = new Message();
-                message.setTo(item.getFullJID());
+                message.setTo(item.getJID());
                 message.setProperty("broadcast", true);
                 message.setBody(messageText);
                 buf.append(item.getNickname()).append("\n");

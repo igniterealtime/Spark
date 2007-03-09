@@ -345,7 +345,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                             group.removeContactItem(item);
                             checkGroup(group);
 
-                            if (offlineGroup.getContactItemByJID(item.getFullJID()) == null) {
+                            if (offlineGroup.getContactItemByJID(item.getJID()) == null) {
                                 moveToOffline(item);
                                 offlineGroup.fireContactGroupUpdated();
                             }
@@ -1073,7 +1073,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
         else if (e.getSource() == chatMenu) {
             if (activeItem != null) {
-                SparkManager.getChatManager().activateChat(activeItem.getContactJID(), activeItem.getNickname());
+                SparkManager.getChatManager().activateChat(activeItem.getJID(), activeItem.getNickname());
             }
         }
         else if (e.getSource() == addContactMenu) {
@@ -1096,7 +1096,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             String oldNickname = activeItem.getNickname();
             String newNickname = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldNickname);
             if (ModelUtil.hasLength(newNickname)) {
-                String address = activeItem.getFullJID();
+                String address = activeItem.getJID();
                 ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
                 ContactItem contactItem = contactGroup.getContactItemByNickname(activeItem.getNickname());
                 contactItem.setNickname(newNickname);
@@ -1130,7 +1130,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
         Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(item.getFullJID());
+        RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && contactGroup != offlineGroup) {
             try {
                 RosterGroup rosterGroup = roster.getGroup(groupName);
@@ -1140,7 +1140,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         rosterGroup.removeEntry(rosterEntry);
                     }
                 }
-                contactGroup.removeContactItem(contactGroup.getContactItemByJID(item.getFullJID()));
+                contactGroup.removeContactItem(contactGroup.getContactItemByJID(item.getJID()));
                 checkGroup(contactGroup);
             }
             catch (Exception e) {
@@ -1151,7 +1151,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private void removeContactFromRoster(ContactItem item) {
         Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(item.getFullJID());
+        RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null) {
             try {
                 roster.removeEntry(entry);
@@ -1190,7 +1190,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         boolean handled = chatManager.fireContactItemDoubleClicked(item);
 
         if (!handled) {
-            chatManager.activateChat(item.getContactJID(), item.getNickname());
+            chatManager.activateChat(item.getJID(), item.getNickname());
         }
 
         clearSelectionList(item);
@@ -1280,7 +1280,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param item the ContactItem
      */
     public void showPopup(MouseEvent e, final ContactItem item) {
-        if (item.getFullJID() == null) {
+        if (item.getJID() == null) {
             return;
         }
 
@@ -1314,7 +1314,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
         if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != unfiledGroup) {
             Roster roster = SparkManager.getConnection().getRoster();
-            RosterEntry entry = roster.getEntry(item.getFullJID());
+            RosterEntry entry = roster.getEntry(item.getJID());
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
 
@@ -1341,7 +1341,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         while (contactGroups.hasNext()) {
             ContactGroup cGroup = (ContactGroup)contactGroups.next();
             if (cGroup.isSharedGroup()) {
-                ContactItem it = cGroup.getContactItemByJID(item.getFullJID());
+                ContactItem it = cGroup.getContactItemByJID(item.getJID());
                 if (it != null) {
                     isInSharedGroup = true;
                 }
@@ -1359,7 +1359,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         Action viewProfile = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
-                String jid = item.getFullJID();
+                String jid = item.getJID();
                 vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
             }
         };
@@ -1374,7 +1374,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         Action lastActivityAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    LastActivity activity = LastActivity.getLastActivity(SparkManager.getConnection(), item.getFullJID());
+                    LastActivity activity = LastActivity.getLastActivity(SparkManager.getConnection(), item.getJID());
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
@@ -1394,7 +1394,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         Action subscribeAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                String jid = item.getFullJID();
+                String jid = item.getJID();
                 Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);
 
@@ -1406,7 +1406,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
         Roster roster = SparkManager.getConnection().getRoster();
-        RosterEntry entry = roster.getEntry(item.getFullJID());
+        RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
         }
@@ -1473,7 +1473,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 contactGroup.clearSelection();
                 if (item.isAvailable()) {
                     Message mess = new Message();
-                    mess.setTo(item.getFullJID());
+                    mess.setTo(item.getJID());
                     mess.setBody(messageText);
 
                     SparkManager.getConnection().sendPacket(mess);
@@ -2043,13 +2043,13 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         offlineGroup.addContactItem(contactItem);
 
 
-        String jid = contactItem.getFullJID();
+        String jid = contactItem.getJID();
 
         final Roster roster = SparkManager.getConnection().getRoster();
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
             if (contactGroup != null) {
-                contactGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getFullJID());
+                contactGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID());
             }
         }
     }

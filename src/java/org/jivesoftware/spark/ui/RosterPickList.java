@@ -147,7 +147,7 @@ public class RosterPickList extends JPanel {
         final int no = values != null ? values.length : 0;
         for (int i = 0; i < no; i++) {
             ContactItem item = (ContactItem)values[i];
-            selectedContacts.add(item.getFullJID());
+            selectedContacts.add(item.getJID());
         }
 
         return selectedContacts;

@@ -431,6 +431,31 @@ public class VCardManager {
     }
 
     /**
+     * Forces a reload of a <code>VCard</code>.
+     *
+     * @param jid the jid of the user.
+     * @return the new VCard.
+     */
+    public VCard reloadVCard(String jid) {
+        jid = StringUtils.parseBareAddress(jid);
+        VCard vcard = new VCard();
+        try {
+            vcard.load(SparkManager.getConnection(), jid);
+            vcard.setJabberId(jid);
+            vcards.put(jid, vcard);
+        }
+        catch (XMPPException e) {
+            vcard.setError(new XMPPError(409));
+            vcards.put(jid, vcard);
+        }
+        
+        // Persist XML
+        persistVCard(jid, vcard);
+
+        return vcards.get(jid);
+    }
+
+    /**
      * Adds a new vCard to the cache.
      *
      * @param jid   the jid of the user.

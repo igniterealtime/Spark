@@ -183,7 +183,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
                 ContactItem contactItem = (ContactItem)object;
                 final List<Action> actions = new ArrayList<Action>();
                 for (Phone phone : phones) {
-                    final Collection<Action> itemActions = phone.getPhoneActions(contactItem.getFullJID());
+                    final Collection<Action> itemActions = phone.getPhoneActions(contactItem.getJID());
                     for (Action action : itemActions) {
                         actions.add(action);
                     }
@@ -223,7 +223,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
 
     public void handleContactInfo(ContactInfoWindow contactInfo) {
         final ContactItem contactItem = contactInfo.getContactItem();
-        final String jid = contactItem.getContactJID();
+        final String jid = contactItem.getJID();
         final List<Action> actions = new ArrayList<Action>();
         for (Phone phone : phones) {
             final Collection<Action> itemActions = phone.getPhoneActions(jid);

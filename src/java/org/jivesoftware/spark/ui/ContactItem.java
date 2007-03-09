@@ -19,9 +19,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
@@ -44,12 +43,15 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Represent a single contact within the <code>ContactList</code>.
+ */
 public class ContactItem extends JPanel {
     private JLabel imageLabel;
     private JLabel nicknameLabel;
     private JLabel descriptionLabel;
     private String nickname;
-    private String fullJID;
+    private String fullyQualifiedJID;
     private Icon icon;
 
     private String status;
@@ -66,7 +68,13 @@ public class ContactItem extends JPanel {
     private JLabel sideIcon;
 
 
-    public ContactItem(String nickname, String fullJID) {
+    /**
+     * Creates a new instance of a contact.
+     *
+     * @param nickname          the nickname of the contact.
+     * @param fullyQualifiedJID the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
+     */
+    public ContactItem(String nickname, String fullyQualifiedJID) {
         setLayout(new GridBagLayout());
 
         // Set default presence
@@ -98,52 +106,90 @@ public class ContactItem extends JPanel {
         add(sideIcon, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
         setNickname(nickname);
-        setFullJID(fullJID);
+
+        this.fullyQualifiedJID = fullyQualifiedJID;
     }
 
+    /**
+     * Returns the nickname of the contact.
+     *
+     * @return the nickname.
+     */
     public String getNickname() {
         return nickname;
     }
 
+    /**
+     * Sets the nickname of the contact.
+     *
+     * @param nickname the contact nickname.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
         nicknameLabel.setText(nickname);
     }
 
-    public String getFullJID() {
-        return fullJID;
+    /**
+     * Returns the fully qualified JID of the contact. (If available). Otherwise will
+     * return the bare jid.
+     *
+     * @return the fully qualified jid (ex. derek@jivesoftware.com).
+     */
+    public String getJID() {
+        return fullyQualifiedJID;
     }
 
-    public void setFullJID(String fullJID) {
-        this.fullJID = fullJID;
-    }
-
+    /**
+     * Returns the icon showing the contacts current state or presence.
+     *
+     * @return the icon.
+     */
     public Icon getIcon() {
         return icon;
     }
 
+    /**
+     * Sets the current icon to use.
+     *
+     * @param icon the current icon to use.
+     */
     public void setIcon(Icon icon) {
         this.icon = icon;
         imageLabel.setIcon(icon);
     }
 
+    /**
+     * Returns the contacts current status based on their presence.
+     *
+     * @return the contacts current status.
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * Sets the contacts current status.
+     *
+     * @param status the contacts current status.
+     */
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getContactJID() {
-        return fullJID;
-    }
-
-
+    /**
+     * Returns the name of the <code>ContactGroup</code> that this contact belongs to.
+     *
+     * @return the name of the <code>ContactGroup</code>.
+     */
     public String getGroupName() {
         return groupName;
     }
 
+    /**
+     * Sets the name of the <code>ContactGrouop</code> that this contact belongs to.
+     *
+     * @param groupName the name of the ContactGroup.
+     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -156,14 +202,29 @@ public class ContactItem extends JPanel {
         this.available = available;
     }
 
+    /**
+     * Returns the <code>JLabel</code> showing the users nickname.
+     *
+     * @return the nickname label.
+     */
     public JLabel getNicknameLabel() {
         return nicknameLabel;
     }
 
+    /**
+     * Returns the <code>JLabel</code> representing the description.
+     *
+     * @return the description label.
+     */
     public JLabel getDescriptionLabel() {
         return descriptionLabel;
     }
 
+    /**
+     * Returns the current presence of the contact.
+     *
+     * @return the users current presence.
+     */
     public Presence getPresence() {
         return presence;
     }
@@ -171,7 +232,7 @@ public class ContactItem extends JPanel {
     /**
      * Sets the current presence on this contact item.
      *
-     * @param presence
+     * @param presence the presence.
      */
     public void setPresence(Presence presence) {
 
@@ -196,6 +257,12 @@ public class ContactItem extends JPanel {
         updatePresenceIcon(presence);
     }
 
+    /**
+     * Checks to see if the hash already exists.
+     *
+     * @param hash the hash.
+     * @return true if the hash exists, otherwise false.
+     */
     private boolean hashExists(String hash) {
         contactsDir.mkdirs();
 
@@ -203,6 +270,12 @@ public class ContactItem extends JPanel {
         return imageFile.exists();
     }
 
+    /**
+     * Returns the url of the avatar belonging to this contact.
+     *
+     * @return the url of the avatar.
+     * @throws MalformedURLException thrown if the address is invalid.
+     */
     public URL getAvatarURL() throws MalformedURLException {
         contactsDir.mkdirs();
 
@@ -216,6 +289,11 @@ public class ContactItem extends JPanel {
         return null;
     }
 
+    /**
+     * Persists the avatar locally based on the new hash.
+     *
+     * @param hash the new hash.
+     */
     private void updateAvatar(final String hash) {
         Thread updateAvatarThread = new Thread(new Runnable() {
             public void run() {
@@ -223,7 +301,7 @@ public class ContactItem extends JPanel {
 
                 final File imageFile = new File(contactsDir, hash);
 
-                VCard vcard = SparkManager.getVCardManager().getVCard(getFullJID(), false);
+                VCard vcard = SparkManager.getVCardManager().reloadVCard(getJID());
 
                 try {
                     byte[] bytes = vcard.getAvatar();
@@ -235,8 +313,6 @@ public class ContactItem extends JPanel {
                             ImageIO.write(image, "PNG", imageFile);
                         }
                     }
-
-                    SparkManager.getVCardManager().addVCard(getFullJID(), vcard);
                 }
                 catch (Exception e) {
                     Log.error("Unable to update avatar in Contact Item.", e);
@@ -252,6 +328,11 @@ public class ContactItem extends JPanel {
     }
 
 
+    /**
+     * Updates the icon of the user based on their presence.
+     *
+     * @param presence the users presence.
+     */
     public void updatePresenceIcon(Presence presence) {
         ChatManager chatManager = SparkManager.getChatManager();
         boolean handled = chatManager.fireContactItemPresenceChanged(this, presence);
@@ -295,7 +376,7 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getFullJID());
+            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
@@ -324,7 +405,7 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getFullJID());
+            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
@@ -385,6 +466,11 @@ public class ContactItem extends JPanel {
         setAvailable(true);
     }
 
+    /**
+     * Sets the status label text based on the users status.
+     *
+     * @param status the users status.
+     */
     public void setStatusText(String status) {
         setStatus(status);
 
@@ -396,16 +482,28 @@ public class ContactItem extends JPanel {
         }
     }
 
+    /**
+     * The icon to use to show extra information about this contact. An example would be to
+     * represent that this user is from a 3rd party transport.
+     *
+     * @param icon the icon to use.
+     */
     public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
     }
 
+    /**
+     * Shows that the user is coming online.
+     */
     public void showUserComingOnline() {
         // Change Font
         getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));
         getNicknameLabel().setForeground(new Color(255, 128, 0));
     }
 
+    /**
+     * Shows that the user is going offline.
+     */
     public void showUserGoingOfflineOnline() {
         // Change Font
         getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));

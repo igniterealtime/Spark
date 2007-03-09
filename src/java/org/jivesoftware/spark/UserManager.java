@@ -334,7 +334,7 @@ public class UserManager {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem item = contactList.getContactItemByNickname(nickname);
         if (item != null) {
-            return getFullJID(item.getFullJID());
+            return getFullJID(item.getJID());
         }
 
         return null;
@@ -400,7 +400,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getFullJID(), item.getNickname());
+                            SparkManager.getChatManager().activateChat(item.getJID(), item.getNickname());
                         }
                     }
 
@@ -422,7 +422,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getFullJID(), item.getNickname());
+                            SparkManager.getChatManager().activateChat(item.getJID(), item.getNickname());
                         }
                     }
                 }

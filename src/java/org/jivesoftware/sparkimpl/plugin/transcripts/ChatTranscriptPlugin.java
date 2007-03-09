@@ -69,7 +69,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final Action viewHistoryAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = (ContactItem)contactList.getSelectedUsers().iterator().next();
-                final String jid = item.getFullJID();
+                final String jid = item.getJID();
 
                 showHistory(jid);
             }

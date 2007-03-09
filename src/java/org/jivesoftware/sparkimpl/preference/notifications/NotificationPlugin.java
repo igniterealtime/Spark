@@ -78,8 +78,8 @@ public class NotificationPlugin implements Plugin, PacketListener {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem item : contactGroup.getContactItems()) {
-                if (item != null && item.getFullJID() != null && item.getPresence() != null) {
-                    String bareJID = StringUtils.parseBareAddress(item.getFullJID());
+                if (item != null && item.getJID() != null && item.getPresence() != null) {
+                    String bareJID = StringUtils.parseBareAddress(item.getJID());
                     onlineUsers.add(bareJID);
                 }
             }
