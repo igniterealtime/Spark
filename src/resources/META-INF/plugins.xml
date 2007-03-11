@@ -185,4 +185,13 @@
         <description>Adds simple extras to use with the Contact List.</description>
         <class>org.jivesoftware.sparkimpl.plugin.chat.ContactListAssistantPlugin</class>
     </plugin>
+    <plugin>
+        <name>My Favorites</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds simple extras to show your most popular contacts.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.history.FavoriteContactsPlugin</class>
+    </plugin>
 </plugins>

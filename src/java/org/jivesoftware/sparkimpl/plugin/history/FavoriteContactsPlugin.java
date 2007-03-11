@@ -1,0 +1,301 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.sparkimpl.plugin.history;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.GraphicUtils;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
+
+/**
+ * Adds a simple feature to list your most "Popular" contacts. Popular contacts is basically who
+ * you talk with the most.
+ */
+public class FavoriteContactsPlugin implements Plugin {
+
+    private File transcriptDir;
+
+    private final DefaultListModel model = new DefaultListModel();
+    private JList contacts;
+    private Window window;
+
+    private Map<JLabel, String> jidMap = new HashMap<JLabel, String>();
+
+    public void initialize() {
+        transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
+
+        contacts = new JList(model);
+        contacts.setCellRenderer(new InternalRenderer());
+
+        window = new Window(SparkManager.getMainWindow());
+
+
+        final JPanel mainPanel = new JPanel(new BorderLayout());
+        final JLabel titleLabel = new JLabel("My Favorite Contacts");
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        mainPanel.add(contacts, BorderLayout.CENTER);
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+        window.add(mainPanel);
+
+        // Add Listeners
+        contacts.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    final JLabel label = (JLabel)contacts.getSelectedValue();
+                    String user = jidMap.get(label);
+                    if (user != null) {
+                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
+                        SparkManager.getChatManager().activateChat(user, contactUsername);
+                        window.dispose();
+                    }
+                }
+            }
+        });
+
+        contacts.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    final JLabel label = (JLabel)contacts.getSelectedValue();
+                    String user = jidMap.get(label);
+                    if (user != null) {
+                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
+                        SparkManager.getChatManager().activateChat(user, contactUsername);
+                        window.dispose();
+                    }
+                }
+                else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    window.dispose();
+                }
+            }
+        });
+
+        contacts.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            public void focusLost(FocusEvent e) {
+                window.dispose();
+            }
+        });
+
+        // Add Keymapping to ContactList
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control T"), "favoritePeople");
+        SparkManager.getMainWindow().getRootPane().getActionMap().put("favoritePeople", new AbstractAction("favoritePeople") {
+            public void actionPerformed(ActionEvent e) {
+                // Show History Popup
+                showPopup();
+            }
+        });
+
+
+    }
+
+
+    /**
+     * Displays your favorite contacts.
+     */
+    private void showPopup() {
+        // Get Transcript Directory
+        if (!transcriptDir.exists()) {
+            return;
+        }
+
+        jidMap.clear();
+        model.clear();
+
+
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+        for (final String user : getFavoriteContacts()) {
+            ContactItem contactItem = contactList.getContactItemByJID(user);
+            Icon icon = null;
+            if (contactItem != null) {
+                icon = contactItem.getIcon();
+                if (icon == null) {
+                    icon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
+                }
+
+                JLabel label = new JLabel();
+                label.setText(contactItem.getNickname());
+                label.setIcon(icon);
+
+                model.addElement(label);
+                jidMap.put(label, user);
+            }
+        }
+
+
+        window.setSize(200, 200);
+        GraphicUtils.centerWindowOnComponent(window, SparkManager.getMainWindow());
+
+
+        if (model.size() > 0) {
+            contacts.setSelectedIndex(0);
+        }
+
+        window.setVisible(true);
+    }
+
+    /**
+     * Returns a collection of your most popular contacts based on previous conversations.
+     *
+     * @return the collection of favorite people (jids)
+     */
+    private Collection<String> getFavoriteContacts() {
+        if (!transcriptDir.exists()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        final File[] transcriptFiles = transcriptDir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                if (!name.contains("_current") && !name.equals("conversations.xml")) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        final List<File> files = Arrays.asList(transcriptFiles);
+
+        Collections.sort(files, sizeComparator);
+
+        int size = files.size();
+        if (size > 10) {
+            size = 10;
+        }
+
+        final List<String> jidList = new ArrayList<String>();
+        for (int i = 0; i < size; i++) {
+            File file = files.get(i);
+            String jid = null;
+
+            final String fileName = file.getName();
+            final int dot = fileName.lastIndexOf('.');
+            jid = dot > 0 ? fileName.substring(0, dot) : fileName;
+
+            jidList.add(jid);
+        }
+
+        return jidList;
+    }
+
+
+    public void shutdown() {
+
+    }
+
+    public boolean canShutDown() {
+        return true;
+    }
+
+    public void uninstall() {
+    }
+
+    /**
+     * Internal handling of a JLabel Renderer.
+     */
+    public class InternalRenderer extends JLabel implements ListCellRenderer {
+
+        /**
+         * Construct Default Renderer.
+         */
+        public InternalRenderer() {
+            setOpaque(true);
+        }
+
+        public Component getListCellRendererComponent(JList list,
+                                                      Object value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            }
+            else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+
+            JLabel label = (JLabel)value;
+            setText(label.getText());
+            setIcon(label.getIcon());
+            return this;
+        }
+    }
+
+    /**
+     * Sorts files by largest to smallest.
+     */
+    final Comparator sizeComparator = new Comparator() {
+        public int compare(Object o1, Object o2) {
+            final File item1 = (File)o1;
+            final File item2 = (File)o2;
+
+            long int1 = item1.length();
+            long int2 = item2.length();
+
+            if (int1 == int2) {
+                return 0;
+            }
+
+            if (int1 > int2) {
+                return -1;
+            }
+
+            if (int1 < int2) {
+                return 1;
+            }
+
+            return 0;
+        }
+    };
+
+}
