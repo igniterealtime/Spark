@@ -93,9 +93,6 @@
     </launcher>
   </launchers>
   <installerGui installerType="1" suggestPreviousProgramGroup="true" addOnAppId="" suggestPreviousLocations="true" allowUnattended="true" allowConsole="true" useCustomInstallerHeaderImage="false" customInstallerHeaderImage="" useCustomUninstallerHeaderImage="false" customUninstallerHeaderImage="" customSize="false" customWidth="500" customHeight="390" useCustomIcon="false" customIcnsFile="" customPngIcon16File="" customPngIcon32File="" customIcoFile="" vmParameters="" watermark="false" resizable="true" suppressProgressDialog="false">
-    <customCode useInstalledFiles="false">
-      <archive location="../../target/build/lib/spark.jar" />
-    </customCode>
     <installerScreens>
       <screen name="" id="22" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
         <serializedBean>
