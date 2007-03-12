@@ -149,11 +149,12 @@ public class IncomingCall implements JingleSessionStateListener {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     showIncomingCall(session);
-                    if (lastState == null && ringing != null) {
-                        ringing.loop();
-                    }
                 }
             });
+
+            if (lastState == null && ringing != null) {
+                ringing.loop();
+            }
 
             while (!answered && (session != null && !session.isClosed())) {
                 try {
@@ -225,10 +226,10 @@ public class IncomingCall implements JingleSessionStateListener {
         incomingCall.getAcceptButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 toasterManager.close();
-                if(ringing != null){
+                if (ringing != null) {
                     ringing.stop();
                 }
-                
+
                 if (chatRoom == null) {
                     chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jingleSession.getInitiator()));
                     SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
