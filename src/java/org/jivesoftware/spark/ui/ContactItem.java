@@ -26,13 +26,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -42,6 +35,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 /**
  * Represent a single contact within the <code>ContactList</code>.
@@ -378,36 +378,7 @@ public class ContactItem extends JPanel {
 
             RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
-                // Do not move out of group.
-                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
-                setStatusText("Pending");
-            }
-            else {
-                setIcon(null);
-                setFont(new Font("Dialog", Font.PLAIN, 11));
-                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
-                setAvailable(false);
-
-                String itemStatus = presence.getStatus();
-                if (itemStatus == null) {
-                    setStatusText("");
-                }
-                else {
-                    setStatusText(itemStatus);
-                }
-            }
-
-            setAvailable(false);
-            return;
-        }
-        else if (!presence.isAvailable()) {
-            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
-            getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
-
-            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
-            if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
