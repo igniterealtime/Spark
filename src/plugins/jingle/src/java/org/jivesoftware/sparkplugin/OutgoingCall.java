@@ -43,6 +43,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handles UI controls for outgoing jingle calls.
@@ -64,6 +66,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
     private boolean answered;
 
     private ChatRoom chatRoom;
+
+    private Map<ChatRoom, JingleRoom> callMap = new HashMap<ChatRoom, JingleRoom>();
 
     /**
      * Creates a new instance of OutgoingCall.
@@ -114,9 +118,10 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
 
     /**
      * Handles a new outgoing call.
-     * @param session the JingleSession for the outgoing call.
+     *
+     * @param session  the JingleSession for the outgoing call.
      * @param chatRoom the room the session is associated with.
-     * @param jid the users jid.
+     * @param jid      the users jid.
      */
     public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
         this.chatRoom = chatRoom;
@@ -208,9 +213,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         }
 
         final JingleRoom jingleRoom = new JingleRoom(session, chatRoom);
-        chatRoom.getSplitPane().setRightComponent(jingleRoom);
-        chatRoom.getSplitPane().setResizeWeight(.60);
-        chatRoom.getSplitPane().setDividerSize(5);
+        chatRoom.getChatPanel().add(jingleRoom, new GridBagConstraints(1, 1, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 5, 0, 5), 0, 0));
+        chatRoom.getChatPanel().invalidate();
+        chatRoom.getChatPanel().validate();
+        chatRoom.getChatPanel().repaint();
+        callMap.put(chatRoom, jingleRoom);
 
         // Add state
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
@@ -220,7 +227,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
     }
 
     /**
-     * Called when the call has ended. 
+     * Called when the call has ended.
      */
     private void showCallEndedState() {
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
@@ -231,6 +238,13 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         if (ringing != null) {
             ringing.stop();
         }
+        JingleRoom room = callMap.get(chatRoom);
+        callMap.remove(chatRoom);
+        chatRoom.getChatPanel().remove(room);
+        chatRoom.getChatPanel().invalidate();
+        chatRoom.getChatPanel().validate();
+        chatRoom.getChatPanel().repaint();
+
         chatRoom.getSplitPane().setRightComponent(null);
         chatRoom.getSplitPane().setDividerSize(0);
 
@@ -289,6 +303,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
     /**
      * Changes the background color. If alert is true, the background will reflect that the ui
      * needs attention.
+     *
      * @param alert true to notify users that their attention is needed.
      */
     private void showAlert(boolean alert) {

@@ -26,8 +26,12 @@ import javax.swing.SwingUtilities;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Incoming call handles a single incoming Jingle call.
@@ -45,6 +49,8 @@ public class IncomingCall implements JingleSessionStateListener {
     private boolean answered;
 
     private ChatRoom chatRoom;
+
+    private Map<ChatRoom, JingleRoom> callMap = new HashMap<ChatRoom, JingleRoom>();
 
     /**
      * Initializes a new IncomingCall with the required JingleSession.
@@ -84,9 +90,11 @@ public class IncomingCall implements JingleSessionStateListener {
         }
 
         final JingleRoom roomUI = new JingleRoom(session, chatRoom);
-        chatRoom.getSplitPane().setRightComponent(roomUI);
-        chatRoom.getSplitPane().setResizeWeight(.60);
-        chatRoom.getSplitPane().setDividerSize(5);
+        chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 5, 0, 5), 0, 0));
+        chatRoom.getChatPanel().invalidate();
+        chatRoom.getChatPanel().validate();
+        chatRoom.getChatPanel().repaint();
+        callMap.put(chatRoom, roomUI);
 
         // Add state
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
@@ -104,8 +112,12 @@ public class IncomingCall implements JingleSessionStateListener {
         }
 
         if (chatRoom != null) {
-            chatRoom.getSplitPane().setRightComponent(null);
-            chatRoom.getSplitPane().setDividerSize(0);
+            JingleRoom room = callMap.get(chatRoom);
+            callMap.remove(chatRoom);
+            chatRoom.getChatPanel().remove(room);
+            chatRoom.getChatPanel().invalidate();
+            chatRoom.getChatPanel().validate();
+            chatRoom.getChatPanel().repaint();
         }
 
         // Add state

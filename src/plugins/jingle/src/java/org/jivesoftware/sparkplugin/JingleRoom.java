@@ -156,7 +156,7 @@ public class JingleRoom extends JPanel {
         // Add Components to Main Panel
         mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
         mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
-        mainPanel.add(muteButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 1, 2, 1), 0, 0));
+        mainPanel.add(muteButton, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 1, 2, 1), 0, 0));
 
         // Add End Call button
         hangUpButton = new RolloverButton("     End Call", JinglePhoneRes.getImageIcon("HANG_UP_PHONE_77x24_IMAGE"));
@@ -164,7 +164,7 @@ public class JingleRoom extends JPanel {
         hangUpButton.setFont(new Font("Dialog", Font.BOLD, 11));
         hangUpButton.setForeground(new Color(153, 32, 10));
         hangUpButton.setMargin(new Insets(0, 0, 0, 0));
-        mainPanel.add(hangUpButton, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.8, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        mainPanel.add(hangUpButton, new GridBagConstraints(0, 1, 4, 1, 0.0, 0.8, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
 
         return mainPanel;
