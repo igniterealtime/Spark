@@ -98,9 +98,9 @@ public class NotificationPlugin implements Plugin, PacketListener {
         }
 
         jid = StringUtils.parseBareAddress(jid);
+        boolean isOnline = onlineUsers.contains(jid);
 
         if (presence.getType().equals(Presence.Type.available)) {
-            boolean isOnline = onlineUsers.contains(jid);
             if (preferences.isOnlineNotificationsOn()) {
                 if (!isOnline) {
                     notifyUserOnline(jid);
@@ -109,7 +109,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
             onlineUsers.add(jid);
         }
         else if (presence.getType().equals(Presence.Type.unavailable)) {
-            if (preferences.isOfflineNotificationsOn()) {
+            if (preferences.isOfflineNotificationsOn() && isOnline) {
                 notifyUserOffline(jid);
             }
 
@@ -142,7 +142,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
 
         ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         if (item != null) {
-            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>"+Res.getString("user.has.signed.in")+"</td></tr></table></body></html>");
+            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>" + Res.getString("user.has.signed.in") + "</td></tr></table></body></html>");
             label.setHorizontalTextPosition(JLabel.CENTER);
             label.setHorizontalAlignment(JLabel.CENTER);
             toaster.showToaster(Res.getString("title.notification"), label);
@@ -161,7 +161,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
         ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         if (item != null) {
-            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>"+Res.getString("user.has.signed.off")+"</td></tr></table></body></html>");
+            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>" + Res.getString("user.has.signed.off") + "</td></tr></table></body></html>");
             label.setHorizontalTextPosition(JLabel.CENTER);
             label.setHorizontalAlignment(JLabel.CENTER);
             toaster.showToaster(Res.getString("title.notification"), label);
