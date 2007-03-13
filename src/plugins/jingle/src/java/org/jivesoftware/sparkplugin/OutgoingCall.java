@@ -213,7 +213,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         }
 
         final JingleRoom jingleRoom = new JingleRoom(session, chatRoom);
-        chatRoom.getChatPanel().add(jingleRoom, new GridBagConstraints(1, 1, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 5, 0, 5), 0, 0));
+        chatRoom.getChatPanel().add(jingleRoom, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
         chatRoom.getChatPanel().invalidate();
         chatRoom.getChatPanel().validate();
         chatRoom.getChatPanel().repaint();
