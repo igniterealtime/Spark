@@ -22,8 +22,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
-import javax.swing.SwingUtilities;
-
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.GridBagConstraints;
@@ -32,6 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
 
 /**
  * Incoming call handles a single incoming Jingle call.
@@ -113,8 +113,11 @@ public class IncomingCall implements JingleSessionStateListener {
 
         if (chatRoom != null) {
             JingleRoom room = callMap.get(chatRoom);
+            if (room != null) {
+                chatRoom.getChatPanel().remove(room);
+            }
+
             callMap.remove(chatRoom);
-            chatRoom.getChatPanel().remove(room);
             chatRoom.getChatPanel().invalidate();
             chatRoom.getChatPanel().validate();
             chatRoom.getChatPanel().repaint();

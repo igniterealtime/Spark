@@ -23,14 +23,6 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Color;
@@ -45,6 +37,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles UI controls for outgoing jingle calls.
@@ -238,15 +238,18 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         if (ringing != null) {
             ringing.stop();
         }
-        JingleRoom room = callMap.get(chatRoom);
-        callMap.remove(chatRoom);
-        chatRoom.getChatPanel().remove(room);
-        chatRoom.getChatPanel().invalidate();
-        chatRoom.getChatPanel().validate();
-        chatRoom.getChatPanel().repaint();
 
-        chatRoom.getSplitPane().setRightComponent(null);
-        chatRoom.getSplitPane().setDividerSize(0);
+        if (chatRoom != null) {
+            JingleRoom room = callMap.get(chatRoom);
+            if (room != null) {
+                chatRoom.getChatPanel().remove(room);
+            }
+
+            callMap.remove(chatRoom);
+            chatRoom.getChatPanel().invalidate();
+            chatRoom.getChatPanel().validate();
+            chatRoom.getChatPanel().repaint();
+        }
 
         // Add state
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
