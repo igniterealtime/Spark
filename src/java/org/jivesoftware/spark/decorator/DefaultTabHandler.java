@@ -19,10 +19,10 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
+import javax.swing.Icon;
+
 import java.awt.Color;
 import java.awt.Component;
-
-import javax.swing.Icon;
 
 /**
  *
@@ -71,7 +71,7 @@ public class DefaultTabHandler extends SparkTabHandler {
             }
 
             // Check if the room is stale.
-            if (SparkManager.getChatManager().isStaleRoom(room)) {
+            if (SparkManager.getChatManager().isStaleRoom(room) && component instanceof ChatRoomImpl) {
                 decorateStaleTab(tab, (ChatRoom)component);
             }
             // Should only set the icon to default if the frame is in focus
