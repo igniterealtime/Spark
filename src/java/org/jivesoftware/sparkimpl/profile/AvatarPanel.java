@@ -10,16 +10,26 @@
 
 package org.jivesoftware.sparkimpl.profile;
 
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.WindowsFileSystemView;
+import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -27,19 +37,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * UI to view/edit avatar.
@@ -50,7 +49,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
     private File avatarFile;
     final JButton browseButton = new JButton();
     final JButton clearButton = new JButton();
-    private JFileChooser fileChooser;
+    private FileDialog fileChooser;
 
     /**
      * Default Constructor
@@ -149,62 +148,72 @@ public class AvatarPanel extends JPanel implements ActionListener {
         // init file chooser (if not already done)
         initFileChooser();
 
-        int result = fileChooser.showOpenDialog(this);
-        // Determine which button was clicked to close the dialog
-        switch (result) {
-            case JFileChooser.APPROVE_OPTION:
-                final JComponent parent = this;
-                SwingWorker worker = new SwingWorker() {
-                    File selectedFile = null;
+        fileChooser.show();
 
-                    public Object construct() {
-                        selectedFile = fileChooser.getSelectedFile();
-                        try {
-                            ImageIcon imageOnDisk = new ImageIcon(selectedFile.getCanonicalPath());
-                            Image avatarImage = imageOnDisk.getImage();
-                            if (avatarImage.getHeight(null) > 96 || avatarImage.getWidth(null) > 96) {
-                                avatarImage = avatarImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
-                            }
-                            return avatarImage;
-                        }
-                        catch (IOException ex) {
-                            Log.error(ex);
-                        }
-                        return null;
-                    }
+        if (fileChooser.getDirectory() != null && fileChooser.getFile() != null) {
+            File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
+            String suffix = URLFileSystem.getSuffix(file);
+            if (suffix.toLowerCase().equals(".jpeg") ||
+                    suffix.toLowerCase().equals(".gif") ||
+                    suffix.toLowerCase().equals(".png")) {
+                changeAvatar(file, this);
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            }
 
-                    public void finished() {
-                        Image avatarImage = (Image)get();
-                        // Check size.
-                        long length = GraphicUtils.getBytesFromImage(avatarImage).length * 8;
 
-                        long k = 8192;
-
-                        long actualSize = (length / k) + 1;
-
-                        if (actualSize > 16) {
-                            // Do not allow
-                            JOptionPane.showMessageDialog(parent, Res.getString("message.image.too.large"));
-                            return;
-                        }
-
-                        setAvatar(new ImageIcon(avatarImage));
-                        avatarFile = selectedFile;
-                    }
-                };
-
-                worker.start();
         }
     }
 
-    public class ImageFilter extends FileFilter {
+    private void changeAvatar(final File selectedFile, final Component parent) {
+        SwingWorker worker = new SwingWorker() {
+            public Object construct() {
+                try {
+                    ImageIcon imageOnDisk = new ImageIcon(selectedFile.getCanonicalPath());
+                    Image avatarImage = imageOnDisk.getImage();
+                    if (avatarImage.getHeight(null) > 96 || avatarImage.getWidth(null) > 96) {
+                        avatarImage = avatarImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+                    }
+                    return avatarImage;
+                }
+                catch (IOException ex) {
+                    Log.error(ex);
+                }
+                return null;
+            }
+
+            public void finished() {
+                Image avatarImage = (Image)get();
+                // Check size.
+                long length = GraphicUtils.getBytesFromImage(avatarImage).length * 8;
+
+                long k = 8192;
+
+                long actualSize = (length / k) + 1;
+
+                if (actualSize > 16) {
+                    // Do not allow
+                    JOptionPane.showMessageDialog(parent, Res.getString("message.image.too.large"));
+                    return;
+                }
+
+                setAvatar(new ImageIcon(avatarImage));
+                avatarFile = selectedFile;
+            }
+        };
+
+        worker.start();
+    }
+
+    public class ImageFilter implements FilenameFilter {
         public final String jpeg = "jpeg";
         public final String jpg = "jpg";
         public final String gif = "gif";
         public final String png = "png";
 
         //Accept all directories and all gif, jpg, tiff, or png files.
-        public boolean accept(File f) {
+        public boolean accept(File f, String string) {
             if (f.isDirectory()) {
                 return true;
             }
@@ -212,11 +221,11 @@ public class AvatarPanel extends JPanel implements ActionListener {
             String extension = getExtension(f);
             if (extension != null) {
                 if (
-                    extension.equals(gif) ||
-                        extension.equals(jpeg) ||
-                        extension.equals(jpg) ||
-                        extension.equals(png)
-                    ) {
+                        extension.equals(gif) ||
+                                extension.equals(jpeg) ||
+                                extension.equals(jpg) ||
+                                extension.equals(png)
+                        ) {
                     return true;
                 }
                 else {
@@ -260,18 +269,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     public void initFileChooser() {
         if (fileChooser == null) {
-            fileChooser = new JFileChooser(Spark.getUserHome()) {
-                public void updateUI() {
-                    putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
-                    super.updateUI();
-                }
-            };
-
-            if (Spark.isWindows()) {
-                fileChooser.setFileSystemView(new WindowsFileSystemView());
-            }
-            fileChooser.setFileFilter(new ImageFilter());
-
+            fileChooser = new FileDialog(SparkManager.getMainWindow(), "Choose Avatar", FileDialog.LOAD);
+            fileChooser.setFilenameFilter(new ImageFilter());
         }
     }
 
