@@ -252,9 +252,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl)room).getParticipantJID());
 
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
-
-            // Cancel typing notifications
-            SparkManager.getChatManager().cancelledNotification(((ChatRoomImpl)room).getParticipantJID(), "");
         }
         else {
             tooltip = room.getRoomname();

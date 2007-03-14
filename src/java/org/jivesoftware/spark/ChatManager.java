@@ -359,21 +359,14 @@ public class ChatManager implements MessageEventNotificationListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
         try {
-            ChatRoom chatRoom = null;
-            try {
-                chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(StringUtils.parseBareAddress(message.getFrom())));
-                if (typingNotificationList.contains(chatRoom)) {
-                    cancelledNotification(message.getFrom(), "");
-                }
-            }
-            catch (ChatRoomNotFoundException e) {
-            }
-
-
+            getChatContainer().getChatRoom(StringUtils.parseBareAddress(message.getFrom()));
+            cancelledNotification(message.getFrom(), "");
         }
         catch (Exception e) {
             Log.error(e);
         }
+
+        // Notify MessageFilters.
         while (filters.hasNext()) {
             ((MessageFilter)filters.next()).filterIncoming(room, message);
         }
