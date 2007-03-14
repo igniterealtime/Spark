@@ -507,7 +507,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param location the tab location.
      * @return the ChatRoom found.
-     * @throws ChatRoomNotFoundException
+     * @throws ChatRoomNotFoundException thrown if the room is not found.
      */
     public ChatRoom getChatRoom(int location) throws ChatRoomNotFoundException {
         if (getTabCount() < location) {

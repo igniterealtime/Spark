@@ -27,8 +27,8 @@ import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.PreferenceManager;
@@ -56,17 +56,13 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -79,11 +75,13 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -299,27 +297,23 @@ public class SparkTransferManager {
 
 
                 final ChatInputEditor chatSendField = room.getChatInputEditor();
-                chatSendField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl v"), "paste");
-
-                chatSendField.getActionMap().put("paste", new AbstractAction("paste") {
-                    public void actionPerformed(ActionEvent evt) {
-                        String clipboardText = SparkManager.getClipboard();
-
-                        if (clipboardText == null && getClipboard() != null) {
-                            sendImage(getClipboard(), room);
-                        }
-                        else {
-                            try {
-                                Document document = chatSendField.getDocument();
-                                document.insertString(chatSendField.getCaretPosition(), clipboardText, null);
-                            }
-                            catch (BadLocationException e) {
-                                Log.error(e);
+                chatSendField.addKeyListener(new KeyAdapter() {
+                    public void keyPressed(KeyEvent ke) {
+                        if (ke.getKeyCode() == KeyEvent.VK_V) {
+                            int i = ke.getModifiers();
+                            if ((i & InputEvent.CTRL_MASK) == InputEvent.CTRL_MASK) {
+                                Clipboard clb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                Transferable contents = clb.getContents(ke.getSource());
+                                if (contents != null) {
+                                    if (contents.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+                                        sendImage(getClipboard(), room);
+                                    }
+                                }
                             }
                         }
                     }
-                });
 
+                });
 
                 fileDropListener = new FileDropListener() {
                     public void filesDropped(Collection files, Component component) {
@@ -564,7 +558,7 @@ public class SparkTransferManager {
      * Send a file to a user.
      *
      * @param file the file to send.
-     * @param jid the jid of the user to send the file to.
+     * @param jid  the jid of the user to send the file to.
      * @return the ChatRoom of the user.
      */
     public ChatRoom sendFile(File file, String jid) {
@@ -572,7 +566,7 @@ public class SparkTransferManager {
         String bareJID = StringUtils.parseBareAddress(jid);
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
-        if (!PresenceManager.isOnline(jid)){
+        if (!PresenceManager.isOnline(jid)) {
             List list = (List)waitMap.get(jid);
             if (list == null) {
                 list = new ArrayList();
@@ -593,7 +587,6 @@ public class SparkTransferManager {
             chatRoom.getTranscriptWindow().insertNotificationMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.", ChatManager.ERROR_COLOR);
             return null;
         }
-
 
         // Create the outgoing file transfer
         final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);

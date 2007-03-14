@@ -19,19 +19,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -48,6 +35,19 @@ import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
@@ -99,42 +99,36 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
 
+        // Cut Action
         final Action cutAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 String selectedText = getSelectedText();
-                try {
-                    getDocument().remove(getSelectionStart(), getSelectionEnd());
-                    SparkManager.setClipboard(selectedText);
-                }
-                catch (BadLocationException e1) {
-                    Log.error("Error removing selected text", e1);
-                }
-
+                replaceSelection("");
+                SparkManager.setClipboard(selectedText);
             }
         };
         cutAction.putValue(Action.NAME, "Cut");
 
-        Action copyAction = new AbstractAction() {
+        // Copy Action
+        final Action copyAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 SparkManager.setClipboard(getSelectedText());
             }
         };
         copyAction.putValue(Action.NAME, "Copy");
 
-        Action pasteAction = new AbstractAction() {
+        // Paste Action
+        final Action pasteAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 String text = SparkManager.getClipboard();
-                try {
-                    Document document = getDocument();
-                    document.insertString(getCaretPosition(), text, null);
-                }
-                catch (BadLocationException e1) {
-                    Log.error("Unable to insert clipboard text.", e1);
+                if (text != null) {
+                    replaceSelection(text);
                 }
             }
         };
         pasteAction.putValue(Action.NAME, "Paste");
 
+        // Select All Action
         Action selectAllAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 requestFocus();
@@ -166,6 +160,14 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getActionMap().put("copy", new AbstractAction("copy") {
             public void actionPerformed(ActionEvent evt) {
                 SparkManager.setClipboard(getSelectedText());
+            }
+        });
+
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl v"), "paste");
+
+        getActionMap().put("paste", new AbstractAction("paste") {
+            public void actionPerformed(ActionEvent evt) {
+                pasteAction.actionPerformed(evt);
             }
         });
 
@@ -233,7 +235,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                ||  textFound.startsWith("https://") || textFound.startsWith("www.") || 
+                    || textFound.startsWith("https://") || textFound.startsWith("www.") ||
                     textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
                 insertLink(textFound);
             }
@@ -570,7 +572,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
                 // swing text.. :-/
                 if (j == rootElem.getElementCount() - 1
-                    && i == pElem.getElementCount() - 1) {
+                        && i == pElem.getElementCount() - 1) {
                     end = text.length();
                 }
 
@@ -591,7 +593,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                 while (tkn.hasMoreTokens()) {
                     final String token = tkn.nextToken();
                     if (token.startsWith("http://") || token.startsWith("ftp://")
-                        || token.startsWith("https://")) {
+                            || token.startsWith("https://")) {
                         buf.append("[url]").append(token).append("[/url]");
                     }
                     else if (token.startsWith("www")) {
