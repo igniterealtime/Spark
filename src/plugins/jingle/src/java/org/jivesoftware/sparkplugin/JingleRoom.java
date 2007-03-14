@@ -307,7 +307,7 @@ public class JingleRoom extends JPanel {
 
     public Dimension getPreferredSize() {
         Dimension dim = super.getPreferredSize();
-        dim.width = 0;
+        dim.width = 200;
         return dim;
     }
 
