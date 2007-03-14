@@ -23,16 +23,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.net.MalformedURLException;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -43,6 +33,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.net.MalformedURLException;
 
 /**
  * Handles the UI for viewing and editing of VCard information.
@@ -208,6 +208,13 @@ public class VCardEditor {
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
+                Object o = pane.getValue();
+                if (o instanceof Integer) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                    return;
+                }
+
                 String value = (String)pane.getValue();
                 if (Res.getString("close").equals(value)) {
                     pane.removePropertyChangeListener(this);
@@ -273,8 +280,8 @@ public class VCardEditor {
                     dlg.dispose();
                 }
                 else if ("View Full Profile".equals(value)) {
-                    SparkManager.getVCardManager().viewFullProfile(jid, pane);
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                    SparkManager.getVCardManager().viewFullProfile(jid, pane);
                 }
             }
         };
