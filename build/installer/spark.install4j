@@ -93,6 +93,7 @@
     </launcher>
   </launchers>
   <installerGui installerType="1" suggestPreviousProgramGroup="true" addOnAppId="" suggestPreviousLocations="true" allowUnattended="true" allowConsole="true" useCustomInstallerHeaderImage="false" customInstallerHeaderImage="" useCustomUninstallerHeaderImage="false" customUninstallerHeaderImage="" customSize="false" customWidth="500" customHeight="390" useCustomIcon="false" customIcnsFile="" customPngIcon16File="" customPngIcon32File="" customIcoFile="" vmParameters="" watermark="false" resizable="true" suppressProgressDialog="false">
+    <customCode useInstalledFiles="false" />
     <installerScreens>
       <screen name="" id="22" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
         <serializedBean>
@@ -326,7 +327,9 @@
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="bin/startup.bat" launcher="false" />
+        <entry location="bin/startup.sh" launcher="false" />
         <entry location="lib/linux" launcher="false" />
+        <entry location="lib/mac" launcher="false" />
         <entry location="plugins/idlelinux.jar" launcher="false" />
       </exclude>
       <variables />
@@ -339,6 +342,8 @@
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="bin/startup.bat" launcher="false" />
+        <entry location="bin/startup.sh" launcher="false" />
+        <entry location="lib/mac" launcher="false" />
         <entry location="lib/windows" launcher="false" />
         <entry location="plugins/jniwrapper.jar" launcher="false" />
       </exclude>
@@ -350,7 +355,9 @@
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="bin/startup.bat" launcher="false" />
+        <entry location="bin/startup.sh" launcher="false" />
         <entry location="lib/linux" launcher="false" />
+        <entry location="lib/mac" launcher="false" />
         <entry location="plugins/idlelinux.jar" launcher="false" />
       </exclude>
       <variables />
