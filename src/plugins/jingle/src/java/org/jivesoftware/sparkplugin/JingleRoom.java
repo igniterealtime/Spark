@@ -15,12 +15,14 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -137,16 +139,30 @@ public class JingleRoom extends JPanel {
         // Add Input Volume To Control Panel
         final ControlPanel inputPanel = new ControlPanel(new GridBagLayout());
 
-        final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
-        inputPanel.add(mixer.getPrefferedInputVolume(), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
-        inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        // Add Volume Control
+        try {
+            Component inputComp = mixer.getPrefferedInputVolume();
+            final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
+            inputPanel.add(inputComp, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+            inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
 
         // Add Output Volume To Control Panel
         final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
 
-        final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
-        outputPanel.add(mixer.getPrefferedMasterVolume(), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
-        outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        // Add master volume control.
+        try {
+            Component outputControl = mixer.getPrefferedMasterVolume();
+            final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
+            outputPanel.add(outputControl, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+            outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
 
         // Build ControlPanel List
 
