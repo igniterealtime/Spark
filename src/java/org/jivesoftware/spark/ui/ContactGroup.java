@@ -468,7 +468,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        ContactInfoWindow.getInstance().checkWindow();
+        ContactInfoWindow.getInstance().dispose();
 
         Object o = null;
         try {
@@ -822,7 +822,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             public void mouseExited(MouseEvent mouseEvent) {
                 timer.stop();
                 canShowPopup = false;
-                ContactInfoWindow.getInstance().checkWindow();
+                ContactInfoWindow.getInstance().dispose();
             }
         });
 

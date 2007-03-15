@@ -15,8 +15,6 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ContactInfoHandler;
-import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
@@ -38,7 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Handles general phone behavior in Spark. This allows for many different phone systems
  * to plug into Spark in a more elegant way.
  */
-public class PhoneManager implements ChatRoomListener, ContextMenuListener, ContactInfoHandler {
+public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     private static PhoneManager singleton;
     private static final Object LOCK = new Object();
 
@@ -84,9 +82,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
         // Handle ContextMenus.
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.addContextMenuListener(this);
-
-        SparkManager.getChatManager().addContactInfoHandler(this);
-
     }
 
     public void addPhone(Phone phone) {
@@ -221,44 +216,4 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener, Cont
     }
 
 
-    public void handleContactInfo(ContactInfoWindow contactInfo) {
-        final ContactItem contactItem = contactInfo.getContactItem();
-        final String jid = contactItem.getJID();
-        final List<Action> actions = new ArrayList<Action>();
-        for (Phone phone : phones) {
-            final Collection<Action> itemActions = phone.getPhoneActions(jid);
-            for (Action action : itemActions) {
-                actions.add(action);
-            }
-        }
-
-        final JPopupMenu popupMenu = new JPopupMenu();
-        final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_16x16));
-        dialButton.setToolTipText("Dial available phone numbers.");
-        dialButton.setText("Dial");
-
-        // Handle lone action case.
-        if (actions.size() > 0) {
-            contactInfo.addChatRoomButton(dialButton);
-
-            dialButton.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent mouseEvent) {
-                    if (actions.size() > 1) {
-                        popupMenu.show(dialButton, mouseEvent.getX(), mouseEvent.getY());
-                    }
-                    else {
-                        Action action = actions.get(0);
-                        action.actionPerformed(null);
-                    }
-                }
-            });
-        }
-
-        // Handle more than one number.
-        if (actions.size() > 1) {
-            for (Action action : actions) {
-                popupMenu.add(action);
-            }
-        }
-    }
 }

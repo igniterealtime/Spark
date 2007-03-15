@@ -19,7 +19,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JMultilineLabel;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
@@ -29,23 +28,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
-import javax.swing.UIManager;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -54,7 +46,7 @@ import java.net.URL;
  *
  * @author Derek DeMoro
  */
-public class ContactInfoWindow extends JPanel implements MouseListener {
+public class ContactInfoWindow extends JPanel {
     private final JLabel nicknameLabel = new JLabel();
     private final JMultilineLabel statusLabel = new JMultilineLabel();
     private final JLabel fullJIDLabel = new JLabel();
@@ -63,11 +55,7 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
 
     private ContactItem contactItem;
 
-    private JPanel toolbar;
-
     private JWindow window = new JWindow();
-
-    private boolean inWindow;
 
     private ChatManager chatManager;
 
@@ -101,42 +89,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
 
         setBackground(Color.white);
 
-        toolbar = new JPanel() {
-            public void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D)g;
-
-                // Initialize color
-                Color startColor = Color.white;
-                Color endColor = new Color(198, 211, 247);
-
-
-                int w = getWidth();
-                int h = getHeight();
-
-                Color customStartColor = (Color)UIManager.get("CollapsiblePane.startColor");
-                Color customEndColor = (Color)UIManager.get("CollapsiblePane.endColor");
-                if (customEndColor != null) {
-                    endColor = customEndColor;
-                }
-
-                if (customStartColor != null) {
-                    startColor = customStartColor;
-                }
-
-
-                GradientPaint gradient = new GradientPaint(0, 0, startColor, w, h, endColor, true);
-                g2.setPaint(gradient);
-                g2.fillRect(0, 0, w, h);
-            }
-
-        };
-
-        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        toolbar.setOpaque(false);
-
-        // Add Toolbar to top of Contact Window
-        add(toolbar, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-
         add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
         add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
@@ -155,8 +107,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 
         setBorder(BorderFactory.createLineBorder(Color.gray, 1));
-
-        window.addMouseListener(this);
 
         window.getContentPane().add(this);
 
@@ -189,29 +139,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
 
     }
 
-    public void checkWindow() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(500);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-
-            public void finished() {
-                if (!inWindow) {
-                    window.setVisible(false);
-                    contactItem = null;
-                }
-            }
-        };
-
-        worker.start();
-    }
-
     public void display(ContactGroup group, MouseEvent e) {
         int loc = group.getList().locationToIndex(e.getPoint());
 
@@ -231,7 +158,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
 
         window.setFocusableWindowState(false);
         setContactItem(item);
-        chatManager.notifyContactInfoHandlers(this);
         window.pack();
 
 
@@ -313,32 +239,15 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
         catch (MalformedURLException e) {
             Log.error(e);
         }
-
-        clearToolbar();
     }
 
     public ContactItem getContactItem() {
         return contactItem;
     }
 
-    public void addChatRoomButton(ChatRoomButton button) {
-        addToolbarComponent(button);
-    }
-
-    public void addToolbarComponent(Component comp) {
-        toolbar.add(comp);
-        comp.addMouseListener(this);
-        window.invalidate();
-        window.validate();
-        window.repaint();
-    }
-
-    public JPanel getToolbar() {
-        return toolbar;
-    }
-
-
     public void dispose() {
+        window.setVisible(false);
+        contactItem = null;
         window.dispose();
     }
 
@@ -351,7 +260,6 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
     }
 
     public void mouseEntered(MouseEvent e) {
-        inWindow = true;
     }
 
     public void mouseExited(MouseEvent e) {
@@ -373,27 +281,9 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
         }
 
         if (close) {
-            inWindow = false;
-            checkWindow();
+            window.setVisible(false);
+            contactItem = null;
         }
     }
 
-
-    public void mouseClicked(MouseEvent mouseEvent) {
-    }
-
-    public void mousePressed(MouseEvent mouseEvent) {
-    }
-
-    public void mouseReleased(MouseEvent mouseEvent) {
-    }
-
-    private void clearToolbar() {
-        for (int i = 0; i < toolbar.getComponentCount(); i++) {
-            Component comp = toolbar.getComponent(i);
-            comp.removeMouseListener(this);
-        }
-
-        toolbar.removeAll();
-    }
 }

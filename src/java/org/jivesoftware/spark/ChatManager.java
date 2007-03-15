@@ -26,8 +26,6 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.ContactInfoHandler;
-import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
@@ -90,8 +88,6 @@ public class ChatManager implements MessageEventNotificationListener {
     private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
 
     private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
-
-    private List<ContactInfoHandler> contactInfoHandlers = new ArrayList<ContactInfoHandler>();
 
 
     /**
@@ -518,35 +514,6 @@ public class ChatManager implements MessageEventNotificationListener {
         }
 
         return null;
-    }
-
-    /**
-     * Adds a new <code>ContactInfoHandler</code>
-     *
-     * @param handler the handler to add.
-     */
-    public void addContactInfoHandler(ContactInfoHandler handler) {
-        contactInfoHandlers.add(handler);
-    }
-
-    /**
-     * Removes a <code>ContactInfoHandler</code>
-     *
-     * @param handler the handler to remove.
-     */
-    public void removeContactInfoHandler(ContactInfoHandler handler) {
-        contactInfoHandlers.remove(handler);
-    }
-
-    /**
-     * Notifies all <code>ContactInfoHandler</code>s.
-     *
-     * @param contactInfo the ContactInfoWindow.
-     */
-    public synchronized void notifyContactInfoHandlers(ContactInfoWindow contactInfo) {
-        for (ContactInfoHandler handler : contactInfoHandlers) {
-            handler.handleContactInfo(contactInfo);
-        }
     }
 
     // Implemenation of MessageEventListener
