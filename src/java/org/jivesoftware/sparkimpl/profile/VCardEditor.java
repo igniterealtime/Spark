@@ -132,7 +132,7 @@ public class VCardEditor {
         };
 
         pane.addPropertyChangeListener(changeListener);
-
+        avatarPanel.setParentDialog(dlg);
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();

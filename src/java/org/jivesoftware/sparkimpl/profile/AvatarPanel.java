@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JDialog;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,6 +35,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -50,6 +52,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
     final JButton browseButton = new JButton();
     final JButton clearButton = new JButton();
     private FileDialog fileChooser;
+
+    private Dialog dlg;
 
     /**
      * Default Constructor
@@ -269,9 +273,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     public void initFileChooser() {
         if (fileChooser == null) {
-            fileChooser = new FileDialog(SparkManager.getMainWindow(), "Choose Avatar", FileDialog.LOAD);
+            fileChooser = new FileDialog(dlg, "Choose Avatar", FileDialog.LOAD);
             fileChooser.setFilenameFilter(new ImageFilter());
         }
+    }
+
+    public void setParentDialog(Dialog dialog){
+        this.dlg = dialog;
     }
 
 
