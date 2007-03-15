@@ -488,43 +488,51 @@ public class LocalPreferences {
     }
 
     public void setDockingEnabled(boolean dockingEnabled) {
-		 setBoolean("dockingEnabled", dockingEnabled);
-	}
-    
-	public boolean isDockingEnabled() {
-		 return getBoolean("dockingEnabled", false);
-	}
-	
-	public void setAutoCloseChatRoomsEnabled(boolean autoCloseChatRoomsEnabled){
-		setBoolean("autoCloseChatRoomsEnabled", autoCloseChatRoomsEnabled);
-	}
-	
-	public boolean isAutoCloseChatRoomsEnabled(){
-		return getBoolean("autoCloseChatRoomsEnabled", true);
-	}
+        setBoolean("dockingEnabled", dockingEnabled);
+    }
 
-     public void setTabsOnTop(boolean onTop){
+    public boolean isDockingEnabled() {
+        return getBoolean("dockingEnabled", false);
+    }
+
+    public void setAutoCloseChatRoomsEnabled(boolean autoCloseChatRoomsEnabled) {
+        setBoolean("autoCloseChatRoomsEnabled", autoCloseChatRoomsEnabled);
+    }
+
+    public boolean isAutoCloseChatRoomsEnabled() {
+        return getBoolean("autoCloseChatRoomsEnabled", true);
+    }
+
+    public void setTabsOnTop(boolean onTop) {
         setBoolean("tabsOnTop", onTop);
     }
 
-    public boolean isTabTopPosition(){
+    public boolean isTabTopPosition() {
         return getBoolean("tabsOnTop", true);
     }
 
-    public void setBuzzEnabled(boolean enabled){
+    public void setBuzzEnabled(boolean enabled) {
         setBoolean("buzzEnabled", enabled);
     }
 
-    public boolean isBuzzEnabled(){
+    public boolean isBuzzEnabled() {
         return getBoolean("buzzEnabled", true);
     }
 
-    public void setOfflineGroupVisible(boolean visible){
+    public void setOfflineGroupVisible(boolean visible) {
         setBoolean("offlineGroupVisible", visible);
     }
 
-    public boolean isOfflineGroupVisible(){
+    public boolean isOfflineGroupVisible() {
         return getBoolean("offlineGroupVisible", true);
+    }
+
+    public void setEmoticonsEnabled(boolean enabled) {
+        setBoolean("emoticonsEnabled", enabled);
+    }
+
+    public boolean areEmoticonsEnabled() {
+        return getBoolean("emoticonsEnabled", true);
     }
 
     private boolean getBoolean(String property, boolean defaultValue) {

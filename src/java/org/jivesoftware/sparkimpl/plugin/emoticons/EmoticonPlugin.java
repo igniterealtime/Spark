@@ -21,6 +21,7 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.themes.ThemePreference;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonUI.EmoticonPickListener;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
@@ -56,6 +57,11 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
     }
 
     public void chatRoomOpened(final ChatRoom room) {
+        // Check to see if emoticons are enabled.
+        if(!SettingsManager.getLocalPreferences().areEmoticonsEnabled()){
+            return;
+        }
+
         final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
 
         final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");

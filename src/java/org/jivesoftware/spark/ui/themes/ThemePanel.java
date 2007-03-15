@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.themes;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
@@ -21,6 +22,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -29,10 +31,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.text.BadLocationException;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -52,6 +54,7 @@ public class ThemePanel extends JPanel {
     private JButton addThemeButton;
     private JButton addEmoticonButton;
 
+    private JCheckBox emoticonCheckBox;
     private JFileChooser fc;
 
     /**
@@ -66,14 +69,17 @@ public class ThemePanel extends JPanel {
         emoticonsLabel = new JLabel();
         emoticonBox = new JComboBox();
 
+        emoticonCheckBox = new JCheckBox();
+
         addThemeButton = new JButton();
         addEmoticonButton = new JButton();
 
         transcript = new TranscriptWindow();
 
         // Set ResourceUtils
-        ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, "&Message Style:");
-        ResourceUtils.resLabel(emoticonsLabel, emoticonBox, "&Emoticons:");
+        ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
+        ResourceUtils.resLabel(emoticonsLabel, emoticonBox, Res.getString("label.emoticons") + ":");
+        ResourceUtils.resButton(emoticonCheckBox, Res.getString("checkbox.enable.emoticons"));
 
         ResourceUtils.resButton(addThemeButton, "&Add...");
         ResourceUtils.resButton(addEmoticonButton, "A&dd...");
@@ -98,6 +104,8 @@ public class ThemePanel extends JPanel {
         add(emoticonsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonBox, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(emoticonCheckBox, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
         // Activate live one.
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         String theme = pref.getTheme();
@@ -127,6 +135,8 @@ public class ThemePanel extends JPanel {
         });
 
         showSelectedEmoticon();
+
+        emoticonCheckBox.setSelected(pref.areEmoticonsEnabled());
     }
 
     /**
@@ -186,6 +196,14 @@ public class ThemePanel extends JPanel {
      */
     public String getSelectedEmoticonPack() {
         return (String)emoticonBox.getSelectedItem();
+    }
+
+    public void setEmoticonsEnabled(boolean enabled) {
+        emoticonCheckBox.setSelected(enabled);
+    }
+
+    public boolean areEmoticonsEnabled() {
+        return emoticonCheckBox.isSelected();
     }
 
     /**
