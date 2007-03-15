@@ -202,8 +202,8 @@ public class VCardViewer extends JPanel {
         add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 10, 0), 0, 0));
 
         // Add JID Label
-        final String jid = vcard.getJabberId();
-        final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>");
+        final String jid = UserManager.unescapeJID(vcard.getJabberId());
+        final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + jid + "</u></font></body></html>");
         jidLabel.setToolTipText("Click to copy jid to clipboard.");
         jidLabel.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent mouseEvent) {

@@ -419,6 +419,7 @@ public class VCardManager {
                 vcards.put(jid, vcard);
             }
             catch (XMPPException e) {
+                vcard.setJabberId(jid);
                 //Log.warning("Unable to load vcard for " + jid, e);
                 vcard.setError(new XMPPError(409));
                 vcards.put(jid, vcard);

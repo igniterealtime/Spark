@@ -286,7 +286,8 @@ public class ContactInfoWindow extends JPanel implements MouseListener {
             fullJIDLabel.setText(transport.getName() + " - " + name);
         }
         else {
-            fullJIDLabel.setText(contactItem.getJID());
+            String name = StringUtils.unescapeNode(contactItem.getJID());
+            fullJIDLabel.setText(name);
             fullJIDLabel.setIcon(null);
         }
 
