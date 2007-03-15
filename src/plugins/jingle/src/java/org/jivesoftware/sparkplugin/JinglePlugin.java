@@ -18,10 +18,7 @@ import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
-import org.jivesoftware.smackx.jingle.nat.BridgedTransportManager;
-import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
-import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
-import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
+import org.jivesoftware.smackx.jingle.nat.*;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.Phone;
 import org.jivesoftware.spark.phone.PhoneManager;
@@ -67,7 +64,19 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
         final SwingWorker jingleLoadingThread = new SwingWorker() {
             public Object construct() {
-                JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), "stun.xten.net", 3478);
+
+                String stunServer = "stun.xten.net";
+                int stunPort = 3478;
+
+                if (STUN.serviceAvailable(SparkManager.getConnection())) {
+                    STUN stun = STUN.getSTUNServer(SparkManager.getConnection());
+                    if (stun != null) {
+                        stunServer = stun.getHost();
+                        stunPort = stun.getPort();
+                    }
+                }
+
+                JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
 
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
 
