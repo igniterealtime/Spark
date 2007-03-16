@@ -33,7 +33,7 @@ public abstract class SparkTabHandler {
      * @param chatRoom the ChatRoom of the SparkTab.
      */
     protected void decorateStaleTab(SparkTab tab, ChatRoom chatRoom) {
-        tab.setForeground(Color.gray);
+        tab.setTitleColor(Color.gray);
         tab.setTabFont(tab.getDefaultFont());
 
         String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();

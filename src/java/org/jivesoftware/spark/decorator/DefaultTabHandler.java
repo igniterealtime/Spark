@@ -19,10 +19,10 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
-import javax.swing.Icon;
-
 import java.awt.Color;
 import java.awt.Component;
+
+import javax.swing.Icon;
 
 /**
  *
@@ -37,20 +37,22 @@ public class DefaultTabHandler extends SparkTabHandler {
 
         if (component instanceof ChatRoom) {
             ChatRoom room = (ChatRoom)component;
+
+            boolean isStaleRoom = SparkManager.getChatManager().isStaleRoom(room);
+
             boolean isTyping = SparkManager.getChatManager().containsTypingNotification((ChatRoom)component);
 
             // Check if is typing.
             if (isTyping) {
                 tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
             }
-            else {
-                if (room instanceof ChatRoomImpl) {
-                    // User is not typing, therefore show default presence icon.
-                    Presence presence = ((ChatRoomImpl)room).getPresence();
-                    Icon icon = PresenceManager.getIconFromPresence(presence);
-                    tab.setIcon(icon);
-                }
+            else if (room instanceof ChatRoomImpl && !isStaleRoom) {
+                // User is not typing, therefore show default presence icon.
+                Presence presence = ((ChatRoomImpl)room).getPresence();
+                Icon icon = PresenceManager.getIconFromPresence(presence);
+                tab.setIcon(icon);
             }
+
 
             if (!chatFrameFocused || !isSelectedTab) {
                 if (room.getUnreadMessageCount() > 0) {
@@ -67,11 +69,10 @@ public class DefaultTabHandler extends SparkTabHandler {
                 }
 
                 tab.getTitleLabel().setText(room.getTabTitle() + appendedMessage);
-
             }
 
             // Check if the room is stale.
-            if (SparkManager.getChatManager().isStaleRoom(room) && component instanceof ChatRoomImpl) {
+            if (isStaleRoom && component instanceof ChatRoomImpl) {
                 decorateStaleTab(tab, (ChatRoom)component);
             }
             // Should only set the icon to default if the frame is in focus

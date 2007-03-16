@@ -1162,32 +1162,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
     }
 
-    /**
-     * Returns a Collection of stale chat rooms.
-     *
-     * @return a collection of stale chat rooms.
-     */
-    public Collection<ChatRoom> getStaleChatRooms() {
-        final List<ChatRoom> staleRooms = new ArrayList<ChatRoom>();
-        for (ChatRoom chatRoom : getChatRooms()) {
-            long lastActivity = chatRoom.getLastActivity();
-            long currentTime = System.currentTimeMillis();
-
-            long diff = currentTime - lastActivity;
-            int minutes = (int)(diff / (60 * 1000F));
-
-            LocalPreferences pref = SettingsManager.getLocalPreferences();
-            int timeoutMinutes = pref.getChatLengthDefaultTimeout();
-
-            int unreadCount = chatRoom.getUnreadMessageCount();
-
-            if (timeoutMinutes <= minutes && unreadCount == 0) {
-                staleRooms.add(chatRoom);
-            }
-        }
-
-        return staleRooms;
-    }
 
     private void checkTabPopup(MouseEvent e) {
         final SparkTab tab = (SparkTab)e.getSource();
@@ -1246,11 +1220,38 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     /**
+     * Returns a Collection of stale chat rooms.
+     *
+     * @return a collection of stale chat rooms.
+     */
+    public Collection<ChatRoom> getStaleChatRooms() {
+        final List<ChatRoom> staleRooms = new ArrayList<ChatRoom>();
+        for (ChatRoom chatRoom : getChatRooms()) {
+            long lastActivity = chatRoom.getLastActivity();
+            long currentTime = System.currentTimeMillis();
+
+            long diff = currentTime - lastActivity;
+            int minutes = (int)(diff / (60 * 1000F));
+
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            int timeoutMinutes = pref.getChatLengthDefaultTimeout();
+
+            int unreadCount = chatRoom.getUnreadMessageCount();
+
+            if (timeoutMinutes <= minutes && unreadCount == 0) {
+                staleRooms.add(chatRoom);
+            }
+        }
+
+        return staleRooms;
+    }
+
+    /**
      * Checks every room every 30 seconds to see if it's timed out.
      */
     private void handleStaleChats() {
-        int delay = 1000;   // delay for 1 minute
-        int period = 60000;  // repeat every 30 seconds.
+        int delay = 1000;   // delay for 1 second.
+        int period = 60000;  // repeat every minute.
 
         final TimerTask task = new SwingTimerTask() {
             public void doRun() {
@@ -1261,7 +1262,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         };
 
-        
+
         TaskEngine.getInstance().scheduleAtFixedRate(task, delay, period);
     }
 
