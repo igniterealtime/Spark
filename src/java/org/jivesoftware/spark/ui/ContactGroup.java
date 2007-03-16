@@ -21,11 +21,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -47,6 +42,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -468,14 +468,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        ContactInfoWindow.getInstance().dispose();
-
         Object o = null;
         try {
             int loc = contactItemList.locationToIndex(e.getPoint());
 
             o = model.getElementAt(loc);
             if (!(o instanceof ContactItem)) {
+                ContactInfoWindow.getInstance().dispose();
                 return;
             }
         }
