@@ -63,7 +63,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     /**
      * Register the listeners for transcript persistence.
      */
-    public void initialize() {
+    public ChatTranscriptPlugin(){
         SparkManager.getChatManager().addChatRoomListener(this);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();

@@ -114,24 +114,6 @@
         <class>org.jivesoftware.sparkimpl.plugin.scratchpad.ScratchPadPlugin</class>
     </plugin>
     <plugin>
-        <name>Bookmark Plugin</name>
-        <version>1.0</version>
-        <author>Derek DeMoro</author>
-        <homePage>http://www.jivesoftware.com</homePage>
-        <email>derek@jivesoftware.com</email>
-        <description>Allows users to have bookmarks.</description>
-        <class>org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin</class>
-    </plugin>
-    <plugin>
-        <name>Transports Plugin</name>
-        <version>1.0</version>
-        <author>Derek DeMoro</author>
-        <homePage>http://www.jivesoftware.com</homePage>
-        <email>derek@jivesoftware.com</email>
-        <description>Allows users to register with Gateways.</description>
-        <class>org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin</class>
-    </plugin>
-    <plugin>
         <name>Buzz Plugin</name>
         <version>1.0</version>
         <author>Derek DeMoro</author>

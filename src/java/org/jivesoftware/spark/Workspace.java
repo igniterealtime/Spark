@@ -31,13 +31,22 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.CommandPanel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.conferences.ConferencePlugin;
+import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
+import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -48,13 +57,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -77,7 +79,10 @@ public class Workspace extends JPanel implements PacketListener {
     private StatusBar statusBox;
     private CommandPanel commandPanel;
     private ContactList contactList;
-    private ConferencePlugin conferences;
+    private ConferenceServices conferences;
+    private ChatTranscriptPlugin transcriptPlugin;
+    private GatewayPlugin gatewayPlugin;
+    private BookmarkPlugin bookmarkPlugin;
 
     private static Workspace singleton;
     private static final Object LOCK = new Object();
@@ -127,6 +132,8 @@ public class Workspace extends JPanel implements PacketListener {
                 }
 
                 conferences.shutdown();
+                gatewayPlugin.shutdown();
+                bookmarkPlugin.shutdown();
             }
 
             public void mainWindowActivated() {
@@ -186,19 +193,10 @@ public class Workspace extends JPanel implements PacketListener {
         // Load VCard information for status box
         statusBox.loadVCard();
 
-        conferences = new ConferencePlugin();
-        conferences.initialize();
-
-        // Initialize Search Service
-        SearchManager.getInstance();
+        conferences = new ConferenceServices();
 
         // Initialise TransferManager
         SparkTransferManager.getInstance();
-
-        ChatTranscriptPlugin transcriptPlugin = new ChatTranscriptPlugin();
-        transcriptPlugin.initialize();
-
-        PhoneManager.getInstance();
     }
 
     /**
@@ -234,6 +232,20 @@ public class Workspace extends JPanel implements PacketListener {
         // Send Available status
         final Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
         SparkManager.getSessionManager().changePresence(presence);
+
+        // Until we have better plugin management, will init after presence updates.
+        gatewayPlugin = new GatewayPlugin();
+        gatewayPlugin.initialize();
+
+        // Load all non-presence related items.
+        conferences.loadConferenceBookmarks();
+        SearchManager.getInstance();
+        PhoneManager.getInstance();
+        transcriptPlugin = new ChatTranscriptPlugin();
+
+        // Load BookmarkPlugin
+        bookmarkPlugin = new BookmarkPlugin();
+        bookmarkPlugin.initialize();
 
         // Schedule loading of the plugins after two seconds.
         TaskEngine.getInstance().schedule(new TimerTask() {
@@ -297,11 +309,11 @@ public class Workspace extends JPanel implements PacketListener {
             boolean broadcast = message.getProperty("broadcast") != null;
 
             if (body == null ||
-                isGroupChat ||
-                broadcast ||
-                message.getType() == Message.Type.normal ||
-                message.getType() == Message.Type.headline ||
-                message.getType() == Message.Type.error) {
+                    isGroupChat ||
+                    broadcast ||
+                    message.getType() == Message.Type.normal ||
+                    message.getType() == Message.Type.headline ||
+                    message.getType() == Message.Type.error) {
                 return;
             }
 

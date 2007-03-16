@@ -274,7 +274,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
         if (!isBookmarked) {
             JiveTreeNode node = (JiveTreeNode)serviceTree.getLastSelectedPathComponent();
             if (node == null) {
-                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), ConferencePlugin.getDefaultServiceName()});
+                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), ConferenceServices.getDefaultServiceName()});
                 node = (JiveTreeNode)path.getLastPathComponent();
             }
             JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));

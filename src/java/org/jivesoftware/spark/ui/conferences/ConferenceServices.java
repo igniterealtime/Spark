@@ -59,19 +59,16 @@ import java.util.List;
  * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
  * you can remove from the plugins.xml file located in the classpath of Communicator.
  */
-public class ConferencePlugin {
+public class ConferenceServices {
     private static BookmarksUI bookmarksUI;
 
     private boolean mucSupported;
 
-    public void initialize() {
+    public ConferenceServices() {
         ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
 
         if (mucSupported) {
-            // Load the conference data from Private Data
-            loadBookmarks();
-
             // Add an invitation listener.
             addInvitationListener();
 
@@ -157,10 +154,10 @@ public class ConferencePlugin {
     /**
      * Load all bookmarked data.
      */
-    private void loadBookmarks() {
+    public void loadConferenceBookmarks() {
         final Workspace workspace = SparkManager.getWorkspace();
 
-        SwingWorker lazyWorker = new SwingWorker() {
+        final SwingWorker bookmarkLoader = new SwingWorker() {
 
             public Object construct() {
                 try {
@@ -179,7 +176,7 @@ public class ConferencePlugin {
             }
         };
 
-        lazyWorker.start();
+        bookmarkLoader.start();
     }
 
     private void addChatRoomListener() {
