@@ -35,8 +35,15 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -44,12 +51,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
 public class PhonePlugin implements Plugin {
     public static PhoneClient phoneClient;
@@ -260,7 +261,7 @@ public class PhonePlugin implements Plugin {
     }
 
     public void callExtension(final String number) {
-        Thread thread = new Thread(new Runnable() {
+        final Runnable caller = new Runnable() {
             public void run() {
                 try {
                     phoneClient.dialByExtension(number);
@@ -269,13 +270,13 @@ public class PhonePlugin implements Plugin {
                     Log.error(e);
                 }
             }
-        });
+        };
 
-        thread.start();
+        TaskEngine.getInstance().submit(caller);
     }
 
     public void callJID(final String jid) {
-        Thread thread = new Thread(new Runnable() {
+        final Runnable caller = new Runnable() {
             public void run() {
                 try {
                     phoneClient.dialByJID(jid);
@@ -284,11 +285,9 @@ public class PhonePlugin implements Plugin {
                     Log.error(e);
                 }
             }
-        });
-
-        thread.start();
-
-
+        };
+        
+        TaskEngine.getInstance().submit(caller);
     }
 
 

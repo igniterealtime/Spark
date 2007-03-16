@@ -23,6 +23,7 @@ import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -32,9 +33,8 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.conferences.ConferencePlugin;
 import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
@@ -45,9 +45,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
@@ -236,32 +234,17 @@ public class Workspace extends JPanel implements PacketListener {
         final Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
         SparkManager.getSessionManager().changePresence(presence);
 
-        // Load Plugins
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(2000);
-                }
-                catch (InterruptedException e) {
-                    Log.error("Unable to sleep thread.", e);
-                }
-                return "ok";
-            }
-
-            public void finished() {
+        // Schedule loading of the plugins after two seconds.
+        TaskEngine.getInstance().schedule(new TimerTask() {
+            public void run() {
                 final PluginManager pluginManager = PluginManager.getInstance();
                 pluginManager.loadPlugins();
                 pluginManager.initializePlugins();
             }
-        };
-        worker.start();
+        }, 2000);
 
-
-        int numberOfMillisecondsInTheFuture = 10000; // 5 sec
-        Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
-        Timer timer = new Timer();
-
-        timer.schedule(new TimerTask() {
+        // Load the offline messages after 10 seconds.
+        TaskEngine.getInstance().schedule(new TimerTask() {
             public void run() {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
@@ -273,7 +256,7 @@ public class Workspace extends JPanel implements PacketListener {
                     }
                 });
             }
-        }, timeToRun);
+        }, 10000);
 
     }
 

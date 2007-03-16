@@ -11,6 +11,7 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SoundsRes;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.applet.Applet;
@@ -59,13 +60,20 @@ public class SoundManager {
      *
      * @param clip the audioclip to play.
      */
-    public void playClip(AudioClip clip) {
-        try {
-            clip.play();
-        }
-        catch (Exception ex) {
-            System.err.println("Unable to load sound file");
-        }
+    public void playClip(final AudioClip clip) {
+
+        final Runnable playThread = new Runnable() {
+            public void run() {
+                try {
+                    clip.play();
+                }
+                catch (Exception ex) {
+                    System.err.println("Unable to load sound file");
+                }
+            }
+        };
+
+        TaskEngine.getInstance().submit(playThread);
     }
 
     /**
@@ -89,7 +97,7 @@ public class SoundManager {
      * @param soundFile the File object representing the wav file.
      */
     public void playClip(final File soundFile) {
-        Thread soundThread = new Thread(new Runnable() {
+        final Runnable playThread = new Runnable() {
             public void run() {
                 try {
                     final URL url = soundFile.toURL();
@@ -104,9 +112,9 @@ public class SoundManager {
                     Log.error(e);
                 }
             }
-        });
+        };
 
-        soundThread.start();
+        TaskEngine.getInstance().submit(playThread);
     }
 
     /**

@@ -23,6 +23,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
 
 import java.util.Collection;
@@ -43,13 +44,19 @@ public class TransportUtils {
     static {
         PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
 
-        PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
-        try {
-            gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
-        }
-        catch (XMPPException e) {
-            Log.error("Unable to load private data for Gateways", e);
-        }
+        final Runnable loadGateways = new Runnable() {
+            public void run() {
+                try {
+                    PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+                    gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
+                }
+                catch (XMPPException e) {
+                    Log.error("Unable to load private data for Gateways", e);
+                }
+            }
+        };
+
+        TaskEngine.getInstance().submit(loadGateways);
     }
 
     public static boolean autoJoinService(String serviceName) {
@@ -178,7 +185,7 @@ public class TransportUtils {
         public String toXML() {
             StringBuilder builder = new StringBuilder();
             builder.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append(
-                    "\"/>");
+                "\"/>");
             return builder.toString();
         }
     }

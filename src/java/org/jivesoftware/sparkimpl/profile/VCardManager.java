@@ -30,6 +30,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
@@ -37,13 +38,6 @@ import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -62,6 +56,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -154,7 +155,7 @@ public class VCardManager {
      * Listens for new VCards to lookup in a queue.
      */
     private void startQueueListener() {
-        final Thread thread = new Thread(new Runnable() {
+        final Runnable queueListener = new Runnable() {
             public void run() {
                 while (true) {
                     try {
@@ -165,10 +166,10 @@ public class VCardManager {
                         e.printStackTrace();
                     }
                 }
-
             }
-        });
-        thread.start();
+        };
+
+        TaskEngine.getInstance().submit(queueListener);
     }
 
     /**
@@ -449,7 +450,7 @@ public class VCardManager {
             vcard.setError(new XMPPError(409));
             vcards.put(jid, vcard);
         }
-        
+
         // Persist XML
         persistVCard(jid, vcard);
 
@@ -537,8 +538,8 @@ public class VCardManager {
 
             String query = getNumbersFromPhone(phoneNumber);
             if ((homePhone != null && homePhone.contains(query)) ||
-                    (workPhone != null && workPhone.contains(query)) ||
-                    (cellPhone != null && cellPhone.contains(query))) {
+                (workPhone != null && workPhone.contains(query)) ||
+                (cellPhone != null && cellPhone.contains(query))) {
                 return vcard;
             }
         }

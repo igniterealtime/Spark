@@ -25,6 +25,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.MessageListener;
+import org.jivesoftware.spark.util.TaskEngine;
 
 import java.io.File;
 
@@ -53,13 +54,14 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
             }
         }, new PacketTypeFilter(Presence.class));
 
-        Thread thread = new Thread(new Runnable() {
+        // Load sound preferences.
+        final Runnable soundLoader = new Runnable() {
             public void run() {
                 soundPreference.loadFromFile();
             }
-        });
-        thread.start();
+        };
 
+        TaskEngine.getInstance().submit(soundLoader);
 
         MultiUserChat.addInvitationListener(SparkManager.getConnection(), new InvitationListener() {
             public void invitationReceived(XMPPConnection xmppConnection, String string, String string1, String string2, String string3, Message message) {

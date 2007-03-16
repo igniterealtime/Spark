@@ -23,6 +23,7 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
@@ -295,7 +296,7 @@ public class ContactItem extends JPanel {
      * @param hash the new hash.
      */
     private void updateAvatar(final String hash) {
-        Thread updateAvatarThread = new Thread(new Runnable() {
+        Runnable updateRunnable = new Runnable() {
             public void run() {
                 contactsDir.mkdirs();
 
@@ -318,9 +319,9 @@ public class ContactItem extends JPanel {
                     Log.error("Unable to update avatar in Contact Item.", e);
                 }
             }
-        });
+        };
 
-        updateAvatarThread.start();
+        TaskEngine.getInstance().submit(updateRunnable);
     }
 
     public String toString() {
