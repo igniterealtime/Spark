@@ -33,6 +33,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.conferences.ConferencePlugin;
 import org.jivesoftware.spark.ui.status.StatusBar;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
@@ -243,21 +244,18 @@ public class Workspace extends JPanel implements PacketListener {
             }
         }, 2000);
 
-        // Load the offline messages after 10 seconds.
-        TaskEngine.getInstance().schedule(new TimerTask() {
-            public void run() {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        for (Message offlineMessage : offlineMessages) {
-                            handleOfflineMessage(offlineMessage);
-                        }
+        // Loads offline messages after a 1000 second delay.
+        final TimerTask offlineTask = new SwingTimerTask() {
+            public void doRun() {
+                for (Message offlineMessage : offlineMessages) {
+                    handleOfflineMessage(offlineMessage);
+                }
 
-                        offlineMessages.clear();
-                    }
-                });
+                offlineMessages.clear();
             }
-        }, 10000);
+        };
 
+        TaskEngine.getInstance().schedule(offlineTask, 10000);
     }
 
 

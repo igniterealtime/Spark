@@ -17,22 +17,26 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.Timer;
 
 /**
  * Adds a simple notification system to alert users to presence changes.
@@ -51,24 +55,13 @@ public class NotificationPlugin implements Plugin, PacketListener {
         SparkManager.getPreferenceManager().addPreference(notifications);
         notifications.load();
 
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(5000);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return true;
+        final TimerTask registerTask = new SwingTimerTask() {
+            public void doRun() {
+                 registerListener();
             }
-
-            public void finished() {
-                registerListener();
-            }
-
         };
 
-        worker.start();
+        TaskEngine.getInstance().schedule(registerTask, 5000);
     }
 
     private void registerListener() {

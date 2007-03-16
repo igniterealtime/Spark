@@ -38,6 +38,7 @@ import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscripts;
@@ -45,11 +46,6 @@ import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -61,6 +57,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimerTask;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -87,7 +88,7 @@ public class ChatRoomImpl extends ChatRoom {
     private long lastTypedCharTime;
     private boolean sendNotification;
 
-    private Timer typingTimer;
+    private TimerTask typingTimerTask;
     private boolean sendTypingNotification;
     private String threadID;
 
@@ -172,9 +173,8 @@ public class ChatRoomImpl extends ChatRoom {
             getToolBar().setVisible(false);
         }
 
-
-        typingTimer = new Timer(2000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        typingTimerTask = new TimerTask() {
+            public void run() {
                 if (!sendTypingNotification) {
                     return;
                 }
@@ -183,14 +183,13 @@ public class ChatRoomImpl extends ChatRoom {
                     if (!sendNotification) {
                         // send cancel
                         SparkManager.getMessageEventManager().sendCancelledNotification(getParticipantJID(), threadID);
-
                         sendNotification = true;
                     }
                 }
             }
-        });
+        };
 
-        typingTimer.start();
+        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, 2000, 2000);
         lastActivity = System.currentTimeMillis();
     }
 
@@ -209,7 +208,7 @@ public class ChatRoomImpl extends ChatRoom {
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removePacketListener(this);
-        typingTimer.stop();
+        typingTimerTask.cancel();
     }
 
     public void sendMessage() {

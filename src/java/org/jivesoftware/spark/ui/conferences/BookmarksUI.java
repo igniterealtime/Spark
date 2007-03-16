@@ -28,8 +28,28 @@ import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -42,24 +62,9 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
@@ -155,28 +160,18 @@ public class BookmarksUI extends JPanel {
             Log.error(e);
         }
 
-
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(5000);
-                }
-                catch (InterruptedException e) {
-                    Log.error(e);
-                }
-                return true;
-            }
-
-            public void finished() {
+        final TimerTask bookmarkTask = new SwingTimerTask() {
+            public void doRun() {
                 try {
                     setBookmarks(manager.getBookmarkedConferences());
                 }
-                catch (XMPPException e) {
-                    Log.error(e);
+                catch (XMPPException error) {
+                    Log.error(error);
                 }
             }
         };
-        worker.start();
+
+        TaskEngine.getInstance().schedule(bookmarkTask, 5000);
     }
 
     private void checkPopup(MouseEvent mouseEvent) {

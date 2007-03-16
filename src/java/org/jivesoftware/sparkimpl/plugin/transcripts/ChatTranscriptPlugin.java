@@ -29,7 +29,9 @@ import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -42,6 +44,7 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -265,18 +268,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
 
-                SwingWorker transcriptWorker = new SwingWorker() {
-                    public Object construct() {
-                        try {
-                            Thread.sleep(500);
-                        }
-                        catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
-                    }
-
-                    public void finished() {
+                final TimerTask transcriptTask = new SwingTimerTask() {
+                    public void doRun() {
                         for (HistoryMessage message : list) {
                             String from = message.getFrom();
                             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
@@ -303,7 +296,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     }
                 };
 
-                transcriptWorker.start();
+                TaskEngine.getInstance().schedule(transcriptTask, 500);
             }
         };
 

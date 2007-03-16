@@ -29,24 +29,13 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -67,8 +56,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -771,7 +772,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         boolean isGroupChat = room.getChatType() == Message.Type.groupchat;
         if (isGroupChat) {
             final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
-                    Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
+                Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
@@ -1107,19 +1108,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
 
+    /**
+     * Brings the chat into focus.
+     */
     public void focusChat() {
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(50);
-                }
-                catch (InterruptedException e1) {
-                    Log.error(e1);
-                }
-                return "ok";
-            }
-
-            public void finished() {
+        final TimerTask focusTask = new SwingTimerTask() {
+            public void doRun() {
                 try {
                     //chatFrame.requestFocus();
                     ChatRoom chatRoom = getActiveChatRoom();
@@ -1131,8 +1125,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
             }
         };
-        worker.start();
 
+        TaskEngine.getInstance().schedule(focusTask, 50);
     }
 
     public Collection<ChatRoom> getChatRooms() {
@@ -1257,16 +1251,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private void handleStaleChats() {
         int delay = 1000;   // delay for 1 minute
         int period = 60000;  // repeat every 30 seconds.
-        final Timer timer = new Timer();
 
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
+        final TimerTask task = new SwingTimerTask() {
+            public void doRun() {
                 for (ChatRoom chatRoom : getStaleChatRooms()) {
                     // Notify decorators
                     SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
                 }
             }
-        }, delay, period);
+        };
+
+        
+        TaskEngine.getInstance().scheduleAtFixedRate(task, delay, period);
     }
 
 }

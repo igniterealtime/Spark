@@ -16,6 +16,8 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -75,14 +77,18 @@ public class BuzzPlugin implements Plugin {
                             SparkManager.getConnection().sendPacket(message);
 
                             room.getTranscriptWindow().insertNotificationMessage("BUZZ", ChatManager.NOTIFICATION_COLOR);
-                            Timer timer = new Timer();
-                            timer.schedule(new TimerTask() {
-                                public void run() {
+                            chatRoomButton.setEnabled(false);
+
+                            // Enable the button after 30 seconds to prevent abuse.            
+                            final TimerTask enableTask = new SwingTimerTask() {
+                                public void doRun() {
                                     chatRoomButton.setEnabled(true);
                                 }
-                            }, 30000);
+                            };
 
-                            chatRoomButton.setEnabled(false);
+                            TaskEngine.getInstance().schedule(enableTask, 30000);
+
+
                         }
                     });
                     room.getEditorBar().add(chatRoomButton);

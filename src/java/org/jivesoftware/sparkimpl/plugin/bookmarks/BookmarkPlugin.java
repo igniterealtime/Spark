@@ -21,13 +21,16 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -97,22 +100,13 @@ public class BookmarkPlugin implements Plugin {
 
                         Action conferenceAction = new AbstractAction() {
                             public void actionPerformed(ActionEvent actionEvent) {
-                                SwingWorker worker = new SwingWorker() {
-                                    public Object construct() {
-                                        try {
-                                            Thread.sleep(10);
-                                        }
-                                        catch (InterruptedException e1) {
-                                            Log.error(e1);
-                                        }
-                                        return "ok";
-                                    }
-
-                                    public void finished() {
+                                final TimerTask task = new SwingTimerTask() {
+                                    public void doRun() {
                                         ConferenceUtils.joinConferenceOnSeperateThread(conferences.getName(), conferences.getJid(), conferences.getPassword());
                                     }
                                 };
-                                worker.start();
+
+                                TaskEngine.getInstance().schedule(task, 10);
                             }
                         };
 
@@ -122,7 +116,7 @@ public class BookmarkPlugin implements Plugin {
                     }
                 }
 
-                if(bookmarkMenu.getMenuComponentCount() > 0){
+                if (bookmarkMenu.getMenuComponentCount() > 0) {
                     int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
                     SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 1);
                 }

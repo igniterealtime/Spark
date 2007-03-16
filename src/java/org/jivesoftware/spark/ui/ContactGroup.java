@@ -809,7 +809,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         final Timer timer = new Timer(500, new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 canShowPopup = true;
-
             }
         });
 
