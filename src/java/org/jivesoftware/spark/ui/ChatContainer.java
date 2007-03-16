@@ -42,13 +42,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -76,7 +70,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author Derek DeMoro
  */
-public class ChatContainer extends SparkTabbedPane implements MessageListener, ChangeListener {
+public class ChatContainer extends SparkTabbedPane implements MessageListener, ChangeListener, KeyListener {
     /**
      * List of all ChatRoom Listeners.
      */
@@ -107,10 +101,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             public void tabRemoved(SparkTab tab, Component component, int index) {
                 stateChanged(null);
                 if (component instanceof ChatRoom) {
-                    cleanupChatRoom((ChatRoom)component);
-                }
-                else if (component instanceof ContainerComponent) {
-                    ((ContainerComponent)component).closing();
+                    cleanupChatRoom((ChatRoom) component);
+                } else if (component instanceof ContainerComponent) {
+                    ((ContainerComponent) component).closing();
                 }
             }
 
@@ -123,7 +116,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
                 // Notify ChatRoomListeners that the tab has been activated.
                 if (component instanceof ChatRoom) {
-                    fireChatRoomActivated((ChatRoom)component);
+                    fireChatRoomActivated((ChatRoom) component);
                 }
             }
 
@@ -178,13 +171,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
         this.getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
             public void actionPerformed(ActionEvent evt) {
-                int selectedIndex = getSelectedIndex();
-                if (selectedIndex > 0) {
-                    setSelectedIndex(selectedIndex - 1);
-                }
-                else {
-                    setSelectedIndex(getTabCount() - 1);
-                }
+                navigateLeft();
             }
         });
 
@@ -195,16 +182,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString + ""), "navigateRight");
         this.getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
             public void actionPerformed(ActionEvent evt) {
-                int selectedIndex = getSelectedIndex();
-                if (selectedIndex > -1) {
-                    int count = getTabCount();
-                    if (selectedIndex == (count - 1)) {
-                        setSelectedIndex(0);
-                    }
-                    else {
-                        setSelectedIndex(selectedIndex + 1);
-                    }
-                }
+                navigateRight();
             }
         });
 
@@ -252,7 +230,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             public void processPacket(final Packet packet) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        handleRoomPresence((Presence)packet);
+                        handleRoomPresence((Presence) packet);
                     }
                 });
             }
@@ -266,12 +244,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         String tooltip = "";
         if (room instanceof ChatRoomImpl) {
-            tooltip = ((ChatRoomImpl)room).getParticipantJID();
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl)room).getParticipantJID());
+            tooltip = ((ChatRoomImpl) room).getParticipantJID();
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl) room).getParticipantJID());
 
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
-        }
-        else {
+        } else {
             tooltip = room.getRoomname();
         }
 
@@ -321,6 +298,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         // Focus Chat
         focusChat();
+
+        room.getChatInputEditor().addKeyListener(this);
+
     }
 
     public void addContainerComponent(ContainerComponent comp) {
@@ -355,8 +335,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final String userid = StringUtils.parseResource(p.getFrom());
         if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
-        }
-        else if (p.getType() == Presence.Type.available) {
+        } else if (p.getType() == Presence.Type.available) {
             fireUserHasJoined(chatRoom, userid);
         }
 
@@ -374,11 +353,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
-        }
-        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
+        } else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
             flashWindow(component);
-        }
-        else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
+        } else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
             int tabLocation = indexOfComponent(component);
             setSelectedIndex(tabLocation);
@@ -391,8 +368,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible()) {
             flashWindow(component);
-        }
-        else if (!chatFrame.isVisible()) {
+        } else if (!chatFrame.isVisible()) {
             // Set to new tab.
             int tabLocation = indexOfComponent(component);
             setSelectedIndex(tabLocation);
@@ -409,13 +385,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
                 flashWindow(component);
-            }
-            else if (chatFrame.getState() == Frame.ICONIFIED) {
+            } else if (chatFrame.getState() == Frame.ICONIFIED) {
                 flashWindow(component);
             }
 
             if (component instanceof ChatRoom) {
-                chatFrame.setTitle(((ChatRoom)component).getRoomTitle());
+                chatFrame.setTitle(((ChatRoom) component).getRoomTitle());
             }
         }
     }
@@ -442,6 +417,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         presenceMap.remove(room.getRoomname());
 
         chatRoomList.remove(room);
+
+        room.getChatInputEditor().removeKeyListener(this);
     }
 
     /**
@@ -456,7 +433,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         final Iterator rooms = new ArrayList<ChatRoom>(chatRoomList).iterator();
         while (rooms.hasNext()) {
-            ChatRoom chatRoom = (ChatRoom)rooms.next();
+            ChatRoom chatRoom = (ChatRoom) rooms.next();
             closeTab(chatRoom);
             chatRoom.closeChatRoom();
         }
@@ -464,7 +441,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         for (int i = 0; i < getTabCount(); i++) {
             Component comp = getComponentAt(i);
             if (comp instanceof ContainerComponent) {
-                ((ContainerComponent)comp).closing();
+                ((ContainerComponent) comp).closing();
             }
 
             closeTab(comp);
@@ -490,7 +467,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             //        setIconAt(location, null);
         }
 
-        final PacketListener listener = (PacketListener)presenceMap.get(room.getRoomname());
+        final PacketListener listener = (PacketListener) presenceMap.get(room.getRoomname());
         if (listener != null) {
             SparkManager.getConnection().removePacketListener(listener);
         }
@@ -534,7 +511,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         try {
             Component comp = getComponentAt(location);
             if (comp != null && comp instanceof ChatRoom) {
-                return (ChatRoom)comp;
+                return (ChatRoom) comp;
             }
         }
         catch (ArrayIndexOutOfBoundsException outOfBoundsEx) {
@@ -614,8 +591,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String insertMessage = message.getBody();
         if (room.getChatType() == Message.Type.chat) {
             from = StringUtils.parseName(from);
-        }
-        else {
+        } else {
             from = StringUtils.parseResource(from);
         }
 
@@ -653,11 +629,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
-        }
-        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
+        } else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
             startFlashing(chatRoom);
-        }
-        else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
+        } else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
@@ -670,8 +644,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
             startFlashing(chatRoom);
-        }
-        else if (!chatFrame.isVisible()) {
+        } else if (!chatFrame.isVisible()) {
             // Set to new tab.
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
@@ -687,14 +660,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
                 startFlashing(chatRoom);
-            }
-            else if (chatFrame.getState() == Frame.ICONIFIED) {
+            } else if (chatFrame.getState() == Frame.ICONIFIED) {
                 startFlashing(chatRoom);
             }
 
             chatFrame.setTitle(chatRoom.getRoomTitle());
-        }
-        else if (chatRoom != activeChatRoom) {
+        } else if (chatRoom != activeChatRoom) {
             startFlashing(chatRoom);
         }
     }
@@ -716,15 +687,14 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         final Object o = getSelectedComponent();
         if (o instanceof ChatRoom) {
-            final ChatRoom room = (ChatRoom)o;
+            final ChatRoom room = (ChatRoom) o;
             focusChat();
 
             // Set the title of the room.
             chatFrame.setTitle(room.getRoomTitle());
             chatFrame.setIconImage(SparkManager.getMainWindow().getIconImage());
-        }
-        else if (o instanceof ContainerComponent) {
-            final ContainerComponent comp = (ContainerComponent)o;
+        } else if (o instanceof ContainerComponent) {
+            final ContainerComponent comp = (ContainerComponent) o;
             chatFrame.setTitle(comp.getFrameTitle());
             chatFrame.setIconImage(comp.getTabIcon().getImage());
 
@@ -777,7 +747,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         catch (ChatRoomNotFoundException e1) {
             Component comp = getActiveRoom();
             if (comp != null) {
-                boolean canClose = ((ContainerComponent)comp).closing();
+                boolean canClose = ((ContainerComponent) comp).closing();
                 if (canClose) {
                     closeTab(comp);
                 }
@@ -789,13 +759,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         boolean isGroupChat = room.getChatType() == Message.Type.groupchat;
         if (isGroupChat) {
             final int ok = JOptionPane.showConfirmDialog(chatFrame, Res.getString("message.end.conversation"),
-                Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
+                    Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
                 return;
             }
-        }
-        else {
+        } else {
             room.closeChatRoom();
             return;
         }
@@ -807,7 +776,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         StringBuffer buf = new StringBuffer();
         Iterator iter = chatRoomList.iterator();
         while (iter.hasNext()) {
-            ChatRoom room = (ChatRoom)iter.next();
+            ChatRoom room = (ChatRoom) iter.next();
             buf.append("Roomname=").append(room.getRoomname()).append("\n");
         }
         return buf.toString();
@@ -854,7 +823,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     protected void fireChatRoomOpened(ChatRoom room) {
         final Iterator iter = new ArrayList(chatRoomListeners).iterator();
         while (iter.hasNext()) {
-            ((ChatRoomListener)iter.next()).chatRoomOpened(room);
+            ((ChatRoomListener) iter.next()).chatRoomOpened(room);
         }
     }
 
@@ -867,7 +836,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final Iterator iter = new HashSet(chatRoomListeners).iterator();
         while (iter.hasNext()) {
             final Object chatRoomListener = iter.next();
-            ((ChatRoomListener)chatRoomListener).chatRoomLeft(room);
+            ((ChatRoomListener) chatRoomListener).chatRoomLeft(room);
         }
     }
 
@@ -880,7 +849,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final Iterator iter = new HashSet(chatRoomListeners).iterator();
         while (iter.hasNext()) {
             final Object chatRoomListener = iter.next();
-            ((ChatRoomListener)chatRoomListener).chatRoomClosed(room);
+            ((ChatRoomListener) chatRoomListener).chatRoomClosed(room);
         }
     }
 
@@ -892,7 +861,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     protected void fireChatRoomActivated(ChatRoom room) {
         final Iterator iter = new HashSet(chatRoomListeners).iterator();
         while (iter.hasNext()) {
-            ((ChatRoomListener)iter.next()).chatRoomActivated(room);
+            ((ChatRoomListener) iter.next()).chatRoomActivated(room);
         }
     }
 
@@ -907,7 +876,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             public void run() {
                 final Iterator iter = new HashSet(chatRoomListeners).iterator();
                 while (iter.hasNext()) {
-                    ((ChatRoomListener)iter.next()).userHasJoined(room, userid);
+                    ((ChatRoomListener) iter.next()).userHasJoined(room, userid);
                 }
             }
         });
@@ -925,7 +894,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             public void run() {
                 final Iterator iter = new HashSet(chatRoomListeners).iterator();
                 while (iter.hasNext()) {
-                    ((ChatRoomListener)iter.next()).userHasLeft(room, userid);
+                    ((ChatRoomListener) iter.next()).userHasLeft(room, userid);
                 }
             }
         });
@@ -1053,7 +1022,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             int size = room.getTranscripts().size();
             if (size > 0) {
-                Message message = (Message)room.getTranscripts().get(size - 1);
+                Message message = (Message) room.getTranscripts().get(size - 1);
 
                 toaster.showToaster(room.getTabIcon(), message.getBody());
             }
@@ -1076,8 +1045,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (pref.isDockingEnabled()) {
             chatFrame = MainWindow.getInstance();
-        }
-        else {
+        } else {
             chatFrame = new ChatFrame();
         }
 
@@ -1149,8 +1117,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (mainWindow.isFocused()) {
             frame.setVisible(true);
             return;
-        }
-        else {
+        } else {
             // Set to new tab.
             if (Spark.isWindows()) {
                 frame.setState(Frame.ICONIFIED);
@@ -1169,7 +1136,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
 
     private void checkTabPopup(MouseEvent e) {
-        final SparkTab tab = (SparkTab)e.getSource();
+        final SparkTab tab = (SparkTab) e.getSource();
         if (!e.isPopupTrigger()) {
             return;
         }
@@ -1179,7 +1146,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Handle closing this room.
         Action closeThisAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                ChatRoom chatRoom = (ChatRoom)getComponentInTab(tab);
+                ChatRoom chatRoom = (ChatRoom) getComponentInTab(tab);
                 if (chatRoom != null) {
                     closeTab(chatRoom);
                 }
@@ -1193,7 +1160,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // Handle closing other rooms.
             Action closeOthersAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent e) {
-                    ChatRoom chatRoom = (ChatRoom)getComponentInTab(tab);
+                    ChatRoom chatRoom = (ChatRoom) getComponentInTab(tab);
                     if (chatRoom != null) {
                         for (ChatRoom cRoom : getChatRooms()) {
                             if (chatRoom != cRoom) {
@@ -1236,7 +1203,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             long currentTime = System.currentTimeMillis();
 
             long diff = currentTime - lastActivity;
-            int minutes = (int)(diff / (60 * 1000F));
+            int minutes = (int) (diff / (60 * 1000F));
 
             LocalPreferences pref = SettingsManager.getLocalPreferences();
             int timeoutMinutes = pref.getChatLengthDefaultTimeout();
@@ -1271,4 +1238,43 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         TaskEngine.getInstance().scheduleAtFixedRate(task, delay, period);
     }
 
+    private void navigateRight() {
+        int selectedIndex = getSelectedIndex();
+        if (selectedIndex > -1) {
+            int count = getTabCount();
+            if (selectedIndex == (count - 1)) {
+                setSelectedIndex(0);
+            } else {
+                setSelectedIndex(selectedIndex + 1);
+            }
+        }
+    }
+
+    private void navigateLeft() {
+        int selectedIndex = getSelectedIndex();
+        if (selectedIndex > 0) {
+            setSelectedIndex(selectedIndex - 1);
+        } else {
+            setSelectedIndex(getTabCount() - 1);
+        }
+    }
+
+    public void keyTyped(KeyEvent keyEvent) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void keyPressed(KeyEvent keyEvent) {
+        if (keyEvent.isMetaDown()) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+                navigateRight();
+            } else if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+                navigateLeft();
+            }
+
+        }
+    }
+
+    public void keyReleased(KeyEvent keyEvent) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
