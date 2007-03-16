@@ -88,8 +88,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
 
-
     private ChatFrame chatFrame;
+
+    private final TimerTask focusTask;
 
     /**
      * Creates the ChatRooms to hold all ChatRooms.
@@ -147,6 +148,22 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         setOpaque(true);
 
         setBackground(Color.white);
+
+        // Create task for focusing chat.
+        focusTask = new SwingTimerTask() {
+            public void doRun() {
+                try {
+                    //chatFrame.requestFocus();
+                    ChatRoom chatRoom = getActiveChatRoom();
+                    chatRoom.requestFocusInWindow();
+                    chatRoom.getChatInputEditor().requestFocusInWindow();
+                }
+                catch (ChatRoomNotFoundException e1) {
+                    // Ignore. There may legitamtly not be a chat room.
+                }
+            }
+        };
+
     }
 
 
@@ -1112,19 +1129,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Brings the chat into focus.
      */
     public void focusChat() {
-        final TimerTask focusTask = new SwingTimerTask() {
-            public void doRun() {
-                try {
-                    //chatFrame.requestFocus();
-                    ChatRoom chatRoom = getActiveChatRoom();
-                    chatRoom.requestFocusInWindow();
-                    chatRoom.getChatInputEditor().requestFocusInWindow();
-                }
-                catch (ChatRoomNotFoundException e1) {
-                    // Ignore. There may legitamtly not be a chat room.
-                }
-            }
-        };
+
 
         TaskEngine.getInstance().schedule(focusTask, 50);
     }
