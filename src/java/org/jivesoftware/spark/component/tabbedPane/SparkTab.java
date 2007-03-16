@@ -134,8 +134,9 @@ public class SparkTab extends TabPanel {
      * Validates the tab UI.
      */
     public void validateTab() {
-        textLabel.validate();
-        textLabel.repaint();
+        invalidate();
+        validate();
+        repaint();
     }
 
 

@@ -66,10 +66,10 @@ public class ChatManager implements MessageEventNotificationListener {
     private static final Object LOCK = new Object();
 
     // Define Default Colors
-    public static Color TO_COLOR = (Color)UIManager.get("User.foreground");
-    public static Color FROM_COLOR = (Color)UIManager.get("OtherUser.foreground");
-    public static Color NOTIFICATION_COLOR = (Color)UIManager.get("Notification.foreground");
-    public static Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
+    public static Color TO_COLOR = (Color) UIManager.get("User.foreground");
+    public static Color FROM_COLOR = (Color) UIManager.get("OtherUser.foreground");
+    public static Color NOTIFICATION_COLOR = (Color) UIManager.get("Notification.foreground");
+    public static Color ERROR_COLOR = (Color) UIManager.get("Error.foreground");
 
 
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
@@ -179,7 +179,7 @@ public class ChatManager implements MessageEventNotificationListener {
     public GroupChatRoom getGroupChat(String roomName) throws ChatNotFoundException {
         for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
             if (chatRoom instanceof GroupChatRoom) {
-                GroupChatRoom groupChat = (GroupChatRoom)chatRoom;
+                GroupChatRoom groupChat = (GroupChatRoom) chatRoom;
                 if (groupChat.getRoomname().equals(roomName)) {
                     return groupChat;
                 }
@@ -229,8 +229,7 @@ public class ChatManager implements MessageEventNotificationListener {
             if (item != null) {
                 String nickname = item.getNickname();
                 chatRoom = new ChatRoomImpl(jid, nickname, nickname);
-            }
-            else {
+            } else {
                 chatRoom = new ChatRoomImpl(jid, jid, jid);
             }
 
@@ -364,7 +363,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
         // Notify MessageFilters.
         while (filters.hasNext()) {
-            ((MessageFilter)filters.next()).filterIncoming(room, message);
+            ((MessageFilter) filters.next()).filterIncoming(room, message);
         }
     }
 
@@ -379,7 +378,7 @@ public class ChatManager implements MessageEventNotificationListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
         while (filters.hasNext()) {
-            ((MessageFilter)filters.next()).filterOutgoing(room, message);
+            ((MessageFilter) filters.next()).filterOutgoing(room, message);
         }
     }
 
@@ -420,7 +419,7 @@ public class ChatManager implements MessageEventNotificationListener {
             try {
                 Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
                 if (col.size() > 0) {
-                    conferenceService = (String)col.iterator().next();
+                    conferenceService = (String) col.iterator().next();
                 }
             }
             catch (XMPPException e) {
@@ -639,7 +638,7 @@ public class ChatManager implements MessageEventNotificationListener {
                 return;
             }
             if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                ((ChatRoomImpl)chatRoom).setSendTypingNotification(true);
+                ((ChatRoomImpl) chatRoom).setSendTypingNotification(true);
             }
         }
 
@@ -709,8 +708,11 @@ public class ChatManager implements MessageEventNotificationListener {
         for (SparkTabHandler decorator : sparkTabHandlers) {
             boolean isHandled = decorator.isTabHandled(tab, component, isSelectedTab, isChatFrameInFocus);
             if (isHandled) {
+                tab.validateTab();
                 return;
             }
         }
+
+
     }
 }
