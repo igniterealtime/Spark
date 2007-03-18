@@ -15,6 +15,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.jingle.*;
 import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
+import org.jivesoftware.smackx.jingle.mediaimpl.multi.MultiMediaManager;
+import org.jivesoftware.smackx.jingle.mediaimpl.jspeex.SpeexMediaManager;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
@@ -78,7 +80,20 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
 
-                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager());
+                MultiMediaManager jingleMediaManager = new MultiMediaManager();
+                jingleMediaManager.addMediaManager(new JmfMediaManager());
+                jingleMediaManager.addMediaManager(new SpeexMediaManager());
+
+                if (System.getProperty("codec") != null) {
+                    try {
+                        int codec = Integer.parseInt(System.getProperty("codec"));
+                        jingleMediaManager.setPreferredPayloadType(jingleMediaManager.getPayloads().get(codec));
+                    } catch (NumberFormatException e) {
+                        // Do Nothing
+                    }
+                }
+
+                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
 
                 if (transportManager instanceof BridgedTransportManager) {
                     jingleManager.addCreationListener((BridgedTransportManager) transportManager);
