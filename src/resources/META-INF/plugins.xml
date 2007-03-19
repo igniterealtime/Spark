@@ -2,17 +2,6 @@
 <!-- Define new plugins -->
 <plugins>
     <plugin>
-        <name>Server Alerts</name>
-        <version>1.0</version>
-        <author>Derek DeMoro</author>
-        <homePage>http://www.jivesoftware.com</homePage>
-        <email>derek@jivesoftware.com</email>
-        <description>Used to display alerts from server. Can be used for server administrators for global
-            notification.
-        </description>
-        <class>org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin</class>
-    </plugin>
-    <plugin>
         <name>Jabber Browser</name>
         <version>1.0</version>
         <author>Derek DeMoro</author>

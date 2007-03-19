@@ -36,17 +36,11 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin;
 import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -57,6 +51,13 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -83,6 +84,7 @@ public class Workspace extends JPanel implements PacketListener {
     private ChatTranscriptPlugin transcriptPlugin;
     private GatewayPlugin gatewayPlugin;
     private BookmarkPlugin bookmarkPlugin;
+    private BroadcastPlugin broadcastPlugin;
 
     private static Workspace singleton;
     private static final Object LOCK = new Object();
@@ -134,6 +136,7 @@ public class Workspace extends JPanel implements PacketListener {
                 conferences.shutdown();
                 gatewayPlugin.shutdown();
                 bookmarkPlugin.shutdown();
+                broadcastPlugin.shutdown();
             }
 
             public void mainWindowActivated() {
@@ -243,6 +246,10 @@ public class Workspace extends JPanel implements PacketListener {
         PhoneManager.getInstance();
         transcriptPlugin = new ChatTranscriptPlugin();
 
+        // Load Broadcast Plugin
+        broadcastPlugin = new BroadcastPlugin();
+        broadcastPlugin.initialize();
+
         // Load BookmarkPlugin
         bookmarkPlugin = new BookmarkPlugin();
         bookmarkPlugin.initialize();
@@ -309,11 +316,11 @@ public class Workspace extends JPanel implements PacketListener {
             boolean broadcast = message.getProperty("broadcast") != null;
 
             if (body == null ||
-                    isGroupChat ||
-                    broadcast ||
-                    message.getType() == Message.Type.normal ||
-                    message.getType() == Message.Type.headline ||
-                    message.getType() == Message.Type.error) {
+                isGroupChat ||
+                broadcast ||
+                message.getType() == Message.Type.normal ||
+                message.getType() == Message.Type.headline ||
+                message.getType() == Message.Type.error) {
                 return;
             }
 

@@ -62,7 +62,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
 /**
@@ -160,23 +159,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));
 
-        // Regardless of loading time, the broadcast button should be to the left of the seperator.
-        final Component[] comps = commandPanel.getComponents();
-        final int no = comps != null ? comps.length : 0;
-        int indexOfSeperator = -1;
-        for (int i = 0; i < no; i++) {
-            Component comp = comps[i];
-            if (comp instanceof JSeparator) {
-                indexOfSeperator = i;
-                break;
-            }
-        }
-        if (indexOfSeperator == -1) {
-            commandPanel.add(broadcastToRosterButton);
-        }
-        else {
-            commandPanel.add(broadcastToRosterButton, indexOfSeperator - 1);
-        }
+        // Add Broadcast button to command panel.
+        commandPanel.add(broadcastToRosterButton);
 
         statusBar.invalidate();
         statusBar.validate();
