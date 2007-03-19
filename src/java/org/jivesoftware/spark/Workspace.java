@@ -42,6 +42,13 @@ import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -51,13 +58,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -191,12 +191,13 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Initialize Contact List
         contactList = new ContactList();
+        conferences = new ConferenceServices();
+
+        // Init contact list.
         contactList.initialize();
 
         // Load VCard information for status box
         statusBox.loadVCard();
-
-        conferences = new ConferenceServices();
 
         // Initialise TransferManager
         SparkTransferManager.getInstance();
@@ -316,11 +317,11 @@ public class Workspace extends JPanel implements PacketListener {
             boolean broadcast = message.getProperty("broadcast") != null;
 
             if (body == null ||
-                isGroupChat ||
-                broadcast ||
-                message.getType() == Message.Type.normal ||
-                message.getType() == Message.Type.headline ||
-                message.getType() == Message.Type.error) {
+                    isGroupChat ||
+                    broadcast ||
+                    message.getType() == Message.Type.normal ||
+                    message.getType() == Message.Type.headline ||
+                    message.getType() == Message.Type.error) {
                 return;
             }
 
