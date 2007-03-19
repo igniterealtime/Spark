@@ -43,16 +43,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -63,6 +53,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -158,7 +159,25 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));
-        commandPanel.add(broadcastToRosterButton);
+
+        // Regardless of loading time, the broadcast button should be to the left of the seperator.
+        final Component[] comps = commandPanel.getComponents();
+        final int no = comps != null ? comps.length : 0;
+        int indexOfSeperator = -1;
+        for (int i = 0; i < no; i++) {
+            Component comp = comps[i];
+            if (comp instanceof JSeparator) {
+                indexOfSeperator = i;
+                break;
+            }
+        }
+        if (indexOfSeperator == -1) {
+            commandPanel.add(broadcastToRosterButton);
+        }
+        else {
+            commandPanel.add(broadcastToRosterButton, indexOfSeperator - 1);
+        }
+
         statusBar.invalidate();
         statusBar.validate();
         statusBar.repaint();
