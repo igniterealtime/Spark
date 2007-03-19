@@ -246,17 +246,8 @@ public final class Notifications implements ActionListener, MainWindowListener {
             hideWindow.dispose();
         }
 
-        Workspace workspace = SparkManager.getWorkspace();
-
         SparkManager.getMainWindow().setState(Frame.NORMAL);
         SparkManager.getMainWindow().setVisible(true);
-
-        StatusBar statusBox = workspace.getStatusBar();
-        Presence presence = statusBox.getPresence();
-        if (presence.getMode() != Presence.Mode.available) {
-            SparkManager.getSessionManager().changePresence(presence);
-        }
-
 
         notificationDialog.setVisible(false);
 
