@@ -14,6 +14,7 @@ import org.jdesktop.jdic.systeminfo.SystemInfo;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
@@ -29,13 +30,13 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.SwingUtilities;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.SwingUtilities;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
@@ -94,6 +95,7 @@ public final class SessionManager implements ConnectionListener {
 
         // Discover items
         discoverItems();
+
 
         ProviderManager.getInstance().addExtensionProvider("event", "http://jabber.org/protocol/disco#info", new Features.Provider());
     }

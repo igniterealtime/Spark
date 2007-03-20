@@ -18,7 +18,6 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -643,10 +642,6 @@ public final class LoginDialog {
                         resource = "spark";
                     }
                     connection.login(getUsername(), getPassword(), resource, false);
-
-                    // Subscriptions are always manual
-                    Roster roster = connection.getRoster();
-                    roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getUsername(), getPassword());

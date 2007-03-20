@@ -13,6 +13,7 @@ package org.jivesoftware.spark;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -261,6 +262,10 @@ public class Workspace extends JPanel implements PacketListener {
                 final PluginManager pluginManager = PluginManager.getInstance();
                 pluginManager.loadPlugins();
                 pluginManager.initializePlugins();
+
+                // Subscriptions are always manual
+                Roster roster = SparkManager.getConnection().getRoster();
+                roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }
         }, 2000);
 
