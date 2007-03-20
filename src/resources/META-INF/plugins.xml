@@ -154,6 +154,6 @@
         <homePage>http://www.jivesoftware.com</homePage>
         <email>derek@jivesoftware.com</email>
         <description>Adds simple extras to show your most popular contacts.</description>
-        <class>org.jivesoftware.sparkimpl.plugin.history.FavoriteContactsPlugin</class>
+        <class>org.jivesoftware.sparkimpl.plugin.history.FrequentContactsPlugin</class>
     </plugin>
 </plugins>

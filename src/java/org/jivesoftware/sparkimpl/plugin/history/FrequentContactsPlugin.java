@@ -55,7 +55,7 @@ import javax.swing.ListCellRenderer;
  * Adds a simple feature to list your most "Popular" contacts. Popular contacts is basically who
  * you talk with the most.
  */
-public class FavoriteContactsPlugin implements Plugin {
+public class FrequentContactsPlugin implements Plugin {
 
     private File transcriptDir;
 
@@ -75,7 +75,7 @@ public class FavoriteContactsPlugin implements Plugin {
 
 
         final JPanel mainPanel = new JPanel(new BorderLayout());
-        final JLabel titleLabel = new JLabel("My Favorite Contacts");
+        final JLabel titleLabel = new JLabel("Frequent Contacts");
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         mainPanel.add(titleLabel, BorderLayout.NORTH);
