@@ -433,7 +433,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         helpMenuItem.addActionListener(new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    BrowserLauncher.openURL("http://www.jivesoftware.org/community/forum.jspa?forumID=49");
+                    BrowserLauncher.openURL("http://www.igniterealtime.org/forum/forum.jspa?forumID=49");
                 }
                 catch (Exception browserException) {
                     Log.error("Error launching browser:", browserException);
