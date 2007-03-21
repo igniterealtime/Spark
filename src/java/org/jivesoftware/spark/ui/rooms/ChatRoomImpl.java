@@ -235,6 +235,9 @@ public class ChatRoomImpl extends ChatRoom {
         // Fire Message Filters
         SparkManager.getChatManager().filterOutgoingMessage(this, message);
 
+        // Fire Global Filters
+        SparkManager.getChatManager().fireGlobalMessageSentListeners(this, message);
+
         sendMessage(message);
 
         sendNotification = true;

@@ -29,6 +29,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
@@ -41,6 +42,10 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -51,10 +56,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -73,6 +74,8 @@ public class ChatManager implements MessageEventNotificationListener {
 
 
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
+
+    private List<GlobalMessageListener> globalMessageListeners = new ArrayList<GlobalMessageListener>();
 
     private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
 
@@ -121,9 +124,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-            new ChatMessageEventRequestListener();
+                new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-            addMessageEventRequestListener(messageEventRequestListener);
+                addMessageEventRequestListener(messageEventRequestListener);
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
@@ -342,6 +345,48 @@ public class ChatManager implements MessageEventNotificationListener {
      */
     public Collection getMessageFilters() {
         return messageFilters;
+    }
+
+    /**
+     * Adds a new <code>GlobalMessageListener</code>.
+     *
+     * @param listener the listener.
+     */
+    public void addGlobalMessageListener(GlobalMessageListener listener) {
+        globalMessageListeners.add(listener);
+    }
+
+    /**
+     * Removes a <code>GlobalMessageListener</code>.
+     *
+     * @param listener the listener.
+     */
+    public void removeGlobalMessageListener(GlobalMessageListener listener) {
+        globalMessageListeners.remove(listener);
+    }
+
+    /**
+     * Notifies all <code>GlobalMessageListeners</code> of a new incoming message.
+     *
+     * @param chatRoom the <code>ChatRoom</code> where the message was sent to.
+     * @param message  the <code>Message</code>
+     */
+    public void fireGlobalMessageReceievedListeners(ChatRoom chatRoom, Message message) {
+        for (GlobalMessageListener listener : globalMessageListeners) {
+            listener.messageReceived(chatRoom, message);
+        }
+    }
+
+    /**
+     * Notifies all <code>GlobalMessageListeners</code> of a new message sent.
+     *
+     * @param chatRoom the <code>ChatRoom</code> where the message was sent from.
+     * @param message  the <code>Message</code> sent.
+     */
+    public void fireGlobalMessageSentListeners(ChatRoom chatRoom, Message message) {
+        for (GlobalMessageListener listener : globalMessageListeners) {
+            listener.messageSent(chatRoom, message);
+        }
     }
 
     /**

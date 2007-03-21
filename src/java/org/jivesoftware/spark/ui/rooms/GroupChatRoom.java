@@ -287,6 +287,9 @@ public final class GroupChatRoom extends ChatRoom {
             // Fire Message Filters
             SparkManager.getChatManager().filterOutgoingMessage(this, message);
 
+            // Fire Global Listeners
+            SparkManager.getChatManager().fireGlobalMessageSentListeners(this, message);
+
             chat.sendMessage(message);
         }
         catch (XMPPException ex) {

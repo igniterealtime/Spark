@@ -350,6 +350,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Fire Message Filters
         SparkManager.getChatManager().filterIncomingMessage(this, message);
 
+        SparkManager.getChatManager().fireGlobalMessageReceievedListeners(this, message);
+
         addToTranscript(message, true);
 
         fireMessageReceived(message);
