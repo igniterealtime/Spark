@@ -22,6 +22,8 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
@@ -50,6 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimerTask;
 
 /**
  * Handles all users in the agent application. Each user or chatting user can be referenced from the User
@@ -455,8 +458,22 @@ public class UserManager {
                 contactField.dispose();
                 parent.removeWindowListener(this);
             }
+
+            public void windowDeactivated(final WindowEvent windowEvent) {
+                TimerTask task = new SwingTimerTask() {
+                    public void doRun() {
+                        if (contactField.canClose()) {
+                            windowClosing(windowEvent);
+                        }
+                    }
+                };
+
+                TaskEngine.getInstance().schedule(task, 250);
+            }
         });
     }
 
 
 }
+
+

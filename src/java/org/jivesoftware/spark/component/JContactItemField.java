@@ -274,5 +274,9 @@ public class JContactItemField extends JPanel {
         }
     }
 
+    public boolean canClose(){
+        return !textField.hasFocus();
+    }
+
 
 }

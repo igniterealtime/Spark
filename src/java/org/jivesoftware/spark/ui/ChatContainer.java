@@ -781,6 +781,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 }
                 return;
             }
+
+            if(room == null){
+                return;
+            }
         }
 
         // Confirm end session
