@@ -63,7 +63,8 @@ public final class AppleUtils {
             cancelThread.start();
         }
 
-        NSApplication.sharedApplication().setApplicationIconImage(getImage(SparkRes.getURL(SparkRes.BRICKWALL_IMAGE)));
+
+        //NSApplication.sharedApplication().setApplicationIconImage(getImage(SparkRes.getURL(SparkRes.MAIN_ICNS_FILE)));
     }
 
     /**
@@ -93,20 +94,20 @@ public final class AppleUtils {
         return new NSImage(data);
     }
 
-     /**
+    /**
      * Creates a {@link com.apple.cocoa.application.NSImage} from a string that points to an image in the class
      *
      * @return an cocoa image object
      */
     public static NSImage getImage(URL url) {
-         InputStream in = null;
-         try {
-             in = url.openStream();
-         }
-         catch (IOException e) {
-             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-         }
-         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        InputStream in = null;
+        try {
+            in = url.openStream();
+        }
+        catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         byte[] buff = new byte[10 * 1024];
         int len;

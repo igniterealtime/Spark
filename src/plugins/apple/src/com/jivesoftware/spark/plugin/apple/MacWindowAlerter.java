@@ -39,6 +39,7 @@ public class MacWindowAlerter implements Alerter {
 
     public void stopFlashing(Window window) {
 
+
     }
 
     public boolean handleNotification() {
