@@ -76,7 +76,14 @@ public class SearchService extends JPanel {
             final JLabel lockLabel = new JLabel();
             lockLabel.setHorizontalTextPosition(JLabel.LEFT);
             lockLabel.setIcon(SparkRes.getImageIcon(SparkRes.LOCK_16x16));
-            add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+            if (Spark.isMac()) {
+                add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
+
+            }
+            else {
+                add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+
+            }
             lockLabel.setToolTipText(Res.getString("message.spark.secure"));
         }
 
@@ -121,7 +128,7 @@ public class SearchService extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (newSearch) {
                     findField.setText("");
-                    findField.getTextComponent().setForeground((Color)UIManager.get("TextField.foreground"));
+                    findField.getTextComponent().setForeground((Color) UIManager.get("TextField.foreground"));
                     newSearch = false;
                 }
             }
@@ -167,7 +174,7 @@ public class SearchService extends JPanel {
 
         newSearch = true;
         findField.requestFocus();
-        findField.getTextComponent().setForeground((Color)UIManager.get("TextField.lightforeground"));
+        findField.getTextComponent().setForeground((Color) UIManager.get("TextField.lightforeground"));
         findField.setIcon(searchable.getIcon());
         findField.setText(searchable.getDefaultText());
         findField.setToolTipText(searchable.getToolTip());
@@ -178,17 +185,17 @@ public class SearchService extends JPanel {
             }
 
             public void focusLost(FocusEvent e) {
-                findField.getTextComponent().setForeground((Color)UIManager.get("TextField.lightforeground"));
+                findField.getTextComponent().setForeground((Color) UIManager.get("TextField.lightforeground"));
                 findField.setText(searchable.getDefaultText());
             }
         });
     }
 
     public void paintComponent(Graphics g) {
-        double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-        double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+        double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
+        double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
         AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+        ((Graphics2D) g).drawImage(backgroundImage, xform, this);
     }
 
     protected IconTextField getFindField() {

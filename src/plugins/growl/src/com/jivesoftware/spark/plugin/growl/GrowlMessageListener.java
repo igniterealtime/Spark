@@ -46,35 +46,8 @@ public class GrowlMessageListener implements GlobalMessageListener {
     public void messageReceived(final ChatRoom chatRoom, final Message message) {
         final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
-        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || !chatFrame.isInFocus())) {
+        if (!chatFrame.isVisible() || !chatFrame.isInFocus()) {
             startFlashing(message);
-            return;
-        }
-
-        if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
-
-        }
-        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(message);
-        }
-        else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
-            startFlashing(message);
-        }
-
-        // Handle when chat frame is visible but the Contact List is not.
-        else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(message);
-        }
-        else if (!chatFrame.isVisible()) {
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
-            if (!SparkManager.getMainWindow().isVisible()) {
-                startFlashing(message);
-            }
-            else if (chatFrame.getState() == Frame.ICONIFIED) {
-                startFlashing(message);
-            }
-
         }
 
     }
