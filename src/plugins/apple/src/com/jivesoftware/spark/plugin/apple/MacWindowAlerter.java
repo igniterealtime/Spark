@@ -13,8 +13,12 @@ package com.jivesoftware.spark.plugin.apple;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Alerter;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.MessageListener;
+import org.jivesoftware.Spark;
+
+import java.awt.*;
 
 /**
  * When a message is received and the user does not have presence
@@ -22,17 +26,22 @@ import org.jivesoftware.spark.ui.MessageListener;
  *
  * @author Andrew Wright
  */
-public class DockMessageListener implements MessageListener {
+public class MacWindowAlerter implements Alerter {
 
 
-    public void messageReceived(ChatRoom room, Message message) {
+    public void flashWindow(Window window) {
+        AppleUtils.bounceDockIcon(true);
+    }
 
-        if (!SparkManager.getMainWindow().isFocused()) {
-            AppleUtils.bounceDockIcon(false);
-        }
+    public void flashWindowStopWhenFocused(Window window) {
+        AppleUtils.bounceDockIcon(true);
+    }
+
+    public void stopFlashing(Window window) {
 
     }
 
-    public void messageSent(ChatRoom room, Message message) {
+    public boolean handleNotification() {
+        return Spark.isMac();
     }
 }

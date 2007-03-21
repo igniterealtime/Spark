@@ -16,11 +16,14 @@ import com.apple.cocoa.foundation.NSData;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
 
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.resource.SparkRes;
 
 /**
  * Utilities for dealing with the apple dock
+ *
  * @author Andrew Wright
  */
 public final class AppleUtils {
@@ -38,8 +41,8 @@ public final class AppleUtils {
         int howMuch = (critical) ?
                 NSApplication.UserAttentionRequestCritical :
                 NSApplication.UserAttentionRequestInformational;
-        final int requestID = NSApplication.sharedApplication().
-                requestUserAttention(howMuch);
+        final int requestID = NSApplication.sharedApplication().requestUserAttention(howMuch);
+
         // Since NSApplication.requestUserAttention() seems to ignore the
         // param and always bounces the dock icon continuously no matter
         // what, make sure it gets cancelled if appropriate.
@@ -48,8 +51,9 @@ public final class AppleUtils {
             Thread cancelThread = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
+                        Thread.sleep(10000);
+                    }
+                    catch (InterruptedException e) {
                         // ignore
                     }
                     NSApplication.sharedApplication().
@@ -58,6 +62,8 @@ public final class AppleUtils {
             });
             cancelThread.start();
         }
+
+        NSApplication.sharedApplication().setApplicationIconImage(getImage(SparkRes.getURL(SparkRes.BRICKWALL_IMAGE)));
     }
 
     /**
@@ -78,7 +84,8 @@ public final class AppleUtils {
             }
             in.close();
             out.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Log.error(e.getMessage(), e);
         }
 
@@ -86,5 +93,36 @@ public final class AppleUtils {
         return new NSImage(data);
     }
 
+     /**
+     * Creates a {@link com.apple.cocoa.application.NSImage} from a string that points to an image in the class
+     *
+     * @return an cocoa image object
+     */
+    public static NSImage getImage(URL url) {
+         InputStream in = null;
+         try {
+             in = url.openStream();
+         }
+         catch (IOException e) {
+             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+         }
+         ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        byte[] buff = new byte[10 * 1024];
+        int len;
+        try {
+            while ((len = in.read(buff)) != -1) {
+                out.write(buff, 0, len);
+            }
+            in.close();
+            out.close();
+        }
+        catch (IOException e) {
+            Log.error(e.getMessage(), e);
+        }
+
+        NSData data = new NSData(out.toByteArray());
+        return new NSImage(data);
+    }
 
 }

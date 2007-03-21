@@ -30,12 +30,12 @@ import org.jivesoftware.Spark;
  */
 public class ApplePlugin implements Plugin {
 
-    private ChatRoomListener roomListener;
+    private MacWindowAlerter alerter;
 
     public void initialize() {
         if (Spark.isMac()) {
-            roomListener = new DockRoomListener();
-            SparkManager.getChatManager().addChatRoomListener(roomListener);
+            alerter = new MacWindowAlerter();
+            SparkManager.getAlertManager().addAlert(alerter);
 
             // Remove the About Menu Item from the help menu
             MainWindow mainWindow = SparkManager.getMainWindow();
@@ -115,8 +115,7 @@ public class ApplePlugin implements Plugin {
 
     public void shutdown() {
         if (Spark.isMac()) {
-            SparkManager.getChatManager().removeChatRoomListener(roomListener);
-            roomListener = null;
+            SparkManager.getAlertManager().removeAlert(alerter);
         }
     }
 
