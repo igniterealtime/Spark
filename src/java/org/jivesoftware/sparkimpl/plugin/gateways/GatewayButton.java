@@ -124,7 +124,7 @@ public class GatewayButton extends JPanel {
         final JMenuItem unregisterMenu = new JMenuItem(Res.getString("menuitem.delete.login.information"));
         unregisterMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport"), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport", transport.getName()), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
                         TransportUtils.unregister(SparkManager.getConnection(), transport.getServiceName());

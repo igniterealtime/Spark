@@ -471,6 +471,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         Object o = null;
         try {
             int loc = contactItemList.locationToIndex(e.getPoint());
+            if(loc == -1){
+                return;
+            }
 
             o = model.getElementAt(loc);
             if (!(o instanceof ContactItem)) {

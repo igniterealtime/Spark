@@ -10,11 +10,14 @@
 
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -25,8 +28,8 @@ import org.jivesoftware.smackx.packet.DiscoverInfo.Identity;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -41,15 +44,15 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
-import org.jivesoftware.resource.SparkRes;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -88,7 +91,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     return;
                 }
 
-                if(TransportUtils.getTransports().size() > 0){
+                if (TransportUtils.getTransports().size() > 0) {
                     final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
                     final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
                     commandPanel.add(dividerLabel);
@@ -132,7 +135,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 info = discoveryManager.discoverInfo(item.getEntityID());
             }
             catch (XMPPException e) {
-                Log.debug("Unable to locate "+item);
+                Log.debug("Unable to locate " + item);
                 continue;
             }
             Iterator identities = info.getIdentities();
@@ -168,23 +171,40 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     private void registerPresenceListener() {
+        PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
+
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                Transport transport = TransportUtils.getTransport(packet.getFrom());
-                if (transport != null) {
-                    boolean registered = true;
-                    if (presence.getType() == Presence.Type.unavailable) {
-                        registered = false;
+                if (packet instanceof Presence) {
+                    Presence presence = (Presence)packet;
+                    Transport transport = TransportUtils.getTransport(packet.getFrom());
+                    if (transport != null) {
+                        boolean registered = true;
+                        if (presence.getType() == Presence.Type.unavailable) {
+                            registered = false;
+                        }
+
+                        GatewayButton button = uiMap.get(transport);
+                        button.signedIn(registered);
                     }
-
-                    GatewayButton button = uiMap.get(transport);
-                    button.signedIn(registered);
                 }
+                else if (packet instanceof Message) {
+                    Message message = (Message)packet;
+                    String from = message.getFrom();
+                    boolean hasError = message.getType() == Message.Type.error;
+                    String body = message.getBody();
 
-
+                    if (from != null && hasError) {
+                        Transport transport = TransportUtils.getTransport(from);
+                        String title = "Alert from " + transport.getName();
+                        if (transport != null) {
+                            // Show error
+                            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), body, title, JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, orFilter);
 
 
         ChatManager chatManager = SparkManager.getChatManager();
