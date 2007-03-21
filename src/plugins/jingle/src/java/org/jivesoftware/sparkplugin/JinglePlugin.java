@@ -33,6 +33,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
+import org.jivesoftware.Spark;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -80,8 +81,11 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
 
+                // if running on Windows use Direct Sound for better performance
+                String locator = Spark.isWindows() ? "dsound://" : "javasound://";
+
                 MultiMediaManager jingleMediaManager = new MultiMediaManager();
-                jingleMediaManager.addMediaManager(new JmfMediaManager());
+                jingleMediaManager.addMediaManager(new JmfMediaManager(locator));
                 jingleMediaManager.addMediaManager(new SpeexMediaManager());
 
                 if (System.getProperty("codec") != null) {
