@@ -22,16 +22,16 @@ import org.jivesoftware.spark.plugin.Plugin;
  */
 public class GrowlPlugin implements Plugin {
 
-    private GrowlRoomListener growlListener;
+    private GrowlMessageListener growlListener;
 
 
     public void initialize() {
-        growlListener = new GrowlRoomListener();
-        SparkManager.getChatManager().addChatRoomListener(growlListener);
+        growlListener = new GrowlMessageListener();
+        SparkManager.getChatManager().addGlobalMessageListener(growlListener);
     }
 
     public void shutdown() {
-        SparkManager.getChatManager().removeChatRoomListener(growlListener);
+        SparkManager.getChatManager().removeGlobalMessageListener(growlListener);
     }
 
     public boolean canShutDown() {
@@ -39,7 +39,7 @@ public class GrowlPlugin implements Plugin {
     }
 
     public void uninstall() {
-        SparkManager.getChatManager().removeChatRoomListener(growlListener);
+        SparkManager.getChatManager().removeGlobalMessageListener(growlListener);
     }
 
 }

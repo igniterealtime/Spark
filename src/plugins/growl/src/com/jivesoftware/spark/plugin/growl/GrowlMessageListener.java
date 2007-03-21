@@ -20,6 +20,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.MessageListener;
+import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.SwingUtilities;
@@ -32,7 +33,7 @@ import java.io.InputStream;
 /**
  * @author Andrew Wright
  */
-public class GrowlMessageListener implements MessageListener {
+public class GrowlMessageListener implements GlobalMessageListener {
 
     private Growl growl;
 
