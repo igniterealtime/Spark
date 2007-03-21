@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.Spark;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -30,17 +31,24 @@ public class CommandPanel extends JPanel {
     private final Image backgroundImage;
 
     public CommandPanel() {
-        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        if (Spark.isWindows()) {
+            setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        }
+        else {
+            setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        }
+
 
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
         setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, new Color(197, 213, 230)));
     }
 
+
     public void paintComponent(Graphics g) {
-        double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-        double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+        double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
+        double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
         AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+        ((Graphics2D) g).drawImage(backgroundImage, xform, this);
     }
 }
