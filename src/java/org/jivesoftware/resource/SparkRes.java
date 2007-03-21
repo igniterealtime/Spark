@@ -263,6 +263,9 @@ public class SparkRes {
     public static final String DIAL_PHONE_IMAGE_16x16 = "DIAL_PHONE_IMAGE_16x16";
     public static final String COMPUTER_IMAGE_16x16 = "COMPUTER_IMAGE_16x16";
     public static final String MAIN_ICNS_FILE = "MAIN_ICNS_FILE";
+    public static final String LIGHTING_BOLT_IMAGE = "LIGHTING_BOLT_IMAGE";
+    public static final String HEADSET_IMAGE = "HEADSET_IMAGE";
+
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

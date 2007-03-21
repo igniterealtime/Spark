@@ -69,8 +69,7 @@ public class JingleTabHandler extends SparkTabHandler {
             tab.setIcon(JinglePhoneRes.getImageIcon("ANSWER_PHONE_IMAGE"));
         }
         else if (JingleRoomState.inJingleCall == state) {
-            tab.setIcon(JinglePhoneRes.getImageIcon("RECEIVER2_IMAGE"));
-
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.HEADSET_IMAGE));
         }
         else if (JingleRoomState.callWasEnded == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("HANG_UP_PHONE_16x16_IMAGE"));

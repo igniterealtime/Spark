@@ -8,6 +8,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -16,8 +17,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -26,14 +25,15 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -67,7 +67,8 @@ public class BuzzPlugin implements Plugin {
                     if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
                         return;
                     }
-                    final RolloverButton chatRoomButton = new RolloverButton("Buzz");
+                    final RolloverButton chatRoomButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.LIGHTING_BOLT_IMAGE));
+                    chatRoomButton.setToolTipText("Get the users attention.");
                     chatRoomButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             final String jid = ((ChatRoomImpl)room).getParticipantJID();
