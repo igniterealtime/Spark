@@ -198,6 +198,11 @@ public final class SessionManager implements ConnectionListener {
      * @param presence the current presence of the user.
      */
     public void changePresence(Presence presence) {
+        // Do NOT  send presence if disconnected.
+        if(!SparkManager.getConnection().isConnected()){
+            return;
+        }
+
         // Send Presence Packet
         SparkManager.getConnection().sendPacket(presence);
 

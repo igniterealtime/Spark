@@ -260,7 +260,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      *
      * @param presence the user to update.
      */
-    private void updateUserPresence(Presence presence) {
+    private void updateUserPresence(Presence presence) throws Exception {
         final Roster roster = SparkManager.getConnection().getRoster();
 
         final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
@@ -549,7 +549,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         if (!presence.isAvailable()) {
-            updateUserPresence(presence);
+            try {
+                updateUserPresence(presence);
+            }
+            catch (Exception e) {
+                Log.error(e);
+            }
         }
     }
 
@@ -649,7 +654,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     RosterEntry entry = roster.getEntry(jid);
                                     Presence presence = PresenceManager.getPresence(jid);
                                     item.setPresence(presence);
-                                    updateUserPresence(presence);
+                                    try {
+                                        updateUserPresence(presence);
+                                    }
+                                    catch (Exception e) {
+                                        Log.error(e);
+                                    }
 
                                     if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                                         && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
@@ -1606,7 +1616,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     });
                 }
                 else {
-                    initialPresences.add(presence);
+                    try {
+                        initialPresences.add(presence);
+                    }
+                    catch (Exception e) {
+                        Log.error(e);
+                    }
 
                     int numberOfMillisecondsInTheFuture = 500;
 
@@ -1618,7 +1633,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     while (users.hasNext()) {
                                         Presence userToUpdate = (Presence)users.next();
                                         initialPresences.remove(userToUpdate);
-                                        updateUserPresence(userToUpdate);
+                                        try {
+                                            updateUserPresence(userToUpdate);
+                                        }
+                                        catch (Exception e) {
+                                            Log.error(e);
+                                        }
 
                                     }
                                 }
@@ -1973,10 +1993,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         timer.schedule(new TimerTask() {
             public void run() {
                 // Send presence to server.
-                final Presence presence = new Presence(Presence.Type.available, Res.getString("available"), -1, Presence.Mode.available);
+                final Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
                 SparkManager.getSessionManager().changePresence(presence);
             }
-        }, 3000);
+        }, 5000);
     }
 
     public void connectionClosedOnError(final Exception ex) {

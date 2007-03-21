@@ -30,6 +30,7 @@ import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -199,7 +200,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                         String title = "Alert from " + transport.getName();
                         if (transport != null) {
                             // Show error
-                            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), body, title, JOptionPane.ERROR_MESSAGE);
+                            MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
                         }
                     }
                 }

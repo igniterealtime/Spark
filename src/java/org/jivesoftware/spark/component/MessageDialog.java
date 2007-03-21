@@ -18,6 +18,7 @@ import org.jivesoftware.spark.SparkManager;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
@@ -105,7 +106,7 @@ public final class MessageDialog {
      * @param message the message to display.
      * @param header  the header/title of the dialog.
      */
-    public static void showAlert(String message, String header, Icon icon) {
+    public static void showAlert(String message, String header, String title, Icon icon) {
         JTextPane textPane;
         final JOptionPane pane;
         final JDialog dlg;
@@ -116,6 +117,7 @@ public final class MessageDialog {
         textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
         textPane.setEditable(false);
         textPane.setText(message);
+        textPane.setBackground(Color.white);
 
         // Create the title panel for this dialog
         titlePanel = new TitlePanel(header, null, icon, true);
@@ -132,7 +134,7 @@ public final class MessageDialog {
         mainPanel.add(pane, BorderLayout.CENTER);
 
         MainWindow mainWindow = SparkManager.getMainWindow();
-        dlg = new JDialog(mainWindow, Res.getString("title.broadcast.message"), false);
+        dlg = new JDialog(mainWindow, title, false);
         dlg.pack();
         dlg.setSize(300, 300);
         dlg.setContentPane(mainPanel);
