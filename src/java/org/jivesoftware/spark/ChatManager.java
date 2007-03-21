@@ -357,14 +357,14 @@ public class ChatManager implements MessageEventNotificationListener {
         try {
             getChatContainer().getChatRoom(StringUtils.parseBareAddress(message.getFrom()));
             cancelledNotification(message.getFrom(), "");
-
-            // Notify MessageFilters.
-            while (filters.hasNext()) {
-                ((MessageFilter)filters.next()).filterIncoming(room, message);
-            }
         }
         catch (Exception e) {
             Log.error(e);
+        }
+
+        // Notify MessageFilters.
+        while (filters.hasNext()) {
+            ((MessageFilter)filters.next()).filterIncoming(room, message);
         }
     }
 
