@@ -293,6 +293,8 @@ public class JingleRoom extends JPanel {
             JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.muted);
         }
 
+        session.getJingleMediaSession().setTrasmit(!muted);
+
         muteButton.invalidate();
         muteButton.validate();
         muteButton.repaint();
