@@ -206,6 +206,10 @@ public class SparkTab extends TabPanel {
             previousIcon = iconLabel.getIcon();
         }
         iconLabel.setIcon(icon);
+
+        textLabel.invalidate();
+        textLabel.validate();
+        textLabel.repaint();
     }
 
     /**
