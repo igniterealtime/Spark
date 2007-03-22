@@ -43,17 +43,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -63,6 +52,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -326,6 +328,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
     private void broadcastToRoster() {
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.message.to.broadcast"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
+
+        final Map<String, Message> broadcastMessages = new HashMap<String, Message>();
         if (ModelUtil.hasLength(messageText)) {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             for (ContactGroup contactGroup : contactList.getContactGroups()) {
@@ -335,11 +339,17 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                         message.setTo(item.getJID());
                         message.setBody(messageText);
                         message.setProperty("broadcast", true);
-                        SparkManager.getConnection().sendPacket(message);
+                        broadcastMessages.put(message.getTo(), message);
                     }
                 }
 
             }
+
+            // Send packets
+            for (Message message : broadcastMessages.values()) {
+                SparkManager.getConnection().sendPacket(message);
+            }
+
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcast.message.sent"), Res.getString("title.broadcast.message"), JOptionPane.INFORMATION_MESSAGE);
 
         }
@@ -356,12 +366,20 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.broadcast.to", group.getGroupName()), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
+
+            final Map<String, Message> broadcastMessages = new HashMap<String, Message>();
             for (ContactItem item : group.getContactItems()) {
                 final Message message = new Message();
                 message.setTo(item.getJID());
                 message.setProperty("broadcast", true);
                 message.setBody(messageText);
-                buf.append(item.getNickname()).append("\n");
+                if (!broadcastMessages.containsKey(item.getJID())) {
+                    buf.append(item.getNickname()).append("\n");
+                    broadcastMessages.put(item.getJID(), message);
+                }
+            }
+
+            for (Message message : broadcastMessages.values()) {
                 SparkManager.getConnection().sendPacket(message);
             }
 
