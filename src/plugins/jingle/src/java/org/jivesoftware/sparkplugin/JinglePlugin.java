@@ -371,7 +371,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             try {
                 session = request.accept();
                 session.addListener(this);
-                session.start(request);
+                session.start();
                 sessions.put(request.getFrom(), session);
 
                 // Notify user of incoming call.
