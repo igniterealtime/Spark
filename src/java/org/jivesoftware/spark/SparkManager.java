@@ -14,6 +14,7 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.MessageEventManager;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.spark.component.Notifications;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.preference.PreferenceManager;
@@ -379,5 +380,30 @@ public final class SparkManager {
         return focusedComponent;
     }
 
+    /**
+     * Adds a feature that can be discovered through Disco.
+     *
+     * @param namespace the namespace of the feature.
+     */
+    public static void addFeature(String namespace) {
+        // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
+        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(getConnection());
+
+        // Register that a new feature is supported by this XMPP entity
+        discoManager.addFeature(namespace);
+    }
+
+    /**
+     * Removes a feature that can be discovered through Disco.
+     *
+     * @param namespace the namespace to remove.
+     */
+    public static void removeFeature(String namespace) {
+        // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
+        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(getConnection());
+
+        // Register that a new feature is supported by this XMPP entity
+        discoManager.removeFeature(namespace);
+    }
 
 }

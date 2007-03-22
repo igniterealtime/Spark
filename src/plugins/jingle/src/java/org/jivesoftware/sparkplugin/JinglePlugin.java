@@ -10,17 +10,29 @@
 
 package org.jivesoftware.sparkplugin;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.jingle.*;
-import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
-import org.jivesoftware.smackx.jingle.mediaimpl.multi.MultiMediaManager;
-import org.jivesoftware.smackx.jingle.mediaimpl.jspeex.SpeexMediaManager;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.jingle.IncomingJingleSession;
+import org.jivesoftware.smackx.jingle.JingleManager;
+import org.jivesoftware.smackx.jingle.JingleSession;
+import org.jivesoftware.smackx.jingle.JingleSessionRequest;
+import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
-import org.jivesoftware.smackx.jingle.nat.*;
+import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
+import org.jivesoftware.smackx.jingle.mediaimpl.jspeex.SpeexMediaManager;
+import org.jivesoftware.smackx.jingle.mediaimpl.multi.MultiMediaManager;
+import org.jivesoftware.smackx.jingle.nat.BridgedTransportManager;
+import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
+import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
+import org.jivesoftware.smackx.jingle.nat.STUN;
+import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.Phone;
 import org.jivesoftware.spark.phone.PhoneManager;
@@ -33,15 +45,22 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
-import org.jivesoftware.Spark;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 import java.awt.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -54,6 +73,10 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     private JingleManager jingleManager;
 
     private JingleStateManager stateManager;
+
+    private static final String JINGLE_NAMESPACE = "http://www.xmpp.org/extensions/xep-0166.html#ns";
+
+    private Map<String, Boolean> jingleFeature = new HashMap<String, Boolean>();
 
     public void initialize() {
         // Add to PhoneManager
@@ -92,7 +115,8 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                     try {
                         int codec = Integer.parseInt(System.getProperty("codec"));
                         jingleMediaManager.setPreferredPayloadType(jingleMediaManager.getPayloads().get(codec));
-                    } catch (NumberFormatException e) {
+                    }
+                    catch (NumberFormatException e) {
                         // Do Nothing
                     }
                 }
@@ -100,8 +124,12 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
 
                 if (transportManager instanceof BridgedTransportManager) {
-                    jingleManager.addCreationListener((BridgedTransportManager) transportManager);
+                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
                 }
+
+                // Add Jingle to discovered items list.
+                SparkManager.addFeature(JINGLE_NAMESPACE);
+
                 return true;
             }
 
@@ -138,7 +166,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomClosed(ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
-                    final ChatRoomImpl roomImpl = (ChatRoomImpl) room;
+                    final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                     if (sessions.containsKey(roomImpl.getJID())) {
                         endCall(roomImpl);
                     }
@@ -150,6 +178,33 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
     public Collection<Action> getPhoneActions(final String jid) {
         if (jingleManager == null) {
+            return Collections.emptyList();
+        }
+
+        Boolean supportsJingle = jingleFeature.get(StringUtils.parseBareAddress(jid));
+        if (supportsJingle == null) {
+            // Disco for event.
+            // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
+            ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+
+            String fullJID = PresenceManager.getFullyQualifiedJID(jid);
+
+            // Get the items of a given XMPP entity
+            // This example gets the items associated with online catalog service
+            DiscoverInfo discoverInfo = null;
+            try {
+                discoverInfo = discoManager.discoverInfo(fullJID);
+            }
+            catch (XMPPException e) {
+                Log.error(e);
+            }
+
+            // Get the discovered items of the queried XMPP entity
+            supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
+            jingleFeature.put(jid, supportsJingle);
+        }
+
+        if (!supportsJingle) {
             return Collections.emptyList();
         }
 
@@ -212,7 +267,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         OutgoingCall outgoingCall = new OutgoingCall();
