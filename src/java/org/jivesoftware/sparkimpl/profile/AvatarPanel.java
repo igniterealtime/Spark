@@ -163,7 +163,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                     suffix.toLowerCase().equals(".png")) {
                 changeAvatar(file, this);
             }
-            else {k
+            else {
                 JOptionPane.showMessageDialog(this, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             }
 
