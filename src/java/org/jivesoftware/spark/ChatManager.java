@@ -400,7 +400,6 @@ public class ChatManager implements MessageEventNotificationListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator filters = chatManager.getMessageFilters().iterator();
         try {
-            getChatContainer().getChatRoom(StringUtils.parseBareAddress(message.getFrom()));
             cancelledNotification(message.getFrom(), "");
         }
         catch (Exception e) {

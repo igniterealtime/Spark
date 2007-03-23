@@ -182,7 +182,7 @@ public class VCardEditor {
         }
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.edit.profile"), Res.getString("message.save.profile"), icon, true);
+        titlePanel = new TitlePanel(Res.getString("title.profile.information"), "", icon, true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

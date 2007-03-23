@@ -144,6 +144,7 @@ public class PersonalPanel extends JPanel {
             Component comp = comps[i];
             if (comp instanceof JTextField) {
                 ((JTextField)comp).setEditable(allowEditing);
+                comp.setEnabled(allowEditing);
             }
         }
     }
