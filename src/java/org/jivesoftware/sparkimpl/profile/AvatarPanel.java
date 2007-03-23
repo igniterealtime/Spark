@@ -11,7 +11,6 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -26,16 +25,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JDialog;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -108,7 +106,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
      */
     public void setAvatar(ImageIcon icon) {
         avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-        avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 48, Image.SCALE_SMOOTH)));
+        if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
+            avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
+        }
+        else {
+            avatar.setIcon(icon);
+        }
+
         avatar.setText("");
     }
 
@@ -279,7 +283,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void setParentDialog(Dialog dialog){
+    public void setParentDialog(Dialog dialog) {
         this.dlg = dialog;
     }
 
