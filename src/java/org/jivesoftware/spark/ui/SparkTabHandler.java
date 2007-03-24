@@ -44,7 +44,7 @@ public abstract class SparkTabHandler {
         }
         else {
             Presence.Mode mode = presence.getMode();
-            if (mode == Presence.Mode.available) {
+            if (mode == Presence.Mode.available || mode == null) {
                 tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_AVAILABLE_STALE_IMAGE));
             }
             else if (mode == Presence.Mode.away) {
