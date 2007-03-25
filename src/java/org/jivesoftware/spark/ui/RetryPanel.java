@@ -41,6 +41,8 @@ public class RetryPanel extends JPanel {
     private RolloverButton retryButton;
     private boolean closedOnError = false;
 
+    private boolean connecting;
+
     /**
      * Construct the RetryPanel.
      */
@@ -70,6 +72,7 @@ public class RetryPanel extends JPanel {
     }
 
     private void attemptReconnection() {
+        connecting = true;
         retryButton.setText("Attempting...");
         retryButton.setEnabled(false);
 
@@ -83,6 +86,7 @@ public class RetryPanel extends JPanel {
     }
 
     private void reconnect() {
+
         try {
             if (closedOnError) {
                 SparkManager.getConnection().connect();
@@ -94,6 +98,8 @@ public class RetryPanel extends JPanel {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        connecting = false;
 
         retryButton.setEnabled(true);
         retryButton.setText("Reconnect....");
@@ -133,6 +139,9 @@ public class RetryPanel extends JPanel {
      * @param text the text to display on the reconnect button.
      */
     protected void setReconnectText(String text) {
+        if (connecting) {
+            return;
+        }
         retryButton.setVisible(true);
         retryButton.setText(text);
     }

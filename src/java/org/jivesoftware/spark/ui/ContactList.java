@@ -261,6 +261,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param presence the user to update.
      */
     private void updateUserPresence(Presence presence) throws Exception {
+        if(presence.getError() != null){
+            // We ignore this.
+            return;
+        }
+        
         final Roster roster = SparkManager.getConnection().getRoster();
 
         final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
@@ -272,6 +277,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
         // belong to.
+
         if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || (presence.getFrom().indexOf("workgroup.") != -1)) {
             changeOfflineToOnline(bareJID, entry, presence);
         }
