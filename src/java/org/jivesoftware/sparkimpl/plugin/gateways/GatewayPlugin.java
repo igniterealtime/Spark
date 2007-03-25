@@ -12,8 +12,6 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -22,9 +20,6 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DiscoverInfo.Identity;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.ChatManager;
@@ -52,7 +47,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -76,7 +70,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         SwingWorker thread = new SwingWorker() {
             public Object construct() {
                 try {
-                    populateTransports(SparkManager.getConnection());
+                    populateTransports();
                 }
                 catch (Exception e) {
                     Log.error(e);
@@ -120,46 +114,31 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     public void uninstall() {
     }
 
-    private void populateTransports(XMPPConnection con) throws Exception {
-        ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(con);
-
+    private void populateTransports() throws Exception {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
 
         DiscoverItems.Item item;
-        DiscoverInfo info;
-        DiscoverInfo.Identity identity;
 
         Iterator items = discoItems.getItems();
         while (items.hasNext()) {
             item = (Item)items.next();
-            try {
-                info = discoveryManager.discoverInfo(item.getEntityID());
-            }
-            catch (XMPPException e) {
-                Log.debug("Unable to locate " + item);
-                continue;
-            }
-            Iterator identities = info.getIdentities();
-            while (identities.hasNext()) {
-                identity = (Identity)identities.next();
-
-                if (identity.getCategory().equalsIgnoreCase(GATEWAY)) {
-                    if ("aim".equals(identity.getType())) {
-                        AIMTransport aim = new AIMTransport(item.getEntityID());
-                        TransportUtils.addTransport(item.getEntityID(), aim);
-                    }
-                    else if ("msn".equals(identity.getType())) {
-                        MSNTransport msn = new MSNTransport(item.getEntityID());
-                        TransportUtils.addTransport(item.getEntityID(), msn);
-                    }
-                    else if ("yahoo".equals(identity.getType())) {
-                        YahooTransport yahoo = new YahooTransport(item.getEntityID());
-                        TransportUtils.addTransport(item.getEntityID(), yahoo);
-                    }
-                    else if ("icq".equals(identity.getType())) {
-                        ICQTransport icq = new ICQTransport(item.getEntityID());
-                        TransportUtils.addTransport(item.getEntityID(), icq);
-                    }
+            String entityName = item.getEntityID();
+            if (entityName != null) {
+                if (entityName.startsWith("aim.")) {
+                    AIMTransport aim = new AIMTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), aim);
+                }
+                else if (entityName.startsWith("msn.")) {
+                    MSNTransport msn = new MSNTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), msn);
+                }
+                else if (entityName.startsWith("yahoo.")) {
+                    YahooTransport yahoo = new YahooTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), yahoo);
+                }
+                else if (entityName.startsWith("icq.")) {
+                    ICQTransport icq = new ICQTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), icq);
                 }
             }
         }
