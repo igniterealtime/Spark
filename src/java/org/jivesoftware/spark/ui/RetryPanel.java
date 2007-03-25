@@ -15,11 +15,8 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.text.html.HTMLEditorKit;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -27,6 +24,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.TimerTask;
+
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.text.html.HTMLEditorKit;
 
 /**
  * RetryPanel is the UI/Function class to handle reconnection logic. This allows for a simple card layout to replace the current
@@ -71,34 +73,32 @@ public class RetryPanel extends JPanel {
         retryButton.setText("Attempting...");
         retryButton.setEnabled(false);
 
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    if(closedOnError){
-                        SparkManager.getConnection().connect();
-                    }
-                    else {
-                        SparkManager.getMainWindow().logout(false);
-                    }
-                    return true;
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return false;
+        TimerTask task = new SwingTimerTask() {
+            public void doRun() {
+                reconnect();
             }
-
-            public void finished() {
-                retryButton.setEnabled(true);
-                retryButton.setText("Reconnect...");
-            }
-
         };
 
-        worker.start();
-
-
+        TaskEngine.getInstance().schedule(task, 2000);
     }
+
+    private void reconnect() {
+        try {
+            if (closedOnError) {
+                SparkManager.getConnection().connect();
+            }
+            else {
+                SparkManager.getMainWindow().logout(false);
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        retryButton.setEnabled(true);
+        retryButton.setText("Reconnect....");
+    }
+
 
     /**
      * Sets the reason the user was disconnected from the server.
@@ -144,7 +144,7 @@ public class RetryPanel extends JPanel {
         retryButton.setVisible(false);
     }
 
-    public void setClosedOnError(boolean onError){
+    public void setClosedOnError(boolean onError) {
         closedOnError = onError;
     }
 }
