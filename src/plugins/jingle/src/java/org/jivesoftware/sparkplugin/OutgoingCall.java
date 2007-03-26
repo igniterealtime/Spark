@@ -11,7 +11,6 @@
 package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.jingle.IncomingJingleSession;
 import org.jivesoftware.smackx.jingle.JingleNegotiator;
 import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
@@ -47,8 +46,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Handles UI controls for outgoing jingle calls.
@@ -60,18 +57,13 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     private JLabel fileLabel = new JLabel();
 
     private CallButton cancelButton = new CallButton();
-    private CallButton answerButton = new CallButton();
 
-    private JingleNegotiator.State lastState;
     private JingleSession session;
+    private JingleRoom jingleRoom;
 
     private AudioClip ringing;
 
-    private boolean answered;
-
     private ChatRoom chatRoom;
-
-    private Map<ChatRoom, JingleRoom> callMap = new HashMap<ChatRoom, JingleRoom>();
 
     /**
      * Creates a new instance of OutgoingCall.
@@ -94,27 +86,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         titleLabel.setForeground(new Color(211, 174, 102));
 
         cancelButton.setText("Cancel");
-        answerButton.setText("Answer");
-
-        add(answerButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(cancelButton, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-
-        answerButton.setVisible(false);
-
-        answerButton.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                answered = true;
-            }
-        });
-
 
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-
-        answerButton.setForeground(new Color(73, 113, 196));
-        answerButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        answerButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
     }
@@ -164,7 +140,6 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
         makeClickable(imageLabel);
         makeClickable(titleLabel);
-        makeClickable(answerButton);
 
         // Notify state change
         SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
@@ -178,16 +153,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
             return;
         }
         else if (session instanceof OutgoingJingleSession) {
-            answerButton.setVisible(false);
             showAlert(false);
-            if (session.getState() instanceof OutgoingJingleSession.Active) {
-                showCallAnsweredState();
-            }
-            else if (session.getState() instanceof OutgoingJingleSession.Pending) {
+            if (session.getState() instanceof OutgoingJingleSession.Pending) {
                 titleLabel.setText("Calling user. Please wait...");
                 cancelButton.setVisible(true);
             }
-            lastState = session.getState();
         }
     }
 
@@ -200,17 +170,15 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         titleLabel.setText("Voice chat started on " + formatter.format(new Date()));
         cancelButton.setVisible(false);
-        lastState = session.getState();
         if (ringing != null) {
             ringing.stop();
         }
 
-        final JingleRoom jingleRoom = new JingleRoom(session, chatRoom);
+        jingleRoom = new JingleRoom(session, chatRoom);
         chatRoom.getChatPanel().add(jingleRoom, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
         chatRoom.getChatPanel().invalidate();
         chatRoom.getChatPanel().validate();
         chatRoom.getChatPanel().repaint();
-        callMap.put(chatRoom, jingleRoom);
 
         // Add state
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
@@ -233,18 +201,12 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
         showAlert(true);
         cancelButton.setVisible(false);
-        answerButton.setVisible(false);
         if (ringing != null) {
             ringing.stop();
         }
 
-        if (chatRoom != null) {
-            JingleRoom room = callMap.get(chatRoom);
-            if (room != null) {
-                chatRoom.getChatPanel().remove(room);
-            }
-
-            callMap.remove(chatRoom);
+        if (chatRoom != null && jingleRoom != null) {
+            chatRoom.getChatPanel().remove(jingleRoom);
             chatRoom.getChatPanel().invalidate();
             chatRoom.getChatPanel().validate();
             chatRoom.getChatPanel().repaint();
@@ -335,29 +297,6 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
-        if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    if (lastState == null && ringing != null) {
-                        ringing.loop();
-                    }
-                }
-            });
-
-            while (!answered && (session != null && !session.isClosed())) {
-                try {
-                    Thread.sleep(50);
-                }
-                catch (InterruptedException e) {
-                    Log.error(e);
-                }
-            }
-            if (!answered) {
-                cancel();
-                throw new JingleNegotiator.JingleException("Not Accepted");
-            }
-        }
-
 
     }
 
@@ -383,6 +322,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+        showCallAnsweredState();
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
