@@ -45,8 +45,6 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
     private SparkToaster toasterManager;
 
-    private JingleNegotiator.State lastState;
-
     private AudioClip ringing;
 
     private ChatRoom chatRoom;
@@ -85,8 +83,6 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         notificationUI.setTitle("Voice chat started on " + formatter.format(new Date()));
         notificationUI.showAlert(false);
         notificationUI.setIcon(null);
-
-        lastState = session.getState();
 
         if (ringing != null) {
             ringing.stop();
