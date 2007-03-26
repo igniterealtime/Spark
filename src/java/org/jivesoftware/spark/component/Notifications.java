@@ -349,7 +349,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
             return;
         }
 
-        trayIcon.displayMessage(title, body, TrayIcon.INFO_MESSAGE_TYPE);
+   //     trayIcon.displayMessage(title, body, TrayIcon.INFO_MESSAGE_TYPE);
     }
 
 
