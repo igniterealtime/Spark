@@ -215,6 +215,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
     private void showCallEndedState() {
         final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
+
+
         showAlert(true);
         cancelButton.setVisible(false);
         answerButton.setVisible(false);

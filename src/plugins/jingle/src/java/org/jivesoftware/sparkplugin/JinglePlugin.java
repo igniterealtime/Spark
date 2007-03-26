@@ -77,6 +77,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
 
     private Map<String, Boolean> jingleFeature = new HashMap<String, Boolean>();
 
+
     public void initialize() {
         // Add to PhoneManager
         PhoneManager.getInstance().addPhone(this);
@@ -302,7 +303,6 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     }
 
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
-
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
@@ -310,10 +310,16 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
-        System.out.println(string);
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
+        if (jingleSession instanceof OutgoingJingleSession) {
+            OutgoingJingleSession session = (OutgoingJingleSession)jingleSession;
+            if (session.getState() instanceof OutgoingJingleSession.Active) {
+            }
+            else if (session.getState() instanceof OutgoingJingleSession.Pending) {
+            }
+        }
         removeJingleSession(jingleSession);
     }
 
