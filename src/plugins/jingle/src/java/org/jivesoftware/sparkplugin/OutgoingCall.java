@@ -15,10 +15,14 @@ import org.jivesoftware.smackx.jingle.IncomingJingleSession;
 import org.jivesoftware.smackx.jingle.JingleNegotiator;
 import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
+import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionStateListener;
+import org.jivesoftware.smackx.jingle.media.PayloadType;
+import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
@@ -49,7 +53,7 @@ import java.util.Map;
 /**
  * Handles UI controls for outgoing jingle calls.
  */
-public class OutgoingCall extends JPanel implements JingleSessionStateListener {
+public class OutgoingCall extends JPanel implements JingleSessionStateListener, JingleSessionListener, ChatRoomClosingListener {
 
     private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
@@ -113,7 +117,6 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         answerButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
-
     }
 
     /**
@@ -125,6 +128,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
      */
     public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
         this.chatRoom = chatRoom;
+
+        JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.ringing);
+
+        chatRoom.addClosingListener(this);
+        session.addListener(this);
         cancelButton.setVisible(true);
 
         this.session = session;
@@ -157,15 +165,17 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         makeClickable(imageLabel);
         makeClickable(titleLabel);
         makeClickable(answerButton);
+
+        // Notify state change
+        SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
     }
 
     /**
      * Updates the UI to reflect the current state.
      */
     private void updateOutgoingCallPanel() {
-
         if (session == null || session.isClosed()) {
-            showCallEndedState();
+            return;
         }
         else if (session instanceof OutgoingJingleSession) {
             answerButton.setVisible(false);
@@ -212,10 +222,14 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
     /**
      * Called when the call has ended.
      */
-    private void showCallEndedState() {
-        final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-        titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
-
+    private void showCallEndedState(boolean answered) {
+        if (answered) {
+            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+            titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
+        }
+        else {
+            titleLabel.setText("Voice chat was rejected.");
+        }
 
         showAlert(true);
         cancelButton.setVisible(false);
@@ -354,6 +368,42 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
             }
         });
 
+    }
+
+
+    public void closing() {
+        try {
+            session.terminate();
+        }
+        catch (XMPPException e) {
+            Log.error(e);
+        }
+
+        JingleStateManager.getInstance().removeJingleSession(chatRoom);
+    }
+
+    public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+    }
+
+    public void sessionDeclined(String string, JingleSession jingleSession) {
+    }
+
+    public void sessionRedirected(String string, JingleSession jingleSession) {
+    }
+
+    public void sessionClosed(String string, JingleSession jingleSession) {
+        if (jingleSession instanceof OutgoingJingleSession) {
+            OutgoingJingleSession session = (OutgoingJingleSession)jingleSession;
+            if (session.getState() instanceof OutgoingJingleSession.Active) {
+                showCallEndedState(true);
+            }
+            else if (session.getState() instanceof OutgoingJingleSession.Pending) {
+                showCallEndedState(false);
+            }
+        }
+    }
+
+    public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
     }
 
 

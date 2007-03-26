@@ -22,6 +22,7 @@ import org.jivesoftware.smackx.jingle.media.PayloadType;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
@@ -40,7 +41,7 @@ import java.util.Map;
 /**
  * Incoming call handles a single incoming Jingle call.
  */
-public class IncomingCall implements JingleSessionListener {
+public class IncomingCall implements JingleSessionListener, ChatRoomClosingListener {
 
     private SparkToaster toasterManager;
 
@@ -272,5 +273,20 @@ public class IncomingCall implements JingleSessionListener {
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
         showCallEndedState();
+    }
+
+
+    public void closing() {
+        if (session != null) {
+            try {
+                session.terminate();
+            }
+            catch (XMPPException e) {
+                Log.error(e);
+            }
+        }
+        
+
+        JingleStateManager.getInstance().removeJingleSession(chatRoom);
     }
 }
