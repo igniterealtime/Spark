@@ -294,6 +294,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
                 Log.error(e);
             }
         }
+
+        showCallEndedState(true);
     }
 
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
@@ -311,11 +313,13 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
 
     public void closing() {
-        try {
-            session.terminate();
-        }
-        catch (XMPPException e) {
-            Log.error(e);
+        if (session != null) {
+            try {
+                session.terminate();
+            }
+            catch (XMPPException e) {
+                Log.error(e);
+            }
         }
 
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
@@ -326,6 +330,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
+          showCallEndedState(false);
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
@@ -344,6 +349,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
+         System.out.println(xmppException);
     }
 
 

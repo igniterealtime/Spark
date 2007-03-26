@@ -199,6 +199,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
         incomingCall.getRejectButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                request.reject();
                 rejectIncomingCall();
             }
         });
