@@ -65,9 +65,6 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
     public IncomingCall(final JingleSessionRequest request) {
 
         try {
-            // Accept the call
-            session = request.accept();
-            
             ringing = Applet.newAudioClip(JinglePhoneRes.getURL("RINGING"));
         }
         catch (Exception e) {
@@ -232,10 +229,9 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             ringing.stop();
         }
 
-        if (session != null)
-            return;
-
         try {
+            // Accept the call
+            session = request.accept();
 
             session.addListener(this);
 
@@ -253,11 +249,12 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             notifyRoom();
         }
 
+        showCallAnsweredState();
     }
 
 
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
-        showCallAnsweredState();
+
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
@@ -285,7 +282,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                 Log.error(e);
             }
         }
-        
+
 
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
     }
