@@ -181,7 +181,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
             return Collections.emptyList();
         }
 
-        Boolean supportsJingle = jingleFeature.get(StringUtils.parseBareAddress(jid));
+        Boolean supportsJingle = true;// jingleFeature.get(StringUtils.parseBareAddress(jid));
         if (supportsJingle == null) {
             // Disco for event.
             // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
@@ -311,7 +311,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
-
+        System.out.println(string);
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
@@ -364,24 +364,7 @@ public class JinglePlugin implements Plugin, JingleSessionListener, Phone {
      * @param request the <code>JingleSessionRequest</code>.
      */
     private void incomingJingleSession(JingleSessionRequest request) {
-        final String from = request.getFrom();
-
-        if (!sessions.containsKey(from)) {
-            IncomingJingleSession session = null;
-            try {
-                session = request.accept();
-                session.addListener(this);
-                session.start();
-                sessions.put(request.getFrom(), session);
-
-                // Notify user of incoming call.
-                new IncomingCall(session);
-            }
-            catch (XMPPException e) {
-                Log.error(e);
-            }
-
-        }
+        final IncomingCall incomingCall = new IncomingCall(request);
     }
 
 

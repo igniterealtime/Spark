@@ -16,14 +16,15 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.jingle.IncomingJingleSession;
 import org.jivesoftware.smackx.jingle.JingleNegotiator;
 import org.jivesoftware.smackx.jingle.JingleSession;
-import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
-import org.jivesoftware.smackx.jingle.listeners.JingleSessionStateListener;
+import org.jivesoftware.smackx.jingle.JingleSessionRequest;
+import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
+import org.jivesoftware.smackx.jingle.media.PayloadType;
+import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-
-import javax.swing.SwingUtilities;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -39,17 +40,13 @@ import java.util.Map;
 /**
  * Incoming call handles a single incoming Jingle call.
  */
-public class IncomingCall implements JingleSessionStateListener {
+public class IncomingCall implements JingleSessionListener {
 
     private SparkToaster toasterManager;
 
     private JingleNegotiator.State lastState;
 
-    private JingleSession session;
-
     private AudioClip ringing;
-
-    private boolean answered;
 
     private ChatRoom chatRoom;
 
@@ -57,15 +54,14 @@ public class IncomingCall implements JingleSessionStateListener {
 
     private GenericNotification notificationUI;
 
+    private IncomingJingleSession session;
+
     /**
      * Initializes a new IncomingCall with the required JingleSession.
      *
-     * @param session the <code>JingleSession</code>
+     * @param request the <code>JingleSessionRequest</code>
      */
-    public IncomingCall(final JingleSession session) {
-        this.session = session;
-
-        this.session.addStateListener(this);
+    public IncomingCall(final JingleSessionRequest request) {
 
         try {
             ringing = Applet.newAudioClip(JinglePhoneRes.getURL("RINGING"));
@@ -75,16 +71,10 @@ public class IncomingCall implements JingleSessionStateListener {
         }
 
         notificationUI = new GenericNotification("Establishing call. Please wait...", SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+
+        showIncomingCall(request);
     }
 
-    /**
-     * Returns true if the call was answered.
-     *
-     * @return true if the call was answered.
-     */
-    public boolean isAnswered() {
-        return answered;
-    }
 
     /**
      * Appends the JingleRoom to the ChatRoom.
@@ -166,6 +156,10 @@ public class IncomingCall implements JingleSessionStateListener {
                 Log.error(e);
             }
         }
+
+        if(ringing != null){
+            ringing.stop();
+        }
     }
 
     /**
@@ -177,81 +171,22 @@ public class IncomingCall implements JingleSessionStateListener {
         return session;
     }
 
-    public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
-        if (newOne != null && newOne instanceof IncomingJingleSession.Active) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    showIncomingCall(session);
-                }
-            });
-
-            if (lastState == null && ringing != null) {
-                ringing.loop();
-            }
-
-            while (!answered && (session != null && !session.isClosed())) {
-                try {
-                    Thread.sleep(50);
-                }
-                catch (InterruptedException e) {
-                    Log.error(e);
-                }
-            }
-            if (!answered) {
-                rejectIncomingCall();
-                throw new JingleNegotiator.JingleException("Not Accepted");
-            }
-        }
-    }
-
     private void notifyRoom() {
         notificationUI.showAlert(true);
         chatRoom.getTranscriptWindow().addComponent(notificationUI);
-    }
-
-    public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateState();
-            }
-        });
-    }
-
-    /**
-     * Updates the state of the call.
-     */
-    private void updateState() {
-        if (session == null || session.isClosed()) {
-            showCallEndedState();
-        }
-        else if (session instanceof OutgoingJingleSession) {
-            if (session.getState() instanceof OutgoingJingleSession.Active) {
-                showCallAnsweredState();
-            }
-
-            lastState = session.getState();
-        }
-        else if (session instanceof IncomingJingleSession) {
-            if (session.getState() instanceof IncomingJingleSession.Active) {
-                showCallAnsweredState();
-            }
-            else {
-                showCallEndedState();
-            }
-        }
     }
 
     /**
      * Notifies user of an incoming call. The UI allows for users to either accept or reject
      * the incoming session.
      *
-     * @param jingleSession the JingleSession.
+     * @param request the JingleSession.
      */
-    private void showIncomingCall(final JingleSession jingleSession) {
+    private void showIncomingCall(final JingleSessionRequest request) {
         toasterManager = new SparkToaster();
         toasterManager.setHidable(false);
 
-        final IncomingCallUI incomingCall = new IncomingCallUI(jingleSession.getInitiator());
+        final IncomingCallUI incomingCall = new IncomingCallUI(request.getFrom());
         toasterManager.setToasterHeight(175);
         toasterManager.setToasterWidth(300);
         toasterManager.setDisplayTime(500000000);
@@ -261,18 +196,7 @@ public class IncomingCall implements JingleSessionStateListener {
 
         incomingCall.getAcceptButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                toasterManager.close();
-                if (ringing != null) {
-                    ringing.stop();
-                }
-
-                if (chatRoom == null) {
-                    chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jingleSession.getInitiator()));
-                    SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                    SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
-                    notifyRoom();
-                }
-                answered = true;
+                acceptSession(request);
             }
         });
 
@@ -281,6 +205,71 @@ public class IncomingCall implements JingleSessionStateListener {
                 rejectIncomingCall();
             }
         });
+
+        // Start the ringing.
+        final Runnable ringer = new Runnable() {
+            public void run() {
+                ringing.loop();
+            }
+        };
+
+        TaskEngine.getInstance().submit(ringer);
     }
 
+    /**
+     * Accepts a <code>JingleSessionRequest</code>.
+     *
+     * @param request the request.
+     */
+    private void acceptSession(JingleSessionRequest request) {
+        toasterManager.close();
+
+        if (ringing != null) {
+            ringing.stop();
+        }
+
+        if (session != null)
+            return;
+
+        try {
+            // Accept the call
+            session = request.accept();
+
+            session.addListener(this);
+
+            // Start the call
+            session.start();
+        }
+        catch (XMPPException ee) {
+            Log.error(ee);
+        }
+
+        if (chatRoom == null) {
+            chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(request.getFrom()));
+            SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
+            SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
+            notifyRoom();
+        }
+
+    }
+
+
+    public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+        showCallAnsweredState();
+    }
+
+    public void sessionDeclined(String string, JingleSession jingleSession) {
+        showCallEndedState();
+    }
+
+    public void sessionRedirected(String string, JingleSession jingleSession) {
+    }
+
+    public void sessionClosed(String string, JingleSession jingleSession) {
+        showCallEndedState();
+    }
+
+    public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
+        showCallEndedState();
+    }
 }

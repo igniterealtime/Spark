@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkplugin;
 
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
@@ -85,7 +86,7 @@ public class IncomingCallUI extends JPanel {
         panel.setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
 
         // Add Avatar
-        panel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
+        panel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
 
         // Add Avatar information
         panel.add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
@@ -102,6 +103,9 @@ public class IncomingCallUI extends JPanel {
 
         if (vcard != null) {
             handleVCardInformation(vcard);
+        }
+        else {
+            updateWithGenericInfo();
         }
 
         // Add to panel
@@ -131,8 +135,27 @@ public class IncomingCallUI extends JPanel {
         add(panel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
+    private void updateWithGenericInfo() {
+        String title = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+        Icon icon = PresenceManager.getIconFromPresence(PresenceManager.getPresence(jid));
+
+        titleLabel.setText(title);
+        titleLabel.setIcon(icon);
+
+        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
+        avatarLabel.invalidate();
+        avatarLabel.validate();
+        avatarLabel.repaint();
+
+
+        invalidate();
+        validate();
+        repaint();
+    }
+
     private void handleVCardInformation(VCard vcard) {
         if (vcard.getError() != null) {
+            updateWithGenericInfo();
             return;
         }
 
