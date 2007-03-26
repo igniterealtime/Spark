@@ -23,6 +23,14 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Color;
@@ -37,14 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles UI controls for outgoing jingle calls.
@@ -136,12 +136,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
-        if (session instanceof IncomingJingleSession) {
 
-        }
-        else {
-            titleLabel.setText("Outgoing Voice Chat To " + contactItem.getNickname());
-        }
+        titleLabel.setText("Outgoing Voice Chat To " + contactItem.getNickname());
 
 
         cancelButton.addMouseListener(new MouseAdapter() {
@@ -182,19 +178,6 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener {
                 cancelButton.setVisible(true);
             }
             lastState = session.getState();
-        }
-        else if (session instanceof IncomingJingleSession) {
-            answerButton.setVisible(false);
-            showAlert(false);
-            if (session.getState() instanceof IncomingJingleSession.Pending) {
-                titleLabel.setText("Establishing...");
-            }
-            else if (session.getState() instanceof IncomingJingleSession.Active) {
-                showCallAnsweredState();
-            }
-            else {
-                showCallEndedState();
-            }
         }
     }
 
