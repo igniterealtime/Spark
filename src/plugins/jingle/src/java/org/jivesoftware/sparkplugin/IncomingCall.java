@@ -64,6 +64,9 @@ public class IncomingCall implements JingleSessionListener {
     public IncomingCall(final JingleSessionRequest request) {
 
         try {
+            // Accept the call
+            session = request.accept();
+            
             ringing = Applet.newAudioClip(JinglePhoneRes.getURL("RINGING"));
         }
         catch (Exception e) {
@@ -157,7 +160,7 @@ public class IncomingCall implements JingleSessionListener {
             }
         }
 
-        if(ringing != null){
+        if (ringing != null) {
             ringing.stop();
         }
     }
@@ -232,8 +235,6 @@ public class IncomingCall implements JingleSessionListener {
             return;
 
         try {
-            // Accept the call
-            session = request.accept();
 
             session.addListener(this);
 
