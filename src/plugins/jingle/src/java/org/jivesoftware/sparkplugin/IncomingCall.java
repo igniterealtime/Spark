@@ -24,6 +24,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimerTask;
 
 /**
  * Incoming call handles a single incoming Jingle call.
@@ -212,6 +214,18 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         };
 
         TaskEngine.getInstance().submit(ringer);
+
+
+        // End after 30 seconds max.
+        TimerTask endTask = new SwingTimerTask() {
+            public void doRun() {
+                if(session == null){
+                    rejectIncomingCall();
+                }
+            }
+        };
+
+        TaskEngine.getInstance().schedule(endTask, 30000);
     }
 
     /**
