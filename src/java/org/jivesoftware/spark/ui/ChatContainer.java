@@ -428,7 +428,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
         }
-        else if (chatFrame.isVisible() && !chatFrame.isFocusOwner()) {
+        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
             startFlashing(chatRoom);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
@@ -950,7 +950,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
                     boolean flashAllowed = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom);
 
-                    if (!chatFrame.isFocusOwner() && flashAllowed) {
+                    if (!chatFrame.isInFocus() && flashAllowed) {
                         chatFrame.setFocusableWindowState(true);
                         SparkManager.getAlertManager().flashWindow(chatFrame);
                     }
