@@ -17,7 +17,7 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "2.5.0 Beta 4";
+        return "2.5.0 Beta 5";
     }
 
     public static String getBuildNumber(){
