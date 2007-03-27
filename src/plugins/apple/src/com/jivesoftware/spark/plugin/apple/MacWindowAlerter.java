@@ -11,14 +11,10 @@
 package com.jivesoftware.spark.plugin.apple;
 
 
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.Alerter;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.Alerter;
 
-import java.awt.*;
+import java.awt.Window;
 
 /**
  * When a message is received and the user does not have presence
