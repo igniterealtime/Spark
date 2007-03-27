@@ -109,6 +109,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
         chatRoom.addClosingListener(this);
         session.addListener(this);
+        session.addStateListener(this);
         cancelButton.setVisible(true);
 
         this.session = session;
@@ -143,6 +144,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
         // Notify state change
         SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+
+        updateOutgoingCallPanel();
     }
 
     /**
@@ -154,7 +157,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         }
         else if (session instanceof OutgoingJingleSession) {
             showAlert(false);
-            if (session.getState() instanceof OutgoingJingleSession.Pending) {
+            if (session.getState() instanceof OutgoingJingleSession.Inviting) {
                 titleLabel.setText("Calling user. Please wait...");
                 cancelButton.setVisible(true);
             }
@@ -299,7 +302,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
-
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
+            }
+        });
     }
 
     public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
@@ -330,10 +337,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
-          showCallEndedState(false);
+        showCallEndedState(false);
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
+        System.out.println(string);
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
@@ -349,7 +357,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
-         System.out.println(xmppException);
+        System.out.println(xmppException);
     }
 
 
