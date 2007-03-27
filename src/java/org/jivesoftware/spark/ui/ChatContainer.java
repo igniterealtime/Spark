@@ -953,7 +953,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     boolean flashAllowed = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom);
 
                     if (!chatFrame.isInFocus() && flashAllowed) {
-                        chatFrame.setFocusableWindowState(true);
                         SparkManager.getAlertManager().flashWindow(chatFrame);
                     }
                 }
