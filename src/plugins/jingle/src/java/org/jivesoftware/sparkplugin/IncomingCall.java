@@ -241,7 +241,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         }
 
         try {
-            // Accept the call
+            // Accept the request
             session = request.accept();
 
             session.addListener(this);

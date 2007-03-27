@@ -82,8 +82,11 @@ public class JinglePlugin implements Plugin, Phone {
                 if (STUN.serviceAvailable(SparkManager.getConnection())) {
                     STUN stun = STUN.getSTUNServer(SparkManager.getConnection());
                     if (stun != null) {
-                        stunServer = stun.getHost();
-                        stunPort = stun.getPort();
+                        List<STUN.StunServerAddress> servers = stun.getServers();
+                        if(servers.size()>0){
+                        stunServer = servers.get(0).getServer();
+                        stunPort = Integer.parseInt(servers.get(0).getPort());
+                        }
                     }
                 }
 
