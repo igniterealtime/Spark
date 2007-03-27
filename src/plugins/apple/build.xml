@@ -8,6 +8,7 @@
     <property name="classes.dir" value="${basedir}/classes"/>
     <property name="src.dir" value="${basedir}/src"/>
     <property name="jar.file" value="${client.dir}/target/build/plugins/apple.jar"/>
+    <property name="resources.dir" value="${basedir}/resources"/>
 
     <path id="lib.classpath">
         <fileset dir="${client.lib.dir}" includes="**/*.jar"/>
@@ -29,6 +30,11 @@
                source="1.5"
                debug="true"
                target="1.5"/>
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="jar.classes" depends="compile">
