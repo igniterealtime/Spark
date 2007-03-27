@@ -30,7 +30,6 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
@@ -287,23 +286,14 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setTitle(room.getRoomTitle());
         }
 
-        final SwingWorker visibilityThread = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Thread.sleep(100);
-                }
-                catch (InterruptedException e1) {
-                    Log.error(e1);
-                }
-                return true;
-            }
 
-            public void finished() {
+        final TimerTask visibleTask = new SwingTimerTask() {
+            public void doRun() {
                 checkVisibility(room);
             }
         };
 
-        visibilityThread.start();
+        TaskEngine.getInstance().schedule(visibleTask, 100);
 
         // Add to ChatRoomList
         chatRoomList.add(room);
@@ -368,12 +358,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     private void checkVisibility(Component component) {
-        if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
+        if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocusOwner()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
         }
-        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            flashWindow(component);
+        else if (chatFrame.isVisible() && !chatFrame.isFocusOwner()) {
+            startFlashing(component);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -382,12 +372,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            flashWindow(component);
+            startFlashing(component);
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible()) {
-            flashWindow(component);
+            startFlashing(component);
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -405,15 +395,81 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                flashWindow(component);
+                startFlashing(component);
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                flashWindow(component);
+                startFlashing(component);
             }
 
             if (component instanceof ChatRoom) {
                 chatFrame.setTitle(((ChatRoom)component).getRoomTitle());
             }
+        }
+    }
+
+
+    private void handleMessageNotification(final ChatRoom chatRoom) {
+        ChatRoom activeChatRoom = null;
+        try {
+            activeChatRoom = getActiveChatRoom();
+        }
+        catch (ChatRoomNotFoundException e1) {
+            Log.error(e1);
+        }
+
+        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 20000)) {
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+            startFlashing(chatRoom);
+            return;
+        }
+
+        if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocusOwner()) {
+            chatFrame.setState(Frame.NORMAL);
+            chatFrame.setVisible(true);
+        }
+        else if (chatFrame.isVisible() && !chatFrame.isFocusOwner()) {
+            startFlashing(chatRoom);
+        }
+        else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
+            // Set to new tab.
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+
+            // If the ContactList is in the tray, we need better notification by flashing
+            // the chatframe.
+            startFlashing(chatRoom);
+        }
+
+        // Handle when chat frame is visible but the Contact List is not.
+        else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isFocusOwner()) {
+            startFlashing(chatRoom);
+        }
+        else if (!chatFrame.isVisible()) {
+            // Set to new tab.
+            int tabLocation = indexOfComponent(chatRoom);
+            setSelectedIndex(tabLocation);
+
+            if (Spark.isWindows()) {
+                chatFrame.setFocusableWindowState(false);
+                chatFrame.setState(Frame.ICONIFIED);
+            }
+            chatFrame.setVisible(true);
+            chatFrame.setFocusableWindowState(true);
+
+            // If the ContactList is in the tray, we need better notification by flashing
+            // the chatframe.
+            if (!SparkManager.getMainWindow().isVisible()) {
+                startFlashing(chatRoom);
+            }
+            else if (chatFrame.getState() == Frame.ICONIFIED) {
+                startFlashing(chatRoom);
+            }
+
+            chatFrame.setTitle(chatRoom.getRoomTitle());
+        }
+        else if (chatRoom != activeChatRoom) {
+            startFlashing(chatRoom);
         }
     }
 
@@ -633,70 +689,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
     }
 
-    private void handleMessageNotification(final ChatRoom chatRoom) {
-        ChatRoom activeChatRoom = null;
-        try {
-            activeChatRoom = getActiveChatRoom();
-        }
-        catch (ChatRoomNotFoundException e1) {
-            Log.error(e1);
-        }
-
-        if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 20000)) {
-            int tabLocation = indexOfComponent(chatRoom);
-            setSelectedIndex(tabLocation);
-            startFlashing(chatRoom);
-            return;
-        }
-
-        if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocused()) {
-            chatFrame.setState(Frame.NORMAL);
-            chatFrame.setVisible(true);
-        }
-        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(chatRoom);
-        }
-        else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
-            // Set to new tab.
-            int tabLocation = indexOfComponent(chatRoom);
-            setSelectedIndex(tabLocation);
-
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
-            startFlashing(chatRoom);
-        }
-
-        // Handle when chat frame is visible but the Contact List is not.
-        else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(chatRoom);
-        }
-        else if (!chatFrame.isVisible()) {
-            // Set to new tab.
-            int tabLocation = indexOfComponent(chatRoom);
-            setSelectedIndex(tabLocation);
-
-            if (Spark.isWindows()) {
-                chatFrame.setFocusableWindowState(false);
-                chatFrame.setState(Frame.ICONIFIED);
-            }
-            chatFrame.setVisible(true);
-            chatFrame.setFocusableWindowState(true);
-
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
-            if (!SparkManager.getMainWindow().isVisible()) {
-                startFlashing(chatRoom);
-            }
-            else if (chatFrame.getState() == Frame.ICONIFIED) {
-                startFlashing(chatRoom);
-            }
-
-            chatFrame.setTitle(chatRoom.getRoomTitle());
-        }
-        else if (chatRoom != activeChatRoom) {
-            startFlashing(chatRoom);
-        }
-    }
 
     public void messageSent(ChatRoom room, Message message) {
         fireChatRoomStateUpdated(room);
@@ -783,7 +775,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 return;
             }
 
-            if(room == null){
+            if (room == null) {
                 return;
             }
         }
@@ -938,44 +930,27 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * Starts flashing of MainWindow.
      *
-     * @param room the ChatRoom to check if a message has been inserted
+     * @param comp the Component to check if a message has been inserted
      *             but the room is not the selected room.
      */
-    public void startFlashing(final ChatRoom room) {
+    public void startFlashing(final Component comp) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    final int index = indexOfComponent(room);
+                    final int index = indexOfComponent(comp);
                     if (index != -1) {
                         // Check notifications.
-                        if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom)) {
-                            checkNotificationPreferences(room);
+                        if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom)) {
+                            checkNotificationPreferences((ChatRoom)comp);
                         }
 
                         // Notify decorators
-                        SparkManager.getChatManager().notifySparkTabHandlers(room);
+                        SparkManager.getChatManager().notifySparkTabHandlers(comp);
                     }
 
-                    boolean shouldFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(room instanceof GroupChatRoom);
+                    boolean flashAllowed = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom);
 
-                    if (!chatFrame.isFocused() && shouldFlash) {
-                        SparkManager.getAlertManager().flashWindow(chatFrame);
-                    }
-                }
-                catch (Exception ex) {
-                    Log.error("Issue in ChatRooms with tab location.", ex);
-                }
-            }
-        });
-    }
-
-    public void flashWindow(final Component component) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    boolean invokeFlash = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(component instanceof GroupChatRoom);
-
-                    if (!chatFrame.isFocused() && invokeFlash) {
+                    if (!chatFrame.isFocusOwner() && flashAllowed) {
                         chatFrame.setFocusableWindowState(true);
                         SparkManager.getAlertManager().flashWindow(chatFrame);
                     }
@@ -1149,7 +1124,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         final MainWindow mainWindow = SparkManager.getMainWindow();
 
-        if (mainWindow.isFocused()) {
+        if (mainWindow.isFocusOwner()) {
             frame.setVisible(true);
             return;
         }
@@ -1318,3 +1293,4 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }
+
