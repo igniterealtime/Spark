@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.SparkManager;
 
 /**
  * Utilities for dealing with the apple dock
@@ -27,6 +28,8 @@ import org.jivesoftware.resource.SparkRes;
  * @author Andrew Wright
  */
 public final class AppleUtils {
+
+    private static SwingWorker worker;
 
     private AppleUtils() {
     }
@@ -41,6 +44,7 @@ public final class AppleUtils {
         int howMuch = (critical) ?
                 NSApplication.UserAttentionRequestCritical :
                 NSApplication.UserAttentionRequestInformational;
+
         final int requestID = NSApplication.sharedApplication().requestUserAttention(howMuch);
 
         // Since NSApplication.requestUserAttention() seems to ignore the
@@ -56,15 +60,43 @@ public final class AppleUtils {
                     catch (InterruptedException e) {
                         // ignore
                     }
-                    NSApplication.sharedApplication().
-                            cancelUserAttentionRequest(requestID);
+                    NSApplication.sharedApplication().cancelUserAttentionRequest(requestID);
                 }
             });
             cancelThread.start();
+
+            worker = new SwingWorker() {
+                public Object construct() {
+                    while (true) {
+                        final NSImage image = getImageForMessageCountOn();
+
+                        NSApplication.sharedApplication().setApplicationIconImage(image);
+                        try {
+                            Thread.sleep(500);
+                        }
+                        catch (InterruptedException e) {
+                        }
+                        final NSImage image2 = getImageForMessageCountOff();
+                        NSApplication.sharedApplication().setApplicationIconImage(image2);
+                        try {
+                            Thread.sleep(500);
+                        }
+                        catch (InterruptedException e) {
+                        }
+                    }
+
+
+                }
+
+                public void finished() {
+                    ClassLoader loader = ApplePlugin.class.getClassLoader();
+                    URL url = loader.getResource("images/Spark-Dock-256-On.png");
+                    NSApplication.sharedApplication().setApplicationIconImage(getImage(url));
+                }
+            };
+
+            worker.start();
         }
-
-
-        //NSApplication.sharedApplication().setApplicationIconImage(getImage(SparkRes.getURL(SparkRes.MAIN_ICNS_FILE)));
     }
 
     /**
@@ -126,4 +158,44 @@ public final class AppleUtils {
         return new NSImage(data);
     }
 
+    public static void resetDock() {
+        if (worker != null) {
+            worker.finished();
+        }
+
+
+    }
+
+
+    public static NSImage getImageForMessageCountOn() {
+        int no = SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages();
+        ClassLoader loader = ApplePlugin.class.getClassLoader();
+        if (no > 10) {
+            no = 10;
+        }
+
+        if (no == 0) {
+            URL url = loader.getResource("images/Spark-Dock-256-On.png");
+            return getImage(url);
+        }
+
+        URL url = loader.getResource("images/Spark-Dock-256-" + no + "-On.png");
+        return getImage(url);
+    }
+
+    public static NSImage getImageForMessageCountOff() {
+        int no = SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages();
+        ClassLoader loader = ApplePlugin.class.getClassLoader();
+        if (no > 10) {
+            no = 10;
+        }
+
+        if (no == 0) {
+            URL url = loader.getResource("images/Spark-Dock-256-On.png");
+            return getImage(url);
+        }
+
+        URL url = loader.getResource("images/Spark-Dock-256-" + no + "-Off.png");
+        return getImage(url);
+    }
 }

@@ -70,12 +70,14 @@ public class ApplePlugin implements Plugin {
 
                     if ("Preferences".equals(item.getText())) {
                         connectMenu.remove(item);
-                    } else if ("Log Out".equals(item.getText())) {
+                    }
+                    else if ("Log Out".equals(item.getText())) {
                         connectMenu.remove(item);
                     }
 
 
-                } else if (current instanceof JSeparator) {
+                }
+                else if (current instanceof JSeparator) {
                     lastSeperator = (JSeparator) current;
                 }
             }
@@ -126,8 +128,6 @@ public class ApplePlugin implements Plugin {
     public void uninstall() {
         // No need, since this is internal
     }
-
-
 
 
 }

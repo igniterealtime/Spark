@@ -143,7 +143,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
 
         NSStatusBar bar = NSStatusBar.systemStatusBar();
         statusItem = bar.statusItem(NSStatusBar.VariableStatusItemLength);
-        statusItem.setImage(AppleUtils.getImage("/images/message.png"));
+        statusItem.setImage(AppleUtils.getImage("/images/spark-16x16.png"));
         statusItem.setHighlightMode(true);
         statusItem.setMenu(contactMenu);
         statusItem.setEnabled(false);

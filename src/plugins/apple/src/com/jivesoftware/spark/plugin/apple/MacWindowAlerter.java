@@ -30,15 +30,15 @@ public class MacWindowAlerter implements Alerter {
 
 
     public void flashWindow(Window window) {
-        AppleUtils.bounceDockIcon(true);
+        AppleUtils.bounceDockIcon(false);
     }
 
     public void flashWindowStopWhenFocused(Window window) {
-        AppleUtils.bounceDockIcon(true);
+        AppleUtils.bounceDockIcon(false);
     }
 
     public void stopFlashing(Window window) {
-
+        AppleUtils.resetDock();
 
     }
 
