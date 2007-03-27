@@ -535,6 +535,14 @@ public class LocalPreferences {
         return getBoolean("emoticonsEnabled", true);
     }
 
+    public void setUseSystemLookAndFeel(boolean sysLAF) {
+        setBoolean("useSystemLookAndFeel", sysLAF);
+    }
+
+    public boolean useSystemLookAndFeel() {
+        return getBoolean("useSystemLookAndFeel", false);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }

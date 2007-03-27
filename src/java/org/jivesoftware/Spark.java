@@ -16,17 +16,19 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -103,12 +105,15 @@ public final class Spark {
             }
         }
 
+        final LocalPreferences preferences = SettingsManager.getLocalPreferences();
+        boolean useSystemLookAndFeel = preferences.useSystemLookAndFeel();
+
         try {
             String classname = UIManager.getSystemLookAndFeelClassName();
 
             if (classname.indexOf("Windows") != -1) {
                 try {
-                    if (isVista()) {
+                    if (useSystemLookAndFeel) {
                         UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
                     }
                     else {
@@ -124,7 +129,12 @@ public final class Spark {
                 UIManager.setLookAndFeel(classname);
             }
             else {
-                UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+                if (useSystemLookAndFeel) {
+                    UIManager.setLookAndFeel(classname);
+                }
+                else {
+                    UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+                }
             }
 
             // Update install ui properties.
@@ -229,7 +239,7 @@ public final class Spark {
         return value;
     }
 
-    public void setArgument(String arguments){
+    public void setArgument(String arguments) {
         argument = arguments;
     }
 

@@ -362,7 +362,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
         }
-        else if (chatFrame.isVisible() && !chatFrame.isFocusOwner()) {
+        else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
             startFlashing(component);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
@@ -442,7 +442,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         // Handle when chat frame is visible but the Contact List is not.
-        else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isFocusOwner()) {
+        else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
             startFlashing(chatRoom);
         }
         else if (!chatFrame.isVisible()) {
