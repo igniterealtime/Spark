@@ -73,6 +73,15 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
         notificationUI = new GenericNotification("Establishing call. Please wait...", SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 
+        // Accept the request
+        try {
+            session = request.accept();
+        } catch (XMPPException e) {
+            Log.error(e);
+        }
+
+        session.addListener(this);
+
         showIncomingCall(request);
     }
 
@@ -200,8 +209,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         });
 
         incomingCall.getRejectButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                request.reject();
+            public void actionPerformed(ActionEvent e) {                
                 rejectIncomingCall();
             }
         });
@@ -215,11 +223,10 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
         TaskEngine.getInstance().submit(ringer);
 
-
         // End after 30 seconds max.
         TimerTask endTask = new SwingTimerTask() {
             public void doRun() {
-                if(session == null){
+                if (session == null) {
                     rejectIncomingCall();
                 }
             }
@@ -241,11 +248,6 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         }
 
         try {
-            // Accept the request
-            session = request.accept();
-
-            session.addListener(this);
-
             // Start the call
             session.start();
         }
