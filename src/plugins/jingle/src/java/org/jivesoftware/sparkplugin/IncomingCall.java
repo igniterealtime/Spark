@@ -285,7 +285,6 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         showCallEndedState();
     }
 
-
     public void closing() {
         if (session != null) {
             try {
@@ -295,7 +294,6 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                 Log.error(e);
             }
         }
-
 
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
     }

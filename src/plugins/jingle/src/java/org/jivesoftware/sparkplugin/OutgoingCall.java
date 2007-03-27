@@ -58,7 +58,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
     private CallButton cancelButton = new CallButton();
 
-    private JingleSession session;
+    private OutgoingJingleSession session;
     private JingleRoom jingleRoom;
 
     private AudioClip ringing;
@@ -102,7 +102,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
      * @param chatRoom the room the session is associated with.
      * @param jid      the users jid.
      */
-    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
+    public void handleOutgoingCall(final OutgoingJingleSession session, ChatRoom chatRoom, final String jid) {
         this.chatRoom = chatRoom;
 
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.ringing);
@@ -115,6 +115,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         this.session = session;
 
         this.session.addStateListener(this);
+
+        // Start the call
+        if (this.session != null) {
+            this.session.start();
+        }
 
         fileLabel.setText(jid);
 
@@ -154,8 +159,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     private void updateOutgoingCallPanel() {
         if (session == null || session.isClosed()) {
             return;
-        }
-        else if (session instanceof OutgoingJingleSession) {
+        } else if (session instanceof OutgoingJingleSession) {
             showAlert(false);
             if (session.getState() instanceof OutgoingJingleSession.Inviting) {
                 titleLabel.setText("Calling user. Please wait...");
@@ -197,8 +201,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         if (answered) {
             final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
             titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
-        }
-        else {
+        } else {
             titleLabel.setText("Voice chat was rejected.");
         }
 
@@ -277,8 +280,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         if (alert) {
             titleLabel.setForeground(new Color(211, 174, 102));
             setBackground(new Color(250, 249, 242));
-        }
-        else {
+        } else {
             setBackground(new Color(239, 245, 250));
             titleLabel.setForeground(new Color(65, 139, 179));
         }
@@ -315,7 +317,6 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
                 updateOutgoingCallPanel();
             }
         });
-
     }
 
 
@@ -341,16 +342,14 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
-        System.out.println(string);
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
         if (jingleSession instanceof OutgoingJingleSession) {
-            OutgoingJingleSession session = (OutgoingJingleSession)jingleSession;
+            OutgoingJingleSession session = (OutgoingJingleSession) jingleSession;
             if (session.getState() instanceof OutgoingJingleSession.Active) {
                 showCallEndedState(true);
-            }
-            else if (session.getState() instanceof OutgoingJingleSession.Pending) {
+            } else {
                 showCallEndedState(false);
             }
         }

@@ -109,7 +109,7 @@ public class JinglePlugin implements Plugin, Phone {
                     }
                 }
 
-                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
+                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager(locator));
 
                 if (transportManager instanceof BridgedTransportManager) {
                     jingleManager.addCreationListener((BridgedTransportManager)transportManager);
@@ -215,11 +215,6 @@ public class JinglePlugin implements Plugin, Phone {
         }
         catch (XMPPException e) {
             Log.error(e);
-        }
-
-        // Start the call
-        if (session != null) {
-            session.start();
         }
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
