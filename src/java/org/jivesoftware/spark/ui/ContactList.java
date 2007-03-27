@@ -45,6 +45,7 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -261,11 +262,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param presence the user to update.
      */
     private void updateUserPresence(Presence presence) throws Exception {
-        if(presence.getError() != null){
+        if (presence.getError() != null) {
             // We ignore this.
             return;
         }
-        
+
         final Roster roster = SparkManager.getConnection().getRoster();
 
         final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
@@ -2008,8 +2009,15 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         }
 
-        final Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
-        SparkManager.getSessionManager().changePresence(presence);
+        final TimerTask updatePresence = new TimerTask() {
+            public void run() {
+                final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+                SparkManager.getSessionManager().changePresence(myPresence);
+            }
+        };
+
+        TaskEngine.getInstance().schedule(updatePresence, 5000);
+
 
     }
 
