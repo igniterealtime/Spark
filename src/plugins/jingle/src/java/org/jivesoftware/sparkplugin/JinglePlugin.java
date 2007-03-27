@@ -157,7 +157,7 @@ public class JinglePlugin implements Plugin, Phone {
             return Collections.emptyList();
         }
 
-        Boolean supportsJingle = true;// jingleFeature.get(StringUtils.parseBareAddress(jid));
+        Boolean supportsJingle = jingleFeature.get(StringUtils.parseBareAddress(jid));
         if (supportsJingle == null) {
             // Disco for event.
             // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
