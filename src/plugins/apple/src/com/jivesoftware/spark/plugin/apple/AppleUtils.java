@@ -29,9 +29,50 @@ import org.jivesoftware.spark.SparkManager;
  */
 public final class AppleUtils {
 
-    private static SwingWorker worker;
 
-    private AppleUtils() {
+    private boolean flash;
+    private boolean usingDefaultIcon = true;
+
+    public AppleUtils() {
+
+        final Thread iconThread = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    if (!flash) {
+                        if (!usingDefaultIcon) {
+                            // Set default icon
+                            NSImage defaultImage = getDefaultImage();
+                            NSApplication.sharedApplication().setApplicationIconImage(defaultImage);
+                            usingDefaultIcon = true;
+                        }
+                    }
+                    else {
+                        final NSImage image = getImageForMessageCountOn();
+
+                        NSApplication.sharedApplication().setApplicationIconImage(image);
+                        try {
+                            Thread.sleep(500);
+                        }
+                        catch (InterruptedException e) {
+                        }
+                        final NSImage image2 = getImageForMessageCountOff();
+                        NSApplication.sharedApplication().setApplicationIconImage(image2);
+                        try {
+                            Thread.sleep(500);
+                        }
+                        catch (InterruptedException e) {
+                        }
+
+                        usingDefaultIcon = false;
+                    }
+
+
+                }
+            }
+        });
+
+        iconThread.start();
+
     }
 
     /**
@@ -40,7 +81,7 @@ public final class AppleUtils {
      * @param critical Bounce the icon repeatedly if this is true. Bounce it
      *                 only for one second (usually just one bounce) if this is false.
      */
-    public static void bounceDockIcon(boolean critical) {
+    public void bounceDockIcon(boolean critical) {
         int howMuch = (critical) ?
                 NSApplication.UserAttentionRequestCritical :
                 NSApplication.UserAttentionRequestInformational;
@@ -65,38 +106,9 @@ public final class AppleUtils {
             });
             cancelThread.start();
 
-            worker = new SwingWorker() {
-                public Object construct() {
-                    while (true) {
-                        final NSImage image = getImageForMessageCountOn();
-
-                        NSApplication.sharedApplication().setApplicationIconImage(image);
-                        try {
-                            Thread.sleep(500);
-                        }
-                        catch (InterruptedException e) {
-                        }
-                        final NSImage image2 = getImageForMessageCountOff();
-                        NSApplication.sharedApplication().setApplicationIconImage(image2);
-                        try {
-                            Thread.sleep(500);
-                        }
-                        catch (InterruptedException e) {
-                        }
-                    }
-
-
-                }
-
-                public void finished() {
-                    ClassLoader loader = ApplePlugin.class.getClassLoader();
-                    URL url = loader.getResource("images/Spark-Dock-256-On.png");
-                    NSApplication.sharedApplication().setApplicationIconImage(getImage(url));
-                }
-            };
-
-            worker.start();
         }
+
+        flash = true;
     }
 
     /**
@@ -158,12 +170,10 @@ public final class AppleUtils {
         return new NSImage(data);
     }
 
-    public static void resetDock() {
-        if (worker != null) {
-            worker.finished();
+    public void resetDock() {
+        if (flash) {
+            flash = false;
         }
-
-
     }
 
 
@@ -196,6 +206,13 @@ public final class AppleUtils {
         }
 
         URL url = loader.getResource("images/Spark-Dock-256-" + no + "-Off.png");
+        return getImage(url);
+    }
+
+
+    public static NSImage getDefaultImage() {
+        ClassLoader loader = ApplePlugin.class.getClassLoader();
+        URL url = loader.getResource("images/Spark-Dock-256-On.png");
         return getImage(url);
     }
 }
