@@ -14,6 +14,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JMultilineLabel;
@@ -22,12 +23,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,6 +36,12 @@ import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
  *
@@ -52,6 +53,7 @@ public class ContactInfoWindow extends JPanel {
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel avatarLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
+    private final JLabel titleLabel = new JLabel();
 
     private ContactItem contactItem;
 
@@ -92,8 +94,8 @@ public class ContactInfoWindow extends JPanel {
         add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
         add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
-        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-
+        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
+        add(titleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
         add(fullJIDLabel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
 
@@ -102,6 +104,8 @@ public class ContactInfoWindow extends JPanel {
         statusLabel.setForeground(Color.gray);
         fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         fullJIDLabel.setForeground(Color.gray);
+        titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+        titleLabel.setForeground(Color.gray);
 
 
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
@@ -239,6 +243,15 @@ public class ContactInfoWindow extends JPanel {
         catch (MalformedURLException e) {
             Log.error(e);
         }
+
+        // Get VCard from memory (if available)
+        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(contactItem.getJID()));
+        if (vcard != null) {
+            String title = vcard.getField("TITLE");
+            if (ModelUtil.hasLength(title)) {
+                titleLabel.setText(title);
+            }
+        }
     }
 
     public ContactItem getContactItem() {
@@ -254,7 +267,7 @@ public class ContactInfoWindow extends JPanel {
 
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
-        size.width = 250;
+        size.width = 300;
         size.height = 125;
         return size;
     }
