@@ -34,8 +34,7 @@ import org.jdesktop.jdic.systeminfo.SystemInfo;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -143,14 +142,6 @@ public class ApplePlugin implements Plugin, Alerter {
             statusMenu = new AppleStatusMenu();
             statusMenu.display();
         }
-
-        try {
-            startIdleListener();
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
-
     }
 
     public void shutdown() {
@@ -188,34 +179,43 @@ public class ApplePlugin implements Plugin, Alerter {
     }
 
     private void handleIdle() {
-        SparkManager.getMainWindow().addWindowListener(new WindowAdapter() {
-            public void windowActivated(WindowEvent windowEvent) {
-                lastActive = -1;
-                setAvailableIfActive();
+        SparkManager.getMainWindow().addComponentListener(new ComponentListener() {
+            public void componentResized(ComponentEvent componentEvent) {
+                setActivity();
             }
 
-            public void windowDeactivated(WindowEvent windowEvent) {
-                if (chatFrame == null || !chatFrame.isInFocus()) {
-                    lastActive = System.currentTimeMillis();
-                }
+            public void componentMoved(ComponentEvent componentEvent) {
+                setActivity();
+            }
+
+            public void componentShown(ComponentEvent componentEvent) {
+                setActivity();
+            }
+
+            public void componentHidden(ComponentEvent componentEvent) {
+                setActivity();
             }
         });
-
 
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomOpened(ChatRoom room) {
                 if (!addedFrameListener) {
                     chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                    chatFrame.addWindowListener(new WindowAdapter() {
-                        public void windowActivated(WindowEvent windowEvent) {
-                            lastActive = -1;
-                            setAvailableIfActive();
+                    chatFrame.addComponentListener(new ComponentListener() {
+                        public void componentResized(ComponentEvent componentEvent) {
+                            setActivity();
                         }
 
-                        public void windowDeactivated(WindowEvent windowEvent) {
-                            if (!SparkManager.getMainWindow().isFocusOwner()) {
-                                lastActive = System.currentTimeMillis();
-                            }
+                        public void componentMoved(ComponentEvent componentEvent) {
+                            setActivity();
+                        }
+
+                        public void componentShown(ComponentEvent componentEvent) {
+                            setActivity();
+                        }
+
+                        public void componentHidden(ComponentEvent componentEvent) {
+                            setActivity();
                         }
                     });
 
@@ -225,12 +225,7 @@ public class ApplePlugin implements Plugin, Alerter {
             }
         });
 
-    }
 
-    /**
-     * @throws Exception thrown is an error occurs loading native library.
-     */
-    private void startIdleListener() throws Exception {
         final Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
@@ -241,6 +236,12 @@ public class ApplePlugin implements Plugin, Alerter {
         lastActive = System.currentTimeMillis();
 
     }
+
+    public void setActivity() {
+        lastActive = System.currentTimeMillis();
+        setAvailableIfActive();
+    }
+
 
     private void sparkIsIdle() {
         LocalPreferences localPref = SettingsManager.getLocalPreferences();
@@ -258,7 +259,7 @@ public class ApplePlugin implements Plugin, Alerter {
             Workspace workspace = SparkManager.getWorkspace();
             Presence presence = workspace.getStatusBar().getPresence();
             long diff = System.currentTimeMillis() - lastActive;
-            boolean idle = diff > 1000 && lastActive != -1;
+            boolean idle = diff > 60000;
             if (workspace != null && presence.getMode() == Presence.Mode.available && idle) {
                 unavailable = true;
                 StatusItem away = workspace.getStatusBar().getStatusItem("Away");
