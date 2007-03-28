@@ -12,20 +12,21 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.ui.PresenceListener;
-import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Frame;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
+
+import javax.swing.SwingUtilities;
 
 /**
  * @author Andrew Wright
@@ -40,6 +41,8 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
     private final NSMenuItem awayItem;
     private final NSMenuItem extendedAwayItem;
     private final NSMenuItem doNotDisturbItem;
+
+    private NSStatusBar bar;
 
 
     public AppleStatusMenu() {
@@ -141,9 +144,9 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
 
         populateMenu(roster);
 
-        NSStatusBar bar = NSStatusBar.systemStatusBar();
+        bar = NSStatusBar.systemStatusBar();
         statusItem = bar.statusItem(NSStatusBar.VariableStatusItemLength);
-        statusItem.setImage(AppleUtils.getImage("/images/spark-16x16.png"));
+        statusItem.setImage(AppleUtils.getImage("/images/black-spark.gif"));
         statusItem.setHighlightMode(true);
         statusItem.setMenu(contactMenu);
         statusItem.setEnabled(false);
@@ -154,6 +157,14 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
 
     public void display() {
         statusItem.setEnabled(true);
+    }
+
+    public void showBlackIcon() {
+        statusItem.setImage(AppleUtils.getImage("/images/black-spark.gif"));
+    }
+
+    public void showActiveIcon() {
+        statusItem.setImage(AppleUtils.getImage("/images/spark-16x16.png"));
     }
 
     /**
@@ -167,7 +178,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 Roster roster = SparkManager.getConnection().getRoster();
                 Iterator jids = addresses.iterator();
                 while (jids.hasNext()) {
-                    String jid = (String) jids.next();
+                    String jid = (String)jids.next();
                     RosterEntry entry = roster.getEntry(jid);
                     addEntry(entry);
                 }
@@ -185,7 +196,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 Roster roster = SparkManager.getConnection().getRoster();
                 Iterator jids = addresses.iterator();
                 while (jids.hasNext()) {
-                    String jid = (String) jids.next();
+                    String jid = (String)jids.next();
                     RosterEntry entry = roster.getEntry(jid);
                     removeEntry(entry);
                 }
@@ -200,15 +211,15 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
                 Presence presence = roster.getPresence(user);
 
 
-                    if (Presence.Mode.away.equals(presence.getMode())) {
-                        RosterEntry entry = roster.getEntry(user);
-                        removeEntry(entry);
-                    }
-                    else if (Presence.Mode.available.equals(presence.getMode()) ||
-                            Presence.Mode.chat.equals(presence.getMode())) {
-                        RosterEntry entry = roster.getEntry(user);
-                        addEntry(entry);
-                    }
+                if (Presence.Mode.away.equals(presence.getMode())) {
+                    RosterEntry entry = roster.getEntry(user);
+                    removeEntry(entry);
+                }
+                else if (Presence.Mode.available.equals(presence.getMode()) ||
+                    Presence.Mode.chat.equals(presence.getMode())) {
+                    RosterEntry entry = roster.getEntry(user);
+                    addEntry(entry);
+                }
 
 
             }
@@ -377,7 +388,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
         item.setEnabled(false);
         contactMenu.addItem(item);
 
-        for (RosterEntry entry : roster.getEntries()){
+        for (RosterEntry entry : roster.getEntries()) {
             final Presence p = roster.getPresence(entry.getUser());
             if (p != null && (Presence.Mode.available.equals(p.getMode()) || Presence.Mode.chat.equals(p.getMode()))) {
                 addEntry(entry);
@@ -414,7 +425,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
             return;
         }
         String nickname = entry.getName();
-        NSMenuItem menuItem = (NSMenuItem) entries.remove(nickname);
+        NSMenuItem menuItem = (NSMenuItem)entries.remove(nickname);
         if (menuItem != null) {
             contactMenu.removeItem(menuItem);
         }
