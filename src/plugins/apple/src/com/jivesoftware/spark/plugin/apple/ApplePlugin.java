@@ -259,7 +259,7 @@ public class ApplePlugin implements Plugin, Alerter {
             Workspace workspace = SparkManager.getWorkspace();
             Presence presence = workspace.getStatusBar().getPresence();
             long diff = System.currentTimeMillis() - lastActive;
-            boolean idle = diff > 60000;
+            boolean idle = diff > 60000 * 60;
             if (workspace != null && presence.getMode() == Presence.Mode.available && idle) {
                 unavailable = true;
                 StatusItem away = workspace.getStatusBar().getStatusItem("Away");
