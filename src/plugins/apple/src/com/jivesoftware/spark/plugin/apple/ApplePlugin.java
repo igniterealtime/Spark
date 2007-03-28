@@ -14,13 +14,30 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
+import org.jivesoftware.MainWindowListener;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.spark.Alerter;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jdesktop.jdic.systeminfo.SystemInfo;
 
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -35,10 +52,20 @@ import javax.swing.JSeparator;
 public class ApplePlugin implements Plugin, Alerter {
 
     private AppleStatusMenu statusMenu;
+    private AppleUtils appleUtils;
+    private boolean unavailable;
+    private int previousPriority;
+    private boolean addedFrameListener;
+    private long lastActive;
+
+    private ChatFrame chatFrame;
 
     public void initialize() {
         if (Spark.isMac()) {
+            appleUtils = new AppleUtils();
             SparkManager.getAlertManager().addAlert(this);
+
+            handleIdle();
 
             // Remove the About Menu Item from the help menu
             MainWindow mainWindow = SparkManager.getMainWindow();
@@ -49,7 +76,7 @@ public class ApplePlugin implements Plugin, Alerter {
             for (int i = 0; i < menuComponents.length; i++) {
                 Component current = menuComponents[i];
                 if (current instanceof JMenuItem) {
-                    JMenuItem item = (JMenuItem)current;
+                    JMenuItem item = (JMenuItem) current;
                     if ("About".equals(item.getText())) {
                         helpMenu.remove(item);
 
@@ -69,7 +96,7 @@ public class ApplePlugin implements Plugin, Alerter {
             for (int i = 0; i < menuComponents.length; i++) {
                 Component current = menuComponents[i];
                 if (current instanceof JMenuItem) {
-                    JMenuItem item = (JMenuItem)current;
+                    JMenuItem item = (JMenuItem) current;
 
                     if ("Preferences".equals(item.getText())) {
                         connectMenu.remove(item);
@@ -81,7 +108,7 @@ public class ApplePlugin implements Plugin, Alerter {
 
                 }
                 else if (current instanceof JSeparator) {
-                    lastSeperator = (JSeparator)current;
+                    lastSeperator = (JSeparator) current;
                 }
             }
             if (lastSeperator != null) {
@@ -117,6 +144,13 @@ public class ApplePlugin implements Plugin, Alerter {
             statusMenu.display();
         }
 
+        try {
+            startIdleListener();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
     }
 
     public void shutdown() {
@@ -134,23 +168,135 @@ public class ApplePlugin implements Plugin, Alerter {
     }
 
     public void flashWindow(Window window) {
-        AppleUtils.bounceDockIcon(false);
+        appleUtils.bounceDockIcon(false);
         statusMenu.showActiveIcon();
     }
 
     public void flashWindowStopWhenFocused(Window window) {
-        AppleUtils.bounceDockIcon(false);
+        appleUtils.bounceDockIcon(false);
         statusMenu.showActiveIcon();
     }
 
     public void stopFlashing(Window window) {
-        AppleUtils.resetDock();
+        appleUtils.resetDock();
         statusMenu.showBlackIcon();
 
     }
 
     public boolean handleNotification() {
         return Spark.isMac();
+    }
+
+    private void handleIdle() {
+        SparkManager.getMainWindow().addWindowListener(new WindowAdapter() {
+            public void windowActivated(WindowEvent windowEvent) {
+                lastActive = -1;
+                setAvailableIfActive();
+            }
+
+            public void windowDeactivated(WindowEvent windowEvent) {
+                if (chatFrame == null || !chatFrame.isInFocus()) {
+                    lastActive = System.currentTimeMillis();
+                }
+            }
+        });
+
+
+        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
+            public void chatRoomOpened(ChatRoom room) {
+                if (!addedFrameListener) {
+                    chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+                    chatFrame.addWindowListener(new WindowAdapter() {
+                        public void windowActivated(WindowEvent windowEvent) {
+                            lastActive = -1;
+                            setAvailableIfActive();
+                        }
+
+                        public void windowDeactivated(WindowEvent windowEvent) {
+                            if (!SparkManager.getMainWindow().isFocusOwner()) {
+                                lastActive = System.currentTimeMillis();
+                            }
+                        }
+                    });
+
+                    addedFrameListener = true;
+
+                }
+            }
+        });
+
+    }
+
+    /**
+     * @throws Exception thrown is an error occurs loading native library.
+     */
+    private void startIdleListener() throws Exception {
+        final Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                sparkIsIdle();
+            }
+        }, 10000, 10000);
+
+        lastActive = System.currentTimeMillis();
+
+    }
+
+    private void sparkIsIdle() {
+        LocalPreferences localPref = SettingsManager.getLocalPreferences();
+        if (!localPref.isIdleOn()) {
+            return;
+        }
+
+        try {
+            // Handle if spark is not connected to the server.
+            if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
+                return;
+            }
+
+            // Change Status
+            Workspace workspace = SparkManager.getWorkspace();
+            Presence presence = workspace.getStatusBar().getPresence();
+            long diff = System.currentTimeMillis() - lastActive;
+            boolean idle = diff > 1000 && lastActive != -1;
+            if (workspace != null && presence.getMode() == Presence.Mode.available && idle) {
+                unavailable = true;
+                StatusItem away = workspace.getStatusBar().getStatusItem("Away");
+                Presence p = away.getPresence();
+                p.setStatus(Res.getString("message.away.idle"));
+
+                previousPriority = presence.getPriority();
+
+                p.setPriority(0);
+
+                SparkManager.getSessionManager().changePresence(p);
+            }
+        }
+        catch (Exception e) {
+            Log.error("Error with IDLE status.", e);
+        }
+    }
+
+    private void setAvailableIfActive() {
+        if (!unavailable) {
+            return;
+        }
+        // Handle if spark is not connected to the server.
+        if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
+            return;
+        }
+
+        // Change Status
+        Workspace workspace = SparkManager.getWorkspace();
+        if (workspace != null) {
+            Presence presence = workspace.getStatusBar().getStatusItem(Res.getString("available")).getPresence();
+            if (previousPriority != -1) {
+                presence.setPriority(previousPriority);
+            }
+
+            SparkManager.getSessionManager().changePresence(presence);
+            unavailable = false;
+        }
     }
 
 
