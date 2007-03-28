@@ -12,15 +12,19 @@ package com.jivesoftware.spark.plugin.apple;
 import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
-
-import javax.swing.*;
-import java.awt.*;
-
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.Alerter;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.Plugin;
+
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.Window;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 
 
 /**
@@ -28,14 +32,13 @@ import org.jivesoftware.Spark;
  *
  * @author Andrew Wright
  */
-public class ApplePlugin implements Plugin {
+public class ApplePlugin implements Plugin, Alerter {
 
-    private MacWindowAlerter alerter;
+    private AppleStatusMenu statusMenu;
 
     public void initialize() {
         if (Spark.isMac()) {
-            alerter = new MacWindowAlerter();
-            SparkManager.getAlertManager().addAlert(alerter);
+            SparkManager.getAlertManager().addAlert(this);
 
             // Remove the About Menu Item from the help menu
             MainWindow mainWindow = SparkManager.getMainWindow();
@@ -46,7 +49,7 @@ public class ApplePlugin implements Plugin {
             for (int i = 0; i < menuComponents.length; i++) {
                 Component current = menuComponents[i];
                 if (current instanceof JMenuItem) {
-                    JMenuItem item = (JMenuItem) current;
+                    JMenuItem item = (JMenuItem)current;
                     if ("About".equals(item.getText())) {
                         helpMenu.remove(item);
 
@@ -66,7 +69,7 @@ public class ApplePlugin implements Plugin {
             for (int i = 0; i < menuComponents.length; i++) {
                 Component current = menuComponents[i];
                 if (current instanceof JMenuItem) {
-                    JMenuItem item = (JMenuItem) current;
+                    JMenuItem item = (JMenuItem)current;
 
                     if ("Preferences".equals(item.getText())) {
                         connectMenu.remove(item);
@@ -78,7 +81,7 @@ public class ApplePlugin implements Plugin {
 
                 }
                 else if (current instanceof JSeparator) {
-                    lastSeperator = (JSeparator) current;
+                    lastSeperator = (JSeparator)current;
                 }
             }
             if (lastSeperator != null) {
@@ -110,14 +113,15 @@ public class ApplePlugin implements Plugin {
                 }
 
             });
-            new AppleStatusMenu().display();
+            statusMenu = new AppleStatusMenu();
+            statusMenu.display();
         }
 
     }
 
     public void shutdown() {
         if (Spark.isMac()) {
-            SparkManager.getAlertManager().removeAlert(alerter);
+            SparkManager.getAlertManager().removeAlert(this);
         }
     }
 
@@ -127,6 +131,26 @@ public class ApplePlugin implements Plugin {
 
     public void uninstall() {
         // No need, since this is internal
+    }
+
+    public void flashWindow(Window window) {
+        AppleUtils.bounceDockIcon(false);
+        statusMenu.showActiveIcon();
+    }
+
+    public void flashWindowStopWhenFocused(Window window) {
+        AppleUtils.bounceDockIcon(false);
+        statusMenu.showActiveIcon();
+    }
+
+    public void stopFlashing(Window window) {
+        AppleUtils.resetDock();
+        statusMenu.showBlackIcon();
+
+    }
+
+    public boolean handleNotification() {
+        return Spark.isMac();
     }
 
 
