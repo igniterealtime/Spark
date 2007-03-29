@@ -42,10 +42,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -56,6 +52,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -124,9 +124,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-                new ChatMessageEventRequestListener();
+            new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-                addMessageEventRequestListener(messageEventRequestListener);
+            addMessageEventRequestListener(messageEventRequestListener);
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
@@ -674,17 +674,21 @@ public class ChatManager implements MessageEventNotificationListener {
         public void displayedNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
         }
 
-        public void composingNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-            ChatRoom chatRoom;
-            try {
-                chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
-            }
-            catch (ChatRoomNotFoundException e) {
-                return;
-            }
-            if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                ((ChatRoomImpl)chatRoom).setSendTypingNotification(true);
-            }
+        public void composingNotificationRequested(final String from, String packetID, MessageEventManager messageEventManager) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    ChatRoom chatRoom;
+                    try {
+                        chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    }
+                    catch (ChatRoomNotFoundException e) {
+                        return;
+                    }
+                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                        ((ChatRoomImpl)chatRoom).setSendTypingNotification(true);
+                    }
+                }
+            });
         }
 
         public void offlineNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
