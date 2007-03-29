@@ -232,7 +232,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         // End after 30 seconds max.
         TimerTask endTask = new SwingTimerTask() {
             public void doRun() {
-                if (session == null) {
+                if (!session.isFullyEstablished()) {
                     rejectIncomingCall();
                 }
             }
