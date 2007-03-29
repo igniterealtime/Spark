@@ -245,13 +245,16 @@ public class ContactInfoWindow extends JPanel {
         }
 
         // Get VCard from memory (if available)
+        String title = "";
         VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(contactItem.getJID()));
         if (vcard != null) {
-            String title = vcard.getField("TITLE");
-            if (ModelUtil.hasLength(title)) {
-                titleLabel.setText(title);
+            title = vcard.getField("TITLE");
+            if (!ModelUtil.hasLength(title)) {
+                title = "";
             }
         }
+
+        titleLabel.setText(title);
     }
 
     public ContactItem getContactItem() {
