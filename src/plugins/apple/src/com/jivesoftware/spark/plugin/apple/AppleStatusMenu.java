@@ -390,7 +390,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
 
         for (RosterEntry entry : roster.getEntries()) {
             final Presence p = roster.getPresence(entry.getUser());
-            if (p != null && (Presence.Mode.available.equals(p.getMode()) || Presence.Mode.chat.equals(p.getMode()))) {
+            if (p.isAvailable()) {
                 addEntry(entry);
             }
 
