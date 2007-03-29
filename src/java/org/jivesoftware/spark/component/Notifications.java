@@ -90,7 +90,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
         SystemTray tray = SystemTray.getDefaultSystemTray();
         setupNotificationDialog();
 
-        availableIcon = SparkRes.getImageIcon(SparkRes.MAIN_IMAGE);
+        availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
         unavaliableIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_AWAY);
         busyIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_DND);
         trayIcon = new TrayIcon(availableIcon);
