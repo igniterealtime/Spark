@@ -92,27 +92,31 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
      * Appends the JingleRoom to the ChatRoom.
      */
     private void showCallAnsweredState() {
-        final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-        notificationUI.setTitle("Voice chat started on " + formatter.format(new Date()));
-        notificationUI.showAlert(false);
-        notificationUI.setIcon(null);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+                notificationUI.setTitle("Voice chat started on " + formatter.format(new Date()));
+                notificationUI.showAlert(false);
+                notificationUI.setIcon(null);
 
-        if (ringing != null) {
-            ringing.stop();
-        }
+                if (ringing != null) {
+                    ringing.stop();
+                }
 
-        final JingleRoom roomUI = new JingleRoom(session, chatRoom);
-        chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-        chatRoom.getChatPanel().invalidate();
-        chatRoom.getChatPanel().validate();
-        chatRoom.getChatPanel().repaint();
-        callMap.put(chatRoom, roomUI);
+                final JingleRoom roomUI = new JingleRoom(session, chatRoom);
+                chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                chatRoom.getChatPanel().invalidate();
+                chatRoom.getChatPanel().validate();
+                chatRoom.getChatPanel().repaint();
+                callMap.put(chatRoom, roomUI);
 
-        // Add state
-        JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
+                // Add state
+                JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
 
-        // Notify state change
-        SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+                // Notify state change
+                SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+            }
+        });
     }
 
     /**
@@ -267,13 +271,11 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
             notifyRoom();
         }
-
-        showCallAnsweredState();
     }
 
 
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
-
+        showCallAnsweredState();
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
