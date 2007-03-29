@@ -265,6 +265,7 @@ public class SparkRes {
     public static final String MAIN_ICNS_FILE = "MAIN_ICNS_FILE";
     public static final String LIGHTING_BOLT_IMAGE = "LIGHTING_BOLT_IMAGE";
     public static final String HEADSET_IMAGE = "HEADSET_IMAGE";
+    public static final String SPARK_IMAGE_32x32 = "SPARK_IMAGE_32x32";
 
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
