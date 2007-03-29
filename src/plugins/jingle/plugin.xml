@@ -7,4 +7,5 @@
     <description>Allows for Pc to Pc calling.</description>
     <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
     <minSparkVersion>2.5.0</minSparkVersion>
+    <os>Windows,mac</os>
 </plugin>
