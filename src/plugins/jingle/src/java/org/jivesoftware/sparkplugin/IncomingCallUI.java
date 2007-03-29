@@ -159,6 +159,8 @@ public class IncomingCallUI extends JPanel {
             return;
         }
 
+        // Nickname label should show presence and nickname.
+        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 
         String firstName = vcard.getFirstName();
         String lastName = vcard.getLastName();
@@ -168,10 +170,13 @@ public class IncomingCallUI extends JPanel {
         else if (ModelUtil.hasLength(firstName)) {
             titleLabel.setText(firstName);
         }
+        else {
+            titleLabel.setText(nickname);
+        }
 
-        // Nickname label should show presence and nickname.
-        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+
         Icon icon = PresenceManager.getIconFromPresence(PresenceManager.getPresence(jid));
+
 
         titleLabel.setIcon(icon);
 
