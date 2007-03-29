@@ -85,7 +85,7 @@ public class SettingsManager {
      * @return the settings file.
      */
     public static File getSettingsFile() {
-        File file = new File(Spark.getUserHome(), "Spark");
+        File file = new File(Spark.getUserSparkHome());
         if (!file.exists()) {
             file.mkdirs();
         }

@@ -40,6 +40,9 @@ import javax.swing.UIManager;
 public final class Spark {
 
     private static final String USER_HOME = System.getProperties().getProperty("user.home");
+
+    private static final String USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
+
     private static String argument;
 
     private static File RESOURCE_DIRECTORY;
@@ -75,9 +78,9 @@ public final class Spark {
 
         final String workingDirectory = System.getProperty("appdir");
         if (workingDirectory == null) {
-            RESOURCE_DIRECTORY = new File(USER_HOME, "/Spark/resources").getAbsoluteFile();
-            BIN_DIRECTORY = new File(USER_HOME, "/Spark/bin").getAbsoluteFile();
-            LOG_DIRECTORY = new File(USER_HOME, "/Spark/logs").getAbsoluteFile();
+            RESOURCE_DIRECTORY = new File(USER_SPARK_HOME, "/resources").getAbsoluteFile();
+            BIN_DIRECTORY = new File(USER_SPARK_HOME, "/bin").getAbsoluteFile();
+            LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
             RESOURCE_DIRECTORY.mkdirs();
             LOG_DIRECTORY.mkdirs();
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists()) {
@@ -95,7 +98,7 @@ public final class Spark {
             BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
 
 
-            LOG_DIRECTORY = new File(USER_HOME, "/Spark/logs").getAbsoluteFile();
+            LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
             try {
                 buf.append(RESOURCE_DIRECTORY.getCanonicalPath()).append(";");
@@ -298,12 +301,21 @@ public final class Spark {
 
     /**
      * Returns the User specific directory for this Spark instance. The user home is where all user specific
-     * files are placed to run Spark within a multi-user system.
+     * files are placed.
      *
      * @return the user home;
      */
     public static String getUserHome() {
         return USER_HOME;
+    }
+    /**
+     * Returns the Spark directory for the current user (user.home). The user home is where all user specific
+     * files are placed to run Spark within a multi-user system.
+     *
+     * @return the user home / Spark;
+     */
+    public static String getUserSparkHome() {
+        return USER_SPARK_HOME;
     }
 
     public static boolean isCustomBuild() {

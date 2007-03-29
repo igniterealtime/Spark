@@ -364,7 +364,7 @@ public final class SparkManager {
      */
     public static File getUserDirectory() {
         final String bareJID = sessionManager.getBareAddress();
-        File userDirectory = new File(Spark.getUserHome(), "Spark/user/" + bareJID);
+        File userDirectory = new File(Spark.getUserSparkHome(), "/user/" + bareJID);
         if (!userDirectory.exists()) {
             userDirectory.mkdirs();
         }

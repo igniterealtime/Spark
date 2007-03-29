@@ -146,7 +146,7 @@ public class ReceiveMessage extends JPanel {
 
         titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", contactItem.getNickname()));
 
-        File tempFile = new File(Spark.getUserHome(), "Spark/tmp");
+        File tempFile = new File(Spark.getUserSparkHome(), "/tmp");
         try {
             tempFile.mkdirs();
 

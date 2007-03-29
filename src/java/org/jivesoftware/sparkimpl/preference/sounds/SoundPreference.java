@@ -333,7 +333,7 @@ public class SoundPreference implements Preference {
     }
 
     private File getSoundSettingsFile() {
-        File file = new File(Spark.getUserHome(), "Spark");
+        File file = new File(Spark.getUserSparkHome());
         if (!file.exists()) {
             file.mkdirs();
         }

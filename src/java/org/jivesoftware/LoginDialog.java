@@ -895,7 +895,7 @@ public final class LoginDialog {
      */
     private void checkForOldSettings() throws Exception {
         // Check for old settings.xml
-        File settingsXML = new File(Spark.getUserHome(), "/Spark/settings.xml");
+        File settingsXML = new File(Spark.getUserSparkHome(), "/settings.xml");
         if (settingsXML.exists()) {
             SAXReader saxReader = new SAXReader();
             Document pluginXML = null;
