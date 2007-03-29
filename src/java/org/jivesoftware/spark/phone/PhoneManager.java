@@ -145,11 +145,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
                         public void finished() {
                             // Handle actions.
-                            if (actions.size() == 1) {
-                                final Action action = actions.get(0);
-                                action.actionPerformed(null);
-                            }
-                            else if (actions.size() > 1) {
+                            if (actions.size() > 0) {
                                 // Display PopupMenu
                                 final JPopupMenu menu = new JPopupMenu();
                                 for (Action action : actions) {
@@ -196,13 +192,8 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
                     }
                 }
 
-                if (actions.size() == 1) {
-                    Action action = actions.get(0);
-                    action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_16x16));
-                    action.putValue(Action.NAME, "Dial");
-                    popup.insert(action, 2);
-                }
-                else if (actions.size() > 1) {
+
+                if (actions.size() > 0) {
                     final JMenu dialMenu = new JMenu("Dial");
                     dialMenu.setIcon(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_16x16));
 
