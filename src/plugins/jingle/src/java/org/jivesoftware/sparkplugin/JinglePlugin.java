@@ -37,14 +37,6 @@ import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +44,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 
 /**
@@ -175,9 +175,15 @@ public class JinglePlugin implements Plugin, Phone {
                 Log.error(e);
             }
 
-            // Get the discovered items of the queried XMPP entity
-            supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
-            jingleFeature.put(jid, supportsJingle);
+            if (discoverInfo != null) {
+                // Get the discovered items of the queried XMPP entity
+                supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
+                jingleFeature.put(jid, supportsJingle);
+            }
+            else {
+                jingleFeature.put(jid, false);
+                supportsJingle = false;
+            }
         }
 
         if (!supportsJingle) {
