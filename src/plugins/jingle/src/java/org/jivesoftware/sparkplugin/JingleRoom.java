@@ -17,10 +17,6 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -38,6 +34,10 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 /**
@@ -136,29 +136,29 @@ public class JingleRoom extends JPanel {
         final JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setOpaque(false);
 
-        // Add Input Volume To Control Panel
-        final ControlPanel inputPanel = new ControlPanel(new GridBagLayout());
-
         // Add Volume Control
         try {
+            final ControlPanel inputPanel = new ControlPanel(new GridBagLayout());
             Component inputComp = mixer.getPrefferedInputVolume();
             final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
             inputPanel.add(inputComp, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
             inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+            mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
+
         }
         catch (Exception e) {
             Log.error(e);
         }
 
-        // Add Output Volume To Control Panel
-        final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
-
         // Add master volume control.
         try {
+            final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
             Component outputControl = mixer.getPrefferedMasterVolume();
             final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
             outputPanel.add(outputControl, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
             outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+            mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
+
         }
         catch (Exception e) {
             Log.error(e);
@@ -170,8 +170,6 @@ public class JingleRoom extends JPanel {
         muteButton.setToolTipText("Mute this call.");
 
         // Add Components to Main Panel
-        mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
-        mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
         mainPanel.add(muteButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 1, 2, 1), 0, 0));
 
         // Add End Call button
