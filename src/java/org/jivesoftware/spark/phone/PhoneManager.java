@@ -21,16 +21,16 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
 
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
 
 /**
  * Handles general phone behavior in Spark. This allows for many different phone systems
@@ -180,33 +180,48 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     }
 
 
-    public void poppingUp(Object object, JPopupMenu popup) {
+    public void poppingUp(Object object, final JPopupMenu popup) {
         if (!phones.isEmpty()) {
             if (object instanceof ContactItem) {
-                ContactItem contactItem = (ContactItem)object;
+                final ContactItem contactItem = (ContactItem)object;
                 final List<Action> actions = new ArrayList<Action>();
-                for (Phone phone : phones) {
-                    final Collection<Action> itemActions = phone.getPhoneActions(contactItem.getJID());
-                    for (Action action : itemActions) {
-                        actions.add(action);
-                    }
-                }
 
-
-                if (actions.size() > 0) {
-                    final JMenu dialMenu = new JMenu("Dial");
-                    dialMenu.setIcon(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_16x16));
-
-                    for (Action action : actions) {
-                        dialMenu.add(action);
+                SwingWorker worker = new SwingWorker() {
+                    public Object construct() {
+                        for (Phone phone : phones) {
+                            final Collection<Action> itemActions = phone.getPhoneActions(contactItem.getJID());
+                            for (Action action : itemActions) {
+                                actions.add(action);
+                            }
+                        }
+                        return null;
                     }
 
-                    int count = popup.getComponentCount();
-                    if (count > 2) {
-                        popup.insert(dialMenu, 2);
-                    }
+                    public void finished() {
 
-                }
+                        if (actions.size() > 0) {
+                            final JMenu dialMenu = new JMenu("Dial");
+                            dialMenu.setIcon(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_16x16));
+
+                            for (Action action : actions) {
+                                dialMenu.add(action);
+                            }
+
+                            int count = popup.getComponentCount();
+                            if (count > 2) {
+                                popup.insert(dialMenu, 2);
+                            }
+
+                            popup.invalidate();
+                            popup.validate();
+                            popup.repaint();
+                        }
+                    }
+                };
+
+                worker.start();
+
+
             }
         }
     }
