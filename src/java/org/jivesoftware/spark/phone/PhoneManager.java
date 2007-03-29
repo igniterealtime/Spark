@@ -21,16 +21,16 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 
 /**
  * Handles general phone behavior in Spark. This allows for many different phone systems
@@ -104,14 +104,31 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
             dialButton.setToolTipText("Place a phone call to this user.");
 
             final List<Action> actions = new ArrayList<Action>();
-            for (Phone phone : phones) {
-                final Collection<Action> phoneActions = phone.getPhoneActions(chatRoomImpl.getParticipantJID());
-                if (phoneActions != null) {
-                    for (Action action : phoneActions) {
-                        actions.add(action);
+            SwingWorker actionWorker = new SwingWorker() {
+                public Object construct() {
+                    for (Phone phone : phones) {
+                        final Collection<Action> phoneActions = phone.getPhoneActions(chatRoomImpl.getParticipantJID());
+                        if (phoneActions != null) {
+                            for (Action action : phoneActions) {
+                                actions.add(action);
+                            }
+                        }
+                    }
+                    return actions;
+                }
+
+                public void finished() {
+                    if (!actions.isEmpty()) {
+                        room.getToolBar().addChatRoomButton(dialButton);
+                        room.getToolBar().invalidate();
+                        room.getToolBar().validate();
+                        room.getToolBar().repaint();
                     }
                 }
-            }
+            };
+
+            actionWorker.start();
+
 
             dialButton.addMouseListener(new MouseAdapter() {
                 public void mousePressed(final MouseEvent e) {
@@ -148,11 +165,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
                 }
             });
-
-
-            if (!actions.isEmpty()) {
-                room.getToolBar().addChatRoomButton(dialButton);
-            }
         }
     }
 
