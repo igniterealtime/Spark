@@ -45,6 +45,12 @@ public final class AppleUtils {
                             NSApplication.sharedApplication().setApplicationIconImage(defaultImage);
                             usingDefaultIcon = true;
                         }
+                        try {
+                            Thread.sleep(100);
+                        }
+                        catch (InterruptedException e) {
+                            Log.error(e);
+                        }
                     }
                     else {
                         final NSImage image = getImageForMessageCountOn();
