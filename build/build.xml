@@ -531,18 +531,24 @@
         <exec executable="hdiutil" failonerror="true">
             <arg line="attach '${basedir}/build/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${basedir}/build/tmp'"/>
         </exec>
-        <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
-            <arg value="mac/dmg_spark.scpt"/>
-            <arg value="${mac.volname}"/>
-            <arg value="images/mac/background/"/>
-            <arg value="400"/>
-            <arg value="400"/>
-            <arg value="200"/>
-            <arg value="205"/>
-            <arg value="430"/>
-            <arg value="205"/>
-            <arg value="80"/>
+        
+        <exec executable="cp">
+        	<arg line="${basedir}/build/installer/mac/RightDSStore ${basedir}/build/tmp/.DS_Store"/>
         </exec>
+        
+        <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
+			<arg value="mac/dmg_spark.scpt"/>
+			<arg value="${mac.volname}"/>
+			<arg value="images/mac/background/"/>
+			<arg value="400"/>
+			<arg value="400"/>
+			<arg value="200"/>
+			<arg value="205"/>
+			<arg value="430"/>
+			<arg value="205"/>
+			<arg value="80"/>
+		</exec>
+        
         <exec executable="hdiutil" failonerror="true">
             <arg line="detach ${basedir}/build/tmp -quiet -force"/>
         </exec>
