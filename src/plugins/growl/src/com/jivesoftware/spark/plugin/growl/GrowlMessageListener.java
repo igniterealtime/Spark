@@ -19,13 +19,11 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.SwingUtilities;
 
-import java.awt.Frame;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,12 +45,12 @@ public class GrowlMessageListener implements GlobalMessageListener {
         final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
         if (!chatFrame.isVisible() || !chatFrame.isInFocus()) {
-            startFlashing(message);
+            showGrowlNotification(message);
         }
 
     }
 
-    private void startFlashing(final Message message) {
+    private void showGrowlNotification(final Message message) {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
