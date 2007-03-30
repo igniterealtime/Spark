@@ -25,11 +25,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -102,7 +98,7 @@ public class ConversationHistoryPlugin implements Plugin {
         contacts.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    final JLabel label = (JLabel)contacts.getSelectedValue();
+                    final JLabel label = (JLabel) contacts.getSelectedValue();
                     String user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
@@ -116,7 +112,7 @@ public class ConversationHistoryPlugin implements Plugin {
         contacts.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    final JLabel label = (JLabel)contacts.getSelectedValue();
+                    final JLabel label = (JLabel) contacts.getSelectedValue();
                     String user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
@@ -144,7 +140,9 @@ public class ConversationHistoryPlugin implements Plugin {
         loadPreviousHistory();
 
         // Add Keymapping to ContactList
-        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control E"), "historyPeople");
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "historyPeople");
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "historyPeople");
+
         SparkManager.getMainWindow().getRootPane().getActionMap().put("historyPeople", new AbstractAction("historyPeople") {
             public void actionPerformed(ActionEvent e) {
                 // Show History Popup
@@ -171,7 +169,7 @@ public class ConversationHistoryPlugin implements Plugin {
      */
     private void addUserToHistory(ChatRoom room) {
         if (room instanceof ChatRoomImpl) {
-            ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+            ChatRoomImpl roomImpl = (ChatRoomImpl) room;
             String jid = roomImpl.getParticipantJID();
             jid = StringUtils.parseBareAddress(jid);
             historyList.remove(jid);
@@ -319,7 +317,7 @@ public class ConversationHistoryPlugin implements Plugin {
                 setForeground(list.getForeground());
             }
 
-            JLabel label = (JLabel)value;
+            JLabel label = (JLabel) value;
             setText(label.getText());
             setIcon(label.getIcon());
             return this;

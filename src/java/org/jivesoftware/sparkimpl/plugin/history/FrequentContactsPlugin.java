@@ -17,11 +17,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.GraphicUtils;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -88,7 +84,7 @@ public class FrequentContactsPlugin implements Plugin {
         contacts.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    final JLabel label = (JLabel)contacts.getSelectedValue();
+                    final JLabel label = (JLabel) contacts.getSelectedValue();
                     String user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
@@ -102,7 +98,7 @@ public class FrequentContactsPlugin implements Plugin {
         contacts.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    final JLabel label = (JLabel)contacts.getSelectedValue();
+                    final JLabel label = (JLabel) contacts.getSelectedValue();
                     String user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
@@ -126,8 +122,9 @@ public class FrequentContactsPlugin implements Plugin {
             }
         });
 
-        // Add Keymapping to ContactList
-        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control T"), "favoritePeople");
+        // Add KeyMappings
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "favoritePeople");
+        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "favoritePeople");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("favoritePeople", new AbstractAction("favoritePeople") {
             public void actionPerformed(ActionEvent e) {
                 // Show History Popup
@@ -264,7 +261,7 @@ public class FrequentContactsPlugin implements Plugin {
                 setForeground(list.getForeground());
             }
 
-            JLabel label = (JLabel)value;
+            JLabel label = (JLabel) value;
             setText(label.getText());
             setIcon(label.getIcon());
             return this;
@@ -276,8 +273,8 @@ public class FrequentContactsPlugin implements Plugin {
      */
     final Comparator sizeComparator = new Comparator() {
         public int compare(Object o1, Object o2) {
-            final File item1 = (File)o1;
-            final File item2 = (File)o2;
+            final File item1 = (File) o1;
+            final File item2 = (File) o2;
 
             long int1 = item1.length();
             long int2 = item2.length();
