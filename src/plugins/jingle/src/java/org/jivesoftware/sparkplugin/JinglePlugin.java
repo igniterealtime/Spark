@@ -116,8 +116,10 @@ public class JinglePlugin implements Plugin, Phone {
 
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager(locator));
 
-                if (transportManager instanceof BridgedTransportManager || transportManager instanceof ICETransportManager) {
+                if (transportManager instanceof BridgedTransportManager) {
                     jingleManager.addCreationListener((BridgedTransportManager)transportManager);
+                }else if(transportManager instanceof ICETransportManager){
+                    jingleManager.addCreationListener((ICETransportManager)transportManager);
                 }
 
                 // Add Jingle to discovered items list.
