@@ -481,6 +481,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private void cleanupChatRoom(ChatRoom room) {
         if (room.isActive()) {
             room.leaveChatRoom();
+            room.closeChatRoom();
         }
 
         final PacketListener listener = presenceMap.get(room.getRoomname());
