@@ -99,6 +99,10 @@ public class TransportUtils {
      * @return true if the user is registered with the transport.
      */
     public static boolean isRegistered(XMPPConnection con, Transport transport) {
+        if(!con.isConnected()){
+            return false;
+        }
+        
         ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(con);
         try {
             DiscoverInfo info = discoveryManager.discoverInfo(transport.getServiceName());
