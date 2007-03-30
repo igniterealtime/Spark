@@ -135,7 +135,7 @@ public class ApplePlugin implements Plugin, Alerter {
 
 
                 public void handleQuit(ApplicationEvent applicationEvent) {
-                    System.exit(0);
+                    SparkManager.getMainWindow().shutdown();
                 }
 
             });
