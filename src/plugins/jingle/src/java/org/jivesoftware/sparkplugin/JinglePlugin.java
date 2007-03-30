@@ -12,7 +12,11 @@ package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.jingle.JingleManager;
@@ -34,16 +38,9 @@ import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,6 +49,14 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -127,6 +132,9 @@ public class JinglePlugin implements Plugin, Phone {
         };
 
         jingleLoadingThread.start();
+
+        // Add Presence listener for better service discovery.
+        addPresenceListener();
     }
 
 
@@ -261,6 +269,27 @@ public class JinglePlugin implements Plugin, Phone {
      */
     private void incomingJingleSession(JingleSessionRequest request) {
         new IncomingCall(request);
+    }
+
+    /**
+     * Adds a presence listener to remove offline users from discovered features.
+     */
+    private void addPresenceListener() {
+        // Check presence changes
+        SparkManager.getConnection().addPacketListener(new PacketListener() {
+            public void processPacket(Packet packet) {
+                Presence presence = (Presence)packet;
+                if (!presence.isAvailable()) {
+                    String from = presence.getFrom();
+                    if (ModelUtil.hasLength(from)) {
+                        // Remove from
+                        jingleFeature.remove(from);
+                    }
+                }
+
+
+            }
+        }, new PacketTypeFilter(Presence.class));
     }
 
 
