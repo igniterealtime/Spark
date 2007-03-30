@@ -516,14 +516,14 @@
 
     <target name="installer.mac" depends="mac.app" description="build release dmg file for the Macintosh">
         <fileset file="*.dmg"/>
-
+<!-- 
         <mkdir dir="${mac.build.dir}/.background"/>
 
         <copy todir="${mac.build.dir}/.background">
             <fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
         </copy>
 
-        <symlink link="${mac.build.dir}/Applications" resource="/Applications"/>
+       <symlink link="${mac.build.dir}/Applications" resource="/Applications"/> -->
 
         <exec executable="hdiutil" failonerror="true">
             <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${basedir}/build/tmp.dmg'"/>
@@ -531,11 +531,11 @@
         <exec executable="hdiutil" failonerror="true">
             <arg line="attach '${basedir}/build/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${basedir}/build/tmp'"/>
         </exec>
-        
+    <!--    
         <exec executable="cp">
         	<arg line="${basedir}/build/installer/mac/RightDSStore ${basedir}/build/tmp/.DS_Store"/>
         </exec>
-        
+      
         <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
 			<arg value="mac/dmg_spark.scpt"/>
 			<arg value="${mac.volname}"/>
@@ -547,7 +547,7 @@
 			<arg value="430"/>
 			<arg value="205"/>
 			<arg value="80"/>
-		</exec>
+		</exec> -->
         
         <exec executable="hdiutil" failonerror="true">
             <arg line="detach ${basedir}/build/tmp -quiet -force"/>
@@ -555,8 +555,11 @@
         <exec executable="hdiutil" failonerror="true">
             <arg line="convert ${basedir}/build/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
         </exec>
+        <exec executable="hdiutil" failonerror="true">
+        	<arg line="internet-enable -yes ${mac.dmg.file}"/>
+        </exec>
         <delete file="${basedir}/build/tmp.dmg"/>
-        <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/>
+       <!-- <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/> -->
     </target>
 
 </project>
