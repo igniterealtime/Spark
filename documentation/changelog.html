@@ -196,12 +196,16 @@ hr {
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-200'>SPARK-200</a>] - Allow drag and drop out of the chat window before and after file transfer</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-517'>SPARK-517</a>] - Simplified the viewing of users vCard information.</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-519'>SPARK-519</a>] - Bookmarks are now located in the Spark main window menu bar.</li>
-    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-515'>SPARK-515</a>] - Spar now has an Enhanced Look and Feel.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-515'>SPARK-515</a>] - Spark now has an Enhanced Look and Feel.</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-518'>SPARK-518</a>] - Added new auto-grow send field box.</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-523'>SPARK-523</a>] - Added support for chat and email options in contact tooltips.</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-524'>SPARK-524</a>] - Spark now shows full address of conference room.</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-528'>SPARK-528</a>] - Message history is now grouped by Day, Month, Year.</li>
     <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-531'>SPARK-531</a>] - Added the new "Buzz" feature, which allows users to give others a little nudge.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-485'>SPARK-485</a>] - Added preference to specify tabs on top or bottom of Chat Room.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-562'>SPARK-562</a>] - Added Workgroup to Workgroup transfer.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-563'>SPARK-563</a>] - Added in Queue To Queue transfer.</li>
+    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-610'>SPARK-610</a>] - Added OSX dock notification with new incoming messages.</li>
 </ul>
 
 <h3>Bug Fixes</h3>
@@ -270,11 +274,65 @@ hr {
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-424'>SPARK-424</a>] - Fixed contact list error occuring on reconnect.</li>
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-427'>SPARK-427</a>] - Spark now allows for actions to occur on tooltips.</li>
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-473'>SPARK-473</a>] - Fixed presence issue in group chat rooms.</li>
+   <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-483'>SPARK-483</a>] - Update logic in show/away actions on tray icon.</li>
+   <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-484'>SPARK-484</a>] - Auto Login into conference rooms causes chat room buttons to not appear.</li>
+   <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-491'>SPARK-491</a>] - Bookmarks are now persisted to the server.</li>
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-492'>SPARK-492</a>] - Spark now defaults presence priority to 1 rather than 0.</li>
+   <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-493'>SPARK-493</a>] - Chat history broken</li>
+   <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-494'>SPARK-494</a>] - Transcripts were being corrupted when persisting Unicode.</li>
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-506'>SPARK-506</a>] - Fixed send field resize issue when chat frame was resized.</li>
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-507'>SPARK-507</a>] - Fixed asterisks plugin. Asterisks is now fully functional.</li>
    <li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-530'>SPARK-530</a>] - Improved performance of loading and persisting of transcripts.</li>
+
+
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-569'>SPARK-569</a>] - Jingle doesn't detect when other client supports Jingle</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-574'>SPARK-574</a>] - Workgroup now accepts AgentSession status change.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-576'>SPARK-576</a>] - Typing in chat window disabled after re-connect</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-577'>SPARK-577</a>] - Fixed softphone issue when preferecnes could not be loaded.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-578'>SPARK-578</a>] - Available Contacts does not display properly in OSX.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-579'>SPARK-579</a>] - Jingle UI will now show regardless of volume control settings.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-580'>SPARK-580</a>] - MSI build now uses pack200 builds.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-582'>SPARK-582</a>] - Growl notifications in OSX are now working properly.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-583'>SPARK-583</a>] - Fixed Typing notification in ContactList</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-584'>SPARK-584</a>] - Ctrl-x and cut now work correctly in send area.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-585'>SPARK-585</a>] - Fixed VCard viewer close button issue.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-587'>SPARK-587</a>] - Update file pickers within Spark</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-588'>SPARK-588</a>] - Window controls will not go away</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-589'>SPARK-589</a>] - Fixed issue with fastpath tabs turning red without having any new messages.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-590'>SPARK-590</a>] - Fixed layout setting of chat window.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-591'>SPARK-591</a>] - Disconnected spark no longer attempts online activities.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-592'>SPARK-592</a>] - Fixed stale chats.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-593'>SPARK-593</a>] - Updated ringing sound file.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-594'>SPARK-594</a>] - Added notification in Jingle rooms when negotiating call.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-595'>SPARK-595</a>] - Fixed SIP Regsitration on computers with VMWare.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-596'>SPARK-596</a>] - Removed contact info options in tooltip.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-597'>SPARK-597</a>] - Added new icon to represent Jingle calls.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-599'>SPARK-599</a>] - Gateways are no longer loaded on the event thread.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-600'>SPARK-600</a>] - Broadcast button in wrong place</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-601'>SPARK-601</a>] - Ending SIP calls does not work properly</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-602'>SPARK-602</a>] - Last activity on unsupported clients is handled more gracefully.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-603'>SPARK-603</a>] - SIP: Caller ID missing from incoming call notification</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-604'>SPARK-604</a>] - SIP: wrong icon in missed calls list</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-605'>SPARK-605</a>] - SIP: two bugs in call history</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-606'>SPARK-606</a>] - SIP: escape button doesn't work on dedicated call tab</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-607'>SPARK-607</a>] - SIP: voicemail button should always show number of messages</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-611'>SPARK-611</a>] - Fixed layout of command buttons on OSX.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-612'>SPARK-612</a>] - Spark now displays notifications from Gateways.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-613'>SPARK-613</a>] - Gateway icons now display disconnection from gateways.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-614'>SPARK-614</a>] - Fixed issue with reconnection.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-616'>SPARK-616</a>] - Fixed issue with redial in Soft Phone.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-617'>SPARK-617</a>] - Send correct presence upon reconnection.,</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-618'>SPARK-618</a>] - Fixed multiple message issue with Broadcast.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-620'>SPARK-620</a>] - Mute does not work</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-621'>SPARK-621</a>] - Clicking on a user's avatar, then view full profile brings up "edit profile information"</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-622'>SPARK-622</a>] - Error at reconnection - no users are connected</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-628'>SPARK-628</a>] - No room found answering a SIP call</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-629'>SPARK-629</a>] - Fixed incoming Jingle call ui when user has no vcard.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-630'>SPARK-630</a>] - Updated Spark message icon.</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-641'>SPARK-641</a>] - Fix User Home Directory in Linux to ".Spark"</li>
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-646'>SPARK-646</a>] - SIP Previous Conversations List is in reverse order</li>
 </ul>
+
 
 <h2>2.0.8 -- <span style="font-weight: normal;">January 23rd, 2007</span></h2>
 
