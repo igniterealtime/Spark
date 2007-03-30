@@ -131,6 +131,13 @@ public class ApplePlugin implements Plugin, Alerter {
                         mainWindow.setState(Frame.NORMAL);
                         mainWindow.setVisible(true);
                     }
+
+                    if(SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() > 0){
+                        final ChatFrame frame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+                        frame.setState(Frame.NORMAL);
+                        frame.setVisible(true);
+                        frame.toFront();
+                    }
                 }
 
 
