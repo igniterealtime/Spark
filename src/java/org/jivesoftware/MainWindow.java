@@ -372,8 +372,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         connectMenu.addSeparator();
 
-        connectMenu.add(exitMenuItem);
-
+        if (!Spark.isMac()) {
+            connectMenu.add(exitMenuItem);
+        }
         Action showTrafficAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
