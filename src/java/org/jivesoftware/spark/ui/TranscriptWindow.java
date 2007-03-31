@@ -333,7 +333,7 @@ public class TranscriptWindow extends ChatArea {
             final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
             final String date = formatter.format(insertDate);
 
-            return "[" + date + "] ";
+            return "(" + date + ") ";
         }
         lastUpdated = insertDate;
         return "";
@@ -366,7 +366,7 @@ public class TranscriptWindow extends ChatArea {
                 insertCustomText(notificationDateFormatter.format(date), true, true, Color.GRAY);
             }
 
-            value = "[" + messageDateFormatter.format(date) + "] ";
+            value = "(" + messageDateFormatter.format(date) + ") ";
             value = value + userid + ": ";
 
 
@@ -457,7 +457,7 @@ public class TranscriptWindow extends ChatArea {
 
                     String value = "";
                     if (insertionDate != null) {
-                        value = "[" + formatter.format(insertionDate) + "] ";
+                        value = "(" + formatter.format(insertionDate) + ") ";
                     }
                     buf.append("<tr><td nowrap><font size=2>").append(value).append("<strong>").append(from).append(":</strong>&nbsp;").append(body).append("</font></td></tr>");
 
