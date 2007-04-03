@@ -140,11 +140,12 @@ public class JingleRoom extends JPanel {
         try {
             final ControlPanel inputPanel = new ControlPanel(new GridBagLayout());
             Component inputComp = mixer.getPrefferedInputVolume();
-            final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
-            inputPanel.add(inputComp, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
-            inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-            mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
-
+            if (inputComp != null) {
+                final JLabel inputIcon = new JLabel(JinglePhoneRes.getImageIcon("MICROPHONE_IMAGE"));
+                inputPanel.add(inputComp, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+                inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+                mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
+            }
         }
         catch (Exception e) {
             Log.error(e);
@@ -154,11 +155,12 @@ public class JingleRoom extends JPanel {
         try {
             final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
             Component outputControl = mixer.getPrefferedMasterVolume();
-            final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
-            outputPanel.add(outputControl, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
-            outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-            mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
-
+            if (outputControl!=null) {
+                final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
+                outputPanel.add(outputControl, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+                outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+                mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
+            }
         }
         catch (Exception e) {
             Log.error(e);
@@ -258,8 +260,7 @@ public class JingleRoom extends JPanel {
     private void setStatus(String status, boolean alert) {
         if (alert) {
             connectedLabel.setForeground(orangeColor);
-        }
-        else {
+        } else {
             connectedLabel.setForeground(greenColor);
         }
         connectedLabel.setText(status);
@@ -280,8 +281,7 @@ public class JingleRoom extends JPanel {
 
             // Change state
             JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
-        }
-        else {
+        } else {
             muted = true;
             muteButton.setToolTipText("Unmute");
             muteButton.setButtonSelected(true);
