@@ -56,12 +56,7 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -176,12 +171,12 @@ public class SparkTransferManager {
         contactList.addFileDropListener(new FileDropListener() {
             public void filesDropped(Collection files, Component component) {
                 if (component instanceof ContactItem) {
-                    ContactItem item = (ContactItem)component;
+                    ContactItem item = (ContactItem) component;
 
                     ChatRoom chatRoom = null;
                     Iterator iter = files.iterator();
                     while (iter.hasNext()) {
-                        chatRoom = sendFile((File)iter.next(), item.getJID());
+                        chatRoom = sendFile((File) iter.next(), item.getJID());
                     }
 
                     if (chatRoom != null) {
@@ -233,7 +228,7 @@ public class SparkTransferManager {
         }
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
 
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
@@ -318,12 +313,12 @@ public class SparkTransferManager {
                 fileDropListener = new FileDropListener() {
                     public void filesDropped(Collection files, Component component) {
                         if (component instanceof ChatRoomImpl) {
-                            ChatRoomImpl roomImpl = (ChatRoomImpl)component;
+                            ChatRoomImpl roomImpl = (ChatRoomImpl) component;
 
 
                             Iterator iter = files.iterator();
                             while (iter.hasNext()) {
-                                sendFile((File)iter.next(), roomImpl.getParticipantJID());
+                                sendFile((File) iter.next(), roomImpl.getParticipantJID());
                             }
 
                             SparkManager.getChatManager().getChatContainer().activateChatRoom(roomImpl);
@@ -363,7 +358,7 @@ public class SparkTransferManager {
                             }
 
                             public void finished() {
-                                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
 
                                 getFileChooser().setDialogTitle(Res.getString("title.select.file.to.send"));
                                 getFileChooser().setMultiSelectionEnabled(true);
@@ -429,7 +424,7 @@ public class SparkTransferManager {
                     Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
                     return robot.createScreenCapture(area);
                 }
-                catch (Exception e) {
+                catch (Throwable e) {
                     Log.error(e);
 
                     if (mainWindowVisible) {
@@ -445,17 +440,23 @@ public class SparkTransferManager {
             }
 
             public void finished() {
+                final BufferedImage bufferedImage = (BufferedImage) get();
+                if (bufferedImage == null) {
+                    JOptionPane.showMessageDialog(null, Res.getString("title.error"), "Unable to process screenshot.", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 final JFrame frame = new JFrame();
                 frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
-                final BufferedImage bufferedImage = (BufferedImage)get();
+
                 final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
                 mainPanel.addMouseListener(new MouseAdapter() {
                     public void mouseReleased(MouseEvent e) {
                         Rectangle clip = mainPanel.getClip();
                         BufferedImage newImage = null;
                         try {
-                            newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
+                            newImage = bufferedImage.getSubimage((int) clip.getX(), (int) clip.getY(), (int) clip.getWidth(), (int) clip.getHeight());
                         }
                         catch (Exception e1) {
 
@@ -481,7 +482,7 @@ public class SparkTransferManager {
                 });
 
                 frame.addKeyListener(new KeyAdapter() {
-                    public void keyTyped(KeyEvent e) {
+                    public void keyReleased(KeyEvent e) {
                         if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                             frame.dispose();
                             frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -525,18 +526,18 @@ public class SparkTransferManager {
     private void addPresenceListener() {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+                Presence presence = (Presence) packet;
                 if (presence.isAvailable()) {
                     String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
                     // Iterate through map.
-                    List list = (List)waitMap.get(bareJID);
+                    List list = (List) waitMap.get(bareJID);
                     if (list != null) {
                         // Iterate through list and send.
                         Iterator iter = list.iterator();
                         ChatRoom room = null;
                         while (iter.hasNext()) {
-                            File file = (File)iter.next();
+                            File file = (File) iter.next();
                             room = sendFile(file, bareJID);
                         }
 
@@ -567,7 +568,7 @@ public class SparkTransferManager {
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
         if (!PresenceManager.isOnline(jid)) {
-            List list = (List)waitMap.get(jid);
+            List list = (List) waitMap.get(jid);
             if (list == null) {
                 list = new ArrayList();
             }
@@ -603,7 +604,7 @@ public class SparkTransferManager {
 
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
 
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
@@ -620,7 +621,7 @@ public class SparkTransferManager {
         AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(bareJID));
         final PacketListener packetListener = new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+                Presence presence = (Presence) packet;
                 if (!presence.isAvailable()) {
                     if (transfer != null) {
                         transfer.cancel();
@@ -691,7 +692,7 @@ public class SparkTransferManager {
             }
 
             public void finished() {
-                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                 sendFile(imageFile, roomImpl.getParticipantJID());
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
                 room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -710,7 +711,7 @@ public class SparkTransferManager {
 
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                return (Image)t.getTransferData(DataFlavor.imageFlavor);
+                return (Image) t.getTransferData(DataFlavor.imageFlavor);
             }
         }
         catch (UnsupportedFlavorException e) {
@@ -743,7 +744,7 @@ public class SparkTransferManager {
     private boolean fireTransferListeners(FileTransferRequest request) {
         final Iterator iter = new ArrayList(listeners).iterator();
         while (iter.hasNext()) {
-            FileTransferListener listener = (FileTransferListener)iter.next();
+            FileTransferListener listener = (FileTransferListener) iter.next();
             boolean accepted = listener.handleTransfer(request);
             if (accepted) {
                 return true;
