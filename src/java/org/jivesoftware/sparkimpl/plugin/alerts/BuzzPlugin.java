@@ -29,6 +29,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionEvent;
@@ -62,39 +63,13 @@ public class BuzzPlugin implements Plugin {
 
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
             public void chatRoomOpened(final ChatRoom room) {
-                if (room instanceof ChatRoomImpl) {
-                    // Add Button to toolbar
-                    if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
-                        return;
+                TimerTask task = new SwingTimerTask() {
+                    public void doRun() {
+                        addBuzzFeatureToChatRoom(room);
                     }
-                    final RolloverButton chatRoomButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.LIGHTING_BOLT_IMAGE));
-                    chatRoomButton.setToolTipText("Get the users attention.");
-                    chatRoomButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            final String jid = ((ChatRoomImpl)room).getParticipantJID();
-                            Message message = new Message();
-                            message.setTo(jid);
-                            message.addExtension(new BuzzPacket());
-                            SparkManager.getConnection().sendPacket(message);
+                };
 
-                            room.getTranscriptWindow().insertNotificationMessage("BUZZ", ChatManager.NOTIFICATION_COLOR);
-                            chatRoomButton.setEnabled(false);
-
-                            // Enable the button after 30 seconds to prevent abuse.            
-                            final TimerTask enableTask = new SwingTimerTask() {
-                                public void doRun() {
-                                    chatRoomButton.setEnabled(true);
-                                }
-                            };
-
-                            TaskEngine.getInstance().schedule(enableTask, 30000);
-
-
-                        }
-                    });
-                    room.getEditorBar().add(chatRoomButton);
-                }
-
+                TaskEngine.getInstance().schedule(task, 100);
             }
 
             public void chatRoomLeft(ChatRoom room) {
@@ -112,6 +87,43 @@ public class BuzzPlugin implements Plugin {
             public void userHasLeft(ChatRoom room, String userid) {
             }
         });
+    }
+
+    private void addBuzzFeatureToChatRoom(final ChatRoom room) {
+        if (room instanceof ChatRoomImpl) {
+            // Add Button to toolbar
+            if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
+                return;
+            }
+            final RolloverButton chatRoomButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
+            chatRoomButton.setToolTipText("Get the users attention.");
+            chatRoomButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final String jid = ((ChatRoomImpl)room).getParticipantJID();
+                    Message message = new Message();
+                    message.setTo(jid);
+                    message.addExtension(new BuzzPacket());
+                    SparkManager.getConnection().sendPacket(message);
+
+                    room.getTranscriptWindow().insertNotificationMessage("Sent alert notification to user.", ChatManager.NOTIFICATION_COLOR);
+                    chatRoomButton.setEnabled(false);
+
+                    // Enable the button after 30 seconds to prevent abuse.
+                    final TimerTask enableTask = new SwingTimerTask() {
+                        public void doRun() {
+                            chatRoomButton.setEnabled(true);
+                        }
+                    };
+
+                    TaskEngine.getInstance().schedule(enableTask, 30000);
+                }
+            });
+
+            final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
+            room.getEditorBar().add(dividerLabel);
+            room.getEditorBar().add(chatRoomButton);
+        }
+
     }
 
     private void shakeWindow(Message message) {
@@ -134,13 +146,14 @@ public class BuzzPlugin implements Plugin {
             room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
         }
 
-        // Insert offline message
-        room.getTranscriptWindow().insertNotificationMessage("BUZZ", ChatManager.NOTIFICATION_COLOR);
-
         ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
         if (chatFrame != null && chatFrame.isVisible()) {
             chatFrame.buzz();
         }
+
+        // Insert offline message
+        room.getTranscriptWindow().insertNotificationMessage("BUZZ", ChatManager.NOTIFICATION_COLOR);
+        room.scrollToBottom();
     }
 
     public void shutdown() {

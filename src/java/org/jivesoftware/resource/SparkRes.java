@@ -267,7 +267,7 @@ public class SparkRes {
     public static final String HEADSET_IMAGE = "HEADSET_IMAGE";
     public static final String SPARK_IMAGE_32x32 = "SPARK_IMAGE_32x32";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
-
+    public static final String BUZZ_IMAGE = "BUZZ_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
