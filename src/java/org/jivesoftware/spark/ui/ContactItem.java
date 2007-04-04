@@ -13,6 +13,7 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
@@ -127,7 +128,7 @@ public class ContactItem extends JPanel {
      */
     public void setNickname(String nickname) {
         this.nickname = nickname;
-        nicknameLabel.setText(nickname);
+        nicknameLabel.setText(StringUtils.unescapeNode(nickname));
     }
 
     /**
