@@ -214,7 +214,7 @@
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
-    <ROW Name="controlPanelIcon.exe" SourcePath="..\..\src\resources\images\spark.ico" Index="0"/>
+    <ROW Name="controlPanelIcon.exe" SourcePath="..\..\src\resources\images\message.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
     <ROW IniFile="Application_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Application Type" Value="gui" Action="0" Component_="Spark.exe"/>
