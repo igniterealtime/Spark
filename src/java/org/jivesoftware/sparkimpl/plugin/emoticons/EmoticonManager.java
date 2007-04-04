@@ -89,6 +89,10 @@ public class EmoticonManager {
     private EmoticonManager() {
         EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "xtra/emoticons").getAbsoluteFile();
 
+        // Copy over to allow for non-admins to extract.
+        copyFiles();
+
+
         expandNewPacks();
 
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -100,6 +104,34 @@ public class EmoticonManager {
         catch (Exception e) {
             Log.error(e);
         }
+    }
+
+    private void copyFiles() {
+        // Current Plugin directory
+        File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(), "xtra/emoticons").getAbsoluteFile();
+        newEmoticonDir.mkdirs();
+
+        File[] files = EMOTICON_DIRECTORY.listFiles();
+        final int no = files != null ? files.length : 0;
+        for (int i = 0; i < no; i++) {
+            File file = files[i];
+            if (file.isFile()) {
+                try {
+                    // Copy over
+                    File newFile = new File(newEmoticonDir, file.getName());
+                    String name = URLFileSystem.getName(newFile.toURL());
+                    File directory = new File(newEmoticonDir, name);
+                    if (!directory.exists()) {
+                        URLFileSystem.copy(file.toURL(), newFile);
+                    }
+                }
+                catch (IOException e) {
+                    Log.error(e);
+                }
+            }
+        }
+
+        EMOTICON_DIRECTORY = newEmoticonDir;
     }
 
     /**
@@ -173,7 +205,7 @@ public class EmoticonManager {
             emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".AdiumEmoticonset");
         }
 
-        if(!emoticonSet.exists()){
+        if (!emoticonSet.exists()) {
             emoticonSet = new File(EMOTICON_DIRECTORY, "Default.adiumemoticonset");
             packName = "Default";
             setActivePack("Default");
