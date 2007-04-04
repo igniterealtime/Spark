@@ -61,15 +61,19 @@ public class SparkPlugUI extends JPanel {
             URL url = null;
             try {
                 url = new URL("http://www.igniterealtime.org/updater/sparkplugs?filename=" + getFilename());
-                Image image = ImageIO.read(url);
-                ImageIcon icon = new ImageIcon(image);
-                imageIcon.setIcon(icon);
-                if (icon.getIconWidth() == -1) {
-                    imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
+                final Image pluginImage = ImageIO.read(url);
+
+                // In some cases, people are not supplying icons. This case needs to be handled.
+                if (pluginImage != null) {
+                    ImageIcon pluginIcon = new ImageIcon(pluginImage);
+                    imageIcon.setIcon(pluginIcon);
+                    if (pluginIcon.getIconWidth() == -1) {
+                        imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
+                    }
                 }
             }
             catch (Exception e) {
-                Log.error("Unable to find image for " + url, e);
+                Log.debug("Unable to find image for " + url);
             }
         }
         else {
