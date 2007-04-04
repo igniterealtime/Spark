@@ -8,6 +8,7 @@
 
 package org.jivesoftware.spark.phone;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -101,7 +102,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         if (!phones.isEmpty() && room instanceof ChatRoomImpl) {
             final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
             final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24));
-            dialButton.setToolTipText("Place a phone call to this user.");
+            dialButton.setToolTipText(Res.getString("tooltip.place.voice.call"));
 
             final List<Action> actions = new ArrayList<Action>();
             SwingWorker actionWorker = new SwingWorker() {
