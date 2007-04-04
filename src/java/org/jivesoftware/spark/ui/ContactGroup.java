@@ -17,9 +17,15 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -42,11 +48,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -155,7 +156,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param nickname the nickname of the offline contact.
      * @param jid      the jid of the offline contact.
      */
-    public void addOfflineContactItem(String nickname, String jid) {
+    public void addOfflineContactItem(String nickname, String jid, String status) {
         // Build new ContactItem
         final ContactItem offlineItem = new ContactItem(nickname, jid);
         offlineItem.setGroupName(getGroupName());
@@ -165,6 +166,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // set offline icon
         offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
+
+        // Set status if applicable.
+        if (ModelUtil.hasLength(status)) {
+            offlineItem.setStatusText(status);
+        }
 
         // Add to offlien contacts.
         offlineContacts.add(offlineItem);
@@ -471,7 +477,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         Object o = null;
         try {
             int loc = contactItemList.locationToIndex(e.getPoint());
-            if(loc == -1){
+            if (loc == -1) {
                 return;
             }
 

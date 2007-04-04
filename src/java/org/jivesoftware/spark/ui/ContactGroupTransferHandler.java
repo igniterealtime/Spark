@@ -226,7 +226,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
 
         if (!PresenceManager.isOnline(item.getJID())) {
-            contactGroup.addOfflineContactItem(item.getNickname(), item.getJID());
+            contactGroup.addOfflineContactItem(item.getNickname(), item.getJID(), null);
         }
         else {
             contactGroup.addContactItem(newContact);

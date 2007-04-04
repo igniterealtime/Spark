@@ -2092,7 +2092,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
             if (contactGroup != null) {
-                contactGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID());
+                contactGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
             }
         }
     }

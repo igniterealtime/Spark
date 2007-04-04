@@ -189,7 +189,7 @@ public class ContactListAssistantPlugin implements Plugin {
         }
 
         if (!PresenceManager.isOnline(item.getJID())) {
-            contactGroup.addOfflineContactItem(item.getNickname(), item.getJID());
+            contactGroup.addOfflineContactItem(item.getNickname(), item.getJID(), null);
         }
         else {
             contactGroup.addContactItem(newContact);
