@@ -1,3 +1,12 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2006 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
 package org.jivesoftware.sparkplugin;
 
 import javax.sound.sampled.*;
@@ -44,35 +53,59 @@ public class JavaMixer {
 
     public Component getPrefferedMasterVolume() {
         TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Volume"});
-        if (path.getLastPathComponent() instanceof JavaMixer.ControlNode)
-            return ((JavaMixer.ControlNode) path.getLastPathComponent()).getComponent();
 
+        if(path==null){
+            path = findByName(new TreePath(root), new String[]{"Master target", "Master", "Mute"});
+        }
+
+        if (path != null) {
+            if (path.getLastPathComponent() instanceof JavaMixer.ControlNode)
+                return ((JavaMixer.ControlNode) path.getLastPathComponent()).getComponent();
+        }
         return null;
     }
 
     public Component getPrefferedInputVolume() {
         TreePath path = findByName(new TreePath(root), new String[]{"MICROPHONE", "Volume"});
-        if (path.getLastPathComponent() instanceof JavaMixer.ControlNode)
-            return ((JavaMixer.ControlNode) path.getLastPathComponent()).getComponent();
 
+        if(path==null){
+            path = findByName(new TreePath(root), new String[]{"Capture source", "Capture", "Volume"});
+        }
+
+        if (path != null) {
+            if (path.getLastPathComponent() instanceof JavaMixer.ControlNode)
+                return ((JavaMixer.ControlNode) path.getLastPathComponent()).getComponent();
+        }
         return null;
     }
 
     public void setMicrophoneInput() {
         TreePath path = findByName(new TreePath(root), new String[]{"MICROPHONE", "Select"});
-        if (path == null) return;
-        if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
-            BooleanControl bControl = (BooleanControl) (((JavaMixer.ControlNode) path.getLastPathComponent()).getControl());
-            bControl.setValue(true);
+
+        if(path==null){
+            path = findByName(new TreePath(root), new String[]{"Capture source", "Capture", "Mute"});
+        }
+
+        if (path != null) {
+            if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
+                BooleanControl bControl = (BooleanControl) (((JavaMixer.ControlNode) path.getLastPathComponent()).getControl());
+                bControl.setValue(true);
+            }
         }
     }
 
     public void setMuteForMicrophoneOutput() {
-        TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Microfone","Mute"});
-        if (path == null) return;
-        if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
-            BooleanControl bControl = (BooleanControl) (((JavaMixer.ControlNode) path.getLastPathComponent()).getControl());
-            bControl.setValue(true);
+        TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Microfone", "Mute"});
+
+        if(path==null){
+            path = findByName(new TreePath(root), new String[]{"MIC target", "mic", "Mute"});
+        }
+
+        if (path != null) {
+            if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
+                BooleanControl bControl = (BooleanControl) (((JavaMixer.ControlNode) path.getLastPathComponent()).getControl());
+                bControl.setValue(true);
+            }
         }
     }
 
@@ -374,7 +407,7 @@ public class JavaMixer {
                 boolean find;
 
                 if (byName) {
-                    find = n.toString().indexOf(nodes[depth].toString()) > -1;
+                    find = n.toString().toUpperCase().indexOf(nodes[depth].toString().toUpperCase()) > -1;
                 } else {
                     find = n.equals(nodes[depth]);
                 }
