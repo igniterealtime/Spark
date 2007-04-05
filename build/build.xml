@@ -83,6 +83,8 @@
     <property name="installer.file_prefix" value="${installer.app_short_name}"/>
     <property name="installer.release_root_path" value="${target.build}"/>
 
+    <property name="advinst.path" value="C:\Program Files\Caphyon\Advanced Installer"/>
+
     <property name="mac.build.dir" value="${target}/spark_${version.filename}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/spark_${version.filename}.dmg"/>
@@ -435,6 +437,21 @@
         </install4j>
 
     </target>
+
+    <target name="installer.msi" depends="jar">
+        <condition property="advinst.not.ok" value="true">
+            <not>
+                <available file="${advinst.path}\AdvancedInstaller.com"/>
+            </not>
+        </condition>
+        <fail if="advinst.not.ok"
+              message="Path to Advanced Installer not set, or not installed."/>
+
+        <exec executable="${advinst.path}\AdvancedInstaller.com">
+            <arg line="/build build\installer\spark.aip"/>
+        </exec>
+    </target>
+
 
     <target name="mac.clean">
         <symlink action="delete" failonerror="false" link="${mac.build.dir}/Applications"/>
