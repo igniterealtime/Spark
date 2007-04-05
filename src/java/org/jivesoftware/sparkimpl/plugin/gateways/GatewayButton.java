@@ -15,6 +15,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
@@ -60,18 +61,24 @@ public class GatewayButton extends JPanel {
             }
         });
 
-        // Send directed presence if registered with this transport.
-        final boolean isRegistered = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
-        if (isRegistered) {
-            // Check if auto login is set.
-            boolean autoJoin = TransportUtils.autoJoinService(transport.getServiceName());
-            if (autoJoin) {
-                Presence oldPresence = statusBar.getPresence();
-                Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
-                presence.setTo(transport.getServiceName());
-                SparkManager.getConnection().sendPacket(presence);
+        final Runnable registerThread = new Runnable() {
+            public void run() {
+                // Send directed presence if registered with this transport.
+                final boolean isRegistered = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
+                if (isRegistered) {
+                    // Check if auto login is set.
+                    boolean autoJoin = TransportUtils.autoJoinService(transport.getServiceName());
+                    if (autoJoin) {
+                        Presence oldPresence = statusBar.getPresence();
+                        Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
+                        presence.setTo(transport.getServiceName());
+                        SparkManager.getConnection().sendPacket(presence);
+                    }
+                }
             }
-        }
+        };
+
+        TaskEngine.getInstance().submit(registerThread);
     }
 
     /**
@@ -176,7 +183,7 @@ public class GatewayButton extends JPanel {
         this.signedIn = signedIn;
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return signedIn;
     }
 
