@@ -98,7 +98,7 @@ public class JinglePlugin implements Plugin, Phone {
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
 
                 // if running on Windows use Direct Sound for better performance
-                String locator = Spark.isWindows() ? "dsound://" : "javasound://";
+                String locator = Spark.isWindows() && !Spark.isVista() ? "dsound://" : "javasound://";
 
                 MultiMediaManager jingleMediaManager = new MultiMediaManager();
                 jingleMediaManager.addMediaManager(new JmfMediaManager(locator));
@@ -117,9 +117,9 @@ public class JinglePlugin implements Plugin, Phone {
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager(locator));
 
                 if (transportManager instanceof BridgedTransportManager) {
-                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
-                }else if(transportManager instanceof ICETransportManager){
-                    jingleManager.addCreationListener((ICETransportManager)transportManager);
+                    jingleManager.addCreationListener((BridgedTransportManager) transportManager);
+                } else if (transportManager instanceof ICETransportManager) {
+                    jingleManager.addCreationListener((ICETransportManager) transportManager);
                 }
 
                 // Add Jingle to discovered items list.
@@ -189,8 +189,7 @@ public class JinglePlugin implements Plugin, Phone {
                 // Get the discovered items of the queried XMPP entity
                 supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
                 jingleFeature.put(jid, supportsJingle);
-            }
-            else {
+            } else {
                 jingleFeature.put(jid, false);
                 supportsJingle = false;
             }
@@ -234,7 +233,7 @@ public class JinglePlugin implements Plugin, Phone {
         }
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         OutgoingCall outgoingCall = new OutgoingCall();
@@ -280,7 +279,7 @@ public class JinglePlugin implements Plugin, Phone {
         // Check presence changes
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+                Presence presence = (Presence) packet;
                 if (!presence.isAvailable()) {
                     String from = presence.getFrom();
                     if (ModelUtil.hasLength(from)) {
