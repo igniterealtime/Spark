@@ -25,6 +25,8 @@ import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -46,6 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimerTask;
 
 /**
  * Handles UI controls for outgoing jingle calls.
@@ -66,6 +69,12 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     private ChatRoom chatRoom;
 
     private boolean established = false;
+
+    private boolean mediaReceived = false;
+
+    private TimerTask mediaReceivedTask;
+
+    private static final long WAIT_FOR_MEDIA_DELAY = 15000;
 
     /**
      * Creates a new instance of OutgoingCall.
@@ -331,11 +340,28 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionMediaReceived(JingleSession jingleSession, String participant) {
+        mediaReceived = true;
+        TaskEngine.getInstance().cancelScheduledTask(mediaReceivedTask);
         showCallAnsweredState();
     }
 
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
         established = true;
+        mediaReceivedTask = new SwingTimerTask() {
+            public void doRun() {
+                if (!mediaReceived) {
+                    if (session != null) {
+                        try {
+                            session.terminate("No Media Received. This may be caused by firewall configuration problems.");
+                        }
+                        catch (XMPPException e) {
+                            Log.error(e);
+                        }
+                    }
+                }
+            }
+        };
+        TaskEngine.getInstance().schedule(mediaReceivedTask, WAIT_FOR_MEDIA_DELAY, WAIT_FOR_MEDIA_DELAY);
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
@@ -347,8 +373,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
     public void sessionClosed(String string, JingleSession jingleSession) {
         if (jingleSession instanceof OutgoingJingleSession) {
-            OutgoingJingleSession session = (OutgoingJingleSession) jingleSession;
-            if (established) {
+            if (established && mediaReceived) {
                 final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
                 showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
             } else {
