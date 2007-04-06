@@ -447,7 +447,8 @@
         <fail if="advinst.not.ok"
               message="Path to Advanced Installer not set, or not installed."/>
 
-        <exec executable="${advinst.path}\AdvancedInstaller.com">
+        <exec executable="${advinst.path}\AdvancedInstaller.com"
+		failonerror="true">
             <arg line="/build build\installer\spark.aip"/>
         </exec>
     </target>
