@@ -462,13 +462,54 @@ public class CheckUpdates {
     /**
      * Returns true if the first version number is greater than the second.
      *
-     * @param version1 the first version number.
-     * @param version2 the second version number.
+     * @param firstVersion the first version number.
+     * @param secondVersion the second version number.
      * @return returns true if the first version is greater than the second.
      */
-    public boolean isGreater(String version1, String version2) {
-        version1 = version1.replaceAll(".online", "");
-        return version1.compareTo(version2) >= 1;
+    public static boolean isGreater(String firstVersion, String secondVersion) {
+        int indexOne = firstVersion.indexOf("_");
+        if (indexOne != -1) {
+            firstVersion = firstVersion.substring(indexOne + 1);
+        }
+
+        int indexTwo = secondVersion.indexOf("_");
+        if (indexTwo != -1) {
+            secondVersion = secondVersion.substring(indexTwo + 1);
+        }
+
+        firstVersion = firstVersion.replaceAll(".online", "");
+        secondVersion = secondVersion.replace(".online", "");
+
+        boolean versionOneBetaOrAlpha = firstVersion.toLowerCase().contains("beta") || firstVersion.toLowerCase().contains("alpha");
+        boolean versionTwoBetaOrAlpha = secondVersion.toLowerCase().contains("beta") || secondVersion.toLowerCase().contains("alpha");
+
+        // Handle case where they are both betas / alphas
+        if ((versionOneBetaOrAlpha && versionTwoBetaOrAlpha) || (!versionOneBetaOrAlpha && !versionTwoBetaOrAlpha)) {
+            return firstVersion.compareTo(secondVersion) >= 1;
+        }
+
+        // Handle the case where version 1 is a beta or alpha
+        if (versionOneBetaOrAlpha) {
+            String versionOne = getVersion(firstVersion);
+            return versionOne.compareTo(secondVersion) >= 1;
+        }
+        else if (versionTwoBetaOrAlpha) {
+            String versionTwo = getVersion(secondVersion);
+            return !(versionTwo.compareTo(secondVersion) >= 1);
+        }
+
+
+        return firstVersion.compareTo(secondVersion) >= 1;
+    }
+
+    public static String getVersion(String version) {
+        int lastIndexOf = version.lastIndexOf("_");
+        if (lastIndexOf != -1) {
+            return version.substring(0, lastIndexOf);
+        }
+
+        return version;
+
     }
 
     /**
