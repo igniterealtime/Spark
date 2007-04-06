@@ -24,9 +24,9 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -170,7 +170,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     private void updateOutgoingCallPanel() {
         if (session == null || session.isClosed()) {
             return;
-        } else if (session instanceof OutgoingJingleSession) {
+        }
+        else if (session instanceof OutgoingJingleSession) {
             showAlert(false);
             if (session.getState() instanceof OutgoingJingleSession.Inviting) {
                 titleLabel.setText("Calling user. Please wait...");
@@ -286,7 +287,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         if (alert) {
             titleLabel.setForeground(new Color(211, 174, 102));
             setBackground(new Color(250, 249, 242));
-        } else {
+        }
+        else {
             setBackground(new Color(239, 245, 250));
             titleLabel.setForeground(new Color(65, 139, 179));
         }
@@ -376,8 +378,9 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
             if (established && mediaReceived) {
                 final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
                 showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
-            } else {
-                showCallEndedState("Voice chat ended due: " + string);
+            }
+            else {
+                showCallEndedState("Session closed due to " + string);
             }
         }
     }
