@@ -58,6 +58,8 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
     private IncomingJingleSession session;
 
+    private boolean established = false;
+
     /**
      * Initializes a new IncomingCall with the required JingleSession.
      *
@@ -122,15 +124,14 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
     /**
      * Removes the JingleRoom from the ChatRoom.
      */
-    private void showCallEndedState() {
+    private void showCallEndedState(final String reason) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (ringing != null) {
                     ringing.stop();
                 }
 
-                final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-                notificationUI.setTitle("Voice chat ended on " + formatter.format(new Date()));
+                notificationUI.setTitle(reason);
                 notificationUI.setIcon(null);
                 notificationUI.showAlert(false);
 
@@ -273,24 +274,32 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         }
     }
 
-
-    public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+    public void sessionMediaReceived(JingleSession jingleSession, String participant) {
         showCallAnsweredState();
     }
 
+    public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+        established = true;
+    }
+
     public void sessionDeclined(String string, JingleSession jingleSession) {
-        showCallEndedState();
+        showCallEndedState("Voice chat was rejected");
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
-        showCallEndedState();
+        if (established) {
+            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+            showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
+        } else {
+            showCallEndedState("Voice chat ended: " + string);
+        }
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
-        showCallEndedState();
+        showCallEndedState("Voice chat ended due an error: " + xmppException.getMessage());
     }
 
     public void closing() {

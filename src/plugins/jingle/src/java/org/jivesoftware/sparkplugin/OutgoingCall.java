@@ -65,6 +65,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
     private ChatRoom chatRoom;
 
+    private boolean established = false;
+
     /**
      * Creates a new instance of OutgoingCall.
      */
@@ -197,13 +199,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     /**
      * Called when the call has ended.
      */
-    private void showCallEndedState(boolean answered) {
-        if (answered) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-            titleLabel.setText("Voice chat ended on " + formatter.format(new Date()));
-        } else {
-            titleLabel.setText("Voice chat was rejected.");
-        }
+    private void showCallEndedState(String reason) {
+        titleLabel.setText(reason);
 
         showAlert(true);
         cancelButton.setVisible(false);
@@ -299,8 +296,8 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
                 Log.error(e);
             }
         }
-
-        showCallEndedState(true);
+        final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+        showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
     }
 
     public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
@@ -333,12 +330,16 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
     }
 
-    public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+    public void sessionMediaReceived(JingleSession jingleSession, String participant) {
         showCallAnsweredState();
     }
 
+    public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+        established = true;
+    }
+
     public void sessionDeclined(String string, JingleSession jingleSession) {
-        showCallEndedState(false);
+        showCallEndedState("The Session was rejected.");
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
@@ -347,16 +348,17 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     public void sessionClosed(String string, JingleSession jingleSession) {
         if (jingleSession instanceof OutgoingJingleSession) {
             OutgoingJingleSession session = (OutgoingJingleSession) jingleSession;
-            if (session.getState() instanceof OutgoingJingleSession.Active) {
-                showCallEndedState(true);
+            if (established) {
+                final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+                showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
             } else {
-                showCallEndedState(false);
+                showCallEndedState("Voice chat ended due: " + string);
             }
         }
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
-        System.out.println(xmppException);
+        showCallEndedState("Voice chat ended due: " + xmppException.getMessage());
     }
 
 
