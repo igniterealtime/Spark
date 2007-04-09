@@ -503,7 +503,7 @@ public class CheckUpdates {
     }
 
     public static String getVersion(String version) {
-        int lastIndexOf = version.lastIndexOf("_");
+        int lastIndexOf = version.lastIndexOf(".");
         if (lastIndexOf != -1) {
             return version.substring(0, lastIndexOf);
         }
