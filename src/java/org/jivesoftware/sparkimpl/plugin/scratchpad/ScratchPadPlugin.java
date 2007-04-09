@@ -10,7 +10,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -19,6 +18,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -36,11 +36,8 @@ import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,7 +48,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -130,7 +126,7 @@ public class ScratchPadPlugin implements Plugin {
         Iterator taskIter = tasks.getTasks().iterator();
         while (taskIter.hasNext()) {
             Task task = (Task)taskIter.next();
-            if(task.isCompleted()){
+            if (task.isCompleted()) {
                 continue;
             }
             final JCheckBox box = new JCheckBox();
@@ -199,8 +195,26 @@ public class ScratchPadPlugin implements Plugin {
         frame.setVisible(true);
     }
 
+    /**
+     * Retrieve private notes from server.
+     */
     private void retrieveNotes() {
-        final PrivateNotes privateNotes = PrivateNotes.getPrivateNotes();
+        // Retrieve private notes from server.
+        final SwingWorker notesWorker = new SwingWorker() {
+            public Object construct() {
+                return PrivateNotes.getPrivateNotes();
+            }
+
+            public void finished() {
+                final PrivateNotes privateNotes = (PrivateNotes)get();
+                showPrivateNotes(privateNotes);
+            }
+        };
+
+        notesWorker.start();
+    }
+
+    private void showPrivateNotes(final PrivateNotes privateNotes) {
         String text = privateNotes.getNotes();
 
         final JLabel titleLabel = new JLabel("Notepad");
@@ -247,7 +261,7 @@ public class ScratchPadPlugin implements Plugin {
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
         frame.getContentPane().add(mainPanel);
 
-     //   mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        //   mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         mainPanel.add(scrollPane, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         mainPanel.add(button, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
