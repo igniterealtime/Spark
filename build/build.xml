@@ -534,6 +534,9 @@
 
     <target name="installer.mac" depends="mac.app" description="build release dmg file for the Macintosh">
         <fileset file="*.dmg"/>
+
+        <mkdir dir="${installer.dest.dir}"/>
+
 <!-- 
         <mkdir dir="${mac.build.dir}/.background"/>
 
