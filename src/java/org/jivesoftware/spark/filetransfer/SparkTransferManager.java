@@ -55,13 +55,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
@@ -90,6 +83,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -171,12 +177,12 @@ public class SparkTransferManager {
         contactList.addFileDropListener(new FileDropListener() {
             public void filesDropped(Collection files, Component component) {
                 if (component instanceof ContactItem) {
-                    ContactItem item = (ContactItem) component;
+                    ContactItem item = (ContactItem)component;
 
                     ChatRoom chatRoom = null;
                     Iterator iter = files.iterator();
                     while (iter.hasNext()) {
-                        chatRoom = sendFile((File) iter.next(), item.getJID());
+                        chatRoom = sendFile((File)iter.next(), item.getJID());
                     }
 
                     if (chatRoom != null) {
@@ -228,7 +234,7 @@ public class SparkTransferManager {
         }
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
 
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
@@ -313,12 +319,12 @@ public class SparkTransferManager {
                 fileDropListener = new FileDropListener() {
                     public void filesDropped(Collection files, Component component) {
                         if (component instanceof ChatRoomImpl) {
-                            ChatRoomImpl roomImpl = (ChatRoomImpl) component;
+                            ChatRoomImpl roomImpl = (ChatRoomImpl)component;
 
 
                             Iterator iter = files.iterator();
                             while (iter.hasNext()) {
-                                sendFile((File) iter.next(), roomImpl.getParticipantJID());
+                                sendFile((File)iter.next(), roomImpl.getParticipantJID());
                             }
 
                             SparkManager.getChatManager().getChatContainer().activateChatRoom(roomImpl);
@@ -358,7 +364,7 @@ public class SparkTransferManager {
                             }
 
                             public void finished() {
-                                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
+                                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
 
                                 getFileChooser().setDialogTitle(Res.getString("title.select.file.to.send"));
                                 getFileChooser().setMultiSelectionEnabled(true);
@@ -440,7 +446,7 @@ public class SparkTransferManager {
             }
 
             public void finished() {
-                final BufferedImage bufferedImage = (BufferedImage) get();
+                final BufferedImage bufferedImage = (BufferedImage)get();
                 if (bufferedImage == null) {
                     JOptionPane.showMessageDialog(null, Res.getString("title.error"), "Unable to process screenshot.", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -456,7 +462,7 @@ public class SparkTransferManager {
                         Rectangle clip = mainPanel.getClip();
                         BufferedImage newImage = null;
                         try {
-                            newImage = bufferedImage.getSubimage((int) clip.getX(), (int) clip.getY(), (int) clip.getWidth(), (int) clip.getHeight());
+                            newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
                         }
                         catch (Exception e1) {
 
@@ -498,22 +504,20 @@ public class SparkTransferManager {
                 });
 
 
-                if (bufferedImage != null) {
+                frame.setUndecorated(true);
+                frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
+                frame.getContentPane().add(mainPanel);
 
-                    frame.setUndecorated(true);
-                    frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
-                    frame.getContentPane().add(mainPanel);
+                // Determine if full-screen mode is supported directly
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                GraphicsDevice gs = ge.getDefaultScreenDevice();
+                if (gs.isFullScreenSupported()) {
 
-                    // Determine if full-screen mode is supported directly
-                    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                    GraphicsDevice gs = ge.getDefaultScreenDevice();
-                    if (gs.isFullScreenSupported()) {
-
-                        gs.setFullScreenWindow(frame);
-                    }
-                    else {
-                        // Full-screen mode will be simulated
-                    }
+                    gs.setFullScreenWindow(frame);
+                }
+                else {
+                    // Full-screen mode will be simulated
+                    frame.setVisible(true);
                 }
 
 
@@ -526,18 +530,18 @@ public class SparkTransferManager {
     private void addPresenceListener() {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence) packet;
+                Presence presence = (Presence)packet;
                 if (presence.isAvailable()) {
                     String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
                     // Iterate through map.
-                    List list = (List) waitMap.get(bareJID);
+                    List list = (List)waitMap.get(bareJID);
                     if (list != null) {
                         // Iterate through list and send.
                         Iterator iter = list.iterator();
                         ChatRoom room = null;
                         while (iter.hasNext()) {
-                            File file = (File) iter.next();
+                            File file = (File)iter.next();
                             room = sendFile(file, bareJID);
                         }
 
@@ -568,7 +572,7 @@ public class SparkTransferManager {
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
         if (!PresenceManager.isOnline(jid)) {
-            List list = (List) waitMap.get(jid);
+            List list = (List)waitMap.get(jid);
             if (list == null) {
                 list = new ArrayList();
             }
@@ -604,7 +608,7 @@ public class SparkTransferManager {
 
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
 
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
@@ -621,7 +625,7 @@ public class SparkTransferManager {
         AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(bareJID));
         final PacketListener packetListener = new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence) packet;
+                Presence presence = (Presence)packet;
                 if (!presence.isAvailable()) {
                     if (transfer != null) {
                         transfer.cancel();
@@ -692,7 +696,7 @@ public class SparkTransferManager {
             }
 
             public void finished() {
-                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
+                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                 sendFile(imageFile, roomImpl.getParticipantJID());
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
                 room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -711,7 +715,7 @@ public class SparkTransferManager {
 
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                return (Image) t.getTransferData(DataFlavor.imageFlavor);
+                return (Image)t.getTransferData(DataFlavor.imageFlavor);
             }
         }
         catch (UnsupportedFlavorException e) {
@@ -744,7 +748,7 @@ public class SparkTransferManager {
     private boolean fireTransferListeners(FileTransferRequest request) {
         final Iterator iter = new ArrayList(listeners).iterator();
         while (iter.hasNext()) {
-            FileTransferListener listener = (FileTransferListener) iter.next();
+            FileTransferListener listener = (FileTransferListener)iter.next();
             boolean accepted = listener.handleTransfer(request);
             if (accepted) {
                 return true;
