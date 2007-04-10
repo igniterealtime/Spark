@@ -33,7 +33,7 @@ import java.awt.event.ActionEvent;
 
 public class JavaMixer {
 
-    private static final Port.Info[] EMPTY_PORT_INFO_ARRAY = new Port.Info[0];
+    private static final Line.Info[] EMPTY_PORT_INFO_ARRAY = new Line.Info[0];
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("Sound Mixers", true);
     JTree tree = new JTree(root);
 
@@ -54,7 +54,7 @@ public class JavaMixer {
     public Component getPrefferedMasterVolume() {
         TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Volume"});
 
-        if(path==null){
+        if (path == null) {
             path = findByName(new TreePath(root), new String[]{"Master target", "Master", "Mute"});
         }
 
@@ -68,7 +68,7 @@ public class JavaMixer {
     public Component getPrefferedInputVolume() {
         TreePath path = findByName(new TreePath(root), new String[]{"MICROPHONE", "Volume"});
 
-        if(path==null){
+        if (path == null) {
             path = findByName(new TreePath(root), new String[]{"Capture source", "Capture", "Volume"});
         }
 
@@ -82,7 +82,7 @@ public class JavaMixer {
     public void setMicrophoneInput() {
         TreePath path = findByName(new TreePath(root), new String[]{"MICROPHONE", "Select"});
 
-        if(path==null){
+        if (path == null) {
             path = findByName(new TreePath(root), new String[]{"Capture source", "Capture", "Mute"});
         }
 
@@ -97,7 +97,7 @@ public class JavaMixer {
     public void setMuteForMicrophoneOutput() {
         TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Microfone", "Mute"});
 
-        if(path==null){
+        if (path == null) {
             path = findByName(new TreePath(root), new String[]{"MIC target", "mic", "Mute"});
         }
 
@@ -133,11 +133,15 @@ public class JavaMixer {
         for (Line.Info info : infos) {
             if (info instanceof Port.Info) {
                 return true;
+            } else if (info instanceof DataLine.Info) {
+                return true;
             }
         }
         infos = mixer.getTargetLineInfo();
-        for (Line.Info info1 : infos) {
-            if (info1 instanceof Port.Info) {
+        for (Line.Info info : infos) {
+            if (info instanceof Port.Info) {
+                return true;
+            } else if (info instanceof DataLine.Info) {
                 return true;
             }
         }
@@ -146,19 +150,31 @@ public class JavaMixer {
 
     private void createMixerChildren(JavaMixer.MixerNode mixerNode) {
         Mixer mixer = mixerNode.getMixer();
-        Port.Info[] infosToCheck = getPortInfo(mixer);
-        for (Port.Info anInfosToCheck : infosToCheck) {
+        Line.Info[] infosToCheck = getPortInfo(mixer);
+        for (Line.Info anInfosToCheck : infosToCheck) {
             if (mixer.isLineSupported(anInfosToCheck)) {
                 Port port = null;
+                DataLine dLine = null;
                 try {
-                    port = (Port) mixer.getLine(anInfosToCheck);
-                    port.open();
+                    if (anInfosToCheck instanceof Port.Info) {
+                        port = (Port) mixer.getLine(anInfosToCheck);
+                        port.open();
+                    } else if (anInfosToCheck instanceof DataLine.Info) {
+                        dLine = (DataLine) mixer.getLine(anInfosToCheck);
+                        dLine.open();
+                    }
                 }
                 catch (LineUnavailableException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    // Do Nothing
                 }
                 if (port != null) {
                     JavaMixer.PortNode portNode = new JavaMixer.PortNode(port);
+                    createPortChildren(portNode);
+                    mixerNode.add(portNode);
+                } else if (dLine != null) {
+                    JavaMixer.PortNode portNode = new JavaMixer.PortNode(dLine);
                     createPortChildren(portNode);
                     mixerNode.add(portNode);
                 }
@@ -166,19 +182,19 @@ public class JavaMixer {
         }
     }
 
-    private Port.Info[] getPortInfo(Mixer mixer) {
+    private Line.Info[] getPortInfo(Mixer mixer) {
         Line.Info[] infos;
-        List<Port.Info> portInfoList = new ArrayList<Port.Info>();
+        List<Line.Info> portInfoList = new ArrayList<Line.Info>();
         infos = mixer.getSourceLineInfo();
         for (Line.Info info : infos) {
-            if (info instanceof Port.Info) {
-                portInfoList.add((Port.Info) info);
+            if (info instanceof Port.Info || info instanceof DataLine.Info) {
+                portInfoList.add((Line.Info) info);
             }
         }
         infos = mixer.getTargetLineInfo();
         for (Line.Info info1 : infos) {
-            if (info1 instanceof Port.Info) {
-                portInfoList.add((Port.Info) info1);
+            if (info1 instanceof Port.Info || info1 instanceof DataLine.Info) {
+                portInfoList.add((Line.Info) info1);
             }
         }
         return portInfoList.toArray(EMPTY_PORT_INFO_ARRAY);
@@ -233,14 +249,14 @@ public class JavaMixer {
 
     public class PortNode extends DefaultMutableTreeNode {
 
-        Port port;
+        Line port;
 
-        public PortNode(Port port) {
+        public PortNode(Line port) {
             super(port.getLineInfo(), true);
             this.port = port;
         }
 
-        public Port getPort() {
+        public Line getPort() {
             return port;
         }
 
