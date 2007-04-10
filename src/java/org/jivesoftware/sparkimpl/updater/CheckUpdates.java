@@ -366,15 +366,15 @@ public class CheckUpdates {
 
         // Check to see if it has been a week
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new java.util.Date());
-        calendar.add(Calendar.DATE, -1);
+        calendar.setTime(lastChecked);
+        calendar.add(Calendar.DATE, 7);
 
-        final Date weekAgo = calendar.getTime();
+        final Date lastCheckedPlusAWeek = calendar.getTime();
 
-        boolean dayOrLonger = weekAgo.getTime() >= lastChecked.getTime();
+        boolean weekOrLonger = new Date().getTime() >= lastCheckedPlusAWeek.getTime();
 
 
-        if (dayOrLonger || explicit || sparkPluginInstalled) {
+        if (weekOrLonger || explicit || sparkPluginInstalled) {
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);
