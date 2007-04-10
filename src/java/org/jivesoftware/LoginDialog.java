@@ -825,10 +825,24 @@ public final class LoginDialog {
             if (protocol.equals("SOCKS")) {
                 System.setProperty("socksProxyHost", host);
                 System.setProperty("socksProxyPort", port);
+
+                if (ModelUtil.hasLength(username) && ModelUtil.hasLength(password)) {
+                    System.setProperty("java.net.socks.username", username);
+                    System.setProperty("java.net.socks.password", password);
+                }
             }
             else {
                 System.setProperty("http.proxyHost", host);
                 System.setProperty("http.proxyPort", port);
+                System.setProperty("https.proxyHost", host);
+                System.setProperty("https.proxyPort", port);
+
+                
+                if (ModelUtil.hasLength(username) && ModelUtil.hasLength(password)) {
+                    System.setProperty("http.proxyUser", username);
+                    System.setProperty("http.proxyPassword", password);
+                }
+
             }
         }
     }

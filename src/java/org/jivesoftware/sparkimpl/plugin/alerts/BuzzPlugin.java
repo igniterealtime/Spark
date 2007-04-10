@@ -8,6 +8,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -96,7 +97,7 @@ public class BuzzPlugin implements Plugin {
                 return;
             }
             final RolloverButton chatRoomButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
-            chatRoomButton.setToolTipText("Get the users attention.");
+            chatRoomButton.setToolTipText(Res.getString("message.buzz.alert.notification"));
             chatRoomButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final String jid = ((ChatRoomImpl)room).getParticipantJID();
@@ -105,7 +106,7 @@ public class BuzzPlugin implements Plugin {
                     message.addExtension(new BuzzPacket());
                     SparkManager.getConnection().sendPacket(message);
 
-                    room.getTranscriptWindow().insertNotificationMessage("Sent alert notification to user.", ChatManager.NOTIFICATION_COLOR);
+                    room.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), ChatManager.NOTIFICATION_COLOR);
                     chatRoomButton.setEnabled(false);
 
                     // Enable the button after 30 seconds to prevent abuse.
