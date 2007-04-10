@@ -10,33 +10,29 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.Timer;
 
 /**
  * Adds a simple notification system to alert users to presence changes.
@@ -57,7 +53,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
 
         final TimerTask registerTask = new SwingTimerTask() {
             public void doRun() {
-                 registerListener();
+                registerListener();
             }
         };
 
@@ -131,15 +127,9 @@ public class NotificationPlugin implements Plugin, PacketListener {
         toaster.setDisplayTime(5000);
         toaster.setBorder(BorderFactory.createBevelBorder(0));
         toaster.setCustomAction(new ChatAction(jid));
-        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-
-        ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-        if (item != null) {
-            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>" + Res.getString("user.has.signed.in") + "</td></tr></table></body></html>");
-            label.setHorizontalTextPosition(JLabel.CENTER);
-            label.setHorizontalAlignment(JLabel.CENTER);
-            toaster.showToaster(Res.getString("title.notification"), label);
-        }
+        NotificationAlertUI alertUI = new NotificationAlertUI(jid, true);
+        toaster.showToaster("", alertUI);
+        toaster.hideTitle();
     }
 
     /**
@@ -149,16 +139,13 @@ public class NotificationPlugin implements Plugin, PacketListener {
      */
     private void notifyUserOffline(String jid) {
         SparkToaster toaster = new SparkToaster();
+        toaster.setCustomAction(new ChatAction(jid));
         toaster.setDisplayTime(5000);
         toaster.setBorder(BorderFactory.createBevelBorder(0));
-        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-        ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-        if (item != null) {
-            final JLabel label = new JLabel("<html><body><table width=100% cellpadding=0 cellspacing=0><tr><td align=center>" + nickname + "<br>" + Res.getString("user.has.signed.off") + "</td></tr></table></body></html>");
-            label.setHorizontalTextPosition(JLabel.CENTER);
-            label.setHorizontalAlignment(JLabel.CENTER);
-            toaster.showToaster(Res.getString("title.notification"), label);
-        }
+
+        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false);
+        toaster.showToaster("", alertUI);
+        toaster.hideTitle();
     }
 
     private class ChatAction extends AbstractAction {
