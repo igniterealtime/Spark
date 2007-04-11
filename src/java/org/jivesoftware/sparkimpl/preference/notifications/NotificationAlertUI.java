@@ -9,11 +9,13 @@
 package org.jivesoftware.sparkimpl.preference.notifications;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -31,12 +33,15 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 
 public class NotificationAlertUI extends JPanel {
     private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
+    private JLabel emailAddressLabel = new JLabel();
     private JLabel professionLabel = new JLabel();
 
     private RolloverButton acceptButton;
@@ -49,6 +54,8 @@ public class NotificationAlertUI extends JPanel {
 
     private boolean available;
 
+    final JLabel topLabel = new JLabel();
+
     public NotificationAlertUI(String jid, boolean available) {
         setLayout(new GridBagLayout());
 
@@ -58,7 +65,7 @@ public class NotificationAlertUI extends JPanel {
         vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(jid));
 
         final Icon presenceIcon = PresenceManager.getIconFromPresence(PresenceManager.getPresence(jid));
-        final JLabel topLabel = new JLabel();
+
         topLabel.setIcon(presenceIcon);
         topLabel.setHorizontalTextPosition(JLabel.RIGHT);
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
@@ -80,16 +87,15 @@ public class NotificationAlertUI extends JPanel {
         panel.setBackground(Color.white);
         panel.setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
 
+        titleLabel.setHorizontalTextPosition(JLabel.RIGHT);
+
         // Add Avatar
-        panel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
+        panel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 
         // Add Avatar information
-        panel.add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
+        panel.add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
         panel.add(professionLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
-
-        // Add History labels
-        // panel.add(lastCalledLabel, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 0, 0), 0, 0));
-        //  panel.add(durationLabel, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
+        panel.add(emailAddressLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
 
         // Set default settings
         titleLabel.setForeground(new Color(64, 103, 162));
@@ -107,36 +113,12 @@ public class NotificationAlertUI extends JPanel {
         add(panel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
     }
 
-    /*
-    private void addButtons() {
-        // Build Accept Button
-        acceptButton = new RolloverButton("      Accept", JinglePhoneRes.getImageIcon("TOASTER_ACCEPT_BUTTON"));
-        acceptButton.setHorizontalTextPosition(JLabel.CENTER);
-        acceptButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        acceptButton.setForeground(new Color(91, 175, 41));
-        acceptButton.setMargin(new Insets(0, 0, 0, 0));
-
-        // Build Reject Button
-        rejectButton = new RolloverButton("      Reject", JinglePhoneRes.getImageIcon("TOASTER_REJECT_BUTTON"));
-        rejectButton.setHorizontalTextPosition(JLabel.CENTER);
-        rejectButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        rejectButton.setForeground(new Color(153, 32, 10));
-        rejectButton.setMargin(new Insets(0, 0, 0, 0));
-
-        final JPanel panel = new JPanel(new GridBagLayout());
-        panel.setOpaque(false);
-        panel.add(acceptButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(rejectButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        add(panel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-    }
-    */
 
     private void updateWithGenericInfo() {
         String title = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 
         titleLabel.setText(title);
-        
+
         avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
         avatarLabel.invalidate();
         avatarLabel.validate();
@@ -169,16 +151,37 @@ public class NotificationAlertUI extends JPanel {
             titleLabel.setText(nickname);
         }
 
+        final Presence presence = PresenceManager.getPresence(jid);
+        final StringBuilder builder = new StringBuilder();
 
-        Icon icon = PresenceManager.getIconFromPresence(PresenceManager.getPresence(jid));
+        String username = titleLabel.getText();
+        builder.append(username);
+        builder.append(" is ");
 
-
-        titleLabel.setIcon(icon);
-
+        builder.append(presence.isAvailable() ? "Available" : "Not Available");
+        topLabel.setText(builder.toString());
 
         String jobTitle = vcard.getField("TITLE");
         if (jobTitle != null) {
             professionLabel.setText(jobTitle);
+        }
+
+        String emailAddress = vcard.getEmailHome();
+        if (ModelUtil.hasLength(emailAddress)) {
+            emailAddressLabel.setText(emailAddress);
+
+            final Color linkColor = new Color(49, 89, 151);
+            final String unselectedText = "<html><body><font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>";
+            final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
+            emailAddressLabel.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    emailAddressLabel.setText(hoverText);
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    emailAddressLabel.setText(unselectedText);
+                }
+            });
         }
 
 
@@ -194,15 +197,18 @@ public class NotificationAlertUI extends JPanel {
             try {
                 ImageIcon avatarIcon = new ImageIcon(avatarBytes);
                 avatarLabel.setIcon(avatarIcon);
-                avatarLabel.invalidate();
-                avatarLabel.validate();
-                avatarLabel.repaint();
             }
             catch (Exception e) {
                 // no issue
             }
         }
+        else {
+            avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
+        }
 
+        avatarLabel.invalidate();
+        avatarLabel.validate();
+        avatarLabel.repaint();
 
         invalidate();
         validate();

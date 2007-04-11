@@ -30,8 +30,8 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TimerTask;
 
 /**
@@ -41,7 +41,7 @@ import java.util.TimerTask;
  */
 public class NotificationPlugin implements Plugin, PacketListener {
 
-    private List<String> onlineUsers = new ArrayList<String>();
+    private Set<String> onlineUsers = new HashSet<String>();
     private LocalPreferences preferences;
 
 
@@ -67,7 +67,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem item : contactGroup.getContactItems()) {
-                if (item != null && item.getJID() != null && item.getPresence() != null) {
+                if (item != null && item.getJID() != null && item.getPresence().isAvailable()) {
                     String bareJID = StringUtils.parseBareAddress(item.getJID());
                     onlineUsers.add(bareJID);
                 }
@@ -89,15 +89,16 @@ public class NotificationPlugin implements Plugin, PacketListener {
         jid = StringUtils.parseBareAddress(jid);
         boolean isOnline = onlineUsers.contains(jid);
 
-        if (presence.getType().equals(Presence.Type.available)) {
+        if (presence.isAvailable()) {
             if (preferences.isOnlineNotificationsOn()) {
                 if (!isOnline) {
                     notifyUserOnline(jid);
                 }
             }
+
             onlineUsers.add(jid);
         }
-        else if (presence.getType().equals(Presence.Type.unavailable)) {
+        else {
             if (preferences.isOfflineNotificationsOn() && isOnline) {
                 notifyUserOffline(jid);
             }
@@ -128,6 +129,16 @@ public class NotificationPlugin implements Plugin, PacketListener {
         toaster.setBorder(BorderFactory.createBevelBorder(0));
         toaster.setCustomAction(new ChatAction(jid));
         NotificationAlertUI alertUI = new NotificationAlertUI(jid, true);
+
+        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
+
+        int width = (int)alertUI.getPreferredSize().getWidth() + 40;
+        if (width < 300) {
+            width = 300;
+        }
+
+        toaster.setToasterWidth(width);
+
         toaster.showToaster("", alertUI);
         toaster.hideTitle();
     }
@@ -144,6 +155,17 @@ public class NotificationPlugin implements Plugin, PacketListener {
         toaster.setBorder(BorderFactory.createBevelBorder(0));
 
         NotificationAlertUI alertUI = new NotificationAlertUI(jid, false);
+
+
+        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
+
+        int width = (int)alertUI.getPreferredSize().getWidth() + 40;
+        if (width < 300) {
+            width = 300;
+        }
+
+        toaster.setToasterWidth(width);
+
         toaster.showToaster("", alertUI);
         toaster.hideTitle();
     }
