@@ -345,19 +345,26 @@ public class ConferenceUtils {
      * @param message     the message sent to each individual invitee.
      * @param roomName    the name of the room to create.
      * @param jids        a collection of the user JIDs to invite.
+     * @throws XMPPException thrown if an error occurs during room creation.
      */
-    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) {
+    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws XMPPException {
         final String roomJID = StringUtils.escapeNode(roomName) + "@" + serviceName;
-        final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomJID);
-
-        final GroupChatRoom room = new GroupChatRoom(chatRoom);
+        final MultiUserChat multiUserChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         try {
-            LocalPreferences pref = SettingsManager.getLocalPreferences();
-            chatRoom.create(pref.getNickname());
+            // Attempt to create room.
+            multiUserChat.create(pref.getNickname());
+        }
+        catch (XMPPException e) {
+            throw e;
+        }
 
+        final GroupChatRoom room = new GroupChatRoom(multiUserChat);
+
+        try {
             // Since this is a private room, make the room not public and set user as owner of the room.
-            Form submitForm = chatRoom.getConfigurationForm().createAnswerForm();
+            Form submitForm = multiUserChat.getConfigurationForm().createAnswerForm();
             submitForm.setAnswer("muc#roomconfig_publicroom", false);
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 
@@ -365,7 +372,7 @@ public class ConferenceUtils {
             owners.add(SparkManager.getSessionManager().getBareAddress());
             submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 
-            chatRoom.sendConfigurationForm(submitForm);
+            multiUserChat.sendConfigurationForm(submitForm);
         }
         catch (XMPPException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);
@@ -384,9 +391,44 @@ public class ConferenceUtils {
         }
 
         for (String jid : jids) {
-            chatRoom.invite(jid, message);
+            multiUserChat.invite(jid, message);
             room.getTranscriptWindow().insertNotificationMessage("Waiting for " + jid + " to join.", ChatManager.NOTIFICATION_COLOR);
         }
+    }
+
+    /**
+     * Returns an explanation for the exception.
+     *
+     * @param ex the <code>XMPPException</code>
+     * @return the reason for the exception.
+     */
+    public static String getReason(XMPPException ex) {
+        String reason = "";
+        int code = 0;
+        if (ex.getXMPPError() != null) {
+            code = ex.getXMPPError().getCode();
+        }
+
+        if (code == 0) {
+            reason = "No response from server.";
+        }
+        else if (code == 401) {
+            reason = "The password did not match the room's password.";
+        }
+        else if (code == 403) {
+            reason = "You have been banned from this room.";
+        }
+        else if (code == 404) {
+            reason = "The room you are trying to enter does not exist.";
+        }
+        else if (code == 405) {
+            reason = "You do not have permission to create a room.";
+        }
+        else if (code == 407) {
+            reason = "You are not a member of this room.\nThis room requires you to be a member to join.";
+        }
+
+        return reason;
     }
 
     /**

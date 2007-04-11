@@ -12,6 +12,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
@@ -293,7 +294,12 @@ final class InvitationDialog extends JPanel {
                             }
 
                             public void finished() {
-                                ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle, jidList);
+                                try {
+                                    ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle, jidList);
+                                }
+                                catch (XMPPException e2) {
+                                    Log.error(e2);
+                                }
                                 return;
                             }
                         };

@@ -43,6 +43,7 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -182,7 +183,7 @@ public class ConferenceServices {
     private void addChatRoomListener() {
         ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListener() {
-            public void chatRoomOpened(ChatRoom room) {
+            public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
                     final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
 
@@ -198,7 +199,7 @@ public class ConferenceServices {
                             final String roomName = userName + "_" + StringUtils.randomString(3);
 
 
-                            final List jids = new ArrayList();
+                            final List<String> jids = new ArrayList<String>();
                             jids.add(chatRoom.getParticipantJID());
 
                             final String serviceName = getDefaultServiceName();
@@ -215,7 +216,12 @@ public class ConferenceServices {
                                     }
 
                                     public void finished() {
-                                        ConferenceUtils.createPrivateConference(serviceName, Res.getString("message.please.join.in.conference"), roomName, jids);
+                                        try {
+                                            ConferenceUtils.createPrivateConference(serviceName, Res.getString("message.please.join.in.conference"), roomName, jids);
+                                        }
+                                        catch (XMPPException e1) {
+                                            JOptionPane.showMessageDialog(room, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                                        }
                                     }
                                 };
                                 worker.start();
