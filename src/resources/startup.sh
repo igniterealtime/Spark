@@ -1,2 +1,10 @@
 #!/bin/bash
-java -Dappdir=.. -cp ../lib/synthetica.jar:../lib/syntheticaBlueMoon.jar:../lib/corecomponents-win.jar:../lib/spark.jar:../lib/base.jar:../lib/skinlf.jar:../lib/swingx.jar:../lib/smack.jar:../lib/i4jruntime.jar:../lib/linux/jdic.jar:../lib/smackx.jar:../lib/smackx-debug.jar:../lib/dom4j.jar:../lib/xpp.jar:../lib/xstream.jar:../resources org.jivesoftware.launcher.Startup
+:mac
+if "%1" == "-linux" goto linux
+java -Dappdir=.. -cp ../lib/mac/JavaSoundStream.fix.jar:../lib/mac/jmf.jar:../lib/startup.jar:../lib/windows/jdic.jar:../resources org.jivesoftware.launcher.Startup
+goto end
+
+:linux
+java -Dappdir=.. -cp ../lib/linux/jmf.jar:../lib/startup.jar:../lib/linux/jdic.jar:../resources org.jivesoftware.launcher.Startup
+goto end
+:end
