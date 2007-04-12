@@ -11,7 +11,7 @@
     <ROW Property="ProductCode" Value="1033:{783E2201-8AC7-44F1-9418-F732A6B96F82} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.5.0"/>
+    <ROW Property="ProductVersion" Value="2.5.2"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
   </COMPONENT>
@@ -219,7 +219,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
     <ROW IniFile="Application_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Application Type" Value="gui" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Application_Type_1" FileName="starter.ini" DirProperty="APPDIR" Section="Application" Key="Application Type" Value="cmdline" Action="0" Component_="Your_Product.exe"/>
-    <ROW IniFile="Class_Path" FileName="Spark.ini" DirProperty="APPDIR" Section="Class Path" Key="Class Path" Value="[#activation.jar];[#asterisk_im_client.jar.pack];[#base.jar];[#dom4j.jar];[#i4jruntime.jar];[#smack.jar.pack];[#smackx_debug.jar.pack];[#smackx.jar.pack];[#spark.jar.pack];[#startup.jar];[#swingx.jar.pack];[#synthetica.jar.pack];[#syntheticaBlueMoon.jar.pack];[#systeminfo.jar.pack];[#xpp.jar.pack];[#xstream.jar.pack];[#jdic.jar];[#jmf.jar_3];" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Class_Path" FileName="Spark.ini" DirProperty="APPDIR" Section="Class Path" Key="Class Path" Value="[#activation.jar];[#asterisk_im_client.jar.pack];[#base.jar];[#dom4j.jar];[#i4jruntime.jar];[#smack.jar.pack];[#smackx_debug.jar.pack];[#smackx.jar.pack];[#spark.jar.pack];[#startup.jar];[#swingx.jar.pack];[#synthetica.jar.pack];[#syntheticaBlueMoon.jar.pack];[#systeminfo.jar.pack];[#xpp.jar.pack];[#xstream.jar.pack];[#jdic.jar];[#jmf.jar_3];[#jingle.jar];[#fastpath.jar.pack];[#jniwrapper.jar.pack];[#sparkphone.jar.pack];[#spelling_plugin.jar.pack];" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Class_Path_1" FileName="starter.ini" DirProperty="APPDIR" Section="Class Path" Key="Class Path" Value="[#activation.jar];[#asterisk_im_client.jar.pack];[#base.jar];[#dom4j.jar];[#i4jruntime.jar];[#smack.jar.pack];[#smackx_debug.jar.pack];[#smackx.jar.pack];[#spark.jar.pack];[#startup.jar];[#swingx.jar.pack];[#synthetica.jar.pack];[#syntheticaBlueMoon.jar.pack];[#systeminfo.jar.pack];[#xpp.jar.pack];[#xstream.jar.pack];[#jdic.jar];[#jmf.jar_3];" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Error_File" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Error File" Value="[APPDIR]/logs/error.log" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Error_File_1" FileName="starter.ini" DirProperty="APPDIR" Section="Application" Key="Error File" Value="[APPDIR]error.log" Action="0" Component_="Your_Product.exe"/>
