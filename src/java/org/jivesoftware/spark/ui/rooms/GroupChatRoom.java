@@ -57,6 +57,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -297,7 +298,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
+            getTranscriptWindow().insertMessage(getNickname(), message, getColor(getNickname()));
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -340,7 +341,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
+            getTranscriptWindow().insertMessage(getNickname(), message, getColor(getNickname()));
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -580,7 +581,7 @@ public final class GroupChatRoom extends ChatRoom {
                         return;
                     }
 
-                    getTranscriptWindow().insertMessage(from, message, ChatManager.FROM_COLOR);
+                    getTranscriptWindow().insertMessage(from, message, getColor(from));
                 }
 
                 if (typingTimer != null) {
@@ -1095,5 +1096,14 @@ public final class GroupChatRoom extends ChatRoom {
         public void setSubject(String subject) {
             subjectLabel.setText(subject);
         }
+    }
+
+    public Color getColor(String nickname) {
+        int index = 0;
+        for (int i = 0; i < nickname.length(); i++) {
+            index += nickname.charAt(i) * i;
+        }
+
+        return ChatManager.COLORS[index % ChatManager.COLORS.length];
     }
 }

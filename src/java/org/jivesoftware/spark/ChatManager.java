@@ -42,6 +42,10 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -52,10 +56,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -72,6 +72,11 @@ public class ChatManager implements MessageEventNotificationListener {
     public static Color NOTIFICATION_COLOR = (Color)UIManager.get("Notification.foreground");
     public static Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
 
+    public static Color[] COLORS = {Color.red, Color.blue, Color.gray, Color.magenta, new Color(238, 153, 247), new Color(128, 128, 0), new Color(173, 205, 50),
+            new Color(181, 0, 0), new Color(0, 100, 0), new Color(237, 150, 122), new Color(0, 139, 139), new Color(218, 14, 0), new Color(147, 112, 219),
+            new Color(205, 133, 63), new Color(163, 142, 35), new Color(72, 160, 237), new Color(255, 140, 0), new Color(106, 90, 205), new Color(224, 165, 32),
+            new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0), new Color(139, 69, 19), new Color(255, 127, 80),
+            new Color(140, 105, 225)};
 
     private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
 
@@ -124,9 +129,9 @@ public class ChatManager implements MessageEventNotificationListener {
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
-            new ChatMessageEventRequestListener();
+                new ChatMessageEventRequestListener();
         SparkManager.getMessageEventManager().
-            addMessageEventRequestListener(messageEventRequestListener);
+                addMessageEventRequestListener(messageEventRequestListener);
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
