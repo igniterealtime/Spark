@@ -86,6 +86,12 @@ public class NotificationPlugin implements Plugin, PacketListener {
             return;
         }
 
+        // Make sure the user is in the contact list.
+        ContactItem contactItem = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+        if (contactItem == null) {
+            return;
+        }
+
         jid = StringUtils.parseBareAddress(jid);
         boolean isOnline = onlineUsers.contains(jid);
 

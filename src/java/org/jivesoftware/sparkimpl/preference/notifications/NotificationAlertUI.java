@@ -151,14 +151,13 @@ public class NotificationAlertUI extends JPanel {
             titleLabel.setText(nickname);
         }
 
-        final Presence presence = PresenceManager.getPresence(jid);
         final StringBuilder builder = new StringBuilder();
 
         String username = titleLabel.getText();
         builder.append(username);
         builder.append(" is ");
 
-        builder.append(presence.isAvailable() ? "Available" : "Not Available");
+        builder.append(available ? "Available" : "Not Available");
         topLabel.setText(builder.toString());
 
         String jobTitle = vcard.getField("TITLE");
