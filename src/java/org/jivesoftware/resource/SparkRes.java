@@ -268,6 +268,10 @@ public class SparkRes {
     public static final String SPARK_IMAGE_32x32 = "SPARK_IMAGE_32x32";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
     public static final String BUZZ_IMAGE = "BUZZ_IMAGE";
+    public static final String CONFERENCE_IMAGE_48x48 = "CONFERENCE_IMAGE_48x48";
+    public static final String ACCEPT_INVITE_IMAGE = "ACCEPT_INVITE_IMAGE";
+    public static final String REJECT_INVITE_IMAGE = "REJECT_INVITE_IMAGE";
+    public static final String INVITE_MORE_IMAGE = "INVITE_MORE_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
