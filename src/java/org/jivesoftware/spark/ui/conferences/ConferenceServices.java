@@ -29,6 +29,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
@@ -134,8 +135,35 @@ public class ConferenceServices {
                             }
                         }
 
+                        final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room, inviter, password);
+
+                        String bareJID = StringUtils.parseBareAddress(inviter);
+                        try {
+                            ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
+
+                            // If the ChatRoom exists, add an invitation UI.
+                            chatRoom.getTranscriptWindow().addComponent(invitationUI);
+                            chatRoom.scrollToBottom();
+                        }
+                        catch (ChatRoomNotFoundException e) {
+                            // If it doesn't exists. Create a new Group Chat Room
+                            // Create the Group Chat Room
+                            final MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), room);
+
+                            GroupChatRoom groupChatRoom = new GroupChatRoom(chat);
+                            groupChatRoom.getSplitPane().setDividerSize(5);
+                            groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
+                            groupChatRoom.getSplitPane().setDividerLocation(0.6);
+
+
+                            groupChatRoom.setTabTitle(room);
+                            groupChatRoom.getToolBar().setVisible(true);
+
+                            SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
+                            groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
+                        }
                         // If no listeners handled the invitation, default to generic invite.
-                        new ConversationInvitation(conn, room, inviter, reason, password, message);
+                        //new ConversationInvitation(conn, room, inviter, reason, password, message);
                     }
                 });
 

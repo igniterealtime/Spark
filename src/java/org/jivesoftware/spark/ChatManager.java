@@ -326,6 +326,22 @@ public class ChatManager implements MessageEventNotificationListener {
     }
 
     /**
+     * Checks if a <code>ChatRoom</code> exists.
+     *
+     * @param jid the jid of the user.
+     * @return true if the ChatRoom exists.
+     */
+    public boolean chatRoomExists(String jid) {
+        try {
+            getChatContainer().getChatRoom(jid);
+        }
+        catch (ChatRoomNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Adds a new <code>MessageFilter</code>.
      *
      * @param filter the MessageFilter.
