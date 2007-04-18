@@ -11,8 +11,11 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.JLabel;
@@ -80,12 +83,12 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         rejectButton = new RolloverButton("Reject", SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
         rejectButton.setForeground(new Color(185, 33, 33));
 
-        add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         add(titleLabel, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
 
-        add(acceptButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
-        add(rejectButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        add(acceptButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        add(rejectButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
         final SimpleAttributeSet styles = new SimpleAttributeSet();
         StyleConstants.setForeground(styles, new Color(13, 104, 196));
@@ -130,7 +133,20 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     private void rejectInvitation() {
         removeUI();
 
-        setVisible(false);
+        try {
+            ChatRoom chatRoom = SparkManager.getChatManager().getGroupChat(room);
+            if (chatRoom instanceof GroupChatRoom) {
+                GroupChatRoom gcr = (GroupChatRoom)chatRoom;
+                if (!gcr.getMultiUserChat().isJoined()) {
+                    chatRoom.closeChatRoom();
+                }
+            }
+        }
+        catch (ChatNotFoundException e) {
+            // Ignore
+        }
+
+
         MultiUserChat.decline(SparkManager.getConnection(), room, inviter, "No thank you");
     }
 
