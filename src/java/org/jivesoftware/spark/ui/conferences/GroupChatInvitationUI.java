@@ -24,6 +24,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,7 +34,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * UI
+ * Conference Invitation UI.
+ *
+ * @author Derek DeMoro
  */
 public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
@@ -69,7 +72,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         titleLabel = new JTextPane();
         titleLabel.setOpaque(false);
         titleLabel.setEditable(false);
-        titleLabel.setBackground(new Color(13, 104, 196));
+        titleLabel.setBackground(new Color(230, 239, 249));
 
         acceptButton = new RolloverButton("Accept", SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
         acceptButton.setForeground(new Color(63, 158, 61));
@@ -110,15 +113,34 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Action taking when a user clicks on the accept button.
+     */
     private void acceptInvitation() {
-        setVisible(false);
+        removeUI();
 
         String name = StringUtils.parseName(room);
         ConferenceUtils.enterRoomOnSameThread(name, room, password);
     }
 
+
+    /**
+     * Action taking when a user clicks on the reject button.
+     */
     private void rejectInvitation() {
+        removeUI();
+
         setVisible(false);
         MultiUserChat.decline(SparkManager.getConnection(), room, inviter, "No thank you");
+    }
+
+    /**
+     * Removes this interface from it's parent.
+     */
+    private void removeUI() {
+        Container par = getParent();
+        if (par != null && par.getParent() != null) {
+            par.remove(this);
+        }
     }
 }
