@@ -64,11 +64,13 @@ public class NotificationsPreference implements Preference {
                 boolean windowFocus = localPreferences.getWindowTakesFocus();
                 boolean offlineNotification = localPreferences.isOfflineNotificationsOn();
                 boolean onlineNotification = localPreferences.isOnlineNotificationsOn();
+                boolean betaChecking = localPreferences.isBetaCheckingEnabled();
 
                 panel.setShowToaster(toaster);
                 panel.setShowWindowPopup(windowFocus);
                 panel.setOfflineNotification(offlineNotification);
                 panel.setOnlineNotification(onlineNotification);
+                panel.setCheckForBeta(betaChecking);
             }
         };
 
@@ -83,6 +85,7 @@ public class NotificationsPreference implements Preference {
         pref.setWindowTakesFocus(panel.shouldWindowPopup());
         pref.setOfflineNotifications(panel.isOfflineNotificationOn());
         pref.setOnlineNotifications(panel.isOnlineNotificationOn());
+        pref.setCheckForBeta(panel.isBetaCheckingEnabled());
         SettingsManager.saveSettings();
     }
 

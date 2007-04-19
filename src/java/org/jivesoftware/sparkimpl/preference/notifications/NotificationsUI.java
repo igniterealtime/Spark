@@ -29,6 +29,7 @@ public class NotificationsUI extends JPanel {
     private JCheckBox windowFocusBox;
     private JCheckBox offlineNotificationBox;
     private JCheckBox onlineNotificationBox;
+    private JCheckBox betaCheckBox;
 
     public NotificationsUI() {
         setLayout(new VerticalFlowLayout());
@@ -48,6 +49,9 @@ public class NotificationsUI extends JPanel {
 
         onlineNotificationBox = new JCheckBox("Notify when a user comes online.");
         add(onlineNotificationBox);
+
+        betaCheckBox = new JCheckBox("Check for Beta Updates");
+        add(betaCheckBox);
     }
 
     public void setShowToaster(boolean show) {
@@ -80,5 +84,13 @@ public class NotificationsUI extends JPanel {
 
     public boolean isOnlineNotificationOn() {
         return onlineNotificationBox.isSelected();
+    }
+
+    public void setCheckForBeta(boolean check) {
+        betaCheckBox.setSelected(check);
+    }
+
+    public boolean isBetaCheckingEnabled() {
+        return betaCheckBox.isSelected();
     }
 }

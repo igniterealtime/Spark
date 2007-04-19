@@ -543,6 +543,14 @@ public class LocalPreferences {
         return getBoolean("useSystemLookAndFeel", false);
     }
 
+    public void setCheckForBeta(boolean checkForBeta) {
+        setBoolean("checkForBeta", checkForBeta);
+    }
+
+    public boolean isBetaCheckingEnabled() {
+        return getBoolean("checkForBeta", false);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }

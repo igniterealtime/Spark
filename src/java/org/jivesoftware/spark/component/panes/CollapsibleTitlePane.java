@@ -140,7 +140,7 @@ public class CollapsibleTitlePane extends JPanel {
 
         if (!isSubPane()) {
 
-            if (collapsed) {
+            if (!collapsed) {
                 preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
             }
             else {

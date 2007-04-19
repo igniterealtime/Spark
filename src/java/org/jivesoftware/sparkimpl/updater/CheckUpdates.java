@@ -85,7 +85,7 @@ public class CheckUpdates {
         // Specify the main update url for JiveSoftware
         this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
 
-        sparkPluginInstalled = isSparkPluginInstalled(SparkManager.getConnection());
+        sparkPluginInstalled = false;//isSparkPluginInstalled(SparkManager.getConnection());
     }
 
     public SparkVersion newBuildAvailable() {
@@ -125,6 +125,14 @@ public class CheckUpdates {
         else {
             post.addParameter("os", "linux");
         }
+
+        // Check to see if the beta should be included.
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        boolean isBetaCheckingEnabled = pref.isBetaCheckingEnabled();
+        if (isBetaCheckingEnabled) {
+            post.addParameter("beta", "true");
+        }
+
 
         Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
         HttpClient httpclient = new HttpClient();
@@ -462,7 +470,7 @@ public class CheckUpdates {
     /**
      * Returns true if the first version number is greater than the second.
      *
-     * @param firstVersion the first version number.
+     * @param firstVersion  the first version number.
      * @param secondVersion the second version number.
      * @return returns true if the first version is greater than the second.
      */
@@ -495,7 +503,7 @@ public class CheckUpdates {
         }
         else if (versionTwoBetaOrAlpha) {
             String versionTwo = getVersion(secondVersion);
-            return !(versionTwo.compareTo(secondVersion) >= 1);
+            return (firstVersion.compareTo(versionTwo) >= 1);
         }
 
 
