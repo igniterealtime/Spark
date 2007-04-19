@@ -85,7 +85,7 @@ public class CheckUpdates {
         // Specify the main update url for JiveSoftware
         this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
 
-        sparkPluginInstalled = false;//isSparkPluginInstalled(SparkManager.getConnection());
+        sparkPluginInstalled = isSparkPluginInstalled(SparkManager.getConnection());
     }
 
     public SparkVersion newBuildAvailable() {
