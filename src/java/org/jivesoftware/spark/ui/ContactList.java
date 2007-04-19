@@ -2002,23 +2002,23 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         buildContactList();
 
-        XMPPConnection con = SparkManager.getConnection();
-        final Roster roster = con.getRoster();
-        for (RosterEntry entry : roster.getEntries()) {
-            String user = entry.getUser();
-            Presence presence = roster.getPresence(user);
-            try {
-                updateUserPresence(presence);
-            }
-            catch (Exception e) {
-                Log.error(e);
-            }
-        }
-
         final TimerTask updatePresence = new TimerTask() {
             public void run() {
                 final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
                 SparkManager.getSessionManager().changePresence(myPresence);
+
+                XMPPConnection con = SparkManager.getConnection();
+                final Roster roster = con.getRoster();
+                for (RosterEntry entry : roster.getEntries()) {
+                    String user = entry.getUser();
+                    Presence presence = roster.getPresence(user);
+                    try {
+                        updateUserPresence(presence);
+                    }
+                    catch (Exception e) {
+                        Log.error(e);
+                    }
+                }
             }
         };
 
