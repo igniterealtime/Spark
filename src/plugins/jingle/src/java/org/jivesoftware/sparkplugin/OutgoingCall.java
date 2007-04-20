@@ -74,7 +74,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
     private TimerTask mediaReceivedTask;
 
-    private static final long WAIT_FOR_MEDIA_DELAY = 15000;
+    private static final long WAIT_FOR_MEDIA_DELAY = 20000;
 
     /**
      * Creates a new instance of OutgoingCall.

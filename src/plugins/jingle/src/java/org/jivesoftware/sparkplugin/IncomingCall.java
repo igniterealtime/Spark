@@ -62,7 +62,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
     private TimerTask mediaReceivedTask;
 
-    private static final long WAIT_FOR_MEDIA_DELAY = 15000;
+    private static final long WAIT_FOR_MEDIA_DELAY = 20000;
 
     /**
      * Initializes a new IncomingCall with the required JingleSession.
