@@ -251,18 +251,6 @@
             </serializedBean>
             <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
           </action>
-          <action name="" id="54" beanClass="com.install4j.runtime.beans.actions.desktop.CreateQuicklaunchIconAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.desktop.CreateQuicklaunchIconAction">
-                  <void property="description">
-                    <string>${compiler:sys.fullName}</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>context.getBooleanVariable("createQuicklaunchIconAction")</condition>
-          </action>
         </actions>
         <formComponents />
       </screen>
