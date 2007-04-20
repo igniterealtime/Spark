@@ -155,12 +155,13 @@ public class ConferenceServices {
                             groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
                             groupChatRoom.getSplitPane().setDividerLocation(0.6);
 
-
-                            groupChatRoom.setTabTitle(room);
+                            String roomName = StringUtils.parseName(room);
+                            groupChatRoom.setTabTitle(roomName);
                             groupChatRoom.getToolBar().setVisible(true);
 
                             SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
                             groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
+                            SparkManager.getChatManager().getChatContainer().startFlashing(groupChatRoom);
                         }
                         // If no listeners handled the invitation, default to generic invite.
                         //new ConversationInvitation(conn, room, inviter, reason, password, message);

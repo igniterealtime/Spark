@@ -155,8 +155,11 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
      */
     private void removeUI() {
         Container par = getParent();
-        if (par != null && par.getParent() != null) {
+        if (par != null) {
             par.remove(this);
+            par.invalidate();
+            par.validate();
+            par.repaint();
         }
     }
 }
