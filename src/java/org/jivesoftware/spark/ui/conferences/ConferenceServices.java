@@ -143,7 +143,14 @@ public class ConferenceServices {
 
                             // If the ChatRoom exists, add an invitation UI.
                             chatRoom.getTranscriptWindow().addComponent(invitationUI);
+
+
+                            // Notify user of incoming invitation.
+                            chatRoom.increaseUnreadMessageCount();
+
                             chatRoom.scrollToBottom();
+
+                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
                         }
                         catch (ChatRoomNotFoundException e) {
                             // If it doesn't exists. Create a new Group Chat Room
@@ -161,7 +168,13 @@ public class ConferenceServices {
 
                             SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
                             groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
-                            SparkManager.getChatManager().getChatContainer().startFlashing(groupChatRoom);
+
+                            // Notify user of incoming invitation.
+                            groupChatRoom.increaseUnreadMessageCount();
+
+                            groupChatRoom.scrollToBottom();
+
+                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom);
                         }
                         // If no listeners handled the invitation, default to generic invite.
                         //new ConversationInvitation(conn, room, inviter, reason, password, message);
