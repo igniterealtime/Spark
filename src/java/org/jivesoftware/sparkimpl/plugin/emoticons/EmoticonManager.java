@@ -26,7 +26,6 @@ import javax.swing.ImageIcon;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -92,9 +91,6 @@ public class EmoticonManager {
         // Copy over to allow for non-admins to extract.
         copyFiles();
 
-
-        expandNewPacks();
-
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         String emoticonPack = pref.getEmoticonPack();
 
@@ -119,10 +115,15 @@ public class EmoticonManager {
                 try {
                     // Copy over
                     File newFile = new File(newEmoticonDir, file.getName());
-                    String name = URLFileSystem.getName(newFile.toURL());
-                    File directory = new File(newEmoticonDir, name);
-                    if (!directory.exists()) {
+
+                    // Check timestamps
+                    long installerFile = file.lastModified();
+                    long copiedFile = newFile.lastModified();
+
+                    if (installerFile > copiedFile) {
+                        // Copy over and expand :)
                         URLFileSystem.copy(file.toURL(), newFile);
+                        expandNewPack(newFile);
                     }
                 }
                 catch (IOException e) {
@@ -387,49 +388,19 @@ public class EmoticonManager {
     /**
      * Expands any zipped Emoticon Packs.
      */
-    private void expandNewPacks() {
-        File[] jars = EMOTICON_DIRECTORY.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                boolean accept = false;
-                String smallName = name.toLowerCase();
-                if (smallName.endsWith(".zip")) {
-                    accept = true;
-                }
-                return accept;
-            }
-        });
-
-        // Do nothing if no jar or zip files were found
-        if (jars == null) {
-            return;
+    private void expandNewPack(File file) {
+        URL url = null;
+        try {
+            url = file.toURL();
         }
-
-
-        for (int i = 0; i < jars.length; i++) {
-            if (jars[i].isFile()) {
-                File file = jars[i];
-
-                URL url = null;
-                try {
-                    url = file.toURL();
-                }
-                catch (MalformedURLException e) {
-                    Log.error(e);
-                }
-                String name = URLFileSystem.getName(url);
-                File directory = new File(EMOTICON_DIRECTORY, name);
-                if (directory.exists() && directory.isDirectory()) {
-                    continue;
-                }
-                else {
-                    // Unzip contents into directory
-                    unzipPack(file, directory.getParentFile());
-
-                    // Delete the pack
-                    file.delete();
-                }
-            }
+        catch (MalformedURLException e) {
+            Log.error(e);
         }
+        String name = URLFileSystem.getName(url);
+        File directory = new File(EMOTICON_DIRECTORY, name);
+
+        // Unzip contents into directory
+        unzipPack(file, directory.getParentFile());
     }
 
     /**
