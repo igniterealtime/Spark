@@ -28,20 +28,23 @@ import org.jivesoftware.spark.ui.ContactList;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
+/**
+ * Allows users to place activity listeners on individual users. This class notifies users when other users
+ * come from away or offline to available.
+ *
+ * @author Derek DeMoro
+ */
 public class PresenceChangePlugin implements Plugin {
 
-    private final Set contacts = new HashSet();
-
+    private final Set<String> sparkContacts = new HashSet<String>();
 
     public void initialize() {
         // Listen for right-clicks on ContactItem
@@ -50,7 +53,8 @@ public class PresenceChangePlugin implements Plugin {
         final Action listenAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 ContactItem item = (ContactItem)contactList.getSelectedUsers().iterator().next();
-                contacts.add(item);
+                String bareAddress = StringUtils.parseBareAddress(item.getJID());
+                sparkContacts.add(bareAddress);
             }
         };
 
@@ -60,7 +64,8 @@ public class PresenceChangePlugin implements Plugin {
         final Action removeAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 ContactItem item = (ContactItem)contactList.getSelectedUsers().iterator().next();
-                contacts.remove(item);
+                String bareAddress = StringUtils.parseBareAddress(item.getJID());
+                sparkContacts.remove(bareAddress);
             }
         };
 
@@ -72,8 +77,9 @@ public class PresenceChangePlugin implements Plugin {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
+                    String bareAddress = StringUtils.parseBareAddress(item.getJID());
                     if (!item.getPresence().isAvailable() || item.getPresence().isAway()) {
-                        if (contacts.contains(item)) {
+                        if (sparkContacts.contains(bareAddress)) {
                             popup.add(removeAction);
                         }
                         else {
@@ -96,27 +102,26 @@ public class PresenceChangePlugin implements Plugin {
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
                 Presence presence = (Presence)packet;
-                if (!presence.isAvailable()) {
+                if (!presence.isAvailable() || presence.isAway()) {
                     return;
                 }
                 String from = presence.getFrom();
 
-                final Iterator contactItems = new ArrayList(contacts).iterator();
-                while (contactItems.hasNext()) {
-                    ContactItem item = (ContactItem)contactItems.next();
-                    if (item.getJID().equals(StringUtils.parseBareAddress(from))) {
-                        contacts.remove(item);
+                for (String jid : sparkContacts) {
+                    if (jid.equals(StringUtils.parseBareAddress(from))) {
+                        sparkContacts.remove(jid);
 
                         ChatManager chatManager = SparkManager.getChatManager();
-                        ChatRoom chatRoom = chatManager.createChatRoom(item.getJID(), item.getNickname(), item.getNickname());
+                        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+                        ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
 
 
                         String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
 
-                        String infoText = Res.getString("message.user.now.available.to.chat", item.getNickname(), time);
+                        String infoText = Res.getString("message.user.now.available.to.chat", nickname, time);
                         chatRoom.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
                         Message message = new Message();
-                        message.setFrom(item.getJID());
+                        message.setFrom(jid);
                         message.setBody(infoText);
                         chatManager.getChatContainer().messageReceived(chatRoom, message);
                     }
