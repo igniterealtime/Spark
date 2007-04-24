@@ -782,7 +782,15 @@ public class ChatManager implements MessageEventNotificationListener {
                 return;
             }
         }
+    }
 
-
+    /**
+     * Returns all selected users in the <code>ContactList</code>.
+     *
+     * @return all selected <code>ContactItem</code> in the ContactList.
+     */
+    public Collection<ContactItem> getSelectedContactItems() {
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        return contactList.getSelectedUsers();
     }
 }

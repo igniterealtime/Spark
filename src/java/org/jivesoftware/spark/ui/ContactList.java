@@ -137,6 +137,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private Workspace workspace;
 
+    public static KeyEvent activeKeyEvent;
+
     /**
      * Creates a new instance of ContactList.
      */
@@ -1201,7 +1203,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     public void contactItemClicked(ContactItem item) {
         activeItem = item;
 
-        clearSelectionList(item);
+        if (activeKeyEvent == null || ((activeKeyEvent.getModifiers() & KeyEvent.CTRL_MASK) == 0)) {
+            clearSelectionList(item);
+        }
+
 
         fireContactItemClicked(item);
     }
@@ -1839,8 +1844,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         return activeGroup;
     }
 
-    public Collection getSelectedUsers() {
-        final List list = new ArrayList();
+    public Collection<ContactItem> getSelectedUsers() {
+        final List<ContactItem> list = new ArrayList<ContactItem>();
 
         Iterator contactGroups = getContactGroups().iterator();
         while (contactGroups.hasNext()) {

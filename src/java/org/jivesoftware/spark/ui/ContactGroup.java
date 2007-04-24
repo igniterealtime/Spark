@@ -13,6 +13,7 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
@@ -135,10 +136,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     ContactItem item = (ContactItem)contactItemList.getSelectedValue();
                     fireContactItemDoubleClicked(item);
                 }
+
+                ContactList.activeKeyEvent = keyEvent;
             }
 
             public void keyReleased(KeyEvent keyEvent) {
-
+                ContactList.activeKeyEvent = null;
             }
         });
 
@@ -510,29 +513,25 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private void checkPopup(MouseEvent e) {
         if (e.isPopupTrigger()) {
-            // Check for multi selection
-            int[] indeces = contactItemList.getSelectedIndices();
-            List selection = new ArrayList();
-            for (int i = 0; i < indeces.length; i++) {
-                selection.add(model.getElementAt(indeces[i]));
-            }
-
-            if (selection.size() > 1) {
-                firePopupEvent(e, selection);
-                return;
-            }
-
             // Otherwise, handle single selection
             int index = contactItemList.locationToIndex(e.getPoint());
+            if (index != -1) {
+                if (index != contactItemList.getSelectedIndex()) {
+                    contactItemList.setSelectedIndex(index);
+                    fireContactItemClicked((ContactItem)contactItemList.getSelectedValue());
+                }
+            }
 
-            Object o = model.getElementAt(index);
-            if (!(o instanceof ContactItem)) {
+
+            final Collection selectedItems = SparkManager.getChatManager().getSelectedContactItems();
+            if (selectedItems.size() > 1) {
+                firePopupEvent(e, selectedItems);
                 return;
             }
-            ContactItem item = (ContactItem)o;
-            contactItemList.setSelectedIndex(index);
-
-            firePopupEvent(e, item);
+            else if (selectedItems.size() == 1) {
+                final ContactItem contactItem = (ContactItem)selectedItems.iterator().next();
+                firePopupEvent(e, contactItem);
+            }
         }
     }
 
