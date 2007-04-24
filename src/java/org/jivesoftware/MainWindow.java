@@ -78,7 +78,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private JMenuItem preferenceMenuItem;
 
     private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-    private final JMenuItem helpMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+    private final JMenuItem helpMenuItem = new JMenuItem();
 
     private final JMenuBar mainWindowBar = new JMenuBar();
 
@@ -246,7 +246,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             con.disconnect();
         }
 
-
         // Notify all MainWindowListeners
         try {
             fireWindowShutdown();
@@ -401,11 +400,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         updateAction.putValue(Action.NAME, Res.getString("menuitem.check.for.updates"));
         updateAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
 
-        // Build Help Menu
-        helpMenu.add(helpMenuItem);
-        helpMenu.add(showTrafficAction);
-        helpMenu.add(updateAction);
-
         // Add Error Dialog Viewer
         Action viewErrors = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -421,9 +415,29 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         viewErrors.putValue(Action.NAME, "View Logs");
 
+        final Action viewHelpGuideAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    BrowserLauncher.openURL("http://www.igniterealtime.org/builds/spark/docs/spark_user_guide.pdf");
+                }
+                catch (IOException e) {
+                    Log.error("Unable to load online help.", e);
+                }
+            }
+        };
+
+        viewHelpGuideAction.putValue(Action.NAME, Res.getString("menuitem.user.guide"));
+        viewHelpGuideAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+
+        // Build Help Menu
+        helpMenu.add(viewHelpGuideAction);
+        helpMenu.add(helpMenuItem);
+        helpMenu.add(showTrafficAction);
+        helpMenu.add(updateAction);
+        helpMenu.addSeparator();
         helpMenu.add(viewErrors);
 
-        helpMenu.addSeparator();
+
         helpMenu.add(menuAbout);
 
         // ResourceUtils - Adds mnemonics
