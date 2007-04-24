@@ -98,7 +98,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
         if (presence.isAvailable()) {
             if (preferences.isOnlineNotificationsOn()) {
                 if (!isOnline) {
-                    notifyUserOnline(jid);
+                    notifyUserOnline(jid, presence);
                 }
             }
 
@@ -106,7 +106,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
         }
         else {
             if (preferences.isOfflineNotificationsOn() && isOnline) {
-                notifyUserOffline(jid);
+                notifyUserOffline(jid, presence);
             }
 
             onlineUsers.remove(jid);
@@ -129,12 +129,12 @@ public class NotificationPlugin implements Plugin, PacketListener {
      *
      * @param jid the jid of the user that has come online.
      */
-    private void notifyUserOnline(String jid) {
+    private void notifyUserOnline(String jid, Presence presence) {
         SparkToaster toaster = new SparkToaster();
         toaster.setDisplayTime(5000);
         toaster.setBorder(BorderFactory.createBevelBorder(0));
         toaster.setCustomAction(new ChatAction(jid));
-        NotificationAlertUI alertUI = new NotificationAlertUI(jid, true);
+        NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
 
         toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
 
@@ -154,13 +154,13 @@ public class NotificationPlugin implements Plugin, PacketListener {
      *
      * @param jid the jid of the user who has gone offline.
      */
-    private void notifyUserOffline(String jid) {
+    private void notifyUserOffline(String jid, Presence presence) {
         SparkToaster toaster = new SparkToaster();
         toaster.setCustomAction(new ChatAction(jid));
         toaster.setDisplayTime(5000);
         toaster.setBorder(BorderFactory.createBevelBorder(0));
 
-        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false);
+        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
 
 
         toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
