@@ -15,8 +15,8 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -161,7 +161,13 @@ public class RosterPickList extends JPanel {
         public int compare(Object contactItemOne, Object contactItemTwo) {
             final ContactItem item1 = (ContactItem)contactItemOne;
             final ContactItem item2 = (ContactItem)contactItemTwo;
-            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+            String nickname1 = item1.getNickname();
+            String nickname2 = item2.getNickname();
+            if (nickname1 == null || nickname2 == null) {
+                return 0;
+            }
+
+            return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
 
         }
     };
