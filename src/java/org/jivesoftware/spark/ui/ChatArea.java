@@ -444,11 +444,11 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         final String url = (String)o;
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
-                            if (Spark.isWindows() || Spark.isMac()) {
-                                BrowserLauncher.openURL(url);
+                            if (Spark.isWindows()) {
+                                Desktop.browse(new URL(url));
                             }
                             else {
-                                Desktop.browse(new URL(url));
+                                BrowserLauncher.openURL(url);
                             }
                         }
                     }
