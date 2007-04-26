@@ -157,7 +157,7 @@ public class NotificationAlertUI extends JPanel {
         builder.append(username);
         builder.append(" is ");
 
-        builder.append(available ? "Available" : "Not Available");
+        builder.append(available ? "Online" : "Offline");
         topLabel.setText(builder.toString());
 
         String jobTitle = vcard.getField("TITLE");

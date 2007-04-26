@@ -23,6 +23,7 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -87,7 +88,14 @@ public final class Notifications implements ActionListener, MainWindowListener {
             return;
         }
 
-        SystemTray tray = SystemTray.getDefaultSystemTray();
+        SystemTray tray = null;
+        try {
+            tray = SystemTray.getDefaultSystemTray();
+        }
+        catch (Throwable e) {
+            Log.error(e);
+        }
+
         setupNotificationDialog();
 
         availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
@@ -136,8 +144,10 @@ public final class Notifications implements ActionListener, MainWindowListener {
 
         trayIcon.setPopupMenu(popupMenu);
         trayIcon.addActionListener(this);
-        tray.addTrayIcon(trayIcon);
 
+        if (tray != null) {
+            tray.addTrayIcon(trayIcon);
+        }
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
                 changePresence(presence);

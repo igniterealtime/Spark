@@ -298,9 +298,8 @@ final class InvitationDialog extends JPanel {
                                     ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle, jidList);
                                 }
                                 catch (XMPPException e2) {
-                                    Log.error(e2);
+                                    JOptionPane.showMessageDialog(pane, ConferenceUtils.getReason(e2), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                                 }
-                                return;
                             }
                         };
 

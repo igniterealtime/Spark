@@ -102,6 +102,9 @@ public class EmoticonManager {
         }
     }
 
+    /**
+     * Copy the files directly over to an accepted permissions directory.
+     */
     private void copyFiles() {
         // Current Plugin directory
         File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(), "xtra/emoticons").getAbsoluteFile();

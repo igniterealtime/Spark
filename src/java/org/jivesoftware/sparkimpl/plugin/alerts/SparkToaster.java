@@ -289,6 +289,9 @@ public class SparkToaster {
                 }
             }
             toaster.setLocation(posx, toY);
+            toaster.invalidate();
+            toaster.validate();
+            toaster.repaint();
         }
 
         public void run() {

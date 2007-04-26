@@ -352,6 +352,8 @@ public class ConferenceUtils {
         final MultiUserChat multiUserChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
+
+        final GroupChatRoom room = new GroupChatRoom(multiUserChat);
         try {
             // Attempt to create room.
             multiUserChat.create(pref.getNickname());
@@ -359,8 +361,6 @@ public class ConferenceUtils {
         catch (XMPPException e) {
             throw e;
         }
-
-        final GroupChatRoom room = new GroupChatRoom(multiUserChat);
 
         try {
             // Since this is a private room, make the room not public and set user as owner of the room.
