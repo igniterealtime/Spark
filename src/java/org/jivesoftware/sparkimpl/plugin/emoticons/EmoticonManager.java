@@ -123,7 +123,7 @@ public class EmoticonManager {
                     if (installerFile > copiedFile) {
                         // Copy over and expand :)
                         URLFileSystem.copy(file.toURL(), newFile);
-                        expandNewPack(newFile);
+                        expandNewPack(newFile, newEmoticonDir);
                     }
                 }
                 catch (IOException e) {
@@ -388,7 +388,7 @@ public class EmoticonManager {
     /**
      * Expands any zipped Emoticon Packs.
      */
-    private void expandNewPack(File file) {
+    private void expandNewPack(File file, File dist) {
         URL url = null;
         try {
             url = file.toURL();
@@ -397,7 +397,7 @@ public class EmoticonManager {
             Log.error(e);
         }
         String name = URLFileSystem.getName(url);
-        File directory = new File(EMOTICON_DIRECTORY, name);
+        File directory = new File(dist, name);
 
         // Unzip contents into directory
         unzipPack(file, directory.getParentFile());
