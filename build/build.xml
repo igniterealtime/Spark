@@ -438,7 +438,7 @@
 
     </target>
 
-    <target name="installer.msi" depends="jar">
+    <target name="installer.msi" depends="release">
         <condition property="advinst.not.ok" value="true">
             <not>
                 <available file="${advinst.path}\AdvancedInstaller.com"/>
