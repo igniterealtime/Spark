@@ -128,6 +128,7 @@ public final class GroupChatRoom extends ChatRoom {
 
         roomInfo.setChatRoom(this);
         getSplitPane().setResizeWeight(.60);
+        getSplitPane().setDividerLocation(.60);
 
         setupListeners();
 
@@ -1082,11 +1083,11 @@ public final class GroupChatRoom extends ChatRoom {
         public SubjectPanel() {
             setLayout(new GridBagLayout());
 
-            iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
+            //iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
             roomJIDLabel = new JLabel("<" + getMultiUserChat().getRoom() + ">");
             subjectLabel = new JLabel(getMultiUserChat().getSubject());
 
-            add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+         //   add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
             add(roomJIDLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
             add(subjectLabel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
