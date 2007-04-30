@@ -21,9 +21,11 @@ import org.jivesoftware.phone.client.event.PhoneEventPacketExtensionProvider;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -34,16 +36,11 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,11 +49,20 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.TimerTask;
+
 public class PhonePlugin implements Plugin {
     public static PhoneClient phoneClient;
     private DialPanel dialPanel;
     //    private Alert incomingDialog;
     private JFrame dialDialog;
+
+    private Presence offPhonePresence;
 
     public void initialize() {
         ProviderManager.getInstance().addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
@@ -213,52 +219,78 @@ public class PhonePlugin implements Plugin {
             if (dialDialog != null) {
                 dialDialog.setVisible(false);
             }
-            /*
-                  if (incomingDialog != null) {
-                      incomingDialog.hidePopupImmediately();
-                  }
-            */
+
+            // Set offline presence if necessary.
+            if (offPhonePresence == null) {
+                offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+
+                // Send on phone presence
+                Presence onPhonePresence = new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away);
+                SparkManager.getSessionManager().changePresence(onPhonePresence);
+            }
+
+
         }
 
         public void handleHangUp(HangUpEvent event) {
             if (dialDialog != null) {
                 dialDialog.setVisible(false);
             }
-            /*
-                  if (incomingDialog != null) {
-                      incomingDialog.hidePopupImmediately();
-                  }
 
-            */
+            if (offPhonePresence != null) {
+                // Set user to available when all phone calls are hung up.
+                Presence availablePresence = new Presence(Presence.Type.available, "Available", 1, Presence.Mode.available);
 
+                SparkManager.getSessionManager().changePresence(availablePresence);
+
+                offPhonePresence = null;
+            }
         }
 
-        public void handleRing(RingEvent event) {
-            IncomingCall incomingCall = new IncomingCall();
-            boolean idExists = false;
-            if (ModelUtil.hasLength(event.getCallerIDName())) {
-                incomingCall.setCallerName(event.getCallerIDName());
-                idExists = true;
-            }
+        public void handleRing(final RingEvent event) {
+            final TimerTask task = new SwingTimerTask() {
+                public void doRun() {
+                    String callerID = event.getCallerID();
+                    if (ModelUtil.hasLength(callerID)) {
+                        String number = PhoneManager.getNumbersFromPhone(callerID);
+                        if (PhoneManager.getInstance().containsCurrentCall(number)) {
+                            return;
+                        }
+                    }
+                    displayRingUI(event);
+                }
+            };
 
-            if (ModelUtil.hasLength(event.getCallerID())) {
-                incomingCall.setCallerNumber(event.getCallerID());
-                idExists = true;
-            }
-
-            if (!idExists) {
-                incomingCall.setCallerName(Res.getString("message.no.caller.id"));
-            }
-
-            SparkToaster toasterManager = new SparkToaster();
-
-            toasterManager.setTitle("Incoming Phone Call");
-            toasterManager.setDisplayTime(5000);
-            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
-            toasterManager.setComponent(incomingCall);
-
+            TaskEngine.getInstance().schedule(task, 1000);
         }
     }
+
+    private void displayRingUI(RingEvent event) {
+        IncomingCall incomingCall = new IncomingCall();
+        boolean idExists = false;
+        if (ModelUtil.hasLength(event.getCallerIDName())) {
+            incomingCall.setCallerName(event.getCallerIDName());
+            idExists = true;
+        }
+
+        if (ModelUtil.hasLength(event.getCallerID())) {
+            incomingCall.setCallerNumber(event.getCallerID());
+            idExists = true;
+        }
+
+        if (!idExists) {
+            incomingCall.setCallerName(Res.getString("message.no.caller.id"));
+        }
+
+        SparkToaster toasterManager = new SparkToaster();
+
+        toasterManager.setTitle("Incoming Phone Call");
+        toasterManager.setDisplayTime(5000);
+        toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+        toasterManager.setComponent(incomingCall);
+
+    }
+
 
     public void callExtension(final String number) {
         final Runnable caller = new Runnable() {
@@ -286,7 +318,7 @@ public class PhonePlugin implements Plugin {
                 }
             }
         };
-        
+
         TaskEngine.getInstance().submit(caller);
     }
 

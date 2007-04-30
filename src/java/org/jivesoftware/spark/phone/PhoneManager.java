@@ -42,6 +42,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     private static final Object LOCK = new Object();
 
     private List<Phone> phones = new CopyOnWriteArrayList<Phone>();
+    private List<String> currentCalls = new ArrayList<String>();
 
     /**
      * Returns the singleton instance of <CODE>PhoneManager</CODE>,
@@ -234,5 +235,31 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         return false;
     }
 
+    public void addCurrentCall(String phoneNumber) {
+        currentCalls.add(phoneNumber);
+    }
 
+    public void removeCurrentCall(String phoneNumber) {
+        currentCalls.remove(phoneNumber);
+    }
+
+    public boolean containsCurrentCall(String phoneNumber) {
+        return currentCalls.contains(phoneNumber);
+    }
+
+    public static String getNumbersFromPhone(String number) {
+        if (number == null) {
+            return null;
+        }
+
+        number = number.replace("-", "");
+        number = number.replace("(", "");
+        number = number.replace(")", "");
+        number = number.replace(" ", "");
+        if (number.startsWith("1")) {
+            number = number.substring(1);
+        }
+
+        return number;
+    }
 }
