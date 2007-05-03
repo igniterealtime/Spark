@@ -39,6 +39,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.security.auth.login.Configuration;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -127,7 +128,7 @@ public final class LoginDialog {
 
         mainPanel.add(imagePanel,
                 new GridBagConstraints(0, 0, 4, 1,
-                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                        1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0));
 
         final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
@@ -144,7 +145,7 @@ public final class LoginDialog {
         loginPanel.setOpaque(false);
         mainPanel.add(loginPanel,
                 new GridBagConstraints(0, 2, 2, 1,
-                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0));
 
         loginDialog.setContentPane(mainPanel);
@@ -187,6 +188,7 @@ public final class LoginDialog {
 
         private final JCheckBox savePasswordBox = new JCheckBox();
         private final JCheckBox autoLoginBox = new JCheckBox();
+        private final JCheckBox useSSOBox = new JCheckBox();
         private final RolloverButton loginButton = new RolloverButton();
         private final RolloverButton advancedButton = new RolloverButton();
         private final RolloverButton quitButton = new RolloverButton();
@@ -208,6 +210,7 @@ public final class LoginDialog {
             //setBorder(BorderFactory.createTitledBorder("Sign In Now"));
             ResourceUtils.resButton(savePasswordBox, Res.getString("checkbox.save.password"));
             ResourceUtils.resButton(autoLoginBox, Res.getString("checkbox.auto.login"));
+            ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On");
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
             ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
 
@@ -218,70 +221,75 @@ public final class LoginDialog {
 
             add(usernameLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15, 2, 2, 2), 0, 0));
             add(usernameField,
                     new GridBagConstraints(1, 1, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(15, 5, 5, 5), 0, 0));
+                            new Insets(15, 2, 2, 2), 0, 0));
 
             add(passwordField,
                     new GridBagConstraints(1, 2, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(0, 5, 5, 5), 0, 0));
+                            new Insets(2, 2, 2, 5), 0, 0));
             add(passwordLabel,
                     new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 5, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 5, 0));
 
             // Add Server Field Properties
             add(serverField,
                     new GridBagConstraints(1, 4, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(0, 5, 5, 5), 0, 0));
+                            new Insets(2, 2, 2, 2), 0, 0));
             add(serverLabel,
                     new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 5, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 5, 0));
 
 
             add(savePasswordBox,
                     new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
             add(autoLoginBox,
                     new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+
+            add(useSSOBox,
+                    new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
 
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);
             autoLoginBox.addActionListener(this);
+            useSSOBox.setOpaque(false);
 
-            /*
-                buttonPanel.add(quitButton,
-                        new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
-                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
-            */
+            useSSOBox.addActionListener(this);
+
+
             if (!"true".equals(Default.getString(Default.ACCOUNT_DISABLED))) {
                 buttonPanel.add(createAccountButton,
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                                GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
+                                GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
             }
             buttonPanel.add(advancedButton,
                     new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 0), 0, 0));
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
             buttonPanel.add(loginButton,
                     new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
+                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
             cardPanel.add(buttonPanel, BUTTON_PANEL);
 
             cardPanel.setOpaque(false);
             buttonPanel.setOpaque(false);
 
-            progressBar.setHorizontalAlignment(JLabel.CENTER);
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/ajax-loader.gif"));
+            progressBar.setIcon(icon);
             cardPanel.add(progressBar, PROGRESS_BAR);
 
-            add(cardPanel,
-                    new GridBagConstraints(0, 7, 4, 1,
-                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(5, 5, 5, 5), 0, 0));
+
+
+            add(cardPanel, new GridBagConstraints(0, 8, 4, 1,
+                    1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
+                    new Insets(2, 2, 2, 2), 0, 0));
             loginButton.setEnabled(false);
 
             // Add KeyListener
@@ -303,7 +311,9 @@ public final class LoginDialog {
 
             // Set progress bar description
             progressBar.setText(Res.getString("message.autenticating"));
-            //progressBar.setStringPainted(true);
+            progressBar.setVerticalTextPosition(JLabel.BOTTOM);
+            progressBar.setHorizontalTextPosition(JLabel.CENTER);
+            progressBar.setHorizontalAlignment(JLabel.CENTER);
 
             // Set Resources
             ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username"));
@@ -421,6 +431,22 @@ public final class LoginDialog {
             }
             else if (e.getSource() == loginButton) {
                 validateLogin();
+            }
+            else if (e.getSource() == useSSOBox) {
+                if (useSSOBox.isSelected()) {
+                    usernameField.setVisible(false);
+                    passwordField.setVisible(false);
+                    savePasswordBox.setVisible(false);
+                    usernameLabel.setVisible(false);
+                    passwordLabel.setVisible(false);
+                }
+                else {
+                    usernameField.setVisible(true);
+                    passwordField.setVisible(true);
+                    savePasswordBox.setVisible(true);
+                    usernameLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                }
             }
             else if (e.getSource() == advancedButton) {
                 final LoginSettingDialog loginSettingsDialog = new LoginSettingDialog();
@@ -577,6 +603,12 @@ public final class LoginDialog {
          */
         private boolean login() {
             final SessionManager sessionManager = SparkManager.getSessionManager();
+            if (useSSOBox.isSelected()) {
+                System.setProperty("java.security.krb5.debug", "true");
+                System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+                GSAPPIConfiguration config = new GSAPPIConfiguration();
+                Configuration.setConfiguration(config);
+            }
 
             boolean hasErrors = false;
             String errorMessage = null;
@@ -837,7 +869,7 @@ public final class LoginDialog {
                 System.setProperty("https.proxyHost", host);
                 System.setProperty("https.proxyPort", port);
 
-                
+
                 if (ModelUtil.hasLength(username) && ModelUtil.hasLength(password)) {
                     System.setProperty("http.proxyUser", username);
                     System.setProperty("http.proxyPassword", password);
