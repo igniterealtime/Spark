@@ -70,7 +70,6 @@ public class JinglePlugin implements Plugin, Phone {
 
     private Map<String, Boolean> jingleFeature = new HashMap<String, Boolean>();
 
-
     public void initialize() {
         // Add Jingle to discovered items list.
         SparkManager.addFeature(JINGLE_NAMESPACE);
@@ -117,7 +116,7 @@ public class JinglePlugin implements Plugin, Phone {
                     }
                 }
 
-                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, new JmfMediaManager(locator));
+                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
 
                 if (transportManager instanceof BridgedTransportManager) {
                     jingleManager.addCreationListener((BridgedTransportManager)transportManager);
