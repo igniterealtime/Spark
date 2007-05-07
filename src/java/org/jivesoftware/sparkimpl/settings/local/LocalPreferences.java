@@ -551,6 +551,14 @@ public class LocalPreferences {
         return getBoolean("checkForBeta", false);
     }
 
+    public void setSSOEnabled(boolean enabled) {
+        setBoolean("ssoEnabled", enabled);
+    }
+
+    public boolean isSSOEnabled() {
+        return getBoolean("ssoEnabled", false);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }

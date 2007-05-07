@@ -14,6 +14,7 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -33,6 +34,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -78,6 +80,9 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
     private ProxyPanel proxyPanel;
 
+    private JCheckBox useSSOBox = new JCheckBox();
+    private JTextField ssoServerField = new JTextField();
+
     /**
      * Empty Constructor.
      */
@@ -107,9 +112,14 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
 
         final JPanel inputPanel = new JPanel();
+        final JPanel ssoPanel = new JPanel();
+
         tabbedPane.addTab(Res.getString("tab.general"), inputPanel);
         tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
+        tabbedPane.addTab("SSO", ssoPanel);
+
         inputPanel.setLayout(new GridBagLayout());
+        ssoPanel.setLayout(new GridBagLayout());
 
         ResourceUtils.resLabel(portLabel, portField, Res.getString("label.port"));
         ResourceUtils.resLabel(timeOutLabel, timeOutField, Res.getString("label.response.timeout"));
@@ -119,6 +129,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
         ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
         ResourceUtils.resButton(compressionBox, "Use Co&mpression");
+        ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO)");
 
         inputPanel.add(autoDiscoverBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -158,6 +169,49 @@ public class LoginSettingDialog implements PropertyChangeListener {
         // Create the title panel for this dialog
         titlePanel = new TitlePanel("Advanced Connection Preferences", "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
 
+        // Setup SSO Panel
+        ssoPanel.add(useSSOBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        final WrappedLabel wrappedLabel = new WrappedLabel();
+        wrappedLabel.setText("This will use the Desktop Account for \"Derek DeMoro\" to login to the server.");
+        wrappedLabel.setBackground(Color.white);
+        ssoPanel.add(wrappedLabel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        final JLabel serverLabel = new JLabel("Server:");
+        ssoPanel.add(serverLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        ssoPanel.add(ssoServerField, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        ssoServerField.setEnabled(false);
+
+        // Load local preferences
+        boolean isSSOEnabled = localPreferences.isSSOEnabled();
+        useSSOBox.setSelected(isSSOEnabled);
+        ssoServerField.setEnabled(isSSOEnabled);
+        if (isSSOEnabled) {
+            String server = localPreferences.getServer();
+            if (ModelUtil.hasLength(server)) {
+                ssoServerField.setText(server);
+            }
+        }
+
+        useSSOBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (useSSOBox.isSelected()) {
+                    ssoServerField.setEnabled(useSSOBox.isSelected());
+                    String server = localPreferences.getServer();
+                    if (ModelUtil.hasLength(server)) {
+                        ssoServerField.setText(server);
+                    }
+
+                    localPreferences.setSSOEnabled(true);
+                }
+                else {
+                    ssoServerField.setEnabled(false);
+                    ssoServerField.setText("");
+                    localPreferences.setSSOEnabled(false);
+                }
+            }
+        });
+
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -182,6 +236,12 @@ public class LoginSettingDialog implements PropertyChangeListener {
         optionsDialog.setVisible(true);
         optionsDialog.toFront();
         optionsDialog.requestFocus();
+
+        String server = ssoServerField.getText();
+        if (ModelUtil.hasLength(server)) {
+            localPreferences.setServer(server);
+        }
+
 
         return true;
     }

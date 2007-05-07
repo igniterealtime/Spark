@@ -53,7 +53,9 @@ import javax.swing.text.JTextComponent;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -188,7 +190,6 @@ public final class LoginDialog {
 
         private final JCheckBox savePasswordBox = new JCheckBox();
         private final JCheckBox autoLoginBox = new JCheckBox();
-        private final JCheckBox useSSOBox = new JCheckBox();
         private final RolloverButton loginButton = new RolloverButton();
         private final RolloverButton advancedButton = new RolloverButton();
         private final RolloverButton quitButton = new RolloverButton();
@@ -205,12 +206,17 @@ public final class LoginDialog {
         private final GridBagLayout GRIDBAGLAYOUT = new GridBagLayout();
         private XMPPConnection connection = null;
 
+        private JLabel headerLabel = new JLabel();
+        private JLabel accountLabel = new JLabel();
+        private JLabel accountNameLabel = new JLabel();
+        private JLabel serverNameLabel = new JLabel();
+        private JLabel ssoServerLabel = new JLabel();
+
 
         LoginPanel() {
             //setBorder(BorderFactory.createTitledBorder("Sign In Now"));
             ResourceUtils.resButton(savePasswordBox, Res.getString("checkbox.save.password"));
             ResourceUtils.resButton(autoLoginBox, Res.getString("checkbox.auto.login"));
-            ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On");
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
             ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
 
@@ -218,63 +224,91 @@ public final class LoginDialog {
             autoLoginBox.setOpaque(false);
             setLayout(GRIDBAGLAYOUT);
 
+            // Set default visibility
+            headerLabel.setVisible(false);
+            accountLabel.setVisible(false);
+            accountNameLabel.setVisible(false);
+            serverNameLabel.setVisible(false);
+
+            headerLabel.setText("Using Single Sign-On(SSO)");
+            headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
+            accountLabel.setText("Account:");
+            ssoServerLabel.setText("Server:");
+
+
+            accountNameLabel.setForeground(new Color(106, 127, 146));
+            serverNameLabel.setForeground(new Color(106, 127, 146));
+
+            add(headerLabel,
+                    new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            add(accountLabel,
+                    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+            add(accountNameLabel,
+                    new GridBagConstraints(1, 1, 1, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(5, 5, 0, 5), 0, 0));
 
             add(usernameLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(15, 2, 2, 2), 0, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
             add(usernameField,
                     new GridBagConstraints(1, 1, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(15, 2, 2, 2), 0, 0));
+                            new Insets(5, 5, 0, 5), 0, 0));
 
             add(passwordField,
                     new GridBagConstraints(1, 2, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(2, 2, 2, 5), 0, 0));
+                            new Insets(5, 5, 0, 5), 0, 0));
             add(passwordLabel,
                     new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 5, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
 
             // Add Server Field Properties
             add(serverField,
                     new GridBagConstraints(1, 4, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(2, 2, 2, 2), 0, 0));
+                            new Insets(5, 5, 0, 5), 0, 0));
+
+            add(serverNameLabel,
+                    new GridBagConstraints(1, 4, 2, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(5, 5, 0, 5), 0, 0));
+
             add(serverLabel,
                     new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 5, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
+
+            add(ssoServerLabel,
+                    new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
 
 
             add(savePasswordBox,
                     new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             add(autoLoginBox,
                     new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-
-            add(useSSOBox,
-                    new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
 
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);
             autoLoginBox.addActionListener(this);
-            useSSOBox.setOpaque(false);
-
-            useSSOBox.addActionListener(this);
 
 
             if (!"true".equals(Default.getString(Default.ACCOUNT_DISABLED))) {
                 buttonPanel.add(createAccountButton,
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                                GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+                                GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
             buttonPanel.add(advancedButton,
                     new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             buttonPanel.add(loginButton,
                     new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
 
             cardPanel.add(buttonPanel, BUTTON_PANEL);
 
@@ -284,7 +318,6 @@ public final class LoginDialog {
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/ajax-loader.gif"));
             progressBar.setIcon(icon);
             cardPanel.add(progressBar, PROGRESS_BAR);
-
 
 
             add(cardPanel, new GridBagConstraints(0, 8, 4, 1,
@@ -329,6 +362,7 @@ public final class LoginDialog {
             if (userProp != null && serverProp != null) {
                 usernameField.setText(StringUtils.unescapeNode(userProp));
                 serverField.setText(serverProp);
+                serverNameLabel.setText(serverProp);
             }
 
             // Check Settings
@@ -379,6 +413,8 @@ public final class LoginDialog {
                 serverField.setEnabled(false);
                 serverField.setText(lockedDownURL);
             }
+
+            useSSO(localPref.isSSOEnabled());
         }
 
         /**
@@ -432,25 +468,10 @@ public final class LoginDialog {
             else if (e.getSource() == loginButton) {
                 validateLogin();
             }
-            else if (e.getSource() == useSSOBox) {
-                if (useSSOBox.isSelected()) {
-                    usernameField.setVisible(false);
-                    passwordField.setVisible(false);
-                    savePasswordBox.setVisible(false);
-                    usernameLabel.setVisible(false);
-                    passwordLabel.setVisible(false);
-                }
-                else {
-                    usernameField.setVisible(true);
-                    passwordField.setVisible(true);
-                    savePasswordBox.setVisible(true);
-                    usernameLabel.setVisible(true);
-                    passwordLabel.setVisible(true);
-                }
-            }
             else if (e.getSource() == advancedButton) {
                 final LoginSettingDialog loginSettingsDialog = new LoginSettingDialog();
                 loginSettingsDialog.invoke(loginDialog);
+                useSSO(localPref.isSSOEnabled());
             }
             else if (e.getSource() == savePasswordBox) {
                 autoLoginBox.setEnabled(savePasswordBox.isSelected());
@@ -595,6 +616,48 @@ public final class LoginDialog {
             return passwordField;
         }
 
+        public void useSSO(boolean use) {
+            if (use) {
+                usernameField.setVisible(false);
+                passwordField.setVisible(false);
+                savePasswordBox.setVisible(false);
+                usernameLabel.setVisible(false);
+                passwordLabel.setVisible(false);
+                serverField.setVisible(false);
+                autoLoginBox.setVisible(false);
+                serverLabel.setVisible(false);
+
+                headerLabel.setVisible(true);
+                accountLabel.setVisible(true);
+                accountNameLabel.setVisible(true);
+                serverNameLabel.setVisible(true);
+                ssoServerLabel.setVisible(true);
+
+                accountNameLabel.setText("Derek DeMoro");
+
+                String server = localPref.getServer();
+                if (ModelUtil.hasLength(server)) {
+                    serverNameLabel.setText(localPref.getServer());
+                    serverField.setText(localPref.getServer());
+                }
+            }
+            else {
+                autoLoginBox.setVisible(true);
+                usernameField.setVisible(true);
+                passwordField.setVisible(true);
+                savePasswordBox.setVisible(true);
+                usernameLabel.setVisible(true);
+                passwordLabel.setVisible(true);
+                serverLabel.setVisible(true);
+                serverField.setVisible(true);
+
+                headerLabel.setVisible(false);
+                accountLabel.setVisible(false);
+                serverNameLabel.setVisible(false);
+                accountNameLabel.setVisible(false);
+            }
+        }
+
         /**
          * Login to the specified server using username, password, and workgroup.
          * Handles error representation as well as logging.
@@ -603,7 +666,7 @@ public final class LoginDialog {
          */
         private boolean login() {
             final SessionManager sessionManager = SparkManager.getSessionManager();
-            if (useSSOBox.isSelected()) {
+            if (localPref.isSSOEnabled()) {
                 System.setProperty("java.security.krb5.debug", "true");
                 System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
                 GSAPPIConfiguration config = new GSAPPIConfiguration();
