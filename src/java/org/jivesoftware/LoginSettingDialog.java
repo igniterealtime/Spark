@@ -17,9 +17,14 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.security.auth.Subject;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -43,6 +48,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.security.Principal;
 import java.util.Properties;
 
 /**
@@ -173,7 +179,14 @@ public class LoginSettingDialog implements PropertyChangeListener {
         ssoPanel.add(useSSOBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         final WrappedLabel wrappedLabel = new WrappedLabel();
-        wrappedLabel.setText("This will use the Desktop Account for \"Derek DeMoro\" to login to the server.");
+        String principalName = getPrincipalName();
+        if (ModelUtil.hasLength(principalName)) {
+            wrappedLabel.setText("This will use the Desktop Account for \"" + principalName + "\" to login to the server.");
+        }
+        else {
+            wrappedLabel.setText("Spark is unable to find the principal to use for Single Sign-On");
+        }
+
         wrappedLabel.setBackground(Color.white);
         ssoPanel.add(wrappedLabel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -548,6 +561,34 @@ public class LoginSettingDialog implements PropertyChangeListener {
         xmppHostField.setEnabled(!isSelected);
         portField.setEnabled(!isSelected);
         localPreferences.setHostAndPortConfigured(!isSelected);
+    }
+
+    private String getPrincipalName() {
+        System.setProperty("java.security.krb5.debug", "true");
+        System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+        GSAPPIConfiguration config = new GSAPPIConfiguration();
+        Configuration.setConfiguration(config);
+
+        LoginContext lc = null;
+        try {
+            lc = new LoginContext("GetPrincipal");
+            lc.login();
+        }
+        catch (LoginException le) {
+            Log.error(le);
+        }
+
+        Subject mySubject = lc.getSubject();
+
+        for (Principal p : mySubject.getPrincipals()) {
+            String name = p.getName();
+            int indexOne = name.indexOf("@");
+            if (indexOne != -1) {
+                String realmName = name.substring(0, indexOne);
+                return realmName;
+            }
+        }
+        return null;
     }
 }
 

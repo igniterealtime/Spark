@@ -39,7 +39,10 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.security.auth.Subject;
 import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -72,6 +75,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.io.File;
+import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -230,10 +234,12 @@ public final class LoginDialog {
             accountNameLabel.setVisible(false);
             serverNameLabel.setVisible(false);
 
-            headerLabel.setText("Using Single Sign-On(SSO)");
+            headerLabel.setText("Using Single Sign-On (SSO)");
             headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
             accountLabel.setText("Account:");
             ssoServerLabel.setText("Server:");
+            accountNameLabel.setFont(accountLabel.getFont().deriveFont(Font.BOLD));
+            serverNameLabel.setFont(ssoServerLabel.getFont().deriveFont(Font.BOLD));
 
 
             accountNameLabel.setForeground(new Color(106, 127, 146));
@@ -616,6 +622,12 @@ public final class LoginDialog {
             return passwordField;
         }
 
+        public Dimension getPreferredSize() {
+            final Dimension dim = super.getPreferredSize();
+            dim.height = 200;
+            return dim;
+        }
+
         public void useSSO(boolean use) {
             if (use) {
                 usernameField.setVisible(false);
@@ -640,6 +652,32 @@ public final class LoginDialog {
                     serverNameLabel.setText(localPref.getServer());
                     serverField.setText(localPref.getServer());
                 }
+
+                System.setProperty("java.security.krb5.debug", "true");
+                System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+                GSAPPIConfiguration config = new GSAPPIConfiguration();
+                Configuration.setConfiguration(config);
+
+                LoginContext lc = null;
+                try {
+                    lc = new LoginContext("GetPrincipal");
+                    lc.login();
+                }
+                catch (LoginException le) {
+                    Log.error(le);
+                }
+
+                Subject mySubject = lc.getSubject();
+
+                for (Principal p : mySubject.getPrincipals()) {
+                    String name = p.getName();
+                    int indexOne = name.indexOf("@");
+                    if (indexOne != -1) {
+                        String realmName = name.substring(0, indexOne);
+                        accountNameLabel.setText(realmName);
+                        usernameField.setText(realmName);
+                    }
+                }
             }
             else {
                 autoLoginBox.setVisible(true);
@@ -655,7 +693,13 @@ public final class LoginDialog {
                 accountLabel.setVisible(false);
                 serverNameLabel.setVisible(false);
                 accountNameLabel.setVisible(false);
+
+                System.setProperty("java.security.krb5.debug", "false");
+                System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+                Configuration.setConfiguration(null);
             }
+
+
         }
 
         /**
@@ -666,12 +710,7 @@ public final class LoginDialog {
          */
         private boolean login() {
             final SessionManager sessionManager = SparkManager.getSessionManager();
-            if (localPref.isSSOEnabled()) {
-                System.setProperty("java.security.krb5.debug", "true");
-                System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-                GSAPPIConfiguration config = new GSAPPIConfiguration();
-                Configuration.setConfiguration(config);
-            }
+
 
             boolean hasErrors = false;
             String errorMessage = null;
