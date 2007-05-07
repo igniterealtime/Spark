@@ -645,7 +645,6 @@ public final class LoginDialog {
                 serverNameLabel.setVisible(true);
                 ssoServerLabel.setVisible(true);
 
-                accountNameLabel.setText("Derek DeMoro");
 
                 String server = localPref.getServer();
                 if (ModelUtil.hasLength(server)) {
@@ -676,6 +675,7 @@ public final class LoginDialog {
                         String realmName = name.substring(0, indexOne);
                         accountNameLabel.setText(realmName);
                         usernameField.setText(realmName);
+                        loginButton.setEnabled(true);
                     }
                 }
             }
@@ -697,6 +697,8 @@ public final class LoginDialog {
                 System.setProperty("java.security.krb5.debug", "false");
                 System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
                 Configuration.setConfiguration(null);
+
+                validateDialog();
             }
 
 

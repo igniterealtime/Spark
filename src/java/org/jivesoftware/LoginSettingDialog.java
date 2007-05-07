@@ -576,6 +576,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
         catch (LoginException le) {
             Log.error(le);
+            return null;
         }
 
         Subject mySubject = lc.getSubject();
