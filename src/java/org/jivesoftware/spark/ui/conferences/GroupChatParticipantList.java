@@ -779,21 +779,47 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         return -1;
     }
 
-    public void removeUser(String nickname) {
-        for (int i = 0; i < model.getSize(); i++) {
-            JLabel label = (JLabel)model.getElementAt(i);
-            if (label.getText().equals(nickname)) {
-                model.removeElement(label);
-                users.remove(label);
+    /**
+     * Removes a user from the participant list based on their nickname.
+     *
+     * @param nickname the users nickname to remove.
+     */
+    public synchronized void removeUser(String nickname) {
+        try {
+            for (int i = 0; i < users.size(); i++) {
+                JLabel label = users.get(i);
+                if (label.getText().equals(nickname)) {
+                    users.remove(label);
+                    model.removeElement(label);
+                }
             }
+        }
+        catch (Exception e) {
+            Log.error(e);
         }
     }
 
-    public void addUser(Icon userIcon, String nickname) {
-        JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
-        users.add(user);
-        Collections.sort(users, labelComp);
-        model.insertElementAt(user, users.indexOf(user));
+    /**
+     * Adds a new user to the participant list.
+     *
+     * @param userIcon the icon to use initially.
+     * @param nickname the users nickname.
+     */
+    public synchronized void addUser(Icon userIcon, String nickname) {
+        try {
+            final JLabel user = new JLabel(nickname, userIcon, JLabel.HORIZONTAL);
+            users.add(user);
+
+            // Sort users alpha.
+            Collections.sort(users, labelComp);
+
+            // Add to the correct position in the model.
+            final int index = users.indexOf(user);
+            model.insertElementAt(user, index);
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     /**
@@ -804,7 +830,6 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             final JLabel item1 = (JLabel)labelOne;
             final JLabel item2 = (JLabel)labelTwo;
             return item1.getText().toLowerCase().compareTo(item2.getText().toLowerCase());
-
         }
     };
 
