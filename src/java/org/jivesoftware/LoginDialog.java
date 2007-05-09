@@ -661,22 +661,23 @@ public final class LoginDialog {
                 try {
                     lc = new LoginContext("GetPrincipal");
                     lc.login();
-                }
-                catch (LoginException le) {
-                    Log.error(le);
-                }
+                    Subject mySubject = lc.getSubject();
 
-                Subject mySubject = lc.getSubject();
 
-                for (Principal p : mySubject.getPrincipals()) {
-                    String name = p.getName();
-                    int indexOne = name.indexOf("@");
-                    if (indexOne != -1) {
-                        String realmName = name.substring(0, indexOne);
-                        accountNameLabel.setText(realmName);
-                        usernameField.setText(realmName);
+                    for (Principal p : mySubject.getPrincipals()) {
+                        String name = p.getName();
+                        int indexOne = name.indexOf("@");
+                        if (indexOne != -1) {
+                            String realmName = name.substring(0, indexOne);
+                            accountNameLabel.setText(realmName);
+                            usernameField.setText(realmName);
+                        }
                         loginButton.setEnabled(true);
                     }
+                }
+                catch (LoginException le) {
+                    Log.debug(le.getMessage());
+                    useSSO(false);
                 }
             }
             else {

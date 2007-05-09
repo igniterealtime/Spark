@@ -179,7 +179,13 @@ public class LoginSettingDialog implements PropertyChangeListener {
         ssoPanel.add(useSSOBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         final WrappedLabel wrappedLabel = new WrappedLabel();
-        String principalName = getPrincipalName();
+        String principalName = null;
+        try {
+            principalName = getPrincipalName();
+        }
+        catch (Exception e) {
+            // Ignore
+        }
         if (ModelUtil.hasLength(principalName)) {
             wrappedLabel.setText("This will use the Desktop Account for \"" + principalName + "\" to login to the server.");
         }
@@ -563,7 +569,13 @@ public class LoginSettingDialog implements PropertyChangeListener {
         localPreferences.setHostAndPortConfigured(!isSelected);
     }
 
-    private String getPrincipalName() {
+    /**
+     * Returns the principal name if one exists.
+     *
+     * @return the name (ex. derek) of the principal.
+     * @throws Exception thrown if a Principal was not found.
+     */
+    private String getPrincipalName() throws Exception {
         System.setProperty("java.security.krb5.debug", "true");
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
         GSAPPIConfiguration config = new GSAPPIConfiguration();
@@ -575,7 +587,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             lc.login();
         }
         catch (LoginException le) {
-            Log.error(le);
+            Log.debug(le.getMessage());
             return null;
         }
 
@@ -585,8 +597,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             String name = p.getName();
             int indexOne = name.indexOf("@");
             if (indexOne != -1) {
-                String realmName = name.substring(0, indexOne);
-                return realmName;
+                return name.substring(0, indexOne);
             }
         }
         return null;
