@@ -363,7 +363,7 @@ public class TranscriptWindow extends ChatArea {
             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
             int diff = DateUtils.getDaysDiff(lastPostTime, date.getTime());
             if (diff != 0) {
-                insertCustomText(notificationDateFormatter.format(date), true, true, Color.GRAY);
+                insertCustomText(notificationDateFormatter.format(date), true, true, Color.BLACK);
             }
 
             value = "(" + messageDateFormatter.format(date) + ") ";
@@ -374,7 +374,7 @@ public class TranscriptWindow extends ChatArea {
 
             // Agent color is always blue
             StyleConstants.setBold(styles, false);
-            StyleConstants.setForeground(styles, Color.gray);
+            StyleConstants.setForeground(styles, Color.BLACK);
             final Document doc = getDocument();
             styles.removeAttribute("link");
 

@@ -46,12 +46,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimerTask;
 
 /**
@@ -364,26 +364,28 @@ public class UserManager {
         final Component glassPane = (Component)parents.get(parent);
         parent.setGlassPane(glassPane);
 
-        final Map contactMap = new HashMap();
-        final Set contacts = new HashSet();
+        final Map<String, ContactItem> contactMap = new HashMap<String, ContactItem>();
+        final List<ContactItem> contacts = new ArrayList<ContactItem>();
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-        Iterator groups = contactList.getContactGroups().iterator();
+        final Iterator groups = contactList.getContactGroups().iterator();
         while (groups.hasNext()) {
             ContactGroup group = (ContactGroup)groups.next();
             Iterator contactItems = group.getContactItems().iterator();
             while (contactItems.hasNext()) {
                 ContactItem item = (ContactItem)contactItems.next();
-                if (contactMap.get(item.getNickname()) == null) {
+                if (!contactMap.containsKey(item.getJID())) {
                     contacts.add(item);
-                    contactMap.put(item.getNickname(), item);
+                    contactMap.put(item.getJID(), item);
                 }
-
             }
         }
 
-        final JContactItemField contactField = new JContactItemField(new ArrayList(contacts));
+        // Sort
+        Collections.sort(contacts, itemComparator);
+
+        final JContactItemField contactField = new JContactItemField(new ArrayList<ContactItem>(contacts));
 
 
         JPanel layoutPanel = new JPanel();
@@ -473,6 +475,17 @@ public class UserManager {
         });
     }
 
+
+    /**
+     * Sorts ContactItems.
+     */
+    final Comparator<ContactItem> itemComparator = new Comparator() {
+        public int compare(Object contactItemOne, Object contactItemTwo) {
+            final ContactItem item1 = (ContactItem)contactItemOne;
+            final ContactItem item2 = (ContactItem)contactItemTwo;
+            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+        }
+    };
 
 }
 

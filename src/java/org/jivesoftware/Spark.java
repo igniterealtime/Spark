@@ -358,7 +358,7 @@ public final class Spark {
         UIManager.put("Notification.foreground", new Color(0, 128, 0));
         UIManager.put("Error.foreground", Color.red);
         UIManager.put("Question.foreground", Color.red);
-        UIManager.put("History.foreground", Color.gray);
+        UIManager.put("History.foreground", Color.darkGray);
 
         UIManager.put("SparkTabbedPane.startColor", new Color(236, 236, 236));
         UIManager.put("SparkTabbedPane.endColor", new Color(236, 236, 236));
