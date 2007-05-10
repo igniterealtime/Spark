@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jdesktop.jdic.systeminfo.SystemInfo;
 
@@ -172,12 +173,22 @@ public class ApplePlugin implements Plugin, Alerter {
 
     public void flashWindowStopWhenFocused(Window window) {
         appleUtils.bounceDockIcon(false);
-        statusMenu.showActiveIcon();
+        try {
+            statusMenu.showActiveIcon();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     public void stopFlashing(Window window) {
         appleUtils.resetDock();
-        statusMenu.showBlackIcon();
+        try {
+            statusMenu.showBlackIcon();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
 
     }
 
@@ -228,6 +239,21 @@ public class ApplePlugin implements Plugin, Alerter {
 
                     addedFrameListener = true;
 
+                }
+
+                setActivity();
+            }
+
+
+            public void chatRoomClosed(ChatRoom room) {
+                setActivity();
+            }
+        });
+
+        SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
+            public void presenceChanged(Presence presence) {
+                if(presence.isAvailable() && !presence.isAway()){
+                    lastActive = System.currentTimeMillis();
                 }
             }
         });
@@ -304,6 +330,7 @@ public class ApplePlugin implements Plugin, Alerter {
 
             SparkManager.getSessionManager().changePresence(presence);
             unavailable = false;
+            lastActive = System.currentTimeMillis();
         }
     }
 
