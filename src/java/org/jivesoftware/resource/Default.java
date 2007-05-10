@@ -47,6 +47,7 @@ public class Default {
     public static final String PROXY_PORT = "PROXY_PORT";
     public static final String ACCOUNT_DISABLED = "ACCOUNT_DISABLED";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
+    public static final String FRAME_IMAGE = "FRAME_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

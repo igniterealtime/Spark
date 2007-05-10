@@ -41,7 +41,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
      * Creates default ChatFrame.
      */
     public ChatFrame() {
-        setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+        setIconImage(SparkManager.getApplicationImage().getImage());
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(SparkManager.getChatManager().getChatContainer(), BorderLayout.CENTER);

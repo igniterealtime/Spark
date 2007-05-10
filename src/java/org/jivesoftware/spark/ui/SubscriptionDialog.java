@@ -230,7 +230,7 @@ public class SubscriptionDialog {
         };
 
 
-        dialog.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+        dialog.setIconImage(SparkManager.getApplicationImage().getImage());
         dialog.getContentPane().add(mainPanel);
         dialog.pack();
         dialog.setLocationRelativeTo(SparkManager.getMainWindow());

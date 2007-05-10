@@ -12,6 +12,8 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
@@ -36,6 +38,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
+
+import javax.swing.ImageIcon;
 
 /**
  * Used as the System Manager for the Spark IM client. The SparkManager is responsible for
@@ -101,14 +105,14 @@ public final class SparkManager {
     static {
         KeyboardFocusManager focusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         focusManager.addPropertyChangeListener(
-                new PropertyChangeListener() {
-                    public void propertyChange(PropertyChangeEvent e) {
-                        String prop = e.getPropertyName();
-                        if (("focusOwner".equals(prop)) && (e.getNewValue() != null)) {
-                            focusedComponent = (Component)e.getNewValue();
-                        }
+            new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent e) {
+                    String prop = e.getPropertyName();
+                    if (("focusOwner".equals(prop)) && (e.getNewValue() != null)) {
+                        focusedComponent = (Component)e.getNewValue();
                     }
                 }
+            }
         );
     }
 
@@ -404,6 +408,19 @@ public final class SparkManager {
 
         // Register that a new feature is supported by this XMPP entity
         discoManager.removeFeature(namespace);
+    }
+
+    /**
+     * Returns the image to use with most dialogs.
+     *
+     * @return the image to use with most dialogs.
+     */
+    public static ImageIcon getApplicationImage() {
+        ImageIcon mainImage = Default.getImageIcon(Default.FRAME_IMAGE);
+        if (mainImage == null) {
+            mainImage = SparkRes.getImageIcon(SparkRes.MAIN_IMAGE);
+        }
+        return mainImage;
     }
 
 }

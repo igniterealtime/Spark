@@ -103,7 +103,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
-                MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkRes.getImageIcon(SparkRes.MAIN_IMAGE));
+                MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
                 singleton = controller;
                 return controller;
             }
@@ -596,9 +596,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Read file and show
         final String errorLogs = URLFileSystem.getContents(logDir);
 
-        final JFrame frame = new JFrame("Spark Logs");
+        final JFrame frame = new JFrame("Client Logs");
         frame.setLayout(new BorderLayout());
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+        frame.setIconImage(SparkManager.getApplicationImage().getImage());
 
         final JTextPane pane = new JTextPane();
         pane.setBackground(Color.white);
