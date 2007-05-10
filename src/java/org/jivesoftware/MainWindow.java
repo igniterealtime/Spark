@@ -308,7 +308,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         try {
             String command = "";
             if (Spark.isWindows()) {
-                String sparkExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\"+Default.getString(Default.SHORT_NAME)+".exe";
+                String sparkExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\" + Default.getString(Default.SHORT_NAME) + ".exe";
                 String starterExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\starter.exe";
 
                 command = starterExe + " \"" + sparkExe + "\"";
@@ -426,12 +426,14 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         };
 
-        viewHelpGuideAction.putValue(Action.NAME, Res.getString("menuitem.user.guide"));
-        viewHelpGuideAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+        if (!Spark.isCustomBuild()) {
+            viewHelpGuideAction.putValue(Action.NAME, Res.getString("menuitem.user.guide"));
+            viewHelpGuideAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+            helpMenu.add(viewHelpGuideAction);
+            helpMenu.add(helpMenuItem);
+        }
 
         // Build Help Menu
-        helpMenu.add(viewHelpGuideAction);
-        helpMenu.add(helpMenuItem);
         helpMenu.add(showTrafficAction);
         helpMenu.add(updateAction);
         helpMenu.addSeparator();
