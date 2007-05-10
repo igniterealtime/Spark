@@ -654,7 +654,7 @@ public final class LoginDialog {
 
                 System.setProperty("java.security.krb5.debug", "true");
                 System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-                GSAPPIConfiguration config = new GSAPPIConfiguration();
+                GSSAPIConfiguration config = new GSSAPIConfiguration();
                 Configuration.setConfiguration(config);
 
                 LoginContext lc = null;
