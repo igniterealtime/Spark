@@ -308,7 +308,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         try {
             String command = "";
             if (Spark.isWindows()) {
-                String sparkExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\Spark.exe";
+                String sparkExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\"+Default.getString(Default.SHORT_NAME)+".exe";
                 String starterExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\starter.exe";
 
                 command = starterExe + " \"" + sparkExe + "\"";
