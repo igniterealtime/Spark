@@ -15,6 +15,7 @@ import org.jdesktop.jdic.tray.TrayIcon;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
@@ -24,17 +25,6 @@ import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,6 +41,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 
 /**
  * Handles tray icon operations inside of Spark. Use to display incoming chat requests, incoming messages
@@ -98,11 +99,20 @@ public final class Notifications implements ActionListener, MainWindowListener {
 
         setupNotificationDialog();
 
-        availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
+        // Handle tray image.
+        final ImageIcon trayImage = Default.getImageIcon(Default.TRAY_IMAGE);
+        if (trayImage != null) {
+            availableIcon = trayImage;
+        }
+        else {
+            availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
+        }
+
+
         unavaliableIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_AWAY);
         busyIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_DND);
         trayIcon = new TrayIcon(availableIcon);
-        trayIcon.setToolTip("Spark Client"); // NORES
+        trayIcon.setToolTip(Default.getString(Default.APPLICATION_NAME)); // NORES
 
         JPopupMenu popupMenu = new JPopupMenu(Res.getString("title.tray.information"));
 
@@ -178,7 +188,7 @@ public final class Notifications implements ActionListener, MainWindowListener {
         // Get Status Text
         if (presence.isAvailable()) {
             String status = presence.getStatus();
-            trayIcon.setToolTip("Spark Client\n" + status);
+            trayIcon.setToolTip(Default.getString(Default.APPLICATION_NAME) + "\n" + status);
         }
     }
 

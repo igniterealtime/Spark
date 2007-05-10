@@ -10,17 +10,11 @@
 
 package org.jivesoftware.spark.component.panes;
 
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ColorUtil;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -35,6 +29,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.StringTokenizer;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 /**
  * Internal implementation of the Title pane in the northern region of a CollapsiblePane.
@@ -103,7 +102,7 @@ public class CollapsibleTitlePane extends JPanel {
         });
 
         // Handle Custom Spark Job.
-        if (Spark.isCustomBuild()) {
+        if (false) {
             titleColor = getColor(Default.getString(Default.TEXT_COLOR));
             String start = Default.getString(Default.CONTACT_GROUP_START_COLOR);
             String end = Default.getString(Default.CONTACT_GROUP_END_COLOR);
@@ -234,7 +233,7 @@ public class CollapsibleTitlePane extends JPanel {
         titleLabel.setForeground(color);
     }
 
-    public void useImageAsBackground(Image image){
+    public void useImageAsBackground(Image image) {
         this.backgroundImage = image;
     }
 }

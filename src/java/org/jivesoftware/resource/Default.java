@@ -10,13 +10,15 @@
 
 package org.jivesoftware.resource;
 
-import javax.swing.ImageIcon;
+import org.jivesoftware.spark.util.log.Log;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+
+import javax.swing.ImageIcon;
 
 public class Default {
     private static PropertyResourceBundle prb;
@@ -44,6 +46,7 @@ public class Default {
     public static final String PROXY_HOST = "PROXY_HOST";
     public static final String PROXY_PORT = "PROXY_PORT";
     public static final String ACCOUNT_DISABLED = "ACCOUNT_DISABLED";
+    public static final String TRAY_IMAGE = "TRAY_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
@@ -90,7 +93,7 @@ public class Default {
             return icon;
         }
         catch (Exception ex) {
-            System.out.println(imageName + " not found.");
+            Log.debug(imageName + " not found.");
         }
         return null;
     }
