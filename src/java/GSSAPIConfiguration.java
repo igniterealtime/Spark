@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Vector;
 
 
-public class GSAPPIConfiguration extends Configuration {
+public class GSSAPIConfiguration extends Configuration {
 
     Map<String, Vector<AppConfigurationEntry>> configs;
 
-    GSAPPIConfiguration() {
+    GSSAPIConfiguration() {
         super();
 
         configs = new HashMap<String, Vector<AppConfigurationEntry>>();
