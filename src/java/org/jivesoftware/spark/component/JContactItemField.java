@@ -12,6 +12,15 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.ModelUtil;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JWindow;
+import javax.swing.ListCellRenderer;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
@@ -23,15 +32,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JWindow;
-import javax.swing.ListCellRenderer;
 
 /**
  * Implementation of a popup field from a TextField.
@@ -124,7 +124,7 @@ public class JContactItemField extends JPanel {
         this.items = items;
     }
 
-    public JList getList(){
+    public JList getList() {
         return list;
     }
 
@@ -159,7 +159,7 @@ public class JContactItemField extends JPanel {
         }
 
         // set initial selection
-        if(validItems.size() > 0){
+        if (validItems.size() > 0) {
             list.setSelectedIndex(0);
         }
 
@@ -180,7 +180,7 @@ public class JContactItemField extends JPanel {
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
             if (!Character.isLetterOrDigit(ch) && ch != '@' && ch != '-' && ch != '_'
-                && ch != '.' && ch != ',' && ch != ' ') {
+                    && ch != '.' && ch != ',' && ch != ' ') {
                 return false;
             }
         }
@@ -198,8 +198,8 @@ public class JContactItemField extends JPanel {
      */
     public boolean validateChar(char ch) {
         if (!Character.isLetterOrDigit(ch) && ch != '@' && ch != '-' && ch != '_'
-            && ch != '.' && ch != ',' && ch != ' ' && ch != KeyEvent.VK_BACK_SPACE && ch != KeyEvent.CTRL_DOWN_MASK
-            && ch != KeyEvent.CTRL_MASK) {
+                && ch != '.' && ch != ',' && ch != ' ' && ch != KeyEvent.VK_BACK_SPACE && ch != KeyEvent.CTRL_DOWN_MASK
+                && ch != KeyEvent.CTRL_MASK) {
             return false;
         }
 
@@ -215,6 +215,11 @@ public class JContactItemField extends JPanel {
 
     public String getText() {
         return textField.getText();
+    }
+
+    public ContactItem getSelectedContactItem() {
+        ContactItem selection = (ContactItem)list.getSelectedValue();
+        return selection;
     }
 
     public void setText(String text) {
@@ -274,7 +279,7 @@ public class JContactItemField extends JPanel {
         }
     }
 
-    public boolean canClose(){
+    public boolean canClose() {
         return !textField.hasFocus();
     }
 

@@ -401,6 +401,9 @@ public class UserManager {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
                     if (ModelUtil.hasLength(contactField.getText())) {
                         ContactItem item = (ContactItem)contactMap.get(contactField.getText());
+                        if (item == null) {
+                            item = contactField.getSelectedContactItem();
+                        }
                         if (item != null) {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
@@ -423,6 +426,9 @@ public class UserManager {
                 if (e.getClickCount() == 2) {
                     if (ModelUtil.hasLength(contactField.getText())) {
                         ContactItem item = (ContactItem)contactMap.get(contactField.getText());
+                        if (item == null) {
+                            item = contactField.getSelectedContactItem();
+                        }
                         if (item != null) {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
