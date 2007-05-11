@@ -190,7 +190,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             wrappedLabel.setText("This will use the Desktop Account for \"" + principalName + "\" to login to the server.");
         }
         else {
-            wrappedLabel.setText("Spark is unable to find the principal to use for Single Sign-On");
+            wrappedLabel.setText("Spark is unable to find the principal to use for Single Sign-On. This will prevent SSO from working.");
         }
 
         wrappedLabel.setBackground(Color.white);
@@ -222,6 +222,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     }
 
                     localPreferences.setSSOEnabled(true);
+                    localPreferences.setAutoLogin(true);
                 }
                 else {
                     ssoServerField.setEnabled(false);

@@ -382,6 +382,7 @@ public final class LoginDialog {
                 loginButton.setEnabled(true);
             }
             autoLoginBox.setSelected(localPref.isAutoLogin());
+            useSSO(localPref.isSSOEnabled());
             if (autoLoginBox.isSelected()) {
                 savePasswordBox.setEnabled(false);
                 autoLoginBox.setEnabled(false);
@@ -420,7 +421,7 @@ public final class LoginDialog {
                 serverField.setText(lockedDownURL);
             }
 
-            useSSO(localPref.isSSOEnabled());
+
         }
 
         /**
@@ -783,7 +784,6 @@ public final class LoginDialog {
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getUsername(), getPassword());
                     sessionManager.setJID(connection.getUser());
-
                 }
                 catch (Exception xee) {
                     if (!loginDialog.isVisible()) {
@@ -824,10 +824,16 @@ public final class LoginDialog {
 
                 // Show error dialog
                 if (loginDialog.isVisible()) {
-
-                    JOptionPane.showMessageDialog(loginDialog, errorMessage, SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
-                            JOptionPane.ERROR_MESSAGE);
-
+                    if (!localPref.isSSOEnabled()) {
+                        JOptionPane.showMessageDialog(loginDialog, errorMessage, SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(loginDialog, "Unabled to connect using Single Sign-On. Please check your principal and server settings.", SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
+                                JOptionPane.ERROR_MESSAGE);
+                        useSSO(false);
+                        localPref.setSSOEnabled(false);
+                    }
                 }
                 setEnabled(true);
                 return false;
@@ -856,6 +862,11 @@ public final class LoginDialog {
 
             localPref.setSavePassword(savePasswordBox.isSelected());
             localPref.setAutoLogin(autoLoginBox.isSelected());
+
+            if (localPref.isSSOEnabled()) {
+                localPref.setAutoLogin(true);
+            }
+
             localPref.setServer(serverField.getText());
 
 
