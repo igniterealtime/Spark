@@ -61,4 +61,6 @@ public class GSSAPIConfiguration extends Configuration {
 
     public void refresh() {
     }
+
+    
 }

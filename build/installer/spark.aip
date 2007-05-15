@@ -11,7 +11,7 @@
     <ROW Property="ProductCode" Value="1033:{783E2201-8AC7-44F1-9418-F732A6B96F82} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.5.2"/>
+    <ROW Property="ProductVersion" Value="2.5.3"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
   </COMPONENT>
