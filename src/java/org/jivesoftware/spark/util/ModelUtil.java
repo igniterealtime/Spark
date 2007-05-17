@@ -278,7 +278,7 @@ public final class ModelUtil {
         String result = buf.toString();
 
         if (numMinutes < 1) {
-            result = "< 1 minute";
+            result = "< 1 min";
         }
 
         return result;
