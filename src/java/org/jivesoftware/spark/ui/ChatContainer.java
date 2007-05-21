@@ -500,6 +500,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         chatRoomList.remove(room);
 
         room.getChatInputEditor().removeKeyListener(this);
+
+        // Clear all Text :)
+        room.getTranscriptWindow().cleanup();
     }
 
     /**

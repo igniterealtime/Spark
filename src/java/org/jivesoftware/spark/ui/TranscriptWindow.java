@@ -477,6 +477,10 @@ public class TranscriptWindow extends ChatArea {
 
     }
 
+    public void cleanup(){
+        clear();
+    }
+
 
     public void setFont(Font font) {
         this.defaultFont = font;
