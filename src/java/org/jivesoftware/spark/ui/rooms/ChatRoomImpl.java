@@ -16,7 +16,6 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -34,6 +33,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.FromJIDFilter;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
@@ -47,6 +47,10 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -58,10 +62,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -109,7 +109,7 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register PacketListeners
-        PacketFilter fromFilter = new FromContainsFilter(participantJID);
+        PacketFilter fromFilter = new FromJIDFilter(participantJID);
         PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
         PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
 
