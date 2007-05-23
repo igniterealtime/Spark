@@ -42,12 +42,23 @@ public class JContactItemField extends JPanel {
 
     private JTextField textField = new JTextField();
     private DefaultListModel model = new DefaultListModel();
-    private JList list = new JList(model);
+    private JList list;
     private JWindow popup;
     private List<ContactItem> items;
 
     public JContactItemField(List items) {
         setLayout(new BorderLayout());
+        list = new JList(model) {
+            public String getToolTipText(MouseEvent e) {
+                int row = locationToIndex(e.getPoint());
+                final ContactItem item = (ContactItem)getModel().getElementAt(row);
+                if (item != null) {
+                    return item.getJID();
+                }
+                return null;
+            }
+        };
+
         this.items = items;
 
         add(textField, BorderLayout.CENTER);
