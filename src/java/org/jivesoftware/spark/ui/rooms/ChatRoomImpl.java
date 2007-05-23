@@ -418,17 +418,13 @@ public class ChatRoomImpl extends ChatRoom {
                     }
 
                     // Do not accept Administrative messages.
-                    String host = SparkManager.getSessionManager().getServerAddress();
+                    final String host = SparkManager.getSessionManager().getServerAddress();
                     if (host.equals(message.getFrom())) {
                         return;
                     }
 
                     // If the message is not from the current agent. Append to chat.
                     if (message.getBody() != null) {
-                        if (!participantJID.equals(message.getFrom())) {
-                            // Create new Chat Object.
-                            participantJID = message.getFrom();
-                        }
                         participantJID = message.getFrom();
                         insertMessage(message);
 
