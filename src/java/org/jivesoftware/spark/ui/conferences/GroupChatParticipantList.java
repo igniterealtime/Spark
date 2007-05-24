@@ -578,6 +578,10 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                         if (ModelUtil.hasLength(newNickname)) {
                             while (true) {
                                 newNickname = newNickname.trim();
+                                String nick = chat.getNickname();
+                                if(newNickname.equals(nick)){
+                                    //return;
+                                }
                                 try {
                                     chat.changeNickname(newNickname);
                                     break;
@@ -788,6 +792,14 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         try {
             for (int i = 0; i < users.size(); i++) {
                 JLabel label = users.get(i);
+                if (label.getText().equals(nickname)) {
+                    users.remove(label);
+                    model.removeElement(label);
+                }
+            }
+
+            for (int i = 0; i < model.size(); i++) {
+                JLabel label = (JLabel)model.getElementAt(i);
                 if (label.getText().equals(nickname)) {
                     users.remove(label);
                     model.removeElement(label);
