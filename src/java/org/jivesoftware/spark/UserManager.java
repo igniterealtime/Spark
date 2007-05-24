@@ -11,6 +11,7 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.Occupant;
@@ -479,6 +480,30 @@ public class UserManager {
                 TaskEngine.getInstance().schedule(task, 250);
             }
         });
+    }
+
+    /**
+     * Returns the correct JID based on the number of resources signed in.
+     *
+     * @param jid the users jid.
+     * @return the valid jid to use.
+     */
+    public static String getValidJID(String jid) {
+        Roster roster = SparkManager.getConnection().getRoster();
+        Iterator<Presence> presences = roster.getPresences(jid);
+        int count = 0;
+        Presence p = null;
+        if (presences.hasNext()) {
+            p = presences.next();
+            count++;
+        }
+
+        if (count == 1 && p != null) {
+            return p.getFrom();
+        }
+        else {
+            return jid;
+        }
     }
 
 
