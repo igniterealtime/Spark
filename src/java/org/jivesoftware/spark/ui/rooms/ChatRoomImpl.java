@@ -97,12 +97,27 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Constructs a 1-to-1 ChatRoom.
      *
-     * @param participantJID      the participants jid to chat with.
+     * @param jid      the participants jid to chat with.
      * @param participantNickname the nickname of the participant.
      * @param title               the title of the room.
      */
-    public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
-        this.participantJID = participantJID;
+    public ChatRoomImpl(String jid, String participantNickname, String title) {
+        Roster roster = SparkManager.getConnection().getRoster();
+        Iterator<Presence> presences = roster.getPresences(jid);
+        int count = 0;
+        Presence p = null;
+        if (presences.hasNext()) {
+            p = presences.next();
+            count++;
+        }
+
+        if(count == 1 && p != null){
+            participantJID = p.getFrom();
+        }
+        else {
+            participantJID = jid;
+        }
+
         this.participantNickname = participantNickname;
 
         // Loads the current history for this user.
