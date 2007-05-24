@@ -102,7 +102,9 @@ public class ChatRoomImpl extends ChatRoom {
      * @param title               the title of the room.
      */
     public ChatRoomImpl(String jid, String participantNickname, String title) {
-        Roster roster = SparkManager.getConnection().getRoster();
+        this.participantJID = jid;
+
+        roster = SparkManager.getConnection().getRoster();
         Iterator<Presence> presences = roster.getPresences(jid);
         int count = 0;
         Presence p = null;
@@ -111,12 +113,10 @@ public class ChatRoomImpl extends ChatRoom {
             count++;
         }
 
-        if(count == 1 && p != null){
+        if(count == 1 && p != null && p.getFrom() != null){
             participantJID = p.getFrom();
         }
-        else {
-            participantJID = jid;
-        }
+      
 
         this.participantNickname = participantNickname;
 
@@ -131,7 +131,7 @@ public class ChatRoomImpl extends ChatRoom {
         SparkManager.getConnection().addPacketListener(this, andFilter);
 
         // The roomname will be the participantJID
-        this.roomname = participantJID;
+        this.roomname = jid;
 
         // Use the agents username as the Tab Title
         this.tabTitle = title;
@@ -146,8 +146,6 @@ public class ChatRoomImpl extends ChatRoom {
 
 
         presence = PresenceManager.getPresence(participantJID);
-
-        roster = SparkManager.getConnection().getRoster();
 
         RosterEntry entry = roster.getEntry(participantJID);
 
