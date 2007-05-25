@@ -14,21 +14,20 @@ import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
 import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -59,11 +58,6 @@ public final class Spark {
     }
 
     public void startup() {
-        EnhancedDebuggerWindow.PERSISTED_DEBUGGER = true;
-        EnhancedDebuggerWindow.MAX_TABLE_ROWS = 10;
-        XMPPConnection.DEBUG_ENABLED = true;
-
-
         String current = System.getProperty("java.library.path");
         String classPath = System.getProperty("java.class.path");
 
@@ -308,6 +302,7 @@ public final class Spark {
     public static String getUserHome() {
         return USER_HOME;
     }
+
     /**
      * Returns the Spark directory for the current user (user.home). The user home is where all user specific
      * files are placed to run Spark within a multi-user system.

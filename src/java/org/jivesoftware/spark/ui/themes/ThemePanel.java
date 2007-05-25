@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
 import java.awt.Color;
@@ -53,6 +54,12 @@ public class ThemePanel extends JPanel {
 
     private JButton addThemeButton;
     private JButton addEmoticonButton;
+
+    private JTextField contactListFontField;
+    private JLabel contactListFontLabel;
+
+    private JTextField chatRoomFontField;
+    private JLabel chatRoomFontLabel;
 
     private JCheckBox emoticonCheckBox;
     private JFileChooser fc;
@@ -80,6 +87,13 @@ public class ThemePanel extends JPanel {
 
         systemLookAndFeelBox = new JCheckBox();
 
+
+        contactListFontField = new JTextField();
+        contactListFontLabel = new JLabel();
+
+        chatRoomFontField = new JTextField();
+        chatRoomFontLabel = new JLabel();
+
         // Set ResourceUtils
         ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
         ResourceUtils.resLabel(emoticonsLabel, emoticonBox, Res.getString("label.emoticons") + ":");
@@ -88,6 +102,9 @@ public class ThemePanel extends JPanel {
 
         ResourceUtils.resButton(addThemeButton, "&Add...");
         ResourceUtils.resButton(addEmoticonButton, "A&dd...");
+
+        ResourceUtils.resLabel(contactListFontLabel, contactListFontField, "Contact &List font size:");
+        ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, "Chat &Room font size:");
 
         // Build UI
         buildUI();
@@ -114,6 +131,12 @@ public class ThemePanel extends JPanel {
         if (Spark.isWindows()) {
             add(systemLookAndFeelBox, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }
+
+        add(chatRoomFontLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(contactListFontField, new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+
         // Activate live one.
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         String theme = pref.getTheme();
@@ -147,6 +170,17 @@ public class ThemePanel extends JPanel {
         emoticonCheckBox.setSelected(pref.areEmoticonsEnabled());
 
         systemLookAndFeelBox.setSelected(pref.useSystemLookAndFeel());
+
+        try {
+            int chatRoomFontSize = pref.getChatRoomFontSize();
+            int contactListFontSize = pref.getContactListFontSize();
+
+            chatRoomFontField.setText(Integer.toString(chatRoomFontSize));
+            contactListFontField.setText(Integer.toString(contactListFontSize));
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     /**
@@ -282,6 +316,14 @@ public class ThemePanel extends JPanel {
         public String getDescription() {
             return "*.zip";
         }
+    }
+
+    public String getChatRoomFontSize(){
+        return chatRoomFontField.getText();
+    }
+
+    public String getContactListFontSize(){
+        return contactListFontField.getText();
     }
 
 }

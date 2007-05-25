@@ -559,12 +559,44 @@ public class LocalPreferences {
         return getBoolean("ssoEnabled", false);
     }
 
+    public void setDebuggerEnabled(boolean enabled) {
+        setBoolean("debuggerEnabled", enabled);
+    }
+
+    public boolean isDebuggerEnabled() {
+        return getBoolean("debuggerEnabled", false);
+    }
+
+    public void setContactListFontSize(int fontSize) {
+        setInt("contactListFontSize", fontSize);
+    }
+
+    public int getContactListFontSize() {
+        return getInt("contactListFontSize", 11);
+    }
+
+    public void setChatRoomFontSize(int fontSize) {
+        setInt("chatRoomFontSize", fontSize);
+    }
+
+    public int getChatRoomFontSize() {
+        return getInt("chatRoomFontSize", 12);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
     private void setBoolean(String property, boolean value) {
         props.setProperty(property, Boolean.toString(value));
+    }
+
+    private int getInt(String property, int defaultValue) {
+        return Integer.parseInt(props.getProperty(property, Integer.toString(defaultValue)));
+    }
+
+    private void setInt(String property, int value) {
+        props.setProperty(property, Integer.toString(value));
     }
 
 }

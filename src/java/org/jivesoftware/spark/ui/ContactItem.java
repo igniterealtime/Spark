@@ -27,6 +27,8 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -69,6 +71,7 @@ public class ContactItem extends JPanel {
 
     private JLabel sideIcon;
 
+    private int fontSize;
 
     /**
      * Creates a new instance of a contact.
@@ -78,6 +81,10 @@ public class ContactItem extends JPanel {
      */
     public ContactItem(String nickname, String fullyQualifiedJID) {
         setLayout(new GridBagLayout());
+
+          // Set Default Font
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        fontSize = pref.getContactListFontSize();
 
         // Set default presence
         presence = new Presence(Presence.Type.unavailable);
@@ -94,7 +101,7 @@ public class ContactItem extends JPanel {
         nicknameLabel.setText(nickname);
 
 
-        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
         descriptionLabel.setForeground((Color)UIManager.get("ContactItemDescription.foreground"));
         descriptionLabel.setHorizontalTextPosition(JLabel.LEFT);
         descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
@@ -375,7 +382,7 @@ public class ContactItem extends JPanel {
             isAvailable = true;
         }
         else if (!presence.isAvailable()) {
-            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
             RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
@@ -383,13 +390,13 @@ public class ContactItem extends JPanel {
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
-                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setStatusText("Pending");
             }
             else {
                 setIcon(null);
-                setFont(new Font("Dialog", Font.PLAIN, 11));
-                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+                setFont(new Font("Dialog", Font.PLAIN, fontSize));
+                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setAvailable(false);
                 if (ModelUtil.hasLength(status)) {
                     setStatusText(status);
@@ -425,7 +432,7 @@ public class ContactItem extends JPanel {
 
 
         if (isAvailable) {
-            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             if ("Online".equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
                 setStatusText("");
             }
@@ -434,7 +441,7 @@ public class ContactItem extends JPanel {
             }
         }
         else if (presence.isAvailable()) {
-            getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, 11));
+            getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, fontSize));
             getNicknameLabel().setForeground(Color.gray);
             if (status != null) {
                 setStatusText(status);
@@ -475,7 +482,7 @@ public class ContactItem extends JPanel {
      */
     public void showUserComingOnline() {
         // Change Font
-        getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));
+        getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, fontSize));
         getNicknameLabel().setForeground(new Color(255, 128, 0));
     }
 
@@ -484,7 +491,7 @@ public class ContactItem extends JPanel {
      */
     public void showUserGoingOfflineOnline() {
         // Change Font
-        getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, 11));
+        getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, fontSize));
         getNicknameLabel().setForeground(Color.red);
     }
 

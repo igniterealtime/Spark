@@ -18,6 +18,8 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -98,6 +100,12 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
+
+          // Set Default Font
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        int fs = pref.getChatRoomFontSize();
+        fontSize = fs;
+        setFontSize(fs);
 
         // Cut Action
         final Action cutAction = new AbstractAction() {

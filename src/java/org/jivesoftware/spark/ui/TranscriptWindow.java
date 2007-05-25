@@ -23,21 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -52,6 +37,21 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -70,7 +70,7 @@ public class TranscriptWindow extends ChatArea {
     /**
      * The default font used in the chat window for all messages.
      */
-    private Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
+    private Font defaultFont;
 
     private Date lastPost;
 
@@ -79,6 +79,12 @@ public class TranscriptWindow extends ChatArea {
      */
     public TranscriptWindow() {
         setEditable(false);
+
+        // Set Default Font
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        int fontSize = pref.getChatRoomFontSize();
+        defaultFont = new Font("Dialog", Font.PLAIN, fontSize);
+
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -467,7 +473,7 @@ public class TranscriptWindow extends ChatArea {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -477,7 +483,7 @@ public class TranscriptWindow extends ChatArea {
 
     }
 
-    public void cleanup(){
+    public void cleanup() {
         clear();
     }
 

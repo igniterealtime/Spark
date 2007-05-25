@@ -12,6 +12,7 @@ package org.jivesoftware.spark.ui.themes;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -85,6 +86,17 @@ public class ThemePreference implements Preference {
         pref.setEmoticonPack(pack);
         pref.setEmoticonsEnabled(emotEnabled);
         pref.setUseSystemLookAndFeel(panel.useSystemLookAndFeel());
+
+        try {
+            String chatRoomFontSize = panel.getChatRoomFontSize();
+            String contactListFontSize = panel.getContactListFontSize();
+
+            pref.setChatRoomFontSize(Integer.parseInt(chatRoomFontSize));
+            pref.setContactListFontSize(Integer.parseInt(contactListFontSize));
+        }
+        catch (NumberFormatException e) {
+            Log.error(e);
+        }
     }
 
 

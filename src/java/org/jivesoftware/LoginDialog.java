@@ -724,6 +724,9 @@ public final class LoginDialog {
 
             if (!hasErrors) {
                 localPref = SettingsManager.getLocalPreferences();
+                if (localPref.isDebuggerEnabled()) {
+                    XMPPConnection.DEBUG_ENABLED = true;
+                }
 
                 SmackConfiguration.setPacketReplyTimeout(localPref.getTimeOut() * 1000);
 

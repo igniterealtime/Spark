@@ -89,6 +89,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
     private JCheckBox useSSOBox = new JCheckBox();
     private JTextField ssoServerField = new JTextField();
 
+    private JCheckBox debuggerBox = new JCheckBox();
+
     /**
      * Empty Constructor.
      */
@@ -136,6 +138,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
         ResourceUtils.resButton(compressionBox, "Use Co&mpression");
         ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO)");
+        ResourceUtils.resButton(debuggerBox, "Start &Debugger on startup");
 
         inputPanel.add(autoDiscoverBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -171,6 +174,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         inputPanel.add(useSSLBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         inputPanel.add(compressionBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        inputPanel.add(debuggerBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Create the title panel for this dialog
         titlePanel = new TitlePanel("Advanced Connection Preferences", "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
@@ -231,6 +235,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 }
             }
         });
+
+        debuggerBox.setSelected(localPreferences.isDebuggerEnabled());
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -317,6 +323,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 localPreferences.setSSL(useSSLBox.isSelected());
                 localPreferences.setXmppHost(xmppHostField.getText());
                 localPreferences.setCompressionEnabled(compressionBox.isSelected());
+                localPreferences.setDebuggerEnabled(debuggerBox.isSelected());
 
                 optionsDialog.setVisible(false);
                 localPreferences.setResource(resource);
