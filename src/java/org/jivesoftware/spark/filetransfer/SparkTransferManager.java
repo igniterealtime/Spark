@@ -305,7 +305,7 @@ public class SparkTransferManager {
                             if ((i & InputEvent.CTRL_MASK) == InputEvent.CTRL_MASK) {
                                 Clipboard clb = Toolkit.getDefaultToolkit().getSystemClipboard();
                                 Transferable contents = clb.getContents(ke.getSource());
-                                if (contents != null) {
+                                if (contents != null && contents.getTransferDataFlavors().length == 1) {
                                     if (contents.isDataFlavorSupported(DataFlavor.imageFlavor)) {
                                         sendImage(getClipboard(), room);
                                     }
