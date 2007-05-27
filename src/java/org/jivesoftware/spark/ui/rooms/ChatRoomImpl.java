@@ -101,7 +101,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @param participantNickname the nickname of the participant.
      * @param title               the title of the room.
      */
-    public ChatRoomImpl(String jid, String participantNickname, String title) {
+    public ChatRoomImpl(final String jid, String participantNickname, String title) {
         this.participantJID = jid;
 
         roster = SparkManager.getConnection().getRoster();
@@ -124,7 +124,7 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register PacketListeners
-        PacketFilter fromFilter = new FromJIDFilter(participantJID);
+        PacketFilter fromFilter = new FromJIDFilter(jid);
         PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
         PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
 
@@ -147,7 +147,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         presence = PresenceManager.getPresence(participantJID);
 
-        RosterEntry entry = roster.getEntry(participantJID);
+        RosterEntry entry = roster.getEntry(jid);
 
         tabIcon = PresenceManager.getIconFromPresence(presence);
 
@@ -166,7 +166,7 @@ public class ChatRoomImpl extends ChatRoom {
             addToRosterButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     RosterDialog rosterDialog = new RosterDialog();
-                    rosterDialog.setDefaultJID(participantJID);
+                    rosterDialog.setDefaultJID(jid);
                     rosterDialog.setDefaultNickname(getParticipantNickname());
                     rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
                 }
@@ -177,7 +177,7 @@ public class ChatRoomImpl extends ChatRoom {
         infoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 VCardManager vcard = SparkManager.getVCardManager();
-                vcard.viewProfile(participantJID, SparkManager.getChatManager().getChatContainer());
+                vcard.viewProfile(jid, SparkManager.getChatManager().getChatContainer());
             }
         });
 
