@@ -23,8 +23,8 @@
     <property file="${basedir}/build/build.properties"/>
     <property name="version.major" value="2"/>
     <property name="version.minor" value="5"/>
-    <property name="version.revision" value="3"/>
-    <property name="version.extra" value="beta2"/>
+    <property name="version.revision" value="4"/>
+    <property name="version.extra" value="beta1"/>
     <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
