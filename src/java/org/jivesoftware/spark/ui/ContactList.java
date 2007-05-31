@@ -93,6 +93,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Map;
+import java.util.HashMap;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -1491,24 +1493,31 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
 
-    private void sendMessages(Collection items) {
+   private void sendMessages(Collection<ContactItem> items) {
+        StringBuffer buf = new StringBuffer();
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
-            Iterator contacts = items.iterator();
-            while (contacts.hasNext()) {
-                ContactItem item = (ContactItem)contacts.next();
-                final ContactGroup contactGroup = getContactGroup(item.getGroupName());
-                contactGroup.clearSelection();
-                if (item.isAvailable()) {
-                    Message mess = new Message();
-                    mess.setTo(item.getJID());
-                    mess.setBody(messageText);
 
-                    SparkManager.getConnection().sendPacket(mess);
+            final Map<String, Message> broadcastMessages = new HashMap<String, Message>();
+            for (ContactItem item : items) {
+                final Message message = new Message();
+                message.setTo(item.getJID());
+                message.setProperty("broadcast", true);
+                message.setBody(messageText);
+                if (!broadcastMessages.containsKey(item.getJID())) {
+                    buf.append(item.getNickname()).append("\n");
+                    broadcastMessages.put(item.getJID(), message);
                 }
             }
+
+            for (Message message : broadcastMessages.values()) {
+                SparkManager.getConnection().sendPacket(message);
+            }
+
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcasted.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
         }
+
 
     }
 

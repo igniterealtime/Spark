@@ -516,9 +516,18 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             // Otherwise, handle single selection
             int index = contactItemList.locationToIndex(e.getPoint());
             if (index != -1) {
-                if (index != contactItemList.getSelectedIndex()) {
-                    contactItemList.setSelectedIndex(index);
-                    fireContactItemClicked((ContactItem)contactItemList.getSelectedValue());
+                int[] indexes = contactItemList.getSelectedIndices();
+                boolean selected = false;
+                for(int i=0; i<indexes.length; i++){
+                    int o = indexes[i];
+                    if(index == o){
+                        selected = true;
+                    }
+                }
+
+                if (!selected){
+                   contactItemList.setSelectedIndex(index);
+                   fireContactItemClicked((ContactItem)contactItemList.getSelectedValue());
                 }
             }
 
