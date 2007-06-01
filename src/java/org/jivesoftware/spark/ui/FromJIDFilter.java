@@ -10,6 +10,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.util.StringUtils;
 
 
 /**
@@ -30,7 +31,7 @@ public class FromJIDFilter implements PacketFilter {
         if (from == null) {
             throw new IllegalArgumentException("Parameter cannot be null.");
         }
-        this.from = from.toLowerCase();
+        this.from = StringUtils.parseBareAddress(from.toLowerCase());
     }
 
     public boolean accept(Packet packet) {

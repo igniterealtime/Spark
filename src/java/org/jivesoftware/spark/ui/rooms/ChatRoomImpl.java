@@ -97,41 +97,26 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Constructs a 1-to-1 ChatRoom.
      *
-     * @param jid      the participants jid to chat with.
+     * @param participantJID      the participants jid to chat with.
      * @param participantNickname the nickname of the participant.
      * @param title               the title of the room.
      */
-    public ChatRoomImpl(final String jid, String participantNickname, String title) {
-        this.participantJID = jid;
-
-        roster = SparkManager.getConnection().getRoster();
-        Iterator<Presence> presences = roster.getPresences(jid);
-        int count = 0;
-        Presence p = null;
-        if (presences.hasNext()) {
-            p = presences.next();
-            count++;
-        }
-
-        if(count == 1 && p != null && p.getFrom() != null){
-            participantJID = p.getFrom();
-        }
-      
-
+    public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
+        this.participantJID = participantJID;
         this.participantNickname = participantNickname;
 
         // Loads the current history for this user.
         loadHistory();
 
         // Register PacketListeners
-        PacketFilter fromFilter = new FromJIDFilter(jid);
+        PacketFilter fromFilter = new FromJIDFilter(participantJID);
         PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
         PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
 
         SparkManager.getConnection().addPacketListener(this, andFilter);
 
         // The roomname will be the participantJID
-        this.roomname = jid;
+        this.roomname = participantJID;
 
         // Use the agents username as the Tab Title
         this.tabTitle = title;
@@ -147,7 +132,9 @@ public class ChatRoomImpl extends ChatRoom {
 
         presence = PresenceManager.getPresence(participantJID);
 
-        RosterEntry entry = roster.getEntry(jid);
+        roster = SparkManager.getConnection().getRoster();
+
+        RosterEntry entry = roster.getEntry(participantJID);
 
         tabIcon = PresenceManager.getIconFromPresence(presence);
 
@@ -166,7 +153,7 @@ public class ChatRoomImpl extends ChatRoom {
             addToRosterButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     RosterDialog rosterDialog = new RosterDialog();
-                    rosterDialog.setDefaultJID(jid);
+                    rosterDialog.setDefaultJID(participantJID);
                     rosterDialog.setDefaultNickname(getParticipantNickname());
                     rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
                 }
@@ -177,7 +164,7 @@ public class ChatRoomImpl extends ChatRoom {
         infoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 VCardManager vcard = SparkManager.getVCardManager();
-                vcard.viewProfile(jid, SparkManager.getChatManager().getChatContainer());
+                vcard.viewProfile(participantJID, SparkManager.getChatManager().getChatContainer());
             }
         });
 
