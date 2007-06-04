@@ -17,7 +17,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.spark.component.Notifications;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.search.SearchManager;
@@ -91,7 +90,6 @@ public final class SparkManager {
     private static MessageEventManager messageEventManager;
     private static UserManager userManager;
     private static ChatManager chatManager;
-    private static Notifications notifications;
     private static VCardManager vcardManager;
     private static AlertManager alertManager;
 
@@ -217,21 +215,6 @@ public final class SparkManager {
      */
     public static Workspace getWorkspace() {
         return Workspace.getInstance();
-    }
-
-
-    /**
-     * Returns the Notification System to handle general notification in either
-     * the system tray or "toaster" popups.  You could use the notification engine
-     * to alert users to incoming messages, new emails, or forum posts.
-     *
-     * @return the Notification system.
-     */
-    public static Notifications getNotificationsEngine() {
-        if (notifications == null) {
-            notifications = new Notifications();
-        }
-        return notifications;
     }
 
     /**

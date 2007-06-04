@@ -10,6 +10,8 @@
 
 package org.jivesoftware.resource;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -346,5 +348,18 @@ public class SparkRes {
                 System.out.println(imageFile.getAbsolutePath() + " is not used.");
             }
         }
+    }
+
+    public static final URL getURLWithoutException(String propertyName) {
+        // Otherwise, load and add to cache.
+        try {
+            final String iconURI = getString(propertyName);
+            final URL imageURL = cl.getResource(iconURI);
+            return imageURL;
+        }
+        catch (Exception ex) {
+            Log.debug(propertyName + " not found.");
+        }
+        return null;
     }
 }

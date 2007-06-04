@@ -12,13 +12,14 @@ package org.jivesoftware.resource;
 
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.ImageIcon;
+
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
-import javax.swing.ImageIcon;
 
 public class Default {
     private static PropertyResourceBundle prb;
@@ -101,6 +102,20 @@ public class Default {
 
     public static final URL getURL(String propertyName) {
         return cl.getResource(getString(propertyName));
+    }
+
+
+    public static final URL getURLWithoutException(String propertyName) {
+        // Otherwise, load and add to cache.
+        try {
+            final String iconURI = getString(propertyName);
+            final URL imageURL = cl.getResource(iconURI);
+            return imageURL;
+        }
+        catch (Exception ex) {
+            Log.debug(propertyName + " not found.");
+        }
+        return null;
     }
 
 }

@@ -187,9 +187,6 @@ public class Workspace extends JPanel implements PacketListener {
     public void buildLayout() {
         new Enterprise();
 
-        // Initilaize tray
-        SparkManager.getNotificationsEngine();
-
         // Initialize Contact List
         contactList = new ContactList();
         conferences = new ConferenceServices();

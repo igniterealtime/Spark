@@ -206,9 +206,6 @@ public final class SessionManager implements ConnectionListener {
         // Send Presence Packet
         SparkManager.getConnection().sendPacket(presence);
 
-        // Update Tray Icon
-        SparkManager.getNotificationsEngine().changePresence(presence);
-
         // Fire Presence Listeners
         final Iterator presenceListeners = new ArrayList(this.presenceListeners).iterator();
         while (presenceListeners.hasNext()) {
@@ -269,7 +266,9 @@ public final class SessionManager implements ConnectionListener {
      * @throws Exception thrown is an error occurs loading native library.
      */
     private void setIdleListener() throws Exception {
-
+        if(true){
+            return;
+        }
         final Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
