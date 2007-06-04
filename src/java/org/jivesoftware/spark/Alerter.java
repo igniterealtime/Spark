@@ -10,10 +10,7 @@
 
 package org.jivesoftware.spark;
 
-import org.jivesoftware.spark.component.browser.BrowserViewer;
-
 import java.awt.Window;
-import java.io.File;
 
 /**
  * Implementations of this interface define alert mechanisms based on the Operating System
@@ -49,24 +46,7 @@ public interface Alerter {
      */
     void setupSystemTray();
 
-    /**
-     * Start Idle Process.
-     */
-    void startIdleProcess();
-
-    /**
-     * Returns the Browser to use for this platform.
-     *
-     * @return the <code>BrowserViewer</code> to use.
-     */
-    BrowserViewer getBrowser();
-
-    /**
-     * Instructs Spark to open up a file.
-     *
-     * @param file the file or directory to open.
-     */
-    void openFile(File file);
+    void startIdleListener();
 
     /**
      * Return true if this <code>Alerter</code> should handle the alert request.
