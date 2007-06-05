@@ -10,7 +10,6 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -248,7 +247,7 @@ public class SubscriptionDialog {
             }
             dialog.setVisible(true);
             dialog.setFocusableWindowState(true);
-            SparkManager.getAlertManager().flashWindowStopOnFocus(dialog);
+            SparkManager.getNativeManager().flashWindowStopOnFocus(dialog);
         }
     }
 

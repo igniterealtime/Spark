@@ -44,7 +44,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -452,7 +451,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
                             if (Spark.isWindows()) {
-                                SparkManager.getAlertManager().launchBrowser(url);
+                                SparkManager.getNativeManager().launchBrowser(url);
                             }
                             else {
                                 BrowserLauncher.openURL(url);

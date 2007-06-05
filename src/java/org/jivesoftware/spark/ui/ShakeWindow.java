@@ -44,7 +44,7 @@ public class ShakeWindow extends Object {
             f.setState(Frame.NORMAL);
             f.setVisible(true);
         }
-        SparkManager.getAlertManager().flashWindow(window);
+        SparkManager.getNativeManager().flashWindow(window);
 
         naturalLocation = window.getLocation();
         startTime = System.currentTimeMillis();
@@ -93,7 +93,7 @@ public class ShakeWindow extends Object {
         window.setLocation(naturalLocation);
         window.repaint();
 
-        SparkManager.getAlertManager().stopFlashing(window);
+        SparkManager.getNativeManager().stopFlashing(window);
     }
 
 

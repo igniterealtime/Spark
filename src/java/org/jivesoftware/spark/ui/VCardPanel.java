@@ -188,7 +188,7 @@ public class VCardPanel extends JPanel {
     }
 
     private void startEmailClient(String emailAddress) {
-        SparkManager.getAlertManager().launchEmailClient(emailAddress, "");
+        SparkManager.getNativeManager().launchEmailClient(emailAddress, "");
     }
 
 

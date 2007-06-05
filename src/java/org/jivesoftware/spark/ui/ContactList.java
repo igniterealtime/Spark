@@ -1985,7 +1985,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         SparkManager.getMainWindow().setVisible(true);
 
         // Flash That Window.
-        SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
+        SparkManager.getNativeManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
 
         workspace.changeCardLayout(RETRY_PANEL);
 
@@ -2002,7 +2002,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         SparkManager.getMainWindow().setVisible(true);
 
         // Flash That Window.
-        SparkManager.getAlertManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
+        SparkManager.getNativeManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
 
         workspace.changeCardLayout(RETRY_PANEL);
 

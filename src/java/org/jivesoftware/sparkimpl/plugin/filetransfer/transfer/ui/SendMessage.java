@@ -231,7 +231,7 @@ public class SendMessage extends JPanel {
     private void openFile(File downloadedFile) {
         try {
             if (!Spark.isMac()) {
-                boolean opened = SparkManager.getAlertManager().openFile(downloadedFile);
+                boolean opened = SparkManager.getNativeManager().openFile(downloadedFile);
                 if (!opened) {
                     JOptionPane.showMessageDialog(this, Res.getString("title.error"), "No application associated with file type.", JOptionPane.ERROR_MESSAGE);
                 }

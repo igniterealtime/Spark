@@ -245,11 +245,11 @@ public final class SparkManager {
     }
 
     /**
-     * Returns the AlertManager. The AlertManager allows for flashing of Windows within Spark.
+     * Returns the NativeManager. The NativeManager allows for native handling of Spark.
      *
-     * @return the AlertManager.
+     * @return the NativeManager.
      */
-    public static NativeManager getAlertManager() {
+    public static NativeManager getNativeManager() {
         if (nativeManager == null) {
             nativeManager = new NativeManager();
         }

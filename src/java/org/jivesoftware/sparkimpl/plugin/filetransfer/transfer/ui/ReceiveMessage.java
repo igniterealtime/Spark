@@ -420,7 +420,7 @@ public class ReceiveMessage extends JPanel {
                 try {
                     Downloads downloads = Downloads.getInstance();
                     if (!Spark.isMac()) {
-                        SparkManager.getAlertManager().openFile(downloads.getDownloadDirectory());
+                        SparkManager.getNativeManager().openFile(downloads.getDownloadDirectory());
                     }
                     else if (Spark.isMac()) {
                         Runtime.getRuntime().exec("open " + downloads.getDownloadDirectory().getCanonicalPath());
@@ -480,7 +480,7 @@ public class ReceiveMessage extends JPanel {
     private void openFile(File downloadedFile) {
         try {
             if (!Spark.isMac()) {
-                boolean opened = SparkManager.getAlertManager().openFile(downloadedFile);
+                boolean opened = SparkManager.getNativeManager().openFile(downloadedFile);
                 if (!opened) {
                     JOptionPane.showMessageDialog(this, Res.getString("title.error"), "No application associated with file type.", JOptionPane.ERROR_MESSAGE);
                 }

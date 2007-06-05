@@ -149,7 +149,7 @@ public class Downloads {
     private void openFile(File downloadedFile) {
         try {
             if (!Spark.isMac()) {
-                SparkManager.getAlertManager().openFile(downloadedFile);
+                SparkManager.getNativeManager().openFile(downloadedFile);
             }
             else if (Spark.isMac()) {
                 Process child = Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
