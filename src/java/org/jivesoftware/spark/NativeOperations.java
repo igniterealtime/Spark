@@ -19,7 +19,7 @@ import java.io.File;
  *
  * @author Derek DeMoro
  */
-public interface Alerter {
+public interface NativeOperations {
 
     /**
      * Flash the window.

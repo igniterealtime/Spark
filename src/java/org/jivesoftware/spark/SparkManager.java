@@ -91,7 +91,7 @@ public final class SparkManager {
     private static UserManager userManager;
     private static ChatManager chatManager;
     private static VCardManager vcardManager;
-    private static AlertManager alertManager;
+    private static NativeManager nativeManager;
 
     private static Component focusedComponent;
 
@@ -249,12 +249,12 @@ public final class SparkManager {
      *
      * @return the AlertManager.
      */
-    public static AlertManager getAlertManager() {
-        if (alertManager == null) {
-            alertManager = new AlertManager();
+    public static NativeManager getAlertManager() {
+        if (nativeManager == null) {
+            nativeManager = new NativeManager();
         }
 
-        return alertManager;
+        return nativeManager;
     }
 
 

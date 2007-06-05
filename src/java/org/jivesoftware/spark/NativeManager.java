@@ -23,30 +23,30 @@ import java.util.List;
  *
  * @author Derek DeMoro
  */
-public class AlertManager {
+public class NativeManager {
 
-    private List<Alerter> alerts = new ArrayList<Alerter>();
+    private List<NativeOperations> alerts = new ArrayList<NativeOperations>();
 
-    public AlertManager() {
+    public NativeManager() {
 
     }
 
     /**
      * Adds an alert.
      *
-     * @param alerter the Alerter to add.
+     * @param nativeOperations the Alerter to add.
      */
-    public void addAlert(Alerter alerter) {
-        alerts.add(alerter);
+    public void addAlert(NativeOperations nativeOperations) {
+        alerts.add(nativeOperations);
     }
 
     /**
      * Removes an alerter.
      *
-     * @param alerter the alerter to remove.
+     * @param nativeOperations the alerter to remove.
      */
-    public void removeAlert(Alerter alerter) {
-        alerts.remove(alerter);
+    public void removeAlert(NativeOperations nativeOperations) {
+        alerts.remove(nativeOperations);
     }
 
 
@@ -58,7 +58,7 @@ public class AlertManager {
     public void flashWindow(Window window) {
         final Iterator alertNotifier = ModelUtil.reverseListIterator(alerts.listIterator());
         while (alertNotifier.hasNext()) {
-            final Alerter alert = (Alerter)alertNotifier.next();
+            final NativeOperations alert = (NativeOperations)alertNotifier.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindow(window);
@@ -75,7 +75,7 @@ public class AlertManager {
     public void flashWindowStopOnFocus(Window window) {
         final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
         while (alertNotifiers.hasNext()) {
-            final Alerter alert = (Alerter)alertNotifiers.next();
+            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindowStopWhenFocused(window);
@@ -92,7 +92,7 @@ public class AlertManager {
     public void stopFlashing(Window window) {
         final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
         while (alertNotifiers.hasNext()) {
-            final Alerter alert = (Alerter)alertNotifiers.next();
+            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.stopFlashing(window);
@@ -104,7 +104,7 @@ public class AlertManager {
     public boolean openFile(File file) {
         final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
         while (alertNotifiers.hasNext()) {
-            final Alerter alert = (Alerter)alertNotifiers.next();
+            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.openFile(file);
@@ -118,7 +118,7 @@ public class AlertManager {
     public boolean launchBrowser(String url) {
         final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
         while (alertNotifiers.hasNext()) {
-            final Alerter alert = (Alerter)alertNotifiers.next();
+            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.launchBrowser(url);
@@ -132,7 +132,7 @@ public class AlertManager {
     public boolean launchEmailClient(String to, String subject) {
         final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
         while (alertNotifiers.hasNext()) {
-            final Alerter alert = (Alerter)alertNotifiers.next();
+            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.launchEmailClient(to, subject);
