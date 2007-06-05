@@ -582,7 +582,15 @@ public class LocalPreferences {
     public int getChatRoomFontSize() {
         return getInt("chatRoomFontSize", 12);
     }
-
+    
+    public void setPerisitedChatRoomsClosable(boolean closable) {
+    	setBoolean("perisitedChatRoomsClosable", closable);
+    }
+    
+    public boolean arePerisitedChatRoomsClosable() {
+    	return getBoolean("perisitedChatRoomsClosable", true);
+    }
+    
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }

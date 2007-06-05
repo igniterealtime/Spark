@@ -10,6 +10,17 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import java.awt.Component;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
@@ -30,16 +41,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.JOptionPane;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
@@ -624,6 +625,24 @@ public class ConferenceUtils {
         }
 
     }
+    
+    final static List<String> unclosableChatRooms = new ArrayList<String>();
+	public synchronized static void addUnclosableChatRoom(String jid) {
+		unclosableChatRooms.add(jid);
+	}
+	
+	public static boolean isChatRoomClosable(Component c) {
+		if(c instanceof GroupChatRoom ) {
+			GroupChatRoom groupChatRoom = (GroupChatRoom) c;
+    		String roomName = groupChatRoom.getChatRoom().getRoomname();
+    		                        		
+    		if(unclosableChatRooms.contains(roomName)){
+    			return false;
+    		}			
+		}
+		return true;
+		
+	}
 
 
 }

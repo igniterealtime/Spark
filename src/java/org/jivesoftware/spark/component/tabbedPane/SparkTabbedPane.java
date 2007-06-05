@@ -10,18 +10,6 @@
 
 package org.jivesoftware.spark.component.tabbedPane;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -41,6 +29,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * Jive Software imlementation of a TabbedPane.
@@ -181,10 +185,18 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         // Add Component to main panel
         mainPanel.add(Integer.toString(component.hashCode()), component);
         tab.addMouseListener(this);
-
+        
+        boolean allowClosingThisTab = true; 
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        
+        if (!pref.arePerisitedChatRoomsClosable()) {
+        	allowClosingThisTab = ConferenceUtils.isChatRoomClosable(component);
+        }
+        //JOptionPane.showMessageDialog(this, "allowClosingThisTab:" + allowClosingThisTab);
+        
         // Add Close Button
-        if (isCloseButtonEnabled()) {
-            final JLabel closeButton = new JLabel(closeInactiveButtonIcon);
+        if (isCloseButtonEnabled() && allowClosingThisTab) {
+        	final JLabel closeButton = new JLabel(closeInactiveButtonIcon);
             tab.addComponent(closeButton);
             closeButton.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent mouseEvent) {

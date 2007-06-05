@@ -532,6 +532,7 @@ public class BookmarksUI extends JPanel {
 
             if (bookmark.isAutoJoin()) {
                 ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+                ConferenceUtils.addUnclosableChatRoom(roomJID);
                 autoJoinRooms.add(bookmark.getJid());
             }
 
