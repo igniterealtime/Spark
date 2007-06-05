@@ -56,6 +56,7 @@ public class BroadcastDialog extends JPanel {
     private JRadioButton alertMessageButton;
 
     private List<CheckNode> nodes = new ArrayList<CheckNode>();
+    private List<CheckNode> groupNodes = new ArrayList<CheckNode>();
 
     public BroadcastDialog() {
         setLayout(new GridBagLayout());
@@ -71,6 +72,7 @@ public class BroadcastDialog extends JPanel {
                 continue;
             }
             CheckNode groupNode = new CheckNode(groupName);
+            groupNodes.add(groupNode);
             rosterNode.add(groupNode);
 
             // Now add contact items from contact group.
@@ -106,6 +108,16 @@ public class BroadcastDialog extends JPanel {
         checkTree.expandTree();
     }
 
+    public void invokeDialog(ContactGroup group){
+        for(CheckNode node : groupNodes){
+            if(node.getUserObject().toString().equals(group.getGroupName())){
+                node.setSelected(true);
+            }
+        }
+
+        invokeDialog();
+    }
+
     /**
      * Displays the broadcast dialog.
      */
@@ -116,7 +128,7 @@ public class BroadcastDialog extends JPanel {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), Res.getString("message.enter.message.to.broadcast"), null, true);
+        titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), "Enter message to broadcast to selected users.", null, true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -131,7 +143,7 @@ public class BroadcastDialog extends JPanel {
 
         JOptionPane p = new JOptionPane();
         dlg = p.createDialog(SparkManager.getMainWindow(), "Broadcast");
-        dlg.setModal(true);
+        dlg.setModal(false);
 
         dlg.pack();
         dlg.setSize(600, 400);
@@ -157,6 +169,8 @@ public class BroadcastDialog extends JPanel {
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();
+
+        messageBox.requestFocus();
     }
 
     /**

@@ -22,7 +22,6 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -50,10 +49,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -336,29 +333,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      * @param group the Contact Group to send the messages to.
      */
     private void broadcastToGroup(ContactGroup group) {
-        StringBuffer buf = new StringBuffer();
-        InputDialog dialog = new InputDialog();
-        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.broadcast.to", group.getGroupName()), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
-        if (ModelUtil.hasLength(messageText)) {
-
-            final Map<String, Message> broadcastMessages = new HashMap<String, Message>();
-            for (ContactItem item : group.getContactItems()) {
-                final Message message = new Message();
-                message.setTo(item.getJID());
-                message.setProperty("broadcast", true);
-                message.setBody(messageText);
-                if (!broadcastMessages.containsKey(item.getJID())) {
-                    buf.append(item.getNickname()).append("\n");
-                    broadcastMessages.put(item.getJID(), message);
-                }
-            }
-
-            for (Message message : broadcastMessages.values()) {
-                SparkManager.getConnection().sendPacket(message);
-            }
-
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcasted.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
-        }
+        final BroadcastDialog broadcastDialog = new BroadcastDialog();
+        broadcastDialog.invokeDialog(group);
     }
 
     public void uninstall() {
