@@ -11,6 +11,7 @@
 package org.jivesoftware.spark;
 
 import java.awt.Window;
+import java.io.File;
 
 /**
  * Implementations of this interface define alert mechanisms based on the Operating System
@@ -47,5 +48,31 @@ public interface Alerter {
      * @return true to handle.
      */
     boolean handleNotification();
+
+    /**
+     * Open File using native operation.
+     *
+     * @param file the name of the file.
+     * @return true if the file was executed.
+     */
+    boolean openFile(File file);
+
+    /**
+     * Launches email client.
+     *
+     * @param to      who the message should go to.
+     * @param subject the subject.
+     * @return true if the email client was launched.
+     */
+
+    boolean launchEmailClient(String to, String subject);
+
+    /**
+     * Launches browser with specified url string.
+     *
+     * @param url the url string.
+     * @return true if the browser was launched.
+     */
+    boolean launchBrowser(String url);
 
 }

@@ -13,6 +13,7 @@ package org.jivesoftware.spark;
 import org.jivesoftware.spark.util.ModelUtil;
 
 import java.awt.Window;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,6 +99,48 @@ public class AlertManager {
                 break;
             }
         }
+    }
+
+    public boolean openFile(File file) {
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        while (alertNotifiers.hasNext()) {
+            final Alerter alert = (Alerter)alertNotifiers.next();
+            boolean handle = alert.handleNotification();
+            if (handle) {
+                alert.openFile(file);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean launchBrowser(String url) {
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        while (alertNotifiers.hasNext()) {
+            final Alerter alert = (Alerter)alertNotifiers.next();
+            boolean handle = alert.handleNotification();
+            if (handle) {
+                alert.launchBrowser(url);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean launchEmailClient(String to, String subject) {
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        while (alertNotifiers.hasNext()) {
+            final Alerter alert = (Alerter)alertNotifiers.next();
+            boolean handle = alert.handleNotification();
+            if (handle) {
+                alert.launchEmailClient(to, subject);
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

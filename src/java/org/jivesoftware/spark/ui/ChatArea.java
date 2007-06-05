@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jdesktop.jdic.desktop.Desktop;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -453,7 +452,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
                             if (Spark.isWindows()) {
-                                Desktop.browse(new URL(url));
+                                SparkManager.getAlertManager().launchBrowser(url);
                             }
                             else {
                                 BrowserLauncher.openURL(url);

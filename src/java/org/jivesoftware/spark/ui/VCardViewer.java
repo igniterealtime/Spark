@@ -10,9 +10,6 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jdesktop.jdic.desktop.Desktop;
-import org.jdesktop.jdic.desktop.DesktopException;
-import org.jdesktop.jdic.desktop.Message;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -21,12 +18,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -38,8 +29,12 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -256,26 +251,7 @@ public class VCardViewer extends JPanel {
 
 
     private void startEmailClient(String emailAddress) {
-        final Message message = new Message();
-
-        final List<String> list = new ArrayList<String>();
-        list.add(emailAddress);
-
-        message.setToAddrs(list);
-
-        SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    Desktop.mail(message);
-                }
-                catch (DesktopException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-        };
-
-        worker.start();
+        SparkManager.getAlertManager().launchEmailClient(emailAddress, "");
     }
 
 

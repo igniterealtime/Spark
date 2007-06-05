@@ -10,11 +10,9 @@
 
 package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer;
 
-import org.jdesktop.jdic.desktop.Desktop;
-import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -151,12 +149,7 @@ public class Downloads {
     private void openFile(File downloadedFile) {
         try {
             if (!Spark.isMac()) {
-                try {
-                    Desktop.open(downloadedFile);
-                }
-                catch (DesktopException e) {
-                    Log.error(e);
-                }
+                SparkManager.getAlertManager().openFile(downloadedFile);
             }
             else if (Spark.isMac()) {
                 Process child = Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());

@@ -10,8 +10,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 
-import org.jdesktop.jdic.desktop.Desktop;
-import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -29,15 +27,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -52,6 +41,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 public class SendMessage extends JPanel {
     private FileDragLabel imageLabel = new FileDragLabel();
@@ -186,8 +184,8 @@ public class SendMessage extends JPanel {
                         Thread.sleep(10);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == Status.error ||
-                                status == Status.complete || status == Status.cancelled ||
-                                status == Status.refused) {
+                            status == Status.complete || status == Status.cancelled ||
+                            status == Status.refused) {
                             break;
                         }
                         updateBar(transfer, nickname);
@@ -233,12 +231,9 @@ public class SendMessage extends JPanel {
     private void openFile(File downloadedFile) {
         try {
             if (!Spark.isMac()) {
-                try {
-                    Desktop.open(downloadedFile);
-                }
-                catch (DesktopException e) {
+                boolean opened = SparkManager.getAlertManager().openFile(downloadedFile);
+                if (!opened) {
                     JOptionPane.showMessageDialog(this, Res.getString("title.error"), "No application associated with file type.", JOptionPane.ERROR_MESSAGE);
-                    Log.error(e);
                 }
             }
             else if (Spark.isMac()) {

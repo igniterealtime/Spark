@@ -10,8 +10,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 
-import org.jdesktop.jdic.desktop.Desktop;
-import org.jdesktop.jdic.desktop.DesktopException;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -32,19 +30,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -61,6 +46,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 
 public class ReceiveMessage extends JPanel {
     private FileDragLabel imageLabel = new FileDragLabel();
@@ -255,8 +253,8 @@ public class ReceiveMessage extends JPanel {
                         progressBar.setValue((int)bytesRead);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == FileTransfer.Status.error ||
-                                status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
-                                status == FileTransfer.Status.refused) {
+                            status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
+                            status == FileTransfer.Status.refused) {
                             break;
                         }
                         else if (status == FileTransfer.Status.negotiating_stream) {
@@ -335,7 +333,7 @@ public class ReceiveMessage extends JPanel {
                         transferMessage = Res.getString("message.transfer.refused");
                     }
                     else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
-                            transfer.getAmountWritten() < request.getFileSize()) {
+                        transfer.getAmountWritten() < request.getFileSize()) {
                         transferMessage = Res.getString("message.transfer.cancelled");
                     }
 
@@ -422,12 +420,7 @@ public class ReceiveMessage extends JPanel {
                 try {
                     Downloads downloads = Downloads.getInstance();
                     if (!Spark.isMac()) {
-                        try {
-                            Desktop.open(downloads.getDownloadDirectory());
-                        }
-                        catch (DesktopException e) {
-                            Log.error(e);
-                        }
+                        SparkManager.getAlertManager().openFile(downloads.getDownloadDirectory());
                     }
                     else if (Spark.isMac()) {
                         Runtime.getRuntime().exec("open " + downloads.getDownloadDirectory().getCanonicalPath());
@@ -487,11 +480,8 @@ public class ReceiveMessage extends JPanel {
     private void openFile(File downloadedFile) {
         try {
             if (!Spark.isMac()) {
-                try {
-                    Desktop.open(downloadedFile);
-                }
-                catch (DesktopException e) {
-                    Log.error(e);
+                boolean opened = SparkManager.getAlertManager().openFile(downloadedFile);
+                if (!opened) {
                     JOptionPane.showMessageDialog(this, Res.getString("title.error"), "No application associated with file type.", JOptionPane.ERROR_MESSAGE);
                 }
             }
