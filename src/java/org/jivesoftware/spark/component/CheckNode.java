@@ -12,6 +12,8 @@ package org.jivesoftware.spark.component;
 
 import java.util.Enumeration;
 
+import javax.swing.Icon;
+
 /**
  * Creates one tree node with a check box.
  */
@@ -57,6 +59,18 @@ public class CheckNode extends JiveTreeNode {
     public CheckNode(Object userObject, boolean allowsChildren, boolean isSelected) {
         super(userObject, allowsChildren);
         this.isSelected = isSelected;
+        setSelectionMode(DIG_IN_SELECTION);
+    }
+
+     /**
+     * Constructs a new CheckNode.
+     *
+     * @param userObject     the name to use.
+     * @param allowsChildren true if it allows children.
+     * @param icon the icon to use.
+     */
+    public CheckNode(String userObject, boolean allowsChildren, Icon icon){
+        super(userObject, allowsChildren, icon);
         setSelectionMode(DIG_IN_SELECTION);
     }
 

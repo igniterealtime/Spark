@@ -77,7 +77,7 @@ public class BroadcastDialog extends JPanel {
 
             // Now add contact items from contact group.
             for (ContactItem item : group.getContactItems()) {
-                CheckNode itemNode = new CheckNode(item.getNickname(), false, false);
+                CheckNode itemNode = new CheckNode(item.getNickname(), false, item.getIcon());
                 itemNode.setAssociatedObject(item.getJID());
                 groupNode.add(itemNode);
                 nodes.add(itemNode);
@@ -106,11 +106,20 @@ public class BroadcastDialog extends JPanel {
 
         normalMessageButton.setSelected(true);
         checkTree.expandTree();
+
+        // Iterate through selected users.
+        for (ContactItem item : contactList.getSelectedUsers()) {
+            for (CheckNode node : nodes) {
+                if (node.getAssociatedObject().toString().equals(item.getJID())) {
+                    node.setSelected(true);
+                }
+            }
+        }
     }
 
-    public void invokeDialog(ContactGroup group){
-        for(CheckNode node : groupNodes){
-            if(node.getUserObject().toString().equals(group.getGroupName())){
+    public void invokeDialog(ContactGroup group) {
+        for (CheckNode node : groupNodes) {
+            if (node.getUserObject().toString().equals(group.getGroupName())) {
                 node.setSelected(true);
             }
         }
