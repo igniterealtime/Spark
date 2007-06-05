@@ -42,13 +42,6 @@ public interface Alerter {
     void stopFlashing(Window window);
 
     /**
-     * Setup system tray.
-     */
-    void setupSystemTray();
-
-    void startIdleListener();
-
-    /**
      * Return true if this <code>Alerter</code> should handle the alert request.
      *
      * @return true to handle.
