@@ -50,6 +50,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
         JList list = (JList)comp;
         ContactGroup group = getContactGroup(list);
+        if(group == null){
+            return false;
+        }
         if ((group.isSharedGroup() && !flavor[0].equals(DataFlavor.javaFileListFlavor)) || group.isUnfiledGroup() || group.isOfflineGroup() || (!group.hasAvailableContacts() && flavor[0].equals(DataFlavor.javaFileListFlavor))) {
             return false;
         }
