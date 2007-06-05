@@ -43,16 +43,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -65,6 +55,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -326,34 +326,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      * Broadcasts a message to all in the roster.
      */
     private void broadcastToRoster() {
-        InputDialog dialog = new InputDialog();
-        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.message.to.broadcast"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
-
-        final Map<String, Message> broadcastMessages = new HashMap<String, Message>();
-        if (ModelUtil.hasLength(messageText)) {
-            ContactList contactList = SparkManager.getWorkspace().getContactList();
-            for (ContactGroup contactGroup : contactList.getContactGroups()) {
-                for (ContactItem item : contactGroup.getContactItems()) {
-                    if (item != null && item.getJID() != null) {
-                        final Message message = new Message();
-                        message.setTo(item.getJID());
-                        message.setBody(messageText);
-                        message.setProperty("broadcast", true);
-                        broadcastMessages.put(message.getTo(), message);
-                    }
-                }
-
-            }
-
-            // Send packets
-            for (Message message : broadcastMessages.values()) {
-                SparkManager.getConnection().sendPacket(message);
-            }
-
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcast.message.sent"), Res.getString("title.broadcast.message"), JOptionPane.INFORMATION_MESSAGE);
-
-        }
-
+        final BroadcastDialog broadcastDialog = new BroadcastDialog();
+        broadcastDialog.invokeDialog();
     }
 
     /**

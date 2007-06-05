@@ -1821,7 +1821,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public List<ContactGroup> getContactGroups() {
-        return groupList;
+        final List<ContactGroup> gList = new ArrayList<ContactGroup>(groupList);
+        Collections.sort(gList, GROUP_COMPARATOR);
+        return gList;
     }
 
     private void subscriptionRequest(final String jid) {

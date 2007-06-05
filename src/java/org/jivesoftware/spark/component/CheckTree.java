@@ -79,10 +79,10 @@ public class CheckTree extends JPanel {
                 }
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
                 // I need revalidate if node is root.  but why?
-                if (row == 0) {
-                    tree.revalidate();
-                    tree.repaint();
-                }
+
+                tree.revalidate();
+                tree.repaint();
+
             }
         }
     }
@@ -129,6 +129,14 @@ public class CheckTree extends JPanel {
         return tree;
     }
 
+    /**
+     * Call to expand the entire tree.
+     */
+    public void expandTree() {
+        for (int i = 0; i <= tree.getRowCount(); i++) {
+            tree.expandPath(tree.getPathForRow(i));
+        }
+    }
 
 }
 

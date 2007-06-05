@@ -429,7 +429,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return all ContactItems.
      */
     public List<ContactItem> getContactItems() {
-        return new ArrayList<ContactItem>(contactItems);
+        final List<ContactItem> list = new ArrayList<ContactItem>(contactItems);
+        Collections.sort(list, itemComparator);
+        return list;
     }
 
     /**
