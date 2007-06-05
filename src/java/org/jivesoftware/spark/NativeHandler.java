@@ -14,12 +14,12 @@ import java.awt.Window;
 import java.io.File;
 
 /**
- * Implementations of this interface define alert mechanisms based on the Operating System
+ * Implementations of this interface define native mechanisms based on the Operating System
  * Spark is running on.
  *
  * @author Derek DeMoro
  */
-public interface NativeOperations {
+public interface NativeHandler {
 
     /**
      * Flash the window.

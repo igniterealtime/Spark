@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class NativeManager {
 
-    private List<NativeOperations> alerts = new ArrayList<NativeOperations>();
+    private List<NativeHandler> nativeHandlers = new ArrayList<NativeHandler>();
 
     public NativeManager() {
 
@@ -34,19 +34,19 @@ public class NativeManager {
     /**
      * Adds an alert.
      *
-     * @param nativeOperations the Alerter to add.
+     * @param nativeHandler the Alerter to add.
      */
-    public void addAlert(NativeOperations nativeOperations) {
-        alerts.add(nativeOperations);
+    public void addNativeHandler(NativeHandler nativeHandler) {
+        nativeHandlers.add(nativeHandler);
     }
 
     /**
      * Removes an alerter.
      *
-     * @param nativeOperations the alerter to remove.
+     * @param nativeHandler the alerter to remove.
      */
-    public void removeAlert(NativeOperations nativeOperations) {
-        alerts.remove(nativeOperations);
+    public void removeNativeHandler(NativeHandler nativeHandler) {
+        nativeHandlers.remove(nativeHandler);
     }
 
 
@@ -56,9 +56,9 @@ public class NativeManager {
      * @param window the window to flash.
      */
     public void flashWindow(Window window) {
-        final Iterator alertNotifier = ModelUtil.reverseListIterator(alerts.listIterator());
+        final Iterator alertNotifier = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifier.hasNext()) {
-            final NativeOperations alert = (NativeOperations)alertNotifier.next();
+            final NativeHandler alert = (NativeHandler)alertNotifier.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindow(window);
@@ -73,9 +73,9 @@ public class NativeManager {
      * @param window the window to start flashing.
      */
     public void flashWindowStopOnFocus(Window window) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
+            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindowStopWhenFocused(window);
@@ -90,9 +90,9 @@ public class NativeManager {
      * @param window the window to stop flashing.
      */
     public void stopFlashing(Window window) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
+            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.stopFlashing(window);
@@ -102,9 +102,9 @@ public class NativeManager {
     }
 
     public boolean openFile(File file) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
+            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.openFile(file);
@@ -116,9 +116,9 @@ public class NativeManager {
     }
 
     public boolean launchBrowser(String url) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
+            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.launchBrowser(url);
@@ -130,9 +130,9 @@ public class NativeManager {
     }
 
     public boolean launchEmailClient(String to, String subject) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(alerts.listIterator());
+        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeOperations alert = (NativeOperations)alertNotifiers.next();
+            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.launchEmailClient(to, subject);
