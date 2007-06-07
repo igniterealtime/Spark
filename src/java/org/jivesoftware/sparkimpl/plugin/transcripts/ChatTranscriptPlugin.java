@@ -47,6 +47,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -275,6 +277,13 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 window.setCaretPosition(0);
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
+
+                frame.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        window.setText("");
+                    }
+                });
+
                 window.setEditable(false);
 
                 final StringBuilder builder = new StringBuilder();
@@ -350,6 +359,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                         }
 
                         window.setText(builder.toString());
+                        builder.replace(0, builder.length(), "");
                     }
                 };
 
