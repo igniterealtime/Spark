@@ -353,7 +353,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     }
                 };
 
-                TaskEngine.getInstance().schedule(transcriptTask, 500);
+                TaskEngine.getInstance().schedule(transcriptTask, 10);
             }
         };
 
