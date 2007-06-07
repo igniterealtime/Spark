@@ -382,14 +382,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (!Spark.isMac()) {
             connectMenu.add(exitMenuItem);
         }
-        Action showTrafficAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
-                window.setVisible(true);
-            }
-        };
-        showTrafficAction.putValue(Action.NAME, Res.getString("menuitem.show.traffic"));
-        showTrafficAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.TRAFFIC_LIGHT_IMAGE));
+      
 
         Action updateAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -434,7 +427,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
 
         // Build Help Menu
-        helpMenu.add(showTrafficAction);
         helpMenu.add(updateAction);
         helpMenu.addSeparator();
         helpMenu.add(viewErrors);
