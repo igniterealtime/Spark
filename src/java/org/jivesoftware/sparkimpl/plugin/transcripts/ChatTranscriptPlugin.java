@@ -10,13 +10,13 @@
 
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
+import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -25,15 +25,22 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,17 +48,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -60,11 +61,17 @@ import javax.swing.JScrollPane;
  */
 public class ChatTranscriptPlugin implements ChatRoomListener {
 
+    private final SimpleDateFormat notificationDateFormatter;
+    private final SimpleDateFormat messageDateFormatter;
+
     /**
      * Register the listeners for transcript persistence.
      */
-    public ChatTranscriptPlugin(){
+    public ChatTranscriptPlugin() {
         SparkManager.getChatManager().addChatRoomListener(this);
+
+        notificationDateFormatter = new SimpleDateFormat("EEEEE, MMMMM d, yyyy");
+        messageDateFormatter = new SimpleDateFormat("h:mm a");
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
@@ -243,7 +250,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final VCardPanel topPanel = new VCardPanel(jid);
                 mainPanel.add(topPanel, BorderLayout.NORTH);
 
-                final TranscriptWindow window = new TranscriptWindow();
+                final JEditorPane window = new JEditorPane();
+                window.setEditorKit(new HTMLEditorKit());
                 window.setBackground(Color.white);
                 final JScrollPane pane = new JScrollPane(window);
                 pane.getVerticalScrollBar().setBlockIncrement(50);
@@ -267,10 +275,20 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 window.setCaretPosition(0);
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
+                window.setEditable(false);
 
-                final TimerTask transcriptTask = new SwingTimerTask() {
-                    public void doRun() {
+                final StringBuilder builder = new StringBuilder();
+                builder.append("<html><body><table cellpadding=0 cellspacing=0>");
+
+
+                final TimerTask transcriptTask = new TimerTask() {
+                    public void run() {
+                        Date lastPost = null;
+                        String lastPerson = null;
+                        boolean initialized = false;
                         for (HistoryMessage message : list) {
+                            String color = "blue";
+
                             String from = message.getFrom();
                             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
                             String body = message.getBody();
@@ -286,13 +304,52 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                 }
                             }
 
-                            window.insertHistoryMessage(nickname, body, message.getDate());
+                            if (!StringUtils.parseBareAddress(from).equals(SparkManager.getSessionManager().getBareAddress())) {
+                                color = "red";
+                            }
+
+
+                            long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
+                            int diff = DateUtils.getDaysDiff(lastPostTime, message.getDate().getTime());
+                            if (diff != 0) {
+                                if (initialized) {
+                                    builder.append("<tr><td><br></td></tr>");
+                                }
+
+                                builder.append("<tr><td colspan=2><font size=4 color=gray><b><u>" + notificationDateFormatter.format(message.getDate()) + "</u></b></font></td></tr>");
+                                lastPerson = null;
+                                initialized = true;
+                            }
+
+                            String value = "[" + messageDateFormatter.format(message.getDate()) + "]&nbsp;&nbsp;  ";
+
+                            boolean newInsertions = lastPerson == null || !lastPerson.equals(nickname);
+                            if (newInsertions) {
+                                builder.append("<tr valign=top><td colspan=2 nowrap>");
+                                builder.append("<font size=4 color='" + color + "'><b>");
+                                builder.append(nickname);
+                                builder.append("</b></font>");
+                                builder.append("</td></tr>");
+                            }
+
+                            builder.append("<tr valign=top><td align=left nowrap>");
+                            builder.append(value);
+                            builder.append("</td><td align=left>");
+                            builder.append(body);
+
+                            builder.append("</td></tr>");
+
+                            lastPost = message.getDate();
+                            lastPerson = nickname;
                         }
+                        builder.append("</table></body></html>");
 
                         // Handle no history
                         if (transcript.getMessages().size() == 0) {
-                            window.insertNotificationMessage(Res.getString("message.no.history.found"), ChatManager.NOTIFICATION_COLOR);
+                            builder.append("<b>" + Res.getString("message.no.history.found") + "</b>");
                         }
+
+                        window.setText(builder.toString());
                     }
                 };
 
