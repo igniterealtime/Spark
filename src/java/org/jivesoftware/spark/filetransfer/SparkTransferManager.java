@@ -45,7 +45,6 @@ import org.jivesoftware.spark.ui.ImageSelectionPanel;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
@@ -55,11 +54,23 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -83,19 +94,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -669,25 +667,21 @@ public class SparkTransferManager {
      * @param image the image to send.
      * @param room  the ChatRoom of the user you wish to send the image to.
      */
-    public void sendImage(final Image image, final ChatRoom room) {
+    public void sendImage(final BufferedImage image, final ChatRoom room) {
         File tmpDirectory = new File(Spark.getUserSparkHome(), "/tempImages");
         tmpDirectory.mkdirs();
 
         String imageName = "image_" + StringUtils.randomString(2) + ".png";
         final File imageFile = new File(tmpDirectory, imageName);
-        // Write image to system.
 
+        // Write image to system.
         room.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker writeImageThread = new SwingWorker() {
             public Object construct() {
                 try {
                     // Write out file in separate thread.
-                    BufferedImage bi = GraphicUtils.convert(image);
-                    ImageIO.write(bi, "png", imageFile);
-                }
-                catch (InterruptedException e) {
-                    Log.error(e);
+                    ImageIO.write(image, "png", imageFile);
                 }
                 catch (IOException e) {
                     Log.error(e);
@@ -702,7 +696,7 @@ public class SparkTransferManager {
                 room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         };
-        worker.start();
+        writeImageThread.start();
     }
 
     /**
@@ -710,12 +704,12 @@ public class SparkTransferManager {
      *
      * @return the image in the clipboard if found, otherwise null.
      */
-    public static Image getClipboard() {
+    public static BufferedImage getClipboard() {
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                return (Image)t.getTransferData(DataFlavor.imageFlavor);
+                return (BufferedImage)t.getTransferData(DataFlavor.imageFlavor);
             }
         }
         catch (UnsupportedFlavorException e) {
