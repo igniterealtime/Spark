@@ -10,6 +10,9 @@
 
 package org.jivesoftware.spark.ui;
 
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -21,9 +24,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JPanel;
-import javax.swing.event.MouseInputAdapter;
-
 /**
  * Allows for selection of panel images.
  */
@@ -31,7 +31,10 @@ public class ImageSelectionPanel extends JPanel {
     BufferedImage image;
     Rectangle clip;
 
-    public ImageSelectionPanel(BufferedImage image) {
+    public ImageSelectionPanel() {
+    }
+
+    public void setImage(BufferedImage image) {
         this.image = image;
         clip = new Rectangle();
         setBackground(Color.black);
@@ -41,10 +44,14 @@ public class ImageSelectionPanel extends JPanel {
     }
 
     protected void paintComponent(Graphics g) {
+        if (image == null) {
+            return;
+        }
+
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
+                RenderingHints.VALUE_ANTIALIAS_ON);
         int w = getWidth();
         int h = getHeight();
         int imageWidth = image.getWidth();
@@ -70,14 +77,17 @@ public class ImageSelectionPanel extends JPanel {
         return clip;
     }
 
+    public void clear() {
+        image = null;
+    }
+
 }
 
 class Selector extends MouseInputAdapter {
     ImageSelectionPanel selectionPanel;
     Point start;
-    boolean dragging
-    ,
-    isClipSet;
+    boolean dragging,
+            isClipSet;
 
     public Selector(ImageSelectionPanel isp) {
         selectionPanel = isp;

@@ -67,6 +67,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
@@ -111,6 +112,9 @@ public class SparkTransferManager {
     private JFileChooser fc;
     private FileTransferManager transferManager;
     private Map waitMap = new HashMap();
+    private BufferedImage bufferedImage;
+    private ImageSelectionPanel selectionPanel;
+    private Robot robot;
 
     /**
      * Returns the singleton instance of <CODE>SparkTransferManager</CODE>,
@@ -136,6 +140,14 @@ public class SparkTransferManager {
         boolean enabled = Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE);
         if (!enabled) {
             return;
+        }
+
+        try {
+            robot = new Robot();
+            selectionPanel = new ImageSelectionPanel();
+        }
+        catch (AWTException e) {
+            Log.error(e);
         }
 
         // Register Preferences
@@ -424,7 +436,6 @@ public class SparkTransferManager {
             public Object construct() {
                 try {
                     Thread.sleep(1000);
-                    final Robot robot = new Robot();
                     Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
                     return robot.createScreenCapture(area);
                 }
@@ -444,7 +455,7 @@ public class SparkTransferManager {
             }
 
             public void finished() {
-                final BufferedImage bufferedImage = (BufferedImage)get();
+                bufferedImage = (BufferedImage)get();
                 if (bufferedImage == null) {
                     JOptionPane.showMessageDialog(null, Res.getString("title.error"), "Unable to process screenshot.", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -453,11 +464,11 @@ public class SparkTransferManager {
                 final JFrame frame = new JFrame();
                 frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
-
-                final ImageSelectionPanel mainPanel = new ImageSelectionPanel(bufferedImage);
-                mainPanel.addMouseListener(new MouseAdapter() {
+                selectionPanel.setImage(bufferedImage);
+                selectionPanel.validate();
+                selectionPanel.addMouseListener(new MouseAdapter() {
                     public void mouseReleased(MouseEvent e) {
-                        Rectangle clip = mainPanel.getClip();
+                        Rectangle clip = selectionPanel.getClip();
                         BufferedImage newImage = null;
                         try {
                             newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
@@ -466,9 +477,11 @@ public class SparkTransferManager {
 
                         }
 
-
                         if (newImage != null) {
                             sendImage(newImage, room);
+                            newImage = null;
+                            bufferedImage = null;
+                            selectionPanel.clear();
                         }
 
                         frame.dispose();
@@ -482,6 +495,7 @@ public class SparkTransferManager {
                             chatFrame.setVisible(true);
                         }
 
+                        selectionPanel.removeMouseListener(this);
                     }
                 });
 
@@ -504,13 +518,12 @@ public class SparkTransferManager {
 
                 frame.setUndecorated(true);
                 frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
-                frame.getContentPane().add(mainPanel);
+                frame.getContentPane().add(selectionPanel);
 
                 // Determine if full-screen mode is supported directly
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 GraphicsDevice gs = ge.getDefaultScreenDevice();
                 if (gs.isFullScreenSupported()) {
-
                     gs.setFullScreenWindow(frame);
                 }
                 else {
