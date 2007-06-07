@@ -16,6 +16,9 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.JLabel;
@@ -35,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimerTask;
 
 /**
  * Conference Invitation UI.
@@ -52,7 +56,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     private String inviter;
     private String password;
 
-    public GroupChatInvitationUI(String room, String inviter, String password) {
+    public GroupChatInvitationUI(String room, String inviter, String password, String reason) {
         setLayout(new GridBagLayout());
 
         setBackground(new Color(230, 239, 249));
@@ -98,6 +102,11 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
             document.insertString(0, "[" + invitationTime + "] ", styles);
             StyleConstants.setBold(styles, true);
             document.insertString(document.getLength(), nickname + " is inviting you to join a group chat.", styles);
+
+            if (ModelUtil.hasLength(reason)) {
+                StyleConstants.setBold(styles, false);
+                document.insertString(document.getLength(), "\nMessage: " + reason, styles);
+            }
         }
         catch (BadLocationException e) {
             Log.error(e);
@@ -120,10 +129,17 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
      * Action taking when a user clicks on the accept button.
      */
     private void acceptInvitation() {
-        removeUI();
-
+        setVisible(false);
         String name = StringUtils.parseName(room);
         ConferenceUtils.enterRoomOnSameThread(name, room, password);
+
+        final TimerTask removeUITask = new SwingTimerTask() {
+            public void doRun() {
+                removeUI();
+            }
+        };
+
+        TaskEngine.getInstance().schedule(removeUITask, 2000);
     }
 
 
@@ -154,12 +170,13 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
      * Removes this interface from it's parent.
      */
     private void removeUI() {
-        Container par = getParent();
+        final Container par = getParent();
         if (par != null) {
             par.remove(this);
             par.invalidate();
             par.validate();
             par.repaint();
         }
+
     }
 }

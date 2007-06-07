@@ -135,7 +135,16 @@ public class ConferenceServices {
                             }
                         }
 
-                        final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room, inviter, password);
+                        // Make sure the user is not already in the room.
+                        try {
+                            SparkManager.getChatManager().getChatContainer().getChatRoom(room);
+                            return;
+                        }
+                        catch (ChatRoomNotFoundException e) {
+                            // Ignore :)
+                        }
+
+                        final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room, inviter, password, reason);
 
                         String bareJID = StringUtils.parseBareAddress(inviter);
                         try {
