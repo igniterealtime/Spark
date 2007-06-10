@@ -23,11 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -49,6 +44,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -520,16 +520,16 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             if (index != -1) {
                 int[] indexes = contactItemList.getSelectedIndices();
                 boolean selected = false;
-                for(int i=0; i<indexes.length; i++){
+                for (int i = 0; i < indexes.length; i++) {
                     int o = indexes[i];
-                    if(index == o){
+                    if (index == o) {
                         selected = true;
                     }
                 }
 
-                if (!selected){
-                   contactItemList.setSelectedIndex(index);
-                   fireContactItemClicked((ContactItem)contactItemList.getSelectedValue());
+                if (!selected) {
+                    contactItemList.setSelectedIndex(index);
+                    fireContactItemClicked((ContactItem)contactItemList.getSelectedValue());
                 }
             }
 
@@ -654,6 +654,20 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.clearSelection();
     }
 
+    public void removeAllContacts() {
+        // Remove all users from online group.
+        Iterator contactItems = new ArrayList(getContactItems()).iterator();
+        while (contactItems.hasNext()) {
+            ContactItem item = (ContactItem)contactItems.next();
+            removeContactItem(item);
+        }
+
+        // Remove all users from offline group.
+        for (ContactItem item : getOfflineContacts()) {
+            removeOfflineContactItem(item);
+        }
+    }
+
     /**
      * Returns true if the ContactGroup contains available users.
      *
@@ -677,6 +691,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         }
         return false;
+    }
+
+    public Collection<ContactItem> getOfflineContacts() {
+        return new ArrayList<ContactItem>(offlineContacts);
     }
 
     /**

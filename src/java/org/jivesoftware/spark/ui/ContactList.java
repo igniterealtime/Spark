@@ -2073,11 +2073,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         final Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
         while (contactGroups.hasNext()) {
             ContactGroup contactGroup = (ContactGroup)contactGroups.next();
-            Iterator contactItems = new ArrayList(contactGroup.getContactItems()).iterator();
-            while (contactItems.hasNext()) {
-                ContactItem item = (ContactItem)contactItems.next();
-                contactGroup.removeContactItem(item);
-            }
+            contactGroup.removeAllContacts();
         }
 
     }
