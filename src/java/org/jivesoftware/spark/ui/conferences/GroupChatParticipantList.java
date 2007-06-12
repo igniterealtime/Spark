@@ -39,23 +39,6 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -73,6 +56,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such as agents and room information.
@@ -161,6 +161,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         chat.addInvitationRejectionListener(new InvitationRejectionListener() {
             public void invitationDeclined(String jid, String message) {
                 String nickname = userManager.getUserNicknameFromJID(jid);
+
                 userHasLeft(chatRoom, nickname);
 
                 chatRoom.getTranscriptWindow().insertNotificationMessage(nickname + " has rejected the invitation.", ChatManager.NOTIFICATION_COLOR);
@@ -389,6 +390,9 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
 
     private void startChat(ChatRoom groupChat, String groupJID) {
+        String userNickname = StringUtils.parseResource(groupJID);
+        String roomTitle = userNickname + " - " + StringUtils.parseName(groupChat.getRoomname());
+
         String nicknameOfUser = StringUtils.parseResource(groupJID);
         String nickname = groupChat.getNickname();
 
@@ -404,7 +408,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             Log.debug("Could not find chat room - " + groupJID);
 
             // Create new room
-            chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, nicknameOfUser);
+            chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, roomTitle);
             chatManager.getChatContainer().addChatRoom(chatRoom);
         }
 
@@ -579,7 +583,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
                             while (true) {
                                 newNickname = newNickname.trim();
                                 String nick = chat.getNickname();
-                                if(newNickname.equals(nick)){
+                                if (newNickname.equals(nick)) {
                                     //return;
                                 }
                                 try {

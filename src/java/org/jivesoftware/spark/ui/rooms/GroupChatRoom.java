@@ -46,17 +46,6 @@ import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -69,6 +58,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -596,9 +596,11 @@ public final class GroupChatRoom extends ChatRoom {
                 chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(message.getFrom());
             }
             catch (ChatRoomNotFoundException e) {
+                String userNickname = StringUtils.parseResource(message.getFrom());
+                String roomTitle = userNickname + " - " + StringUtils.parseName(getRoomname());
 
                 // Create new room
-                chatRoom = new ChatRoomImpl(message.getFrom(), StringUtils.parseResource(message.getFrom()), message.getFrom());
+                chatRoom = new ChatRoomImpl(message.getFrom(), userNickname, roomTitle);
                 SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
 
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
@@ -1087,7 +1089,7 @@ public final class GroupChatRoom extends ChatRoom {
             roomJIDLabel = new JLabel("<" + getMultiUserChat().getRoom() + ">");
             subjectLabel = new JLabel(getMultiUserChat().getSubject());
 
-         //   add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+            //   add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
             add(roomJIDLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
             add(subjectLabel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
