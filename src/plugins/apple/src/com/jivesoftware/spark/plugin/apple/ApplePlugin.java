@@ -19,11 +19,12 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.spark.Alerter;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -38,6 +39,8 @@ import java.awt.Window;
 import java.awt.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -49,7 +52,7 @@ import javax.swing.JSeparator;
  *
  * @author Andrew Wright
  */
-public class ApplePlugin implements Plugin, Alerter {
+public class ApplePlugin implements Plugin, NativeHandler {
 
     private AppleStatusMenu statusMenu;
     private AppleUtils appleUtils;
@@ -63,7 +66,7 @@ public class ApplePlugin implements Plugin, Alerter {
     public void initialize() {
         if (Spark.isMac()) {
             appleUtils = new AppleUtils();
-            SparkManager.getAlertManager().addAlert(this);
+            SparkManager.getNativeManager().addNativeHandler(this);
 
             handleIdle();
 
@@ -154,7 +157,7 @@ public class ApplePlugin implements Plugin, Alerter {
 
     public void shutdown() {
         if (Spark.isMac()) {
-            SparkManager.getAlertManager().removeAlert(this);
+            SparkManager.getNativeManager().removeNativeHandler(this);
         }
     }
 
@@ -335,6 +338,23 @@ public class ApplePlugin implements Plugin, Alerter {
     }
 
 
+    public boolean openFile(File file) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean launchEmailClient(String to, String subject) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean launchBrowser(String url) {
+        try {
+            BrowserLauncher.openURL(url);
+        }
+        catch (IOException e) {
+            Log.error(e);
+        }
+        return true;
+    }
 }
 
 
