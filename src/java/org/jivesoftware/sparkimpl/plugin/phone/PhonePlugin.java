@@ -238,11 +238,16 @@ public class PhonePlugin implements Plugin {
             }
 
             if (offPhonePresence != null) {
-                // Set user to available when all phone calls are hung up.
+                // Set user to previous presence state when all phone calls are hung up.
+                SparkManager.getSessionManager().changePresence(offPhonePresence);
+
+                offPhonePresence = null;
+            }
+            else {
+                // If no previous state available, set status to Available
                 Presence availablePresence = new Presence(Presence.Type.available, "Available", 1, Presence.Mode.available);
 
                 SparkManager.getSessionManager().changePresence(availablePresence);
-
                 offPhonePresence = null;
             }
         }
