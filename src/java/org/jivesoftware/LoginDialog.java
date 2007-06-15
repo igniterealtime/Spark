@@ -79,6 +79,17 @@ import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
 
+import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Collections;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.Attribute;
+
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
  * for login in registered users into the Spark Server.
@@ -245,9 +256,14 @@ public final class LoginDialog {
             accountNameLabel.setForeground(new Color(106, 127, 146));
             serverNameLabel.setForeground(new Color(106, 127, 146));
 
-            add(headerLabel,
-                    new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+            add(usernameLabel,
+                    new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+            add(usernameField,
+                    new GridBagConstraints(1, 0, 2, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(5, 5, 0, 5), 0, 0));
             add(accountLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -256,42 +272,31 @@ public final class LoginDialog {
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
 
-            add(usernameLabel,
-                    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
-            add(usernameField,
+            add(passwordField,
                     new GridBagConstraints(1, 1, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
-
-            add(passwordField,
-                    new GridBagConstraints(1, 2, 2, 1,
-                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(5, 5, 0, 5), 0, 0));
             add(passwordLabel,
-                    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
 
             // Add Server Field Properties
             add(serverField,
-                    new GridBagConstraints(1, 4, 2, 1,
+                    new GridBagConstraints(1, 2, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
 
             add(serverNameLabel,
-                    new GridBagConstraints(1, 4, 2, 1,
+                    new GridBagConstraints(1, 2, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
 
             add(serverLabel,
-                    new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+                    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
-
-            add(ssoServerLabel,
-                    new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
-
-
+            add(headerLabel,
+                    new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
             add(savePasswordBox,
                     new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
@@ -631,20 +636,19 @@ public final class LoginDialog {
 
         public void useSSO(boolean use) {
             if (use) {
-                usernameField.setVisible(false);
+                usernameField.setVisible(true);
                 passwordField.setVisible(false);
                 savePasswordBox.setVisible(false);
-                usernameLabel.setVisible(false);
+                usernameLabel.setVisible(true);
                 passwordLabel.setVisible(false);
-                serverField.setVisible(false);
-                autoLoginBox.setVisible(false);
-                serverLabel.setVisible(false);
+                serverField.setVisible(true);
+                autoLoginBox.setVisible(true);
+                serverLabel.setVisible(true);
 
                 headerLabel.setVisible(true);
                 accountLabel.setVisible(true);
                 accountNameLabel.setVisible(true);
-                serverNameLabel.setVisible(true);
-                ssoServerLabel.setVisible(true);
+
 
 
                 String server = localPref.getServer();
@@ -653,12 +657,20 @@ public final class LoginDialog {
                     serverField.setText(localPref.getServer());
                 }
 
-                System.setProperty("java.security.krb5.debug", "true");
+                if(localPref.getDebug()) {
+                    System.setProperty("java.security.krb5.debug","true");
+                } else {
+                    System.setProperty("java.security.krb5.debug","false");
+                }
                 System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
                 GSSAPIConfiguration config = new GSSAPIConfiguration();
                 Configuration.setConfiguration(config);
 
+                
+
                 LoginContext lc = null;
+                String princName = localPref.getUsername();
+                String princRealm = null;
                 try {
                     lc = new LoginContext("GetPrincipal");
                     lc.login();
@@ -666,12 +678,13 @@ public final class LoginDialog {
 
 
                     for (Principal p : mySubject.getPrincipals()) {
+                        //TODO: check if principal is a kerberos principal first...
                         String name = p.getName();
                         int indexOne = name.indexOf("@");
                         if (indexOne != -1) {
-                            String realmName = name.substring(0, indexOne);
-                            accountNameLabel.setText(realmName);
-                            usernameField.setText(realmName);
+                            princName = name.substring(0, indexOne);
+                            accountNameLabel.setText(princName);
+                            princRealm = name.substring(indexOne+1);
                         }
                         loginButton.setEnabled(true);
                     }
@@ -679,6 +692,38 @@ public final class LoginDialog {
                 catch (LoginException le) {
                     Log.debug(le.getMessage());
                     useSSO(false);
+                }
+
+                String ssoMethod = localPref.getSSOMethod();
+                if(!ModelUtil.hasLength(ssoMethod)) {
+                    if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                        ssoMethod = "dns";
+                    } else {
+                        ssoMethod = "file";
+                    }
+                }
+
+                String ssoKdc = null;
+                if(ssoMethod.equals("dns")) {
+                    ssoKdc = getDnsKdc(princRealm);
+                    System.setProperty("java.security.krb5.realm",princRealm);
+                    System.setProperty("java.security.krb5.kdc",ssoKdc);
+                } else if(ssoMethod.equals("manual")) {
+                    princRealm = localPref.getSSORealm();
+                    ssoKdc = localPref.getSSOKDC();
+                    System.setProperty("java.security.krb5.realm",princRealm);
+                    System.setProperty("java.security.krb5.kdc",ssoKdc);
+                } else {
+                    //else do nothing, java takes care of it for us. Unset the props if they are set
+                    System.clearProperty("java.security.krb5.realm");
+                    System.clearProperty("java.security.krb5.kdc");
+                }
+
+                String userName = localPref.getUsername();
+                if (ModelUtil.hasLength(userName)) {
+                    usernameField.setText(userName);
+                } else {
+                    usernameField.setText(princName);
                 }
             }
             else {
@@ -696,8 +741,6 @@ public final class LoginDialog {
                 serverNameLabel.setVisible(false);
                 accountNameLabel.setVisible(false);
 
-                System.setProperty("java.security.krb5.debug", "false");
-                System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
                 Configuration.setConfiguration(null);
 
                 validateDialog();
@@ -1098,5 +1141,48 @@ public final class LoginDialog {
         }
     }
 
+    /**
+     * Use DNS to lookup a KDC
+     * @param realm The realm to look up
+     * @return the KDC hostname
+     */
+    private String getDnsKdc(String realm) {
+        //Assumption: the KDC will be found with the SRV record
+        // _kerberos._udp.$realm
+        try {
+            Hashtable env= new Hashtable();
+            env.put("java.naming.factory.initial","com.sun.jndi.dns.DnsContextFactory");
+            DirContext context = new InitialDirContext(env);
+            Attributes dnsLookup = context.getAttributes("_kerberos._udp."+realm, new String[]{"SRV"});
+    
+            ArrayList<Integer> priorities = new ArrayList<Integer>();
+            HashMap<Integer,List> records = new HashMap<Integer,List>();
+            for (Enumeration e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
+                Attribute record = (Attribute)e.nextElement();
+                for (Enumeration e2 = record.getAll() ; e2.hasMoreElements() ; ) {
+                    String sRecord = (String)e2.nextElement();
+                    String [] sRecParts = sRecord.split(" ");
+                    Integer pri = new Integer(sRecParts[0]);
+                    if(priorities.contains(pri)) {
+                        List recs = records.get(pri);
+                        if(recs == null) recs = new ArrayList<String>();
+                        recs.add(sRecord);
+                    } else {
+                        priorities.add(pri);
+                        List recs = new ArrayList<String>();
+                        recs.add(sRecord);
+                        records.put(pri,recs);
+                    }
+                }
+            }
+            Collections.sort(priorities);
+            List l = records.get(priorities.get(0));
+            String toprec = (String)l.get(0);
+            String [] sRecParts = toprec.split(" ");
+            return sRecParts[3];
+        } catch (NamingException e){
+            return "";
+        }
+    }
 
 }

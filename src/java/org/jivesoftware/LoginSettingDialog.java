@@ -37,6 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -87,7 +89,18 @@ public class LoginSettingDialog implements PropertyChangeListener {
     private ProxyPanel proxyPanel;
 
     private JCheckBox useSSOBox = new JCheckBox();
-    private JTextField ssoServerField = new JTextField();
+    private JLabel ssoRealmLabel = new JLabel();
+    private JTextField ssoRealmField = new JTextField();
+    private JLabel ssoKDCLabel = new JLabel();
+    private JTextField ssoKDCField = new JTextField();
+    private JLabel ssoMethodFileLabel = new JLabel();
+    private JRadioButton ssoMethodFileRadio = new JRadioButton();
+    private JLabel ssoMethodDNSLabel = new JLabel();
+    private JRadioButton ssoMethodDNSRadio = new JRadioButton();
+    private JLabel ssoMethodManualLabel = new JLabel();
+    private JRadioButton ssoMethodManualRadio = new JRadioButton();
+    private JLabel ssoMethodLabel = new JLabel();
+    private ButtonGroup ssoMethodRadio = new ButtonGroup();
 
     private JCheckBox debuggerBox = new JCheckBox();
 
@@ -115,6 +128,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         useSSLBox.setSelected(localPreferences.isSSL());
         xmppHostField.setText(localPreferences.getXmppHost());
         resourceField.setText(localPreferences.getResource());
+
         if (localPreferences.getResource() == null) {
             resourceField.setText("spark");
         }
@@ -137,7 +151,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
         ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
         ResourceUtils.resButton(compressionBox, "Use Co&mpression");
-        ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO)");
+        ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO) via GSSAPI");
         ResourceUtils.resButton(debuggerBox, "Start &Debugger on startup");
 
         inputPanel.add(autoDiscoverBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -180,7 +194,12 @@ public class LoginSettingDialog implements PropertyChangeListener {
         titlePanel = new TitlePanel("Advanced Connection Preferences", "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
 
         // Setup SSO Panel
-        ssoPanel.add(useSSOBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        // Load local preferences
+        boolean isSSOEnabled = localPreferences.isSSOEnabled();
+        boolean showAdvSSO = localPreferences.getSSOAdv();
+
+        ssoPanel.add(useSSOBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         final WrappedLabel wrappedLabel = new WrappedLabel();
         String principalName = null;
@@ -190,6 +209,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
         catch (Exception e) {
             // Ignore
         }
+
+
         if (ModelUtil.hasLength(principalName)) {
             wrappedLabel.setText("This will use the Desktop Account for \"" + principalName + "\" to login to the server.");
         }
@@ -198,39 +219,116 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
 
         wrappedLabel.setBackground(Color.white);
-        ssoPanel.add(wrappedLabel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        ssoPanel.add(wrappedLabel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        final JLabel serverLabel = new JLabel("Server:");
-        ssoPanel.add(serverLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        ssoPanel.add(ssoServerField, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        ssoServerField.setEnabled(false);
 
-        // Load local preferences
-        boolean isSSOEnabled = localPreferences.isSSOEnabled();
+
         useSSOBox.setSelected(isSSOEnabled);
-        ssoServerField.setEnabled(isSSOEnabled);
+        ssoMethodFileRadio.setEnabled(isSSOEnabled);
+        ssoMethodDNSRadio.setEnabled(isSSOEnabled);
+        ssoMethodManualRadio.setEnabled(isSSOEnabled);
+        ssoRealmField.setEnabled(isSSOEnabled);
+        ssoKDCField.setEnabled(isSSOEnabled);
+
+        if(showAdvSSO) {
+            ssoMethodFileLabel.setText("Use krb5.conf or krb5.ini:");
+            ssoPanel.add(ssoMethodFileLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            ssoPanel.add(ssoMethodFileRadio, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            ssoMethodRadio.add(ssoMethodFileRadio);
+
+            ssoMethodDNSLabel.setText("Use DNS:");
+            ssoPanel.add(ssoMethodDNSLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            ssoPanel.add(ssoMethodDNSRadio, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            ssoMethodRadio.add(ssoMethodDNSRadio);
+
+            ssoMethodManualLabel.setText("Specify Below:");
+            ssoPanel.add(ssoMethodManualLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            ssoPanel.add(ssoMethodManualRadio, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            ssoMethodRadio.add(ssoMethodManualRadio);
+
+            ssoRealmLabel.setText("    Realm:");
+            ssoPanel.add(ssoRealmLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            ssoPanel.add(ssoRealmField, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+            ssoKDCLabel.setText("    KDC:");
+            ssoPanel.add(ssoKDCLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            ssoPanel.add(ssoKDCField, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        }
+
+
         if (isSSOEnabled) {
-            String server = localPreferences.getServer();
-            if (ModelUtil.hasLength(server)) {
-                ssoServerField.setText(server);
+
+            String method = localPreferences.getSSOMethod();
+            if (ModelUtil.hasLength(method)) {
+                if(method.equals("file")) {
+                    ssoMethodFileRadio.setSelected(true);
+                } else if(method.equals("dns")) {
+                    ssoMethodDNSRadio.setSelected(true);
+                } else if(method.equals("manual")) {
+                    ssoMethodManualRadio.setSelected(true);
+                } //else: do what?
+            } else {
+                //Do some OS detection here...
+                if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                    ssoMethodDNSRadio.setSelected(true);
+                } else {
+                    ssoMethodFileRadio.setSelected(true);
+                }
+            }
+
+            String realm = localPreferences.getSSORealm();
+            if (ModelUtil.hasLength(realm)) {
+                ssoRealmField.setText(realm);
+            }
+            String kdc = localPreferences.getSSOKDC();
+            if (ModelUtil.hasLength(kdc)) {
+                ssoKDCField.setText(kdc);
             }
         }
 
         useSSOBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (useSSOBox.isSelected()) {
-                    ssoServerField.setEnabled(useSSOBox.isSelected());
-                    String server = localPreferences.getServer();
-                    if (ModelUtil.hasLength(server)) {
-                        ssoServerField.setText(server);
+                    ssoMethodFileRadio.setEnabled(useSSOBox.isSelected());
+                    ssoMethodDNSRadio.setEnabled(useSSOBox.isSelected());
+                    ssoMethodManualRadio.setEnabled(useSSOBox.isSelected());
+                    ssoRealmField.setEnabled(useSSOBox.isSelected());
+                    ssoKDCField.setEnabled(useSSOBox.isSelected());
+                    String method = localPreferences.getSSOMethod();
+                    if (ModelUtil.hasLength(method)) {
+                        if(method.equals("file")) {
+                            ssoMethodFileRadio.setSelected(true);
+                        } else if(method.equals("dns")) {
+                            ssoMethodDNSRadio.setSelected(true);
+                        } else if(method.equals("manual")) {
+                            ssoMethodManualRadio.setSelected(true);
+                        } //else: do what?
+                    } else {
+                        //Do some OS detection here...
+                        ssoMethodDNSRadio.setSelected(true);
                     }
-
+                    String realm = localPreferences.getSSORealm();
+                    if (ModelUtil.hasLength(realm)) {
+                        ssoRealmField.setText(realm);
+                    }
+                    String kdc = localPreferences.getSSOKDC();
+                    if (ModelUtil.hasLength(kdc)) {
+                        ssoKDCField.setText(kdc);
+                    }
                     localPreferences.setSSOEnabled(true);
                     localPreferences.setAutoLogin(true);
                 }
                 else {
-                    ssoServerField.setEnabled(false);
-                    ssoServerField.setText("");
+                    ssoMethodFileRadio.setEnabled(false);
+                    ssoMethodFileRadio.setSelected(false);
+                    ssoMethodDNSRadio.setEnabled(false);
+                    ssoMethodDNSRadio.setSelected(false);
+                    ssoMethodManualRadio.setEnabled(false);
+                    ssoMethodManualRadio.setSelected(false);
+                    ssoRealmField.setEnabled(false);
+                    ssoRealmField.setText("");
+                    ssoKDCField.setEnabled(false);
+                    ssoKDCField.setText("");
                     localPreferences.setSSOEnabled(false);
                 }
             }
@@ -262,12 +360,6 @@ public class LoginSettingDialog implements PropertyChangeListener {
         optionsDialog.setVisible(true);
         optionsDialog.toFront();
         optionsDialog.requestFocus();
-
-        String server = ssoServerField.getText();
-        if (ModelUtil.hasLength(server)) {
-            localPreferences.setServer(server);
-        }
-
 
         return true;
     }

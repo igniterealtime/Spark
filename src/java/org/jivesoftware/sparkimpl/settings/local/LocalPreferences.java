@@ -559,6 +559,46 @@ public class LocalPreferences {
         return getBoolean("ssoEnabled", false);
     }
 
+    public void setSSOAdv(boolean enabled) {
+        setBoolean("ssoAdv",enabled);
+    }
+
+    public boolean getSSOAdv() {
+        return getBoolean("ssoAdv",false);
+    }
+
+    public void setSSOMethod(String method) {
+        props.setProperty("ssoMethod",method);
+    }
+
+    public String getSSOMethod() {
+        return props.getProperty("ssoMethod");
+    }
+
+    public void setSSORealm(String realm) {
+        props.setProperty("ssoRealm",realm);
+    }
+
+    public String getSSORealm() {
+        return props.getProperty("ssoRealm");
+    }
+
+    public void setSSOKDC(String kdc) {
+        props.setProperty("ssoKDC",kdc);
+    }
+
+    public String getSSOKDC() {
+        return props.getProperty("ssoKDC");
+    }
+
+    public boolean getDebug() {
+        return getBoolean("debug",false);
+    }
+
+    public void setDebug(boolean debug) {
+        setBoolean("debug",debug);
+    }
+
     public void setDebuggerEnabled(boolean enabled) {
         setBoolean("debuggerEnabled", enabled);
     }
@@ -582,15 +622,15 @@ public class LocalPreferences {
     public int getChatRoomFontSize() {
         return getInt("chatRoomFontSize", 12);
     }
-    
+
     public void setPerisitedChatRoomsClosable(boolean closable) {
-    	setBoolean("perisitedChatRoomsClosable", closable);
+        setBoolean("perisitedChatRoomsClosable", closable);
     }
-    
+
     public boolean arePerisitedChatRoomsClosable() {
-    	return getBoolean("perisitedChatRoomsClosable", true);
+        return getBoolean("perisitedChatRoomsClosable", true);
     }
-    
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
