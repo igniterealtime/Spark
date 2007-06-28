@@ -14,6 +14,7 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -141,6 +142,25 @@ public class SparkTransferManager {
         if (!enabled) {
             return;
         }
+
+        SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+            public void connectionClosed() {
+            }
+
+            public void connectionClosedOnError(Exception e) {
+            }
+
+            public void reconnectingIn(int seconds) {
+            }
+
+            public void reconnectionSuccessful() {
+                // Re-create transfer manager.
+                transferManager = new FileTransferManager(SparkManager.getConnection());
+            }
+
+            public void reconnectionFailed(Exception e) {
+            }
+        });
 
         try {
             robot = new Robot();
