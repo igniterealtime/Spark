@@ -12,6 +12,7 @@ package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -62,7 +63,7 @@ import javax.swing.text.StyledDocument;
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
-public class JinglePlugin implements Plugin, Phone {
+public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
     private JingleManager jingleManager;
 
@@ -137,6 +138,8 @@ public class JinglePlugin implements Plugin, Phone {
 
         // Add Presence listener for better service discovery.
         addPresenceListener();
+
+        SparkManager.getConnection().addConnectionListener(this);
     }
 
 
@@ -295,4 +298,21 @@ public class JinglePlugin implements Plugin, Phone {
     }
 
 
+    public void connectionClosed() {
+    }
+
+    public void connectionClosedOnError(Exception e) {
+    }
+
+    public void reconnectingIn(int seconds) {
+    }
+
+    public void reconnectionSuccessful() {
+        // Add Jingle to discovered items list.
+        SparkManager.addFeature(JINGLE_NAMESPACE);
+    }
+
+    public void reconnectionFailed(Exception e) {
+
+    }
 }
