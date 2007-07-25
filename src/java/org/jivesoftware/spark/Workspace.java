@@ -242,7 +242,6 @@ public class Workspace extends JPanel implements PacketListener {
         // Load all non-presence related items.
         conferences.loadConferenceBookmarks();
         SearchManager.getInstance();
-        PhoneManager.getInstance();
         transcriptPlugin = new ChatTranscriptPlugin();
 
         // Load Broadcast Plugin
