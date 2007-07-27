@@ -542,17 +542,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         fireChatRoomLeft(room);
         room.leaveChatRoom();
 
-        // Setting the tab to be "disabled". Will not actually disable the tab because
-        // that doesn't allow for selection.
-        final int location = indexOfComponent(room);
-        if (location != -1) {
-//            setBackgroundAt(location, Color.GRAY);
-            //          setForegroundAt(location, Color.GRAY);
-            //        setIconAt(location, null);
-        }
-
         final PacketListener listener = (PacketListener)presenceMap.get(room.getRoomname());
-        if (listener != null) {
+        if (listener != null && SparkManager.getConnection().isConnected()) {
             SparkManager.getConnection().removePacketListener(listener);
         }
     }
