@@ -39,6 +39,13 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,13 +63,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -160,7 +160,7 @@ public class VCardManager {
                 while (true) {
                     try {
                         String jid = queue.take();
-                        getVCard(jid);
+                        reloadVCard(jid);
                     }
                     catch (InterruptedException e) {
                         e.printStackTrace();
@@ -398,20 +398,9 @@ public class VCardManager {
                 // Check File system first
                 VCard localVCard = loadFromFileSystem(jid);
                 if (localVCard != null) {
-                    String timestamp = localVCard.getField("timestamp");
-
-                    if (timestamp != null) {
-                        long time = Long.parseLong(timestamp);
-                        long now = System.currentTimeMillis();
-
-                        // Check to see if the file is older than a day.
-                        long day = 1000 * 60 * 60 * 24;
-                        if (now - time < day) {
-                            localVCard.setJabberId(jid);
-                            vcards.put(jid, localVCard);
-                            return localVCard;
-                        }
-                    }
+                    localVCard.setJabberId(jid);
+                    vcards.put(jid, localVCard);
+                    return localVCard;
                 }
 
                 // Otherwise retrieve vCard from server and persist back out.
@@ -538,8 +527,8 @@ public class VCardManager {
 
             String query = getNumbersFromPhone(phoneNumber);
             if ((homePhone != null && homePhone.contains(query)) ||
-                (workPhone != null && workPhone.contains(query)) ||
-                (cellPhone != null && cellPhone.contains(query))) {
+                    (workPhone != null && workPhone.contains(query)) ||
+                    (cellPhone != null && cellPhone.contains(query))) {
                 return vcard;
             }
         }
@@ -632,6 +621,20 @@ public class VCardManager {
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
             VCard vcard = (VCard)provider.parseIQ(parser);
+
+            // Check to see if the file is older 10 minutes. If so, reload.
+            String timestamp = vcard.getField("timestamp");
+            if (timestamp != null) {
+                long time = Long.parseLong(timestamp);
+                long now = System.currentTimeMillis();
+
+
+                long hour = (1000 * 60) * 60;
+                if (now - time > hour) {
+                    addToQueue(jid);
+                }
+            }
+
             vcard.setJabberId(jid);
             vcards.put(jid, vcard);
             return vcard;
