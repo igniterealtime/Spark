@@ -49,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -588,6 +589,10 @@ public class BookmarksUI extends JPanel {
         }
     }
 
+    /**
+     * Returns a list of bookmarks.
+     * @return a Collection of bookmarks.
+     */
     public Collection getBookmarks() {
         try {
             return manager.getBookmarkedConferences();
@@ -595,7 +600,7 @@ public class BookmarksUI extends JPanel {
         catch (XMPPException e) {
             Log.error(e);
         }
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
 }
