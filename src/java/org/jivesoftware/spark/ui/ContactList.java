@@ -85,16 +85,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Map;
-import java.util.HashMap;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -1211,6 +1211,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         fireContactItemClicked(item);
+        activeKeyEvent = null;
     }
 
     public void contactItemDoubleClicked(ContactItem item) {
@@ -1476,13 +1477,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         popup.show(group.getList(), e.getX(), e.getY());
     }
 
-    private void clearSelectionList(ContactItem item) {
+    private void clearSelectionList(ContactItem selectedItem) {
         // Check for null. In certain cases the event triggering the model might
         // not find the selected object.
-        if (item == null) {
+        if (selectedItem == null) {
             return;
         }
-        final ContactGroup owner = getContactGroup(item.getGroupName());
+        
+        final ContactGroup owner = getContactGroup(selectedItem.getGroupName());
         Iterator groups = new ArrayList(groupList).iterator();
         while (groups.hasNext()) {
             ContactGroup contactGroup = (ContactGroup)groups.next();
@@ -1493,7 +1495,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
 
-   private void sendMessages(Collection<ContactItem> items) {
+    private void sendMessages(Collection<ContactItem> items) {
         StringBuffer buf = new StringBuffer();
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
