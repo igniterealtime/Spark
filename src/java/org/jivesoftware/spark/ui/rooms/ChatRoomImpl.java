@@ -77,8 +77,6 @@ public class ChatRoomImpl extends ChatRoom {
     private String participantJID;
     private String participantNickname;
 
-    boolean isOnline = true;
-
     private Presence presence;
 
     private boolean offlineSent;
@@ -367,16 +365,14 @@ public class ChatRoomImpl extends ChatRoom {
                     String time = formatter.format(new Date());
 
                     if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
-                        if (isOnline) {
+                        if (isOnline()) {
                             getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                         }
-                        isOnline = false;
                     }
                     else if (presence.getType() == Presence.Type.available) {
-                        if (!isOnline) {
+                        if (!isOnline()) {
                             getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                         }
-                        isOnline = true;
                     }
                 }
                 else if (packet instanceof Message) {
@@ -654,5 +650,10 @@ public class ChatRoomImpl extends ChatRoom {
             getTranscriptWindow().insertHistoryMessage(nickname, messageBody, messageDate);
         }
 
+    }
+
+    private boolean isOnline() {
+        Presence presence = roster.getPresence(getParticipantJID());
+        return presence.isAvailable();
     }
 }
