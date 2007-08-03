@@ -10,6 +10,8 @@
 
 package org.jivesoftware.spark.util;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
@@ -60,7 +62,7 @@ public class TaskEngine {
             public Thread newThread(Runnable runnable) {
                 // Use our own naming scheme for the threads.
                 Thread thread = new Thread(Thread.currentThread().getThreadGroup(), runnable,
-                    "pool-spark" + threadNumber.getAndIncrement(), 0);
+                        "pool-spark" + threadNumber.getAndIncrement(), 0);
                 // Make workers daemon threads.
                 thread.setDaemon(true);
                 if (thread.getPriority() != Thread.NORM_PRIORITY) {
@@ -222,7 +224,12 @@ public class TaskEngine {
     public void scheduleAtFixedRate(TimerTask task, long delay, long period) {
         TimerTaskWrapper taskWrapper = new TimerTaskWrapper(task);
         wrappedTasks.put(task, taskWrapper);
-        timer.scheduleAtFixedRate(taskWrapper, delay, period);
+        try {
+            timer.scheduleAtFixedRate(taskWrapper, delay, period);
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     /**
@@ -258,7 +265,12 @@ public class TaskEngine {
     public void scheduleAtFixedRate(TimerTask task, Date firstTime, long period) {
         TimerTaskWrapper taskWrapper = new TimerTaskWrapper(task);
         wrappedTasks.put(task, taskWrapper);
-        timer.scheduleAtFixedRate(taskWrapper, firstTime, period);
+        try {
+            timer.scheduleAtFixedRate(taskWrapper, firstTime, period);
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     /**
