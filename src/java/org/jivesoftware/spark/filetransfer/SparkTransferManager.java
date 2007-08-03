@@ -27,6 +27,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -143,6 +144,9 @@ public class SparkTransferManager {
             return;
         }
 
+        // Set Timeout
+        OutgoingFileTransfer.setResponseTimeout((60 * 1000) * 60);
+        
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
             public void connectionClosed() {
             }
@@ -626,6 +630,7 @@ public class SparkTransferManager {
 
         // Create the outgoing file transfer
         final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);
+
 
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
