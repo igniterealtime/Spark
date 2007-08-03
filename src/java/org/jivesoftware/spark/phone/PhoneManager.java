@@ -20,7 +20,6 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
 
 import javax.swing.Action;
@@ -32,7 +31,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -67,13 +65,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     }
 
     private PhoneManager() {
-        final TimerTask task = new TimerTask() {
-            public void run() {
-                 JMFInit.start(false);
-            }
-        };
-
-        TaskEngine.getInstance().submit(task);
+        JMFInit.start(false);
     }
 
     private void addListeners() {
