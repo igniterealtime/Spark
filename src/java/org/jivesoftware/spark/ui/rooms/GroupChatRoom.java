@@ -1076,7 +1076,7 @@ public final class GroupChatRoom extends ChatRoom {
      * An internal UI implementation for display subjects
      * within the conference room.
      */
-    private class SubjectPanel extends JPanel {
+    public class SubjectPanel extends JPanel {
 
         private JLabel iconLabel;
         private JLabel roomJIDLabel;
@@ -1099,6 +1099,19 @@ public final class GroupChatRoom extends ChatRoom {
         public void setSubject(String subject) {
             subjectLabel.setText(subject);
         }
+
+        public void setRoomLabel(String label) {
+            roomJIDLabel.setText(label);
+        }
+    }
+
+    /**
+     * Returns the descriptive panel at the top of the room.
+     *
+     * @return the SubjectPanel.
+     */
+    public SubjectPanel getSubjectPanel() {
+        return subjectPanel;
     }
 
     public Color getColor(String nickname) {
