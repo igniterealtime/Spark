@@ -144,9 +144,6 @@ public class SparkTransferManager {
             return;
         }
 
-        // Set Timeout
-        OutgoingFileTransfer.setResponseTimeout((60 * 1000) * 60);
-        
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
             public void connectionClosed() {
             }

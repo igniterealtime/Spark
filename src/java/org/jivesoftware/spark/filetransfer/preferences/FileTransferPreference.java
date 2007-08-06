@@ -98,7 +98,9 @@ public class FileTransferPreference implements Preference {
             }
 
             pref.setFileTransferTimeout(tout);
-            OutgoingFileTransfer.setResponseTimeout(tout);
+
+            final int timeOutMs = tout * (60 * 1000);
+            OutgoingFileTransfer.setResponseTimeout(timeOutMs);
         }
 
         SettingsManager.saveSettings();

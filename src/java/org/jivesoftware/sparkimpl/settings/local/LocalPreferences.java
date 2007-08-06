@@ -400,7 +400,7 @@ public class LocalPreferences {
     }
 
     public int getFileTransferTimeout() {
-        return Integer.parseInt(props.getProperty("fileTransferTimeout", "1"));
+        return Integer.parseInt(props.getProperty("fileTransferTimeout", "30"));
     }
 
     public void setFileTransferTimeout(int minutes) {
