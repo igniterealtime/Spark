@@ -182,7 +182,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                     ImageIcon imageOnDisk = new ImageIcon(selectedFile.getCanonicalPath());
                     Image avatarImage = imageOnDisk.getImage();
                     if (avatarImage.getHeight(null) > 96 || avatarImage.getWidth(null) > 96) {
-                        avatarImage = avatarImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+                        avatarImage = avatarImage.getScaledInstance(-1, 96, Image.SCALE_SMOOTH);
                     }
                     return avatarImage;
                 }
@@ -194,6 +194,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
             public void finished() {
                 Image avatarImage = (Image)get();
+
+                /*
                 // Check size.
                 long length = GraphicUtils.getBytesFromImage(avatarImage).length * 8;
 
@@ -206,7 +208,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                     JOptionPane.showMessageDialog(parent, Res.getString("message.image.too.large"));
                     return;
                 }
-
+                */
                 setAvatar(new ImageIcon(avatarImage));
                 avatarFile = selectedFile;
             }
