@@ -76,7 +76,7 @@ public class Tasks implements PrivateData {
     public String toXML() {
         StringBuffer buf = new StringBuffer();
         buf.append("<scratchpad xmlns=\"scratchpad:tasks\">");
-        buf.append("<tasks>");
+        buf.append("<tasks showAll=\"" + ScratchPadPlugin.SHOW_ALL_TASKS + "\">");
 
         Iterator iter = getTasks().iterator();
         while (iter.hasNext()) {
@@ -117,6 +117,12 @@ public class Tasks implements PrivateData {
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
+                if (eventType == XmlPullParser.START_TAG && "tasks".equals(parser.getName())) {
+                    String showAll = parser.getAttributeValue("", "showAll");
+                    boolean sAll = new Boolean(showAll);
+                    ScratchPadPlugin.SHOW_ALL_TASKS = sAll;
+                }
+
                 if (eventType == XmlPullParser.START_TAG && "task".equals(parser.getName())) {
                     tasks.addTask(getTask(parser));
                 }

@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import org.jdesktop.swingx.JXDatePicker;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -38,6 +39,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,6 +96,9 @@ public class ScratchPadPlugin implements Plugin {
     private void showTaskList() {
         final JFrame frame = new JFrame("Tasks");
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
+
+        final JXDatePicker datePicker = new org.jdesktop.swingx.JXDatePicker(new Date().getTime());
+
 
         final List<TaskUI> taskList = new ArrayList<TaskUI>();
         final JPanel mainPanel = new JPanel();
@@ -229,6 +235,14 @@ public class ScratchPadPlugin implements Plugin {
             mainPanel.invalidate();
             mainPanel.validate();
             mainPanel.repaint();
+        }
+
+        if (SHOW_ALL_TASKS) {
+            allButton.setSelected(true);
+        }
+        else {
+            activeButton.setSelected(true);
+            showActiveAction.actionPerformed(null);
         }
 
 
