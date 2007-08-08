@@ -10,7 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
-import org.jdesktop.swingx.JXDatePicker;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -39,8 +39,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,6 +89,40 @@ public class ScratchPadPlugin implements Plugin {
                 showTaskList();
             }
         });
+
+        int index = -1;
+        JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+        for (int i = 0; i < commandPanel.getComponentCount(); i++) {
+            if (commandPanel.getComponent(i) instanceof JLabel) {
+                index = i;
+                break;
+            }
+        }
+
+        RolloverButton taskButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+        RolloverButton notesButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
+        taskButton.setToolTipText("View Task List");
+        notesButton.setToolTipText("View Notes");
+
+        taskButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showTaskList();
+            }
+        });
+
+        notesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                retrieveNotes();
+            }
+        });
+
+        // Add To toolbar
+        SparkManager.getWorkspace().getCommandPanel().add(taskButton, index);
+        SparkManager.getWorkspace().getCommandPanel().add(notesButton, index + 1);
+        SparkManager.getWorkspace().getCommandPanel().validate();
+        SparkManager.getWorkspace().getCommandPanel().invalidate();
+        SparkManager.getWorkspace().getCommandPanel().repaint();
+
     }
 
     private void showTaskList() {
@@ -106,13 +138,14 @@ public class ScratchPadPlugin implements Plugin {
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JTextField taskField = new JTextField();
         final JTextField dueDateField = new JTextField();
-       
+
         final JButton addButton = new JButton("Add");
         final JLabel addTaskLabel = new JLabel("Add Task");
         topPanel.setOpaque(false);
 
         topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, .9, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
+
         topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 50, 0));
         topPanel.add(addButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
 
@@ -179,12 +212,7 @@ public class ScratchPadPlugin implements Plugin {
             }
         };
 
-        allButton.addActionListener(showAllAction);
-        activeButton.addActionListener(showActiveAction);
-
-        GraphicUtils.makeSameSize(allButton, activeButton);
-
-        addButton.addActionListener(new ActionListener() {
+        final Action addAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 String taskTitle = taskField.getText();
                 if (!ModelUtil.hasLength(taskTitle)) {
@@ -212,7 +240,7 @@ public class ScratchPadPlugin implements Plugin {
                 }
 
                 taskField.setText("");
-                dueDateField.setText("");
+
 
                 final TaskUI taskUI = new TaskUI(task);
                 mainPanel.add(taskUI);
@@ -221,7 +249,14 @@ public class ScratchPadPlugin implements Plugin {
                 mainPanel.validate();
                 mainPanel.repaint();
             }
-        });
+        };
+
+        allButton.addActionListener(showAllAction);
+        activeButton.addActionListener(showActiveAction);
+
+        GraphicUtils.makeSameSize(allButton, activeButton);
+
+        addButton.addActionListener(addAction);
 
         Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
         Iterator taskIter = tasks.getTasks().iterator();
@@ -242,6 +277,10 @@ public class ScratchPadPlugin implements Plugin {
             activeButton.setSelected(true);
             showActiveAction.actionPerformed(null);
         }
+
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+        dueDateField.setText(formatter.format(now));
 
 
         final JScrollPane pane = new JScrollPane(mainPanel);
@@ -278,6 +317,14 @@ public class ScratchPadPlugin implements Plugin {
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
                 saveAction.actionPerformed(null);
+            }
+        });
+
+        taskField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    addAction.actionPerformed(null);
+                }
             }
         });
 
