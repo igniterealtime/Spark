@@ -97,9 +97,6 @@ public class ScratchPadPlugin implements Plugin {
         final JFrame frame = new JFrame("Tasks");
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
 
-        final JXDatePicker datePicker = new org.jdesktop.swingx.JXDatePicker(new Date().getTime());
-
-
         final List<TaskUI> taskList = new ArrayList<TaskUI>();
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
@@ -109,6 +106,7 @@ public class ScratchPadPlugin implements Plugin {
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JTextField taskField = new JTextField();
         final JTextField dueDateField = new JTextField();
+       
         final JButton addButton = new JButton("Add");
         final JLabel addTaskLabel = new JLabel("Add Task");
         topPanel.setOpaque(false);
