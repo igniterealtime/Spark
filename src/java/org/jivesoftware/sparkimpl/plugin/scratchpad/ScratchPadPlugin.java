@@ -103,7 +103,7 @@ public class ScratchPadPlugin implements Plugin {
 
         topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 15, 0));
+        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 30, 0));
         topPanel.add(addButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         mainPanel.add(topPanel);
@@ -123,6 +123,7 @@ public class ScratchPadPlugin implements Plugin {
         middlePanel.add(activeButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         mainPanel.add(middlePanel);
+        mainPanel.setOpaque(false);
 
         allButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

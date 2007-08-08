@@ -11,8 +11,11 @@
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -33,14 +36,12 @@ public class TaskUI extends JPanel implements ActionListener {
         this.task = task;
 
         box = new JCheckBox();
-        if (task.isCompleted()) {
-            box.setText("<html><body><del>" + task.getTitle() + "</del></body></html>");
-        }
-        else {
-            box.setText(task.getTitle());
-        }
 
         add(box, BorderLayout.CENTER);
+
+        box.setText(task.getTitle());
+
+        updateTitleFont();
 
         box.addActionListener(this);
     }
@@ -49,16 +50,36 @@ public class TaskUI extends JPanel implements ActionListener {
         return box.isSelected();
     }
 
+    public void updateTitleFont() {
+        if (isSelected()) {
+            Font font = box.getFont();
+
+            Map Attribs = font.getAttributes();
+
+            Attribs.put(TextAttribute.STRIKETHROUGH, true);
+
+            box.setFont(new Font(Attribs));
+        }
+        else {
+            Font font = box.getFont();
+
+            Map Attribs = font.getAttributes();
+
+            Attribs.put(TextAttribute.STRIKETHROUGH, false);
+
+            box.setFont(new Font(Attribs));
+        }
+    }
 
     public void actionPerformed(ActionEvent e) {
         if (isSelected()) {
-            box.setText("<del>" + task.getTitle() + "</del>");
             task.setCompleted(true);
         }
         else {
-            box.setText(task.getTitle());
             task.setCompleted(false);
         }
+
+        updateTitleFont();
     }
 
     public Task getTask() {
