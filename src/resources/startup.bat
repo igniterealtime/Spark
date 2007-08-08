@@ -1,6 +1,6 @@
 :run
 if "%1" == "-debug" goto debug
-java -Dappdir=.. -cp ../lib/windows/jmf.jar;../lib/startup.jar;../lib/windows/jdic.jar;../resources;../lib/windows; org.jivesoftware.launcher.Startup
+java -Dappdir=.. -cp ../lib/windows/jmf.jar;../lib/startup.jar;../lib/windows/jdic.jar;../resources;../lib/windows; -Djava.library.path="../lib/windows" org.jivesoftware.launcher.Startup
 goto end
 
 :debug
