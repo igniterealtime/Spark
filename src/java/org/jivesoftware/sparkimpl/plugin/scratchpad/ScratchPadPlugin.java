@@ -10,10 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
-import org.jdesktop.swingx.JXDatePicker;
 import org.jdesktop.swingx.calendar.DateUtils;
-import org.jdesktop.swingx.plaf.LookAndFeelAddons;
-import org.jdesktop.swingx.plaf.JXDatePickerAddon;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -128,6 +125,9 @@ public class ScratchPadPlugin implements Plugin {
         SparkManager.getWorkspace().getCommandPanel().validate();
         SparkManager.getWorkspace().getCommandPanel().invalidate();
         SparkManager.getWorkspace().getCommandPanel().repaint();
+
+        // Start notifications.
+        new TaskNotification();
 
     }
 
