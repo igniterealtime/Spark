@@ -83,6 +83,8 @@ public class Tasks implements PrivateData {
             Task task = (Task)iter.next();
             buf.append("<task>");
             buf.append("<title>").append(task.getTitle()).append("</title>");
+            buf.append("<dueDate>").append(task.getDueDate()).append("</dueDate>");
+            buf.append("<creationDate>").append(task.getCreatedDate()).append("</creationDate>");
             if (task.isCompleted()) {
                 buf.append("<completed>true</completed>");
             }
@@ -139,6 +141,17 @@ public class Tasks implements PrivateData {
             if (eventType == XmlPullParser.START_TAG && "title".equals(parser.getName())) {
                 task.setTitle(parser.nextText());
             }
+
+            if (eventType == XmlPullParser.START_TAG && "dueDate".equals(parser.getName())) {
+                String dueDate = parser.nextText();
+                task.setDueDate(Integer.parseInt(dueDate));
+            }
+
+            if (eventType == XmlPullParser.START_TAG && "creationDate".equals(parser.getName())) {
+                String creationDate = parser.nextText();
+                task.setCreatedDate(Integer.parseInt(creationDate));
+            }
+
             if (eventType == XmlPullParser.START_TAG && "completed".equals(parser.getName())) {
                 String completed = parser.nextText();
                 if (ModelUtil.hasLength(completed)) {

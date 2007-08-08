@@ -20,19 +20,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -48,9 +35,27 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -84,41 +89,85 @@ public class ScratchPadPlugin implements Plugin {
         final JFrame frame = new JFrame("Tasks");
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
 
-        final Map map = new HashMap();
+        final List<TaskUI> taskList = new ArrayList<TaskUI>();
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground(Color.white);
 
-        final RolloverButton addButton = new RolloverButton("Add Task...");
-        addButton.setForeground(Color.gray);
-        mainPanel.add(addButton);
+        final JPanel topPanel = new JPanel(new GridBagLayout());
+        final JTextField taskField = new JTextField();
+        final JTextField dueDateField = new JTextField();
+        final JButton addButton = new JButton("Add");
+        final JLabel addTaskLabel = new JLabel("Add Task");
+        topPanel.setOpaque(false);
+
+        topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 15, 0));
+        topPanel.add(addButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+
+        mainPanel.add(topPanel);
+
+        // Add Selection
+        final JPanel middlePanel = new JPanel(new GridBagLayout());
+        final JLabel showLabel = new JLabel("Show:");
+        final JToggleButton allButton = new JToggleButton("All");
+        final JToggleButton activeButton = new JToggleButton("Active");
+        final ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(allButton);
+        buttonGroup.add(activeButton);
+        middlePanel.setOpaque(false);
+
+        middlePanel.add(showLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        middlePanel.add(allButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        middlePanel.add(activeButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+
+        mainPanel.add(middlePanel);
+
+        allButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
+        activeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
+
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String taskTitle = JOptionPane.showInputDialog(frame, "Enter Task:", "Create Task", JOptionPane.INFORMATION_MESSAGE);
+                String taskTitle = taskField.getText();
                 if (!ModelUtil.hasLength(taskTitle)) {
                     return;
                 }
                 Task task = new Task();
                 task.setTitle(taskTitle);
-                final JCheckBox box = new JCheckBox();
-                box.setOpaque(false);
-                box.setText(task.getTitle());
-                mainPanel.add(box);
-                map.put(box, task);
+
+                // Set creation time.
+                final Date creationDate = new Date();
+                task.setCreatedDate(creationDate.getTime());
+
+                // Set due date.
+                String dueDate = dueDateField.getText();
+                if (ModelUtil.hasLength(dueDate)) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("MM/DD/yyyy");
+                    try {
+                        Date date = formatter.parse(dueDate);
+                        task.setDueDate(date.getTime());
+                    }
+                    catch (ParseException e1) {
+
+                    }
+
+                }
+
+                final TaskUI taskUI = new TaskUI(task);
+                mainPanel.add(taskUI);
+                taskList.add(taskUI);
                 mainPanel.invalidate();
                 mainPanel.validate();
                 mainPanel.repaint();
-
-                box.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        mainPanel.remove(box);
-                        map.remove(box);
-                        mainPanel.invalidate();
-                        mainPanel.validate();
-                        mainPanel.repaint();
-                    }
-                });
-
             }
         });
 
@@ -126,29 +175,12 @@ public class ScratchPadPlugin implements Plugin {
         Iterator taskIter = tasks.getTasks().iterator();
         while (taskIter.hasNext()) {
             Task task = (Task)taskIter.next();
-            if (task.isCompleted()) {
-                continue;
-            }
-            final JCheckBox box = new JCheckBox();
-            box.setOpaque(false);
-            box.setText(task.getTitle());
-            mainPanel.add(box);
-            map.put(box, task);
+            final TaskUI taskUI = new TaskUI(task);
+            mainPanel.add(taskUI);
+            taskList.add(taskUI);
             mainPanel.invalidate();
             mainPanel.validate();
             mainPanel.repaint();
-
-            box.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    mainPanel.remove(box);
-
-                    Task task = (Task)map.get(box);
-                    task.setCompleted(true);
-                    mainPanel.invalidate();
-                    mainPanel.validate();
-                    mainPanel.repaint();
-                }
-            });
         }
 
 
@@ -163,9 +195,8 @@ public class ScratchPadPlugin implements Plugin {
             public void actionPerformed(ActionEvent actionEvent) {
                 // Save it.
                 Tasks tasks = new Tasks();
-                Iterator iter = map.values().iterator();
-                while (iter.hasNext()) {
-                    Task task = (Task)iter.next();
+                for (TaskUI ui : taskList) {
+                    Task task = ui.getTask();
                     tasks.addTask(task);
                 }
 
@@ -304,12 +335,12 @@ public class ScratchPadPlugin implements Plugin {
     }
 
     private class DragWindowAdapter extends MouseAdapter
-            implements MouseMotionListener {
+        implements MouseMotionListener {
         private JFrame m_msgWnd;
         private int m_mousePrevX,
-                m_mousePrevY;
+            m_mousePrevY;
         private int m_frameX,
-                m_frameY;
+            m_frameY;
 
         public DragWindowAdapter(JFrame mw) {
             m_msgWnd = mw;

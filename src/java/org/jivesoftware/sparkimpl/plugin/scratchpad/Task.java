@@ -17,6 +17,8 @@ public class Task {
 
     private String title;
     private boolean isCompleted;
+    private long dueDate = -1;
+    private long createdDate;
 
     public String getTitle() {
         return title;
@@ -32,6 +34,22 @@ public class Task {
 
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public long getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(long dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setCreatedDate(long date){
+        this.createdDate = date;
+    }
+
+    public long getCreatedDate(){
+        return createdDate;
     }
 
 
