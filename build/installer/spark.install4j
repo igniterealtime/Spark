@@ -51,7 +51,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true" arguments="" allowVMPassthroughParameters="true" preferredVM="client">
+      <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true &quot;-Djava.library.path=${launcher:sys.launcherDirectory}\lib\windows&quot;" arguments="" allowVMPassthroughParameters="true" preferredVM="client">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
           <directory location="resources" failOnError="false" />
