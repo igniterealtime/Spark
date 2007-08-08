@@ -144,12 +144,12 @@ public class Tasks implements PrivateData {
 
             if (eventType == XmlPullParser.START_TAG && "dueDate".equals(parser.getName())) {
                 String dueDate = parser.nextText();
-                task.setDueDate(Integer.parseInt(dueDate));
+                task.setDueDate(Long.parseLong(dueDate));
             }
 
             if (eventType == XmlPullParser.START_TAG && "creationDate".equals(parser.getName())) {
                 String creationDate = parser.nextText();
-                task.setCreatedDate(Integer.parseInt(creationDate));
+                task.setCreatedDate(Long.parseLong(creationDate));
             }
 
             if (eventType == XmlPullParser.START_TAG && "completed".equals(parser.getName())) {

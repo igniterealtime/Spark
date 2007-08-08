@@ -23,6 +23,9 @@ import org.jivesoftware.spark.util.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -63,6 +66,8 @@ import javax.swing.KeyStroke;
 public class ScratchPadPlugin implements Plugin {
     private ContactList contactList;
 
+    public static boolean SHOW_ALL_TASKS = true;
+
 
     public void initialize() {
         contactList = SparkManager.getWorkspace().getContactList();
@@ -94,6 +99,7 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground(Color.white);
 
+
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JTextField taskField = new JTextField();
         final JTextField dueDateField = new JTextField();
@@ -101,11 +107,12 @@ public class ScratchPadPlugin implements Plugin {
         final JLabel addTaskLabel = new JLabel("Add Task");
         topPanel.setOpaque(false);
 
-        topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-        topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 30, 0));
-        topPanel.add(addButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, .9, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
+        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 50, 0));
+        topPanel.add(addButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
 
+        topPanel.add(new JLabel("Use mm/dd/yy"), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         mainPanel.add(topPanel);
 
         // Add Selection
@@ -123,18 +130,55 @@ public class ScratchPadPlugin implements Plugin {
         middlePanel.add(activeButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         mainPanel.add(middlePanel);
-        mainPanel.setOpaque(false);
+        mainPanel.setBackground(Color.white);
 
-        allButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        final JPanel titlePanel = new JPanel(new BorderLayout()) {
+            public void paintComponent(Graphics g) {
+                Color startColor = Color.white;
+                Color endColor = new Color(198, 211, 247);
+
+                Graphics2D g2 = (Graphics2D)g;
+
+                int w = getWidth();
+                int h = getHeight();
+
+                GradientPaint gradient = new GradientPaint(0, 0, startColor, w, h, endColor, true);
+                g2.setPaint(gradient);
+                g2.fillRect(0, 0, w, h);
             }
-        });
 
-        activeButton.addActionListener(new ActionListener() {
+        };
+        final JLabel taskLabel = new JLabel("Due   ");
+        taskLabel.setFont(taskLabel.getFont().deriveFont(Font.BOLD));
+        titlePanel.add(taskLabel, BorderLayout.EAST);
+        mainPanel.add(titlePanel);
+
+        Action showAllAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-            }
-        });
+                for (TaskUI ui : taskList) {
+                    ui.setVisible(true);
+                }
 
+                SHOW_ALL_TASKS = true;
+            }
+        };
+
+        Action showActiveAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                for (TaskUI ui : taskList) {
+                    if (ui.isSelected()) {
+                        ui.setVisible(false);
+                    }
+                }
+
+                SHOW_ALL_TASKS = false;
+            }
+        };
+
+        allButton.addActionListener(showAllAction);
+        activeButton.addActionListener(showActiveAction);
+
+        GraphicUtils.makeSameSize(allButton, activeButton);
 
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -152,7 +196,7 @@ public class ScratchPadPlugin implements Plugin {
                 // Set due date.
                 String dueDate = dueDateField.getText();
                 if (ModelUtil.hasLength(dueDate)) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("MM/DD/yyyy");
+                    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
                     try {
                         Date date = formatter.parse(dueDate);
                         task.setDueDate(date.getTime());
@@ -162,6 +206,9 @@ public class ScratchPadPlugin implements Plugin {
                     }
 
                 }
+
+                taskField.setText("");
+                dueDateField.setText("");
 
                 final TaskUI taskUI = new TaskUI(task);
                 mainPanel.add(taskUI);
