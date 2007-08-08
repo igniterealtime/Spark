@@ -10,6 +10,12 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import org.jdesktop.swingx.calendar.DateUtils;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,10 +25,6 @@ import java.awt.font.TextAttribute;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  *
@@ -57,7 +59,9 @@ public class TaskUI extends JPanel implements ActionListener {
             dueLabel.setText(theDate);
         }
 
-        if (dueDate < new Date().getTime()) {
+        int diff = DateUtils.getDaysDiff(dueDate, new Date().getTime());
+
+        if (diff > 0){
             dueLabel.setForeground(Color.red);
         }
 

@@ -10,6 +10,10 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import org.jdesktop.swingx.JXDatePicker;
+import org.jdesktop.swingx.calendar.DateUtils;
+import org.jdesktop.swingx.plaf.LookAndFeelAddons;
+import org.jdesktop.swingx.plaf.JXDatePickerAddon;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -20,6 +24,21 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,21 +65,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-
 /**
  *
  */
@@ -68,6 +72,8 @@ public class ScratchPadPlugin implements Plugin {
     private ContactList contactList;
 
     public static boolean SHOW_ALL_TASKS = true;
+
+    private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
 
 
     public void initialize() {
@@ -147,7 +153,7 @@ public class ScratchPadPlugin implements Plugin {
         topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
 
         topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 50, 0));
-        topPanel.add(addButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
+        topPanel.add(addButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
 
         topPanel.add(new JLabel("Use mm/dd/yy"), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         mainPanel.add(topPanel);
@@ -228,7 +234,7 @@ public class ScratchPadPlugin implements Plugin {
                 // Set due date.
                 String dueDate = dueDateField.getText();
                 if (ModelUtil.hasLength(dueDate)) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+
                     try {
                         Date date = formatter.parse(dueDate);
                         task.setDueDate(date.getTime());
@@ -278,9 +284,9 @@ public class ScratchPadPlugin implements Plugin {
             showActiveAction.actionPerformed(null);
         }
 
-        Date now = new Date();
+        long tomorrow = DateUtils.addDays(new Date().getTime(), 1);
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
-        dueDateField.setText(formatter.format(now));
+        dueDateField.setText(formatter.format(new Date(tomorrow)));
 
 
         final JScrollPane pane = new JScrollPane(mainPanel);
@@ -442,12 +448,12 @@ public class ScratchPadPlugin implements Plugin {
     }
 
     private class DragWindowAdapter extends MouseAdapter
-        implements MouseMotionListener {
+            implements MouseMotionListener {
         private JFrame m_msgWnd;
         private int m_mousePrevX,
-            m_mousePrevY;
+                m_mousePrevY;
         private int m_frameX,
-            m_frameY;
+                m_frameY;
 
         public DragWindowAdapter(JFrame mw) {
             m_msgWnd = mw;

@@ -274,6 +274,7 @@ public class SparkRes {
     public static final String ACCEPT_INVITE_IMAGE = "ACCEPT_INVITE_IMAGE";
     public static final String REJECT_INVITE_IMAGE = "REJECT_INVITE_IMAGE";
     public static final String INVITE_MORE_IMAGE = "INVITE_MORE_IMAGE";
+    public static final String CALENDAR_IMAGE = "CALENDAR_IMAGE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
