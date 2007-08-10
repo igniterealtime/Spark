@@ -1,0 +1,12 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>Linux plugin for Spark IM Client</name>
+    <version>1.0</version>
+    <author>Derek DeMoro</author>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <email>derek@jivesoftware.com</email>
+    <description>Adds Linux specific functionallity.</description>
+    <class>org.jivesoftware.spark.plugins.transfersettings.FileTransferSettingsPlugin</class>
+    <minSparkVersion>2.5.0</minSparkVersion>
+</plugin>
+
