@@ -1,7 +1,7 @@
 <project name="Linux Plugin" default="jar" basedir="..">
 
     <property name="plug.dir" value="${basedir}"/>
-    <property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
+    <property name="plug.lib.dir" value="${plug.dir}/build/lib/dist"/>
 
     <property name="classes.dir" value="${basedir}/build/classes"/>
 
@@ -17,6 +17,7 @@
 
     <path id="lib.classpath">
         <fileset dir="${spark.libs.dir}" includes="**/*.jar, **/*.zip"/>
+        <fileset dir="${plug.lib.dir}" includes="**/*.jar, **/*.zip"/>
         <fileset dir="${spark.home}/build/lib/dist" includes="**/*.jar, **/*.zip"/>
         <fileset dir="${spark.home}/build/lib/dist/windows" includes="**/*.jar"/>
     </path>
@@ -25,9 +26,11 @@
         <delete file="${jar.file}"/>
         <delete dir="${classes.dir}"/>
         <delete dir="${target.dir}"/>
+        <delete file="${plug.dir}/linuxplugin.jar" />
     </target>
 
-     <target name="resources">
+    <!-- resources =================================================================================== -->
+    <target name="resources">
         <copy todir="${classes.dir}">
             <fileset dir="${resources.dir}">
                 <include name="**/*"/>
@@ -38,15 +41,14 @@
         </copy>
     </target>
 
-
     <target name="compile" description="Compiles plugin source">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${java.dir}"
                destdir="${classes.dir}"
                classpathref="lib.classpath"
-               source="1.5"
+               source="1.4"
                debug="true"
-               target="1.5"/>
+               target="1.4"/>
         <copy todir="${classes.dir}">
             <fileset dir="${java.dir}" includes="**/*.png"/>
             <fileset dir="${java.dir}" includes="**/*.gif"/>
@@ -55,27 +57,26 @@
         </copy>
     </target>
 
-    <target name="jar" depends="clean, resources, compile" description="Makes a plugin jar">
+    <target name="jar" depends="clean,resources, compile" description="Makes a plugin jar">
         <mkdir dir="${target.dir}"/>
         <mkdir dir="${target.lib.dir}"/>
 
+        <copy todir="${target.lib.dir}">
+            <fileset file="${plug.lib.dir}/lib" includes="**/*"/>
+        </copy>
 
         <copy todir="${target.dir}">
             <fileset file="${plug.dir}/plugin.xml"/>
         </copy>
 
-         <copy todir="${target.dir}">
-            <fileset dir="${plug.dir}">
-                <include name="**/*.html"/>
-                <include name="**/*.txt"/>
-            </fileset>
-        </copy>
-
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
+        <zip zipfile="${plug.dir}/linuxplugin.jar" basedir="${target.dir}"/>
 
+        <copy todir="${spark.home}/src/commercial">
+            <fileset file="${plug.dir}/linuxplugin.jar" />
+        </copy>
 
-        <zip zipfile="${target.dir}/transferguard.jar" basedir="${target.dir}"/>
     </target>
 
 </project>

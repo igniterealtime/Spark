@@ -5,8 +5,8 @@
     <author>Derek DeMoro</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>derek@jivesoftware.com</email>
-    <description>Adds Linux specific functionallity.</description>
-    <class>org.jivesoftware.spark.plugins.transfersettings.FileTransferSettingsPlugin</class>
+    <description>Adds Linux specific functionality.</description>
+    <class>org.jivesoftware.spark.plugins.LinuxPlugin</class>
     <minSparkVersion>2.5.0</minSparkVersion>
 </plugin>
 
