@@ -88,6 +88,9 @@ public final class LinuxSystemTray implements ActionListener, MainWindowListener
      * Creates a new instance of notifications.
      */
     public LinuxSystemTray() {
+        if(Spark.isWindows() || Spark.isMac()){
+            return;
+        }
         setupNotificationDialog();
 
         // Handle tray image.
