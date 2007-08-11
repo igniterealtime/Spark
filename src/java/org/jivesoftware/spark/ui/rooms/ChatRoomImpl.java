@@ -365,7 +365,7 @@ public class ChatRoomImpl extends ChatRoom {
                     String time = formatter.format(new Date());
 
                     if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
-                        if (isOnline()) {
+                        if (!isOnline()) {
                             getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                         }
                     }
