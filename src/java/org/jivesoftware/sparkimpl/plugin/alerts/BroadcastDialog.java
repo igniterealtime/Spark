@@ -19,6 +19,16 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.ModelUtil;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -30,15 +40,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 /**
  * Allows for better selective broadcasting.
@@ -196,6 +197,10 @@ public class BroadcastDialog extends JPanel {
         }
 
         String text = messageBox.getText();
+        if (!ModelUtil.hasLength(text)) {
+            return;
+        }
+
         for (String jid : jids) {
             final Message message = new Message();
             message.setTo(jid);
