@@ -27,7 +27,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
-import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -49,7 +48,6 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage;
@@ -57,7 +55,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -72,6 +69,8 @@ import javax.swing.text.StyledDocument;
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -106,17 +105,18 @@ import java.util.Map;
  */
 public class SparkTransferManager {
 
-    private List listeners = new ArrayList();
+    private List<FileTransferListener> listeners = new ArrayList<FileTransferListener>();
     private File defaultDirectory;
 
     private static SparkTransferManager singleton;
     private static final Object LOCK = new Object();
-    private JFileChooser fc;
+
     private FileTransferManager transferManager;
     private Map waitMap = new HashMap();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
+
 
     /**
      * Returns the singleton instance of <CODE>SparkTransferManager</CODE>,
@@ -300,20 +300,21 @@ public class SparkTransferManager {
 
     public void sendFileTo(ContactItem item) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        getFileChooser().setDialogTitle(Res.getString("title.select.file.to.send"));
-        int ok = getFileChooser().showOpenDialog(contactList);
-        if (ok != JFileChooser.APPROVE_OPTION) {
+
+        FileDialog fileChooser = getFileChooser(SparkManager.getMainWindow(), Res.getString("title.select.file.to.send"));
+        fileChooser.show();
+
+        if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
             return;
         }
 
-        File[] files = getFileChooser().getSelectedFiles();
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
-            if (file.exists()) {
-                defaultDirectory = file.getParentFile();
-                sendFile(file, item.getJID());
-            }
+        File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
+
+        if (file.exists()) {
+            defaultDirectory = file.getParentFile();
+            sendFile(file, item.getJID());
         }
+
     }
 
     private void addSendFileButton() {
@@ -395,31 +396,21 @@ public class SparkTransferManager {
                             }
 
                             public void finished() {
-                                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                                ChatRoomImpl chatRoom = (ChatRoomImpl)room;
 
-                                getFileChooser().setDialogTitle(Res.getString("title.select.file.to.send"));
-                                getFileChooser().setMultiSelectionEnabled(true);
-                                int ok = getFileChooser().showOpenDialog(roomImpl);
-                                if (ok != JFileChooser.APPROVE_OPTION) {
+                                FileDialog fileChooser = getFileChooser(SparkManager.getChatManager().getChatContainer().getChatFrame(), Res.getString("title.select.file.to.send"));
+                                fileChooser.show();
+
+                                if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
                                     return;
                                 }
 
-                                File[] file = getFileChooser().getSelectedFiles();
-                                if (file == null || file.length == 0) {
-                                    return;
+                                File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
+
+                                if (file.exists()) {
+                                    defaultDirectory = file.getParentFile();
+                                    sendFile(file, chatRoom.getParticipantJID());
                                 }
-
-
-                                final int no = file.length;
-                                for (int i = 0; i < no; i++) {
-                                    File sendFile = file[i];
-
-                                    if (sendFile.exists()) {
-                                        defaultDirectory = sendFile.getParentFile();
-                                        sendFile(sendFile, roomImpl.getParticipantJID());
-                                    }
-                                }
-
 
                             }
                         };
@@ -786,16 +777,8 @@ public class SparkTransferManager {
         return false;
     }
 
-    private JFileChooser getFileChooser() {
-        if (fc == null) {
-            fc = new JFileChooser(defaultDirectory);
-            fc.setMultiSelectionEnabled(true);
-            if (Spark.isWindows()) {
-                fc.setFileSystemView(new WindowsFileSystemView());
-            }
-
-            fc.setApproveButtonText(Res.getString("button.send"));
-        }
-        return fc;
+    private FileDialog getFileChooser(Frame parent, String title) {
+        FileDialog dialog = new FileDialog(parent, title, FileDialog.LOAD);
+        return dialog;
     }
 }
