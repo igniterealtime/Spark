@@ -35,19 +35,21 @@ import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.GTalkTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.ICQTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.XMPPTransport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -139,6 +141,14 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 else if (entityName.startsWith("icq.")) {
                     ICQTransport icq = new ICQTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), icq);
+                }
+                else if (entityName.startsWith("gtalk.")) {
+                    GTalkTransport gtalk = new GTalkTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), gtalk);
+                }
+                else if (entityName.startsWith("xmpp.")) {
+                    XMPPTransport xmppTransport = new XMPPTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), xmppTransport);
                 }
             }
         }
