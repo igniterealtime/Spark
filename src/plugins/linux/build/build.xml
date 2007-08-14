@@ -1,4 +1,4 @@
-<project name="Linux Plugin" default="jar" basedir="..">
+<project name="System Tray Plugin" default="jar" basedir="..">
 
     <property name="plug.dir" value="${basedir}"/>
     <property name="plug.lib.dir" value="${plug.dir}/build/lib/dist"/>
