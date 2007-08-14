@@ -1,12 +1,12 @@
 <!-- Define your plugins -->
 <plugin>
-    <name>Linux plugin for Spark IM Client</name>
+    <name>Notification and System Tray Plugin for Spark IM</name>
     <version>1.0</version>
     <author>Derek DeMoro</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>derek@jivesoftware.com</email>
-    <description>Adds Linux specific functionality.</description>
-    <class>org.jivesoftware.spark.plugins.LinuxPlugin</class>
+    <description>Adds System Tray functionality.</description>
+    <class>org.jivesoftware.spark.plugins.SystemTrayPlugin</class>
     <minSparkVersion>2.5.0</minSparkVersion>
 </plugin>
 
