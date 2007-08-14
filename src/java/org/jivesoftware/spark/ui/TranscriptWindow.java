@@ -367,7 +367,10 @@ public class TranscriptWindow extends ChatArea {
             String value = "";
 
             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
-            int diff = DateUtils.getDaysDiff(lastPostTime, date.getTime());
+            long lastPostStartOfDay = DateUtils.startOfDayInMillis(lastPostTime);
+            long newPostStartOfDay = DateUtils.startOfDayInMillis(date.getTime());
+
+            int diff = DateUtils.getDaysDiff(lastPostStartOfDay, newPostStartOfDay);
             if (diff != 0) {
                 insertCustomText(notificationDateFormatter.format(date), true, true, Color.BLACK);
             }
