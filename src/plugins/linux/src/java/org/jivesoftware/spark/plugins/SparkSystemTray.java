@@ -60,7 +60,7 @@ import javax.swing.JScrollPane;
  * Handles tray icon operations inside of Spark. Use to display incoming chat requests, incoming messages
  * and general notifications.
  */
-public final class LinuxSystemTray implements ActionListener, MainWindowListener {
+public final class SparkSystemTray implements ActionListener, MainWindowListener {
     private SystemTray systemTray;
     private TrayIcon trayIcon;
     private JPopupMenu notificationDialog;
@@ -87,10 +87,11 @@ public final class LinuxSystemTray implements ActionListener, MainWindowListener
     /**
      * Creates a new instance of notifications.
      */
-    public LinuxSystemTray() {
-        if(Spark.isWindows() || Spark.isMac()){
+    public SparkSystemTray() {
+        if(Spark.isMac()){
             return;
         }
+        
         setupNotificationDialog();
 
         // Handle tray image.

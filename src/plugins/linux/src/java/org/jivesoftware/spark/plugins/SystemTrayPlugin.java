@@ -13,11 +13,11 @@ import org.jivesoftware.spark.plugin.Plugin;
 /**
  *
  */
-public class LinuxPlugin implements Plugin {
+public class SystemTrayPlugin implements Plugin {
 
     public void initialize() {
         // Add System Tray
-        new LinuxSystemTray();
+        new SparkSystemTray();
     }
 
     public void shutdown() {
