@@ -26,7 +26,7 @@
         <delete file="${jar.file}"/>
         <delete dir="${classes.dir}"/>
         <delete dir="${target.dir}"/>
-        <delete file="${plug.dir}/linuxplugin.jar" />
+        <delete file="${plug.dir}/systemtray.jar" />
     </target>
 
     <!-- resources =================================================================================== -->
@@ -71,10 +71,10 @@
 
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
-        <zip zipfile="${plug.dir}/linuxplugin.jar" basedir="${target.dir}"/>
+        <zip zipfile="${plug.dir}/systemtray.jar" basedir="${target.dir}"/>
 
         <copy todir="${spark.home}/src/commercial">
-            <fileset file="${plug.dir}/linuxplugin.jar" />
+            <fileset file="${plug.dir}/systemtray.jar" />
         </copy>
 
     </target>
