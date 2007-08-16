@@ -19,6 +19,7 @@ import org.jivesoftware.smackx.jingle.listeners.JingleSessionStateListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
@@ -374,6 +375,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
+        
         if (jingleSession instanceof OutgoingJingleSession) {
             if (established && mediaReceived) {
                 final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
@@ -383,10 +385,16 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
                 showCallEndedState("Session closed due to " + string);
             }
         }
+        if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
+            PhoneManager.setUsingMediaLocator(false);
+        }
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
         showCallEndedState("Voice chat ended due: " + xmppException.getMessage());
+        if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
+            PhoneManager.setUsingMediaLocator(false);
+        }                
     }
 
 

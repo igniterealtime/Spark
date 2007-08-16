@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.jingle.media.PayloadType;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.smackx.packet.JingleError;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.util.SwingTimerTask;
@@ -285,6 +286,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
     }
 
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
+
         established = true;
         mediaReceivedTask = new SwingTimerTask() {
             public void doRun() {
@@ -317,10 +319,16 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         } else {
             showCallEndedState("Voice chat ended: " + string);
         }
+        if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
+            PhoneManager.setUsingMediaLocator(false);
+        }
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
         showCallEndedState("Voice chat ended due an error: " + xmppException.getMessage());
+        if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
+            PhoneManager.setUsingMediaLocator(false);
+        }        
     }
 
     public void closing() {

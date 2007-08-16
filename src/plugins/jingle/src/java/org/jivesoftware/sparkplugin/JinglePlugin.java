@@ -101,7 +101,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
 
                 // if running on Windows use Direct Sound for better performance
-                String locator = Spark.isWindows() && !Spark.isVista() ? "dsound://" : "javasound://";
+                String locator = Spark.isWindows() ? "dsound://" : "javasound://";
 
                 MultiMediaManager jingleMediaManager = new MultiMediaManager();
                 jingleMediaManager.addMediaManager(new JmfMediaManager(locator));
@@ -120,10 +120,9 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
 
                 if (transportManager instanceof BridgedTransportManager) {
-                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
-                }
-                else if (transportManager instanceof ICETransportManager) {
-                    jingleManager.addCreationListener((ICETransportManager)transportManager);
+                    jingleManager.addCreationListener((BridgedTransportManager) transportManager);
+                } else if (transportManager instanceof ICETransportManager) {
+                    jingleManager.addCreationListener((ICETransportManager) transportManager);
                 }
 
                 return true;
@@ -191,8 +190,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 // Get the discovered items of the queried XMPP entity
                 supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
                 jingleFeature.put(jid, supportsJingle);
-            }
-            else {
+            } else {
                 jingleFeature.put(jid, false);
                 supportsJingle = false;
             }
@@ -217,6 +215,14 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
 
     public void placeCall(String jid) {
+
+        // cancel call request if no Media Locator available
+        if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
+            return;
+        }
+
+        PhoneManager.setUsingMediaLocator(true);
+
         jid = SparkManager.getUserManager().getFullJID(jid);
 
         ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jid));
@@ -236,7 +242,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         }
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         OutgoingCall outgoingCall = new OutgoingCall();
@@ -265,14 +271,18 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     public void uninstall() {
     }
 
-
     /**
      * Notify user that a new incoming jingle request has been receieved.
      *
      * @param request the <code>JingleSessionRequest</code>.
      */
     private void incomingJingleSession(JingleSessionRequest request) {
-        new IncomingCall(request);
+        if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
+            request.reject();
+        } else {
+            PhoneManager.setUsingMediaLocator(true);
+            new IncomingCall(request);
+        }
     }
 
     /**
@@ -282,7 +292,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         // Check presence changes
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+                Presence presence = (Presence) packet;
                 if (!presence.isAvailable()) {
                     String from = presence.getFrom();
                     if (ModelUtil.hasLength(from)) {
