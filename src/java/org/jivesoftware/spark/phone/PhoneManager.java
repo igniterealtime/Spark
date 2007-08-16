@@ -21,10 +21,12 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
+import org.jivesoftware.Spark;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
+import javax.media.MediaLocator;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -43,6 +45,12 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
     private List<Phone> phones = new CopyOnWriteArrayList<Phone>();
     private List<String> currentCalls = new ArrayList<String>();
+    // Static Media Locator
+    static private MediaLocator mediaLocator = null;
+    // Static Media Locator Preference
+    static private boolean useStaticLocator = false;
+    // Static using MediaLocator
+    static private boolean usingMediaLocator = false;
 
     /**
      * Returns the singleton instance of <CODE>PhoneManager</CODE>,
@@ -66,6 +74,9 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
     private PhoneManager() {
         JMFInit.start(false);
+        if (Spark.isVista() || Spark.isLinux()) {
+            setUseStaticLocator(true);
+        }
     }
 
     private void addListeners() {
@@ -93,7 +104,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
     public void chatRoomOpened(final ChatRoom room) {
         if (!phones.isEmpty() && room instanceof ChatRoomImpl) {
-            final ChatRoomImpl chatRoomImpl = (ChatRoomImpl)room;
+            final ChatRoomImpl chatRoomImpl = (ChatRoomImpl) room;
             final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24));
             dialButton.setToolTipText(Res.getString("tooltip.place.voice.call"));
 
@@ -152,7 +163,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
                     };
                     worker.start();
 
-
                 }
             });
         }
@@ -177,7 +187,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     public void poppingUp(Object object, final JPopupMenu popup) {
         if (!phones.isEmpty()) {
             if (object instanceof ContactItem) {
-                final ContactItem contactItem = (ContactItem)object;
+                final ContactItem contactItem = (ContactItem) object;
                 final List<Action> actions = new ArrayList<Action>();
 
                 SwingWorker worker = new SwingWorker() {
@@ -253,5 +263,37 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         }
 
         return number;
+    }
+
+    public static MediaLocator getMediaLocator(String locator) {
+        MediaLocator auxLocator;
+
+        if (useStaticLocator) {
+            if (mediaLocator == null) {
+                mediaLocator = new MediaLocator(locator);
+            }
+            auxLocator = mediaLocator;
+            //usingMediaLocator=true;
+        } else {
+            auxLocator = new MediaLocator(locator);
+        }
+
+        return auxLocator;
+    }
+
+    public static boolean isUsingMediaLocator() {
+        return usingMediaLocator;
+    }
+
+    public static void setUsingMediaLocator(boolean usingMediaLocator) {
+        PhoneManager.usingMediaLocator = usingMediaLocator;
+    }
+
+    public static boolean isUseStaticLocator() {
+        return useStaticLocator;
+    }
+
+    public static void setUseStaticLocator(boolean useStaticLocator) {
+        PhoneManager.useStaticLocator = useStaticLocator;
     }
 }
