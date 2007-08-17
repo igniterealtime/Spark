@@ -545,11 +545,12 @@ public class PluginManager implements MainWindowListener {
         String name = URLFileSystem.getName(url);
         File pluginDownload = new File(PluginManager.PLUGINS_DIRECTORY, name);
 
-        classLoader.addPlugin(pluginDownload);
+        ((PluginClassLoader)getParentClassLoader()).addPlugin(pluginDownload);
+        
         Plugin pluginClass = loadPublicPlugin(pluginDownload);
+
         Log.debug("Trying to initialize " + pluginClass);
         pluginClass.initialize();
-
     }
 
     /**
