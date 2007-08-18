@@ -18,12 +18,13 @@ import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Registration;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
 
 import java.util.Collection;
@@ -83,6 +84,17 @@ public class TransportUtils {
         return null;
     }
 
+    /**
+     * Returns true if the jid is from a gateway.
+     * @param jid the jid.
+     * @return true if the jid is from a gateway.
+     */
+    public static boolean isFromGateway(String jid) {
+        jid = StringUtils.parseBareAddress(jid);
+        String serviceName = StringUtils.parseServer(jid);
+        return transports.containsKey(serviceName);
+    }
+
     public static void addTransport(String serviceName, Transport transport) {
         transports.put(serviceName, transport);
     }
@@ -99,10 +111,10 @@ public class TransportUtils {
      * @return true if the user is registered with the transport.
      */
     public static boolean isRegistered(XMPPConnection con, Transport transport) {
-        if(!con.isConnected()){
+        if (!con.isConnected()) {
             return false;
         }
-        
+
         ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(con);
         try {
             DiscoverInfo info = discoveryManager.discoverInfo(transport.getServiceName());

@@ -42,14 +42,7 @@ import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -58,6 +51,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 
 /**
@@ -120,9 +121,10 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
 
                 if (transportManager instanceof BridgedTransportManager) {
-                    jingleManager.addCreationListener((BridgedTransportManager) transportManager);
-                } else if (transportManager instanceof ICETransportManager) {
-                    jingleManager.addCreationListener((ICETransportManager) transportManager);
+                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
+                }
+                else if (transportManager instanceof ICETransportManager) {
+                    jingleManager.addCreationListener((ICETransportManager)transportManager);
                 }
 
                 return true;
@@ -165,7 +167,8 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
 
     public Collection<Action> getPhoneActions(final String jid) {
-        if (jingleManager == null) {
+        // Do not even disco gateway clients.
+        if (TransportUtils.isFromGateway(jid) || jingleManager == null) {
             return Collections.emptyList();
         }
 
@@ -190,7 +193,8 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 // Get the discovered items of the queried XMPP entity
                 supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
                 jingleFeature.put(jid, supportsJingle);
-            } else {
+            }
+            else {
                 jingleFeature.put(jid, false);
                 supportsJingle = false;
             }
@@ -242,7 +246,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         }
 
         TranscriptWindow transcriptWindow = room.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
+        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
         OutgoingCall outgoingCall = new OutgoingCall();
@@ -279,7 +283,8 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     private void incomingJingleSession(JingleSessionRequest request) {
         if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
             request.reject();
-        } else {
+        }
+        else {
             PhoneManager.setUsingMediaLocator(true);
             new IncomingCall(request);
         }
@@ -292,7 +297,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         // Check presence changes
         SparkManager.getConnection().addPacketListener(new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence) packet;
+                Presence presence = (Presence)packet;
                 if (!presence.isAvailable()) {
                     String from = presence.getFrom();
                     if (ModelUtil.hasLength(from)) {
