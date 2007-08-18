@@ -139,7 +139,7 @@ public final class SessionManager implements ConnectionListener {
     public void connectionClosedOnError(final Exception ex) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Log.error("Connection closed on error.", ex);
+                Log.debug("Connection closed on error.: "+ ex.getMessage());
             }
         });
     }
@@ -148,7 +148,7 @@ public final class SessionManager implements ConnectionListener {
      * Notify agent that the connection has been closed.
      */
     public void connectionClosed() {
-        connectionClosedOnError(null);
+       
     }
 
     /**
