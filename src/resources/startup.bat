@@ -1,6 +1,11 @@
 :run
 if "%1" == "-debug" goto debug
+if "%1" == "-noconsole" goto noconsole
 java -Dappdir=.. -cp ../lib/windows/jmf.jar;../lib/startup.jar;../lib/windows/jdic.jar;../resources;../lib/windows; -Djava.library.path="../lib/windows" org.jivesoftware.launcher.Startup
+goto end
+
+:noconsole
+javaw -Dappdir=.. -cp ../lib/windows/jmf.jar;../lib/startup.jar;../lib/windows/jdic.jar;../resources;../lib/windows; -Djava.library.path="../lib/windows" org.jivesoftware.launcher.Startup
 goto end
 
 :debug
