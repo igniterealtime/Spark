@@ -640,7 +640,7 @@ public class VCardManager {
             return vcard;
         }
         catch (Exception e) {
-            Log.error("Unable to load vCard for " + jid, e);
+            Log.warning("Unable to load vCard for " + jid, e);
         }
 
         return null;
