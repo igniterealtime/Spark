@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
@@ -23,8 +24,11 @@ import java.util.logging.SimpleFormatter;
  * the Agent application.
  */
 public class Log {
-    private static File LOG_FILE;
-    private static java.util.logging.Logger LOGGER;
+    private static File ERROR_LOG_FILE;
+    private static java.util.logging.Logger ERROR_LOGGER;
+
+    private static Logger WARNING_LOGGER;
+    private static File WARNING_LOG_FILE;
 
     private Log() {
         // Do not allow initialization
@@ -35,18 +39,25 @@ public class Log {
             Spark.getLogDirectory().mkdirs();
         }
 
-        LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
+        ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
+        WARNING_LOG_FILE = new File(Spark.getLogDirectory(), "warn.log");
 
 
         try {
             // Create an appending file handler
             boolean append = true;
-            FileHandler handler = new FileHandler(LOG_FILE.getCanonicalPath(), append);
-            handler.setFormatter(new SimpleFormatter());
+            FileHandler errorHandler = new FileHandler(ERROR_LOG_FILE.getCanonicalPath(), append);
+            errorHandler.setFormatter(new SimpleFormatter());
+
+            FileHandler warnHandler = new FileHandler(WARNING_LOG_FILE.getCanonicalPath(), append);
+            warnHandler.setFormatter(new SimpleFormatter());
 
             // Add to the desired logger
-            LOGGER = java.util.logging.Logger.getAnonymousLogger();
-            LOGGER.addHandler(handler);
+            ERROR_LOGGER = java.util.logging.Logger.getAnonymousLogger();
+            ERROR_LOGGER.addHandler(errorHandler);
+
+            WARNING_LOGGER = Logger.getAnonymousLogger();
+            WARNING_LOGGER.addHandler(warnHandler);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -60,7 +71,7 @@ public class Log {
      * @param ex      the exception being thrown.
      */
     public static void error(String message, Throwable ex) {
-        LOGGER.log(Level.SEVERE, message, ex);
+        ERROR_LOGGER.log(Level.SEVERE, message, ex);
     }
 
     /**
@@ -69,7 +80,7 @@ public class Log {
      * @param ex the exception being thrown.
      */
     public static void error(Throwable ex) {
-        LOGGER.log(Level.SEVERE, "", ex);
+        ERROR_LOGGER.log(Level.SEVERE, "", ex);
     }
 
     /**
@@ -79,11 +90,11 @@ public class Log {
      * @param ex      the exception.
      */
     public static void warning(String message, Throwable ex) {
-        ex.printStackTrace();
+        WARNING_LOGGER.log(Level.WARNING, message, ex);
     }
 
     public static void warning(String message) {
-        LOGGER.log(Level.WARNING, message);
+        WARNING_LOGGER.log(Level.WARNING, message);
     }
 
     /**
@@ -92,7 +103,7 @@ public class Log {
      * @param message a message to append to log file.
      */
     public static void error(String message) {
-        LOGGER.log(Level.SEVERE, message);
+        ERROR_LOGGER.log(Level.SEVERE, message);
     }
 
     /**
@@ -105,7 +116,7 @@ public class Log {
      */
     public static void debug(String message) {
         if (System.getProperty("debug.mode") != null) {
-            LOGGER.info(message);
+            ERROR_LOGGER.info(message);
         }
     }
 
