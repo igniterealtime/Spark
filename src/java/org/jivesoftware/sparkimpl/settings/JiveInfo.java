@@ -17,11 +17,11 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "2.5.5";
+        return "2.5.6";
     }
 
     public static String getBuildNumber() {
-        return "2.5.5";
+        return "2.5.6";
     }
 
     public static String getOS() {
