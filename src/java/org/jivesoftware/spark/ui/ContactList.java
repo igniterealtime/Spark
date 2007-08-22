@@ -695,19 +695,22 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                         // Now check to see if groups have been modified or removed. This is used
                         // to check if Contact Groups have been renamed or removed.
-                        final Set<String> groupSet = new HashSet<String>();
+                        final Set<String> userGroupSet = new HashSet<String>();
                         jids = addresses.iterator();
                         while (jids.hasNext()) {
                             jid = (String)jids.next();
                             rosterEntry = roster.getEntry(jid);
 
+                            boolean unfiled = true;
                             for (RosterGroup g : rosterEntry.getGroups()) {
-                                groupSet.add(g.getName());
+                                userGroupSet.add(g.getName());
+                                unfiled = false;
                             }
 
                             for (ContactGroup group : new ArrayList<ContactGroup>(getContactGroups())) {
-                                if (group.getContactItemByJID(jid) != null && group != unfiledGroup && group != offlineGroup) {
-                                    if (!groupSet.contains(group.getGroupName())) {
+                                ContactItem itemFound = group.getContactItemByJID(jid);
+                                if (itemFound != null && !unfiled && group != unfiledGroup && group != offlineGroup) {
+                                    if (!userGroupSet.contains(group.getGroupName())) {
                                         removeContactGroup(group);
                                     }
                                 }
