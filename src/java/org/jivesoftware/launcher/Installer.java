@@ -10,30 +10,34 @@
 
 package org.jivesoftware.launcher;
 
-import com.install4j.api.InstallAction;
-import com.install4j.api.InstallerWizardContext;
-import com.install4j.api.ProgressInterface;
-import com.install4j.api.UserCanceledException;
+
+import com.install4j.api.actions.InstallAction;
+import com.install4j.api.context.Context;
+import com.install4j.api.context.InstallerContext;
+import com.install4j.api.context.UserCanceledException;
+import com.install4j.api.windows.RegistryRoot;
 import com.install4j.api.windows.WinRegistry;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * The installer class is used by the Install4j Installer to setup registry entries
  * during the setup process.
  */
-public class Installer extends InstallAction {
+public class Installer implements InstallAction {
 
-    private InstallerWizardContext context;
+    private InstallerContext context;
 
     public int getPercentOfTotalInstallation() {
         return 0;
     }
 
 
-    public boolean performAction(InstallerWizardContext installerWizardContext, ProgressInterface progressInterface) throws UserCanceledException {
-        context = installerWizardContext;
+    public void init(Context context) {
+    }
+
+    public boolean install(InstallerContext installerContext) throws UserCanceledException {
+        context = installerContext;
 
         final String osName = System.getProperty("os.name").toLowerCase();
         boolean isWindows = osName.startsWith("windows");
@@ -42,24 +46,45 @@ public class Installer extends InstallAction {
             return true;
         }
 
-        addSparkToStartup(installerWizardContext.getInstallationDirectory());
+        final File sparkDirectory;
+        String sparkPath = "";
+        try {
+            String executable = installerContext.getMediaName();
+
+            sparkDirectory = new File(installerContext.getInstallationDirectory(), executable);
+            sparkPath = sparkDirectory.getCanonicalPath();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (sparkPath != null && sparkPath.length() > 0) {
+            // Add Spark to startup
+            addSparkToStartup(sparkPath);
+
+            // Add Spark XMPP:URI mapping
+            setURI(sparkPath);
+        }
+
+
         return true;
+    }
+
+    public void rollback(InstallerContext installerContext) {
+        WinRegistry.deleteValue(RegistryRoot.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark");
     }
 
     /**
      * Adds Spark to the users registry.
      *
-     * @param dir the installation directory of Spark.
+     * @param sparkPath the canonical path to spark.
      */
-    public void addSparkToStartup(File dir) {
-        final File sparkDirectory = new File(dir, "Spark.exe");
+    public void addSparkToStartup(String sparkPath) {
         try {
-            final String sparkPath = sparkDirectory.getCanonicalPath();
-            WinRegistry.setValue(WinRegistry.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", sparkPath);
-
-            setURI(sparkPath);
+            WinRegistry.setValue(RegistryRoot.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", sparkPath);
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -70,18 +95,18 @@ public class Installer extends InstallAction {
      * @param path the installation directory of spark.
      */
     private void setURI(String path) {
-        boolean exists = WinRegistry.keyExists(WinRegistry.HKEY_CLASSES_ROOT, "xmpp");
+        boolean exists = WinRegistry.keyExists(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp");
         if (exists) {
         }
         //   JOptionPane.showConfirmDialog(null, "Another application is currently registered to handle XMPP instant messaging. Make Spark the default XMPP instant messaging client?", "Confirmation",         }
-        WinRegistry.deleteKey(WinRegistry.HKEY_CLASSES_ROOT, "xmpp", true);
+        WinRegistry.deleteKey(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp", true);
 
-        WinRegistry.createKey(WinRegistry.HKEY_CLASSES_ROOT, "xmpp");
-        WinRegistry.setValue(WinRegistry.HKEY_CLASSES_ROOT, "xmpp", "", "URL:XMPP Address");
-        WinRegistry.setValue(WinRegistry.HKEY_CLASSES_ROOT, "xmpp", "URL Protocol", "");
+        WinRegistry.createKey(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp");
+        WinRegistry.setValue(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp", "", "URL:XMPP Address");
+        WinRegistry.setValue(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp", "URL Protocol", "");
 
-        WinRegistry.createKey(WinRegistry.HKEY_CLASSES_ROOT, "xmpp\\shell\\open\\command");
-        WinRegistry.setValue(WinRegistry.HKEY_CLASSES_ROOT, "xmpp\\shell\\open\\command", "", path + " %1");
+        WinRegistry.createKey(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp\\shell\\open\\command");
+        WinRegistry.setValue(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp\\shell\\open\\command", "", path + " %1");
     }
 
 
