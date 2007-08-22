@@ -50,7 +50,7 @@ public class NotificationsUI extends JPanel {
         onlineNotificationBox = new JCheckBox("Notify when a user comes online.");
         add(onlineNotificationBox);
 
-        betaCheckBox = new JCheckBox("Check for Beta Updates");
+        betaCheckBox = new JCheckBox( Res.getString("menuitem.check.for.updates"));
         add(betaCheckBox);
     }
 

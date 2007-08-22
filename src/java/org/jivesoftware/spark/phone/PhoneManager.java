@@ -204,7 +204,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
                     public void finished() {
 
                         if (actions.size() > 0) {
-                            final JMenu dialMenu = new JMenu("Dial");
+                            final JMenu dialMenu = new JMenu(Res.getString("title.dial.phone"));
                             dialMenu.setIcon(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_16x16));
 
                             for (Action action : actions) {

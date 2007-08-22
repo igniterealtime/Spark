@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.filetransfer.preferences;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
@@ -43,7 +44,7 @@ public class FileTransferPreference implements Preference {
     }
 
     public String getTitle() {
-        return "File Transfer Preferences";
+        return Res.getString("title.file.transfer.preferences");
     }
 
     public Icon getIcon() {
@@ -55,7 +56,7 @@ public class FileTransferPreference implements Preference {
     }
 
     public String getListName() {
-        return "File Transfer";
+        return Res.getString("title.file.transfer");
     }
 
     public String getNamespace() {
