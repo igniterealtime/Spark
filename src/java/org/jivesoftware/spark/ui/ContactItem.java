@@ -13,11 +13,11 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
@@ -30,13 +30,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -46,6 +39,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 /**
  * Represent a single contact within the <code>ContactList</code>.
@@ -82,7 +82,7 @@ public class ContactItem extends JPanel {
     public ContactItem(String nickname, String fullyQualifiedJID) {
         setLayout(new GridBagLayout());
 
-          // Set Default Font
+        // Set Default Font
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         fontSize = pref.getContactListFontSize();
 
@@ -319,7 +319,12 @@ public class ContactItem extends JPanel {
                         icon = VCardManager.scale(icon);
                         if (icon != null && icon.getIconWidth() != -1) {
                             BufferedImage image = GraphicUtils.convert(icon.getImage());
-                            ImageIO.write(image, "PNG", imageFile);
+                            if (image == null) {
+                                Log.warning("Unable to write out avatar for " + getJID());
+                            }
+                            else {
+                                ImageIO.write(image, "PNG", imageFile);
+                            }
                         }
                     }
                 }
@@ -387,7 +392,7 @@ public class ContactItem extends JPanel {
 
             RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
