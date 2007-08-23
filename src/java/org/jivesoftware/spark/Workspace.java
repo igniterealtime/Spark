@@ -89,7 +89,6 @@ public class Workspace extends JPanel implements PacketListener {
 
     private static Workspace singleton;
     private static final Object LOCK = new Object();
-    private List<Message> offlineMessages = new ArrayList<Message>();
 
     private JPanel cardPanel;
     private CardLayout cardLayout;
@@ -265,19 +264,6 @@ public class Workspace extends JPanel implements PacketListener {
             }
         }, 2000);
 
-        // Loads offline messages after a 1000 second delay.
-        final TimerTask offlineTask = new SwingTimerTask() {
-            public void doRun() {
-                for (Message offlineMessage : offlineMessages) {
-                    handleOfflineMessage(offlineMessage);
-                }
-
-                offlineMessages.clear();
-            }
-        };
-
-        TaskEngine.getInstance().schedule(offlineTask, 10000);
-
         // Check URI Mappings
         SparkManager.getChatManager().handleURIMapping(Spark.ARGUMENTS);
     }
@@ -352,7 +338,7 @@ public class Workspace extends JPanel implements PacketListener {
             DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
 
             if (offlineInformation != null && (Message.Type.chat == message.getType() || Message.Type.normal == message.getType())) {
-                offlineMessages.add(message);
+                handleOfflineMessage(message);
             }
 
             // Check for anonymous user.
