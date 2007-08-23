@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.0.5" transformSequenceNumber="1">
-  <directoryPresets config="../../target/classes/org/jivesoftware/launcher" />
+<install4j version="4.0.6" transformSequenceNumber="1">
+  <directoryPresets config="../../target/build/lib" />
   <application name="${compiler:APP_NAME}" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="${compiler:APP_SHORT_NAME}" publisher="${compiler:PUBLISHER}" publisherWeb="${compiler:PUBLISHER_URL}" version="${compiler:VERSION_MAJOR}.${compiler:VERSION_MINOR}.${compiler:VERSION_REVISION}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -93,7 +93,9 @@
     </launcher>
   </launchers>
   <installerGui installerType="1" suggestPreviousProgramGroup="true" addOnAppId="" suggestPreviousLocations="true" allowUnattended="true" allowConsole="true" useCustomInstallerHeaderImage="true" customInstallerHeaderImage="../../src/resources/images/spark-60x60.png" useCustomUninstallerHeaderImage="true" customUninstallerHeaderImage="../../src/resources/images/spark-60x60.png" customSize="false" customWidth="500" customHeight="390" useCustomIcon="true" customIcnsFile="../../src/resources/images/message.icns" customPngIcon16File="../../src/resources/images/spark-16x16.png" customPngIcon32File="../../src/resources/images/spark-32x32.png" customIcoFile="../../src/resources/images/spark.ico" vmParameters="" watermark="false" resizable="true" suppressProgressDialog="false">
-    <customCode useInstalledFiles="false" />
+    <customCode useInstalledFiles="false">
+      <archive location="../../target/build/lib/startup.jar" />
+    </customCode>
     <installerScreens>
       <screen name="" id="22" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
         <serializedBean>
@@ -263,27 +265,6 @@
         <condition />
         <validation />
         <actions>
-          <action name="" id="72" beanClass="com.install4j.runtime.beans.actions.registry.SetRegistryValueAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.registry.SetRegistryValueAction">
-                  <void property="keyName">
-                    <string>Software\\Microsoft\\Windows\\CurrentVersion\\Run</string>
-                  </void>
-                  <void property="registryRoot">
-                    <object class="com.install4j.api.windows.RegistryRoot" field="HKEY_CURRENT_USER" />
-                  </void>
-                  <void property="value">
-                    <string>${installer:sys.installationDir}${compiler:APP_SHORT_NAME}</string>
-                  </void>
-                  <void property="valueName">
-                    <string>Spark</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-          </action>
           <action name="" id="41" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -295,6 +276,14 @@
               </java>
             </serializedBean>
             <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
+          </action>
+          <action name="" id="83" beanClass="org.jivesoftware.launcher.Installer" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="org.jivesoftware.launcher.Installer" />
+              </java>
+            </serializedBean>
+            <condition />
           </action>
         </actions>
         <formComponents>

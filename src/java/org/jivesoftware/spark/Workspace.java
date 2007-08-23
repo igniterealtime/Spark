@@ -12,6 +12,7 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
+import org.jivesoftware.Spark;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketFilter;
@@ -24,7 +25,6 @@ import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
-import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -277,6 +277,9 @@ public class Workspace extends JPanel implements PacketListener {
         };
 
         TaskEngine.getInstance().schedule(offlineTask, 10000);
+
+        // Check URI Mappings
+        SparkManager.getChatManager().handleURIMapping(Spark.ARGUMENTS);
     }
 
 

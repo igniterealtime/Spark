@@ -20,6 +20,8 @@ import com.install4j.api.windows.WinRegistry;
 
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
 /**
  * The installer class is used by the Install4j Installer to setup registry entries
  * during the setup process.
@@ -49,9 +51,7 @@ public class Installer implements InstallAction {
         final File sparkDirectory;
         String sparkPath = "";
         try {
-            String executable = installerContext.getMediaName();
-
-            sparkDirectory = new File(installerContext.getInstallationDirectory(), executable);
+            sparkDirectory = new File(installerContext.getInstallationDirectory(), "Spark.exe");
             sparkPath = sparkDirectory.getCanonicalPath();
 
         }

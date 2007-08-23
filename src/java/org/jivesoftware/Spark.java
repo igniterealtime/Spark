@@ -13,7 +13,6 @@ package org.jivesoftware;
 import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
 import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -42,7 +41,7 @@ public final class Spark {
 
     private static final String USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
 
-    private static String argument;
+    public static String ARGUMENTS;
 
     private static File RESOURCE_DIRECTORY;
     private static File BIN_DIRECTORY;
@@ -214,18 +213,18 @@ public final class Spark {
      *         will be returned.
      */
     public static String getArgumentValue(String argumentName) {
-        if (argument == null) {
+        if (ARGUMENTS == null) {
             return null;
         }
 
         String arg = argumentName + "=";
 
-        int index = argument.indexOf(arg);
+        int index = ARGUMENTS.indexOf(arg);
         if (index == -1) {
             return null;
         }
 
-        String value = argument.substring(index + arg.length());
+        String value = ARGUMENTS.substring(index + arg.length());
         int index2 = value.indexOf("&");
         if (index2 != -1) {
             // Must be the last argument
@@ -237,7 +236,7 @@ public final class Spark {
     }
 
     public void setArgument(String arguments) {
-        argument = arguments;
+        ARGUMENTS = arguments;
     }
 
     /**
