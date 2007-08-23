@@ -801,6 +801,10 @@ public class ChatManager implements MessageEventNotificationListener {
      * @param arguments the arguments passed into Spark.
      */
     public void handleURIMapping(String arguments) {
+        if(arguments == null){
+            return;
+        }
+        
         if (arguments.indexOf("xmpp") == -1) {
             return;
         }
