@@ -13,6 +13,7 @@ package org.jivesoftware.spark.util;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +22,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 
 /**
  * <code>URLFileSystem</code> class handles some of the most common
@@ -577,6 +579,40 @@ public class URLFileSystem {
             }
         }
         return null;
+    }
+
+    /**
+     * Allows for the copying of entire directories/sub-dirs and their files.
+     *
+     * @param src the root directory to copy.
+     * @param dst the destination directory.
+     * @throws IOException thrown if there is an issue copying over the files.
+     */
+    public static void copyDir(File src, File dst) throws IOException {
+        // Create the destination directory
+        dst.mkdirs();
+
+        // Loop through the files and directories in the source directory and copy them
+        File[] files = src.listFiles();
+        for (int i = 0; i < files.length; ++i) {
+            if (files[i].isFile()) {
+                copyFile(files[i], new File(dst, files[i].getName()));
+            }
+            else if (files[i].isDirectory()) {
+                copyDir(files[i], new File(dst, files[i].getName()));
+            }
+        }
+    }
+
+    private static void copyFile(File src, File dst) throws IOException {
+        FileChannel in = new FileInputStream(src).getChannel();
+        FileChannel out = new FileOutputStream(dst).getChannel();
+
+        // Fast and efficient way to copy a file
+        in.transferTo(0, in.size(), out);
+
+        in.close();
+        out.close();
     }
 
 
