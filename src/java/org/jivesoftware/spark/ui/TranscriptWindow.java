@@ -430,7 +430,7 @@ public class TranscriptWindow extends ChatArea {
         try {
             SimpleDateFormat formatter;
 
-            File defaultSaveFile = new File(Spark.getUserSparkHome() + "/" + fileName);
+            File defaultSaveFile = new File(Spark.getSparkUserHome() + "/" + fileName);
             final JFileChooser fileChooser = new JFileChooser(defaultSaveFile);
             fileChooser.setSelectedFile(defaultSaveFile);
 

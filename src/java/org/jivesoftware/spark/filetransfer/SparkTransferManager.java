@@ -694,7 +694,7 @@ public class SparkTransferManager {
      * @param room  the ChatRoom of the user you wish to send the image to.
      */
     public void sendImage(final BufferedImage image, final ChatRoom room) {
-        File tmpDirectory = new File(Spark.getUserSparkHome(), "/tempImages");
+        File tmpDirectory = new File(Spark.getSparkUserHome(), "/tempImages");
         tmpDirectory.mkdirs();
 
         String imageName = "image_" + StringUtils.randomString(2) + ".png";

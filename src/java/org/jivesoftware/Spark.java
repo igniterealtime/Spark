@@ -37,8 +37,6 @@ import java.io.IOException;
  */
 public final class Spark {
 
-    private static final String USER_HOME = System.getProperties().getProperty("user.home");
-
     private static final String USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
 
     public static String ARGUMENTS;
@@ -285,30 +283,25 @@ public final class Spark {
      *
      * @return Directory name depending on Operating System.
      */
-    public static String getUserConf() {
+    private static String getUserConf() {
         if (isLinux()) {
             return ".Spark";
         }
+        else if(isWindows()){
+            return "Spark";
+        }
+        
         return "Spark";
     }
 
-    /**
-     * Returns the User specific directory for this Spark instance. The user home is where all user specific
-     * files are placed.
-     *
-     * @return the user home;
-     */
-    public static String getUserHome() {
-        return USER_HOME;
-    }
-
+   
     /**
      * Returns the Spark directory for the current user (user.home). The user home is where all user specific
      * files are placed to run Spark within a multi-user system.
      *
      * @return the user home / Spark;
      */
-    public static String getUserSparkHome() {
+    public static String getSparkUserHome() {
         return USER_SPARK_HOME;
     }
 
