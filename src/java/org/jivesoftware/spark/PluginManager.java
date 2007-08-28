@@ -92,8 +92,10 @@ public class PluginManager implements MainWindowListener {
             Log.error(e);
         }
 
-
-        movePlugins();
+        // Do not use deployable plugins if not installed.
+        if (System.getProperty("plugin") == null) {
+            movePlugins();
+        }
 
         SparkManager.getMainWindow().addMainWindowListener(this);
 
