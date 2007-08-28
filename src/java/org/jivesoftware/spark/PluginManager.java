@@ -92,10 +92,8 @@ public class PluginManager implements MainWindowListener {
             Log.error(e);
         }
 
-        // Copy Files over if not on Windows. This is a workaround for installation issues.
-        if (!Spark.isWindows()) {
-            copyFiles();
-        }
+
+        movePlugins();
 
         SparkManager.getMainWindow().addMainWindowListener(this);
 
@@ -105,7 +103,7 @@ public class PluginManager implements MainWindowListener {
         }
     }
 
-    private void copyFiles() {
+    private void movePlugins() {
         // Current Plugin directory
         File newPlugins = new File(Spark.getLogDirectory().getParentFile(), "plugins").getAbsoluteFile();
         newPlugins.mkdirs();
@@ -117,12 +115,18 @@ public class PluginManager implements MainWindowListener {
             if (file.isFile()) {
                 // Copy over
                 File newFile = new File(newPlugins, file.getName());
+
+                if (newFile.lastModified() >= file.lastModified()) {
+                    continue;
+                }
+
                 try {
                     URLFileSystem.copy(file.toURL(), newFile);
                 }
                 catch (IOException e) {
                     Log.error(e);
                 }
+
             }
         }
 
@@ -546,7 +550,7 @@ public class PluginManager implements MainWindowListener {
         File pluginDownload = new File(PluginManager.PLUGINS_DIRECTORY, name);
 
         ((PluginClassLoader)getParentClassLoader()).addPlugin(pluginDownload);
-        
+
         Plugin pluginClass = loadPublicPlugin(pluginDownload);
 
         Log.debug("Trying to initialize " + pluginClass);
