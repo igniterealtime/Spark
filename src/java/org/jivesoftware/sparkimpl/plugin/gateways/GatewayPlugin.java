@@ -221,6 +221,9 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 for (Transport transport : TransportUtils.getTransports()) {
                     GatewayButton button = uiMap.get(transport);
                     if (button.isLoggedIn()) {
+                        if (!presence.isAvailable()) {
+                            return;
+                        }
                         // Create new presence
                         Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
                         p.setTo(transport.getServiceName());

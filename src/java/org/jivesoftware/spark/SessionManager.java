@@ -139,7 +139,10 @@ public final class SessionManager implements ConnectionListener {
     public void connectionClosedOnError(final Exception ex) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Log.debug("Connection closed on error.: "+ ex.getMessage());
+                final Presence presence = new Presence(Presence.Type.unavailable);
+                changePresence(presence);
+
+                Log.debug("Connection closed on error.: " + ex.getMessage());
             }
         });
     }
@@ -148,7 +151,6 @@ public final class SessionManager implements ConnectionListener {
      * Notify agent that the connection has been closed.
      */
     public void connectionClosed() {
-       
     }
 
     /**
@@ -175,18 +177,16 @@ public final class SessionManager implements ConnectionListener {
      * @param presence the current presence of the user.
      */
     public void changePresence(Presence presence) {
-        // Do NOT  send presence if disconnected.
-        if (!SparkManager.getConnection().isConnected()) {
-            return;
-        }
-
-        // Send Presence Packet
-        SparkManager.getConnection().sendPacket(presence);
-
         // Fire Presence Listeners
         final Iterator presenceListeners = new ArrayList(this.presenceListeners).iterator();
         while (presenceListeners.hasNext()) {
             ((PresenceListener)presenceListeners.next()).presenceChanged(presence);
+        }
+
+        // Do NOT  send presence if disconnected.
+        if (SparkManager.getConnection().isConnected()) {
+            // Send Presence Packet
+            SparkManager.getConnection().sendPacket(presence);
         }
     }
 
