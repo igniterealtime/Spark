@@ -13,6 +13,7 @@ package org.jivesoftware;
 import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
 import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -27,6 +28,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -98,6 +100,9 @@ public final class Spark {
                 e.printStackTrace();
             }
         }
+
+        // Set default language set by the user.
+        loadLanguage();
 
         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
         boolean useSystemLookAndFeel = preferences.useSystemLookAndFeel();
@@ -287,14 +292,14 @@ public final class Spark {
         if (isLinux()) {
             return ".Spark";
         }
-        else if(isWindows()){
+        else if (isWindows()) {
             return "Spark";
         }
-        
+
         return "Spark";
     }
 
-   
+
     /**
      * Returns the Spark directory for the current user (user.home). The user home is where all user specific
      * files are placed to run Spark within a multi-user system.
@@ -307,9 +312,10 @@ public final class Spark {
 
     /**
      * Return the base user home.
+     *
      * @return the user home.
      */
-    public static String getUserHome(){
+    public static String getUserHome() {
         return System.getProperties().getProperty("user.home");
     }
 
@@ -358,5 +364,23 @@ public final class Spark {
         UIManager.put("SparkTabbedPane.startColor", new Color(236, 236, 236));
         UIManager.put("SparkTabbedPane.endColor", new Color(236, 236, 236));
         UIManager.put("SparkTabbedPane.borderColor", Color.lightGray);
+    }
+
+    /**
+     * Loads the language set by the user. If no language is set, then the default implementation will be used.
+     */
+    private void loadLanguage() {
+        final LocalPreferences preferences = SettingsManager.getLocalPreferences();
+        final String setLanguage = preferences.getLanguage();
+
+        if (ModelUtil.hasLength(setLanguage)) {
+            Locale[] locales = Locale.getAvailableLocales();
+            for (int i = 0; i < locales.length; i++) {
+                if (locales[i].getLanguage().equals(setLanguage)) {
+                    Locale.setDefault(locales[i]);
+                    break;
+                }
+            }
+        }
     }
 }

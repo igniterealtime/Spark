@@ -631,6 +631,14 @@ public class LocalPreferences {
         return getBoolean("perisitedChatRoomsClosable", true);
     }
 
+    public void setLanguage(String language){
+        props.setProperty("language", language);
+    }
+
+    public String getLanguage(){
+        return props.getProperty("language", "");
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
@@ -646,5 +654,6 @@ public class LocalPreferences {
     private void setInt(String property, int value) {
         props.setProperty(property, Integer.toString(value));
     }
+
 
 }

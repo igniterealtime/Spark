@@ -156,4 +156,13 @@
         <description>Adds simple extras to show your most popular contacts.</description>
         <class>org.jivesoftware.sparkimpl.plugin.history.FrequentContactsPlugin</class>
     </plugin>
+    <plugin>
+        <name>Language Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to explicitly set their language.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.language.LanguagePlugin</class>
+    </plugin>
 </plugins>
