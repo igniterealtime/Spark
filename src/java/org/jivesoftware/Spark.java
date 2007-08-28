@@ -305,6 +305,14 @@ public final class Spark {
         return USER_SPARK_HOME;
     }
 
+    /**
+     * Return the base user home.
+     * @return the user home.
+     */
+    public static String getUserHome(){
+        return System.getProperties().getProperty("user.home");
+    }
+
     public static boolean isCustomBuild() {
         return "true".equals(Default.getString("CUSTOM"));
     }
