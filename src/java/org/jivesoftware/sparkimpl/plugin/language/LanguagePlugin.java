@@ -15,15 +15,15 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.Locale;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 
 /**
  * Allows for changing of default languages within Spark.
@@ -51,13 +51,13 @@ public class LanguagePlugin implements Plugin {
             File propertiesFile = files[i];
             String propertiesName = propertiesFile.getName();
             if (propertiesName.endsWith(".properties")) {
-                int lastIndex = propertiesName.lastIndexOf("_");
+                int lastIndex = propertiesName.lastIndexOf("i18n_");
                 int period = propertiesName.lastIndexOf(".");
-                String language = propertiesName.substring(lastIndex + 1, period);
-                if (language.equals("i18n")) {
-                    languageMenu.add("English");
+                if (lastIndex == -1) {
+                    addLanguage("en");
                 }
                 else {
+                    String language = propertiesName.substring(lastIndex + 5, period);
                     addLanguage(language);
                 }
             }
@@ -76,7 +76,7 @@ public class LanguagePlugin implements Plugin {
                         preferences.setLanguage(locale.getLanguage());
 
                         int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
-                        if(ok == JOptionPane.YES_OPTION){
+                        if (ok == JOptionPane.YES_OPTION) {
                             SparkManager.getMainWindow().shutdown();
                         }
                     }
