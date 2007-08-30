@@ -752,7 +752,13 @@ public final class GroupChatRoom extends ChatRoom {
 
         chat.addUserStatusListener(new DefaultUserStatusListener() {
             public void kicked(String s, String reason) {
-                insertText(Res.getString("message.your.kicked", s));
+                if (ModelUtil.hasLength(reason)) {
+                    insertText(reason);
+                }
+                else {
+                    insertText(Res.getString("message.your.kicked", s));
+                }
+
                 getChatInputEditor().setEnabled(false);
                 getSplitPane().setRightComponent(null);
                 leaveChatRoom();
