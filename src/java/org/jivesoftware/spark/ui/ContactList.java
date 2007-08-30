@@ -287,7 +287,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             changeOfflineToOnline(bareJID, entry, presence);
         }
         else if (presence.getType() == Presence.Type.available) {
-            updateContactItemsPresence(presence, bareJID);
+            updateContactItemsPresence(presence, entry, bareJID);
         }
         else if (presence.getType() == Presence.Type.unavailable && !isPending) {
             // If not available, move to offline group.
@@ -296,7 +296,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 moveToOfflineGroup(presence, bareJID);
             }
             else {
-                updateContactItemsPresence(rosterPresence, bareJID);
+                updateContactItemsPresence(rosterPresence, entry, bareJID);
             }
         }
 
@@ -308,12 +308,16 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param presence the users presence.
      * @param bareJID  the bare jid of the user.
      */
-    private void updateContactItemsPresence(Presence presence, String bareJID) {
+    private void updateContactItemsPresence(Presence presence, RosterEntry entry, String bareJID) {
         final Iterator groupIterator = groupList.iterator();
         while (groupIterator.hasNext()) {
             ContactGroup group = (ContactGroup)groupIterator.next();
             ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
+                if (group == offlineGroup) {
+                    changeOfflineToOnline(bareJID, entry, presence);
+                    continue;
+                }
                 item.setPresence(presence);
                 group.fireContactGroupUpdated();
             }

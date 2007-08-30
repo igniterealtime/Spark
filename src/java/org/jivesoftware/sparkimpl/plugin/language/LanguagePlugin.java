@@ -47,6 +47,10 @@ public class LanguagePlugin implements Plugin {
         URL url = getClass().getClassLoader().getResource("i18n");
 
         File[] files = URLFileSystem.url2File(url).listFiles();
+        if(files == null){
+            return;
+        }
+        
         for (int i = 0; i < files.length; i++) {
             File propertiesFile = files[i];
             String propertiesName = propertiesFile.getName();
