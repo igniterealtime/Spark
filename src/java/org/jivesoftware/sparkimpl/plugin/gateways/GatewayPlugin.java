@@ -72,6 +72,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         SwingWorker thread = new SwingWorker() {
             public Object construct() {
                 try {
+                    // Let's try and avoid any timing issues with the gateway presence.
+                    Thread.sleep(5000);
                     populateTransports();
                 }
                 catch (Exception e) {
