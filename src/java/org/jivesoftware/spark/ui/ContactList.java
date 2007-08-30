@@ -265,7 +265,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      *
      * @param presence the user to update.
      */
-    private void updateUserPresence(Presence presence) throws Exception {
+    private synchronized void updateUserPresence(Presence presence) throws Exception {
         if (presence.getError() != null) {
             // We ignore this.
             return;
@@ -1656,6 +1656,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     });
                 }
                 else {
+                    
                     try {
                         initialPresences.add(presence);
                     }
@@ -1663,7 +1664,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         Log.error(e);
                     }
 
-                    int numberOfMillisecondsInTheFuture = 500;
+                    int numberOfMillisecondsInTheFuture = 1000;
 
                     presenceTimer.schedule(new TimerTask() {
                         public void run() {
