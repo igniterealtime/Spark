@@ -44,10 +44,10 @@ public class NotificationsUI extends JPanel {
         ResourceUtils.resButton(windowFocusBox, Res.getString("checkbox.window.to.front"));
         add(windowFocusBox);
 
-        offlineNotificationBox = new JCheckBox("Notify when a user goes offline.");
+        offlineNotificationBox = new JCheckBox(Res.getString("checkbox.notify.user.goes.offline"));
         add(offlineNotificationBox);
 
-        onlineNotificationBox = new JCheckBox("Notify when a user comes online.");
+        onlineNotificationBox = new JCheckBox(Res.getString("checkbox.notify.user.comes.online"));
         add(onlineNotificationBox);
 
         betaCheckBox = new JCheckBox( Res.getString("menuitem.check.for.updates"));
