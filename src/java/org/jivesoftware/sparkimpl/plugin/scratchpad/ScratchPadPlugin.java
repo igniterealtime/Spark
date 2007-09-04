@@ -377,8 +377,8 @@ public class ScratchPadPlugin implements Plugin {
         scrollPane.getViewport().setOpaque(false);
 
         pane.setText(text);
-        final RolloverButton button = new RolloverButton("Save", null);
-        final RolloverButton cancelButton = new RolloverButton("Cancel", null);
+        final RolloverButton button = new RolloverButton(SparkRes.getString("save"), null);
+        final RolloverButton cancelButton = new RolloverButton(SparkRes.getString("cancel"), null);
         ResourceUtils.resButton(button, "&Save");
         ResourceUtils.resButton(cancelButton, "&Cancel");
 
