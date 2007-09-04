@@ -138,7 +138,7 @@ public class BroadcastDialog extends JPanel {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), "Enter message to broadcast to selected users.", null, true);
+        titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), null, true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
