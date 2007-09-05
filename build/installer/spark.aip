@@ -8,10 +8,10 @@
     <ROW Property="BannerBitmap" Value="default_banner.bmp" Type="1"/>
     <ROW Property="DialogBitmap" Value="default_dialog.bmp" Type="1"/>
     <ROW Property="Manufacturer" Value="Jive Software" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{EF548870-A19D-46E3-886C-272B56EAE210} "/>
+    <ROW Property="ProductCode" Value="1033:{4A04B262-B71A-4487-9B91-E1A72AA8AE36} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.5.5"/>
+    <ROW Property="ProductVersion" Value="2.5.7"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
   </COMPONENT>
@@ -110,7 +110,7 @@
     <ROW File="error.log" Component_="error.log" FileName="error.log" Attributes="0" SourcePath="..\..\target\build\logs\error.log" SelfReg="false" Sequence="22"/>
     <ROW File="fastpath.jar.pack" Component_="fastpath.jar" FileName="fastpa~1.pac|fastpath.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar.pack" SelfReg="false" Sequence="85"/>
     <ROW File="i4jruntime.jar" Component_="activation.jar" FileName="i4jrun~1.jar|i4jruntime.jar" Attributes="0" SourcePath="..\..\target\build\lib\i4jruntime.jar" SelfReg="false" Sequence="16"/>
-    <ROW File="idlelinux.jar.pack" Component_="fastpath.jar" FileName="idleli~1.pac|idlelinux.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar.pack" SelfReg="false" Sequence="89"/>
+    <ROW File="idlelinux.jar.pack" Component_="fastpath.jar" FileName="idleli~1.pac|idlelinux.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar.pack" SelfReg="false" Sequence="90"/>
     <ROW File="incoming.wav" Component_="bell.wav" FileName="incoming.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\incoming.wav" SelfReg="false" Sequence="28"/>
     <ROW File="jdic.dll" Component_="jdic.dll" FileName="jdic.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.dll" SelfReg="false" Sequence="18"/>
     <ROW File="jdic.jar" Component_="jdic.jar" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.jar" SelfReg="false" Sequence="19"/>
@@ -148,6 +148,7 @@
     <ROW File="libmozembed_linux_gtk1.2.so" Component_="jdic.jar_1" FileName="libmoz~1.so|libmozembed-linux-gtk1.2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk1.2.so" SelfReg="false" Sequence="67"/>
     <ROW File="libmozembed_linux_gtk2.so" Component_="jdic.jar_1" FileName="libmoz~2.so|libmozembed-linux-gtk2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk2.so" SelfReg="false" Sequence="68"/>
     <ROW File="libtray.so" Component_="jdic.jar_1" FileName="libtray.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libtray.so" SelfReg="false" Sequence="69"/>
+    <ROW File="linuxplugin.jar.pack" Component_="fastpath.jar" FileName="linuxp~1.pac|linuxplugin.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\linuxplugin.jar.pack" SelfReg="false" Sequence="91"/>
     <ROW File="login_dialog.png" Component_="banner_spark.gif" FileName="login-~1.png|login-dialog.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\login-dialog.png" SelfReg="false" Sequence="8"/>
     <ROW File="mozembed_linux_gtk1.2" Component_="jdic.jar_1" FileName="mozemb~1.2|mozembed-linux-gtk1.2" Attributes="0" SourcePath="..\..\target\build\lib\linux\mozembed-linux-gtk1.2" SelfReg="false" Sequence="70"/>
     <ROW File="outgoing.wav" Component_="bell.wav" FileName="outgoing.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\outgoing.wav" SelfReg="false" Sequence="29"/>
@@ -155,6 +156,7 @@
     <ROW File="smack.jar.pack" Component_="activation.jar" FileName="smackj~1.pac|smack.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar.pack" SelfReg="false" Sequence="74"/>
     <ROW File="smackx.jar.pack" Component_="activation.jar" FileName="smackx~2.pac|smackx.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar.pack" SelfReg="false" Sequence="76"/>
     <ROW File="smackx_debug.jar.pack" Component_="activation.jar" FileName="smackx~1.pac|smackx-debug.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar.pack" SelfReg="false" Sequence="75"/>
+    <ROW File="smackx_jingle.jar.pack" Component_="activation.jar" FileName="smackx~3.pac|smackx-jingle.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx-jingle.jar.pack" SelfReg="false" Sequence="89"/>
     <ROW File="spark.jar.pack" Component_="activation.jar" FileName="sparkj~1.pac|spark.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar.pack" SelfReg="false" Sequence="77"/>
     <ROW File="sparkEmoticonSet.zip" Component_="Default.adiumemoticonset.zip" FileName="sparkE~1.zip|sparkEmoticonSet.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet.zip" SelfReg="false" Sequence="63"/>
     <ROW File="sparkphone.jar.pack" Component_="fastpath.jar" FileName="sparkp~1.pac|sparkphone.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone.jar.pack" SelfReg="false" Sequence="87"/>
@@ -228,7 +230,7 @@
     <ROW IniFile="JVM_Type_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JVM Type" Value="favor_client" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Main_Class" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.launcher.Startup" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Main_Class_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.Restarter" Action="0" Component_="Your_Product.exe"/>
-    <ROW IniFile="Maximum_Version" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Maximum Version" Value="1.6" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="Maximum_Version" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Maximum Version" Value="any" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Maximum_Version_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Maximum Version" Value="1.6" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Minimum_Version" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Minimum Version" Value="1.6" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Minimum_Version_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Minimum Version" Value="1.5" Action="0" Component_="Your_Product.exe"/>
