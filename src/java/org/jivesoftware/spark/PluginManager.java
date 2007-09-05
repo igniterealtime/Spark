@@ -686,7 +686,7 @@ public class PluginManager implements MainWindowListener {
                 StringTokenizer tkn = new StringTokenizer(operatingSystem, ",");
                 while (tkn.hasMoreTokens()) {
                     String os = tkn.nextToken().toLowerCase();
-                    if (currentOS.contains(os)) {
+                    if (currentOS.contains(os) || currentOS.equalsIgnoreCase(os)) {
                         ok = true;
                     }
                 }
