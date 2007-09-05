@@ -86,18 +86,18 @@ public class BroadcastDialog extends JPanel {
         }
 
         messageBox = new JTextArea();
-        normalMessageButton = new JRadioButton("Normal Message");
-        alertMessageButton = new JRadioButton("Alert Notification");
+        normalMessageButton = new JRadioButton(Res.getString("message.normal"));
+        alertMessageButton = new JRadioButton(Res.getString("message.alert.notify"));
 
         ButtonGroup group = new ButtonGroup();
         group.add(normalMessageButton);
         group.add(alertMessageButton);
 
         final JScrollPane pane = new JScrollPane(messageBox);
-        pane.setBorder(BorderFactory.createTitledBorder("Message"));
+        pane.setBorder(BorderFactory.createTitledBorder(Res.getString("message")));
 
         final JScrollPane treePane = new JScrollPane(checkTree);
-        treePane.setBorder(BorderFactory.createTitledBorder("Send to these people"));
+        treePane.setBorder(BorderFactory.createTitledBorder(Res.getString("message.send.to.these.people")));
 
         // Add to UI
         add(pane, new GridBagConstraints(0, 0, 1, 1, 0.5, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
