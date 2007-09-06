@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -121,7 +122,7 @@ public class ScratchPadPlugin implements Plugin {
 
         // Add To toolbar
         SparkManager.getWorkspace().getCommandPanel().add(taskButton, index);
-        SparkManager.getWorkspace().getCommandPanel().add(notesButton, index + 1);
+        SparkManager.getWorkspace().getCommandPanel().add(notesButton, index);
         SparkManager.getWorkspace().getCommandPanel().validate();
         SparkManager.getWorkspace().getCommandPanel().invalidate();
         SparkManager.getWorkspace().getCommandPanel().repaint();
@@ -377,8 +378,8 @@ public class ScratchPadPlugin implements Plugin {
         scrollPane.getViewport().setOpaque(false);
 
         pane.setText(text);
-        final RolloverButton button = new RolloverButton(SparkRes.getString("save"), null);
-        final RolloverButton cancelButton = new RolloverButton(SparkRes.getString("cancel"), null);
+        final RolloverButton button = new RolloverButton(Res.getString("save"), null);
+        final RolloverButton cancelButton = new RolloverButton(Res.getString("cancel"), null);
         ResourceUtils.resButton(button, "&Save");
         ResourceUtils.resButton(cancelButton, "&Cancel");
 
