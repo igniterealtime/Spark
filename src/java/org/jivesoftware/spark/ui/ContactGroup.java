@@ -23,6 +23,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -44,11 +49,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -75,6 +75,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private MouseEvent mouseEvent;
 
     private LocalPreferences preferences;
+
+    private Timer presenceTimer;
 
 
     /**
@@ -276,17 +278,38 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         item.setGroupName(getGroupName());
         contactItems.add(item);
 
+        if (presenceTimer != null && presenceTimer.isRunning()) {
+            presenceTimer.stop();
+        }
+
+        presenceTimer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sortContactList();
+            }
+        });
+        presenceTimer.start();
+
+        model.addElement(item);
+        fireContactItemAdded(item);
+    }
+
+    /**
+     * Sorts the ContactList alphabetically.
+     */
+    private void sortContactList() {
         final List<ContactItem> sortedItemList = getContactItems();
-        final int index = sortedItemList.indexOf(item);
+        int j = 0;
+        for (ContactItem item : sortedItemList) {
+            model.set(j, item);
+            j++;
+        }
 
 
-        Object[] objs = contactItemList.getSelectedValues();
+        Object[] contactItemArray = contactItemList.getSelectedValues();
 
-        model.insertElementAt(item, index);
-
-        int[] intList = new int[objs.length];
-        for (int i = 0; i < objs.length; i++) {
-            ContactItem contact = (ContactItem)objs[i];
+        int[] intList = new int[contactItemArray.length];
+        for (int i = 0; i < contactItemArray.length; i++) {
+            ContactItem contact = (ContactItem)contactItemArray[i];
             intList[i] = model.indexOf(contact);
         }
 
@@ -294,7 +317,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             contactItemList.setSelectedIndices(intList);
         }
 
-        fireContactItemAdded(item);
     }
 
     /**
@@ -315,6 +337,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         // contactGroup.setStyle(CollapsiblePane.TREE_STYLE);
         listPanel.add(panel);
         contactGroups.add(contactGroup);
+
+        // Do not show no contacts.
+        if(model.contains(noContacts)){
+            model.removeElement(noContacts);
+        }
     }
 
     /**
