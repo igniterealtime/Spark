@@ -18,15 +18,10 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -35,14 +30,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -257,7 +249,7 @@ public class ContactItem extends JPanel {
                 this.hash = hash;
 
                 if (!hashExists(hash)) {
-                    updateAvatar(hash);
+                    updateAvatar();
                 }
             }
         }
@@ -300,41 +292,9 @@ public class ContactItem extends JPanel {
 
     /**
      * Persists the avatar locally based on the new hash.
-     *
-     * @param hash the new hash.
      */
-    private void updateAvatar(final String hash) {
-        Runnable updateRunnable = new Runnable() {
-            public void run() {
-                contactsDir.mkdirs();
-
-                final File imageFile = new File(contactsDir, hash);
-
-                VCard vcard = SparkManager.getVCardManager().reloadVCard(getJID());
-
-                try {
-                    byte[] bytes = vcard.getAvatar();
-                    if (bytes != null) {
-                        ImageIcon icon = new ImageIcon(bytes);
-                        icon = VCardManager.scale(icon);
-                        if (icon != null && icon.getIconWidth() != -1) {
-                            BufferedImage image = GraphicUtils.convert(icon.getImage());
-                            if (image == null) {
-                                Log.warning("Unable to write out avatar for " + getJID());
-                            }
-                            else {
-                                ImageIO.write(image, "PNG", imageFile);
-                            }
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    Log.error("Unable to update avatar in Contact Item.", e);
-                }
-            }
-        };
-
-        TaskEngine.getInstance().submit(updateRunnable);
+    private void updateAvatar() {
+        SparkManager.getVCardManager().addToQueue(getJID());
     }
 
     public String toString() {

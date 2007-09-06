@@ -87,6 +87,8 @@ public class VCardManager {
 
     private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
 
+    private File contactsDir;
+
 
     /**
      * Initialize VCardManager.
@@ -110,6 +112,10 @@ public class VCardManager {
         // Set VCard Storage
         vcardStorageDirectory = new File(SparkManager.getUserDirectory(), "vcards");
         vcardStorageDirectory.mkdirs();
+
+        // Set the current user directory.
+        contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
+        contactsDir.mkdirs();
 
         initializeUI();
 
@@ -178,7 +184,7 @@ public class VCardManager {
      *
      * @param jid the jid to lookup.
      */
-    private void addToQueue(String jid) {
+    public void addToQueue(String jid) {
         if (!queue.contains(jid)) {
             queue.add(jid);
         }
@@ -580,6 +586,24 @@ public class VCardManager {
         byte[] bytes = vcard.getAvatar();
         if (bytes != null) {
             vcard.setAvatar(bytes);
+            try {
+                String hash = org.jivesoftware.spark.util.StringUtils.hash(bytes);
+                final File avatarFile = new File(contactsDir, hash);
+                ImageIcon icon = new ImageIcon(bytes);
+                icon = VCardManager.scale(icon);
+                if (icon != null && icon.getIconWidth() != -1) {
+                    BufferedImage image = GraphicUtils.convert(icon.getImage());
+                    if (image == null) {
+                        Log.warning("Unable to write out avatar for " + jid);
+                    }
+                    else {
+                        ImageIO.write(image, "PNG", avatarFile);
+                    }
+                }
+            }
+            catch (Exception e) {
+                Log.error("Unable to update avatar in Contact Item.", e);
+            }
         }
 
         // Set timestamp
