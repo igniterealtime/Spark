@@ -22,22 +22,10 @@ import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -57,6 +45,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 //TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel {
@@ -360,76 +361,77 @@ public class StatusBar extends JPanel {
 
 
     public void loadVCard() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                return SparkManager.getVCardManager().getVCard();
-            }
-
-            public void finished() {
-                final VCard vCard = (VCard)get();
-                populateWithVCardInfo(vCard);
+        final Runnable loadVCard = new Runnable() {
+            public void run() {
+                VCard vcard = SparkManager.getVCardManager().getVCard();
+                updatVCardInformation(vcard);
             }
         };
 
-        worker.start();
+        TaskEngine.getInstance().submit(loadVCard);
     }
 
-    private void populateWithVCardInfo(VCard vCard) {
-        if (vCard.getError() == null) {
-            String firstName = vCard.getFirstName();
-            String lastName = vCard.getLastName();
-            String nickname = vCard.getNickName();
-            if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                setNickname(firstName + " " + lastName);
-            }
-            else if (ModelUtil.hasLength(firstName)) {
-                setNickname(firstName);
-            }
-            else if (ModelUtil.hasLength(nickname)) {
-                setNickname(nickname);
-            }
-            else {
-                nickname = SparkManager.getSessionManager().getUsername();
-                setNickname(nickname);
-            }
-        }
-        else {
-            String nickname = SparkManager.getSessionManager().getUsername();
-            setNickname(nickname);
-            return;
-        }
+    private void updatVCardInformation(final VCard vCard) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (vCard.getError() == null) {
+                    String firstName = vCard.getFirstName();
+                    String lastName = vCard.getLastName();
+                    String nickname = vCard.getNickName();
+                    if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
+                        setNickname(firstName + " " + lastName);
+                    }
+                    else if (ModelUtil.hasLength(firstName)) {
+                        setNickname(firstName);
+                    }
+                    else if (ModelUtil.hasLength(nickname)) {
+                        setNickname(nickname);
+                    }
+                    else {
+                        nickname = SparkManager.getSessionManager().getUsername();
+                        setNickname(nickname);
+                    }
+                }
+                else {
+                    String nickname = SparkManager.getSessionManager().getUsername();
+                    setNickname(nickname);
+                    return;
+                }
 
 
-        byte[] avatarBytes = null;
-        try {
-            avatarBytes = vCard.getAvatar();
-        }
-        catch (Exception e) {
-            Log.error("Cannot retrieve avatar bytes.", e);
-        }
+                byte[] avatarBytes = null;
+                try {
+                    avatarBytes = vCard.getAvatar();
+                }
+                catch (Exception e) {
+                    Log.error("Cannot retrieve avatar bytes.", e);
+                }
 
 
-        if (avatarBytes != null) {
-            try {
-                ImageIcon avatarIcon = new ImageIcon(avatarBytes);
-                avatarIcon = VCardManager.scale(avatarIcon);
-                imageLabel.setIcon(avatarIcon);
-                imageLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-                imageLabel.invalidate();
-                imageLabel.validate();
-                imageLabel.repaint();
+                if (avatarBytes != null) {
+                    try {
+                        ImageIcon avatarIcon = new ImageIcon(avatarBytes);
+                        avatarIcon = VCardManager.scale(avatarIcon);
+                        imageLabel.setIcon(avatarIcon);
+                        imageLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+                        imageLabel.invalidate();
+                        imageLabel.validate();
+                        imageLabel.repaint();
+                    }
+                    catch (Exception e) {
+                        // no issue
+                    }
+                }
+                else {
+                    imageLabel.setIcon(null);
+                    imageLabel.setBorder(null);
+                    imageLabel.invalidate();
+                    imageLabel.validate();
+                    imageLabel.repaint();
+                }
             }
-            catch (Exception e) {
-                // no issue
-            }
-        }
-        else {
-            imageLabel.setIcon(null);
-            imageLabel.setBorder(null);
-            imageLabel.invalidate();
-            imageLabel.validate();
-            imageLabel.repaint();
-        }
+        });
+
     }
 
     public static Presence copyPresence(Presence presence) {
