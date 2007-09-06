@@ -300,7 +300,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                             String from = message.getFrom();
                             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-                            String body = message.getBody();
+                            String body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(message.getBody());
                             if (nickname.equals(message.getFrom())) {
                                 String otherJID = StringUtils.parseBareAddress(message.getFrom());
                                 String myJID = SparkManager.getSessionManager().getBareAddress();
