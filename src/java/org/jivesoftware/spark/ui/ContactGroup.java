@@ -276,13 +276,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         item.setGroupName(getGroupName());
         contactItems.add(item);
 
-        List<ContactItem> tempItems = getContactItems();
-
-
-        Collections.sort(tempItems, itemComparator);
-
-
-        int index = tempItems.indexOf(item);
+        final List<ContactItem> sortedItemList = getContactItems();
+        final int index = sortedItemList.indexOf(item);
 
 
         Object[] objs = contactItemList.getSelectedValues();
