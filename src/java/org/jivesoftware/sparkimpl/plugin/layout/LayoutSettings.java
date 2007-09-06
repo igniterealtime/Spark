@@ -21,7 +21,7 @@ public class LayoutSettings {
     private int chatFrameY;
     private int chatFrameWidth;
     private int chatFrameHeight;
-	private int dividerLocation = -1;
+    private int dividerLocation = -1;
 
     public int getMainWindowX() {
         return mainWindowX;
@@ -40,6 +40,9 @@ public class LayoutSettings {
     }
 
     public int getMainWindowWidth() {
+        if (mainWindowWidth < 200) {
+            mainWindowWidth = 200;
+        }
         return mainWindowWidth;
     }
 
@@ -48,6 +51,9 @@ public class LayoutSettings {
     }
 
     public int getMainWindowHeight() {
+        if (mainWindowHeight < 400) {
+            mainWindowHeight = 400;
+        }
         return mainWindowHeight;
     }
 
@@ -87,14 +93,14 @@ public class LayoutSettings {
         this.chatFrameHeight = chatFrameHeight;
     }
 
-	public void setSplitPaneDividerLocation(int dividerLocation) {
-		this.dividerLocation = dividerLocation;
-		
-	}
+    public void setSplitPaneDividerLocation(int dividerLocation) {
+        this.dividerLocation = dividerLocation;
 
-	public int getSplitPaneDividerLocation() {
-		return dividerLocation;
-	}
+    }
 
-	
+    public int getSplitPaneDividerLocation() {
+        return dividerLocation;
+    }
+
+
 }
