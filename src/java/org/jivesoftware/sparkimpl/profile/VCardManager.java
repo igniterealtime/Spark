@@ -39,13 +39,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,6 +56,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -132,16 +132,17 @@ public class VCardManager {
                     newPresence.removeExtension(jabberExt);
                 }
 
-                byte[] bytes = getVCard().getAvatar();
-                if (bytes != null) {
-                    String hash = org.jivesoftware.spark.util.StringUtils.hash(bytes);
-                    update.setPhotoHash(hash);
-                    jax.setPhotoHash(hash);
+                if (personalVCard != null) {
+                    byte[] bytes = personalVCard.getAvatar();
+                    if (bytes != null) {
+                        String hash = org.jivesoftware.spark.util.StringUtils.hash(bytes);
+                        update.setPhotoHash(hash);
+                        jax.setPhotoHash(hash);
 
-                    newPresence.addExtension(update);
-                    newPresence.addExtension(jax);
+                        newPresence.addExtension(update);
+                        newPresence.addExtension(jax);
+                    }
                 }
-
             }
         }, presenceFilter);
 
@@ -527,8 +528,8 @@ public class VCardManager {
 
             String query = getNumbersFromPhone(phoneNumber);
             if ((homePhone != null && homePhone.contains(query)) ||
-                    (workPhone != null && workPhone.contains(query)) ||
-                    (cellPhone != null && cellPhone.contains(query))) {
+                (workPhone != null && workPhone.contains(query)) ||
+                (cellPhone != null && cellPhone.contains(query))) {
                 return vcard;
             }
         }
