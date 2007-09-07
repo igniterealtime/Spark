@@ -282,7 +282,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             presenceTimer.stop();
         }
 
-        presenceTimer = new Timer(1000, new ActionListener() {
+        presenceTimer = new Timer(200, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 sortContactList();
             }
