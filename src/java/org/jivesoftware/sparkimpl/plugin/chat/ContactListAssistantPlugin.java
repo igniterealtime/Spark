@@ -20,7 +20,6 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -29,7 +28,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -38,8 +36,6 @@ import javax.swing.event.PopupMenuListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -187,31 +183,10 @@ public class ContactListAssistantPlugin implements Plugin {
     }
 
     private void updateContactItem(ContactItem contactItem) {
-        LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        avatarsShowing = preferences.areAvatarsVisible();
-
-        try {
-            final URL url = contactItem.getAvatarURL();
-            if (url != null) {
-                if (!avatarsShowing) {
-                    contactItem.setSideIcon(null);
-                }
-                else {
-                    ImageIcon icon = new ImageIcon(url);
-                    icon = GraphicUtils.scale(icon, 16, 19);
-                    contactItem.setSideIcon(icon);
-                }
-            }
-        }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        contactItem.updateAvatarInSideIcon();
     }
 
     private void updateAvatarsInContactList() {
-        LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        avatarsShowing = preferences.areAvatarsVisible();
-
         final ContactList contactList = SparkManager.getContactList();
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             if (contactGroup.isOfflineGroup()) {

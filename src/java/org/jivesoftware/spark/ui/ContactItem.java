@@ -23,6 +23,7 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -254,7 +255,7 @@ public class ContactItem extends JPanel {
                     updateAvatar();
                 }
 
-                updateContactItem();
+                updateAvatarInSideIcon();
             }
         }
 
@@ -463,7 +464,10 @@ public class ContactItem extends JPanel {
         getNicknameLabel().setForeground(Color.red);
     }
 
-    private void updateContactItem() {
+    /**
+     * Update avatar icon.
+     */
+    public void updateAvatarInSideIcon() {
         LocalPreferences preferences = SettingsManager.getLocalPreferences();
         boolean avatarsShowing = preferences.areAvatarsVisible();
 
@@ -475,13 +479,13 @@ public class ContactItem extends JPanel {
                 }
                 else {
                     ImageIcon icon = new ImageIcon(url);
-                    icon = GraphicUtils.scale(icon, 16, 19);
+                    icon = GraphicUtils.scale(icon, 16, 16);
                     setSideIcon(icon);
                 }
             }
         }
         catch (MalformedURLException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
