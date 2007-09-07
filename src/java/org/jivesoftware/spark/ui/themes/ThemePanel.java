@@ -66,6 +66,8 @@ public class ThemePanel extends JPanel {
 
     private JCheckBox systemLookAndFeelBox;
 
+    private JCheckBox showAvatarsBox;
+
     /**
      * Construct UI
      */
@@ -87,6 +89,8 @@ public class ThemePanel extends JPanel {
 
         systemLookAndFeelBox = new JCheckBox();
 
+        showAvatarsBox = new JCheckBox();
+
 
         contactListFontField = new JTextField();
         contactListFontLabel = new JLabel();
@@ -105,6 +109,7 @@ public class ThemePanel extends JPanel {
 
         ResourceUtils.resLabel(contactListFontLabel, contactListFontField, "Contact &List font size:");
         ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, "Chat &Room font size:");
+        ResourceUtils.resButton(showAvatarsBox, "Show &Avatars in Contact List");
 
         // Build UI
         buildUI();
@@ -136,6 +141,8 @@ public class ThemePanel extends JPanel {
         add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(contactListFontField, new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(showAvatarsBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
 
         // Activate live one.
         LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -170,6 +177,8 @@ public class ThemePanel extends JPanel {
         emoticonCheckBox.setSelected(pref.areEmoticonsEnabled());
 
         systemLookAndFeelBox.setSelected(pref.useSystemLookAndFeel());
+
+        showAvatarsBox.setSelected(pref.areAvatarsVisible());
 
         try {
             int chatRoomFontSize = pref.getChatRoomFontSize();
@@ -326,4 +335,7 @@ public class ThemePanel extends JPanel {
         return contactListFontField.getText();
     }
 
+    public boolean areAvatarsVisible(){
+        return showAvatarsBox.isSelected();
+    }
 }

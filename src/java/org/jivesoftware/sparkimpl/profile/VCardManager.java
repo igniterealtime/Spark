@@ -141,9 +141,8 @@ public class VCardManager {
                 if (personalVCard != null) {
                     byte[] bytes = personalVCard.getAvatar();
                     if (bytes != null) {
-                        String hash = org.jivesoftware.spark.util.StringUtils.hash(bytes);
-                        update.setPhotoHash(hash);
-                        jax.setPhotoHash(hash);
+                        update.setPhotoHash(personalVCard.getAvatarHash());
+                        jax.setPhotoHash(personalVCard.getAvatarHash());
 
                         newPresence.addExtension(update);
                         newPresence.addExtension(jax);
@@ -587,7 +586,7 @@ public class VCardManager {
         if (bytes != null) {
             vcard.setAvatar(bytes);
             try {
-                String hash = org.jivesoftware.spark.util.StringUtils.hash(bytes);
+                String hash = vcard.getAvatarHash();
                 final File avatarFile = new File(contactsDir, hash);
                 ImageIcon icon = new ImageIcon(bytes);
                 icon = VCardManager.scale(icon);

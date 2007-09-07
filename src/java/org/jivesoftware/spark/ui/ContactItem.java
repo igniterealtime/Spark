@@ -21,9 +21,16 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -33,11 +40,6 @@ import java.awt.Insets;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 /**
  * Represent a single contact within the <code>ContactList</code>.
@@ -251,9 +253,10 @@ public class ContactItem extends JPanel {
                 if (!hashExists(hash)) {
                     updateAvatar();
                 }
+
+                updateContactItem();
             }
         }
-
 
         updatePresenceIcon(presence);
     }
@@ -352,7 +355,7 @@ public class ContactItem extends JPanel {
 
             RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
@@ -458,6 +461,28 @@ public class ContactItem extends JPanel {
         // Change Font
         getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, fontSize));
         getNicknameLabel().setForeground(Color.red);
+    }
+
+    private void updateContactItem() {
+        LocalPreferences preferences = SettingsManager.getLocalPreferences();
+        boolean avatarsShowing = preferences.areAvatarsVisible();
+
+        try {
+            final URL url = getAvatarURL();
+            if (url != null) {
+                if (!avatarsShowing) {
+                    setSideIcon(null);
+                }
+                else {
+                    ImageIcon icon = new ImageIcon(url);
+                    icon = GraphicUtils.scale(icon, 16, 19);
+                    setSideIcon(icon);
+                }
+            }
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
 

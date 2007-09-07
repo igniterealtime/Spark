@@ -560,15 +560,15 @@ public class LocalPreferences {
     }
 
     public void setSSOAdv(boolean enabled) {
-        setBoolean("ssoAdv",enabled);
+        setBoolean("ssoAdv", enabled);
     }
 
     public boolean getSSOAdv() {
-        return getBoolean("ssoAdv",false);
+        return getBoolean("ssoAdv", false);
     }
 
     public void setSSOMethod(String method) {
-        props.setProperty("ssoMethod",method);
+        props.setProperty("ssoMethod", method);
     }
 
     public String getSSOMethod() {
@@ -576,7 +576,7 @@ public class LocalPreferences {
     }
 
     public void setSSORealm(String realm) {
-        props.setProperty("ssoRealm",realm);
+        props.setProperty("ssoRealm", realm);
     }
 
     public String getSSORealm() {
@@ -584,7 +584,7 @@ public class LocalPreferences {
     }
 
     public void setSSOKDC(String kdc) {
-        props.setProperty("ssoKDC",kdc);
+        props.setProperty("ssoKDC", kdc);
     }
 
     public String getSSOKDC() {
@@ -592,11 +592,11 @@ public class LocalPreferences {
     }
 
     public boolean getDebug() {
-        return getBoolean("debug",false);
+        return getBoolean("debug", false);
     }
 
     public void setDebug(boolean debug) {
-        setBoolean("debug",debug);
+        setBoolean("debug", debug);
     }
 
     public void setDebuggerEnabled(boolean enabled) {
@@ -631,12 +631,20 @@ public class LocalPreferences {
         return getBoolean("perisitedChatRoomsClosable", true);
     }
 
-    public void setLanguage(String language){
+    public void setLanguage(String language) {
         props.setProperty("language", language);
     }
 
-    public String getLanguage(){
+    public String getLanguage() {
         return props.getProperty("language", "");
+    }
+
+    public void setAvatarVisible(boolean visible) {
+        setBoolean("showAvatar", visible);
+    }
+
+    public boolean areAvatarsVisible() {
+        return getBoolean("showAvatar", false);
     }
 
     private boolean getBoolean(String property, boolean defaultValue) {

@@ -10,10 +10,11 @@
 
 package org.jivesoftware.sparkimpl.preference;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.resource.Res;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -29,8 +30,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Iterator;
 
@@ -111,6 +112,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         if (currentPreference != null) {
             if (currentPreference.isDataValid()) {
                 currentPreference.commit();
+                SettingsManager.fireListeners();
                 return true;
             }
             else {

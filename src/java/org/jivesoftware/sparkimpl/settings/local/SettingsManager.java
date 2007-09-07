@@ -66,8 +66,6 @@ public class SettingsManager {
         catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
-
-        fireListeners(localPreferences);
     }
 
     /**
@@ -114,9 +112,9 @@ public class SettingsManager {
         listeners.remove(listener);
     }
 
-    private static void fireListeners(LocalPreferences pref) {
+    public static void fireListeners() {
         for (PreferenceListener listener : listeners) {
-            listener.preferencesChanged(pref);
+            listener.preferencesChanged(localPreferences);
         }
     }
 }
