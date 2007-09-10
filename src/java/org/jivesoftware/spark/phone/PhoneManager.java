@@ -27,6 +27,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.media.MediaLocator;
+import javax.media.protocol.DataSource;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -51,6 +52,8 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     static private boolean useStaticLocator = false;
     // Static using MediaLocator
     static private boolean usingMediaLocator = false;
+    // Static DataSource
+    static private DataSource ds;
 
     /**
      * Returns the singleton instance of <CODE>PhoneManager</CODE>,
@@ -100,7 +103,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     public void removePhone(Phone phone) {
         phones.remove(phone);
     }
-
 
     public void chatRoomOpened(final ChatRoom room) {
         if (!phones.isEmpty() && room instanceof ChatRoomImpl) {
@@ -182,7 +184,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
     public void userHasLeft(ChatRoom room, String userid) {
     }
-
 
     public void poppingUp(Object object, final JPopupMenu popup) {
         if (!phones.isEmpty()) {
@@ -279,6 +280,38 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         }
 
         return auxLocator;
+    }
+
+    public static DataSource getDataSource(String locator) {
+
+        if (ds == null) {
+
+            try {
+                ds = javax.media.Manager.createDataSource(getMediaLocator(locator));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+
+        return ds;
+    }
+
+    public static DataSource getDataSource(MediaLocator locator) {
+
+        if (ds == null) {
+
+            try {
+                ds = javax.media.Manager.createDataSource(locator);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+
+        return ds;
     }
 
     public static boolean isUsingMediaLocator() {
