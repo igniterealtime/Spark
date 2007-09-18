@@ -428,6 +428,10 @@ public class VCardEditor {
 
                 // Change my own presence
                 SparkManager.getSessionManager().changePresence(newPresence);
+
+                // Chnage avatar in status bar.
+                StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+                statusBar.setAvatar(new ImageIcon(vcard.getAvatar()));
             }
             else {
                 String firstName = vcard.getFirstName();
