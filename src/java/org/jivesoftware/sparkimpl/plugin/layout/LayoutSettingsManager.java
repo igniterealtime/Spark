@@ -143,7 +143,15 @@ public class LayoutSettingsManager {
 
 
             int chatFrameXInt = Integer.parseInt(chatFrameX);
+            if (chatFrameXInt < 0) {
+                chatFrameXInt = 0;
+            }
+
             int chatFrameYInt = Integer.parseInt(chatFrameY);
+            if (chatFrameYInt < 0) {
+                chatFrameYInt = 0;
+            }
+
             int chatFrameWidthInt = Integer.parseInt(chatFrameWidth);
             int chatFrameHeightInt = Integer.parseInt(chatFrameHeight);
             int splitDividerLocationInt = splitDividerLocation == null ? -1 : Integer.parseInt(splitDividerLocation);
@@ -156,7 +164,7 @@ public class LayoutSettingsManager {
                 chatFrameYInt = (height - chatFrameHeightInt) / 2;
             }
 
-            if(chatFrameHeightInt < 100){
+            if (chatFrameHeightInt < 100) {
                 chatFrameHeightInt = 100;
             }
 
