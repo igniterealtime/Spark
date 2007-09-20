@@ -89,7 +89,8 @@
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
-    <property name="pack200.excludes" value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
+    <property name="pack200.excludes"
+              value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
 
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
@@ -182,6 +183,11 @@
                 <include name="*.*"/>
             </fileset>
         </copy>
+        <copy todir="${target.resources}/i18n">
+            <fileset dir="${resources.dir}/i18n">
+                <include name="*.*"/>
+            </fileset>
+        </copy>
         <copy todir="${plugins}">
             <fileset dir="${commercial.plugin.dir}">
                 <include name="*.jar"/>
@@ -192,7 +198,7 @@
                 <include name="**/*.*"/>
             </fileset>
         </copy>
-       
+
     </target>
 
     <!-- build =================================================================================== -->
@@ -267,10 +273,10 @@
 
         <jar jarfile="${targetlib}/spark.jar" basedir="${classes}" excludes="org/jivesoftware/Startup.class"/>
 
-     </target>
-	
-     <target name="release" depends="jar">
-    	<!-- Pack200 on all jars -->
+    </target>
+
+    <target name="release" depends="jar">
+        <!-- Pack200 on all jars -->
         <for param="jar">
             <path>
                 <fileset dir="${targetlib}" includes="*.jar" excludes="${pack200.excludes}"/>
@@ -284,7 +290,7 @@
                 <delete file="@{jar}"/>
             </sequential>
         </for>
-		 <!-- Pack200 all plugins -->
+        <!-- Pack200 all plugins -->
         <for param="jar">
             <path>
                 <fileset dir="${plugins}" includes="*.jar" excludes="${pack200.excludes}"/>
@@ -448,7 +454,7 @@
               message="Path to Advanced Installer not set, or not installed."/>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
-		failonerror="true">
+              failonerror="true">
             <arg line="/build build\installer\spark.aip"/>
         </exec>
     </target>
@@ -537,14 +543,14 @@
 
         <mkdir dir="${installer.dest.dir}"/>
 
-<!-- 
-        <mkdir dir="${mac.build.dir}/.background"/>
+        <!--
+      <mkdir dir="${mac.build.dir}/.background"/>
 
-        <copy todir="${mac.build.dir}/.background">
-            <fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
-        </copy>
+      <copy todir="${mac.build.dir}/.background">
+          <fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
+      </copy>
 
-       <symlink link="${mac.build.dir}/Applications" resource="/Applications"/> -->
+     <symlink link="${mac.build.dir}/Applications" resource="/Applications"/> -->
 
         <exec executable="hdiutil" failonerror="true">
             <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${target}/tmp.dmg'"/>
@@ -552,24 +558,24 @@
         <exec executable="hdiutil" failonerror="true">
             <arg line="attach '${target}/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${target}/tmp'"/>
         </exec>
-    <!--    
-        <exec executable="cp">
-        	<arg line="${basedir}/build/installer/mac/RightDSStore ${basedir}/build/tmp/.DS_Store"/>
-        </exec>
-      
-        <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
-			<arg value="mac/dmg_spark.scpt"/>
-			<arg value="${mac.volname}"/>
-			<arg value="images/mac/background/"/>
-			<arg value="400"/>
-			<arg value="400"/>
-			<arg value="200"/>
-			<arg value="205"/>
-			<arg value="430"/>
-			<arg value="205"/>
-			<arg value="80"/>
-		</exec> -->
-        
+        <!--
+          <exec executable="cp">
+              <arg line="${basedir}/build/installer/mac/RightDSStore ${basedir}/build/tmp/.DS_Store"/>
+          </exec>
+
+          <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
+              <arg value="mac/dmg_spark.scpt"/>
+              <arg value="${mac.volname}"/>
+              <arg value="images/mac/background/"/>
+              <arg value="400"/>
+              <arg value="400"/>
+              <arg value="200"/>
+              <arg value="205"/>
+              <arg value="430"/>
+              <arg value="205"/>
+              <arg value="80"/>
+          </exec> -->
+
         <exec executable="hdiutil" failonerror="true">
             <arg line="detach ${target}/tmp -quiet -force"/>
         </exec>
@@ -577,10 +583,10 @@
             <arg line="convert ${target}/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
-        	<arg line="internet-enable -yes ${mac.dmg.file}"/>
+            <arg line="internet-enable -yes ${mac.dmg.file}"/>
         </exec>
         <delete file="${target}/tmp.dmg"/>
-       <!-- <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/> -->
+        <!-- <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/> -->
     </target>
 
 </project>
