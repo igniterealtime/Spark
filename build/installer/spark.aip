@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DOCUMENT type="Advanced Installer" CreateVersion="4.4.1" version="4.8.1" modules="java" RootPath="." Language="en">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
+    <ROW Property="AI_UPGRADE" Value="No"/>
     <ROW Property="ALLUSERS" Value="2"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
     <ROW Property="ARPPRODUCTICON" Value="controlPanelIcon.exe"/>
@@ -8,11 +9,11 @@
     <ROW Property="BannerBitmap" Value="default_banner.bmp" Type="1"/>
     <ROW Property="DialogBitmap" Value="default_dialog.bmp" Type="1"/>
     <ROW Property="Manufacturer" Value="Jive Software" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{4A04B262-B71A-4487-9B91-E1A72AA8AE36} "/>
+    <ROW Property="ProductCode" Value="1033:{27DB209C-57D1-42BE-B547-8867B26FA480} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Spark" ValueLocId="*"/>
     <ROW Property="ProductVersion" Value="2.5.7"/>
-    <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
+    <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS"/>
     <ROW Property="UpgradeCode" Value="{FD8D7ADD-E933-4DEA-81BA-2F4C0FF8B22E}"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
@@ -96,6 +97,7 @@
     <ROW File="Spark.exe" Component_="Spark.exe" FileName="Spark.exe" Attributes="0" SourcePath="&lt;aijclw.exe&gt;" SelfReg="false" Sequence="32"/>
     <ROW File="Your_Product.exe" Component_="Your_Product.exe" FileName="starter.exe" Attributes="0" SourcePath="&lt;aijcl.exe&gt;" SelfReg="false" Sequence="33"/>
     <ROW File="activation.jar" Component_="activation.jar" FileName="activa~1.jar|activation.jar" Attributes="0" SourcePath="..\..\target\build\lib\activation.jar" SelfReg="false" Sequence="13"/>
+    <ROW File="asterisk_im_client.jar" Component_="activation.jar" FileName="asteri~1.jar|asterisk-im-client.jar" Attributes="0" SourcePath="..\..\target\build\lib\asterisk-im-client.jar" SelfReg="false" Sequence="89"/>
     <ROW File="asterisk_im_client.jar.pack" Component_="activation.jar" FileName="asteri~1.pac|asterisk-im-client.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\asterisk-im-client.jar.pack" SelfReg="false" Sequence="73"/>
     <ROW File="banner_spark.gif" Component_="banner_spark.gif" FileName="banner~1.gif|banner-spark.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spark.gif" SelfReg="false" Sequence="4"/>
     <ROW File="banner_spring.gif" Component_="banner_spark.gif" FileName="banner~2.gif|banner-spring.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spring.gif" SelfReg="false" Sequence="5"/>
@@ -108,9 +110,10 @@
     <ROW File="contact_list.png" Component_="banner_spark.gif" FileName="contac~1.png|contact-list.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\contact-list.png" SelfReg="false" Sequence="7"/>
     <ROW File="dom4j.jar" Component_="activation.jar" FileName="dom4j.jar" Attributes="0" SourcePath="..\..\target\build\lib\dom4j.jar" SelfReg="false" Sequence="15"/>
     <ROW File="error.log" Component_="error.log" FileName="error.log" Attributes="0" SourcePath="..\..\target\build\logs\error.log" SelfReg="false" Sequence="22"/>
+    <ROW File="fastpath.jar" Component_="fastpath.jar" FileName="fastpath.jar" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar" SelfReg="false" Sequence="101"/>
     <ROW File="fastpath.jar.pack" Component_="fastpath.jar" FileName="fastpa~1.pac|fastpath.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar.pack" SelfReg="false" Sequence="85"/>
     <ROW File="i4jruntime.jar" Component_="activation.jar" FileName="i4jrun~1.jar|i4jruntime.jar" Attributes="0" SourcePath="..\..\target\build\lib\i4jruntime.jar" SelfReg="false" Sequence="16"/>
-    <ROW File="idlelinux.jar.pack" Component_="fastpath.jar" FileName="idleli~1.pac|idlelinux.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar.pack" SelfReg="false" Sequence="90"/>
+    <ROW File="idlelinux.jar" Component_="fastpath.jar" FileName="idleli~1.jar|idlelinux.jar" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar" SelfReg="false" Sequence="102"/>
     <ROW File="incoming.wav" Component_="bell.wav" FileName="incoming.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\incoming.wav" SelfReg="false" Sequence="28"/>
     <ROW File="jdic.dll" Component_="jdic.dll" FileName="jdic.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.dll" SelfReg="false" Sequence="18"/>
     <ROW File="jdic.jar" Component_="jdic.jar" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.jar" SelfReg="false" Sequence="19"/>
@@ -141,6 +144,7 @@
     <ROW File="jmvh263.dll" Component_="jmvh263.dll" FileName="jmvh263.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmvh263.dll" SelfReg="false" Sequence="53"/>
     <ROW File="jniwrap.dll" Component_="jniwrap.dll" FileName="jniwrap.dll" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.dll" SelfReg="false" Sequence="24"/>
     <ROW File="jniwrap.lic" Component_="Info.plist" FileName="jniwrap.lic" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.lic" SelfReg="false" Sequence="25"/>
+    <ROW File="jniwrapper.jar" Component_="fastpath.jar" FileName="jniwra~1.jar|jniwrapper.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper.jar" SelfReg="false" Sequence="103"/>
     <ROW File="jniwrapper.jar.pack" Component_="fastpath.jar" FileName="jniwra~1.pac|jniwrapper.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper.jar.pack" SelfReg="false" Sequence="86"/>
     <ROW File="jsound.dll" Component_="jsound.dll" FileName="jsound.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jsound.dll" SelfReg="false" Sequence="57"/>
     <ROW File="libSystemUtilities.jnilib" Component_="JavaSoundStream.fix.jar" FileName="libSys~1.jni|libSystemUtilities.jnilib" Attributes="0" SourcePath="..\..\target\build\lib\mac\libSystemUtilities.jnilib" SelfReg="false" Sequence="84"/>
@@ -148,32 +152,44 @@
     <ROW File="libmozembed_linux_gtk1.2.so" Component_="jdic.jar_1" FileName="libmoz~1.so|libmozembed-linux-gtk1.2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk1.2.so" SelfReg="false" Sequence="67"/>
     <ROW File="libmozembed_linux_gtk2.so" Component_="jdic.jar_1" FileName="libmoz~2.so|libmozembed-linux-gtk2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk2.so" SelfReg="false" Sequence="68"/>
     <ROW File="libtray.so" Component_="jdic.jar_1" FileName="libtray.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libtray.so" SelfReg="false" Sequence="69"/>
-    <ROW File="linuxplugin.jar.pack" Component_="fastpath.jar" FileName="linuxp~1.pac|linuxplugin.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\linuxplugin.jar.pack" SelfReg="false" Sequence="91"/>
+    <ROW File="linuxplugin.jar" Component_="fastpath.jar" FileName="linuxp~1.jar|linuxplugin.jar" Attributes="0" SourcePath="..\..\target\build\plugins\linuxplugin.jar" SelfReg="false" Sequence="104"/>
     <ROW File="login_dialog.png" Component_="banner_spark.gif" FileName="login-~1.png|login-dialog.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\login-dialog.png" SelfReg="false" Sequence="8"/>
     <ROW File="mozembed_linux_gtk1.2" Component_="jdic.jar_1" FileName="mozemb~1.2|mozembed-linux-gtk1.2" Attributes="0" SourcePath="..\..\target\build\lib\linux\mozembed-linux-gtk1.2" SelfReg="false" Sequence="70"/>
     <ROW File="outgoing.wav" Component_="bell.wav" FileName="outgoing.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\outgoing.wav" SelfReg="false" Sequence="29"/>
     <ROW File="presence_changed.wav" Component_="bell.wav" FileName="presen~1.wav|presence_changed.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\presence_changed.wav" SelfReg="false" Sequence="30"/>
+    <ROW File="smack.jar" Component_="activation.jar" FileName="smack.jar" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar" SelfReg="false" Sequence="90"/>
     <ROW File="smack.jar.pack" Component_="activation.jar" FileName="smackj~1.pac|smack.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar.pack" SelfReg="false" Sequence="74"/>
+    <ROW File="smackx.jar" Component_="activation.jar" FileName="smackx.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar" SelfReg="false" Sequence="93"/>
     <ROW File="smackx.jar.pack" Component_="activation.jar" FileName="smackx~2.pac|smackx.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar.pack" SelfReg="false" Sequence="76"/>
+    <ROW File="smackx_debug.jar" Component_="activation.jar" FileName="smackx~1.jar|smackx-debug.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar" SelfReg="false" Sequence="91"/>
     <ROW File="smackx_debug.jar.pack" Component_="activation.jar" FileName="smackx~1.pac|smackx-debug.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar.pack" SelfReg="false" Sequence="75"/>
-    <ROW File="smackx_jingle.jar.pack" Component_="activation.jar" FileName="smackx~3.pac|smackx-jingle.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx-jingle.jar.pack" SelfReg="false" Sequence="89"/>
+    <ROW File="smackx_jingle.jar" Component_="activation.jar" FileName="smackx~2.jar|smackx-jingle.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx-jingle.jar" SelfReg="false" Sequence="92"/>
+    <ROW File="spark.jar" Component_="activation.jar" FileName="spark.jar" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar" SelfReg="false" Sequence="94"/>
     <ROW File="spark.jar.pack" Component_="activation.jar" FileName="sparkj~1.pac|spark.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar.pack" SelfReg="false" Sequence="77"/>
     <ROW File="sparkEmoticonSet.zip" Component_="Default.adiumemoticonset.zip" FileName="sparkE~1.zip|sparkEmoticonSet.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet.zip" SelfReg="false" Sequence="63"/>
+    <ROW File="sparkphone.jar" Component_="fastpath.jar" FileName="sparkp~1.jar|sparkphone.jar" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone.jar" SelfReg="false" Sequence="105"/>
     <ROW File="sparkphone.jar.pack" Component_="fastpath.jar" FileName="sparkp~1.pac|sparkphone.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\sparkphone.jar.pack" SelfReg="false" Sequence="87"/>
     <ROW File="sparkplug_dev_guide.html" Component_="builder.jar" FileName="sparkp~1.htm|sparkplug_dev_guide.html" Attributes="0" SourcePath="..\..\target\build\documentation\sparkplug_dev_guide.html" SelfReg="false" Sequence="11"/>
+    <ROW File="spelling_plugin.jar" Component_="fastpath.jar" FileName="spelli~1.jar|spelling-plugin.jar" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin.jar" SelfReg="false" Sequence="106"/>
     <ROW File="spelling_plugin.jar.pack" Component_="fastpath.jar" FileName="spelli~1.pac|spelling-plugin.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin.jar.pack" SelfReg="false" Sequence="88"/>
     <ROW File="startup.bat" Component_="startup.bat" FileName="startup.bat" Attributes="0" SourcePath="..\..\target\build\bin\startup.bat" SelfReg="false" Sequence="1"/>
     <ROW File="startup.jar" Component_="activation.jar" FileName="startup.jar" Attributes="0" SourcePath="..\..\target\build\lib\startup.jar" SelfReg="false" Sequence="54"/>
     <ROW File="startup.sh" Component_="Info.plist" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\resources\startup.sh" SelfReg="false" Sequence="31"/>
     <ROW File="startup.sh_1" Component_="startup.bat" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\bin\startup.sh" SelfReg="false" Sequence="34"/>
     <ROW File="style.css" Component_="builder.jar" FileName="style.css" Attributes="0" SourcePath="..\..\target\build\documentation\style.css" SelfReg="false" Sequence="12"/>
+    <ROW File="swingx.jar" Component_="activation.jar" FileName="swingx.jar" Attributes="0" SourcePath="..\..\target\build\lib\swingx.jar" SelfReg="false" Sequence="95"/>
     <ROW File="swingx.jar.pack" Component_="activation.jar" FileName="swingx~1.pac|swingx.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\swingx.jar.pack" SelfReg="false" Sequence="78"/>
+    <ROW File="synthetica.jar" Component_="activation.jar" FileName="synthe~1.jar|synthetica.jar" Attributes="0" SourcePath="..\..\target\build\lib\synthetica.jar" SelfReg="false" Sequence="96"/>
     <ROW File="synthetica.jar.pack" Component_="activation.jar" FileName="synthe~1.pac|synthetica.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\synthetica.jar.pack" SelfReg="false" Sequence="79"/>
+    <ROW File="syntheticaBlueMoon.jar" Component_="activation.jar" FileName="synthe~2.jar|syntheticaBlueMoon.jar" Attributes="0" SourcePath="..\..\target\build\lib\syntheticaBlueMoon.jar" SelfReg="false" Sequence="97"/>
     <ROW File="syntheticaBlueMoon.jar.pack" Component_="activation.jar" FileName="synthe~2.pac|syntheticaBlueMoon.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\syntheticaBlueMoon.jar.pack" SelfReg="false" Sequence="80"/>
     <ROW File="systeminfo.dll" Component_="systeminfo.dll" FileName="system~1.dll|systeminfo.dll" Attributes="0" SourcePath="..\..\target\build\resources\systeminfo.dll" SelfReg="false" Sequence="59"/>
+    <ROW File="systeminfo.jar" Component_="activation.jar" FileName="system~1.jar|systeminfo.jar" Attributes="0" SourcePath="..\..\target\build\lib\systeminfo.jar" SelfReg="false" Sequence="98"/>
     <ROW File="systeminfo.jar.pack" Component_="activation.jar" FileName="system~1.pac|systeminfo.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\systeminfo.jar.pack" SelfReg="false" Sequence="81"/>
     <ROW File="tray.dll" Component_="tray.dll" FileName="tray.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\tray.dll" SelfReg="false" Sequence="21"/>
+    <ROW File="xpp.jar" Component_="activation.jar" FileName="xpp.jar" Attributes="0" SourcePath="..\..\target\build\lib\xpp.jar" SelfReg="false" Sequence="99"/>
     <ROW File="xpp.jar.pack" Component_="activation.jar" FileName="xppjar~1.pac|xpp.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\xpp.jar.pack" SelfReg="false" Sequence="82"/>
+    <ROW File="xstream.jar" Component_="activation.jar" FileName="xstream.jar" Attributes="0" SourcePath="..\..\target\build\lib\xstream.jar" SelfReg="false" Sequence="100"/>
     <ROW File="xstream.jar.pack" Component_="activation.jar" FileName="xstrea~1.pac|xstream.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\xstream.jar.pack" SelfReg="false" Sequence="83"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
@@ -207,7 +223,6 @@
     <ROW Directory_="xtra_DIR" Component_="xtra"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
-    <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="1" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="1" Source="aicustact.dll" Target="RestoreLocation"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
@@ -244,7 +259,6 @@
     <ROW IniFile="Virtual_Machine_Parameters" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Virtual Machine Parameters" Value="-Dappdir=&quot;[APPDIR]&quot; " Action="0" Component_="Spark.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
-    <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="740"/>
     <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1545"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1300"/>
@@ -275,7 +289,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
     <ROW UpgradeCode="UpgradeCode" VersionMax="ProductVersion" Attributes="1025"/>
-    <ROW UpgradeCode="UpgradeCode" VersionMin="ProductVersion" Attributes="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
     <ROW Directory_="APPDIR" SourcePath="..\..\target\build" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
