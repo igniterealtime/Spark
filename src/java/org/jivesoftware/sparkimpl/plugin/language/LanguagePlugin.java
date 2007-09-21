@@ -12,18 +12,22 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.net.URL;
-import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+
+import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 /**
  * Allows for changing of default languages within Spark.
@@ -44,27 +48,31 @@ public class LanguagePlugin implements Plugin {
         locales = Locale.getAvailableLocales();
 
         // Load files
-        URL url = getClass().getClassLoader().getResource("i18n");
+        URL sparkJar = getClass().getClassLoader().getResource("spark.jar");
 
-        File[] files = URLFileSystem.url2File(url).listFiles();
-        if(files == null){
-            return;
-        }
-        
-        for (int i = 0; i < files.length; i++) {
-            File propertiesFile = files[i];
-            String propertiesName = propertiesFile.getName();
-            if (propertiesName.endsWith(".properties")) {
-                int lastIndex = propertiesName.lastIndexOf("i18n_");
-                int period = propertiesName.lastIndexOf(".");
-                if (lastIndex == -1) {
-                    addLanguage("en");
-                }
-                else {
-                    String language = propertiesName.substring(lastIndex + 5, period);
-                    addLanguage(language);
+        try {
+            ZipFile zipFile = new JarFile(URLFileSystem.url2File(sparkJar));
+            for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+                JarEntry entry = (JarEntry)e.nextElement();
+                String propertiesName = entry.getName();
+                // Ignore any manifest.mf entries.
+                if (propertiesName.endsWith(".properties")) {
+                    int lastIndex = propertiesName.lastIndexOf("i18n_");
+                    int period = propertiesName.lastIndexOf(".");
+                    if (lastIndex == -1 && propertiesName.contains("spark_i18n")) {
+                        addLanguage("en");
+                    }
+                    else {
+                        String language = propertiesName.substring(lastIndex + 5, period);
+                        addLanguage(language);
+                    }
                 }
             }
+            zipFile.close();
+            zipFile = null;
+        }
+        catch (Throwable e) {
+            Log.error("Error unzipping plugin", e);
         }
 
         actionsMenu.add(languageMenu);
