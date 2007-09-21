@@ -183,11 +183,6 @@
                 <include name="*.*"/>
             </fileset>
         </copy>
-        <copy todir="${target.resources}/i18n">
-            <fileset dir="${resources.dir}/i18n">
-                <include name="*.*"/>
-            </fileset>
-        </copy>
         <copy todir="${plugins}">
             <fileset dir="${commercial.plugin.dir}">
                 <include name="*.jar"/>
