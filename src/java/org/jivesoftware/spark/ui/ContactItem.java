@@ -479,7 +479,7 @@ public class ContactItem extends JPanel {
                 }
                 else {
                     ImageIcon icon = new ImageIcon(url);
-                    icon = GraphicUtils.scale(icon, 16, 16);
+                    icon = GraphicUtils.scale(icon, 24, 24);
                     setSideIcon(icon);
                 }
             }

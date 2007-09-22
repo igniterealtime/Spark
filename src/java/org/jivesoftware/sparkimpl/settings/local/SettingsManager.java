@@ -30,18 +30,28 @@ public class SettingsManager {
 
     private static List<PreferenceListener> listeners = new ArrayList<PreferenceListener>();
 
+    private static boolean fileExists = false;
+
     private SettingsManager() {
     }
 
     /**
-     * Returns the LocalPreferences for this agent.
+     * Returns the LocalPreferences for this user.
      *
-     * @return the LocalPreferences for this agent.
+     * @return the LocalPreferences for this user.
      */
     public static LocalPreferences getLocalPreferences() {
+        if(localPreferences != null){
+            return localPreferences;
+        }
 
-        if (!exists() && localPreferences == null) {
+        if (!fileExists) {
+            fileExists = exists();
+        }
+
+        if (!fileExists && localPreferences == null) {
             localPreferences = new LocalPreferences();
+            saveSettings();
         }
 
         if (localPreferences == null) {
@@ -49,7 +59,6 @@ public class SettingsManager {
             File settingsFile = getSettingsFile();
             localPreferences = load();
         }
-
 
         return localPreferences;
     }
