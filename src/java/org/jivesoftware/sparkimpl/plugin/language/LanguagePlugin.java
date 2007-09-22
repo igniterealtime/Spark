@@ -23,11 +23,13 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
+import java.io.File;
 
 /**
  * Allows for changing of default languages within Spark.
@@ -49,9 +51,10 @@ public class LanguagePlugin implements Plugin {
 
         // Load files
         URL sparkJar = getClass().getClassLoader().getResource("spark.jar");
+        String url = URLDecoder.decode(sparkJar.getPath());
 
         try {
-            ZipFile zipFile = new JarFile(URLFileSystem.url2File(sparkJar));
+            ZipFile zipFile = new JarFile(new File(url));
             for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
                 JarEntry entry = (JarEntry)e.nextElement();
                 String propertiesName = entry.getName();
