@@ -573,6 +573,25 @@ public class VCardManager {
         this.personalVCard = vcard;
     }
 
+    public URL getAvatarURL(String jid) {
+        VCard vcard = getVCard(jid, true);
+        if (vcard != null) {
+            String hash = vcard.getAvatarHash();
+            if(!ModelUtil.hasLength(hash)){
+                return null;
+            }
+            
+            final File avatarFile = new File(contactsDir, hash);
+            try {
+                return avatarFile.toURL();
+            }
+            catch (MalformedURLException e) {
+                Log.error(e);
+            }
+        }
+        return null;
+    }
+
     /**
      * Persist vCard information out for caching.
      *

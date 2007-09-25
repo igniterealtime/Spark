@@ -26,6 +26,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.sparkimpl.profile.VCardManager;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -291,7 +292,7 @@ public class ContactItem extends JPanel {
             }
         }
 
-        return null;
+        return SparkManager.getVCardManager().getAvatarURL(getJID());
     }
 
     /**
