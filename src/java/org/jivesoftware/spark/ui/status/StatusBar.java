@@ -21,10 +21,12 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
+import org.jivesoftware.sparkimpl.profile.VCardListener;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
 import java.awt.Color;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -60,7 +63,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 //TODO: I need to remove the presence logic from this class.
-public class StatusBar extends JPanel {
+public class StatusBar extends JPanel implements VCardListener {
     private List<StatusItem> statusList = new ArrayList<StatusItem>();
 
     private JLabel imageLabel = new JLabel();
@@ -129,6 +132,17 @@ public class StatusBar extends JPanel {
                 imageLabel.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
+
+
+        final TimerTask task = new SwingTimerTask() {
+            public void doRun() {
+                SparkManager.getVCardManager().addVCardListener(SparkManager.getWorkspace().getStatusBar());
+            }
+        };
+
+        TaskEngine.getInstance().schedule(task, 3000);
+
+
     }
 
     public void setAvatar(Icon icon) {
@@ -528,5 +542,10 @@ public class StatusBar extends JPanel {
         Dimension dim = super.getPreferredSize();
         dim.width = 0;
         return dim;
+    }
+
+
+    public void vcardChanged(VCard vcard) {
+        updatVCardInformation(vcard);
     }
 }

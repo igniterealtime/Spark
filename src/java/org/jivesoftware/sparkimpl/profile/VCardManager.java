@@ -53,7 +53,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -89,6 +91,7 @@ public class VCardManager {
 
     private File contactsDir;
 
+    private List<VCardListener> listeners = new ArrayList<VCardListener>();
 
     /**
      * Initialize VCardManager.
@@ -231,7 +234,7 @@ public class VCardManager {
 
         JMenuItem viewProfileMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.FIND_TEXT_IMAGE));
         ResourceUtils.resButton(viewProfileMenu, Res.getString("menuitem.lookup.profile"));
-        contactsMenu.insert(viewProfileMenu, size - 1);
+        contactsMenu.insert(viewProfileMenu, size > 0 ? size - 1 : 0);
         viewProfileMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
@@ -577,10 +580,10 @@ public class VCardManager {
         VCard vcard = getVCard(jid, true);
         if (vcard != null) {
             String hash = vcard.getAvatarHash();
-            if(!ModelUtil.hasLength(hash)){
+            if (!ModelUtil.hasLength(hash)) {
                 return null;
             }
-            
+
             final File avatarFile = new File(contactsDir, hash);
             try {
                 return avatarFile.toURL();
@@ -687,6 +690,34 @@ public class VCardManager {
         }
 
         return null;
+    }
+
+
+    /**
+     * Add <code>VCardListener</code>.
+     *
+     * @param listener the listener to add.
+     */
+    public void addVCardListener(VCardListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove <code>VCardListener</code>.
+     *
+     * @param listener the listener to remove.
+     */
+    public void removeVCardListener(VCardListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Notify all <code>VCardListener</code> implementations.
+     */
+    protected void notifyVCardListeners() {
+        for (VCardListener listener : listeners) {
+            listener.vcardChanged(personalVCard);
+        }
     }
 
 }

@@ -446,6 +446,9 @@ public class VCardEditor {
 
                 statusBar.setAvatar(null);
             }
+
+            // Notify listenres
+            SparkManager.getVCardManager().notifyVCardListeners();
         }
         catch (XMPPException e) {
             Log.error(e);
