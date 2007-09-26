@@ -23,6 +23,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
@@ -34,7 +35,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin;
@@ -43,22 +44,20 @@ import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
-
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.util.TimerTask;
 
 
 /**
@@ -307,11 +306,11 @@ public class Workspace extends JPanel implements PacketListener {
             boolean broadcast = message.getProperty("broadcast") != null;
 
             if (body == null ||
-                isGroupChat ||
-                broadcast ||
-                message.getType() == Message.Type.normal ||
-                message.getType() == Message.Type.headline ||
-                message.getType() == Message.Type.error) {
+                    isGroupChat ||
+                    broadcast ||
+                    message.getType() == Message.Type.normal ||
+                    message.getType() == Message.Type.headline ||
+                    message.getType() == Message.Type.error) {
                 return;
             }
 
@@ -385,6 +384,24 @@ public class Workspace extends JPanel implements PacketListener {
         String nickname = StringUtils.parseName(bareJID);
         if (contact != null) {
             nickname = contact.getNickname();
+        }
+        else {
+            // Attempt to load VCard from users who we are not subscribed to.
+            VCard vCard = SparkManager.getVCardManager().getVCard(bareJID);
+            if (vCard != null && vCard.getError() == null) {
+                String firstName = vCard.getFirstName();
+                String lastName = vCard.getLastName();
+                String userNickname = vCard.getNickName();
+                if (ModelUtil.hasLength(userNickname)) {
+                    nickname = userNickname;
+                }
+                else if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
+                    nickname = firstName + " " + lastName;
+                }
+                else if (ModelUtil.hasLength(firstName)) {
+                    nickname = firstName;
+                }
+            }
         }
 
         SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);

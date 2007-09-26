@@ -160,6 +160,31 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
             public void focusLost(FocusEvent e) {
                 String jid = getJID();
+                String vcardNickname = null;
+
+                if (!publicBox.isSelected()) {
+                    // This is not a transport.
+                    String fullJID = getJID();
+                    if (fullJID.indexOf("@") == -1) {
+                        fullJID = fullJID + "@" + SparkManager.getConnection().getServiceName();
+                    }
+
+                    VCard vCard = SparkManager.getVCardManager().getVCard(fullJID);
+                    if (vCard != null && vCard.getError() == null) {
+                        String firstName = vCard.getFirstName();
+                        String lastName = vCard.getLastName();
+                        String nickname = vCard.getNickName();
+                        if (ModelUtil.hasLength(nickname)) {
+                            vcardNickname = nickname;
+                        }
+                        else if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
+                            vcardNickname = firstName + " " + lastName;
+                        }
+                        else if (ModelUtil.hasLength(firstName)) {
+                            vcardNickname = firstName;
+                        }
+                    }
+                }
 
                 String nickname = nicknameField.getText();
                 if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(jid)) {
@@ -167,7 +192,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
                     if (!ModelUtil.hasLength(nickname)) {
                         nickname = jid;
                     }
-                    nicknameField.setText(nickname);
+
+                    nicknameField.setText(vcardNickname != null ? vcardNickname : nickname);
                 }
             }
         });
