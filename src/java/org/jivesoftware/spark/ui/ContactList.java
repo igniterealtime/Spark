@@ -2130,5 +2130,16 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
     }
 
+    /**
+     * Sorts ContactItems.
+     */
+    public final static Comparator<ContactItem> ContactItemComparator = new Comparator() {
+        public int compare(Object contactItemOne, Object contactItemTwo) {
+            final ContactItem item1 = (ContactItem)contactItemOne;
+            final ContactItem item2 = (ContactItem)contactItemTwo;
+            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+        }
+    };
+
 }
 

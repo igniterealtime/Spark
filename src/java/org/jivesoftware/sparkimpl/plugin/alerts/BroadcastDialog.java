@@ -21,6 +21,18 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JDialog;
@@ -29,17 +41,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Allows for better selective broadcasting.
@@ -78,6 +79,16 @@ public class BroadcastDialog extends JPanel {
 
             // Now add contact items from contact group.
             for (ContactItem item : group.getContactItems()) {
+                CheckNode itemNode = new CheckNode(item.getNickname(), false, item.getIcon());
+                itemNode.setAssociatedObject(item.getJID());
+                groupNode.add(itemNode);
+                nodes.add(itemNode);
+            }
+
+            final List<ContactItem> offlineContacts = new ArrayList<ContactItem>(group.getOfflineContacts());
+            Collections.sort(offlineContacts, ContactList.ContactItemComparator);
+
+            for (ContactItem item : offlineContacts) {
                 CheckNode itemNode = new CheckNode(item.getNickname(), false, item.getIcon());
                 itemNode.setAssociatedObject(item.getJID());
                 groupNode.add(itemNode);
