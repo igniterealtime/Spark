@@ -47,10 +47,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -62,6 +58,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -409,7 +409,8 @@ public class ChatRoomImpl extends ChatRoom {
                     boolean broadcast = message.getProperty("broadcast") != null;
 
                     // If this is a group chat message, discard
-                    if (message.getType() == Message.Type.groupchat || broadcast) {
+                    if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
+                        message.getType() == Message.Type.headline) {
                         return;
                     }
 
