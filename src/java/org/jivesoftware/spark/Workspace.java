@@ -44,13 +44,6 @@ import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -58,6 +51,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -305,12 +305,19 @@ public class Workspace extends JPanel implements PacketListener {
             final String body = message.getBody();
             boolean broadcast = message.getProperty("broadcast") != null;
 
+            // Handle offline message.
+            DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+            if (offlineInformation != null && (Message.Type.chat == message.getType() ||
+                Message.Type.normal == message.getType())) {
+                handleOfflineMessage(message);
+            }
+
             if (body == null ||
-                    isGroupChat ||
-                    broadcast ||
-                    message.getType() == Message.Type.normal ||
-                    message.getType() == Message.Type.headline ||
-                    message.getType() == Message.Type.error) {
+                isGroupChat ||
+                broadcast ||
+                message.getType() == Message.Type.normal ||
+                message.getType() == Message.Type.headline ||
+                message.getType() == Message.Type.error) {
                 return;
             }
 
@@ -333,15 +340,8 @@ public class Workspace extends JPanel implements PacketListener {
                 // Ignore
             }
 
-            // Handle offline message.
-            DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
-
-            if (offlineInformation != null && (Message.Type.chat == message.getType() || Message.Type.normal == message.getType())) {
-                handleOfflineMessage(message);
-            }
-
-            // Check for anonymous user.
-            else if (room == null) {
+            // Check for non-existent rooms.
+            if (room == null) {
                 createOneToOneRoom(bareJID, message);
             }
         }
