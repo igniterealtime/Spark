@@ -40,8 +40,8 @@ public class LayoutSettings {
     }
 
     public int getMainWindowWidth() {
-        if (mainWindowWidth < 200) {
-            mainWindowWidth = 200;
+        if (mainWindowWidth < 100) {
+            mainWindowWidth = 100;
         }
         return mainWindowWidth;
     }
@@ -51,8 +51,8 @@ public class LayoutSettings {
     }
 
     public int getMainWindowHeight() {
-        if (mainWindowHeight < 400) {
-            mainWindowHeight = 400;
+        if (mainWindowHeight < 200) {
+            mainWindowHeight = 200;
         }
         return mainWindowHeight;
     }

@@ -175,6 +175,10 @@ public class BroadcastDialog extends JPanel {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
+                if(!dlg.isVisible()){
+                    return;
+                }
+
                 if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                 }
