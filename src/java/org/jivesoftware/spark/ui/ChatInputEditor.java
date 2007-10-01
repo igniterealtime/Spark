@@ -10,6 +10,10 @@
 
 package org.jivesoftware.spark.ui;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -18,10 +22,6 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.undo.UndoManager;
-
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 /**
  * This is implementation of ChatArea that should be used as the sendField
@@ -64,6 +64,15 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
     }
 
     public void changedUpdate(DocumentEvent e) {
+    }
+
+    /**
+     * Remove dependices when no longer in use.
+     */
+    public void close() {
+        this.getDocument().removeDocumentListener(this);
+        this.getDocument().removeUndoableEditListener(undoManager);
+        this.removeMouseListener(this);
     }
 
     /**

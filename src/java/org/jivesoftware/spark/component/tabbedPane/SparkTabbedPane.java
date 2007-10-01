@@ -1,13 +1,3 @@
-/**
- * $Revision: $
- * $Date: $
- *
- * Copyright (C) 2006 Jive Software. All rights reserved.
- *
- * This software is published under the terms of the GNU Lesser Public License (LGPL),
- * a copy of which is included in this distribution.
- */
-
 package org.jivesoftware.spark.component.tabbedPane;
 
 import java.awt.BorderLayout;
@@ -24,6 +14,7 @@ import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,34 +93,34 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         setLayout(new BorderLayout());
 
         tabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0)) {
-            public Dimension getPreferredSize() {
-                if (getParent() == null)
-                    return getPreferredSize();
-                // calculate the preferred size based on the flow of components
-                FlowLayout flow = (FlowLayout)getLayout();
-                int w = getParent().getWidth();
-                int h = flow.getVgap();
-                int x = flow.getHgap();
-                int rowH = 0;
-                Dimension d;
-                Component[] comps = getComponents();
-                for (int i = 0; i < comps.length; i++) {
-                    if (comps[i].isVisible()) {
-                        d = comps[i].getPreferredSize();
-                        if (x + d.width > w && x > flow.getHgap()) {
-                            x = flow.getHgap();
-                            h += rowH;
-                            rowH = 0;
-                            h += flow.getVgap();
+                    public Dimension getPreferredSize() {
+                        if (getParent() == null)
+                            return getPreferredSize();
+                        // calculate the preferred size based on the flow of components
+                        FlowLayout flow = (FlowLayout)getLayout();
+                        int w = getParent().getWidth();
+                        int h = flow.getVgap();
+                        int x = flow.getHgap();
+                        int rowH = 0;
+                        Dimension d;
+                        Component[] comps = getComponents();
+                        for (int i = 0; i < comps.length; i++) {
+                            if (comps[i].isVisible()) {
+                                d = comps[i].getPreferredSize();
+                                if (x + d.width > w && x > flow.getHgap()) {
+                                    x = flow.getHgap();
+                                    h += rowH;
+                                    rowH = 0;
+                                    h += flow.getVgap();
+                                }
+                                rowH = Math.max(d.height, rowH);
+                                x += d.width + flow.getHgap();
+                            }
                         }
-                        rowH = Math.max(d.height, rowH);
-                        x += d.width + flow.getHgap();
+                        h += rowH;
+                        return new Dimension(w, h);
                     }
-                }
-                h += rowH;
-                return new Dimension(w, h);
-            }
-        };
+                };
 
 
         final JPanel topPanel = new JPanel();
@@ -138,11 +129,15 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
         // Add Tabs panel to top of panel.
         if (tabPlacement == JTabbedPane.TOP) {
-            topPanel.add(tabs, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+            topPanel.add(tabs, 
+                         new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, 
+                                                new Insets(2, 0, 0, 0), 0, 0));
             add(topPanel, BorderLayout.NORTH);
         }
         else {
-            topPanel.add(tabs, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 0), 0, 0));
+            topPanel.add(tabs, 
+                         new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, 
+                                                new Insets(0, 0, 2, 0), 0, 0));
             add(topPanel, BorderLayout.SOUTH);
         }
 
@@ -185,55 +180,55 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         // Add Component to main panel
         mainPanel.add(Integer.toString(component.hashCode()), component);
         tab.addMouseListener(this);
-        
-        boolean allowClosingThisTab = true; 
+
+        boolean allowClosingThisTab = true;
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        
+
         if (!pref.arePerisitedChatRoomsClosable()) {
-        	allowClosingThisTab = ConferenceUtils.isChatRoomClosable(component);
+            allowClosingThisTab = ConferenceUtils.isChatRoomClosable(component);
         }
         //JOptionPane.showMessageDialog(this, "allowClosingThisTab:" + allowClosingThisTab);
-        
+
         // Add Close Button
         if (isCloseButtonEnabled() && allowClosingThisTab) {
-        	final JLabel closeButton = new JLabel(closeInactiveButtonIcon);
+            final JLabel closeButton = new JLabel(closeInactiveButtonIcon);
             tab.addComponent(closeButton);
             closeButton.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent mouseEvent) {
-                    if (Spark.isWindows()) {
-                        closeButton.setIcon(closeActiveButtonIcon);
-                    }
-
-                    setCursor(HAND_CURSOR);
-                }
-
-                public void mouseExited(MouseEvent mouseEvent) {
-                    if (Spark.isWindows()) {
-                        closeButton.setIcon(closeInactiveButtonIcon);
-                    }
-                    
-                    setCursor(DEFAULT_CURSOR);
-                }
-
-                public void mousePressed(MouseEvent mouseEvent) {
-                    final SwingWorker closeTimerThread = new SwingWorker() {
-                        public Object construct() {
-                            try {
-                                Thread.sleep(100);
+                        public void mouseEntered(MouseEvent mouseEvent) {
+                            if (Spark.isWindows()) {
+                                closeButton.setIcon(closeActiveButtonIcon);
                             }
-                            catch (InterruptedException e) {
-                                Log.error(e);
-                            }
-                            return true;
+
+                            setCursor(HAND_CURSOR);
                         }
 
-                        public void finished() {
-                            close(tab, component);
+                        public void mouseExited(MouseEvent mouseEvent) {
+                            if (Spark.isWindows()) {
+                                closeButton.setIcon(closeInactiveButtonIcon);
+                            }
+
+                            setCursor(DEFAULT_CURSOR);
                         }
-                    };
-                    closeTimerThread.start();
-                }
-            });
+
+                        public void mousePressed(MouseEvent mouseEvent) {
+                            final SwingWorker closeTimerThread = new SwingWorker() {
+                                    public Object construct() {
+                                        try {
+                                            Thread.sleep(100);
+                                        }
+                                        catch (InterruptedException e) {
+                                            Log.error(e);
+                                        }
+                                        return true;
+                                    }
+
+                                    public void finished() {
+                                        close(tab, component);
+                                    }
+                                };
+                            closeTimerThread.start();
+                        }
+                    });
         }
 
 
@@ -368,7 +363,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         // Close Tab
         mainPanel.remove(comp);
         tabs.remove(tab);
-
+        tabs.removeMouseListener(this);
 
         tabs.invalidate();
         tabs.validate();

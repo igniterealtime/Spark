@@ -92,6 +92,8 @@ public class ChatRoomImpl extends ChatRoom {
 
     private long lastActivity;
 
+    private boolean active;
+
     /**
      * Constructs a 1-to-1 ChatRoom.
      *
@@ -100,6 +102,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @param title               the title of the room.
      */
     public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
+        this.active = true;
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
 
@@ -193,6 +196,11 @@ public class ChatRoomImpl extends ChatRoom {
 
 
     public void closeChatRoom() {
+        // If already closed, don't bother.
+        if(!active){
+            return;
+        }
+
         super.closeChatRoom();
 
         // Send a cancel notification event on closing if listening.
@@ -206,7 +214,9 @@ public class ChatRoomImpl extends ChatRoom {
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removePacketListener(this);
-        typingTimerTask.cancel();
+        TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
+        typingTimerTask = null;
+        active = false;
     }
 
     public void sendMessage() {
