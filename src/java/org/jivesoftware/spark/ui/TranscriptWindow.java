@@ -89,7 +89,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         addMouseListener(this);
         addMouseMotionListener(this);
         setDragEnabled(true);
-
         addContextMenuListener(this);
 
         // Make sure ctrl-c works
@@ -97,8 +96,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
         getActionMap().put("copy", new AbstractAction("copy") {
             public void actionPerformed(ActionEvent evt) {
-                StringSelection ss = new StringSelection(getSelectedText());
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+                StringSelection stringSelection = new StringSelection(getSelectedText());
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
             }
         });
 
