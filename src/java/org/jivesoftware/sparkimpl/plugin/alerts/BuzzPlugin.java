@@ -8,8 +8,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -18,7 +16,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -30,12 +27,9 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.TimerTask;
+
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -96,33 +90,8 @@ public class BuzzPlugin implements Plugin {
             if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
                 return;
             }
-            final RolloverButton chatRoomButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
-            chatRoomButton.setToolTipText(Res.getString("message.buzz.alert.notification"));
-            chatRoomButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    final String jid = ((ChatRoomImpl)room).getParticipantJID();
-                    Message message = new Message();
-                    message.setTo(jid);
-                    message.addExtension(new BuzzPacket());
-                    SparkManager.getConnection().sendPacket(message);
 
-                    room.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), ChatManager.NOTIFICATION_COLOR);
-                    chatRoomButton.setEnabled(false);
-
-                    // Enable the button after 30 seconds to prevent abuse.
-                    final TimerTask enableTask = new SwingTimerTask() {
-                        public void doRun() {
-                            chatRoomButton.setEnabled(true);
-                        }
-                    };
-
-                    TaskEngine.getInstance().schedule(enableTask, 30000);
-                }
-            });
-
-            final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
-            room.getEditorBar().add(dividerLabel);
-            room.getEditorBar().add(chatRoomButton);
+            new BuzzRoomDecorator(room);
         }
 
     }
