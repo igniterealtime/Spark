@@ -133,7 +133,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
-        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND)) {
+        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND));
+        /*{
             public Dimension getPreferredSize() {
                 Dimension dim = super.getPreferredSize();
 
@@ -146,6 +147,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 return dim;
             }
         };
+        */
 
 
         textScroller = new JScrollPane(transcriptWindow);
@@ -621,6 +623,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getActionMap().remove("closeTheRoom");
         chatAreaButton.getButton().removeActionListener(this);
+        bottomPanel.remove(chatAreaButton);
     }
 
     /**

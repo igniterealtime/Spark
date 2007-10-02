@@ -29,12 +29,15 @@ import javax.swing.undo.UndoManager;
  */
 public class ChatInputEditor extends ChatArea implements DocumentListener {
 
-    private final UndoManager undoManager = new UndoManager();
+    private final UndoManager undoManager;
+    private KeyStroke keyStroke;
 
     /**
      * Creates a new Default ChatSendField.
      */
     public ChatInputEditor() {
+        undoManager = new UndoManager();
+
         this.setDragEnabled(true);
         this.getDocument().addUndoableEditListener(undoManager);
         Action undo = new AbstractAction() {
@@ -43,12 +46,14 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
             }
         };
 
-        this.getInputMap().put(KeyStroke.getKeyStroke('z', ActionEvent.CTRL_MASK), "undo");
+        keyStroke = KeyStroke.getKeyStroke('z', ActionEvent.CTRL_MASK);
+        this.getInputMap().put(keyStroke, "undo");
+        
         this.registerKeyboardAction(undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         this.getDocument().addDocumentListener(this);
 
-        addMouseListener(this);
+        this.addMouseListener(this);
     }
 
     public void insertUpdate(DocumentEvent e) {
@@ -73,6 +78,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         this.getDocument().removeDocumentListener(this);
         this.getDocument().removeUndoableEditListener(undoManager);
         this.removeMouseListener(this);
+        this.getInputMap().remove(keyStroke);
     }
 
     /**
