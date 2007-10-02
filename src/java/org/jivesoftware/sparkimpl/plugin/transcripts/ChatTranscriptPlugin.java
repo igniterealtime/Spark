@@ -22,6 +22,7 @@ import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
@@ -168,16 +169,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         if (room instanceof ChatRoomImpl) {
-            // Add History Button
-            ChatRoomButton chatRoomButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE));
-            room.getToolBar().addChatRoomButton(chatRoomButton);
-            chatRoomButton.setToolTipText(Res.getString("tooltip.view.history"));
-            chatRoomButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    ChatRoomImpl roomImpl = (ChatRoomImpl)room;
-                    showHistory(roomImpl.getParticipantJID());
-                }
-            });
+            new ChatRoomDecorator(room);
         }
     }
 
@@ -391,6 +383,34 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         }
     };
+
+    private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
+
+        private ChatRoom chatRoom;
+        private ChatRoomButton chatHistoryButton;
+
+        public ChatRoomDecorator(ChatRoom chatRoom) {
+            this.chatRoom = chatRoom;
+            chatRoom.addClosingListener(this);
+
+            // Add History Button
+            chatHistoryButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE));
+            chatRoom.getToolBar().addChatRoomButton(chatHistoryButton);
+            chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
+            chatHistoryButton.addActionListener(this);
+        }
+
+
+        public void closing() {
+            chatHistoryButton.removeActionListener(this);
+            chatRoom.removeClosingListener(this);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
+            showHistory(roomImpl.getParticipantJID());
+        }
+    }
 
 
 }

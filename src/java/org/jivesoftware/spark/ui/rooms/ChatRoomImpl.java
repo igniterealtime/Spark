@@ -47,10 +47,13 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,10 +61,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -93,6 +92,11 @@ public class ChatRoomImpl extends ChatRoom {
     private long lastActivity;
 
     private boolean active;
+
+    // Information button
+    private ChatRoomButton infoButton;
+
+    private ChatRoomButton addToRosterButton;
 
     /**
      * Constructs a 1-to-1 ChatRoom.
@@ -140,34 +144,23 @@ public class ChatRoomImpl extends ChatRoom {
         tabIcon = PresenceManager.getIconFromPresence(presence);
 
         // Create toolbar buttons.
-        ChatRoomButton infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
+        infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
         infoButton.setToolTipText(Res.getString("message.view.information.about.this.user"));
 
         // Create basic toolbar.
         getToolBar().addChatRoomButton(infoButton);
 
         // If the user is not in the roster, then allow user to add them.
+        addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
         if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
-            ChatRoomButton addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
             getToolBar().addChatRoomButton(addToRosterButton);
-            addToRosterButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    RosterDialog rosterDialog = new RosterDialog();
-                    rosterDialog.setDefaultJID(participantJID);
-                    rosterDialog.setDefaultNickname(getParticipantNickname());
-                    rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
-                }
-            });
+
+            addToRosterButton.addActionListener(this);
         }
 
         // Show VCard.
-        infoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                VCardManager vcard = SparkManager.getVCardManager();
-                vcard.viewProfile(participantJID, SparkManager.getChatManager().getChatContainer());
-            }
-        });
+        infoButton.addActionListener(this);
 
         // If this is a private chat from a group chat room, do not show toolbar.
         if (StringUtils.parseResource(participantJID).equals(participantNickname)) {
@@ -202,6 +195,10 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         super.closeChatRoom();
+
+        // Remove info listener
+        infoButton.removeActionListener(this);
+        addToRosterButton.removeActionListener(this);
 
         // Send a cancel notification event on closing if listening.
         if (!sendNotification) {
@@ -422,7 +419,7 @@ public class ChatRoomImpl extends ChatRoom {
 
                     // If this is a group chat message, discard
                     if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
-                        message.getType() == Message.Type.headline) {
+                            message.getType() == Message.Type.headline) {
                         return;
                     }
 
@@ -668,5 +665,23 @@ public class ChatRoomImpl extends ChatRoom {
     private boolean isOnline() {
         Presence presence = roster.getPresence(getParticipantJID());
         return presence.isAvailable();
+    }
+
+
+    // I would normally use the command pattern, but
+    // have no real use when dealing with just a couple options.
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+
+        if (e.getSource() == infoButton) {
+            VCardManager vcard = SparkManager.getVCardManager();
+            vcard.viewProfile(participantJID, SparkManager.getChatManager().getChatContainer());
+        }
+        else if (e.getSource() == addToRosterButton) {
+            RosterDialog rosterDialog = new RosterDialog();
+            rosterDialog.setDefaultJID(participantJID);
+            rosterDialog.setDefaultNickname(getParticipantNickname());
+            rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
+        }
     }
 }

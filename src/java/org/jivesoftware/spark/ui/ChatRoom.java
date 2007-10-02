@@ -16,7 +16,6 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
@@ -26,6 +25,26 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -47,26 +66,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -101,6 +100,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private MouseAdapter transcriptWindowMouseListener;
 
+    private KeyAdapter chatEditorKeyListener;
+
     /**
      * Initializes the base layout and base background color.
      */
@@ -120,11 +121,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                 getChatInputEditor().requestFocus();
+                getChatInputEditor().requestFocus();
             }
 
             public void mouseReleased(MouseEvent e) {
-                  if (transcriptWindow.getSelectedText() == null) {
+                if (transcriptWindow.getSelectedText() == null) {
                     getChatInputEditor().requestFocus();
                 }
             }
@@ -166,15 +167,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
         getTranscriptWindow().addContextMenuListener(this);
-
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
-        this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
-            public void actionPerformed(ActionEvent evt) {
-                EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
-                window.setVisible(true);
-            }
-        });
-
 
         transferHandler = new ChatRoomTransferHandler(this);
 
@@ -252,11 +244,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getDocument().addDocumentListener(this);
 
         // Add Key Listener to Send Field
-        getChatInputEditor().addKeyListener(new KeyAdapter() {
+        chatEditorKeyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                checkForEnter(e);
+                 checkForEnter(e);
             }
-        });
+        };
+
+        getChatInputEditor().addKeyListener(chatEditorKeyListener);
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
@@ -465,7 +459,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private void checkForEnter(KeyEvent e) {
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
         if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) &&
-            e.getKeyChar() == KeyEvent.VK_ENTER) {
+                e.getKeyChar() == KeyEvent.VK_ENTER) {
             e.consume();
             sendMessage();
             getChatInputEditor().setText("");
@@ -609,6 +603,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getTranscriptWindow().removeContextMenuListener(this);
         getTranscriptWindow().removeMouseListener(transcriptWindowMouseListener);
+        getChatInputEditor().removeKeyListener(chatEditorKeyListener);
 
 
         // Remove Connection Listener
@@ -622,6 +617,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         messageListeners.clear();
         fileDropListeners.clear();
         getChatInputEditor().close();
+
+        getChatInputEditor().getActionMap().remove("closeTheRoom");
+        chatAreaButton.getButton().removeActionListener(this);
     }
 
     /**
