@@ -99,6 +99,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private List<Message> transcript;
     private List<FileDropListener> fileDropListeners;
 
+    private MouseAdapter transcriptWindowMouseListener;
+
     /**
      * Initializes the base layout and base background color.
      */
@@ -116,17 +118,19 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         editorBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
         fileDropListeners = new ArrayList<FileDropListener>();
 
-        transcriptWindow.addMouseListener(new MouseAdapter() {
+        transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                getChatInputEditor().requestFocus();
+                 getChatInputEditor().requestFocus();
             }
 
             public void mouseReleased(MouseEvent e) {
-                if (transcriptWindow.getSelectedText() == null) {
+                  if (transcriptWindow.getSelectedText() == null) {
                     getChatInputEditor().requestFocus();
                 }
             }
-        });
+        };
+
+        transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
         chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND)) {
             public Dimension getPreferredSize() {
@@ -144,16 +148,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
         textScroller = new JScrollPane(transcriptWindow);
-
-        textScroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                mousePressed = true;
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                mousePressed = false;
-            }
-        });
 
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
@@ -614,6 +608,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         fireClosingListeners();
 
         getTranscriptWindow().removeContextMenuListener(this);
+        getTranscriptWindow().removeMouseListener(transcriptWindowMouseListener);
+
 
         // Remove Connection Listener
         SparkManager.getConnection().removeConnectionListener(this);
