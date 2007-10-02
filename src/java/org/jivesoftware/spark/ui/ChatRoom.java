@@ -71,7 +71,7 @@ import javax.swing.text.Document;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener {
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private JSplitPane verticalSplit;
@@ -171,28 +171,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
 
 
-        getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object component, JPopupMenu popup) {
-                Action saveAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        saveTranscript();
-                    }
-                };
-                saveAction.putValue(Action.NAME, "Save");
-                saveAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SAVE_AS_16x16));
-
-
-                popup.add(saveAction);
-            }
-
-            public void poppingDown(JPopupMenu popup) {
-
-            }
-
-            public boolean handleDefaultAction(MouseEvent e) {
-                return false;
-            }
-        });
+        getTranscriptWindow().addContextMenuListener(this);
 
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
         this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
@@ -634,6 +613,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void closeChatRoom() {
         fireClosingListeners();
 
+        getTranscriptWindow().removeContextMenuListener(this);
+
         // Remove Connection Listener
         SparkManager.getConnection().removeConnectionListener(this);
         getTranscriptWindow().setTransferHandler(null);
@@ -971,6 +952,28 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         verticalSplit.setDividerLocation(-1);
     }
+
+    public void poppingUp(Object component, JPopupMenu popup) {
+        Action saveAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                saveTranscript();
+            }
+        };
+        saveAction.putValue(Action.NAME, "Save");
+        saveAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SAVE_AS_16x16));
+
+
+        popup.add(saveAction);
+    }
+
+    public void poppingDown(JPopupMenu popup) {
+
+    }
+
+    public boolean handleDefaultAction(MouseEvent e) {
+        return false;
+    }
+
 
     public void focusLost(FocusEvent focusEvent) {
     }

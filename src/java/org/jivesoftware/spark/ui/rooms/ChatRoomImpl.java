@@ -197,7 +197,7 @@ public class ChatRoomImpl extends ChatRoom {
 
     public void closeChatRoom() {
         // If already closed, don't bother.
-        if(!active){
+        if (!active) {
             return;
         }
 
@@ -214,8 +214,10 @@ public class ChatRoomImpl extends ChatRoom {
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removePacketListener(this);
-        TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
-        typingTimerTask = null;
+        if (typingTimerTask != null) {
+            TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
+            typingTimerTask = null;
+        }
         active = false;
     }
 

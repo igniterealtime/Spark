@@ -23,21 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -53,12 +38,27 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
  * of a Chat Window. In general, extensions could override this class
  * to offer more support within the chat, but should not be necessary.
  */
-public class TranscriptWindow extends ChatArea {
+public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
 
     private final SimpleDateFormat notificationDateFormatter;
@@ -90,42 +90,7 @@ public class TranscriptWindow extends ChatArea {
         addMouseMotionListener(this);
         setDragEnabled(true);
 
-        final TranscriptWindow window = this;
-        addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object object, JPopupMenu popup) {
-                Action printAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        SparkManager.printChatTranscript(window);
-                    }
-                };
-
-
-                Action clearAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        clear();
-                    }
-                };
-
-
-                printAction.putValue(Action.NAME, "Print");
-                printAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PRINTER_IMAGE_16x16));
-
-                clearAction.putValue(Action.NAME, "Clear");
-                clearAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.ERASER_IMAGE));
-                popup.addSeparator();
-                popup.add(printAction);
-
-                popup.add(clearAction);
-            }
-
-            public void poppingDown(JPopupMenu popup) {
-
-            }
-
-            public boolean handleDefaultAction(MouseEvent e) {
-                return false;
-            }
-        });
+        addContextMenuListener(this);
 
         // Make sure ctrl-c works
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
@@ -476,7 +441,7 @@ public class TranscriptWindow extends ChatArea {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -488,6 +453,11 @@ public class TranscriptWindow extends ChatArea {
 
     public void cleanup() {
         clear();
+
+        removeMouseListener(this);
+        removeMouseMotionListener(this);
+
+        removeContextMenuListener(this);
     }
 
 
@@ -497,5 +467,45 @@ public class TranscriptWindow extends ChatArea {
 
     public Font getFont() {
         return defaultFont;
+    }
+
+
+    /**
+     * Adds Print and Clear actions.
+     * @param object the TransferWindow
+     * @param popup the popup menu to add to.
+     */
+    public void poppingUp(final Object object, JPopupMenu popup) {
+        Action printAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                SparkManager.printChatTranscript((TranscriptWindow)object);
+            }
+        };
+
+
+        Action clearAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                clear();
+            }
+        };
+
+
+        printAction.putValue(Action.NAME, "Print");
+        printAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PRINTER_IMAGE_16x16));
+
+        clearAction.putValue(Action.NAME, "Clear");
+        clearAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.ERASER_IMAGE));
+        popup.addSeparator();
+        popup.add(printAction);
+
+        popup.add(clearAction);
+    }
+
+    public void poppingDown(JPopupMenu popup) {
+
+    }
+
+    public boolean handleDefaultAction(MouseEvent e) {
+        return false;
     }
 }
