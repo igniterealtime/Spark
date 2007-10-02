@@ -21,7 +21,6 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -41,6 +40,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -53,7 +53,7 @@ import java.util.StringTokenizer;
  * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
  * formatting of bold, italics, underlined and urls.
  */
-public class ChatArea extends JTextPane implements MouseListener, MouseMotionListener {
+public class ChatArea extends JTextPane implements MouseListener, MouseMotionListener, ActionListener {
     /**
      * The SimpleAttributeSet used within this instance of JTextPane.
      */
@@ -99,55 +99,24 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
 
-          // Set Default Font
+        // Set Default Font
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         int fs = pref.getChatRoomFontSize();
         fontSize = fs;
         setFontSize(fs);
 
-        // Cut Action
-        final Action cutAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                String selectedText = getSelectedText();
-                replaceSelection("");
-                SparkManager.setClipboard(selectedText);
-            }
-        };
-        cutAction.putValue(Action.NAME, "Cut");
 
-        // Copy Action
-        final Action copyAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.setClipboard(getSelectedText());
-            }
-        };
-        copyAction.putValue(Action.NAME, "Copy");
+        cutMenu = new JMenuItem("Cut");
+        cutMenu.addActionListener(this);
 
-        // Paste Action
-        final Action pasteAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                String text = SparkManager.getClipboard();
-                if (text != null) {
-                    replaceSelection(text);
-                }
-            }
-        };
-        pasteAction.putValue(Action.NAME, "Paste");
+        copyMenu = new JMenuItem("Copy");
+        copyMenu.addActionListener(this);
 
-        // Select All Action
-        Action selectAllAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                requestFocus();
-                selectAll();
-            }
-        };
-        selectAllAction.putValue(Action.NAME, "Select All");
+        pasteMenu = new JMenuItem("Paste");
+        pasteMenu.addActionListener(this);
 
-
-        cutMenu = new JMenuItem(cutAction);
-        copyMenu = new JMenuItem(copyAction);
-        pasteMenu = new JMenuItem(pasteAction);
-        selectAll = new JMenuItem(selectAllAction);
+        selectAll = new JMenuItem("Select All");
+        selectAll.addActionListener(this);
 
         // Set Default Font
         setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -157,7 +126,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
         getActionMap().put("cut", new AbstractAction("cut") {
             public void actionPerformed(ActionEvent evt) {
-                cutAction.actionPerformed(evt);
+                cutAction();
             }
         });
 
@@ -173,7 +142,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
         getActionMap().put("paste", new AbstractAction("paste") {
             public void actionPerformed(ActionEvent evt) {
-                pasteAction.actionPerformed(evt);
+                pasteAction();
             }
         });
 
@@ -696,4 +665,39 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         return false;
     }
 
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == cutMenu) {
+            cutAction();
+        }
+        else if (e.getSource() == copyMenu) {
+            SparkManager.setClipboard(getSelectedText());
+        }
+        else if (e.getSource() == pasteMenu) {
+            pasteAction();
+        }
+        else if (e.getSource() == selectAll) {
+            requestFocus();
+            selectAll();
+        }
+    }
+
+    private void cutAction() {
+        String selectedText = getSelectedText();
+        replaceSelection("");
+        SparkManager.setClipboard(selectedText);
+    }
+
+    private void pasteAction() {
+        String text = SparkManager.getClipboard();
+        if (text != null) {
+            replaceSelection(text);
+        }
+    }
+
+    protected void releaseResources() {
+        getActionMap().remove("copy");
+        getActionMap().remove("cut");
+        getActionMap().remove("paste");
+    }
 }

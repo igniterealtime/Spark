@@ -246,7 +246,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Add Key Listener to Send Field
         chatEditorKeyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                 checkForEnter(e);
+                checkForEnter(e);
             }
         };
 
@@ -605,6 +605,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().removeMouseListener(transcriptWindowMouseListener);
         getChatInputEditor().removeKeyListener(chatEditorKeyListener);
 
+        textScroller.getViewport().remove(transcriptWindow);
 
         // Remove Connection Listener
         SparkManager.getConnection().removeConnectionListener(this);

@@ -23,21 +23,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -52,6 +37,21 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -440,7 +440,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                 writer.write(buf.toString());
                 writer.close();
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
+                        "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
@@ -451,12 +451,15 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
     }
 
     public void cleanup() {
+        super.releaseResources();
+
         clear();
 
         removeMouseListener(this);
         removeMouseMotionListener(this);
 
         removeContextMenuListener(this);
+        getActionMap().remove("copy");
     }
 
 
@@ -471,8 +474,9 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
     /**
      * Adds Print and Clear actions.
+     *
      * @param object the TransferWindow
-     * @param popup the popup menu to add to.
+     * @param popup  the popup menu to add to.
      */
     public void poppingUp(final Object object, JPopupMenu popup) {
         Action printAction = new AbstractAction() {
