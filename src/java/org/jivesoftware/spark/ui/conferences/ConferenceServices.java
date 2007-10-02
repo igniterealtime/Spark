@@ -372,6 +372,7 @@ public class ConferenceServices {
 
         public ChatRoomDecorator(ChatRoom room) {
             this.chatRoom = room;
+            chatRoom.addClosingListener(this);
         }
 
         public void decorate() {
