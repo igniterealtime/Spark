@@ -34,7 +34,6 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
@@ -54,18 +53,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -76,13 +63,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -96,6 +81,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -299,8 +296,6 @@ public class SparkTransferManager {
 
 
     public void sendFileTo(ContactItem item) {
-        final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
         FileDialog fileChooser = getFileChooser(SparkManager.getMainWindow(), Res.getString("title.select.file.to.send"));
         fileChooser.show();
 
@@ -321,113 +316,24 @@ public class SparkTransferManager {
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
 
-            FileDropListener fileDropListener;
-
             public void chatRoomOpened(final ChatRoom room) {
                 if (!(room instanceof ChatRoomImpl)) {
                     return;
                 }
 
-
-                final ChatInputEditor chatSendField = room.getChatInputEditor();
-                chatSendField.addKeyListener(new KeyAdapter() {
-                    public void keyPressed(KeyEvent ke) {
-                        if (ke.getKeyCode() == KeyEvent.VK_V) {
-                            int i = ke.getModifiers();
-                            if ((i & InputEvent.CTRL_MASK) == InputEvent.CTRL_MASK) {
-                                Clipboard clb = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                Transferable contents = clb.getContents(ke.getSource());
-                                if (contents != null && contents.getTransferDataFlavors().length == 1) {
-                                    if (contents.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                                        sendImage(getClipboard(), room);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                });
-
-                fileDropListener = new FileDropListener() {
-                    public void filesDropped(Collection files, Component component) {
-                        if (component instanceof ChatRoomImpl) {
-                            ChatRoomImpl roomImpl = (ChatRoomImpl)component;
-
-
-                            Iterator iter = files.iterator();
-                            while (iter.hasNext()) {
-                                sendFile((File)iter.next(), roomImpl.getParticipantJID());
-                            }
-
-                            SparkManager.getChatManager().getChatContainer().activateChatRoom(roomImpl);
-                        }
-                    }
-                };
-
-                room.addFileDropListener(fileDropListener);
-
-
-                ChatRoomButton sendFileButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24));
-                sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
-
-                room.getToolBar().addChatRoomButton(sendFileButton);
-
-                final ChatRoomButton sendScreenShotButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PHOTO_IMAGE));
-                sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
-                room.getToolBar().addChatRoomButton(sendScreenShotButton);
-
-                sendScreenShotButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        sendScreenshot(sendScreenShotButton, room);
-                    }
-                });
-
-                sendFileButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        SwingWorker worker = new SwingWorker() {
-                            public Object construct() {
-                                try {
-                                    Thread.sleep(10);
-                                }
-                                catch (InterruptedException e1) {
-                                    Log.error(e1);
-                                }
-                                return true;
-                            }
-
-                            public void finished() {
-                                ChatRoomImpl chatRoom = (ChatRoomImpl)room;
-
-                                FileDialog fileChooser = getFileChooser(SparkManager.getChatManager().getChatContainer().getChatFrame(), Res.getString("title.select.file.to.send"));
-                                fileChooser.show();
-
-                                if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
-                                    return;
-                                }
-
-                                File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
-
-                                if (file.exists()) {
-                                    defaultDirectory = file.getParentFile();
-                                    sendFile(file, chatRoom.getParticipantJID());
-                                }
-
-                            }
-                        };
-                        worker.start();
-                    }
-                });
+                // Otherwise,
+                new ChatRoomTransferDecorator(room);
             }
 
             public void chatRoomClosed(ChatRoom room) {
-                room.removeFileDropListener(fileDropListener);
+
             }
         });
 
 
     }
 
-    private void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
+    public void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
         button.setEnabled(false);
 
         final MainWindow mainWindow = SparkManager.getMainWindow();
@@ -777,7 +683,22 @@ public class SparkTransferManager {
         return false;
     }
 
-    private FileDialog getFileChooser(Frame parent, String title) {
+    /**
+     * Sets the current default directory to store files.
+     *
+     * @param directory the default directory.
+     */
+    public void setDefaultDirectory(File directory) {
+        defaultDirectory = directory;
+    }
+
+    /**
+     * Return the File Chooser to user.
+     * @param parent the parent component.
+     * @param title the title.
+     * @return the FileChooser. (Native Widget)
+     */
+    public FileDialog getFileChooser(Frame parent, String title) {
         FileDialog dialog = new FileDialog(parent, title, FileDialog.LOAD);
         return dialog;
     }
