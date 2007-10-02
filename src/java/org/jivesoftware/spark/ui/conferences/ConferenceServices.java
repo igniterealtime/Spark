@@ -28,6 +28,7 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.ContactGroup;
@@ -41,14 +42,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -56,6 +49,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 /**
  * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
@@ -153,7 +154,6 @@ public class ConferenceServices {
                             // If the ChatRoom exists, add an invitation UI.
                             chatRoom.getTranscriptWindow().addComponent(invitationUI);
 
-
                             // Notify user of incoming invitation.
                             chatRoom.increaseUnreadMessageCount();
 
@@ -236,50 +236,8 @@ public class ConferenceServices {
         chatManager.addChatRoomListener(new ChatRoomListener() {
             public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
-                    final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
-
-                    // Add Conference Invite Button.
-                    ChatRoomButton inviteButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
-                    inviteButton.setToolTipText(Res.getString("title.invite.to.conference"));
-
-                    room.getToolBar().addChatRoomButton(inviteButton);
-
-                    inviteButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            String userName = StringUtils.parseName(SparkManager.getSessionManager().getJID());
-                            final String roomName = userName + "_" + StringUtils.randomString(3);
-
-
-                            final List<String> jids = new ArrayList<String>();
-                            jids.add(chatRoom.getParticipantJID());
-
-                            final String serviceName = getDefaultServiceName();
-                            if (serviceName != null) {
-                                SwingWorker worker = new SwingWorker() {
-                                    public Object construct() {
-                                        try {
-                                            Thread.sleep(25);
-                                        }
-                                        catch (InterruptedException e1) {
-                                            Log.error(e1);
-                                        }
-                                        return "ok";
-                                    }
-
-                                    public void finished() {
-                                        try {
-                                            ConferenceUtils.createPrivateConference(serviceName, Res.getString("message.please.join.in.conference"), roomName, jids);
-                                        }
-                                        catch (XMPPException e1) {
-                                            JOptionPane.showMessageDialog(room, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                                        }
-                                    }
-                                };
-                                worker.start();
-
-                            }
-                        }
-                    });
+                    final ChatRoomDecorator decorator = new ChatRoomDecorator(room);
+                    decorator.decorate();
                 }
             }
 
@@ -406,6 +364,66 @@ public class ConferenceServices {
      */
     public static BookmarksUI getBookmarkedConferences() {
         return bookmarksUI;
+    }
+
+    private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
+        private ChatRoom chatRoom;
+        private ChatRoomButton inviteButton;
+
+        public ChatRoomDecorator(ChatRoom room) {
+            this.chatRoom = room;
+        }
+
+        public void decorate() {
+
+            // Add Conference Invite Button.
+            inviteButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
+            inviteButton.setToolTipText(Res.getString("title.invite.to.conference"));
+
+            chatRoom.getToolBar().addChatRoomButton(inviteButton);
+
+            inviteButton.addActionListener(this);
+        }
+
+
+        public void closing() {
+            inviteButton.removeActionListener(this);
+            chatRoom.removeClosingListener(this);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String userName = StringUtils.parseName(SparkManager.getSessionManager().getJID());
+            final String roomName = userName + "_" + StringUtils.randomString(3);
+
+
+            final List<String> jids = new ArrayList<String>();
+            jids.add(((ChatRoomImpl)chatRoom).getParticipantJID());
+
+            final String serviceName = getDefaultServiceName();
+            if (serviceName != null) {
+                SwingWorker worker = new SwingWorker() {
+                    public Object construct() {
+                        try {
+                            Thread.sleep(25);
+                        }
+                        catch (InterruptedException e1) {
+                            Log.error(e1);
+                        }
+                        return "ok";
+                    }
+
+                    public void finished() {
+                        try {
+                            ConferenceUtils.createPrivateConference(serviceName, Res.getString("message.please.join.in.conference"), roomName, jids);
+                        }
+                        catch (XMPPException e1) {
+                            JOptionPane.showMessageDialog(chatRoom, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                };
+                worker.start();
+            }
+        }
     }
 
 }
