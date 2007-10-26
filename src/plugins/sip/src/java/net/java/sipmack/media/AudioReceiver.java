@@ -1,0 +1,137 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2007 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package net.java.sipmack.media;
+
+import javax.media.*;
+import javax.media.protocol.DataSource;
+import javax.media.rtp.*;
+import javax.media.rtp.event.*;
+
+/**
+ * This class implements receive methods and listeners to be used in AudioChannel
+ *
+ * @author Thiago Camargo 
+ */
+public class AudioReceiver implements ReceiveStreamListener, SessionListener,
+        ControllerListener {
+
+    boolean dataReceived = false;
+
+    Object dataSync;
+
+    public AudioReceiver(Object dataSync) {
+        this.dataSync = dataSync;
+    }
+
+    /**
+     * JingleSessionListener.
+     */
+    public synchronized void update(SessionEvent evt) {
+        if (evt instanceof NewParticipantEvent) {
+            Participant p = ((NewParticipantEvent) evt).getParticipant();
+            System.err.println("  - A new participant had just joined: " + p.getCNAME());
+        }
+    }
+
+    /**
+     * ReceiveStreamListener
+     */
+    public synchronized void update(ReceiveStreamEvent evt) {
+
+        RTPManager mgr = (RTPManager) evt.getSource();
+        Participant participant = evt.getParticipant();    // could be null.
+        ReceiveStream stream = evt.getReceiveStream();  // could be null.
+
+        if (evt instanceof RemotePayloadChangeEvent) {
+
+            System.err.println("  - Received an RTP PayloadChangeEvent.");
+            System.err.println("Sorry, cannot handle payload change.");
+            // System.exit(0);
+
+        } else if (evt instanceof NewReceiveStreamEvent) {
+
+            try {
+                stream = ((NewReceiveStreamEvent) evt).getReceiveStream();
+                DataSource ds = stream.getDataSource();
+
+                // Find out the formats.
+                RTPControl ctl = (RTPControl) ds.getControl("javax.jmf.rtp.RTPControl");
+                if (ctl != null) {
+                    System.err.println("  - Recevied new RTP stream: " + ctl.getFormat());
+                } else
+                    System.err.println("  - Recevied new RTP stream");
+
+                if (participant == null)
+                    System.err.println("      The sender of this stream had yet to be identified.");
+                else {
+                    System.err.println("      The stream comes from: " + participant.getCNAME());
+                }
+
+                // create a player by passing datasource to the Media Manager
+                Player p = javax.media.Manager.createPlayer(ds);
+                if (p == null)
+                    return;
+
+                p.addControllerListener(this);
+                p.realize();
+
+                // Notify intialize() that a new stream had arrived.
+                synchronized (dataSync) {
+                    dataReceived = true;
+                    dataSync.notifyAll();
+                }
+
+            } catch (Exception e) {
+                System.err.println("NewReceiveStreamEvent exception " + e.getMessage());
+                return;
+            }
+
+        } else if (evt instanceof StreamMappedEvent) {
+
+            if (stream != null && stream.getDataSource() != null) {
+                DataSource ds = stream.getDataSource();
+                // Find out the formats.
+                RTPControl ctl = (RTPControl) ds.getControl("javax.jmf.rtp.RTPControl");
+                System.err.println("  - The previously unidentified stream ");
+                if (ctl != null)
+                    System.err.println("      " + ctl.getFormat());
+                System.err.println("      had now been identified as sent by: " + participant.getCNAME());
+            }
+        } else if (evt instanceof ByeEvent) {
+
+            System.err.println("  - Got \"bye\" from: " + participant.getCNAME());
+
+        }
+
+    }
+
+    /**
+     * ControllerListener for the Players.
+     */
+    public synchronized void controllerUpdate(ControllerEvent ce) {
+
+        Player p = (Player) ce.getSourceController();
+
+        if (p == null)
+            return;
+
+        // Get this when the internal players are realized.
+        if (ce instanceof RealizeCompleteEvent) {
+            p.start();
+        }
+
+        if (ce instanceof ControllerErrorEvent) {
+            p.removeControllerListener(this);
+            System.err.println("Receiver internal error: " + ce);
+        }
+
+    }
+}
