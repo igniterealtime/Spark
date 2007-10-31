@@ -24,7 +24,7 @@
     <property name="version.major" value="2"/>
     <property name="version.minor" value="5"/>
     <property name="version.revision" value="8"/>
-    <property name="version.extra" value="beta1"/>
+    <property name="version.extra" value=""/>
     <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
