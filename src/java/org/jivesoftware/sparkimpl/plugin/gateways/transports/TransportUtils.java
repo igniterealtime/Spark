@@ -133,17 +133,25 @@ public class TransportUtils {
      * @param gatewayDomain the domain of the gateway (service name)
      * @param username      the username.
      * @param password      the password.
+     * @param nickname      the nickname.
      * @throws XMPPException thrown if there was an issue registering with the gateway.
      */
-    public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password) throws XMPPException {
+    public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname) throws XMPPException {
         Registration registration = new Registration();
         registration.setType(IQ.Type.SET);
         registration.setTo(gatewayDomain);
         registration.addExtension(new GatewayRegisterExtension());
 
         Map<String, String> attributes = new HashMap<String, String>();
-        attributes.put("username", username);
-        attributes.put("password", password);
+        if (username != null) {
+            attributes.put("username", username);
+        }
+        if (password != null) {
+            attributes.put("password", password);
+        }
+        if (nickname != null) {
+            attributes.put("nickname", nickname);
+        }
         registration.setAttributes(attributes);
 
         PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
@@ -161,15 +169,15 @@ public class TransportUtils {
     }
 
     /**
-     * @param con
-     * @param gatewayDomain
-     * @throws XMPPException
+     * @param con           the XMPPConnection.
+     * @param gatewayDomain the domain of the gateway (service name)
+     * @throws XMPPException thrown if there was an issue unregistering with the gateway.
      */
     public static void unregister(XMPPConnection con, String gatewayDomain) throws XMPPException {
         Registration registration = new Registration();
         registration.setType(IQ.Type.SET);
         registration.setTo(gatewayDomain);
-        Map map = new HashMap();
+        Map<String,String> map = new HashMap<String,String>();
         map.put("remove", "");
         registration.setAttributes(map);
 

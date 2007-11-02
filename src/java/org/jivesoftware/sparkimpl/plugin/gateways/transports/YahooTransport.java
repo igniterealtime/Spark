@@ -47,4 +47,17 @@ public class YahooTransport implements Transport {
     public String getName(){
         return "Yahoo";
     }
+
+    public Boolean requiresUsername() {
+        return true;
+    }
+
+    public Boolean requiresPassword() {
+        return true;
+    }
+
+    public Boolean requiresNickname() {
+        return false;
+    }
+    
 }

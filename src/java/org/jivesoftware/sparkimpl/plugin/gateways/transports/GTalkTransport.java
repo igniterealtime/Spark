@@ -51,4 +51,17 @@ public class GTalkTransport implements Transport {
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
+
+    public Boolean requiresUsername() {
+        return true;
+    }
+
+    public Boolean requiresPassword() {
+        return true;
+    }
+
+    public Boolean requiresNickname() {
+        return false;
+    }
+    
 }

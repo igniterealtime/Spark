@@ -87,6 +87,7 @@ public class ThemePreference implements Preference {
         pref.setEmoticonsEnabled(emotEnabled);
         pref.setUseSystemLookAndFeel(panel.useSystemLookAndFeel());
         pref.setAvatarVisible(panel.areAvatarsVisible());
+        pref.setContactListIconSize(panel.getContactListIconSize());
 
         try {
             String chatRoomFontSize = panel.getChatRoomFontSize();

@@ -13,7 +13,6 @@ import org.jivesoftware.smackx.provider.PrivateDataProvider;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -54,13 +53,11 @@ public class GatewayPrivateData implements PrivateData {
         StringBuffer buf = new StringBuffer();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         buf.append("<gateways>");
-        Iterator iter = loginSettingsMap.keySet().iterator();
-        while (iter.hasNext()) {
+        for (String serviceName : loginSettingsMap.keySet()) {
             buf.append("<gateway>");
-            String serviceName = (String)iter.next();
             String autoLogin = loginSettingsMap.get(serviceName);
-            buf.append("<serviceName>" + serviceName + "</serviceName>");
-            buf.append("<autoLogin>" + autoLogin + "</autoLogin>");
+            buf.append("<serviceName>").append(serviceName).append("</serviceName>");
+            buf.append("<autoLogin>").append(autoLogin).append("</autoLogin>");
             buf.append("</gateway>");
         }
         buf.append("</gateways>");

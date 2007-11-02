@@ -21,21 +21,9 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
-
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -67,6 +55,8 @@ public class ThemePanel extends JPanel {
     private JCheckBox systemLookAndFeelBox;
 
     private JCheckBox showAvatarsBox;
+    private JLabel avatarSizeLabel;
+    private JList avatarSizeField;
 
     /**
      * Construct UI
@@ -90,6 +80,9 @@ public class ThemePanel extends JPanel {
         systemLookAndFeelBox = new JCheckBox();
 
         showAvatarsBox = new JCheckBox();
+        avatarSizeLabel = new JLabel();
+        String [] sizeChoices = {"16x16", "24x24", "32x32"};
+        avatarSizeField = new JList(sizeChoices);
 
 
         contactListFontField = new JTextField();
@@ -110,6 +103,7 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resLabel(contactListFontLabel, contactListFontField, "Contact &List font size:");
         ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, "Chat &Room font size:");
         ResourceUtils.resButton(showAvatarsBox, "Show &Avatars in Contact List");
+        ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, "Contact List a&vatar size:");
 
         // Build UI
         buildUI();
@@ -142,6 +136,8 @@ public class ThemePanel extends JPanel {
         add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(contactListFontField, new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(showAvatarsBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(avatarSizeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         // Activate live one.
@@ -179,6 +175,19 @@ public class ThemePanel extends JPanel {
         systemLookAndFeelBox.setSelected(pref.useSystemLookAndFeel());
 
         showAvatarsBox.setSelected(pref.areAvatarsVisible());
+
+        if (pref.getContactListIconSize() == 16) {
+            avatarSizeField.setSelectedIndex(0);
+        }
+        else if (pref.getContactListIconSize() == 24) {
+            avatarSizeField.setSelectedIndex(1);
+        }
+        else if (pref.getContactListIconSize() == 32) {
+            avatarSizeField.setSelectedIndex(2);
+        }
+        else {
+            avatarSizeField.setSelectedIndex(1);
+        }
 
         try {
             int chatRoomFontSize = pref.getChatRoomFontSize();
@@ -333,6 +342,21 @@ public class ThemePanel extends JPanel {
 
     public String getContactListFontSize(){
         return contactListFontField.getText();
+    }
+
+    public int getContactListIconSize(){
+        if (avatarSizeField.getSelectedIndex() == 0) {
+            return 16;
+        }
+        else if (avatarSizeField.getSelectedIndex() == 1) {
+            return 24;
+        }
+        else if (avatarSizeField.getSelectedIndex() == 2) {
+            return 32;
+        }
+        else {
+            return 24;
+        }
     }
 
     public boolean areAvatarsVisible(){

@@ -1,51 +1,53 @@
 /**
- * $Revision$
- * $Date$
+ * $Revision: $
+ * $Date: $
  *
- * Copyright (C) 1999-2005 Jive Software. All rights reserved.
- * This software is the proprietary information of Jive Software. Use is subject to license terms.
+ * Copyright (C) 2007 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
  */
 
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
 
 /**
  *
  */
-public class XMPPTransport implements Transport {
+public class SimpleTransport implements Transport {
 
     private String serviceName;
 
-    public XMPPTransport(String serviceName) {
+    public SimpleTransport(String serviceName){
         this.serviceName = serviceName;
     }
 
-    public String getTitle() {
-        return Res.getString("title.xmpp.registration");
+    public String getTitle(){
+        return Res.getString("title.simple.registration");
     }
 
     public String getInstructions() {
-        return Res.getString("message.enter.xmpp");
+        return Res.getString("message.enter.simple");
     }
 
     public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.XMPP_TRANSPORT_ACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.SIMPLE_TRANSPORT_ACTIVE_IMAGE);
     }
 
     public Icon getInactiveIcon() {
-        return SparkRes.getImageIcon(SparkRes.XMPP_TRANSPORT_INACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.SIMPLE_TRANSPORT_INACTIVE_IMAGE);
     }
 
     public String getServiceName() {
         return serviceName;
     }
 
-    public String getName() {
-        return "XMPP";
+    public String getName(){
+        return "SIMPLE";
     }
 
     public void setServiceName(String serviceName) {

@@ -49,7 +49,7 @@ public class TransportItem extends JPanel {
         titleLabel.setText(transport.getTitle());
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
 
-        //  descriptionLabel.setText(description);
+        descriptionLabel.setText(transport.getName());
         descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
         descriptionLabel.setForeground(Color.lightGray);
         descriptionLabel.setHorizontalTextPosition(JLabel.LEFT);
@@ -77,7 +77,7 @@ public class TransportItem extends JPanel {
     private void buildUI() {
         add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0));
         add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-        //  add(descriptionLabel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
+        add(descriptionLabel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
         add(activeLabel, new GridBagConstraints(1, 2, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
     }
 

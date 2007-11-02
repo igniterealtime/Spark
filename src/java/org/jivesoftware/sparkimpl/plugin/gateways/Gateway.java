@@ -56,8 +56,8 @@ public class Gateway extends IQ {
 
     public String getChildElementXML() {
         StringBuffer buf = new StringBuffer();
-        buf.append("<query xmlns=\"" + NAMESPACE + "\">");
-        buf.append("<prompt>" + username + "</prompt>");
+        buf.append("<query xmlns=\"").append(NAMESPACE).append("\">");
+        buf.append("<prompt>").append(username).append("</prompt>");
         buf.append("</query>");
         return buf.toString();
     }

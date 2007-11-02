@@ -50,6 +50,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
 
     private JTextField usernameField = new JTextField();
     private JPasswordField passwordField = new JPasswordField();
+    private JTextField nicknameField = new JTextField();
     private RolloverButton registerButton = new RolloverButton("", null);
     private RolloverButton cancelButton = new RolloverButton("", null);
     private JDialog dialog;
@@ -80,21 +81,34 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
 
         final TitlePanel titlePanel = new TitlePanel(transport.getTitle(), transport.getInstructions(), transport.getIcon(), true);
 
-        add(titlePanel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        int line = 0;
+        add(titlePanel, new GridBagConstraints(0, line, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
+        line++;
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username") + ":");
-        add(usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(usernameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(usernameLabel, new GridBagConstraints(0, line, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(usernameField, new GridBagConstraints(1, line, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
+        line++;
         final JLabel passwordLabel = new JLabel();
         passwordLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
-        add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(passwordLabel, new GridBagConstraints(0, line, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(passwordField, new GridBagConstraints(1, line, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(buttonPanel, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        if (transport.requiresNickname()) {
+            line++;
+            final JLabel nicknameLabel = new JLabel();
+            nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
+            ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
+            add(nicknameLabel, new GridBagConstraints(0, line, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(nicknameField, new GridBagConstraints(1, line, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0,0));
+        }
+
+        line++;
+        add(buttonPanel, new GridBagConstraints(0, line, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
@@ -130,17 +144,29 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         return new String(passwordField.getPassword());
     }
 
+    public String getNickname() {
+        return nicknameField.getText();
+    }
 
     public void actionPerformed(ActionEvent e) {
         String username = getScreenName();
         String password = getPassword();
-        if (!ModelUtil.hasLength(username) || !ModelUtil.hasLength(password)) {
-            JOptionPane.showMessageDialog(this, Res.getString("message.username.password.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+        String nickname = getNickname();
+        if (transport.requiresUsername() && !ModelUtil.hasLength(username)) {
+            JOptionPane.showMessageDialog(this, Res.getString("message.username.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (transport.requiresPassword() && !ModelUtil.hasLength(password)) {
+            JOptionPane.showMessageDialog(this, Res.getString("message.password.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (transport.requiresNickname() && !ModelUtil.hasLength(nickname)) {
+            JOptionPane.showMessageDialog(this, Res.getString("message.nickname.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password);
+            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password, nickname);
 
             // Send Directed Presence
             final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();

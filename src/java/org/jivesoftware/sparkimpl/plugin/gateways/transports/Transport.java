@@ -26,6 +26,10 @@ public interface Transport {
 
     String getName();
 
+    Boolean requiresUsername();
 
+    Boolean requiresPassword();
+
+    Boolean requiresNickname();
 
 }

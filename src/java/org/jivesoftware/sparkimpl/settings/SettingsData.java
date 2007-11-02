@@ -16,14 +16,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class SettingsData implements PrivateData {
-    private Map settingsMap;
+    private Map<String,String> settingsMap;
 
 
-    public SettingsData(Map map) {
+    public SettingsData(Map<String,String> map) {
         settingsMap = map;
     }
 
-    public Map getMap() {
+    public Map<String,String> getMap() {
         return settingsMap;
     }
 
@@ -37,17 +37,17 @@ public class SettingsData implements PrivateData {
 
     public String toXML() {
         StringBuffer buf = new StringBuffer();
-        buf.append("<" + getElementName() + " xmlns=\"" + getNamespace() + "\">");
+        buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         String key;
-        for (Iterator iter = settingsMap.keySet().iterator(); iter.hasNext(); buf.append("</" + key + "></entry>")) {
+        for (Iterator iter = settingsMap.keySet().iterator(); iter.hasNext(); buf.append("</").append(key).append("></entry>")) {
             key = (String)iter.next();
-            String value = (String)settingsMap.get(key);
+            String value = settingsMap.get(key);
             buf.append("<entry xmlns=\"\">");
-            buf.append("<" + key + ">");
+            buf.append("<").append(key).append(">");
             buf.append(value);
         }
 
-        buf.append("</" + getElementName() + ">");
+        buf.append("</").append(getElementName()).append(">");
         return buf.toString();
     }
 

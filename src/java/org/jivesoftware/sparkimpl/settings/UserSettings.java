@@ -31,8 +31,7 @@ public class UserSettings {
             if (null == singleton) {
                 UserSettings controller = new UserSettings();
                 singleton = controller;
-                UserSettings usersettings = controller;
-                return usersettings;
+                return controller;
             }
         }
         return singleton;
@@ -50,10 +49,9 @@ public class UserSettings {
         }
     }
 
-    public Map getSettings() {
+    public Map<String,String> getSettings() {
         try {
-            Map map = settingsData.getMap();
-            return map;
+            return settingsData.getMap();
         }
         catch (Exception ex) {
             Log.error("Error in User Settings.", ex);
@@ -74,11 +72,11 @@ public class UserSettings {
     }
 
     public String getProperty(String name) {
-        return (String)getSettings().get(name);
+        return getSettings().get(name);
     }
 
     public String getEmptyPropertyIfNull(String name) {
-        return ModelUtil.nullifyIfEmpty((String)getSettings().get(name));
+        return ModelUtil.nullifyIfEmpty(getSettings().get(name));
     }
 
     public void save() {

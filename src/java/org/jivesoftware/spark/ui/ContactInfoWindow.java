@@ -17,30 +17,17 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.JMultilineLabel;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
@@ -49,7 +36,7 @@ import javax.swing.JWindow;
  */
 public class ContactInfoWindow extends JPanel {
     private final JLabel nicknameLabel = new JLabel();
-    private final JMultilineLabel statusLabel = new JMultilineLabel();
+    private final JTextArea statusLabel = new JTextArea();
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel avatarLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
@@ -102,6 +89,10 @@ public class ContactInfoWindow extends JPanel {
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
         statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         statusLabel.setForeground(Color.gray);
+        statusLabel.setLineWrap(true);
+        statusLabel.setWrapStyleWord(true);
+        statusLabel.setEditable(false);
+        statusLabel.setBorder(null);
         fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         fullJIDLabel.setForeground(Color.gray);
         titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));

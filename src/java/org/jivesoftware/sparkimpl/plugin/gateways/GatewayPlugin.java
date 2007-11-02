@@ -27,26 +27,12 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ContactGroup;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactItemHandler;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.PresenceListener;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.AIMTransport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.GTalkTransport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.ICQTransport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.MSNTransport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.XMPPTransport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.YahooTransport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -152,6 +138,18 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     XMPPTransport xmppTransport = new XMPPTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), xmppTransport);
                 }
+                else if (entityName.startsWith("irc.")) {
+                    IRCTransport ircTransport = new IRCTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), ircTransport);
+                }
+                else if (entityName.startsWith("sip.")) {
+                    SimpleTransport simpleTransport = new SimpleTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), simpleTransport);
+                }
+                else if (entityName.startsWith("gadugadu.")) {
+                    GaduGaduTransport gadugaduTransport = new GaduGaduTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), gadugaduTransport);
+                }
             }
         }
 
@@ -188,8 +186,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
                     if (from != null && hasError) {
                         Transport transport = TransportUtils.getTransport(from);
-                        String title = "Alert from " + transport.getName();
                         if (transport != null) {
+                            String title = "Alert from " + transport.getName();
                             // Show error
                             MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
                         }

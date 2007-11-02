@@ -26,19 +26,9 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -69,6 +59,10 @@ public class ContactItem extends JPanel {
 
     private int fontSize;
 
+    private int iconSize;
+
+    private boolean avatarsShowing;
+
     /**
      * Creates a new instance of a contact.
      *
@@ -81,6 +75,8 @@ public class ContactItem extends JPanel {
         // Set Default Font
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         fontSize = pref.getContactListFontSize();
+        iconSize = pref.getContactListIconSize();
+        avatarsShowing = pref.areAvatarsVisible();
 
         // Set default presence
         presence = new Presence(Presence.Type.unavailable);
@@ -91,10 +87,20 @@ public class ContactItem extends JPanel {
         descriptionLabel = new JLabel();
         imageLabel = new JLabel();
         sideIcon = new JLabel();
+        if (avatarsShowing) {
+            sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
+            sideIcon.setMaximumSize(new Dimension(iconSize, iconSize));
+            sideIcon.setPreferredSize(new Dimension(iconSize, iconSize));
+        }
 
         nicknameLabel.setHorizontalTextPosition(JLabel.LEFT);
         nicknameLabel.setHorizontalAlignment(JLabel.LEFT);
-        nicknameLabel.setText(nickname);
+        if (nickname.length() > 0) {
+            nicknameLabel.setText(nickname);
+        }
+        else {
+            nicknameLabel.setText(fullyQualifiedJID);
+        }
 
 
         descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
@@ -469,9 +475,6 @@ public class ContactItem extends JPanel {
      * Update avatar icon.
      */
     public void updateAvatarInSideIcon() {
-        LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        boolean avatarsShowing = preferences.areAvatarsVisible();
-
         try {
             final URL url = getAvatarURL();
             if (url != null) {
@@ -480,7 +483,7 @@ public class ContactItem extends JPanel {
                 }
                 else {
                     ImageIcon icon = new ImageIcon(url);
-                    icon = GraphicUtils.scale(icon, 24, 24);
+                    icon = GraphicUtils.scale(icon, iconSize, iconSize);
                     setSideIcon(icon);
                 }
             }

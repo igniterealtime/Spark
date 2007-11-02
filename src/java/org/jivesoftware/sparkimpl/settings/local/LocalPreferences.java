@@ -615,6 +615,14 @@ public class LocalPreferences {
         return getInt("contactListFontSize", 11);
     }
 
+    public void setContactListIconSize(int iconSize) {
+        setInt("contactListIconSize", iconSize);
+    }
+
+    public int getContactListIconSize() {
+        return getInt("contactListIconSize", 24);
+    }
+
     public void setChatRoomFontSize(int fontSize) {
         setInt("chatRoomFontSize", fontSize);
     }
