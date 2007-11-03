@@ -11,22 +11,17 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-
-import java.awt.Component;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -50,7 +45,12 @@ public class GatewayButton extends JPanel {
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
-        button.setIcon(transport.getInactiveIcon());
+        if (PresenceManager.isOnline(transport.getServiceName())) {
+            button.setIcon(transport.getIcon());
+        }
+        else {
+            button.setIcon(transport.getInactiveIcon());
+        }
         button.setToolTipText(transport.getName());
 
         commandPanel.add(button);
