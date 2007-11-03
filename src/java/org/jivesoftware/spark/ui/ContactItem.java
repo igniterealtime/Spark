@@ -95,12 +95,7 @@ public class ContactItem extends JPanel {
 
         nicknameLabel.setHorizontalTextPosition(JLabel.LEFT);
         nicknameLabel.setHorizontalAlignment(JLabel.LEFT);
-        if (nickname.length() > 0) {
-            nicknameLabel.setText(nickname);
-        }
-        else {
-            nicknameLabel.setText(fullyQualifiedJID);
-        }
+        nicknameLabel.setText(nickname);
 
 
         descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));

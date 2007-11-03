@@ -124,7 +124,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private List initialPresences = new ArrayList();
     private final Timer presenceTimer = new Timer();
     private final List dndListeners = new ArrayList();
-    private final List contactListListeners = new ArrayList();
+    private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
     private Properties props;
     private File propertiesFile;
 
@@ -243,7 +243,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         SparkManager.getConnection().addConnectionListener(this);
 
         // Get command panel and add View Online/Offline, Add Contact
-        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+//        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
 
@@ -477,7 +477,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
             for (RosterEntry entry : group.getEntries()) {
                 String name = entry.getName();
-                if (name == null) {
+                if (!ModelUtil.hasLength(name)) {
                     name = entry.getUser();
                 }
 
@@ -502,7 +502,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // addContactGroup(unfiledGroup);
         for (RosterEntry entry : roster.getUnfiledEntries()) {
             String name = entry.getName();
-            if (name == null) {
+            if (!ModelUtil.hasLength(name)) {
                 name = entry.getUser();
             }
 
@@ -1855,9 +1855,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void fireContextMenuListenerPopup(JPopupMenu popup, Object object) {
-        Iterator listeners = new ArrayList(contextListeners).iterator();
-        while (listeners.hasNext()) {
-            ContextMenuListener listener = (ContextMenuListener)listeners.next();
+        for (ContextMenuListener o : new ArrayList<ContextMenuListener>(contextListeners)) {
+            ContextMenuListener listener = (ContextMenuListener) o;
             listener.poppingUp(object, popup);
         }
     }
@@ -1978,10 +1977,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         if (props == null) {
             return;
         }
-        final Iterator contactGroups = getContactGroups().iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup group = (ContactGroup)contactGroups.next();
-            props.put(group.getGroupName(), Boolean.toString(group.isCollapsed()));
+        for (ContactGroup contactGroup : getContactGroups()) {
+            props.put(contactGroup.getGroupName(), Boolean.toString(contactGroup.isCollapsed()));
         }
 
         try {
