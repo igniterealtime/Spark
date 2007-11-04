@@ -26,6 +26,8 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -126,6 +128,16 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Add Workspace Container
         getContentPane().setLayout(new BorderLayout());
 
+        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+        if (settings.getMainWindowX() == 0 && settings.getMainWindowY() == 0) {
+            // Use default settings.
+            setSize(300, 500);
+            GraphicUtils.centerWindowOnScreen(this);
+        }
+        else {
+            setBounds(settings.getMainWindowX(), settings.getMainWindowY(), settings.getMainWindowWidth(), settings.getMainWindowHeight());
+        }
+
         // Add menubar
         this.setJMenuBar(mainWindowBar);
         this.getContentPane().add(topToolbar, BorderLayout.NORTH);
@@ -171,6 +183,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
              * @param e WindowEvent is never used.
              */
             public void windowClosing(WindowEvent e) {
+                saveLayout();
                 setVisible(false);
             }
         });
@@ -615,6 +628,23 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         GraphicUtils.centerWindowOnScreen(frame);
         frame.setVisible(true);
+    }
+
+    /**
+     * Saves the layout on closing of the main window.
+     */
+    public void saveLayout() {
+        try {
+            LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+            settings.setMainWindowHeight(getHeight());
+            settings.setMainWindowWidth(getWidth());
+            settings.setMainWindowX(getX());
+            settings.setMainWindowY(getY());
+            LayoutSettingsManager.saveLayoutSettings();
+        }
+        catch (Exception e) {
+            // Don't let this cause a real problem shutting down.
+        }
     }
 
     /**
