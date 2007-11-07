@@ -23,16 +23,11 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.Icon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
-import java.util.ArrayList;
+import javax.swing.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 public class UserSearchService implements Searchable {
     private Collection searchServices;
@@ -66,8 +61,8 @@ public class UserSearchService implements Searchable {
             return;
         }
 
-        UserSearchForm searchForm = null;
-        DataFormUI dataFormUI = null;
+        UserSearchForm searchForm;
+        DataFormUI dataFormUI;
         try {
             searchForm = new UserSearchForm(searchServices);
             dataFormUI = searchForm.getQuestionForm();
@@ -129,7 +124,7 @@ public class UserSearchService implements Searchable {
      * @throws XMPPException thrown if a server error has occurred.
      */
     private Collection getServices() throws Exception {
-        final List<String> searchServices = new ArrayList<String>();
+        final Set<String> searchServices = new HashSet<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         Iterator<DiscoverItems.Item> iter = items.getItems();
@@ -146,7 +141,13 @@ public class UserSearchService implements Searchable {
                 }
 
                 if (info.containsFeature("jabber:iq:search")) {
-                    searchServices.add(item.getEntityID());
+                    // Check that the search service belongs to user searches (and not room searches or other searches)
+                    for (Iterator<DiscoverInfo.Identity> identities = info.getIdentities(); identities.hasNext();) {
+                        DiscoverInfo.Identity identity = identities.next();
+                        if ("directory".equals(identity.getCategory()) && "user".equals(identity.getType())) {
+                            searchServices.add(item.getEntityID());
+                        }
+                    }
                 }
             }
             catch (Exception e) {
