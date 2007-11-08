@@ -468,11 +468,6 @@
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
-            <arg line="/build build\installer\spark.aip"/>
-        </exec>
-
-        <exec executable="${advinst.path}\AdvancedInstaller.com"
-              failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
             <arg line="/SetPackageName ${win.msi.nojre}"/>
         </exec>
