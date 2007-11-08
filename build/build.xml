@@ -461,7 +461,7 @@
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
-            <arg line="/SetPackageName ${win.msi.withjre} -buildname BuildWithJre"/>
+            <arg line="/SetPackageName ${win.msi.withjre} -withjre"/>
         </exec>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
@@ -472,7 +472,7 @@
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
-            <arg line="/SetPackageName ${win.msi.nojre} -buildname DefaultBuild"/>
+            <arg line="/SetPackageName ${win.msi.nojre}"/>
         </exec>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
