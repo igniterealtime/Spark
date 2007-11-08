@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="4" relativePaths="true">
+<project relativePaths="true" version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/../build.xml">
@@ -40,12 +40,12 @@
       <entry name="?*.jpg" />
     </wildcardResourcePatterns>
   </component>
-  <component name="DataSourceManager" />
-  <component name="DataSourceManagerImpl" />
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
-  <component name="DependencyValidationManager" />
+  <component name="DependencyValidationManager">
+    <option name="SKIP_IMPORT_STATEMENTS" value="false" />
+  </component>
   <component name="EclipseCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
@@ -61,14 +61,13 @@
     <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="EntryPointsManager">
-    <entry_points />
+    <entry_points version="2.0" />
   </component>
   <component name="ExportToHTMLSettings">
     <option name="PRINT_LINE_NUMBERS" value="false" />
     <option name="OPEN_IN_BROWSER" value="false" />
     <option name="OUTPUT_DIRECTORY" />
   </component>
-  <component name="GUI Designer component loader factory" />
   <component name="IdProvider" IDEtalkID="EC071A1E99BC3096B6041F4CA82D0257" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
@@ -78,31 +77,19 @@
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <used_levels>
-          <error>
-            <option name="myName" value="ERROR" />
-            <option name="myVal" value="200" />
-          </error>
-          <warning>
-            <option name="myName" value="WARNING" />
-            <option name="myVal" value="100" />
-          </warning>
-          <information>
-            <option name="myName" value="INFO" />
-            <option name="myVal" value="100" />
-          </information>
-          <server>
-            <option name="myName" value="SERVER PROBLEM" />
-            <option name="myVal" value="100" />
-          </server>
-        </used_levels>
         <inspection_tool class="UnusedDeclaration" level="WARNING" enabled="false">
           <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-          <option name="ADD_JUNIT_TO_ENTRIES" value="true" />
-          <option name="ADD_EJB_TO_ENTRIES" value="true" />
           <option name="ADD_APPLET_TO_ENTRIES" value="true" />
           <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
           <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+          <option name="ADDITIONAL_ANNOTATIONS">
+            <value>
+              <list size="0" />
+            </value>
+          </option>
+          <option name="ADD_EJB_TO_ENTRIES" value="true" />
+          <option name="ADD_JUNIT_TO_ENTRIES" value="true" />
+          <option name="ADD_TESTNG_TO_ENTRIES" value="true" />
         </inspection_tool>
         <inspection_tool class="WeakerAccess" level="WARNING" enabled="false">
           <option name="SUGGEST_PACKAGE_LOCAL_FOR_MEMBERS" value="true" />
@@ -118,17 +105,12 @@
         <inspection_tool class="SameParameterValue" level="WARNING" enabled="false" />
         <inspection_tool class="UnusedReturnValue" level="WARNING" enabled="false" />
         <inspection_tool class="SameReturnValue" level="WARNING" enabled="false" />
-        <inspection_tool class="EmptyMethod" level="WARNING" enabled="false">
-          <option name="EXCLUDE_ANNOS">
-            <value>
-              <list size="0" />
-            </value>
-          </option>
-        </inspection_tool>
+        <inspection_tool class="EmptyMethod" level="WARNING" enabled="false" />
         <inspection_tool class="Deprecation" level="WARNING" enabled="false" />
         <inspection_tool class="EqualsAndHashcode" level="WARNING" enabled="false" />
         <inspection_tool class="ConstantConditions" level="WARNING" enabled="false">
           <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
+          <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
         </inspection_tool>
         <inspection_tool class="UnusedAssignment" level="WARNING" enabled="false">
           <option name="REPORT_PREFIX_EXPRESSIONS" value="false" />
@@ -159,6 +141,7 @@
         <inspection_tool class="EmptyCatchBlock" level="WARNING" enabled="false">
           <option name="m_includeComments" value="true" />
           <option name="m_ignoreTestCases" value="true" />
+          <option name="m_ignoreIgnoreParameter" value="true" />
         </inspection_tool>
         <inspection_tool class="EmptyFinallyBlock" level="WARNING" enabled="false" />
         <inspection_tool class="EmptyTryBlock" level="WARNING" enabled="false" />
@@ -191,7 +174,7 @@
           <option name="m_reportEmptyBlocks" value="false" />
         </inspection_tool>
         <inspection_tool class="SerializableHasSerializationMethods" level="WARNING" enabled="false">
-          <option name="m_ignoreSerializableDueToInheritance" value="true" />
+          <option name="superClassString" value="java.awt.Component" />
         </inspection_tool>
         <inspection_tool class="SynchronizeOnNonFinalField" level="WARNING" enabled="false" />
         <inspection_tool class="ExtendsObject" level="WARNING" enabled="false" />
@@ -230,7 +213,7 @@
           <option name="m_maxLength" value="20" />
         </inspection_tool>
         <inspection_tool class="QuestionableName" level="WARNING" enabled="true">
-          <option name="nameCheckString" value="foo,bar,baz" />
+          <option name="nameString" value="aa,abc,bad,bar,bar2,baz,baz1,baz2,baz3,bb,blah,bogus,bool,cc,dd,defau1t,dummy,dummy2,ee,fa1se,ff,foo,foo1,foo2,foo3,foobar,four,fred,fred1,fred2,gg,hh,hello,hello1,hello2,hello3,ii,nu11,one,silly,silly2,string,two,that,then,three,whi1e,var" />
         </inspection_tool>
         <inspection_tool class="StandardVariableNames" level="WARNING" enabled="true" />
         <inspection_tool class="UnusedProperty" level="WARNING" enabled="true" />
@@ -239,14 +222,18 @@
         </inspection_tool>
         <inspection_tool class="UnnecessaryQualifierForThis" level="WARNING" enabled="true" />
         <inspection_tool class="ThrowablePrintStackTrace" level="WARNING" enabled="true" />
-        <inspection_tool class="ObsoleteCollection" level="WARNING" enabled="true" />
+        <inspection_tool class="ObsoleteCollection" level="WARNING" enabled="true">
+          <option name="ignoreLibraryArguments" value="false" />
+        </inspection_tool>
         <inspection_tool class="SystemOutErr" level="WARNING" enabled="true" />
         <inspection_tool class="UnusedCatchParameter" level="WARNING" enabled="true">
           <option name="m_ignoreCatchBlocksWithComments" value="false" />
           <option name="m_ignoreTestCases" value="false" />
+          <option name="m_ignoreIgnoreParameter" value="true" />
         </inspection_tool>
       </profile>
     </profiles>
+    <list size="0" />
   </component>
   <component name="JavacSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -407,6 +394,7 @@
       </item>
     </group>
   </component>
+  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" />
@@ -414,7 +402,13 @@
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK" />
-  <component name="ProjectRunConfigurationManager" />
+  <component name="ResourceManagerContainer">
+    <option name="myResourceBundles">
+      <value>
+        <list size="0" />
+      </value>
+    </option>
+  </component>
   <component name="RmicSettings">
     <option name="IS_EANABLED" value="false" />
     <option name="DEBUGGING_INFO" value="true" />
@@ -422,8 +416,11 @@
     <option name="GENERATE_IIOP_STUBS" value="false" />
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
-  <component name="StarteamVcsAdapter" />
-  <component name="VssVcs" />
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="" />
+    <mapping directory="$PROJECT_DIR$/../.." vcs="svn" />
+  </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.intellij.jsf.UserDefinedFacesConfigs">
     <option name="USER_DEFINED_CONFIGS">
       <value>
@@ -431,12 +428,15 @@
       </value>
     </option>
   </component>
-  <component name="libraryTable" />
+  <component name="copyright">
+    <Base>
+      <setting name="state" value="2" />
+    </Base>
+  </component>
   <component name="uidesigner-configuration">
     <option name="INSTRUMENT_CLASSES" value="true" />
     <option name="COPY_FORMS_RUNTIME_TO_OUTPUT" value="true" />
     <option name="DEFAULT_LAYOUT_MANAGER" value="GridLayoutManager" />
   </component>
-  <UsedPathMacros />
 </project>
 
