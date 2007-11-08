@@ -456,7 +456,7 @@
             <arg line="-buildslist BuildWithJre"/>
         </exec>
 
-        <rename src="spark.msi" "${win.msi.withjre}"/>
+        <rename src="spark.msi" dest="${win.msi.withjre}"/>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
@@ -464,7 +464,7 @@
             <arg line="-buildslist DefaultBuild"/>
         </exec>
 
-        <rename src="spark.msi" "${win.msi.nojre}"/>
+        <rename src="spark.msi" dest="${win.msi.nojre}"/>
     </target>
 
 
