@@ -452,6 +452,8 @@
 
         <copy file="build\installer\spark.aip.tmpl" tofile="build\installer\spark.aip" />
 
+        <mkdir dir="${installer.dest.dir}"/>
+
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
