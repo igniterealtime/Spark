@@ -458,23 +458,27 @@
             <arg line="/SetVersion ${version}"/>
         </exec>
 
-        <delete file="build\installer\spark.msi" />
+        <exec executable="${advinst.path}\AdvancedInstaller.com"
+              failonerror="true">
+            <arg line="/edit build\installer\spark.aip"/>
+            <arg line="/SetPackageName ${win.msi.withjre} -buildname BuildWithJre"/>
+        </exec>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/build build\installer\spark.aip"/>
-            <arg line="-buildslist BuildWithJre"/>
         </exec>
 
-        <move file="build\installer\spark.msi" tofile="${win.msi.withjre}"/>
+        <exec executable="${advinst.path}\AdvancedInstaller.com"
+              failonerror="true">
+            <arg line="/edit build\installer\spark.aip"/>
+            <arg line="/SetPackageName ${win.msi.nojre} -buildname DefaultBuild"/>
+        </exec>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/build build\installer\spark.aip"/>
-            <arg line="-buildslist DefaultBuild"/>
         </exec>
-
-        <move file="build\installer\spark.msi" tofile="${win.msi.nojre}"/>
     </target>
 
 
