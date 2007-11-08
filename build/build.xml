@@ -89,8 +89,8 @@
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
-    <property name="win.msi.withjre" value="spark_${version.major}.${version.minor}.${version.revision}.msi"/>
-    <property name="win.msi.nojre" value="spark_${version.major}.${version.minor}.${version.revision}_online.msi"/>
+    <property name="win.msi.withjre" value="${target}/installer/spark_${version.major}.${version.minor}.${version.revision}.msi"/>
+    <property name="win.msi.nojre" value="${target}/installer/spark_${version.major}.${version.minor}.${version.revision}_online.msi"/>
     <property name="pack200.excludes"
               value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
 
@@ -450,13 +450,15 @@
         <fail if="advinst.not.ok"
               message="Path to Advanced Installer not set, or not installed."/>
 
+        <delete file="build\installer\spark.msi" />
+
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/build build\installer\spark.aip"/>
             <arg line="-buildslist BuildWithJre"/>
         </exec>
 
-        <rename src="spark.msi" dest="${win.msi.withjre}"/>
+        <move file="build\installer\spark.msi" tofile="${win.msi.withjre}"/>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
@@ -464,7 +466,7 @@
             <arg line="-buildslist DefaultBuild"/>
         </exec>
 
-        <rename src="spark.msi" dest="${win.msi.nojre}"/>
+        <move file="build\installer\spark.msi" tofile="${win.msi.nojre}"/>
     </target>
 
 
