@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT type="Advanced Installer" CreateVersion="4.4.1" version="4.8.1" modules="java" RootPath="." Language="en">
+<DOCUMENT type="Advanced Installer" CreateVersion="4.4.1" version="5.2.2" modules="java" RootPath="." Language="en">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_UPGRADE" Value="No"/>
     <ROW Property="ALLUSERS" Value="2"/>
@@ -18,41 +18,124 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="Africa_DIR" Directory_Parent="zi_DIR" DefaultDir="Africa"/>
+    <ROW Directory="America_DIR" Directory_Parent="zi_DIR" DefaultDir="America"/>
+    <ROW Directory="Antarctica_DIR" Directory_Parent="zi_DIR" DefaultDir="Antarc~1|Antarctica"/>
+    <ROW Directory="Argentina_DIR" Directory_Parent="America_DIR" DefaultDir="Argent~1|Argentina"/>
+    <ROW Directory="Asia_DIR" Directory_Parent="zi_DIR" DefaultDir="Asia"/>
+    <ROW Directory="Atlantic_DIR" Directory_Parent="zi_DIR" DefaultDir="Atlantic"/>
+    <ROW Directory="Australia_DIR" Directory_Parent="zi_DIR" DefaultDir="Austra~1|Australia"/>
     <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="Deskto~1|DesktopFolder" IsPseudoRoot="1"/>
+    <ROW Directory="Etc_DIR" Directory_Parent="zi_DIR" DefaultDir="Etc"/>
+    <ROW Directory="Europe_DIR" Directory_Parent="zi_DIR" DefaultDir="Europe"/>
+    <ROW Directory="Indian_DIR" Directory_Parent="zi_DIR" DefaultDir="Indian"/>
+    <ROW Directory="Indiana_DIR" Directory_Parent="America_DIR" DefaultDir="Indiana"/>
+    <ROW Directory="Kentucky_DIR" Directory_Parent="America_DIR" DefaultDir="Kentucky"/>
+    <ROW Directory="North_Dakota_DIR" Directory_Parent="America_DIR" DefaultDir="North_~1|North_Dakota"/>
+    <ROW Directory="Pacific_DIR" Directory_Parent="zi_DIR" DefaultDir="Pacific"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
+    <ROW Directory="SystemV_DIR" Directory_Parent="zi_DIR" DefaultDir="SystemV"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="bin_1_DIR" Directory_Parent="jre_DIR" DefaultDir="bin"/>
     <ROW Directory="bin_DIR" Directory_Parent="APPDIR" DefaultDir="bin"/>
+    <ROW Directory="client_DIR" Directory_Parent="bin_1_DIR" DefaultDir="client"/>
+    <ROW Directory="cmm_DIR" Directory_Parent="lib_1_DIR" DefaultDir="cmm"/>
+    <ROW Directory="cursors_DIR" Directory_Parent="images_1_DIR" DefaultDir="cursors"/>
+    <ROW Directory="deploy_DIR" Directory_Parent="lib_1_DIR" DefaultDir="deploy"/>
     <ROW Directory="documentation_DIR" Directory_Parent="APPDIR" DefaultDir="docume~1|documentation"/>
     <ROW Directory="emoticons_DIR" Directory_Parent="xtra_DIR" DefaultDir="emotic~1|emoticons"/>
+    <ROW Directory="ext_DIR" Directory_Parent="lib_1_DIR" DefaultDir="ext"/>
+    <ROW Directory="fonts_DIR" Directory_Parent="lib_1_DIR" DefaultDir="fonts"/>
+    <ROW Directory="i386_DIR" Directory_Parent="lib_1_DIR" DefaultDir="i386"/>
+    <ROW Directory="im_DIR" Directory_Parent="lib_1_DIR" DefaultDir="im"/>
+    <ROW Directory="images_1_DIR" Directory_Parent="lib_1_DIR" DefaultDir="images"/>
     <ROW Directory="images_DIR" Directory_Parent="documentation_DIR" DefaultDir="images"/>
+    <ROW Directory="jre_DIR" Directory_Parent="APPDIR" DefaultDir="jre"/>
+    <ROW Directory="lib_1_DIR" Directory_Parent="jre_DIR" DefaultDir="lib"/>
     <ROW Directory="lib_DIR" Directory_Parent="APPDIR" DefaultDir="lib"/>
     <ROW Directory="linux_DIR" Directory_Parent="lib_DIR" DefaultDir="linux"/>
     <ROW Directory="logs_DIR" Directory_Parent="APPDIR" DefaultDir="logs"/>
     <ROW Directory="mac_DIR" Directory_Parent="lib_DIR" DefaultDir="mac"/>
+    <ROW Directory="management_DIR" Directory_Parent="lib_1_DIR" DefaultDir="manage~1|management"/>
     <ROW Directory="plugins_DIR" Directory_Parent="APPDIR" DefaultDir="plugins"/>
     <ROW Directory="resources_DIR" Directory_Parent="APPDIR" DefaultDir="resour~1|resources"/>
+    <ROW Directory="security_DIR" Directory_Parent="lib_1_DIR" DefaultDir="security"/>
     <ROW Directory="sounds_DIR" Directory_Parent="resources_DIR" DefaultDir="sounds"/>
     <ROW Directory="windows_DIR" Directory_Parent="lib_DIR" DefaultDir="windows"/>
     <ROW Directory="xtra_DIR" Directory_Parent="APPDIR" DefaultDir="xtra"/>
+    <ROW Directory="zi_DIR" Directory_Parent="lib_1_DIR" DefaultDir="zi"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
+    <ROW Component="AST4" ComponentId="{1F3EF30B-7C16-4FC2-B0FD-349F581CC09E}" Directory_="SystemV_DIR" Attributes="0" KeyPath="AST4" FullKeyPath="APPDIR\jre\lib\zi\SystemV"/>
+    <ROW Component="Abidjan" ComponentId="{9D569E80-9A92-4FE6-ADA3-14A313102EAB}" Directory_="Africa_DIR" Attributes="0" KeyPath="Abidjan" FullKeyPath="APPDIR\jre\lib\zi\Africa"/>
+    <ROW Component="Adak" ComponentId="{2B4D7F36-AC24-4E8E-9D8E-005B19107969}" Directory_="America_DIR" Attributes="0" KeyPath="Adak" FullKeyPath="APPDIR\jre\lib\zi\America"/>
+    <ROW Component="Adelaide" ComponentId="{1F6E9B00-6847-4A6F-8B89-063B99D9A6AA}" Directory_="Australia_DIR" Attributes="0" KeyPath="Adelaide" FullKeyPath="APPDIR\jre\lib\zi\Australia"/>
+    <ROW Component="Aden" ComponentId="{EF3272E5-57F2-46E5-A0EE-4EC6CC4874E2}" Directory_="Asia_DIR" Attributes="0" KeyPath="Aden" FullKeyPath="APPDIR\jre\lib\zi\Asia"/>
+    <ROW Component="Amsterdam" ComponentId="{AB955C2E-8370-4B5C-9DD6-7B453FDA6502}" Directory_="Europe_DIR" Attributes="0" KeyPath="Amsterdam" FullKeyPath="APPDIR\jre\lib\zi\Europe"/>
+    <ROW Component="Antananarivo" ComponentId="{15C2FDC1-C2BC-43BA-B979-4ED1E01F2CBB}" Directory_="Indian_DIR" Attributes="0" KeyPath="Antananarivo" FullKeyPath="APPDIR\jre\lib\zi\Indian"/>
+    <ROW Component="Apia" ComponentId="{F1867298-C884-4A10-9C57-D88CA027C878}" Directory_="Pacific_DIR" Attributes="0" KeyPath="Apia" FullKeyPath="APPDIR\jre\lib\zi\Pacific"/>
+    <ROW Component="Azores" ComponentId="{A0B4F43F-AD7B-4FCC-9ACB-F416452CD8AD}" Directory_="Atlantic_DIR" Attributes="0" KeyPath="Azores" FullKeyPath="APPDIR\jre\lib\zi\Atlantic"/>
+    <ROW Component="Buenos_Aires" ComponentId="{E64296A7-F2B6-4C79-B5BC-B6B5F79560FC}" Directory_="Argentina_DIR" Attributes="0" KeyPath="Buenos_Aires" FullKeyPath="APPDIR\jre\lib\zi\America\Argentina"/>
+    <ROW Component="CET" ComponentId="{1F7DBA8D-71D8-42AE-B0A4-104B1B696978}" Directory_="zi_DIR" Attributes="0" KeyPath="CET" FullKeyPath="APPDIR\jre\lib\zi"/>
+    <ROW Component="CIEXYZ.pf" ComponentId="{AD818FBB-F20E-4C23-943A-4548CCD38197}" Directory_="cmm_DIR" Attributes="0" KeyPath="CIEXYZ.pf" FullKeyPath="APPDIR\jre\lib\cmm"/>
+    <ROW Component="COPYRIGHT" ComponentId="{2B483F26-C8BB-467D-BDA1-6D916CAAC1BF}" Directory_="jre_DIR" Attributes="0" KeyPath="COPYRIGHT" FullKeyPath="APPDIR\jre"/>
+    <ROW Component="Casey" ComponentId="{93FA38B7-C238-4526-9FD4-B2FA9421E76C}" Directory_="Antarctica_DIR" Attributes="0" KeyPath="Casey" FullKeyPath="APPDIR\jre\lib\zi\Antarctica"/>
+    <ROW Component="Center" ComponentId="{F29BA058-8317-4DF1-A6DC-1460B6BA3DED}" Directory_="North_Dakota_DIR" Attributes="0" KeyPath="Center" FullKeyPath="APPDIR\jre\lib\zi\America\North_Dakota"/>
     <ROW Component="Default.adiumemoticonset.zip" ComponentId="{A74C0B9B-9F79-4951-907D-EEBCF3775BBD}" Directory_="emoticons_DIR" Attributes="0" KeyPath="Default.adiumemoticonset.zip" FullKeyPath="APPDIR\xtra\emoticons"/>
+    <ROW Component="GMT" ComponentId="{2E55F071-E846-4107-A8F4-99941B3C6C09}" Directory_="Etc_DIR" Attributes="0" KeyPath="GMT" FullKeyPath="APPDIR\jre\lib\zi\Etc"/>
     <ROW Component="IeEmbed.exe" ComponentId="{2552E216-7836-4ED2-8676-8F0DAC7CFBE4}" Directory_="windows_DIR" Attributes="0" KeyPath="IeEmbed.exe" FullKeyPath="APPDIR\lib\windows\IeEmbed.exe"/>
+    <ROW Component="Indianapolis" ComponentId="{062BB071-1111-4A63-817F-F6A8BBBAF1C7}" Directory_="Indiana_DIR" Attributes="0" KeyPath="Indianapolis" FullKeyPath="APPDIR\jre\lib\zi\America\Indiana"/>
     <ROW Component="Info.plist" ComponentId="{DFF8C4AC-6AF8-48D8-8960-7D2930A4B487}" Directory_="resources_DIR" Attributes="0" KeyPath="Info.plist" FullKeyPath="APPDIR\resources"/>
     <ROW Component="JavaSoundStream.fix.jar" ComponentId="{16D4E458-7487-4D38-9686-BC3D1F65037C}" Directory_="mac_DIR" Attributes="0" KeyPath="JavaSoundStream.fix.jar" FullKeyPath="APPDIR\lib\mac"/>
+    <ROW Component="JdbcOdbc.dll" ComponentId="{91AFE920-E456-4C98-B5AE-5E787AB662C3}" Directory_="bin_1_DIR" Attributes="0" KeyPath="JdbcOdbc.dll" FullKeyPath="APPDIR\jre\bin\JdbcOdbc.dll"/>
+    <ROW Component="Louisville" ComponentId="{7D40C222-22CD-49F8-842B-93489956F242}" Directory_="Kentucky_DIR" Attributes="0" KeyPath="Louisville" FullKeyPath="APPDIR\jre\lib\zi\America\Kentucky"/>
+    <ROW Component="LucidaSansRegular.ttf" ComponentId="{4B457212-5815-49B1-939B-CE3EED801042}" Directory_="fonts_DIR" Attributes="0" FullKeyPath="APPDIR\jre\lib\fonts"/>
     <ROW Component="MozEmbed.exe" ComponentId="{80FB601E-4D1E-47CC-8900-72DAF42B0771}" Directory_="windows_DIR" Attributes="0" KeyPath="MozEmbed.exe" FullKeyPath="APPDIR\lib\windows\MozEmbed.exe"/>
     <ROW Component="Spark" ComponentId="{EBD3450E-80F9-4F19-9AC6-A3750F7BD93B}" Directory_="APPDIR" Attributes="4" KeyPath="Spark" FullKeyPath="HK_UM\Software\Spark"/>
     <ROW Component="Spark.exe" ComponentId="{64B04163-3A7C-4F9F-9F72-2E2FEDB7FE4D}" Directory_="APPDIR" Attributes="0" KeyPath="Spark.exe" FullKeyPath="APPDIR\Spark.exe"/>
     <ROW Component="Your_Product.exe" ComponentId="{0CCEE694-7AA5-4D78-BA82-A5001AF3489F}" Directory_="APPDIR" Attributes="0" KeyPath="Your_Product.exe" FullKeyPath="APPDIR\starter.exe"/>
     <ROW Component="activation.jar" ComponentId="{4AA0D33E-9C25-4CA7-8C10-4CE4FBF116A0}" Directory_="lib_DIR" Attributes="0" KeyPath="activation.jar" FullKeyPath="APPDIR\lib"/>
+    <ROW Component="awt.dll" ComponentId="{07F50553-674C-47BA-8522-CEC41C93DB7A}" Directory_="bin_1_DIR" Attributes="0" KeyPath="awt.dll" FullKeyPath="APPDIR\jre\bin\awt.dll"/>
+    <ROW Component="axbridge.dll" ComponentId="{B18FD212-9314-43B5-B9D8-201DBFB60BA8}" Directory_="bin_1_DIR" Attributes="0" KeyPath="axbridge.dll" FullKeyPath="APPDIR\jre\bin\axbridge.dll"/>
     <ROW Component="banner_spark.gif" ComponentId="{73562780-810A-49E3-B2D2-F77E2C2F837E}" Directory_="images_DIR" Attributes="0" KeyPath="banner_spark.gif" FullKeyPath="APPDIR\documentation\images"/>
     <ROW Component="bell.wav" ComponentId="{EF2B5A55-1F75-4FD9-AA4A-D74E2E68E693}" Directory_="sounds_DIR" Attributes="0" KeyPath="bell.wav" FullKeyPath="APPDIR\resources\sounds"/>
     <ROW Component="builder.jar" ComponentId="{795A80F8-B5ED-4AD1-936D-C899D0372A3D}" Directory_="documentation_DIR" Attributes="0" KeyPath="builder.jar" FullKeyPath="APPDIR\documentation"/>
+    <ROW Component="cacerts" ComponentId="{01F5EA06-0EF4-4021-AEEB-0CDACFBED381}" Directory_="security_DIR" Attributes="0" KeyPath="cacerts" FullKeyPath="APPDIR\jre\lib\security"/>
+    <ROW Component="calendars.properties" ComponentId="{F788DC47-637A-4C72-9D85-0ACB9B91E337}" Directory_="lib_1_DIR" Attributes="0" KeyPath="calendars.properties" FullKeyPath="APPDIR\jre\lib"/>
+    <ROW Component="classes.jsa" ComponentId="{A945D445-9FE2-4807-B230-FCB29F984475}" Directory_="client_DIR" Attributes="0" KeyPath="classes.jsa" FullKeyPath="APPDIR\jre\bin\client"/>
+    <ROW Component="cmm.dll" ComponentId="{E45BBE9F-D190-4AD9-A87B-C0BD5E2444B3}" Directory_="bin_1_DIR" Attributes="0" KeyPath="cmm.dll" FullKeyPath="APPDIR\jre\bin\cmm.dll"/>
+    <ROW Component="cursors.properties" ComponentId="{D4FAAEA0-6586-4930-A60A-F82804756CA7}" Directory_="cursors_DIR" Attributes="0" KeyPath="cursors.properties" FullKeyPath="APPDIR\jre\lib\images\cursors"/>
+    <ROW Component="dcpr.dll" ComponentId="{56ADD132-439E-4EBC-AC52-8A303FBF3EFD}" Directory_="bin_1_DIR" Attributes="0" KeyPath="dcpr.dll" FullKeyPath="APPDIR\jre\bin\dcpr.dll"/>
+    <ROW Component="deploy.dll" ComponentId="{63659EAA-9FC5-4FAA-BC8D-5F2AE278121E}" Directory_="bin_1_DIR" Attributes="0" KeyPath="deploy.dll" FullKeyPath="APPDIR\jre\bin\deploy.dll"/>
+    <ROW Component="dnsns.jar" ComponentId="{DDBC905B-11B2-413E-9A4B-6E53C0175364}" Directory_="ext_DIR" Attributes="0" KeyPath="dnsns.jar" FullKeyPath="APPDIR\jre\lib\ext"/>
+    <ROW Component="dt_shmem.dll" ComponentId="{8F6C550C-E473-45B6-961A-190B2937A6E6}" Directory_="bin_1_DIR" Attributes="0" KeyPath="dt_shmem.dll" FullKeyPath="APPDIR\jre\bin\dt_shmem.dll"/>
+    <ROW Component="dt_socket.dll" ComponentId="{7C21C0E2-8BB3-48D2-A53E-F8B271DC1F69}" Directory_="bin_1_DIR" Attributes="0" KeyPath="dt_socket.dll" FullKeyPath="APPDIR\jre\bin\dt_socket.dll"/>
     <ROW Component="error.log" ComponentId="{70AD4F3B-9CDF-4026-AA4D-5F36707989ED}" Directory_="logs_DIR" Attributes="0" KeyPath="error.log" FullKeyPath="APPDIR\logs"/>
     <ROW Component="fastpath.jar" ComponentId="{503F9197-8958-4BEC-822A-94E0E6E1D4C4}" Directory_="plugins_DIR" Attributes="0" KeyPath="jingle.jar" FullKeyPath="APPDIR\plugins"/>
+    <ROW Component="ffjcext.zip" ComponentId="{0EF7127C-6395-491E-B21E-CA4AFD37B961}" Directory_="deploy_DIR" Attributes="0" KeyPath="ffjcext.zip" FullKeyPath="APPDIR\jre\lib\deploy"/>
+    <ROW Component="fontmanager.dll" ComponentId="{860C7ECE-FABD-44E9-A2D6-A66085422A77}" Directory_="bin_1_DIR" Attributes="0" KeyPath="fontmanager.dll" FullKeyPath="APPDIR\jre\bin\fontmanager.dll"/>
+    <ROW Component="hpi.dll" ComponentId="{53F65D41-4337-4220-8054-B1A8BEFFAD83}" Directory_="bin_1_DIR" Attributes="0" KeyPath="hpi.dll" FullKeyPath="APPDIR\jre\bin\hpi.dll"/>
+    <ROW Component="hprof.dll" ComponentId="{D46A173D-ABCA-4038-9AA7-221909660E09}" Directory_="bin_1_DIR" Attributes="0" KeyPath="hprof.dll" FullKeyPath="APPDIR\jre\bin\hprof.dll"/>
+    <ROW Component="indicim.jar" ComponentId="{1236E1AA-E69C-4079-9CB7-8BD7F8B6F95B}" Directory_="im_DIR" Attributes="0" KeyPath="indicim.jar" FullKeyPath="APPDIR\jre\lib\im"/>
+    <ROW Component="instrument.dll" ComponentId="{8BC6E001-2373-4067-A9EF-B407A8EB57B4}" Directory_="bin_1_DIR" Attributes="0" KeyPath="instrument.dll" FullKeyPath="APPDIR\jre\bin\instrument.dll"/>
+    <ROW Component="ioser12.dll" ComponentId="{25C4492A-83A3-4F8B-A3E0-3889B533441F}" Directory_="bin_1_DIR" Attributes="0" KeyPath="ioser12.dll" FullKeyPath="APPDIR\jre\bin\ioser12.dll"/>
+    <ROW Component="j2pcsc.dll" ComponentId="{7D7C2EAD-55D3-442F-B0CA-3A13D6609011}" Directory_="bin_1_DIR" Attributes="0" KeyPath="j2pcsc.dll" FullKeyPath="APPDIR\jre\bin\j2pcsc.dll"/>
+    <ROW Component="j2pkcs11.dll" ComponentId="{2BD9CE6A-C0A4-4153-9E94-1EA710939240}" Directory_="bin_1_DIR" Attributes="0" KeyPath="j2pkcs11.dll" FullKeyPath="APPDIR\jre\bin\j2pkcs11.dll"/>
+    <ROW Component="jaas_nt.dll" ComponentId="{08937812-268C-4FE7-A56D-AAF8D19F4C2F}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jaas_nt.dll" FullKeyPath="APPDIR\jre\bin\jaas_nt.dll"/>
+    <ROW Component="java.dll" ComponentId="{2A59E948-FF60-4496-87AD-4938D75A2BC1}" Directory_="bin_1_DIR" Attributes="0" KeyPath="java.dll" FullKeyPath="APPDIR\jre\bin\java.dll"/>
+    <ROW Component="java.exe" ComponentId="{512A46C8-BAAF-428A-8382-0B3C75E20137}" Directory_="bin_1_DIR" Attributes="0" KeyPath="java.exe" FullKeyPath="APPDIR\jre\bin\java.exe"/>
+    <ROW Component="java_crw_demo.dll" ComponentId="{853A864A-752C-4E17-BF37-B30BC4814548}" Directory_="bin_1_DIR" Attributes="0" KeyPath="java_crw_demo.dll" FullKeyPath="APPDIR\jre\bin\java_crw_demo.dll"/>
+    <ROW Component="java_rmi.exe" ComponentId="{9A930144-66EA-4334-81C1-4133BC52C282}" Directory_="bin_1_DIR" Attributes="0" KeyPath="java_rmi.exe" FullKeyPath="APPDIR\jre\bin\java-rmi.exe"/>
+    <ROW Component="javacpl.cpl" ComponentId="{DF27865A-A23C-487A-8091-F4C7BE074145}" Directory_="bin_1_DIR" Attributes="0" KeyPath="javacpl.cpl" FullKeyPath="APPDIR\jre\bin"/>
+    <ROW Component="javacpl.exe" ComponentId="{25D77933-D612-4A8A-BDFA-3E202E58E3A0}" Directory_="bin_1_DIR" Attributes="0" KeyPath="javacpl.exe" FullKeyPath="APPDIR\jre\bin\javacpl.exe"/>
+    <ROW Component="javaw.exe" ComponentId="{1FA6CAF1-927F-4D6D-A54B-8C77F3ECDA92}" Directory_="bin_1_DIR" Attributes="0" KeyPath="javaw.exe" FullKeyPath="APPDIR\jre\bin\javaw.exe"/>
+    <ROW Component="javaws.exe" ComponentId="{188B7A80-D8C4-4636-862E-387DE134A665}" Directory_="bin_1_DIR" Attributes="0" KeyPath="javaws.exe" FullKeyPath="APPDIR\jre\bin\javaws.exe"/>
+    <ROW Component="jawt.dll" ComponentId="{C20615F5-AA9C-4C0A-A83E-04373C314B14}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jawt.dll" FullKeyPath="APPDIR\jre\bin\jawt.dll"/>
     <ROW Component="jdic.dll" ComponentId="{17D3EE65-D6C1-467E-B25A-676C0EEFAD93}" Directory_="windows_DIR" Attributes="0" KeyPath="jdic.dll" FullKeyPath="APPDIR\lib\windows\jdic.dll"/>
     <ROW Component="jdic.jar" ComponentId="{8964186C-0874-41F6-85D3-4EA5BF7004B7}" Directory_="windows_DIR" Attributes="0" KeyPath="jdic.jar" FullKeyPath="APPDIR\lib\windows"/>
     <ROW Component="jdic.jar_1" ComponentId="{1D37B8D5-5F18-448B-9064-37A75574A597}" Directory_="linux_DIR" Attributes="0" KeyPath="jdic.jar_1" FullKeyPath="APPDIR\lib\linux"/>
+    <ROW Component="jdwp.dll" ComponentId="{C7FAE63C-7488-4635-A0D3-46D86549460B}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jdwp.dll" FullKeyPath="APPDIR\jre\bin\jdwp.dll"/>
+    <ROW Component="jli.dll" ComponentId="{43B80A90-0AA7-4D8D-B57D-2A0A491DA782}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jli.dll" FullKeyPath="APPDIR\jre\bin\jli.dll"/>
     <ROW Component="jmacm.dll" ComponentId="{29DC57BF-EAF7-448D-86F5-68356EE871A4}" Directory_="windows_DIR" Attributes="0" KeyPath="jmacm.dll" FullKeyPath="APPDIR\lib\windows\jmacm.dll"/>
     <ROW Component="jmam.dll" ComponentId="{E76A0AD6-77BA-429D-8702-79F8EF8DD596}" Directory_="windows_DIR" Attributes="0" KeyPath="jmam.dll" FullKeyPath="APPDIR\lib\windows\jmam.dll"/>
     <ROW Component="jmcvid.dll" ComponentId="{663FFC6A-6886-47E9-892A-25C0181FFC9D}" Directory_="windows_DIR" Attributes="0" KeyPath="jmcvid.dll" FullKeyPath="APPDIR\lib\windows\jmcvid.dll"/>
@@ -73,52 +156,598 @@
     <ROW Component="jmvcm.dll" ComponentId="{A974CB6E-DA75-49D0-A570-A285AE78F87D}" Directory_="windows_DIR" Attributes="0" KeyPath="jmvcm.dll" FullKeyPath="APPDIR\lib\windows\jmvcm.dll"/>
     <ROW Component="jmvfw.dll" ComponentId="{74EFBC0E-CD17-4FC0-8B9A-59698E9066D7}" Directory_="windows_DIR" Attributes="0" KeyPath="jmvfw.dll" FullKeyPath="APPDIR\lib\windows\jmvfw.dll"/>
     <ROW Component="jmvh263.dll" ComponentId="{DCAF46F2-9CCF-4032-A38E-3782372EE08B}" Directory_="windows_DIR" Attributes="0" KeyPath="jmvh263.dll" FullKeyPath="APPDIR\lib\windows\jmvh263.dll"/>
+    <ROW Component="jmxremote.access" ComponentId="{B1C9EB03-6211-4F6E-AA0E-C1F5143B0EAD}" Directory_="management_DIR" Attributes="0" KeyPath="jmxremote.access" FullKeyPath="APPDIR\jre\lib\management"/>
     <ROW Component="jniwrap.dll" ComponentId="{CB50B6AC-1A6C-4603-A7E9-5FA0699A8487}" Directory_="resources_DIR" Attributes="0" KeyPath="jniwrap.dll" FullKeyPath="APPDIR\resources\jniwrap.dll"/>
+    <ROW Component="jpeg.dll" ComponentId="{3E6455BC-2A39-407E-B41B-2EF7D69A5138}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jpeg.dll" FullKeyPath="APPDIR\jre\bin\jpeg.dll"/>
+    <ROW Component="jpicom.dll" ComponentId="{3529A292-F4AA-4C6D-9429-7177A81543C6}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jpicom.dll" FullKeyPath="APPDIR\jre\bin\jpicom.dll"/>
+    <ROW Component="jpiexp.dll" ComponentId="{69582E2B-F492-4C99-B5D5-37BA8194DEE3}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jpiexp.dll" FullKeyPath="APPDIR\jre\bin\jpiexp.dll"/>
+    <ROW Component="jpinscp.dll" ComponentId="{9BA88DA3-598C-45A0-B8D8-A0C524214026}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jpinscp.dll" FullKeyPath="APPDIR\jre\bin\jpinscp.dll"/>
+    <ROW Component="jpioji.dll" ComponentId="{B04E5828-0150-42D1-9A7E-9284BF5246DC}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jpioji.dll" FullKeyPath="APPDIR\jre\bin\jpioji.dll"/>
+    <ROW Component="jpishare.dll" ComponentId="{8DA024B6-CE3C-4FC1-B6E5-D6359E398F5A}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jpishare.dll" FullKeyPath="APPDIR\jre\bin\jpishare.dll"/>
     <ROW Component="jsound.dll" ComponentId="{6C41EA93-7D81-4295-AB49-1BC0F5B9B420}" Directory_="windows_DIR" Attributes="0" KeyPath="jsound.dll" FullKeyPath="APPDIR\lib\windows\jsound.dll"/>
+    <ROW Component="jsound.dll_1" ComponentId="{D558FD96-DD2B-4FC8-8876-0D0584ECFC30}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jsound.dll_1" FullKeyPath="APPDIR\jre\bin\jsound.dll"/>
+    <ROW Component="jsoundds.dll" ComponentId="{DD00B032-1F9C-4BB1-9BB0-DCB07C841778}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jsoundds.dll" FullKeyPath="APPDIR\jre\bin\jsoundds.dll"/>
+    <ROW Component="jucheck.exe" ComponentId="{3C52CC86-B6E6-4AD7-AFE5-1F22ADC2E975}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jucheck.exe" FullKeyPath="APPDIR\jre\bin\jucheck.exe"/>
+    <ROW Component="jureg.exe" ComponentId="{D7EEC7E9-D288-4E19-B3E2-B78C4FB6A7C2}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jureg.exe" FullKeyPath="APPDIR\jre\bin\jureg.exe"/>
+    <ROW Component="jusched.exe" ComponentId="{174A4CAF-7136-4981-9DFA-021EE8E481C2}" Directory_="bin_1_DIR" Attributes="0" KeyPath="jusched.exe" FullKeyPath="APPDIR\jre\bin\jusched.exe"/>
+    <ROW Component="jvm.cfg" ComponentId="{434EF039-631D-495A-B592-FF443A51D4A7}" Directory_="i386_DIR" Attributes="0" KeyPath="jvm.cfg" FullKeyPath="APPDIR\jre\lib\i386"/>
+    <ROW Component="jvm.dll" ComponentId="{ED231599-9DD8-4231-BF04-6FD424B8FFEA}" Directory_="client_DIR" Attributes="0" KeyPath="jvm.dll" FullKeyPath="APPDIR\jre\bin\client\jvm.dll"/>
+    <ROW Component="keytool.exe" ComponentId="{AF59AC55-A1BE-4985-A106-42641F6FF3EC}" Directory_="bin_1_DIR" Attributes="0" KeyPath="keytool.exe" FullKeyPath="APPDIR\jre\bin\keytool.exe"/>
+    <ROW Component="kinit.exe" ComponentId="{0D5BEB1C-CCB0-4560-8DBF-10DBEA9038DF}" Directory_="bin_1_DIR" Attributes="0" KeyPath="kinit.exe" FullKeyPath="APPDIR\jre\bin\kinit.exe"/>
+    <ROW Component="klist.exe" ComponentId="{D2E40B0E-4DB4-4860-8365-91DFF8C115C2}" Directory_="bin_1_DIR" Attributes="0" KeyPath="klist.exe" FullKeyPath="APPDIR\jre\bin\klist.exe"/>
+    <ROW Component="ktab.exe" ComponentId="{76D4F94F-2511-46A2-A480-170817293417}" Directory_="bin_1_DIR" Attributes="0" KeyPath="ktab.exe" FullKeyPath="APPDIR\jre\bin\ktab.exe"/>
+    <ROW Component="management.dll" ComponentId="{5868B877-F9E7-43E2-9375-9C579641D589}" Directory_="bin_1_DIR" Attributes="0" KeyPath="management.dll" FullKeyPath="APPDIR\jre\bin\management.dll"/>
+    <ROW Component="msvcr71.dll" ComponentId="{BE0C2620-709D-4098-9CAC-26D68B173BCA}" Directory_="bin_1_DIR" Attributes="0" KeyPath="msvcr71.dll" FullKeyPath="APPDIR\jre\bin\msvcr71.dll"/>
+    <ROW Component="net.dll" ComponentId="{F4053F42-FC73-4D21-9C9F-907A24F009FB}" Directory_="bin_1_DIR" Attributes="0" KeyPath="net.dll" FullKeyPath="APPDIR\jre\bin\net.dll"/>
+    <ROW Component="nio.dll" ComponentId="{308D8FFF-2B6C-480A-93D8-DA9311FBEFCB}" Directory_="bin_1_DIR" Attributes="0" KeyPath="nio.dll" FullKeyPath="APPDIR\jre\bin\nio.dll"/>
+    <ROW Component="npjava11.dll" ComponentId="{77E90066-9ED4-4A58-9DDF-564C58D12290}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npjava11.dll" FullKeyPath="APPDIR\jre\bin\npjava11.dll"/>
+    <ROW Component="npjava12.dll" ComponentId="{C496D9D2-F3AA-4FDC-AF6D-B3F2155219C4}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npjava12.dll" FullKeyPath="APPDIR\jre\bin\npjava12.dll"/>
+    <ROW Component="npjava13.dll" ComponentId="{02D6763F-E5CC-4669-A343-B4856AAA4D04}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npjava13.dll" FullKeyPath="APPDIR\jre\bin\npjava13.dll"/>
+    <ROW Component="npjava14.dll" ComponentId="{358EDAF8-EE7C-4D1B-908F-15CA2297DE25}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npjava14.dll" FullKeyPath="APPDIR\jre\bin\npjava14.dll"/>
+    <ROW Component="npjava32.dll" ComponentId="{B26C043B-50FB-48BF-8279-A0B5B525492F}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npjava32.dll" FullKeyPath="APPDIR\jre\bin\npjava32.dll"/>
+    <ROW Component="npjpi160_03.dll" ComponentId="{849A5E87-F83C-426B-9217-FFFED819A1EE}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npjpi160_03.dll" FullKeyPath="APPDIR\jre\bin\npjpi160_03.dll"/>
+    <ROW Component="npoji610.dll" ComponentId="{47A595E3-0886-4FBC-B67A-5629047FA95B}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npoji610.dll" FullKeyPath="APPDIR\jre\bin\npoji610.dll"/>
+    <ROW Component="npt.dll" ComponentId="{CB5B353F-45BF-44D8-A8C7-68C9FE50C284}" Directory_="bin_1_DIR" Attributes="0" KeyPath="npt.dll" FullKeyPath="APPDIR\jre\bin\npt.dll"/>
+    <ROW Component="orbd.exe" ComponentId="{367743BA-A434-4D1F-B707-29EA972EBB1B}" Directory_="bin_1_DIR" Attributes="0" KeyPath="orbd.exe" FullKeyPath="APPDIR\jre\bin\orbd.exe"/>
+    <ROW Component="pack200.exe" ComponentId="{4EFC88D2-6448-4ADB-A205-4958777F6696}" Directory_="bin_1_DIR" Attributes="0" KeyPath="pack200.exe" FullKeyPath="APPDIR\jre\bin\pack200.exe"/>
+    <ROW Component="policytool.exe" ComponentId="{70C65345-B83F-42BB-8998-48A31C1C8718}" Directory_="bin_1_DIR" Attributes="0" KeyPath="policytool.exe" FullKeyPath="APPDIR\jre\bin\policytool.exe"/>
+    <ROW Component="regutils.dll" ComponentId="{E806AC75-81C8-43AC-8E16-48A8EA74D0F5}" Directory_="bin_1_DIR" Attributes="0" KeyPath="regutils.dll" FullKeyPath="APPDIR\jre\bin\regutils.dll"/>
+    <ROW Component="rmi.dll" ComponentId="{B26F1BF1-520C-4523-AC3B-23BB16DAE1DF}" Directory_="bin_1_DIR" Attributes="0" KeyPath="rmi.dll" FullKeyPath="APPDIR\jre\bin\rmi.dll"/>
+    <ROW Component="rmid.exe" ComponentId="{5FE0D35F-C721-4062-939D-75F6540DD74B}" Directory_="bin_1_DIR" Attributes="0" KeyPath="rmid.exe" FullKeyPath="APPDIR\jre\bin\rmid.exe"/>
+    <ROW Component="rmiregistry.exe" ComponentId="{0EE2E013-9605-4CFB-9480-EB946D6DB9AF}" Directory_="bin_1_DIR" Attributes="0" KeyPath="rmiregistry.exe" FullKeyPath="APPDIR\jre\bin\rmiregistry.exe"/>
+    <ROW Component="servertool.exe" ComponentId="{C379DE83-D13C-44B3-86D7-B7B8F586B371}" Directory_="bin_1_DIR" Attributes="0" KeyPath="servertool.exe" FullKeyPath="APPDIR\jre\bin\servertool.exe"/>
+    <ROW Component="splashscreen.dll" ComponentId="{1D426F83-75A4-47C1-BBF7-413AC07ACDB7}" Directory_="bin_1_DIR" Attributes="0" KeyPath="splashscreen.dll" FullKeyPath="APPDIR\jre\bin\splashscreen.dll"/>
+    <ROW Component="ssv.dll" ComponentId="{1B40E681-08C0-4155-B1D1-D6EEAF9A2BD2}" Directory_="bin_1_DIR" Attributes="0" KeyPath="ssv.dll" FullKeyPath="APPDIR\jre\bin\ssv.dll"/>
     <ROW Component="startup.bat" ComponentId="{FE572BF0-B831-45A0-9011-65560A86D090}" Directory_="bin_DIR" Attributes="0" KeyPath="startup.bat" FullKeyPath="APPDIR\bin"/>
+    <ROW Component="sunmscapi.dll" ComponentId="{1B014B45-7FD8-4D62-9319-F19EB02ED83E}" Directory_="bin_1_DIR" Attributes="0" KeyPath="sunmscapi.dll" FullKeyPath="APPDIR\jre\bin\sunmscapi.dll"/>
     <ROW Component="systeminfo.dll" ComponentId="{82FE331B-ACA1-4660-98B0-B1D90268BF48}" Directory_="resources_DIR" Attributes="0" KeyPath="systeminfo.dll" FullKeyPath="APPDIR\resources\systeminfo.dll"/>
+    <ROW Component="tnameserv.exe" ComponentId="{7736D093-A5B4-4AC3-9EB3-DA5A7CF38586}" Directory_="bin_1_DIR" Attributes="0" KeyPath="tnameserv.exe" FullKeyPath="APPDIR\jre\bin\tnameserv.exe"/>
     <ROW Component="tray.dll" ComponentId="{9111ECAE-92BB-4C1C-BFBF-BF4A76C93CC1}" Directory_="windows_DIR" Attributes="0" KeyPath="tray.dll" FullKeyPath="APPDIR\lib\windows\tray.dll"/>
+    <ROW Component="unpack.dll" ComponentId="{9FD6DFAF-C566-402B-8320-7FD226741835}" Directory_="bin_1_DIR" Attributes="0" KeyPath="unpack.dll" FullKeyPath="APPDIR\jre\bin\unpack.dll"/>
+    <ROW Component="unpack200.exe" ComponentId="{153C4E62-E7FB-4B40-AA11-E8AC50950F32}" Directory_="bin_1_DIR" Attributes="0" KeyPath="unpack200.exe" FullKeyPath="APPDIR\jre\bin\unpack200.exe"/>
+    <ROW Component="verify.dll" ComponentId="{DC47D84D-A07A-47C3-8095-0AB52E2193CF}" Directory_="bin_1_DIR" Attributes="0" KeyPath="verify.dll" FullKeyPath="APPDIR\jre\bin\verify.dll"/>
+    <ROW Component="w2k_lsa_auth.dll" ComponentId="{CF72783C-FD2D-4603-8DD0-7B38F8852FF0}" Directory_="bin_1_DIR" Attributes="0" KeyPath="w2k_lsa_auth.dll" FullKeyPath="APPDIR\jre\bin\w2k_lsa_auth.dll"/>
+    <ROW Component="wsdetect.dll" ComponentId="{792E52D9-5FA5-42D4-B416-A193B2FDE591}" Directory_="bin_1_DIR" Attributes="0" KeyPath="wsdetect.dll" FullKeyPath="APPDIR\jre\bin\wsdetect.dll"/>
     <ROW Component="xtra" ComponentId="{50DC827D-F369-41B1-A8BD-426956FA71FB}" Directory_="xtra_DIR" Attributes="0"/>
+    <ROW Component="zip.dll" ComponentId="{608959AF-62F5-46B7-B44B-F5A39DF7C5E9}" Directory_="bin_1_DIR" Attributes="0" KeyPath="zip.dll" FullKeyPath="APPDIR\jre\bin\zip.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
+    <ROW Feature="JRE_Bundle" Title="JRE Bundle" Description="This feature contains the JRE bundle." Display="2" Level="1" Directory_="APPDIR" Attributes="0" Components="awt.dll axbridge.dll classes.jsa jvm.dll cmm.dll dcpr.dll deploy.dll dt_shmem.dll dt_socket.dll fontmanager.dll hpi.dll hprof.dll instrument.dll ioser12.dll j2pcsc.dll j2pkcs11.dll jaas_nt.dll java_rmi.exe java.dll java.exe javacpl.cpl javacpl.exe javaw.exe javaws.exe java_crw_demo.dll jawt.dll JdbcOdbc.dll jdwp.dll jli.dll jpeg.dll jpicom.dll jpiexp.dll jpinscp.dll jpioji.dll jpishare.dll jsound.dll_1 jsoundds.dll jucheck.exe jureg.exe jusched.exe keytool.exe kinit.exe klist.exe ktab.exe management.dll msvcr71.dll net.dll nio.dll npjava11.dll npjava12.dll npjava13.dll npjava14.dll npjava32.dll npjpi160_03.dll npoji610.dll npt.dll orbd.exe pack200.exe policytool.exe regutils.dll rmi.dll rmid.exe rmiregistry.exe servertool.exe splashscreen.dll ssv.dll sunmscapi.dll tnameserv.exe unpack.dll unpack200.exe verify.dll w2k_lsa_auth.dll wsdetect.dll zip.dll COPYRIGHT calendars.properties CIEXYZ.pf ffjcext.zip dnsns.jar LucidaSansRegular.ttf jvm.cfg indicim.jar cursors.properties jmxremote.access cacerts Abidjan Adak Buenos_Aires Indianapolis Louisville Center Casey Aden Azores Adelaide CET GMT Amsterdam Antananarivo Apia AST4" Builds="BuildWithJre"/>
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="startup.bat builder.jar banner_spark.gif activation.jar IeEmbed.exe jdic.dll jdic.jar MozEmbed.exe tray.dll error.log fastpath.jar Info.plist jniwrap.dll bell.wav Spark.exe Your_Product.exe Spark jmacm.dll jmam.dll jmcvid.dll jmdaud.dll jmdaudc.dll jmddraw.dll jmfjawt.dll jmg723.dll jmgdi.dll jmgsm.dll jmh263enc.dll jmjpeg.dll jmmci.dll jmmpa.dll jmmpegv.dll jmutil.dll jmvcm.dll jmvfw.dll jmvh263.dll xtra jmh261.dll jsound.dll systeminfo.dll Default.adiumemoticonset.zip jdic.jar_1 JavaSoundStream.fix.jar"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
+    <ROW File="AST4" Component_="AST4" FileName="AST4" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\AST4" SelfReg="false" Sequence="656"/>
+    <ROW File="AST4ADT" Component_="AST4" FileName="AST4ADT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\AST4ADT" SelfReg="false" Sequence="657"/>
+    <ROW File="Abidjan" Component_="Abidjan" FileName="Abidjan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Abidjan" SelfReg="false" Sequence="232"/>
+    <ROW File="Accra" Component_="Abidjan" FileName="Accra" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Accra" SelfReg="false" Sequence="233"/>
+    <ROW File="Adak" Component_="Adak" FileName="Adak" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Adak" SelfReg="false" Sequence="283"/>
+    <ROW File="Addis_Ababa" Component_="Abidjan" FileName="Addis_~1|Addis_Ababa" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Addis_Ababa" SelfReg="false" Sequence="234"/>
+    <ROW File="Adelaide" Component_="Adelaide" FileName="Adelaide" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Adelaide" SelfReg="false" Sequence="512"/>
+    <ROW File="Aden" Component_="Aden" FileName="Aden" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Aden" SelfReg="false" Sequence="424"/>
+    <ROW File="Algiers" Component_="Abidjan" FileName="Algiers" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Algiers" SelfReg="false" Sequence="235"/>
+    <ROW File="Almaty" Component_="Aden" FileName="Almaty" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Almaty" SelfReg="false" Sequence="425"/>
+    <ROW File="Amman" Component_="Aden" FileName="Amman" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Amman" SelfReg="false" Sequence="426"/>
+    <ROW File="Amsterdam" Component_="Amsterdam" FileName="Amster~1|Amsterdam" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Amsterdam" SelfReg="false" Sequence="558"/>
+    <ROW File="Anadyr" Component_="Aden" FileName="Anadyr" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Anadyr" SelfReg="false" Sequence="427"/>
+    <ROW File="Anchorage" Component_="Adak" FileName="Anchor~1|Anchorage" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Anchorage" SelfReg="false" Sequence="284"/>
+    <ROW File="Andorra" Component_="Amsterdam" FileName="Andorra" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Andorra" SelfReg="false" Sequence="559"/>
+    <ROW File="Anguilla" Component_="Adak" FileName="Anguilla" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Anguilla" SelfReg="false" Sequence="285"/>
+    <ROW File="Antananarivo" Component_="Antananarivo" FileName="Antana~1|Antananarivo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Antananarivo" SelfReg="false" Sequence="603"/>
+    <ROW File="Antigua" Component_="Adak" FileName="Antigua" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Antigua" SelfReg="false" Sequence="286"/>
+    <ROW File="Apia" Component_="Apia" FileName="Apia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Apia" SelfReg="false" Sequence="617"/>
+    <ROW File="Aqtau" Component_="Aden" FileName="Aqtau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Aqtau" SelfReg="false" Sequence="428"/>
+    <ROW File="Aqtobe" Component_="Aden" FileName="Aqtobe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Aqtobe" SelfReg="false" Sequence="429"/>
+    <ROW File="Araguaina" Component_="Adak" FileName="Aragua~1|Araguaina" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Araguaina" SelfReg="false" Sequence="287"/>
+    <ROW File="Aruba" Component_="Adak" FileName="Aruba" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Aruba" SelfReg="false" Sequence="298"/>
+    <ROW File="Ashgabat" Component_="Aden" FileName="Ashgabat" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Ashgabat" SelfReg="false" Sequence="430"/>
+    <ROW File="Asmara" Component_="Abidjan" FileName="Asmara" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Asmara" SelfReg="false" Sequence="236"/>
+    <ROW File="Asuncion" Component_="Adak" FileName="Asuncion" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Asuncion" SelfReg="false" Sequence="299"/>
+    <ROW File="Athens" Component_="Amsterdam" FileName="Athens" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Athens" SelfReg="false" Sequence="560"/>
+    <ROW File="Atikokan" Component_="Adak" FileName="Atikokan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Atikokan" SelfReg="false" Sequence="300"/>
+    <ROW File="Auckland" Component_="Apia" FileName="Auckland" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Auckland" SelfReg="false" Sequence="618"/>
+    <ROW File="Azores" Component_="Azores" FileName="Azores" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Azores" SelfReg="false" Sequence="502"/>
+    <ROW File="Baghdad" Component_="Aden" FileName="Baghdad" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Baghdad" SelfReg="false" Sequence="431"/>
+    <ROW File="Bahia" Component_="Adak" FileName="Bahia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Bahia" SelfReg="false" Sequence="301"/>
+    <ROW File="Bahrain" Component_="Aden" FileName="Bahrain" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Bahrain" SelfReg="false" Sequence="432"/>
+    <ROW File="Baku" Component_="Aden" FileName="Baku" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Baku" SelfReg="false" Sequence="433"/>
+    <ROW File="Bamako" Component_="Abidjan" FileName="Bamako" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Bamako" SelfReg="false" Sequence="237"/>
+    <ROW File="Bangkok" Component_="Aden" FileName="Bangkok" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Bangkok" SelfReg="false" Sequence="434"/>
+    <ROW File="Bangui" Component_="Abidjan" FileName="Bangui" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Bangui" SelfReg="false" Sequence="238"/>
+    <ROW File="Banjul" Component_="Abidjan" FileName="Banjul" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Banjul" SelfReg="false" Sequence="239"/>
+    <ROW File="Barbados" Component_="Adak" FileName="Barbados" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Barbados" SelfReg="false" Sequence="302"/>
+    <ROW File="Beirut" Component_="Aden" FileName="Beirut" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Beirut" SelfReg="false" Sequence="435"/>
+    <ROW File="Belem" Component_="Adak" FileName="Belem" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Belem" SelfReg="false" Sequence="303"/>
+    <ROW File="Belgrade" Component_="Amsterdam" FileName="Belgrade" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Belgrade" SelfReg="false" Sequence="561"/>
+    <ROW File="Belize" Component_="Adak" FileName="Belize" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Belize" SelfReg="false" Sequence="304"/>
+    <ROW File="Berlin" Component_="Amsterdam" FileName="Berlin" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Berlin" SelfReg="false" Sequence="562"/>
+    <ROW File="Bermuda" Component_="Azores" FileName="Bermuda" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Bermuda" SelfReg="false" Sequence="503"/>
+    <ROW File="Bishkek" Component_="Aden" FileName="Bishkek" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Bishkek" SelfReg="false" Sequence="436"/>
+    <ROW File="Bissau" Component_="Abidjan" FileName="Bissau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Bissau" SelfReg="false" Sequence="240"/>
+    <ROW File="Blanc_Sablon" Component_="Adak" FileName="Blanc-~1|Blanc-Sablon" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Blanc-Sablon" SelfReg="false" Sequence="305"/>
+    <ROW File="Blantyre" Component_="Abidjan" FileName="Blantyre" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Blantyre" SelfReg="false" Sequence="241"/>
+    <ROW File="Boa_Vista" Component_="Adak" FileName="Boa_Vi~1|Boa_Vista" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Boa_Vista" SelfReg="false" Sequence="306"/>
+    <ROW File="Bogota" Component_="Adak" FileName="Bogota" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Bogota" SelfReg="false" Sequence="307"/>
+    <ROW File="Boise" Component_="Adak" FileName="Boise" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Boise" SelfReg="false" Sequence="308"/>
+    <ROW File="Brazzaville" Component_="Abidjan" FileName="Brazza~1|Brazzaville" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Brazzaville" SelfReg="false" Sequence="242"/>
+    <ROW File="Brisbane" Component_="Adelaide" FileName="Brisbane" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Brisbane" SelfReg="false" Sequence="513"/>
+    <ROW File="Broken_Hill" Component_="Adelaide" FileName="Broken~1|Broken_Hill" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Broken_Hill" SelfReg="false" Sequence="514"/>
+    <ROW File="Brunei" Component_="Aden" FileName="Brunei" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Brunei" SelfReg="false" Sequence="437"/>
+    <ROW File="Brussels" Component_="Amsterdam" FileName="Brussels" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Brussels" SelfReg="false" Sequence="563"/>
+    <ROW File="Bucharest" Component_="Amsterdam" FileName="Buchar~1|Bucharest" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Bucharest" SelfReg="false" Sequence="564"/>
+    <ROW File="Budapest" Component_="Amsterdam" FileName="Budapest" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Budapest" SelfReg="false" Sequence="565"/>
+    <ROW File="Buenos_Aires" Component_="Buenos_Aires" FileName="Buenos~1|Buenos_Aires" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Buenos_Aires" SelfReg="false" Sequence="288"/>
+    <ROW File="Bujumbura" Component_="Abidjan" FileName="Bujumb~1|Bujumbura" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Bujumbura" SelfReg="false" Sequence="243"/>
+    <ROW File="CET" Component_="CET" FileName="CET" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\CET" SelfReg="false" Sequence="524"/>
+    <ROW File="CIEXYZ.pf" Component_="CIEXYZ.pf" FileName="CIEXYZ.pf" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\cmm\CIEXYZ.pf" SelfReg="false" Sequence="166"/>
+    <ROW File="COPYRIGHT" Component_="COPYRIGHT" FileName="COPYRI~1|COPYRIGHT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\COPYRIGHT" SelfReg="false" Sequence="163"/>
+    <ROW File="CST6" Component_="AST4" FileName="CST6" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\CST6" SelfReg="false" Sequence="658"/>
+    <ROW File="CST6CDT" Component_="CET" FileName="CST6CDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\CST6CDT" SelfReg="false" Sequence="525"/>
+    <ROW File="CST6CDT_1" Component_="AST4" FileName="CST6CDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\CST6CDT" SelfReg="false" Sequence="659"/>
+    <ROW File="Cairo" Component_="Abidjan" FileName="Cairo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Cairo" SelfReg="false" Sequence="244"/>
+    <ROW File="Calcutta" Component_="Aden" FileName="Calcutta" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Calcutta" SelfReg="false" Sequence="438"/>
+    <ROW File="Cambridge_Bay" Component_="Adak" FileName="Cambri~1|Cambridge_Bay" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Cambridge_Bay" SelfReg="false" Sequence="309"/>
+    <ROW File="Campo_Grande" Component_="Adak" FileName="Campo_~1|Campo_Grande" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Campo_Grande" SelfReg="false" Sequence="310"/>
+    <ROW File="Canary" Component_="Azores" FileName="Canary" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Canary" SelfReg="false" Sequence="504"/>
+    <ROW File="Cancun" Component_="Adak" FileName="Cancun" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Cancun" SelfReg="false" Sequence="311"/>
+    <ROW File="Cape_Verde" Component_="Azores" FileName="Cape_V~1|Cape_Verde" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Cape_Verde" SelfReg="false" Sequence="505"/>
+    <ROW File="Caracas" Component_="Adak" FileName="Caracas" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Caracas" SelfReg="false" Sequence="312"/>
+    <ROW File="Casablanca" Component_="Abidjan" FileName="Casabl~1|Casablanca" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Casablanca" SelfReg="false" Sequence="245"/>
+    <ROW File="Casey" Component_="Casey" FileName="Casey" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Casey" SelfReg="false" Sequence="415"/>
+    <ROW File="Catamarca" Component_="Buenos_Aires" FileName="Catama~1|Catamarca" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Catamarca" SelfReg="false" Sequence="289"/>
+    <ROW File="Cayenne" Component_="Adak" FileName="Cayenne" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Cayenne" SelfReg="false" Sequence="313"/>
+    <ROW File="Cayman" Component_="Adak" FileName="Cayman" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Cayman" SelfReg="false" Sequence="314"/>
+    <ROW File="Center" Component_="Center" FileName="Center" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\North_Dakota\Center" SelfReg="false" Sequence="378"/>
+    <ROW File="Ceuta" Component_="Abidjan" FileName="Ceuta" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Ceuta" SelfReg="false" Sequence="246"/>
+    <ROW File="Chagos" Component_="Antananarivo" FileName="Chagos" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Chagos" SelfReg="false" Sequence="604"/>
+    <ROW File="Chatham" Component_="Apia" FileName="Chatham" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Chatham" SelfReg="false" Sequence="619"/>
+    <ROW File="Chicago" Component_="Adak" FileName="Chicago" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Chicago" SelfReg="false" Sequence="315"/>
+    <ROW File="Chihuahua" Component_="Adak" FileName="Chihua~1|Chihuahua" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Chihuahua" SelfReg="false" Sequence="316"/>
+    <ROW File="Chisinau" Component_="Amsterdam" FileName="Chisinau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Chisinau" SelfReg="false" Sequence="566"/>
+    <ROW File="Choibalsan" Component_="Aden" FileName="Choiba~1|Choibalsan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Choibalsan" SelfReg="false" Sequence="439"/>
+    <ROW File="Chongqing" Component_="Aden" FileName="Chongq~1|Chongqing" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Chongqing" SelfReg="false" Sequence="440"/>
+    <ROW File="Christmas" Component_="Antananarivo" FileName="Christ~1|Christmas" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Christmas" SelfReg="false" Sequence="605"/>
+    <ROW File="Cocos" Component_="Antananarivo" FileName="Cocos" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Cocos" SelfReg="false" Sequence="606"/>
+    <ROW File="Colombo" Component_="Aden" FileName="Colombo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Colombo" SelfReg="false" Sequence="441"/>
+    <ROW File="Comoro" Component_="Antananarivo" FileName="Comoro" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Comoro" SelfReg="false" Sequence="607"/>
+    <ROW File="Conakry" Component_="Abidjan" FileName="Conakry" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Conakry" SelfReg="false" Sequence="247"/>
+    <ROW File="Copenhagen" Component_="Amsterdam" FileName="Copenh~1|Copenhagen" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Copenhagen" SelfReg="false" Sequence="567"/>
+    <ROW File="Cordoba" Component_="Buenos_Aires" FileName="Cordoba" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Cordoba" SelfReg="false" Sequence="290"/>
+    <ROW File="Costa_Rica" Component_="Adak" FileName="Costa_~1|Costa_Rica" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Costa_Rica" SelfReg="false" Sequence="317"/>
+    <ROW File="Cuiaba" Component_="Adak" FileName="Cuiaba" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Cuiaba" SelfReg="false" Sequence="318"/>
+    <ROW File="Curacao" Component_="Adak" FileName="Curacao" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Curacao" SelfReg="false" Sequence="319"/>
+    <ROW File="Currie" Component_="Adelaide" FileName="Currie" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Currie" SelfReg="false" Sequence="515"/>
+    <ROW File="Dakar" Component_="Abidjan" FileName="Dakar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Dakar" SelfReg="false" Sequence="248"/>
+    <ROW File="Damascus" Component_="Aden" FileName="Damascus" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Damascus" SelfReg="false" Sequence="442"/>
+    <ROW File="Danmarkshavn" Component_="Adak" FileName="Danmar~1|Danmarkshavn" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Danmarkshavn" SelfReg="false" Sequence="320"/>
+    <ROW File="Dar_es_Salaam" Component_="Abidjan" FileName="Dar_es~1|Dar_es_Salaam" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Dar_es_Salaam" SelfReg="false" Sequence="249"/>
+    <ROW File="Darwin" Component_="Adelaide" FileName="Darwin" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Darwin" SelfReg="false" Sequence="516"/>
+    <ROW File="Davis" Component_="Casey" FileName="Davis" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Davis" SelfReg="false" Sequence="416"/>
+    <ROW File="Dawson" Component_="Adak" FileName="Dawson" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Dawson" SelfReg="false" Sequence="321"/>
+    <ROW File="Dawson_Creek" Component_="Adak" FileName="Dawson~1|Dawson_Creek" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Dawson_Creek" SelfReg="false" Sequence="322"/>
     <ROW File="Default.adiumemoticonset.zip" Component_="Default.adiumemoticonset.zip" FileName="Defaul~1.zip|Default.adiumemoticonset.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\Default.adiumemoticonset.zip" SelfReg="false" Sequence="60"/>
+    <ROW File="Denver" Component_="Adak" FileName="Denver" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Denver" SelfReg="false" Sequence="323"/>
+    <ROW File="Detroit" Component_="Adak" FileName="Detroit" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Detroit" SelfReg="false" Sequence="324"/>
+    <ROW File="Dhaka" Component_="Aden" FileName="Dhaka" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Dhaka" SelfReg="false" Sequence="443"/>
+    <ROW File="Dili" Component_="Aden" FileName="Dili" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Dili" SelfReg="false" Sequence="444"/>
+    <ROW File="Djibouti" Component_="Abidjan" FileName="Djibouti" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Djibouti" SelfReg="false" Sequence="250"/>
+    <ROW File="Dominica" Component_="Adak" FileName="Dominica" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Dominica" SelfReg="false" Sequence="325"/>
+    <ROW File="Douala" Component_="Abidjan" FileName="Douala" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Douala" SelfReg="false" Sequence="251"/>
+    <ROW File="Dubai" Component_="Aden" FileName="Dubai" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Dubai" SelfReg="false" Sequence="445"/>
+    <ROW File="Dublin" Component_="Amsterdam" FileName="Dublin" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Dublin" SelfReg="false" Sequence="568"/>
+    <ROW File="DumontDUrville" Component_="Casey" FileName="Dumont~1|DumontDUrville" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\DumontDUrville" SelfReg="false" Sequence="417"/>
+    <ROW File="Dushanbe" Component_="Aden" FileName="Dushanbe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Dushanbe" SelfReg="false" Sequence="446"/>
+    <ROW File="EET" Component_="CET" FileName="EET" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\EET" SelfReg="false" Sequence="526"/>
+    <ROW File="EST" Component_="CET" FileName="EST" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\EST" SelfReg="false" Sequence="527"/>
+    <ROW File="EST5" Component_="AST4" FileName="EST5" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\EST5" SelfReg="false" Sequence="660"/>
+    <ROW File="EST5EDT" Component_="CET" FileName="EST5EDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\EST5EDT" SelfReg="false" Sequence="528"/>
+    <ROW File="EST5EDT_1" Component_="AST4" FileName="EST5EDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\EST5EDT" SelfReg="false" Sequence="661"/>
+    <ROW File="Easter" Component_="Apia" FileName="Easter" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Easter" SelfReg="false" Sequence="620"/>
+    <ROW File="Edmonton" Component_="Adak" FileName="Edmonton" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Edmonton" SelfReg="false" Sequence="326"/>
+    <ROW File="Efate" Component_="Apia" FileName="Efate" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Efate" SelfReg="false" Sequence="621"/>
+    <ROW File="Eirunepe" Component_="Adak" FileName="Eirunepe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Eirunepe" SelfReg="false" Sequence="327"/>
+    <ROW File="El_Aaiun" Component_="Abidjan" FileName="El_Aaiun" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\El_Aaiun" SelfReg="false" Sequence="252"/>
+    <ROW File="El_Salvador" Component_="Adak" FileName="El_Sal~1|El_Salvador" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\El_Salvador" SelfReg="false" Sequence="328"/>
+    <ROW File="Enderbury" Component_="Apia" FileName="Enderb~1|Enderbury" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Enderbury" SelfReg="false" Sequence="622"/>
+    <ROW File="Eucla" Component_="Adelaide" FileName="Eucla" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Eucla" SelfReg="false" Sequence="517"/>
+    <ROW File="Fakaofo" Component_="Apia" FileName="Fakaofo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Fakaofo" SelfReg="false" Sequence="623"/>
+    <ROW File="Faroe" Component_="Azores" FileName="Faroe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Faroe" SelfReg="false" Sequence="506"/>
+    <ROW File="Fiji" Component_="Apia" FileName="Fiji" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Fiji" SelfReg="false" Sequence="624"/>
+    <ROW File="Fortaleza" Component_="Adak" FileName="Fortal~1|Fortaleza" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Fortaleza" SelfReg="false" Sequence="329"/>
+    <ROW File="Freetown" Component_="Abidjan" FileName="Freetown" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Freetown" SelfReg="false" Sequence="253"/>
+    <ROW File="Funafuti" Component_="Apia" FileName="Funafuti" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Funafuti" SelfReg="false" Sequence="625"/>
+    <ROW File="GMT" Component_="GMT" FileName="GMT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT" SelfReg="false" Sequence="529"/>
+    <ROW File="GMT_1" Component_="GMT" FileName="GMT_1~1|GMT+1" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+1" SelfReg="false" Sequence="530"/>
+    <ROW File="GMT_10" Component_="GMT" FileName="GMT_10~1|GMT+10" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+10" SelfReg="false" Sequence="531"/>
+    <ROW File="GMT_10_1" Component_="GMT" FileName="GMT-10" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-10" SelfReg="false" Sequence="543"/>
+    <ROW File="GMT_11" Component_="GMT" FileName="GMT_11~1|GMT+11" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+11" SelfReg="false" Sequence="532"/>
+    <ROW File="GMT_11_1" Component_="GMT" FileName="GMT-11" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-11" SelfReg="false" Sequence="544"/>
+    <ROW File="GMT_12" Component_="GMT" FileName="GMT_12~1|GMT+12" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+12" SelfReg="false" Sequence="533"/>
+    <ROW File="GMT_12_1" Component_="GMT" FileName="GMT-12" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-12" SelfReg="false" Sequence="545"/>
+    <ROW File="GMT_13" Component_="GMT" FileName="GMT-13" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-13" SelfReg="false" Sequence="546"/>
+    <ROW File="GMT_14" Component_="GMT" FileName="GMT-14" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-14" SelfReg="false" Sequence="547"/>
+    <ROW File="GMT_15" Component_="CET" FileName="GMT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\GMT" SelfReg="false" Sequence="601"/>
+    <ROW File="GMT_1_1" Component_="GMT" FileName="GMT-1" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-1" SelfReg="false" Sequence="542"/>
+    <ROW File="GMT_2" Component_="GMT" FileName="GMT_2~1|GMT+2" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+2" SelfReg="false" Sequence="534"/>
+    <ROW File="GMT_2_1" Component_="GMT" FileName="GMT-2" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-2" SelfReg="false" Sequence="548"/>
+    <ROW File="GMT_3" Component_="GMT" FileName="GMT_3~1|GMT+3" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+3" SelfReg="false" Sequence="535"/>
+    <ROW File="GMT_3_1" Component_="GMT" FileName="GMT-3" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-3" SelfReg="false" Sequence="549"/>
+    <ROW File="GMT_4" Component_="GMT" FileName="GMT_4~1|GMT+4" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+4" SelfReg="false" Sequence="536"/>
+    <ROW File="GMT_4_1" Component_="GMT" FileName="GMT-4" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-4" SelfReg="false" Sequence="550"/>
+    <ROW File="GMT_5" Component_="GMT" FileName="GMT_5~1|GMT+5" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+5" SelfReg="false" Sequence="537"/>
+    <ROW File="GMT_5_1" Component_="GMT" FileName="GMT-5" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-5" SelfReg="false" Sequence="551"/>
+    <ROW File="GMT_6" Component_="GMT" FileName="GMT_6~1|GMT+6" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+6" SelfReg="false" Sequence="538"/>
+    <ROW File="GMT_6_1" Component_="GMT" FileName="GMT-6" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-6" SelfReg="false" Sequence="552"/>
+    <ROW File="GMT_7" Component_="GMT" FileName="GMT_7~1|GMT+7" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+7" SelfReg="false" Sequence="539"/>
+    <ROW File="GMT_7_1" Component_="GMT" FileName="GMT-7" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-7" SelfReg="false" Sequence="553"/>
+    <ROW File="GMT_8" Component_="GMT" FileName="GMT_8~1|GMT+8" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+8" SelfReg="false" Sequence="540"/>
+    <ROW File="GMT_8_1" Component_="GMT" FileName="GMT-8" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-8" SelfReg="false" Sequence="554"/>
+    <ROW File="GMT_9" Component_="GMT" FileName="GMT_9~1|GMT+9" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT+9" SelfReg="false" Sequence="541"/>
+    <ROW File="GMT_9_1" Component_="GMT" FileName="GMT-9" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\GMT-9" SelfReg="false" Sequence="555"/>
+    <ROW File="GRAY.pf" Component_="CIEXYZ.pf" FileName="GRAY.pf" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\cmm\GRAY.pf" SelfReg="false" Sequence="167"/>
     <ROW File="GTalk.AdiumEmoticonset.zip" Component_="Default.adiumemoticonset.zip" FileName="GTalkA~1.zip|GTalk.AdiumEmoticonset.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\GTalk.AdiumEmoticonset.zip" SelfReg="false" Sequence="61"/>
+    <ROW File="Gaborone" Component_="Abidjan" FileName="Gaborone" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Gaborone" SelfReg="false" Sequence="254"/>
+    <ROW File="Galapagos" Component_="Apia" FileName="Galapa~1|Galapagos" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Galapagos" SelfReg="false" Sequence="626"/>
+    <ROW File="Gambier" Component_="Apia" FileName="Gambier" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Gambier" SelfReg="false" Sequence="627"/>
+    <ROW File="Gaza" Component_="Aden" FileName="Gaza" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Gaza" SelfReg="false" Sequence="447"/>
+    <ROW File="Gibraltar" Component_="Amsterdam" FileName="Gibral~1|Gibraltar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Gibraltar" SelfReg="false" Sequence="569"/>
+    <ROW File="Glace_Bay" Component_="Adak" FileName="Glace_~1|Glace_Bay" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Glace_Bay" SelfReg="false" Sequence="330"/>
+    <ROW File="Godthab" Component_="Adak" FileName="Godthab" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Godthab" SelfReg="false" Sequence="331"/>
+    <ROW File="Goose_Bay" Component_="Adak" FileName="Goose_~1|Goose_Bay" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Goose_Bay" SelfReg="false" Sequence="332"/>
+    <ROW File="Grand_Turk" Component_="Adak" FileName="Grand_~1|Grand_Turk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Grand_Turk" SelfReg="false" Sequence="333"/>
+    <ROW File="Grenada" Component_="Adak" FileName="Grenada" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Grenada" SelfReg="false" Sequence="334"/>
+    <ROW File="Guadalcanal" Component_="Apia" FileName="Guadal~1|Guadalcanal" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Guadalcanal" SelfReg="false" Sequence="628"/>
+    <ROW File="Guadeloupe" Component_="Adak" FileName="Guadel~1|Guadeloupe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Guadeloupe" SelfReg="false" Sequence="335"/>
+    <ROW File="Guam" Component_="Apia" FileName="Guam" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Guam" SelfReg="false" Sequence="629"/>
+    <ROW File="Guatemala" Component_="Adak" FileName="Guatem~1|Guatemala" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Guatemala" SelfReg="false" Sequence="336"/>
+    <ROW File="Guayaquil" Component_="Adak" FileName="Guayaq~1|Guayaquil" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Guayaquil" SelfReg="false" Sequence="337"/>
+    <ROW File="Guyana" Component_="Adak" FileName="Guyana" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Guyana" SelfReg="false" Sequence="338"/>
+    <ROW File="HST" Component_="CET" FileName="HST" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\HST" SelfReg="false" Sequence="602"/>
+    <ROW File="HST10" Component_="AST4" FileName="HST10" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\HST10" SelfReg="false" Sequence="662"/>
+    <ROW File="Halifax" Component_="Adak" FileName="Halifax" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Halifax" SelfReg="false" Sequence="339"/>
+    <ROW File="Harare" Component_="Abidjan" FileName="Harare" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Harare" SelfReg="false" Sequence="255"/>
+    <ROW File="Harbin" Component_="Aden" FileName="Harbin" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Harbin" SelfReg="false" Sequence="448"/>
+    <ROW File="Havana" Component_="Adak" FileName="Havana" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Havana" SelfReg="false" Sequence="340"/>
+    <ROW File="Helsinki" Component_="Amsterdam" FileName="Helsinki" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Helsinki" SelfReg="false" Sequence="570"/>
+    <ROW File="Hermosillo" Component_="Adak" FileName="Hermos~1|Hermosillo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Hermosillo" SelfReg="false" Sequence="341"/>
+    <ROW File="Hobart" Component_="Adelaide" FileName="Hobart" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Hobart" SelfReg="false" Sequence="518"/>
+    <ROW File="Hong_Kong" Component_="Aden" FileName="Hong_K~1|Hong_Kong" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Hong_Kong" SelfReg="false" Sequence="449"/>
+    <ROW File="Honolulu" Component_="Apia" FileName="Honolulu" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Honolulu" SelfReg="false" Sequence="630"/>
+    <ROW File="Hovd" Component_="Aden" FileName="Hovd" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Hovd" SelfReg="false" Sequence="450"/>
     <ROW File="IeEmbed.exe" Component_="IeEmbed.exe" FileName="IeEmbed.exe" Attributes="0" SourcePath="..\..\target\build\lib\windows\IeEmbed.exe" SelfReg="false" Sequence="17"/>
+    <ROW File="Indianapolis" Component_="Indianapolis" FileName="Indian~1|Indianapolis" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Indianapolis" SelfReg="false" Sequence="342"/>
     <ROW File="Info.plist" Component_="Info.plist" FileName="Info~1.pli|Info.plist" Attributes="0" SourcePath="..\..\target\build\resources\Info.plist" SelfReg="false" Sequence="23"/>
+    <ROW File="Inuvik" Component_="Adak" FileName="Inuvik" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Inuvik" SelfReg="false" Sequence="350"/>
+    <ROW File="Iqaluit" Component_="Adak" FileName="Iqaluit" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Iqaluit" SelfReg="false" Sequence="351"/>
+    <ROW File="Irkutsk" Component_="Aden" FileName="Irkutsk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Irkutsk" SelfReg="false" Sequence="451"/>
+    <ROW File="Istanbul" Component_="Amsterdam" FileName="Istanbul" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Istanbul" SelfReg="false" Sequence="571"/>
+    <ROW File="Jakarta" Component_="Aden" FileName="Jakarta" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Jakarta" SelfReg="false" Sequence="452"/>
+    <ROW File="Jamaica" Component_="Adak" FileName="Jamaica" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Jamaica" SelfReg="false" Sequence="352"/>
     <ROW File="JavaSoundStream.fix.jar" Component_="JavaSoundStream.fix.jar" FileName="JavaSo~1.jar|JavaSoundStream.fix.jar" Attributes="0" SourcePath="..\..\target\build\lib\mac\JavaSoundStream.fix.jar" SelfReg="false" Sequence="71"/>
+    <ROW File="Jayapura" Component_="Aden" FileName="Jayapura" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Jayapura" SelfReg="false" Sequence="453"/>
+    <ROW File="JdbcOdbc.dll" Component_="JdbcOdbc.dll" FileName="JdbcOdbc.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\JdbcOdbc.dll" SelfReg="false" Sequence="115"/>
+    <ROW File="Jerusalem" Component_="Aden" FileName="Jerusa~1|Jerusalem" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Jerusalem" SelfReg="false" Sequence="454"/>
+    <ROW File="Johannesburg" Component_="Abidjan" FileName="Johann~1|Johannesburg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Johannesburg" SelfReg="false" Sequence="256"/>
+    <ROW File="Johnston" Component_="Apia" FileName="Johnston" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Johnston" SelfReg="false" Sequence="631"/>
+    <ROW File="Jujuy" Component_="Buenos_Aires" FileName="Jujuy" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Jujuy" SelfReg="false" Sequence="291"/>
+    <ROW File="Juneau" Component_="Adak" FileName="Juneau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Juneau" SelfReg="false" Sequence="353"/>
+    <ROW File="Kabul" Component_="Aden" FileName="Kabul" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Kabul" SelfReg="false" Sequence="455"/>
+    <ROW File="Kaliningrad" Component_="Amsterdam" FileName="Kalini~1|Kaliningrad" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Kaliningrad" SelfReg="false" Sequence="572"/>
+    <ROW File="Kamchatka" Component_="Aden" FileName="Kamcha~1|Kamchatka" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Kamchatka" SelfReg="false" Sequence="456"/>
+    <ROW File="Kampala" Component_="Abidjan" FileName="Kampala" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Kampala" SelfReg="false" Sequence="257"/>
+    <ROW File="Karachi" Component_="Aden" FileName="Karachi" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Karachi" SelfReg="false" Sequence="457"/>
+    <ROW File="Kashgar" Component_="Aden" FileName="Kashgar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Kashgar" SelfReg="false" Sequence="458"/>
+    <ROW File="Katmandu" Component_="Aden" FileName="Katmandu" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Katmandu" SelfReg="false" Sequence="459"/>
+    <ROW File="Kerguelen" Component_="Antananarivo" FileName="Kergue~1|Kerguelen" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Kerguelen" SelfReg="false" Sequence="608"/>
+    <ROW File="Khartoum" Component_="Abidjan" FileName="Khartoum" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Khartoum" SelfReg="false" Sequence="258"/>
+    <ROW File="Kiev" Component_="Amsterdam" FileName="Kiev" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Kiev" SelfReg="false" Sequence="573"/>
+    <ROW File="Kigali" Component_="Abidjan" FileName="Kigali" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Kigali" SelfReg="false" Sequence="259"/>
+    <ROW File="Kinshasa" Component_="Abidjan" FileName="Kinshasa" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Kinshasa" SelfReg="false" Sequence="260"/>
+    <ROW File="Kiritimati" Component_="Apia" FileName="Kiriti~1|Kiritimati" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Kiritimati" SelfReg="false" Sequence="632"/>
+    <ROW File="Knox" Component_="Indianapolis" FileName="Knox" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Knox" SelfReg="false" Sequence="343"/>
+    <ROW File="Kosrae" Component_="Apia" FileName="Kosrae" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Kosrae" SelfReg="false" Sequence="633"/>
+    <ROW File="Krasnoyarsk" Component_="Aden" FileName="Krasno~1|Krasnoyarsk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Krasnoyarsk" SelfReg="false" Sequence="460"/>
+    <ROW File="Kuala_Lumpur" Component_="Aden" FileName="Kuala_~1|Kuala_Lumpur" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Kuala_Lumpur" SelfReg="false" Sequence="461"/>
+    <ROW File="Kuching" Component_="Aden" FileName="Kuching" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Kuching" SelfReg="false" Sequence="462"/>
+    <ROW File="Kuwait" Component_="Aden" FileName="Kuwait" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Kuwait" SelfReg="false" Sequence="463"/>
+    <ROW File="Kwajalein" Component_="Apia" FileName="Kwajal~1|Kwajalein" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Kwajalein" SelfReg="false" Sequence="634"/>
+    <ROW File="LICENSE" Component_="COPYRIGHT" FileName="LICENSE" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\LICENSE" SelfReg="false" Sequence="671"/>
     <ROW File="LICENSE.html" Component_="builder.jar" FileName="LICENS~1.htm|LICENSE.html" Attributes="0" SourcePath="..\..\target\build\documentation\LICENSE.html" SelfReg="false" Sequence="9"/>
+    <ROW File="LINEAR_RGB.pf" Component_="CIEXYZ.pf" FileName="LINEAR~1.pf|LINEAR_RGB.pf" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\cmm\LINEAR_RGB.pf" SelfReg="false" Sequence="168"/>
+    <ROW File="La_Paz" Component_="Adak" FileName="La_Paz" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\La_Paz" SelfReg="false" Sequence="356"/>
+    <ROW File="La_Rioja" Component_="Buenos_Aires" FileName="La_Rioja" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\La_Rioja" SelfReg="false" Sequence="292"/>
+    <ROW File="Lagos" Component_="Abidjan" FileName="Lagos" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Lagos" SelfReg="false" Sequence="261"/>
+    <ROW File="Libreville" Component_="Abidjan" FileName="Librev~1|Libreville" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Libreville" SelfReg="false" Sequence="262"/>
+    <ROW File="Lima" Component_="Adak" FileName="Lima" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Lima" SelfReg="false" Sequence="357"/>
+    <ROW File="Lindeman" Component_="Adelaide" FileName="Lindeman" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Lindeman" SelfReg="false" Sequence="519"/>
+    <ROW File="Lisbon" Component_="Amsterdam" FileName="Lisbon" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Lisbon" SelfReg="false" Sequence="574"/>
+    <ROW File="Lome" Component_="Abidjan" FileName="Lome" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Lome" SelfReg="false" Sequence="263"/>
+    <ROW File="London" Component_="Amsterdam" FileName="London" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\London" SelfReg="false" Sequence="575"/>
+    <ROW File="Lord_Howe" Component_="Adelaide" FileName="Lord_H~1|Lord_Howe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Lord_Howe" SelfReg="false" Sequence="520"/>
+    <ROW File="Los_Angeles" Component_="Adak" FileName="Los_An~1|Los_Angeles" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Los_Angeles" SelfReg="false" Sequence="358"/>
+    <ROW File="Louisville" Component_="Louisville" FileName="Louisv~1|Louisville" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Kentucky\Louisville" SelfReg="false" Sequence="354"/>
+    <ROW File="Luanda" Component_="Abidjan" FileName="Luanda" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Luanda" SelfReg="false" Sequence="264"/>
+    <ROW File="Lubumbashi" Component_="Abidjan" FileName="Lubumb~1|Lubumbashi" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Lubumbashi" SelfReg="false" Sequence="265"/>
+    <ROW File="LucidaSansRegular.ttf" Component_="LucidaSansRegular.ttf" FileName="Lucida~1.ttf|LucidaSansRegular.ttf" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\fonts\LucidaSansRegular.ttf" SelfReg="false" Sequence="195"/>
+    <ROW File="Lusaka" Component_="Abidjan" FileName="Lusaka" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Lusaka" SelfReg="false" Sequence="266"/>
+    <ROW File="Luxembourg" Component_="Amsterdam" FileName="Luxemb~1|Luxembourg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Luxembourg" SelfReg="false" Sequence="576"/>
+    <ROW File="MET" Component_="CET" FileName="MET" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\MET" SelfReg="false" Sequence="614"/>
+    <ROW File="MST" Component_="CET" FileName="MST" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\MST" SelfReg="false" Sequence="615"/>
+    <ROW File="MST7" Component_="AST4" FileName="MST7" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\MST7" SelfReg="false" Sequence="663"/>
+    <ROW File="MST7MDT" Component_="CET" FileName="MST7MDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\MST7MDT" SelfReg="false" Sequence="616"/>
+    <ROW File="MST7MDT_1" Component_="AST4" FileName="MST7MDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\MST7MDT" SelfReg="false" Sequence="664"/>
+    <ROW File="Macau" Component_="Aden" FileName="Macau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Macau" SelfReg="false" Sequence="464"/>
+    <ROW File="Maceio" Component_="Adak" FileName="Maceio" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Maceio" SelfReg="false" Sequence="359"/>
+    <ROW File="Madeira" Component_="Azores" FileName="Madeira" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Madeira" SelfReg="false" Sequence="507"/>
+    <ROW File="Madrid" Component_="Amsterdam" FileName="Madrid" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Madrid" SelfReg="false" Sequence="577"/>
+    <ROW File="Magadan" Component_="Aden" FileName="Magadan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Magadan" SelfReg="false" Sequence="465"/>
+    <ROW File="Mahe" Component_="Antananarivo" FileName="Mahe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Mahe" SelfReg="false" Sequence="609"/>
+    <ROW File="Majuro" Component_="Apia" FileName="Majuro" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Majuro" SelfReg="false" Sequence="635"/>
+    <ROW File="Makassar" Component_="Aden" FileName="Makassar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Makassar" SelfReg="false" Sequence="466"/>
+    <ROW File="Malabo" Component_="Abidjan" FileName="Malabo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Malabo" SelfReg="false" Sequence="267"/>
+    <ROW File="Maldives" Component_="Antananarivo" FileName="Maldives" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Maldives" SelfReg="false" Sequence="610"/>
+    <ROW File="Malta" Component_="Amsterdam" FileName="Malta" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Malta" SelfReg="false" Sequence="578"/>
+    <ROW File="Managua" Component_="Adak" FileName="Managua" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Managua" SelfReg="false" Sequence="360"/>
+    <ROW File="Manaus" Component_="Adak" FileName="Manaus" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Manaus" SelfReg="false" Sequence="361"/>
+    <ROW File="Manila" Component_="Aden" FileName="Manila" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Manila" SelfReg="false" Sequence="467"/>
+    <ROW File="Maputo" Component_="Abidjan" FileName="Maputo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Maputo" SelfReg="false" Sequence="268"/>
+    <ROW File="Marengo" Component_="Indianapolis" FileName="Marengo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Marengo" SelfReg="false" Sequence="344"/>
+    <ROW File="Marquesas" Component_="Apia" FileName="Marque~1|Marquesas" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Marquesas" SelfReg="false" Sequence="636"/>
+    <ROW File="Martinique" Component_="Adak" FileName="Martin~1|Martinique" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Martinique" SelfReg="false" Sequence="362"/>
+    <ROW File="Maseru" Component_="Abidjan" FileName="Maseru" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Maseru" SelfReg="false" Sequence="269"/>
+    <ROW File="Mauritius" Component_="Antananarivo" FileName="Maurit~1|Mauritius" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Mauritius" SelfReg="false" Sequence="611"/>
+    <ROW File="Mawson" Component_="Casey" FileName="Mawson" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Mawson" SelfReg="false" Sequence="418"/>
+    <ROW File="Mayotte" Component_="Antananarivo" FileName="Mayotte" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Mayotte" SelfReg="false" Sequence="612"/>
+    <ROW File="Mazatlan" Component_="Adak" FileName="Mazatlan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Mazatlan" SelfReg="false" Sequence="363"/>
+    <ROW File="Mbabane" Component_="Abidjan" FileName="Mbabane" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Mbabane" SelfReg="false" Sequence="270"/>
+    <ROW File="McMurdo" Component_="Casey" FileName="McMurdo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\McMurdo" SelfReg="false" Sequence="419"/>
+    <ROW File="Melbourne" Component_="Adelaide" FileName="Melbou~1|Melbourne" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Melbourne" SelfReg="false" Sequence="521"/>
+    <ROW File="Mendoza" Component_="Buenos_Aires" FileName="Mendoza" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Mendoza" SelfReg="false" Sequence="293"/>
+    <ROW File="Menominee" Component_="Adak" FileName="Menomi~1|Menominee" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Menominee" SelfReg="false" Sequence="364"/>
+    <ROW File="Merida" Component_="Adak" FileName="Merida" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Merida" SelfReg="false" Sequence="365"/>
+    <ROW File="Mexico_City" Component_="Adak" FileName="Mexico~1|Mexico_City" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Mexico_City" SelfReg="false" Sequence="366"/>
+    <ROW File="Midway" Component_="Apia" FileName="Midway" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Midway" SelfReg="false" Sequence="637"/>
+    <ROW File="Minsk" Component_="Amsterdam" FileName="Minsk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Minsk" SelfReg="false" Sequence="579"/>
+    <ROW File="Miquelon" Component_="Adak" FileName="Miquelon" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Miquelon" SelfReg="false" Sequence="367"/>
+    <ROW File="Mogadishu" Component_="Abidjan" FileName="Mogadi~1|Mogadishu" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Mogadishu" SelfReg="false" Sequence="271"/>
+    <ROW File="Monaco" Component_="Amsterdam" FileName="Monaco" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Monaco" SelfReg="false" Sequence="580"/>
+    <ROW File="Moncton" Component_="Adak" FileName="Moncton" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Moncton" SelfReg="false" Sequence="368"/>
+    <ROW File="Monrovia" Component_="Abidjan" FileName="Monrovia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Monrovia" SelfReg="false" Sequence="272"/>
+    <ROW File="Monterrey" Component_="Adak" FileName="Monter~1|Monterrey" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Monterrey" SelfReg="false" Sequence="369"/>
+    <ROW File="Montevideo" Component_="Adak" FileName="Montev~1|Montevideo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Montevideo" SelfReg="false" Sequence="370"/>
+    <ROW File="Monticello" Component_="Louisville" FileName="Montic~1|Monticello" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Kentucky\Monticello" SelfReg="false" Sequence="355"/>
+    <ROW File="Montreal" Component_="Adak" FileName="Montreal" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Montreal" SelfReg="false" Sequence="371"/>
+    <ROW File="Montserrat" Component_="Adak" FileName="Montse~1|Montserrat" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Montserrat" SelfReg="false" Sequence="372"/>
+    <ROW File="Moscow" Component_="Amsterdam" FileName="Moscow" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Moscow" SelfReg="false" Sequence="581"/>
     <ROW File="MozEmbed.exe" Component_="MozEmbed.exe" FileName="MozEmbed.exe" Attributes="0" SourcePath="..\..\target\build\lib\windows\MozEmbed.exe" SelfReg="false" Sequence="20"/>
+    <ROW File="Muscat" Component_="Aden" FileName="Muscat" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Muscat" SelfReg="false" Sequence="468"/>
+    <ROW File="Nairobi" Component_="Abidjan" FileName="Nairobi" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Nairobi" SelfReg="false" Sequence="273"/>
+    <ROW File="Nassau" Component_="Adak" FileName="Nassau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Nassau" SelfReg="false" Sequence="373"/>
+    <ROW File="Nauru" Component_="Apia" FileName="Nauru" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Nauru" SelfReg="false" Sequence="638"/>
+    <ROW File="Ndjamena" Component_="Abidjan" FileName="Ndjamena" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Ndjamena" SelfReg="false" Sequence="274"/>
+    <ROW File="New_Salem" Component_="Center" FileName="New_Sa~1|New_Salem" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\North_Dakota\New_Salem" SelfReg="false" Sequence="379"/>
+    <ROW File="New_York" Component_="Adak" FileName="New_York" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\New_York" SelfReg="false" Sequence="374"/>
+    <ROW File="Niamey" Component_="Abidjan" FileName="Niamey" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Niamey" SelfReg="false" Sequence="275"/>
+    <ROW File="Nicosia" Component_="Aden" FileName="Nicosia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Nicosia" SelfReg="false" Sequence="469"/>
+    <ROW File="Nipigon" Component_="Adak" FileName="Nipigon" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Nipigon" SelfReg="false" Sequence="375"/>
+    <ROW File="Niue" Component_="Apia" FileName="Niue" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Niue" SelfReg="false" Sequence="639"/>
+    <ROW File="Nome" Component_="Adak" FileName="Nome" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Nome" SelfReg="false" Sequence="376"/>
+    <ROW File="Norfolk" Component_="Apia" FileName="Norfolk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Norfolk" SelfReg="false" Sequence="640"/>
+    <ROW File="Noronha" Component_="Adak" FileName="Noronha" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Noronha" SelfReg="false" Sequence="377"/>
+    <ROW File="Nouakchott" Component_="Abidjan" FileName="Nouakc~1|Nouakchott" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Nouakchott" SelfReg="false" Sequence="276"/>
+    <ROW File="Noumea" Component_="Apia" FileName="Noumea" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Noumea" SelfReg="false" Sequence="641"/>
+    <ROW File="Novosibirsk" Component_="Aden" FileName="Novosi~1|Novosibirsk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Novosibirsk" SelfReg="false" Sequence="470"/>
+    <ROW File="Omsk" Component_="Aden" FileName="Omsk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Omsk" SelfReg="false" Sequence="471"/>
+    <ROW File="Oral" Component_="Aden" FileName="Oral" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Oral" SelfReg="false" Sequence="472"/>
+    <ROW File="Oslo" Component_="Amsterdam" FileName="Oslo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Oslo" SelfReg="false" Sequence="582"/>
+    <ROW File="Ouagadougou" Component_="Abidjan" FileName="Ouagad~1|Ouagadougou" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Ouagadougou" SelfReg="false" Sequence="277"/>
+    <ROW File="PATCH.ERR" Component_="COPYRIGHT" FileName="PATCH.ERR" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\PATCH.ERR" SelfReg="false" Sequence="672"/>
     <ROW File="POPO.adiumemoticonset.zip" Component_="Default.adiumemoticonset.zip" FileName="POPOad~1.zip|POPO.adiumemoticonset.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\POPO.adiumemoticonset.zip" SelfReg="false" Sequence="62"/>
+    <ROW File="PST8" Component_="AST4" FileName="PST8" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\PST8" SelfReg="false" Sequence="665"/>
+    <ROW File="PST8PDT" Component_="CET" FileName="PST8PDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\PST8PDT" SelfReg="false" Sequence="655"/>
+    <ROW File="PST8PDT_1" Component_="AST4" FileName="PST8PDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\PST8PDT" SelfReg="false" Sequence="666"/>
+    <ROW File="Pago_Pago" Component_="Apia" FileName="Pago_P~1|Pago_Pago" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Pago_Pago" SelfReg="false" Sequence="642"/>
+    <ROW File="Palau" Component_="Apia" FileName="Palau" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Palau" SelfReg="false" Sequence="643"/>
+    <ROW File="Palmer" Component_="Casey" FileName="Palmer" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Palmer" SelfReg="false" Sequence="420"/>
+    <ROW File="Panama" Component_="Adak" FileName="Panama" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Panama" SelfReg="false" Sequence="380"/>
+    <ROW File="Pangnirtung" Component_="Adak" FileName="Pangni~1|Pangnirtung" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Pangnirtung" SelfReg="false" Sequence="381"/>
+    <ROW File="Paramaribo" Component_="Adak" FileName="Parama~1|Paramaribo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Paramaribo" SelfReg="false" Sequence="382"/>
+    <ROW File="Paris" Component_="Amsterdam" FileName="Paris" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Paris" SelfReg="false" Sequence="583"/>
+    <ROW File="Perth" Component_="Adelaide" FileName="Perth" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Perth" SelfReg="false" Sequence="522"/>
+    <ROW File="Petersburg" Component_="Indianapolis" FileName="Peters~1|Petersburg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Petersburg" SelfReg="false" Sequence="345"/>
+    <ROW File="Phnom_Penh" Component_="Aden" FileName="Phnom_~1|Phnom_Penh" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Phnom_Penh" SelfReg="false" Sequence="473"/>
+    <ROW File="Phoenix" Component_="Adak" FileName="Phoenix" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Phoenix" SelfReg="false" Sequence="383"/>
+    <ROW File="Pitcairn" Component_="Apia" FileName="Pitcairn" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Pitcairn" SelfReg="false" Sequence="644"/>
+    <ROW File="Ponape" Component_="Apia" FileName="Ponape" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Ponape" SelfReg="false" Sequence="645"/>
+    <ROW File="Pontianak" Component_="Aden" FileName="Pontia~1|Pontianak" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Pontianak" SelfReg="false" Sequence="474"/>
+    <ROW File="Port_Moresby" Component_="Apia" FileName="Port_M~1|Port_Moresby" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Port_Moresby" SelfReg="false" Sequence="646"/>
+    <ROW File="Port_au_Prince" Component_="Adak" FileName="Port-a~1|Port-au-Prince" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Port-au-Prince" SelfReg="false" Sequence="384"/>
+    <ROW File="Port_of_Spain" Component_="Adak" FileName="Port_o~1|Port_of_Spain" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Port_of_Spain" SelfReg="false" Sequence="386"/>
+    <ROW File="Porto_Novo" Component_="Abidjan" FileName="Porto-~1|Porto-Novo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Porto-Novo" SelfReg="false" Sequence="278"/>
+    <ROW File="Porto_Velho" Component_="Adak" FileName="Porto_~1|Porto_Velho" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Porto_Velho" SelfReg="false" Sequence="385"/>
+    <ROW File="Prague" Component_="Amsterdam" FileName="Prague" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Prague" SelfReg="false" Sequence="584"/>
+    <ROW File="Puerto_Rico" Component_="Adak" FileName="Puerto~1|Puerto_Rico" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Puerto_Rico" SelfReg="false" Sequence="387"/>
+    <ROW File="Pyongyang" Component_="Aden" FileName="Pyongy~1|Pyongyang" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Pyongyang" SelfReg="false" Sequence="475"/>
+    <ROW File="Qatar" Component_="Aden" FileName="Qatar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Qatar" SelfReg="false" Sequence="476"/>
+    <ROW File="Qyzylorda" Component_="Aden" FileName="Qyzylo~1|Qyzylorda" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Qyzylorda" SelfReg="false" Sequence="477"/>
     <ROW File="README.html" Component_="builder.jar" FileName="README~1.htm|README.html" Attributes="0" SourcePath="..\..\target\build\documentation\README.html" SelfReg="false" Sequence="10"/>
+    <ROW File="README.txt" Component_="COPYRIGHT" FileName="README.txt" Attributes="1" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\README.txt" SelfReg="false" Sequence="673"/>
+    <ROW File="Rainy_River" Component_="Adak" FileName="Rainy_~1|Rainy_River" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Rainy_River" SelfReg="false" Sequence="388"/>
+    <ROW File="Rangoon" Component_="Aden" FileName="Rangoon" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Rangoon" SelfReg="false" Sequence="478"/>
+    <ROW File="Rankin_Inlet" Component_="Adak" FileName="Rankin~1|Rankin_Inlet" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Rankin_Inlet" SelfReg="false" Sequence="389"/>
+    <ROW File="Rarotonga" Component_="Apia" FileName="Raroto~1|Rarotonga" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Rarotonga" SelfReg="false" Sequence="647"/>
+    <ROW File="Recife" Component_="Adak" FileName="Recife" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Recife" SelfReg="false" Sequence="390"/>
+    <ROW File="Regina" Component_="Adak" FileName="Regina" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Regina" SelfReg="false" Sequence="391"/>
+    <ROW File="Resolute" Component_="Adak" FileName="Resolute" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Resolute" SelfReg="false" Sequence="392"/>
+    <ROW File="Reunion" Component_="Antananarivo" FileName="Reunion" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Indian\Reunion" SelfReg="false" Sequence="613"/>
+    <ROW File="Reykjavik" Component_="Azores" FileName="Reykja~1|Reykjavik" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Reykjavik" SelfReg="false" Sequence="508"/>
+    <ROW File="Riga" Component_="Amsterdam" FileName="Riga" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Riga" SelfReg="false" Sequence="585"/>
+    <ROW File="Rio_Branco" Component_="Adak" FileName="Rio_Br~1|Rio_Branco" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Rio_Branco" SelfReg="false" Sequence="393"/>
+    <ROW File="Rio_Gallegos" Component_="Buenos_Aires" FileName="Rio_Ga~1|Rio_Gallegos" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Rio_Gallegos" SelfReg="false" Sequence="294"/>
+    <ROW File="Riyadh" Component_="Aden" FileName="Riyadh" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Riyadh" SelfReg="false" Sequence="479"/>
+    <ROW File="Riyadh87" Component_="Aden" FileName="Riyadh87" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Riyadh87" SelfReg="false" Sequence="480"/>
+    <ROW File="Riyadh88" Component_="Aden" FileName="Riyadh88" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Riyadh88" SelfReg="false" Sequence="481"/>
+    <ROW File="Riyadh89" Component_="Aden" FileName="Riyadh89" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Riyadh89" SelfReg="false" Sequence="482"/>
+    <ROW File="Rome" Component_="Amsterdam" FileName="Rome" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Rome" SelfReg="false" Sequence="586"/>
+    <ROW File="Rothera" Component_="Casey" FileName="Rothera" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Rothera" SelfReg="false" Sequence="421"/>
+    <ROW File="Saigon" Component_="Aden" FileName="Saigon" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Saigon" SelfReg="false" Sequence="483"/>
+    <ROW File="Saipan" Component_="Apia" FileName="Saipan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Saipan" SelfReg="false" Sequence="648"/>
+    <ROW File="Sakhalin" Component_="Aden" FileName="Sakhalin" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Sakhalin" SelfReg="false" Sequence="484"/>
+    <ROW File="Samara" Component_="Amsterdam" FileName="Samara" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Samara" SelfReg="false" Sequence="587"/>
+    <ROW File="Samarkand" Component_="Aden" FileName="Samark~1|Samarkand" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Samarkand" SelfReg="false" Sequence="485"/>
+    <ROW File="San_Juan" Component_="Buenos_Aires" FileName="San_Juan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\San_Juan" SelfReg="false" Sequence="295"/>
+    <ROW File="Santiago" Component_="Adak" FileName="Santiago" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Santiago" SelfReg="false" Sequence="394"/>
+    <ROW File="Santo_Domingo" Component_="Adak" FileName="Santo_~1|Santo_Domingo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Santo_Domingo" SelfReg="false" Sequence="395"/>
+    <ROW File="Sao_Paulo" Component_="Adak" FileName="Sao_Pa~1|Sao_Paulo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Sao_Paulo" SelfReg="false" Sequence="396"/>
+    <ROW File="Sao_Tome" Component_="Abidjan" FileName="Sao_Tome" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Sao_Tome" SelfReg="false" Sequence="279"/>
+    <ROW File="Scoresbysund" Component_="Adak" FileName="Scores~1|Scoresbysund" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Scoresbysund" SelfReg="false" Sequence="397"/>
+    <ROW File="Seoul" Component_="Aden" FileName="Seoul" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Seoul" SelfReg="false" Sequence="486"/>
+    <ROW File="Shanghai" Component_="Aden" FileName="Shanghai" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Shanghai" SelfReg="false" Sequence="487"/>
+    <ROW File="Simferopol" Component_="Amsterdam" FileName="Simfer~1|Simferopol" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Simferopol" SelfReg="false" Sequence="588"/>
+    <ROW File="Singapore" Component_="Aden" FileName="Singap~1|Singapore" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Singapore" SelfReg="false" Sequence="488"/>
+    <ROW File="Sofia" Component_="Amsterdam" FileName="Sofia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Sofia" SelfReg="false" Sequence="589"/>
+    <ROW File="South_Georgia" Component_="Azores" FileName="South_~1|South_Georgia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\South_Georgia" SelfReg="false" Sequence="509"/>
     <ROW File="Spark.exe" Component_="Spark.exe" FileName="Spark.exe" Attributes="0" SourcePath="&lt;aijclw.exe&gt;" SelfReg="false" Sequence="32"/>
+    <ROW File="St_Helena" Component_="Azores" FileName="St_Hel~1|St_Helena" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\St_Helena" SelfReg="false" Sequence="511"/>
+    <ROW File="St_Johns" Component_="Adak" FileName="St_Johns" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\St_Johns" SelfReg="false" Sequence="398"/>
+    <ROW File="St_Kitts" Component_="Adak" FileName="St_Kitts" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\St_Kitts" SelfReg="false" Sequence="399"/>
+    <ROW File="St_Lucia" Component_="Adak" FileName="St_Lucia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\St_Lucia" SelfReg="false" Sequence="400"/>
+    <ROW File="St_Thomas" Component_="Adak" FileName="St_Tho~1|St_Thomas" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\St_Thomas" SelfReg="false" Sequence="401"/>
+    <ROW File="St_Vincent" Component_="Adak" FileName="St_Vin~1|St_Vincent" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\St_Vincent" SelfReg="false" Sequence="402"/>
+    <ROW File="Stanley" Component_="Azores" FileName="Stanley" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Atlantic\Stanley" SelfReg="false" Sequence="510"/>
+    <ROW File="Stockholm" Component_="Amsterdam" FileName="Stockh~1|Stockholm" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Stockholm" SelfReg="false" Sequence="590"/>
+    <ROW File="Swift_Current" Component_="Adak" FileName="Swift_~1|Swift_Current" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Swift_Current" SelfReg="false" Sequence="403"/>
+    <ROW File="Sydney" Component_="Adelaide" FileName="Sydney" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Australia\Sydney" SelfReg="false" Sequence="523"/>
+    <ROW File="Syowa" Component_="Casey" FileName="Syowa" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Syowa" SelfReg="false" Sequence="422"/>
+    <ROW File="THIRDPARTYLICENSEREADME.txt" Component_="COPYRIGHT" FileName="THIRDP~1.txt|THIRDPARTYLICENSEREADME.txt" Attributes="1" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\THIRDPARTYLICENSEREADME.txt" SelfReg="false" Sequence="674"/>
+    <ROW File="Tahiti" Component_="Apia" FileName="Tahiti" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Tahiti" SelfReg="false" Sequence="649"/>
+    <ROW File="Taipei" Component_="Aden" FileName="Taipei" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Taipei" SelfReg="false" Sequence="489"/>
+    <ROW File="Tallinn" Component_="Amsterdam" FileName="Tallinn" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Tallinn" SelfReg="false" Sequence="591"/>
+    <ROW File="Tarawa" Component_="Apia" FileName="Tarawa" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Tarawa" SelfReg="false" Sequence="650"/>
+    <ROW File="Tashkent" Component_="Aden" FileName="Tashkent" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Tashkent" SelfReg="false" Sequence="490"/>
+    <ROW File="Tbilisi" Component_="Aden" FileName="Tbilisi" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Tbilisi" SelfReg="false" Sequence="491"/>
+    <ROW File="Tegucigalpa" Component_="Adak" FileName="Teguci~1|Tegucigalpa" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Tegucigalpa" SelfReg="false" Sequence="404"/>
+    <ROW File="Tehran" Component_="Aden" FileName="Tehran" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Tehran" SelfReg="false" Sequence="492"/>
+    <ROW File="Tell_City" Component_="Indianapolis" FileName="Tell_C~1|Tell_City" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Tell_City" SelfReg="false" Sequence="346"/>
+    <ROW File="Thimphu" Component_="Aden" FileName="Thimphu" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Thimphu" SelfReg="false" Sequence="493"/>
+    <ROW File="Thule" Component_="Adak" FileName="Thule" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Thule" SelfReg="false" Sequence="405"/>
+    <ROW File="Thunder_Bay" Component_="Adak" FileName="Thunde~1|Thunder_Bay" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Thunder_Bay" SelfReg="false" Sequence="406"/>
+    <ROW File="Tijuana" Component_="Adak" FileName="Tijuana" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Tijuana" SelfReg="false" Sequence="407"/>
+    <ROW File="Tirane" Component_="Amsterdam" FileName="Tirane" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Tirane" SelfReg="false" Sequence="592"/>
+    <ROW File="Tokyo" Component_="Aden" FileName="Tokyo" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Tokyo" SelfReg="false" Sequence="494"/>
+    <ROW File="Tongatapu" Component_="Apia" FileName="Tongat~1|Tongatapu" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Tongatapu" SelfReg="false" Sequence="651"/>
+    <ROW File="Toronto" Component_="Adak" FileName="Toronto" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Toronto" SelfReg="false" Sequence="408"/>
+    <ROW File="Tortola" Component_="Adak" FileName="Tortola" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Tortola" SelfReg="false" Sequence="409"/>
+    <ROW File="Tripoli" Component_="Abidjan" FileName="Tripoli" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Tripoli" SelfReg="false" Sequence="280"/>
+    <ROW File="Truk" Component_="Apia" FileName="Truk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Truk" SelfReg="false" Sequence="652"/>
+    <ROW File="Tucuman" Component_="Buenos_Aires" FileName="Tucuman" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Tucuman" SelfReg="false" Sequence="296"/>
+    <ROW File="Tunis" Component_="Abidjan" FileName="Tunis" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Tunis" SelfReg="false" Sequence="281"/>
+    <ROW File="UCT" Component_="GMT" FileName="UCT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\UCT" SelfReg="false" Sequence="556"/>
+    <ROW File="US_export_policy.jar" Component_="cacerts" FileName="US_exp~1.jar|US_export_policy.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\security\US_export_policy.jar" SelfReg="false" Sequence="229"/>
+    <ROW File="UTC" Component_="GMT" FileName="UTC" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Etc\UTC" SelfReg="false" Sequence="557"/>
+    <ROW File="Ulaanbaatar" Component_="Aden" FileName="Ulaanb~1|Ulaanbaatar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Ulaanbaatar" SelfReg="false" Sequence="495"/>
+    <ROW File="Urumqi" Component_="Aden" FileName="Urumqi" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Urumqi" SelfReg="false" Sequence="496"/>
+    <ROW File="Ushuaia" Component_="Buenos_Aires" FileName="Ushuaia" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Argentina\Ushuaia" SelfReg="false" Sequence="297"/>
+    <ROW File="Uzhgorod" Component_="Amsterdam" FileName="Uzhgorod" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Uzhgorod" SelfReg="false" Sequence="593"/>
+    <ROW File="Vaduz" Component_="Amsterdam" FileName="Vaduz" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Vaduz" SelfReg="false" Sequence="594"/>
+    <ROW File="Vancouver" Component_="Adak" FileName="Vancou~1|Vancouver" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Vancouver" SelfReg="false" Sequence="410"/>
+    <ROW File="Vevay" Component_="Indianapolis" FileName="Vevay" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Vevay" SelfReg="false" Sequence="347"/>
+    <ROW File="Vienna" Component_="Amsterdam" FileName="Vienna" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Vienna" SelfReg="false" Sequence="595"/>
+    <ROW File="Vientiane" Component_="Aden" FileName="Vienti~1|Vientiane" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Vientiane" SelfReg="false" Sequence="497"/>
+    <ROW File="Vilnius" Component_="Amsterdam" FileName="Vilnius" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Vilnius" SelfReg="false" Sequence="596"/>
+    <ROW File="Vincennes" Component_="Indianapolis" FileName="Vincen~1|Vincennes" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Vincennes" SelfReg="false" Sequence="348"/>
+    <ROW File="Vladivostok" Component_="Aden" FileName="Vladiv~1|Vladivostok" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Vladivostok" SelfReg="false" Sequence="498"/>
+    <ROW File="Volgograd" Component_="Amsterdam" FileName="Volgog~1|Volgograd" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Volgograd" SelfReg="false" Sequence="597"/>
+    <ROW File="Vostok" Component_="Casey" FileName="Vostok" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Antarctica\Vostok" SelfReg="false" Sequence="423"/>
+    <ROW File="WET" Component_="CET" FileName="WET" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\WET" SelfReg="false" Sequence="669"/>
+    <ROW File="Wake" Component_="Apia" FileName="Wake" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Wake" SelfReg="false" Sequence="653"/>
+    <ROW File="Wallis" Component_="Apia" FileName="Wallis" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Pacific\Wallis" SelfReg="false" Sequence="654"/>
+    <ROW File="Warsaw" Component_="Amsterdam" FileName="Warsaw" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Warsaw" SelfReg="false" Sequence="598"/>
+    <ROW File="Welcome.html" Component_="COPYRIGHT" FileName="Welcom~1.htm|Welcome.html" Attributes="1" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\Welcome.html" SelfReg="false" Sequence="675"/>
+    <ROW File="Whitehorse" Component_="Adak" FileName="Whiteh~1|Whitehorse" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Whitehorse" SelfReg="false" Sequence="411"/>
+    <ROW File="Winamac" Component_="Indianapolis" FileName="Winamac" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Indiana\Winamac" SelfReg="false" Sequence="349"/>
+    <ROW File="Windhoek" Component_="Abidjan" FileName="Windhoek" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Africa\Windhoek" SelfReg="false" Sequence="282"/>
+    <ROW File="Winnipeg" Component_="Adak" FileName="Winnipeg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Winnipeg" SelfReg="false" Sequence="412"/>
+    <ROW File="Xusage.txt" Component_="classes.jsa" FileName="Xusage.txt" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\client\Xusage.txt" SelfReg="false" Sequence="92"/>
+    <ROW File="YST9" Component_="AST4" FileName="YST9" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\YST9" SelfReg="false" Sequence="667"/>
+    <ROW File="YST9YDT" Component_="AST4" FileName="YST9YDT" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\SystemV\YST9YDT" SelfReg="false" Sequence="668"/>
+    <ROW File="Yakutat" Component_="Adak" FileName="Yakutat" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Yakutat" SelfReg="false" Sequence="413"/>
+    <ROW File="Yakutsk" Component_="Aden" FileName="Yakutsk" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Yakutsk" SelfReg="false" Sequence="499"/>
+    <ROW File="Yekaterinburg" Component_="Aden" FileName="Yekate~1|Yekaterinburg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Yekaterinburg" SelfReg="false" Sequence="500"/>
+    <ROW File="Yellowknife" Component_="Adak" FileName="Yellow~1|Yellowknife" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\America\Yellowknife" SelfReg="false" Sequence="414"/>
+    <ROW File="Yerevan" Component_="Aden" FileName="Yerevan" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Asia\Yerevan" SelfReg="false" Sequence="501"/>
     <ROW File="Your_Product.exe" Component_="Your_Product.exe" FileName="starter.exe" Attributes="0" SourcePath="&lt;aijcl.exe&gt;" SelfReg="false" Sequence="33"/>
+    <ROW File="Zaporozhye" Component_="Amsterdam" FileName="Zaporo~1|Zaporozhye" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Zaporozhye" SelfReg="false" Sequence="599"/>
+    <ROW File="ZoneInfoMappings" Component_="CET" FileName="ZoneIn~1|ZoneInfoMappings" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\ZoneInfoMappings" SelfReg="false" Sequence="670"/>
+    <ROW File="Zurich" Component_="Amsterdam" FileName="Zurich" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\zi\Europe\Zurich" SelfReg="false" Sequence="600"/>
     <ROW File="activation.jar" Component_="activation.jar" FileName="activa~1.jar|activation.jar" Attributes="0" SourcePath="..\..\target\build\lib\activation.jar" SelfReg="false" Sequence="13"/>
-    <ROW File="asterisk_im_client.jar" Component_="activation.jar" FileName="asteri~1.jar|asterisk-im-client.jar" Attributes="0" SourcePath="..\..\target\build\lib\asterisk-im-client.jar" SelfReg="false" Sequence="89"/>
     <ROW File="asterisk_im_client.jar.pack" Component_="activation.jar" FileName="asteri~1.pac|asterisk-im-client.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\asterisk-im-client.jar.pack" SelfReg="false" Sequence="73"/>
+    <ROW File="awt.dll" Component_="awt.dll" FileName="awt.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\awt.dll" SelfReg="false" Sequence="89"/>
+    <ROW File="axbridge.dll" Component_="axbridge.dll" FileName="axbridge.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\axbridge.dll" SelfReg="false" Sequence="90"/>
     <ROW File="banner_spark.gif" Component_="banner_spark.gif" FileName="banner~1.gif|banner-spark.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spark.gif" SelfReg="false" Sequence="4"/>
     <ROW File="banner_spring.gif" Component_="banner_spark.gif" FileName="banner~2.gif|banner-spring.gif" Attributes="0" SourcePath="..\..\target\build\documentation\images\banner-spring.gif" SelfReg="false" Sequence="5"/>
     <ROW File="base.jar" Component_="activation.jar" FileName="base.jar" Attributes="0" SourcePath="..\..\target\build\lib\base.jar" SelfReg="false" Sequence="14"/>
     <ROW File="bell.wav" Component_="bell.wav" FileName="bell.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\bell.wav" SelfReg="false" Sequence="26"/>
     <ROW File="builder.jar" Component_="builder.jar" FileName="builder.jar" Attributes="0" SourcePath="..\..\target\build\documentation\builder.jar" SelfReg="false" Sequence="2"/>
+    <ROW File="cacerts" Component_="cacerts" FileName="cacerts" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\security\cacerts" SelfReg="false" Sequence="224"/>
+    <ROW File="calendars.properties" Component_="calendars.properties" FileName="calend~1.pro|calendars.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\calendars.properties" SelfReg="false" Sequence="164"/>
     <ROW File="changelog.html" Component_="builder.jar" FileName="change~1.htm|changelog.html" Attributes="0" SourcePath="..\..\target\build\documentation\changelog.html" SelfReg="false" Sequence="3"/>
     <ROW File="chat_request.wav" Component_="bell.wav" FileName="chat_r~1.wav|chat_request.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\chat_request.wav" SelfReg="false" Sequence="27"/>
     <ROW File="chat_room.png" Component_="banner_spark.gif" FileName="chat-r~1.png|chat-room.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\chat-room.png" SelfReg="false" Sequence="6"/>
+    <ROW File="classes.jsa" Component_="classes.jsa" FileName="classes.jsa" Attributes="1" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\client\classes.jsa" SelfReg="false" Sequence="90"/>
+    <ROW File="classlist" Component_="calendars.properties" FileName="classl~1|classlist" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\classlist" SelfReg="false" Sequence="165"/>
+    <ROW File="cmm.dll" Component_="cmm.dll" FileName="cmm.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\cmm.dll" SelfReg="false" Sequence="93"/>
     <ROW File="contact_list.png" Component_="banner_spark.gif" FileName="contac~1.png|contact-list.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\contact-list.png" SelfReg="false" Sequence="7"/>
+    <ROW File="content_types.properties" Component_="calendars.properties" FileName="conten~1.pro|content-types.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\content-types.properties" SelfReg="false" Sequence="170"/>
+    <ROW File="cursors.properties" Component_="cursors.properties" FileName="cursor~1.pro|cursors.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\cursors.properties" SelfReg="false" Sequence="199"/>
+    <ROW File="dcpr.dll" Component_="dcpr.dll" FileName="dcpr.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\dcpr.dll" SelfReg="false" Sequence="94"/>
+    <ROW File="deploy.dll" Component_="deploy.dll" FileName="deploy.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\deploy.dll" SelfReg="false" Sequence="95"/>
+    <ROW File="deploy.jar" Component_="calendars.properties" FileName="deploy.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy.jar" SelfReg="false" Sequence="184"/>
+    <ROW File="dnsns.jar" Component_="dnsns.jar" FileName="dnsns.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\ext\dnsns.jar" SelfReg="false" Sequence="185"/>
     <ROW File="dom4j.jar" Component_="activation.jar" FileName="dom4j.jar" Attributes="0" SourcePath="..\..\target\build\lib\dom4j.jar" SelfReg="false" Sequence="15"/>
+    <ROW File="dt_shmem.dll" Component_="dt_shmem.dll" FileName="dt_shmem.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\dt_shmem.dll" SelfReg="false" Sequence="96"/>
+    <ROW File="dt_socket.dll" Component_="dt_socket.dll" FileName="dt_soc~1.dll|dt_socket.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\dt_socket.dll" SelfReg="false" Sequence="97"/>
     <ROW File="error.log" Component_="error.log" FileName="error.log" Attributes="0" SourcePath="..\..\target\build\logs\error.log" SelfReg="false" Sequence="22"/>
-    <ROW File="fastpath.jar" Component_="fastpath.jar" FileName="fastpath.jar" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar" SelfReg="false" Sequence="101"/>
     <ROW File="fastpath.jar.pack" Component_="fastpath.jar" FileName="fastpa~1.pac|fastpath.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\fastpath.jar.pack" SelfReg="false" Sequence="85"/>
+    <ROW File="ffjcext.zip" Component_="ffjcext.zip" FileName="ffjcext.zip" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\ffjcext.zip" SelfReg="false" Sequence="171"/>
+    <ROW File="flavormap.properties" Component_="calendars.properties" FileName="flavor~1.pro|flavormap.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\flavormap.properties" SelfReg="false" Sequence="190"/>
+    <ROW File="fontconfig.98.bfc" Component_="calendars.properties" FileName="fontco~1.bfc|fontconfig.98.bfc" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\fontconfig.98.bfc" SelfReg="false" Sequence="191"/>
+    <ROW File="fontconfig.98.properties.src" Component_="calendars.properties" FileName="fontco~1.src|fontconfig.98.properties.src" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\fontconfig.98.properties.src" SelfReg="false" Sequence="192"/>
+    <ROW File="fontconfig.bfc" Component_="calendars.properties" FileName="fontco~2.bfc|fontconfig.bfc" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\fontconfig.bfc" SelfReg="false" Sequence="193"/>
+    <ROW File="fontconfig.properties.src" Component_="calendars.properties" FileName="fontco~2.src|fontconfig.properties.src" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\fontconfig.properties.src" SelfReg="false" Sequence="194"/>
+    <ROW File="fontmanager.dll" Component_="fontmanager.dll" FileName="fontma~1.dll|fontmanager.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\fontmanager.dll" SelfReg="false" Sequence="98"/>
+    <ROW File="hpi.dll" Component_="hpi.dll" FileName="hpi.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\hpi.dll" SelfReg="false" Sequence="99"/>
+    <ROW File="hprof.dll" Component_="hprof.dll" FileName="hprof.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\hprof.dll" SelfReg="false" Sequence="100"/>
     <ROW File="i4jruntime.jar" Component_="activation.jar" FileName="i4jrun~1.jar|i4jruntime.jar" Attributes="0" SourcePath="..\..\target\build\lib\i4jruntime.jar" SelfReg="false" Sequence="16"/>
-    <ROW File="idlelinux.jar" Component_="fastpath.jar" FileName="idleli~1.jar|idlelinux.jar" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar" SelfReg="false" Sequence="102"/>
+    <ROW File="idlelinux.jar.pack" Component_="fastpath.jar" FileName="idleli~1.pac|idlelinux.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\idlelinux.jar.pack" SelfReg="false" Sequence="676"/>
     <ROW File="incoming.wav" Component_="bell.wav" FileName="incoming.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\incoming.wav" SelfReg="false" Sequence="28"/>
+    <ROW File="indicim.jar" Component_="indicim.jar" FileName="indicim.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\im\indicim.jar" SelfReg="false" Sequence="197"/>
+    <ROW File="instrument.dll" Component_="instrument.dll" FileName="instru~1.dll|instrument.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\instrument.dll" SelfReg="false" Sequence="101"/>
+    <ROW File="invalid32x32.gif" Component_="cursors.properties" FileName="invali~1.gif|invalid32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\invalid32x32.gif" SelfReg="false" Sequence="200"/>
+    <ROW File="ioser12.dll" Component_="ioser12.dll" FileName="ioser12.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\ioser12.dll" SelfReg="false" Sequence="102"/>
+    <ROW File="j2pcsc.dll" Component_="j2pcsc.dll" FileName="j2pcsc.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\j2pcsc.dll" SelfReg="false" Sequence="103"/>
+    <ROW File="j2pkcs11.dll" Component_="j2pkcs11.dll" FileName="j2pkcs11.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\j2pkcs11.dll" SelfReg="false" Sequence="104"/>
+    <ROW File="jaas_nt.dll" Component_="jaas_nt.dll" FileName="jaas_nt.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jaas_nt.dll" SelfReg="false" Sequence="105"/>
+    <ROW File="java.dll" Component_="java.dll" FileName="java.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\java.dll" SelfReg="false" Sequence="107"/>
+    <ROW File="java.exe" Component_="java.exe" FileName="java.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\java.exe" SelfReg="false" Sequence="108"/>
+    <ROW File="java.policy" Component_="cacerts" FileName="java~1.pol|java.policy" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\security\java.policy" SelfReg="false" Sequence="225"/>
+    <ROW File="java.security" Component_="cacerts" FileName="java~1.sec|java.security" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\security\java.security" SelfReg="false" Sequence="226"/>
+    <ROW File="java_crw_demo.dll" Component_="java_crw_demo.dll" FileName="java_c~1.dll|java_crw_demo.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\java_crw_demo.dll" SelfReg="false" Sequence="113"/>
+    <ROW File="java_rmi.exe" Component_="java_rmi.exe" FileName="java-rmi.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\java-rmi.exe" SelfReg="false" Sequence="106"/>
+    <ROW File="javacpl.cpl" Component_="javacpl.cpl" FileName="javacpl.cpl" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\javacpl.cpl" SelfReg="false" Sequence="109"/>
+    <ROW File="javacpl.exe" Component_="javacpl.exe" FileName="javacpl.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\javacpl.exe" SelfReg="false" Sequence="110"/>
+    <ROW File="javaw.exe" Component_="javaw.exe" FileName="javaw.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\javaw.exe" SelfReg="false" Sequence="111"/>
+    <ROW File="javaws.exe" Component_="javaws.exe" FileName="javaws.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\javaws.exe" SelfReg="false" Sequence="112"/>
+    <ROW File="javaws.jar" Component_="calendars.properties" FileName="javaws.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\javaws.jar" SelfReg="false" Sequence="207"/>
+    <ROW File="javaws.policy" Component_="cacerts" FileName="javaws~1.pol|javaws.policy" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\security\javaws.policy" SelfReg="false" Sequence="227"/>
+    <ROW File="jawt.dll" Component_="jawt.dll" FileName="jawt.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jawt.dll" SelfReg="false" Sequence="114"/>
+    <ROW File="jce.jar" Component_="calendars.properties" FileName="jce.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\jce.jar" SelfReg="false" Sequence="208"/>
     <ROW File="jdic.dll" Component_="jdic.dll" FileName="jdic.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.dll" SelfReg="false" Sequence="18"/>
     <ROW File="jdic.jar" Component_="jdic.jar" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\windows\jdic.jar" SelfReg="false" Sequence="19"/>
     <ROW File="jdic.jar_1" Component_="jdic.jar_1" FileName="jdic.jar" Attributes="0" SourcePath="..\..\target\build\lib\linux\jdic.jar" SelfReg="false" Sequence="64"/>
+    <ROW File="jdwp.dll" Component_="jdwp.dll" FileName="jdwp.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jdwp.dll" SelfReg="false" Sequence="116"/>
     <ROW File="jingle.jar" Component_="fastpath.jar" FileName="jingle.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jingle.jar" SelfReg="false" Sequence="58"/>
+    <ROW File="jli.dll" Component_="jli.dll" FileName="jli.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jli.dll" SelfReg="false" Sequence="117"/>
     <ROW File="jmacm.dll" Component_="jmacm.dll" FileName="jmacm.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmacm.dll" SelfReg="false" Sequence="35"/>
     <ROW File="jmam.dll" Component_="jmam.dll" FileName="jmam.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmam.dll" SelfReg="false" Sequence="36"/>
     <ROW File="jmcvid.dll" Component_="jmcvid.dll" FileName="jmcvid.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmcvid.dll" SelfReg="false" Sequence="37"/>
@@ -142,53 +771,133 @@
     <ROW File="jmvcm.dll" Component_="jmvcm.dll" FileName="jmvcm.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmvcm.dll" SelfReg="false" Sequence="51"/>
     <ROW File="jmvfw.dll" Component_="jmvfw.dll" FileName="jmvfw.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmvfw.dll" SelfReg="false" Sequence="52"/>
     <ROW File="jmvh263.dll" Component_="jmvh263.dll" FileName="jmvh263.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jmvh263.dll" SelfReg="false" Sequence="53"/>
+    <ROW File="jmxremote.access" Component_="jmxremote.access" FileName="jmxrem~1.acc|jmxremote.access" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\management\jmxremote.access" SelfReg="false" Sequence="212"/>
+    <ROW File="jmxremote.password.template" Component_="jmxremote.access" FileName="jmxrem~1.tem|jmxremote.password.template" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\management\jmxremote.password.template" SelfReg="false" Sequence="213"/>
     <ROW File="jniwrap.dll" Component_="jniwrap.dll" FileName="jniwrap.dll" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.dll" SelfReg="false" Sequence="24"/>
     <ROW File="jniwrap.lic" Component_="Info.plist" FileName="jniwrap.lic" Attributes="0" SourcePath="..\..\target\build\resources\jniwrap.lic" SelfReg="false" Sequence="25"/>
-    <ROW File="jniwrapper.jar" Component_="fastpath.jar" FileName="jniwra~1.jar|jniwrapper.jar" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper.jar" SelfReg="false" Sequence="103"/>
     <ROW File="jniwrapper.jar.pack" Component_="fastpath.jar" FileName="jniwra~1.pac|jniwrapper.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\jniwrapper.jar.pack" SelfReg="false" Sequence="86"/>
+    <ROW File="jpeg.dll" Component_="jpeg.dll" FileName="jpeg.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jpeg.dll" SelfReg="false" Sequence="118"/>
+    <ROW File="jpicom.dll" Component_="jpicom.dll" FileName="jpicom.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jpicom.dll" SelfReg="false" Sequence="119"/>
+    <ROW File="jpiexp.dll" Component_="jpiexp.dll" FileName="jpiexp.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jpiexp.dll" SelfReg="false" Sequence="120"/>
+    <ROW File="jpinscp.dll" Component_="jpinscp.dll" FileName="jpinscp.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jpinscp.dll" SelfReg="false" Sequence="121"/>
+    <ROW File="jpioji.dll" Component_="jpioji.dll" FileName="jpioji.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jpioji.dll" SelfReg="false" Sequence="122"/>
+    <ROW File="jpishare.dll" Component_="jpishare.dll" FileName="jpishare.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jpishare.dll" SelfReg="false" Sequence="123"/>
     <ROW File="jsound.dll" Component_="jsound.dll" FileName="jsound.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\jsound.dll" SelfReg="false" Sequence="57"/>
+    <ROW File="jsound.dll_1" Component_="jsound.dll_1" FileName="jsound.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jsound.dll" SelfReg="false" Sequence="124"/>
+    <ROW File="jsoundds.dll" Component_="jsoundds.dll" FileName="jsoundds.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jsoundds.dll" SelfReg="false" Sequence="125"/>
+    <ROW File="jsse.jar" Component_="calendars.properties" FileName="jsse.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\jsse.jar" SelfReg="false" Sequence="209"/>
+    <ROW File="jucheck.exe" Component_="jucheck.exe" FileName="jucheck.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jucheck.exe" SelfReg="false" Sequence="126"/>
+    <ROW File="jureg.exe" Component_="jureg.exe" FileName="jureg.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jureg.exe" SelfReg="false" Sequence="127"/>
+    <ROW File="jusched.exe" Component_="jusched.exe" FileName="jusched.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\jusched.exe" SelfReg="false" Sequence="128"/>
+    <ROW File="jvm.cfg" Component_="jvm.cfg" FileName="jvm.cfg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\i386\jvm.cfg" SelfReg="false" Sequence="196"/>
+    <ROW File="jvm.dll" Component_="jvm.dll" FileName="jvm.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\client\jvm.dll" SelfReg="false" Sequence="91"/>
+    <ROW File="jvm.hprof.txt" Component_="calendars.properties" FileName="jvmhpr~1.txt|jvm.hprof.txt" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\jvm.hprof.txt" SelfReg="false" Sequence="210"/>
+    <ROW File="keytool.exe" Component_="keytool.exe" FileName="keytool.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\keytool.exe" SelfReg="false" Sequence="129"/>
+    <ROW File="kinit.exe" Component_="kinit.exe" FileName="kinit.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\kinit.exe" SelfReg="false" Sequence="130"/>
+    <ROW File="klist.exe" Component_="klist.exe" FileName="klist.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\klist.exe" SelfReg="false" Sequence="131"/>
+    <ROW File="ktab.exe" Component_="ktab.exe" FileName="ktab.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\ktab.exe" SelfReg="false" Sequence="132"/>
     <ROW File="libSystemUtilities.jnilib" Component_="JavaSoundStream.fix.jar" FileName="libSys~1.jni|libSystemUtilities.jnilib" Attributes="0" SourcePath="..\..\target\build\lib\mac\libSystemUtilities.jnilib" SelfReg="false" Sequence="84"/>
     <ROW File="libjdic.so" Component_="jdic.jar_1" FileName="libjdic.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libjdic.so" SelfReg="false" Sequence="66"/>
     <ROW File="libmozembed_linux_gtk1.2.so" Component_="jdic.jar_1" FileName="libmoz~1.so|libmozembed-linux-gtk1.2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk1.2.so" SelfReg="false" Sequence="67"/>
     <ROW File="libmozembed_linux_gtk2.so" Component_="jdic.jar_1" FileName="libmoz~2.so|libmozembed-linux-gtk2.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libmozembed-linux-gtk2.so" SelfReg="false" Sequence="68"/>
     <ROW File="libtray.so" Component_="jdic.jar_1" FileName="libtray.so" Attributes="0" SourcePath="..\..\target\build\lib\linux\libtray.so" SelfReg="false" Sequence="69"/>
-    <ROW File="linuxplugin.jar" Component_="fastpath.jar" FileName="linuxp~1.jar|linuxplugin.jar" Attributes="0" SourcePath="..\..\target\build\plugins\linuxplugin.jar" SelfReg="false" Sequence="104"/>
+    <ROW File="local_policy.jar" Component_="cacerts" FileName="local_~1.jar|local_policy.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\security\local_policy.jar" SelfReg="false" Sequence="228"/>
+    <ROW File="logging.properties" Component_="calendars.properties" FileName="loggin~1.pro|logging.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\logging.properties" SelfReg="false" Sequence="211"/>
     <ROW File="login_dialog.png" Component_="banner_spark.gif" FileName="login-~1.png|login-dialog.png" Attributes="0" SourcePath="..\..\target\build\documentation\images\login-dialog.png" SelfReg="false" Sequence="8"/>
+    <ROW File="management.dll" Component_="management.dll" FileName="manage~1.dll|management.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\management.dll" SelfReg="false" Sequence="133"/>
+    <ROW File="management.properties" Component_="jmxremote.access" FileName="manage~1.pro|management.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\management\management.properties" SelfReg="false" Sequence="214"/>
+    <ROW File="management_agent.jar" Component_="calendars.properties" FileName="manage~1.jar|management-agent.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\management-agent.jar" SelfReg="false" Sequence="216"/>
+    <ROW File="messages.properties" Component_="ffjcext.zip" FileName="messag~1.pro|messages.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages.properties" SelfReg="false" Sequence="172"/>
+    <ROW File="messages_de.properties" Component_="ffjcext.zip" FileName="messag~2.pro|messages_de.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_de.properties" SelfReg="false" Sequence="173"/>
+    <ROW File="messages_es.properties" Component_="ffjcext.zip" FileName="messag~3.pro|messages_es.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_es.properties" SelfReg="false" Sequence="174"/>
+    <ROW File="messages_fr.properties" Component_="ffjcext.zip" FileName="messag~4.pro|messages_fr.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_fr.properties" SelfReg="false" Sequence="175"/>
+    <ROW File="messages_it.properties" Component_="ffjcext.zip" FileName="messag~5.pro|messages_it.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_it.properties" SelfReg="false" Sequence="176"/>
+    <ROW File="messages_ja.properties" Component_="ffjcext.zip" FileName="messag~6.pro|messages_ja.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_ja.properties" SelfReg="false" Sequence="177"/>
+    <ROW File="messages_ko.properties" Component_="ffjcext.zip" FileName="messag~7.pro|messages_ko.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_ko.properties" SelfReg="false" Sequence="178"/>
+    <ROW File="messages_sv.properties" Component_="ffjcext.zip" FileName="messag~8.pro|messages_sv.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_sv.properties" SelfReg="false" Sequence="179"/>
+    <ROW File="messages_zh_CN.properties" Component_="ffjcext.zip" FileName="messag~9.pro|messages_zh_CN.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_zh_CN.properties" SelfReg="false" Sequence="180"/>
+    <ROW File="messages_zh_HK.properties" Component_="ffjcext.zip" FileName="messa~10.pro|messages_zh_HK.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_zh_HK.properties" SelfReg="false" Sequence="181"/>
+    <ROW File="messages_zh_TW.properties" Component_="ffjcext.zip" FileName="messa~11.pro|messages_zh_TW.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\messages_zh_TW.properties" SelfReg="false" Sequence="182"/>
+    <ROW File="meta_index" Component_="dnsns.jar" FileName="meta-i~1|meta-index" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\ext\meta-index" SelfReg="false" Sequence="186"/>
+    <ROW File="meta_index_1" Component_="calendars.properties" FileName="meta-i~1|meta-index" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\meta-index" SelfReg="false" Sequence="217"/>
     <ROW File="mozembed_linux_gtk1.2" Component_="jdic.jar_1" FileName="mozemb~1.2|mozembed-linux-gtk1.2" Attributes="0" SourcePath="..\..\target\build\lib\linux\mozembed-linux-gtk1.2" SelfReg="false" Sequence="70"/>
+    <ROW File="msvcr71.dll" Component_="msvcr71.dll" FileName="msvcr71.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\msvcr71.dll" SelfReg="false" Sequence="134"/>
+    <ROW File="net.dll" Component_="net.dll" FileName="net.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\net.dll" SelfReg="false" Sequence="135"/>
+    <ROW File="net.properties" Component_="calendars.properties" FileName="net~1.pro|net.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\net.properties" SelfReg="false" Sequence="218"/>
+    <ROW File="nio.dll" Component_="nio.dll" FileName="nio.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\nio.dll" SelfReg="false" Sequence="136"/>
+    <ROW File="npjava11.dll" Component_="npjava11.dll" FileName="npjava11.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npjava11.dll" SelfReg="false" Sequence="137"/>
+    <ROW File="npjava12.dll" Component_="npjava12.dll" FileName="npjava12.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npjava12.dll" SelfReg="false" Sequence="138"/>
+    <ROW File="npjava13.dll" Component_="npjava13.dll" FileName="npjava13.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npjava13.dll" SelfReg="false" Sequence="139"/>
+    <ROW File="npjava14.dll" Component_="npjava14.dll" FileName="npjava14.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npjava14.dll" SelfReg="false" Sequence="140"/>
+    <ROW File="npjava32.dll" Component_="npjava32.dll" FileName="npjava32.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npjava32.dll" SelfReg="false" Sequence="141"/>
+    <ROW File="npjpi160_03.dll" Component_="npjpi160_03.dll" FileName="npjpi1~1.dll|npjpi160_03.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npjpi160_03.dll" SelfReg="false" Sequence="142"/>
+    <ROW File="npoji610.dll" Component_="npoji610.dll" FileName="npoji610.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npoji610.dll" SelfReg="false" Sequence="143"/>
+    <ROW File="npt.dll" Component_="npt.dll" FileName="npt.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\npt.dll" SelfReg="false" Sequence="144"/>
+    <ROW File="orbd.exe" Component_="orbd.exe" FileName="orbd.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\orbd.exe" SelfReg="false" Sequence="145"/>
     <ROW File="outgoing.wav" Component_="bell.wav" FileName="outgoing.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\outgoing.wav" SelfReg="false" Sequence="29"/>
+    <ROW File="pack200.exe" Component_="pack200.exe" FileName="pack200.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\pack200.exe" SelfReg="false" Sequence="146"/>
+    <ROW File="plugin.jar" Component_="calendars.properties" FileName="plugin.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\plugin.jar" SelfReg="false" Sequence="219"/>
+    <ROW File="policytool.exe" Component_="policytool.exe" FileName="policy~1.exe|policytool.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\policytool.exe" SelfReg="false" Sequence="147"/>
     <ROW File="presence_changed.wav" Component_="bell.wav" FileName="presen~1.wav|presence_changed.wav" Attributes="0" SourcePath="..\..\target\build\resources\sounds\presence_changed.wav" SelfReg="false" Sequence="30"/>
-    <ROW File="smack.jar" Component_="activation.jar" FileName="smack.jar" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar" SelfReg="false" Sequence="90"/>
+    <ROW File="psfont.properties.ja" Component_="calendars.properties" FileName="psfont~1.ja|psfont.properties.ja" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\psfont.properties.ja" SelfReg="false" Sequence="220"/>
+    <ROW File="psfontj2d.properties" Component_="calendars.properties" FileName="psfont~1.pro|psfontj2d.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\psfontj2d.properties" SelfReg="false" Sequence="221"/>
+    <ROW File="regutils.dll" Component_="regutils.dll" FileName="regutils.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\regutils.dll" SelfReg="false" Sequence="148"/>
+    <ROW File="resources.jar" Component_="calendars.properties" FileName="resour~1.jar|resources.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\resources.jar" SelfReg="false" Sequence="222"/>
+    <ROW File="rmi.dll" Component_="rmi.dll" FileName="rmi.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\rmi.dll" SelfReg="false" Sequence="149"/>
+    <ROW File="rmid.exe" Component_="rmid.exe" FileName="rmid.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\rmid.exe" SelfReg="false" Sequence="150"/>
+    <ROW File="rmiregistry.exe" Component_="rmiregistry.exe" FileName="rmireg~1.exe|rmiregistry.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\rmiregistry.exe" SelfReg="false" Sequence="151"/>
+    <ROW File="rt.jar" Component_="calendars.properties" FileName="rt.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\rt.jar" SelfReg="false" Sequence="223"/>
+    <ROW File="sRGB.pf" Component_="CIEXYZ.pf" FileName="sRGB.pf" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\cmm\sRGB.pf" SelfReg="false" Sequence="169"/>
+    <ROW File="servertool.exe" Component_="servertool.exe" FileName="server~1.exe|servertool.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\servertool.exe" SelfReg="false" Sequence="152"/>
     <ROW File="smack.jar.pack" Component_="activation.jar" FileName="smackj~1.pac|smack.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smack.jar.pack" SelfReg="false" Sequence="74"/>
-    <ROW File="smackx.jar" Component_="activation.jar" FileName="smackx.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar" SelfReg="false" Sequence="93"/>
     <ROW File="smackx.jar.pack" Component_="activation.jar" FileName="smackx~2.pac|smackx.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx.jar.pack" SelfReg="false" Sequence="76"/>
-    <ROW File="smackx_debug.jar" Component_="activation.jar" FileName="smackx~1.jar|smackx-debug.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar" SelfReg="false" Sequence="91"/>
     <ROW File="smackx_debug.jar.pack" Component_="activation.jar" FileName="smackx~1.pac|smackx-debug.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\smackx-debug.jar.pack" SelfReg="false" Sequence="75"/>
-    <ROW File="smackx_jingle.jar" Component_="activation.jar" FileName="smackx~2.jar|smackx-jingle.jar" Attributes="0" SourcePath="..\..\target\build\lib\smackx-jingle.jar" SelfReg="false" Sequence="92"/>
-    <ROW File="spark.jar" Component_="activation.jar" FileName="spark.jar" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar" SelfReg="false" Sequence="94"/>
+    <ROW File="snmp.acl.template" Component_="jmxremote.access" FileName="snmpac~1.tem|snmp.acl.template" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\management\snmp.acl.template" SelfReg="false" Sequence="215"/>
+    <ROW File="sound.properties" Component_="calendars.properties" FileName="sound~1.pro|sound.properties" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\sound.properties" SelfReg="false" Sequence="230"/>
     <ROW File="spark.jar.pack" Component_="activation.jar" FileName="sparkj~1.pac|spark.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\spark.jar.pack" SelfReg="false" Sequence="77"/>
     <ROW File="sparkEmoticonSet.zip" Component_="Default.adiumemoticonset.zip" FileName="sparkE~1.zip|sparkEmoticonSet.zip" Attributes="0" SourcePath="..\..\target\build\xtra\emoticons\sparkEmoticonSet.zip" SelfReg="false" Sequence="63"/>
     <ROW File="sparkplug_dev_guide.html" Component_="builder.jar" FileName="sparkp~1.htm|sparkplug_dev_guide.html" Attributes="0" SourcePath="..\..\target\build\documentation\sparkplug_dev_guide.html" SelfReg="false" Sequence="11"/>
-    <ROW File="spelling_plugin.jar" Component_="fastpath.jar" FileName="spelli~1.jar|spelling-plugin.jar" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin.jar" SelfReg="false" Sequence="106"/>
     <ROW File="spelling_plugin.jar.pack" Component_="fastpath.jar" FileName="spelli~1.pac|spelling-plugin.jar.pack" Attributes="0" SourcePath="..\..\target\build\plugins\spelling-plugin.jar.pack" SelfReg="false" Sequence="88"/>
+    <ROW File="splash.jpg" Component_="ffjcext.zip" FileName="splash.jpg" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\deploy\splash.jpg" SelfReg="false" Sequence="183"/>
+    <ROW File="splashscreen.dll" Component_="splashscreen.dll" FileName="splash~1.dll|splashscreen.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\splashscreen.dll" SelfReg="false" Sequence="153"/>
+    <ROW File="ssv.dll" Component_="ssv.dll" FileName="ssv.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\ssv.dll" SelfReg="false" Sequence="154"/>
     <ROW File="startup.bat" Component_="startup.bat" FileName="startup.bat" Attributes="0" SourcePath="..\..\target\build\bin\startup.bat" SelfReg="false" Sequence="1"/>
     <ROW File="startup.jar" Component_="activation.jar" FileName="startup.jar" Attributes="0" SourcePath="..\..\target\build\lib\startup.jar" SelfReg="false" Sequence="54"/>
     <ROW File="startup.sh" Component_="Info.plist" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\resources\startup.sh" SelfReg="false" Sequence="31"/>
     <ROW File="startup.sh_1" Component_="startup.bat" FileName="startup.sh" Attributes="0" SourcePath="..\..\target\build\bin\startup.sh" SelfReg="false" Sequence="34"/>
     <ROW File="style.css" Component_="builder.jar" FileName="style.css" Attributes="0" SourcePath="..\..\target\build\documentation\style.css" SelfReg="false" Sequence="12"/>
-    <ROW File="swingx.jar" Component_="activation.jar" FileName="swingx.jar" Attributes="0" SourcePath="..\..\target\build\lib\swingx.jar" SelfReg="false" Sequence="95"/>
+    <ROW File="sunjce_provider.jar" Component_="dnsns.jar" FileName="sunjce~1.jar|sunjce_provider.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\ext\sunjce_provider.jar" SelfReg="false" Sequence="187"/>
+    <ROW File="sunmscapi.dll" Component_="sunmscapi.dll" FileName="sunmsc~1.dll|sunmscapi.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\sunmscapi.dll" SelfReg="false" Sequence="155"/>
+    <ROW File="sunmscapi.jar" Component_="dnsns.jar" FileName="sunmsc~1.jar|sunmscapi.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\ext\sunmscapi.jar" SelfReg="false" Sequence="188"/>
+    <ROW File="sunpkcs11.jar" Component_="dnsns.jar" FileName="sunpkc~1.jar|sunpkcs11.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\ext\sunpkcs11.jar" SelfReg="false" Sequence="189"/>
     <ROW File="swingx.jar.pack" Component_="activation.jar" FileName="swingx~1.pac|swingx.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\swingx.jar.pack" SelfReg="false" Sequence="78"/>
-    <ROW File="synthetica.jar" Component_="activation.jar" FileName="synthe~1.jar|synthetica.jar" Attributes="0" SourcePath="..\..\target\build\lib\synthetica.jar" SelfReg="false" Sequence="96"/>
     <ROW File="synthetica.jar.pack" Component_="activation.jar" FileName="synthe~1.pac|synthetica.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\synthetica.jar.pack" SelfReg="false" Sequence="79"/>
-    <ROW File="syntheticaBlueMoon.jar" Component_="activation.jar" FileName="synthe~2.jar|syntheticaBlueMoon.jar" Attributes="0" SourcePath="..\..\target\build\lib\syntheticaBlueMoon.jar" SelfReg="false" Sequence="97"/>
     <ROW File="syntheticaBlueMoon.jar.pack" Component_="activation.jar" FileName="synthe~2.pac|syntheticaBlueMoon.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\syntheticaBlueMoon.jar.pack" SelfReg="false" Sequence="80"/>
     <ROW File="systeminfo.dll" Component_="systeminfo.dll" FileName="system~1.dll|systeminfo.dll" Attributes="0" SourcePath="..\..\target\build\resources\systeminfo.dll" SelfReg="false" Sequence="59"/>
-    <ROW File="systeminfo.jar" Component_="activation.jar" FileName="system~1.jar|systeminfo.jar" Attributes="0" SourcePath="..\..\target\build\lib\systeminfo.jar" SelfReg="false" Sequence="98"/>
     <ROW File="systeminfo.jar.pack" Component_="activation.jar" FileName="system~1.pac|systeminfo.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\systeminfo.jar.pack" SelfReg="false" Sequence="81"/>
+    <ROW File="thaiim.jar" Component_="indicim.jar" FileName="thaiim.jar" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\im\thaiim.jar" SelfReg="false" Sequence="198"/>
+    <ROW File="tnameserv.exe" Component_="tnameserv.exe" FileName="tnames~1.exe|tnameserv.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\tnameserv.exe" SelfReg="false" Sequence="156"/>
     <ROW File="tray.dll" Component_="tray.dll" FileName="tray.dll" Attributes="0" SourcePath="..\..\target\build\lib\windows\tray.dll" SelfReg="false" Sequence="21"/>
-    <ROW File="xpp.jar" Component_="activation.jar" FileName="xpp.jar" Attributes="0" SourcePath="..\..\target\build\lib\xpp.jar" SelfReg="false" Sequence="99"/>
+    <ROW File="tzmappings" Component_="calendars.properties" FileName="tzmapp~1|tzmappings" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\tzmappings" SelfReg="false" Sequence="231"/>
+    <ROW File="unpack.dll" Component_="unpack.dll" FileName="unpack.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\unpack.dll" SelfReg="false" Sequence="157"/>
+    <ROW File="unpack200.exe" Component_="unpack200.exe" FileName="unpack~1.exe|unpack200.exe" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\unpack200.exe" SelfReg="false" Sequence="158"/>
+    <ROW File="verify.dll" Component_="verify.dll" FileName="verify.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\verify.dll" SelfReg="false" Sequence="159"/>
+    <ROW File="w2k_lsa_auth.dll" Component_="w2k_lsa_auth.dll" FileName="w2k_ls~1.dll|w2k_lsa_auth.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\w2k_lsa_auth.dll" SelfReg="false" Sequence="160"/>
+    <ROW File="win32_CopyDrop32x32.gif" Component_="cursors.properties" FileName="win32_~1.gif|win32_CopyDrop32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\win32_CopyDrop32x32.gif" SelfReg="false" Sequence="201"/>
+    <ROW File="win32_CopyNoDrop32x32.gif" Component_="cursors.properties" FileName="win32_~2.gif|win32_CopyNoDrop32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\win32_CopyNoDrop32x32.gif" SelfReg="false" Sequence="202"/>
+    <ROW File="win32_LinkDrop32x32.gif" Component_="cursors.properties" FileName="win32_~3.gif|win32_LinkDrop32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\win32_LinkDrop32x32.gif" SelfReg="false" Sequence="203"/>
+    <ROW File="win32_LinkNoDrop32x32.gif" Component_="cursors.properties" FileName="win32_~4.gif|win32_LinkNoDrop32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\win32_LinkNoDrop32x32.gif" SelfReg="false" Sequence="204"/>
+    <ROW File="win32_MoveDrop32x32.gif" Component_="cursors.properties" FileName="win32_~5.gif|win32_MoveDrop32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\win32_MoveDrop32x32.gif" SelfReg="false" Sequence="205"/>
+    <ROW File="win32_MoveNoDrop32x32.gif" Component_="cursors.properties" FileName="win32_~6.gif|win32_MoveNoDrop32x32.gif" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\lib\images\cursors\win32_MoveNoDrop32x32.gif" SelfReg="false" Sequence="206"/>
+    <ROW File="wsdetect.dll" Component_="wsdetect.dll" FileName="wsdetect.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\wsdetect.dll" SelfReg="false" Sequence="161"/>
     <ROW File="xpp.jar.pack" Component_="activation.jar" FileName="xppjar~1.pac|xpp.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\xpp.jar.pack" SelfReg="false" Sequence="82"/>
-    <ROW File="xstream.jar" Component_="activation.jar" FileName="xstream.jar" Attributes="0" SourcePath="..\..\target\build\lib\xstream.jar" SelfReg="false" Sequence="100"/>
     <ROW File="xstream.jar.pack" Component_="activation.jar" FileName="xstrea~1.pac|xstream.jar.pack" Attributes="0" SourcePath="..\..\target\build\lib\xstream.jar.pack" SelfReg="false" Sequence="83"/>
+    <ROW File="zip.dll" Component_="zip.dll" FileName="zip.dll" Attributes="0" SourcePath="..\..\..\..\Program Files\Java\jre1.6.0_03\bin\zip.dll" SelfReg="false" Sequence="162"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
+    <ROW BuildName="BuildWithJre" BuildOrder="2" BuildType="1" InstallationType="4" JREDir="jre_DIR"/>
+    <ROW BuildName="DefaultBuild" BuildOrder="1" BuildType="1" InstallationType="4"/>
+    <ATTRIBUTE name="CurrentBuild" value="BuildWithJre"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;ui.ail&gt;"/>
@@ -211,7 +920,7 @@
     <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="3"/>
+    <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="4"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceWelcomeDlg" Condition="AI_MAINT" Ordering="1"/>
     <ROW Dialog_="MaintenanceWelcomeDlg" Control_="Next" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="2"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
@@ -224,7 +933,7 @@
     <ROW Action="AI_PREPARE_UPGRADE" Type="1" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="1" Source="aicustact.dll" Target="RestoreLocation"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder][ProductName]#BuildWithJre:[ProgramFilesFolder][ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
@@ -239,6 +948,8 @@
     <ROW IniFile="Error_File" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Error File" Value="[APPDIR]/logs/error.log" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="Error_File_1" FileName="starter.ini" DirProperty="APPDIR" Section="Application" Key="Error File" Value="[APPDIR]error.log" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Failure_Check" FileName="Spark.ini" DirProperty="APPDIR" Section="Application" Key="Failure Check" Value="yes" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="JRE_Path" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JRE Path" Value="[jre_DIR]" Action="0" Component_="Spark.exe"/>
+    <ROW IniFile="JRE_Path_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JRE Path" Value="[jre_DIR]" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="JVM_Type" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JVM Type" Value="favor_client" Action="0" Component_="Spark.exe"/>
     <ROW IniFile="JVM_Type_1" FileName="starter.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="JVM Type" Value="favor_client" Action="0" Component_="Your_Product.exe"/>
     <ROW IniFile="Main_Class" FileName="Spark.ini" DirProperty="APPDIR" Section="Java Runtime Environment" Key="Main Class" Value="org.jivesoftware.launcher.Startup" Action="0" Component_="Spark.exe"/>
@@ -271,13 +982,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLockPermComponent">
     <ROW LockObject="Spark" Table="Registry" User="Everyone" Permission="268435456"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiMediaComponent">
-    <ATTRIBUTE name="CabsLocation" value="0"/>
-    <ATTRIBUTE name="Compress" value="1"/>
-    <ATTRIBUTE name="InstallationType" value="4"/>
-    <ATTRIBUTE name="JREPath" value="C:\Program Files\Java\jre1.6.0_03"/>
-    <ATTRIBUTE name="Package" value="1"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
     <ROW Registry="Spark" Root="-1" Key="Software" Name="Spark" Value="[#Spark.exe]" Component_="Spark"/>
   </COMPONENT>
@@ -286,7 +990,7 @@
     <ROW Shortcut="Spark.exe_1" Directory_="DesktopFolder" Name="Spark.exe" Component_="Spark.exe" Target="[#Spark.exe]" Description="Spark.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
-    <ROW UpgradeCode="UpgradeCode" VersionMax="ProductVersion" Attributes="1025"/>
+    <ROW UpgradeCode="[|UpgradeCode]" VersionMax="[|ProductVersion]" Attributes="1025" ActionProperty="OLDPRODUCTS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
     <ROW Directory_="APPDIR" SourcePath="..\..\target\build" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
