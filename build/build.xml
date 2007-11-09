@@ -456,7 +456,7 @@
         <delete dir="build\installer\jre"/>
 
         <copy todir="build\installer\jre">
-            <fileset dir="${msi.jre.path}">
+            <fileset dir="${msi.jre.path}"/>
         </copy>
 
         <mkdir dir="${installer.dest.dir}"/>
