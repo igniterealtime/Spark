@@ -89,7 +89,7 @@ public class RetryPanel extends JPanel implements ConnectionListener {
     private void reconnect() {
         try {
             if (closedOnError) {
-                ReconnectionManager.forced = true;
+                //FIXME!!!!!   ReconnectionManager.forced = true;
             }
             else {
                 SparkManager.getMainWindow().logout(false);
