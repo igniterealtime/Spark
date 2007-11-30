@@ -39,6 +39,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JButton;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -52,64 +54,37 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.security.Principal;
 import java.util.Properties;
+import java.io.File;
 
 /**
  * Allows users to configure startup options.
  *
  * @author Derek DeMoro
+ * @author Jay Kline
  */
 public class LoginSettingDialog implements PropertyChangeListener {
-    private JOptionPane optionPane;
-    private JDialog optionsDialog;
-
-    private TitlePanel titlePanel;
-
-    private JCheckBox autoDiscoverBox = new JCheckBox();
-
-    private JLabel portLabel = new JLabel();
-    private JTextField portField = new JTextField();
-
-    private JLabel xmppHostLabel = new JLabel();
-    private JTextField xmppHostField = new JTextField();
-
-    private JLabel timeOutLabel = new JLabel();
-    private JTextField timeOutField = new JTextField();
-
-    private JLabel resourceLabel = new JLabel();
-    private JTextField resourceField = new JTextField();
-
-    private JCheckBox autoLoginBox = new JCheckBox();
-
-    private JCheckBox useSSLBox = new JCheckBox();
-
-    private JCheckBox compressionBox = new JCheckBox();
 
     private LocalPreferences localPreferences;
 
+
+    private JDialog optionsDialog;
+    private JOptionPane optionPane;
+
+    private GeneralPanel generalPanel;
     private ProxyPanel proxyPanel;
+    private PkiPanel pkiPanel;
+    private SsoPanel ssoPanel;
 
-    private JCheckBox useSSOBox = new JCheckBox();
-    private JLabel ssoRealmLabel = new JLabel();
-    private JTextField ssoRealmField = new JTextField();
-    private JLabel ssoKDCLabel = new JLabel();
-    private JTextField ssoKDCField = new JTextField();
-    private JLabel ssoMethodFileLabel = new JLabel();
-    private JRadioButton ssoMethodFileRadio = new JRadioButton();
-    private JLabel ssoMethodDNSLabel = new JLabel();
-    private JRadioButton ssoMethodDNSRadio = new JRadioButton();
-    private JLabel ssoMethodManualLabel = new JLabel();
-    private JRadioButton ssoMethodManualRadio = new JRadioButton();
-    private JLabel ssoMethodLabel = new JLabel();
-    private ButtonGroup ssoMethodRadio = new ButtonGroup();
-
-    private JCheckBox debuggerBox = new JCheckBox();
 
     /**
      * Empty Constructor.
      */
     public LoginSettingDialog() {
         localPreferences = SettingsManager.getLocalPreferences();
+        generalPanel = new GeneralPanel();
         proxyPanel = new ProxyPanel();
+        ssoPanel = new SsoPanel();
+        pkiPanel = new PkiPanel();
     }
 
     /**
@@ -119,222 +94,18 @@ public class LoginSettingDialog implements PropertyChangeListener {
      * @return true if the options have been changed.
      */
     public boolean invoke(JFrame owner) {
-        // Load local localPref
         JTabbedPane tabbedPane = new JTabbedPane();
-
-        portField.setText(Integer.toString(localPreferences.getXmppPort()));
-        timeOutField.setText(Integer.toString(localPreferences.getTimeOut()));
-        autoLoginBox.setSelected(localPreferences.isAutoLogin());
-        useSSLBox.setSelected(localPreferences.isSSL());
-        xmppHostField.setText(localPreferences.getXmppHost());
-        resourceField.setText(localPreferences.getResource());
-
-        if (localPreferences.getResource() == null) {
-            resourceField.setText("spark");
-        }
-
-        final JPanel inputPanel = new JPanel();
-        final JPanel ssoPanel = new JPanel();
-
-        tabbedPane.addTab(Res.getString("tab.general"), inputPanel);
-        tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
-        tabbedPane.addTab("SSO", ssoPanel);
-
-        inputPanel.setLayout(new GridBagLayout());
-        ssoPanel.setLayout(new GridBagLayout());
-
-        ResourceUtils.resLabel(portLabel, portField, Res.getString("label.port"));
-        ResourceUtils.resLabel(timeOutLabel, timeOutField, Res.getString("label.response.timeout"));
-        ResourceUtils.resButton(autoLoginBox, Res.getString("label.auto.login"));
-        ResourceUtils.resButton(useSSLBox, Res.getString("label.old.ssl"));
-        ResourceUtils.resLabel(xmppHostLabel, xmppHostField, Res.getString("label.host"));
-        ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
-        ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
-        ResourceUtils.resButton(compressionBox, "Use Co&mpression");
-        ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO) via GSSAPI");
-        ResourceUtils.resButton(debuggerBox, "Start &Debugger on startup");
-
-        inputPanel.add(autoDiscoverBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        autoDiscoverBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateAutoDiscovery();
-            }
-        });
-
-        autoDiscoverBox.setSelected(!localPreferences.isHostAndPortConfigured());
-        updateAutoDiscovery();
-
-        compressionBox.setSelected(localPreferences.isCompressionEnabled());
-
-        final JPanel connectionPanel = new JPanel();
-        connectionPanel.setLayout(new GridBagLayout());
-        connectionPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.connection")));
-
-        connectionPanel.add(xmppHostLabel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        connectionPanel.add(xmppHostField, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 200, 0));
-
-        connectionPanel.add(portLabel, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        connectionPanel.add(portField, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-
-        inputPanel.add(connectionPanel, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
-        inputPanel.add(resourceLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        inputPanel.add(resourceField, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
-
-        inputPanel.add(timeOutLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        inputPanel.add(timeOutField, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-
-        inputPanel.add(useSSLBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-        inputPanel.add(compressionBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        inputPanel.add(debuggerBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        TitlePanel titlePanel;
 
         // Create the title panel for this dialog
         titlePanel = new TitlePanel("Advanced Connection Preferences", "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
 
-        // Setup SSO Panel
-
-        // Load local preferences
-        boolean isSSOEnabled = localPreferences.isSSOEnabled();
-        boolean showAdvSSO = localPreferences.getSSOAdv();
-
-        ssoPanel.add(useSSOBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        final WrappedLabel wrappedLabel = new WrappedLabel();
-        String principalName = null;
-        try {
-            principalName = getPrincipalName();
-        }
-        catch (Exception e) {
-            // Ignore
-        }
 
 
-        if (ModelUtil.hasLength(principalName)) {
-            wrappedLabel.setText("This will use the Desktop Account for \"" + principalName + "\" to login to the server.");
-        }
-        else {
-            wrappedLabel.setText("Spark is unable to find the principal to use for Single Sign-On. This will prevent SSO from working.");
-        }
-
-        wrappedLabel.setBackground(Color.white);
-        ssoPanel.add(wrappedLabel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-
-
-        useSSOBox.setSelected(isSSOEnabled);
-        ssoMethodFileRadio.setEnabled(isSSOEnabled);
-        ssoMethodDNSRadio.setEnabled(isSSOEnabled);
-        ssoMethodManualRadio.setEnabled(isSSOEnabled);
-        ssoRealmField.setEnabled(isSSOEnabled);
-        ssoKDCField.setEnabled(isSSOEnabled);
-
-        if(showAdvSSO) {
-            ssoMethodFileLabel.setText("Use krb5.conf or krb5.ini:");
-            ssoPanel.add(ssoMethodFileLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            ssoPanel.add(ssoMethodFileRadio, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            ssoMethodRadio.add(ssoMethodFileRadio);
-
-            ssoMethodDNSLabel.setText("Use DNS:");
-            ssoPanel.add(ssoMethodDNSLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            ssoPanel.add(ssoMethodDNSRadio, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            ssoMethodRadio.add(ssoMethodDNSRadio);
-
-            ssoMethodManualLabel.setText("Specify Below:");
-            ssoPanel.add(ssoMethodManualLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            ssoPanel.add(ssoMethodManualRadio, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            ssoMethodRadio.add(ssoMethodManualRadio);
-
-            ssoRealmLabel.setText("    Realm:");
-            ssoPanel.add(ssoRealmLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            ssoPanel.add(ssoRealmField, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-            ssoKDCLabel.setText("    KDC:");
-            ssoPanel.add(ssoKDCLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            ssoPanel.add(ssoKDCField, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        }
-
-
-        if (isSSOEnabled) {
-
-            String method = localPreferences.getSSOMethod();
-            if (ModelUtil.hasLength(method)) {
-                if(method.equals("file")) {
-                    ssoMethodFileRadio.setSelected(true);
-                } else if(method.equals("dns")) {
-                    ssoMethodDNSRadio.setSelected(true);
-                } else if(method.equals("manual")) {
-                    ssoMethodManualRadio.setSelected(true);
-                } //else: do what?
-            } else {
-                //Do some OS detection here...
-                if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                    ssoMethodDNSRadio.setSelected(true);
-                } else {
-                    ssoMethodFileRadio.setSelected(true);
-                }
-            }
-
-            String realm = localPreferences.getSSORealm();
-            if (ModelUtil.hasLength(realm)) {
-                ssoRealmField.setText(realm);
-            }
-            String kdc = localPreferences.getSSOKDC();
-            if (ModelUtil.hasLength(kdc)) {
-                ssoKDCField.setText(kdc);
-            }
-        }
-
-        useSSOBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (useSSOBox.isSelected()) {
-                    ssoMethodFileRadio.setEnabled(useSSOBox.isSelected());
-                    ssoMethodDNSRadio.setEnabled(useSSOBox.isSelected());
-                    ssoMethodManualRadio.setEnabled(useSSOBox.isSelected());
-                    ssoRealmField.setEnabled(useSSOBox.isSelected());
-                    ssoKDCField.setEnabled(useSSOBox.isSelected());
-                    String method = localPreferences.getSSOMethod();
-                    if (ModelUtil.hasLength(method)) {
-                        if(method.equals("file")) {
-                            ssoMethodFileRadio.setSelected(true);
-                        } else if(method.equals("dns")) {
-                            ssoMethodDNSRadio.setSelected(true);
-                        } else if(method.equals("manual")) {
-                            ssoMethodManualRadio.setSelected(true);
-                        } //else: do what?
-                    } else {
-                        //Do some OS detection here...
-                        ssoMethodDNSRadio.setSelected(true);
-                    }
-                    String realm = localPreferences.getSSORealm();
-                    if (ModelUtil.hasLength(realm)) {
-                        ssoRealmField.setText(realm);
-                    }
-                    String kdc = localPreferences.getSSOKDC();
-                    if (ModelUtil.hasLength(kdc)) {
-                        ssoKDCField.setText(kdc);
-                    }
-                    localPreferences.setSSOEnabled(true);
-                    localPreferences.setAutoLogin(true);
-                }
-                else {
-                    ssoMethodFileRadio.setEnabled(false);
-                    ssoMethodFileRadio.setSelected(false);
-                    ssoMethodDNSRadio.setEnabled(false);
-                    ssoMethodDNSRadio.setSelected(false);
-                    ssoMethodManualRadio.setEnabled(false);
-                    ssoMethodManualRadio.setSelected(false);
-                    ssoRealmField.setEnabled(false);
-                    ssoRealmField.setText("");
-                    ssoKDCField.setEnabled(false);
-                    ssoKDCField.setText("");
-                    localPreferences.setSSOEnabled(false);
-                }
-            }
-        });
-
-        debuggerBox.setSelected(localPreferences.isDebuggerEnabled());
+        tabbedPane.addTab(Res.getString("tab.general"), generalPanel);
+        tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
+        tabbedPane.addTab("SSO", ssoPanel);
+        tabbedPane.addTab("PKI", pkiPanel);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -376,11 +147,183 @@ public class LoginSettingDialog implements PropertyChangeListener {
             optionsDialog.setVisible(false);
         }
         else if (Res.getString("ok").equals(value)) {
+
+            boolean valid = true;
+            valid = valid && generalPanel.validate_settings();
+            valid = valid && proxyPanel.validate_settings();
+            valid = valid && ssoPanel.validate_settings();
+            valid = valid && pkiPanel.validate_settings();
+
+
+            if(valid) {
+                generalPanel.saveSettings();
+                proxyPanel.saveSettings();
+                ssoPanel.saveSettings();
+                pkiPanel.saveSettings();
+                SettingsManager.saveSettings();
+                optionsDialog.setVisible(false);
+            } else {
+                optionPane.removePropertyChangeListener(this);
+                optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                optionPane.addPropertyChangeListener(this);
+            }
+        }
+        else {
+            // Some unknown operation happened
+            optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+        }
+    }
+
+    /**
+     * Internal class to set General settings
+     */
+    private class GeneralPanel extends JPanel implements ActionListener {
+
+        private JCheckBox autoDiscoverBox = new JCheckBox();
+        private JLabel portLabel = new JLabel();
+        private JTextField portField = new JTextField();
+        private JLabel xmppHostLabel = new JLabel();
+        private JTextField xmppHostField = new JTextField();
+        private JLabel timeOutLabel = new JLabel();
+        private JTextField timeOutField = new JTextField();
+        private JLabel resourceLabel = new JLabel();
+        private JTextField resourceField = new JTextField();
+        private JCheckBox autoLoginBox = new JCheckBox();
+        private JCheckBox useSSLBox = new JCheckBox();
+        private JCheckBox compressionBox = new JCheckBox(); 
+        private JCheckBox debuggerBox = new JCheckBox();
+
+
+
+        public GeneralPanel() {
+            ResourceUtils.resLabel(portLabel, portField, Res.getString("label.port"));
+            ResourceUtils.resLabel(timeOutLabel, timeOutField, Res.getString("label.response.timeout"));
+            ResourceUtils.resButton(autoLoginBox, Res.getString("label.auto.login"));
+            ResourceUtils.resButton(useSSLBox, Res.getString("label.old.ssl"));
+            ResourceUtils.resLabel(xmppHostLabel, xmppHostField, Res.getString("label.host"));
+            ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
+            ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
+            ResourceUtils.resButton(compressionBox, "Use Co&mpression");
+            ResourceUtils.resButton(debuggerBox, "Start &Debugger on startup");
+
+            portField.setText(Integer.toString(localPreferences.getXmppPort()));
+            timeOutField.setText(Integer.toString(localPreferences.getTimeOut()));
+            autoLoginBox.setSelected(localPreferences.isAutoLogin());
+            useSSLBox.setSelected(localPreferences.isSSL());
+            xmppHostField.setText(localPreferences.getXmppHost());
+            resourceField.setText(localPreferences.getResource());
+
+
+            if (localPreferences.getResource() == null) {
+                resourceField.setText("spark");
+            }
+
+
+            autoDiscoverBox.addActionListener(this);
+
+            autoDiscoverBox.setSelected(!localPreferences.isHostAndPortConfigured());
+            updateAutoDiscovery();
+
+            compressionBox.setSelected(localPreferences.isCompressionEnabled());
+
+
+            debuggerBox.setSelected(localPreferences.isDebuggerEnabled());
+
+            final JPanel connectionPanel = new JPanel();
+            connectionPanel.setLayout(new GridBagLayout());
+            connectionPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.connection")));
+
+            setLayout(new GridBagLayout());
+            add(autoDiscoverBox, 
+                        new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            connectionPanel.add(xmppHostLabel, 
+                        new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            connectionPanel.add(xmppHostField, 
+                        new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 200, 0));
+            connectionPanel.add(portLabel, 
+                        new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            connectionPanel.add(portField, 
+                        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 50, 0));
+            add(connectionPanel, 
+                        new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.BOTH, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(resourceLabel, 
+                        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(resourceField, 
+                        new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 100, 0));
+            add(timeOutLabel, 
+                        new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(timeOutField, 
+                        new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 50, 0));
+            add(useSSLBox, 
+                        new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(compressionBox, 
+                        new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(debuggerBox, 
+                        new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+        }
+
+        /**
+        * Updates local preferences with auto discovery settings.
+        */
+        private void updateAutoDiscovery() {
+            boolean isSelected = autoDiscoverBox.isSelected();
+            xmppHostField.setEnabled(!isSelected);
+            portField.setEnabled(!isSelected);
+            localPreferences.setHostAndPortConfigured(!isSelected);
+        }
+
+
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == autoDiscoverBox) {
+                updateAutoDiscovery();
+            }
+        }
+
+        public boolean validate_settings() {
             String timeOut = timeOutField.getText();
             String port = portField.getText();
             String resource = resourceField.getText();
 
-            boolean errors = false;
+            boolean valid = true;
 
             try {
                 Integer.valueOf(timeOut);
@@ -389,7 +332,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.timeout"),
                         Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 timeOutField.requestFocus();
-                errors = true;
+                valid = false;
             }
 
             try {
@@ -399,44 +342,31 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.port"),
                         Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 portField.requestFocus();
-                errors = true;
+                valid = false;
             }
 
             if (!ModelUtil.hasLength(resource)) {
                 JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.resource"),
                         Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 resourceField.requestFocus();
-                errors = true;
+                valid = false;
             }
 
-            if (!errors) {
-                localPreferences.setTimeOut(Integer.parseInt(timeOut));
-                localPreferences.setXmppPort(Integer.parseInt(port));
-                localPreferences.setSSL(useSSLBox.isSelected());
-                localPreferences.setXmppHost(xmppHostField.getText());
-                localPreferences.setCompressionEnabled(compressionBox.isSelected());
-                localPreferences.setDebuggerEnabled(debuggerBox.isSelected());
-
-                optionsDialog.setVisible(false);
-                localPreferences.setResource(resource);
-                proxyPanel.saveProxySettings();
-            }
-            else {
-                optionPane.removePropertyChangeListener(this);
-                optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                optionPane.addPropertyChangeListener(this);
-            }
+            return valid;
         }
-        else {
-            localPreferences.setTimeOut(30);
-            localPreferences.setXmppPort(5222);
-            localPreferences.setSSL(false);
-            portField.setText("5222");
-            timeOutField.setText("30");
-            useSSLBox.setSelected(false);
-            optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+
+        public void saveSettings() {
+
+            localPreferences.setTimeOut(Integer.parseInt(timeOutField.getText()));
+            localPreferences.setXmppPort(Integer.parseInt(portField.getText()));
+            localPreferences.setSSL(useSSLBox.isSelected());
+            localPreferences.setXmppHost(xmppHostField.getText());
+            localPreferences.setCompressionEnabled(compressionBox.isSelected());
+            localPreferences.setDebuggerEnabled(debuggerBox.isSelected());
+            localPreferences.setResource(resourceField.getText());
         }
     }
+
 
     /**
      * Internal class to allow setting of proxies within Spark.
@@ -471,22 +401,61 @@ public class LoginSettingDialog implements PropertyChangeListener {
             ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password"));
 
             setLayout(new GridBagLayout());
-            add(useProxyBox, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-            add(protocolLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(protocolBox, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-            add(hostLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(hostField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-            add(portLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(portField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-            add(usernameLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(usernameField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-            add(passwordLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(passwordField, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            add(useProxyBox, 
+                        new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(protocolLabel, 
+                        new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(protocolBox, 
+                        new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(hostLabel, 
+                        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(hostField, 
+                        new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(portLabel, 
+                        new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(portField, 
+                        new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(usernameLabel, 
+                        new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(usernameField, 
+                        new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(passwordLabel, 
+                        new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(passwordField, 
+                        new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, 
+                                                GridBagConstraints.WEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
 
 
             useProxyBox.addActionListener(new ActionListener() {
@@ -593,10 +562,34 @@ public class LoginSettingDialog implements PropertyChangeListener {
             return new String(passwordField.getPassword());
         }
 
+        public boolean validate_settings() {
+            boolean valid = true;
+
+            if(useProxyBox.isSelected()) {
+                try {
+                    Integer.valueOf(portField.getText());
+                }
+                catch (NumberFormatException numberFormatException) {
+                    JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.port"),
+                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    portField.requestFocus();
+                    valid = false;
+                }
+    
+                if (!ModelUtil.hasLength(hostField.getText())) {
+                    JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.supply.valid.host"),
+                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    hostField.requestFocus();
+                    valid = false;
+                }
+            }
+            return valid;
+        }
+
         /**
          * Persist the proxy settings to local preferences.
          */
-        public void saveProxySettings() {
+        public void saveSettings() {
             localPreferences.setProxyEnabled(useProxyBox.isSelected());
             if (ModelUtil.hasLength(getProtocol())) {
                 localPreferences.setProtocol(getProtocol());
@@ -654,53 +647,528 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     localPreferences.setProxyEnabled(false);
                 }
             }
-
-            SettingsManager.saveSettings();
         }
     }
 
-    /**
-     * Updates local preferences with auto discovery settings.
-     */
-    private void updateAutoDiscovery() {
-        boolean isSelected = autoDiscoverBox.isSelected();
-        xmppHostField.setEnabled(!isSelected);
-        portField.setEnabled(!isSelected);
-        localPreferences.setHostAndPortConfigured(!isSelected);
-    }
 
     /**
-     * Returns the principal name if one exists.
-     *
-     * @return the name (ex. derek) of the principal.
-     * @throws Exception thrown if a Principal was not found.
+     * Internal class to set SSO settings
      */
-    private String getPrincipalName() throws Exception {
-        System.setProperty("java.security.krb5.debug", "true");
-        System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-        GSSAPIConfiguration config = new GSSAPIConfiguration();
-        Configuration.setConfiguration(config);
+    private class SsoPanel extends JPanel implements ActionListener {
+        private JCheckBox useSSOBox = new JCheckBox();
+        private JPanel settingsPanel = new JPanel();
+        private JCheckBox showAdvBox = new JCheckBox();
+        private JLabel ssoRealmLabel = new JLabel();
+        private JTextField ssoRealmField = new JTextField();
+        private JLabel ssoKDCLabel = new JLabel();
+        private JTextField ssoKDCField = new JTextField();
+        private JLabel ssoMethodFileLabel = new JLabel();
+        private JRadioButton ssoMethodFileRadio = new JRadioButton();
+        private JLabel ssoMethodDNSLabel = new JLabel();
+        private JRadioButton ssoMethodDNSRadio = new JRadioButton();
+        private JLabel ssoMethodManualLabel = new JLabel();
+        private JRadioButton ssoMethodManualRadio = new JRadioButton();
+        private JLabel ssoMethodLabel = new JLabel();
+        private ButtonGroup ssoMethodRadio = new ButtonGroup();
 
-        LoginContext lc = null;
-        try {
-            lc = new LoginContext("GetPrincipal");
-            lc.login();
+
+
+        public SsoPanel() {
+            ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO) via GSSAPI");
+            ResourceUtils.resButton(showAdvBox,"Show Advanced Settings");
+
+            useSSOBox.addActionListener(this);
+            showAdvBox.addActionListener(this);
+
+            final WrappedLabel wrappedLabel = new WrappedLabel();
+            String principalName = null;
+            try {
+                principalName = getPrincipalName();
+            }
+            catch (Exception e) {
+                // Ignore
+            }
+
+            if (ModelUtil.hasLength(principalName)) {
+                wrappedLabel.setText("This will use the Desktop Account for \"" + principalName + "\" to login to the server.");
+            }
+            else {
+                wrappedLabel.setText("Spark is unable to find the principal to use for Single Sign-On. This will prevent SSO from working.");
+            }
+            wrappedLabel.setBackground(Color.white);
+
+
+            String method = localPreferences.getSSOMethod();
+            if (ModelUtil.hasLength(method)) {
+                if(method.equals("file")) {
+                    ssoMethodFileRadio.setSelected(true);
+                } else if(method.equals("dns")) {
+                    ssoMethodDNSRadio.setSelected(true);
+                } else if(method.equals("manual")) {
+                    ssoMethodManualRadio.setSelected(true);
+                }
+                else {
+                    ssoMethodFileRadio.setSelected(true);
+                }
+            }
+            else {
+                ssoMethodFileRadio.setSelected(true);
+            }
+
+            if (ModelUtil.hasLength(localPreferences.getSSORealm())) {
+                ssoRealmField.setText(localPreferences.getSSORealm());
+            }
+            if (ModelUtil.hasLength(localPreferences.getSSOKDC())) {
+                ssoKDCField.setText(localPreferences.getSSOKDC());
+            }
+
+            ssoMethodFileLabel.setText("Use krb5.conf or krb5.ini:");
+            ssoMethodDNSLabel.setText("Use DNS:");
+            ssoMethodManualLabel.setText("Specify Below:");
+            ssoRealmLabel.setText("    Realm:");
+            ssoKDCLabel.setText("    KDC:");
+
+            ssoMethodRadio.add(ssoMethodFileRadio);
+            ssoMethodRadio.add(ssoMethodDNSRadio);
+            ssoMethodRadio.add(ssoMethodManualRadio);
+
+            useSSOBox.setSelected(localPreferences.isSSOEnabled());
+
+            ssoMethodFileRadio.setEnabled(localPreferences.isSSOEnabled());
+            ssoMethodDNSRadio.setEnabled(localPreferences.isSSOEnabled());
+            ssoMethodManualRadio.setEnabled(localPreferences.isSSOEnabled());
+            ssoRealmField.setEnabled(localPreferences.isSSOEnabled());
+            ssoKDCField.setEnabled(localPreferences.isSSOEnabled());
+
+            showAdvBox.setSelected(localPreferences.getSSOAdv());
+            settingsPanel.setVisible(localPreferences.getSSOAdv());
+
+            setLayout(new GridBagLayout());
+            add(useSSOBox, 
+                        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(showAdvBox, 
+                        new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(wrappedLabel, 
+                        new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST,
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.setLayout(new GridBagLayout());
+            settingsPanel.add(ssoMethodFileLabel, 
+                        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoMethodFileRadio, 
+                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoMethodDNSLabel, 
+                        new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoMethodDNSRadio, 
+                        new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoMethodManualLabel, 
+                        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoMethodManualRadio, 
+                        new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoRealmLabel, 
+                        new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoRealmField, 
+                        new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoKDCLabel, 
+                        new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            settingsPanel.add(ssoKDCField, 
+                        new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(settingsPanel, 
+                        new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL,
+                                                new Insets(5, 5, 5, 5), 100, 0));
+
+
         }
-        catch (LoginException le) {
-            Log.debug(le.getMessage());
+
+
+        /**
+        * Returns the principal name if one exists.
+        *
+        * @return the name (ex. derek) of the principal.
+        * @throws Exception thrown if a Principal was not found.
+        */
+        private String getPrincipalName() throws Exception {
+            if(localPreferences.getDebug()) {
+                System.setProperty("java.security.krb5.debug", "true");
+            }
+            System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+            GSSAPIConfiguration config = new GSSAPIConfiguration();
+            Configuration.setConfiguration(config);
+
+            LoginContext lc = null;
+            try {
+                lc = new LoginContext("com.sun.security.jgss.krb5.initiate");
+                lc.login();
+            }
+            catch (LoginException le) {
+                Log.debug(le.getMessage());
+                return null;
+            }
+
+            Subject mySubject = lc.getSubject();
+
+            for (Principal p : mySubject.getPrincipals()) {
+                String name = p.getName();
+                int indexOne = name.indexOf("@");
+                if (indexOne != -1) {
+                    return name;
+                }
+            }
             return null;
         }
 
-        Subject mySubject = lc.getSubject();
-
-        for (Principal p : mySubject.getPrincipals()) {
-            String name = p.getName();
-            int indexOne = name.indexOf("@");
-            if (indexOne != -1) {
-                return name.substring(0, indexOne);
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == useSSOBox) {
+                ssoMethodFileRadio.setEnabled(useSSOBox.isSelected());
+                ssoMethodDNSRadio.setEnabled(useSSOBox.isSelected());
+                ssoMethodManualRadio.setEnabled(useSSOBox.isSelected());
+                ssoRealmField.setEnabled(useSSOBox.isSelected());
+                ssoKDCField.setEnabled(useSSOBox.isSelected());
+            }
+            else if(e.getSource() == showAdvBox) {
+                settingsPanel.setVisible(showAdvBox.isSelected());
             }
         }
-        return null;
+
+        public boolean validate_settings() {
+
+            boolean valid = true;
+
+            if(useSSOBox.isSelected() && showAdvBox.isSelected()) {
+                if(ssoMethodManualRadio.isSelected()) {
+                    if(!ModelUtil.hasLength(ssoRealmField.getText())) {
+                        JOptionPane.showMessageDialog(optionsDialog, "You must specify a realm",
+                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        ssoRealmField.requestFocus();
+                        valid = false;
+                    }
+                    if(!ModelUtil.hasLength(ssoKDCField.getText())) {
+                        JOptionPane.showMessageDialog(optionsDialog, "You must specify a KDC",
+                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        ssoKDCField.requestFocus();
+                        valid = false;
+                    }
+                }
+            }
+
+            return valid;
+        }
+
+        public void saveSettings() {
+            localPreferences.setSSOEnabled(useSSOBox.isSelected());
+            if(ssoMethodFileRadio.isSelected()) {
+                localPreferences.setSSOMethod("file");
+            }
+            else if(ssoMethodDNSRadio.isSelected()) {
+                localPreferences.setSSOMethod("dns");
+            }
+            else if(ssoMethodManualRadio.isSelected()) {
+                localPreferences.setSSOMethod("manual");
+                localPreferences.setSSORealm(ssoRealmField.getText());
+                localPreferences.setSSOKDC(ssoKDCField.getText());
+            }
+            else {
+                localPreferences.setSSOMethod("file");
+            }
+        }
+    }
+
+
+    /**
+     * Internal class to set PKI settings
+     */
+
+    private class PkiPanel extends JPanel implements ActionListener {
+        private JLabel       usePKILabel = new JLabel();
+        private JCheckBox    usePKIBox = new JCheckBox();
+        private JLabel       pkiStoreLabel = new JLabel();
+        private JComboBox    pkiStore = new JComboBox();
+        private JFileChooser fileChooser = new JFileChooser();
+        private JLabel       fileLabel = new JLabel(); 
+        private JButton      fileButton = new JButton();
+        private JTextField   fileField = new JTextField();
+        private JPanel       filePanel = new JPanel();
+        private JLabel       trustStorePasswordLabel = new JLabel();
+        private JPasswordField trustStorePassword = new JPasswordField();
+        private JTextField   trustStoreField = new JTextField();
+        private JButton      trustStoreButton = new JButton();
+        private JPanel       trustStorePanel = new JPanel();
+
+        public PkiPanel() {
+            ResourceUtils.resButton(usePKIBox, "&Use PKI Authentication");
+            ResourceUtils.resLabel(pkiStoreLabel, pkiStore, "Which PKI Method?");
+            ResourceUtils.resButton(fileButton, "Choose File");
+            ResourceUtils.resButton(trustStoreButton, "Choose File");
+            ResourceUtils.resLabel(trustStorePasswordLabel, trustStorePassword, "Trust Store Password");
+
+
+            pkiStore.addItem("Java Keystore");
+            pkiStore.addItem("PKCS#11");
+            //pkiStore.addItem("X.509 PEM File");
+            pkiStore.addItem("Apple KeyChain");
+
+            usePKIBox.setSelected(localPreferences.isPKIEnabled());
+
+            if(ModelUtil.hasLength(localPreferences.getPKIStore())) {
+                if(localPreferences.getPKIStore().equals("PKCS11")) {
+                    pkiStore.setSelectedItem("PKCS#11");
+                    if(ModelUtil.hasLength(localPreferences.getPKCSConfig())) {
+                        fileField.setText(localPreferences.getPKCSConfig());
+                    }
+                    else {
+                        fileField.setText("");
+                    }
+                }
+                else if(localPreferences.getPKIStore().equals("X509")) {
+                    pkiStore.setSelectedItem("X.509 PEM File");
+                    //if(ModelUtil.hasLength(localPreferences.getPEMFile())) {
+                    //    fileField.setText(localPreferences.getPEMFile());
+                    //}
+                    //else {
+                        fileField.setText("");
+                    //}
+                }
+                else if(localPreferences.getPKIStore().equals("Apple KeyChain")) {
+                        fileField.setText("");
+                }
+                else {
+                    pkiStore.setSelectedItem("Java Keystore");
+                    if(ModelUtil.hasLength(localPreferences.getJKSPath())) {
+                        fileField.setText(localPreferences.getJKSPath());
+                    }
+                    else {
+                        fileField.setText("");
+                    }
+                }
+            }
+            else {
+                pkiStore.setSelectedItem("Java Keystore");
+                if(ModelUtil.hasLength(localPreferences.getJKSPath())) {
+                    fileField.setText(localPreferences.getJKSPath());
+                }
+                else {
+                    fileField.setText("");
+                }
+            }
+
+            if(ModelUtil.hasLength(localPreferences.getTrustStorePath())) {
+                trustStoreField.setText(localPreferences.getTrustStorePath());
+            }
+
+            if(ModelUtil.hasLength(localPreferences.getTrustStorePassword())) {
+                trustStorePassword.setText(localPreferences.getTrustStorePassword());
+            }
+
+            pkiStore.setEnabled(usePKIBox.isSelected());
+            filePanel.setEnabled(usePKIBox.isSelected());
+            fileField.setEnabled(usePKIBox.isSelected());
+            fileButton.setEnabled(usePKIBox.isSelected());
+
+
+            setLayout(new GridBagLayout());
+
+            add(usePKIBox, 
+                        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(usePKILabel,
+                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.NORTHWEST,
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(pkiStoreLabel,
+                        new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.NORTHWEST,
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(pkiStore, 
+                        new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+
+            filePanel.setLayout(new GridBagLayout());
+            filePanel.setBorder(BorderFactory.createTitledBorder("Keystore Location"));
+            filePanel.add(fileField,
+                        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 100, 0));
+            filePanel.add(fileButton,
+                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            add(filePanel, 
+                        new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 150, 0));
+
+            trustStorePanel.setLayout(new GridBagLayout());
+            trustStorePanel.setBorder(BorderFactory.createTitledBorder("Truststore Location"));
+            trustStorePanel.add(trustStoreField,
+                        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 100, 0));
+            trustStorePanel.add(trustStoreButton,
+                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            trustStorePanel.add(trustStorePasswordLabel,
+                        new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.NONE, 
+                                                new Insets(5, 5, 5, 5), 0, 0));
+            trustStorePanel.add(trustStorePassword,
+                        new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.NORTHWEST, 
+                                                GridBagConstraints.HORIZONTAL, 
+                                                new Insets(5, 5, 5, 5), 100, 0));
+            add(trustStorePanel,
+                        new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, 
+                                                GridBagConstraints.NORTHWEST,
+                                                GridBagConstraints.HORIZONTAL,
+                                                new Insets(5, 5, 5, 5), 150, 0));
+
+            usePKIBox.addActionListener(this);
+            pkiStore.addActionListener(this);
+            fileButton.addActionListener(this);
+            trustStoreButton.addActionListener(this);
+
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            if(e.getSource() == usePKIBox) {
+                pkiStore.setEnabled(usePKIBox.isSelected());
+                filePanel.setEnabled(usePKIBox.isSelected());
+                fileField.setEnabled(usePKIBox.isSelected());
+                fileButton.setEnabled(usePKIBox.isSelected());
+            }
+            else if(e.getSource() == pkiStore) {
+                if(((String)pkiStore.getSelectedItem()).equals("PKCS#11")) {
+                    filePanel.setBorder(BorderFactory.createTitledBorder("PKCS#11 Configuration File"));
+                    if(ModelUtil.hasLength(localPreferences.getPKCSConfig())) {
+                        fileField.setText(localPreferences.getPKCSConfig());
+                    } else {
+                        fileField.setText("");
+                    }
+                }
+                else if(((String)pkiStore.getSelectedItem()).equals("X.509 PEM File")) {
+                    filePanel.setBorder(BorderFactory.createTitledBorder("X.509 Certificate"));
+                    //if(ModelUtil.hasLength(localPreferences.getPEMFile())) {
+                    //    fileField.setText(localPreferences.getPEMFile());
+                    //} else {
+                    //    fileField.setText("");
+                    //}
+                }
+                else if(((String)pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
+                    filePanel.setBorder(BorderFactory.createTitledBorder("Apple KeyChain"));
+                }
+                else {
+                    filePanel.setBorder(BorderFactory.createTitledBorder("Keystore Location"));
+                    if(ModelUtil.hasLength(localPreferences.getJKSPath())) {
+                        fileField.setText(localPreferences.getJKSPath());
+                    } else {
+                        fileField.setText("");
+                    }
+                }
+            }
+            else if(e.getSource() == fileButton) {
+                int retval = fileChooser.showOpenDialog(this);
+                if (retval == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    fileField.setText(file.getAbsolutePath());
+                }
+            }
+            else if(e.getSource() == trustStoreButton) {
+                int retval = fileChooser.showOpenDialog(this);
+                if (retval == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    trustStoreField.setText(file.getAbsolutePath());
+                }
+            }
+        }
+
+        public boolean validate_settings() {
+
+            boolean valid = true;
+
+            if(usePKIBox.isSelected()) {
+                if(!ModelUtil.hasLength(fileField.getText())) {
+                    JOptionPane.showMessageDialog(optionsDialog, "You must specify a file location",
+                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    fileField.requestFocus();
+                    valid = false;
+                }
+            }
+            return valid;
+        }
+
+        public void saveSettings() {
+
+            localPreferences.setPKIEnabled(usePKIBox.isSelected());
+            localPreferences.setPKIStore((String)pkiStore.getSelectedItem());
+            if(((String)pkiStore.getSelectedItem()).equals("PKCS#11")) {
+                localPreferences.setPKIStore("PKCS11");
+                localPreferences.setPKCSConfig(fileField.getText());
+            }
+            else if(((String)pkiStore.getSelectedItem()).equals("X.509 Certificate")) {
+                localPreferences.setPKIStore("X509");
+                //localPreferences.setPEMFile(fileField.getText());
+            }
+            else if(((String)pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
+                localPreferences.setPKIStore("Apple");
+            }
+            else {
+                localPreferences.setPKIStore("JKS");
+                localPreferences.setJKSPath(fileField.getText());
+            }
+            localPreferences.setTrustStorePath(trustStoreField.getText());
+            localPreferences.setTrustStorePassword(new String(trustStorePassword.getPassword()));
+        }
     }
 }
-

@@ -21,6 +21,7 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SessionManager;
@@ -43,6 +44,10 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -78,7 +83,6 @@ import java.io.File;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -89,6 +93,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.Attribute;
+import java.io.IOException;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -193,7 +198,7 @@ public final class LoginDialog {
     /**
      * Define Login Panel implementation.
      */
-    private final class LoginPanel extends JPanel implements KeyListener, ActionListener, FocusListener {
+    private final class LoginPanel extends JPanel implements KeyListener, ActionListener, FocusListener, CallbackHandler {
         private final JLabel usernameLabel = new JLabel();
         private final JTextField usernameField = new JTextField();
 
@@ -521,8 +526,10 @@ public final class LoginDialog {
          * Checks the users input and enables/disables the login button depending on state.
          */
         private void validateDialog() {
-            loginButton.setEnabled(ModelUtil.hasLength(getUsername()) && ModelUtil.hasLength(getPassword())
-                    && ModelUtil.hasLength(getServerName()));
+            loginButton.setEnabled(
+                    ModelUtil.hasLength(getUsername()) && 
+                    ( ModelUtil.hasLength(getPassword()) || localPref.isSSOEnabled() ) &&
+                    ModelUtil.hasLength(getServerName())   );
         }
 
         /**
@@ -636,19 +643,23 @@ public final class LoginDialog {
 
         public void useSSO(boolean use) {
             if (use) {
-                usernameField.setVisible(true);
-                passwordField.setVisible(false);
-                savePasswordBox.setVisible(false);
                 usernameLabel.setVisible(true);
+                usernameField.setVisible(true);
+
                 passwordLabel.setVisible(false);
+                passwordField.setVisible(false);
+
+                savePasswordBox.setVisible(false);
+
+                accountLabel.setVisible(true);
+                accountNameLabel.setVisible(true);
+
                 serverField.setVisible(true);
+
                 autoLoginBox.setVisible(true);
                 serverLabel.setVisible(true);
 
                 headerLabel.setVisible(true);
-                accountLabel.setVisible(true);
-                accountNameLabel.setVisible(true);
-
 
 
                 String server = localPref.getServer();
@@ -659,20 +670,20 @@ public final class LoginDialog {
 
                 if(localPref.getDebug()) {
                     System.setProperty("java.security.krb5.debug","true");
+                    System.setProperty("sun.security.krb5.debug","true");
                 } else {
                     System.setProperty("java.security.krb5.debug","false");
+                    System.setProperty("sun.security.krb5.debug","false");
                 }
                 System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
                 GSSAPIConfiguration config = new GSSAPIConfiguration();
                 Configuration.setConfiguration(config);
 
-                
-
                 LoginContext lc = null;
                 String princName = localPref.getUsername();
                 String princRealm = null;
                 try {
-                    lc = new LoginContext("GetPrincipal");
+                    lc = new LoginContext("com.sun.security.jgss.krb5.initiate");
                     lc.login();
                     Subject mySubject = lc.getSubject();
 
@@ -683,7 +694,7 @@ public final class LoginDialog {
                         int indexOne = name.indexOf("@");
                         if (indexOne != -1) {
                             princName = name.substring(0, indexOne);
-                            accountNameLabel.setText(princName);
+                            accountNameLabel.setText(name);
                             princRealm = name.substring(indexOne+1);
                         }
                         loginButton.setEnabled(true);
@@ -691,16 +702,13 @@ public final class LoginDialog {
                 }
                 catch (LoginException le) {
                     Log.debug(le.getMessage());
-                    useSSO(false);
+                    accountNameLabel.setText("Unable to determine.");
+                    //useSSO(false);
                 }
 
                 String ssoMethod = localPref.getSSOMethod();
                 if(!ModelUtil.hasLength(ssoMethod)) {
-                    if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                        ssoMethod = "dns";
-                    } else {
-                        ssoMethod = "file";
-                    }
+                    ssoMethod = "file";
                 }
 
                 String ssoKdc = null;
@@ -811,12 +819,34 @@ public final class LoginDialog {
 
 
                     }
+                    if (localPref.isPKIEnabled()) {
+                        SASLAuthentication.supportSASLMechanism("EXTERNAL");
+                        config.setKeystoreType(localPref.getPKIStore());
+                        if(localPref.getPKIStore().equals("PKCS11")) {
+                            config.setPKCSConfig(localPref.getPKCSConfig());
+                        }
+                        else if(localPref.getPKIStore().equals("JKS")) {
+                            config.setKeystoreType("JKS");
+                            config.setKeystorePath(localPref.getJKSPath());
+
+                        }
+                        else if(localPref.getPKIStore().equals("X509")) {
+                            //do something
+                        }
+                        else if(localPref.getPKIStore().equals("Apple")) {
+                            config.setKeystoreType("Apple");
+                        }
+                    }
 
                     if (config != null) {
                         config.setReconnectionAllowed(true);
                         boolean compressionEnabled = localPref.isCompressionEnabled();
                         config.setCompressionEnabled(compressionEnabled);
-                        connection = new XMPPConnection(config);
+                        connection = new XMPPConnection(config,this);
+                        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
+                            config.setTruststorePath(localPref.getTrustStorePath());
+                            config.setTruststorePassword(localPref.getTrustStorePassword());
+                        }
                     }
 
                     connection.connect();
@@ -877,8 +907,8 @@ public final class LoginDialog {
                     else {
                         JOptionPane.showMessageDialog(loginDialog, "Unabled to connect using Single Sign-On. Please check your principal and server settings.", SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
                                 JOptionPane.ERROR_MESSAGE);
-                        useSSO(false);
-                        localPref.setSSOEnabled(false);
+                        //useSSO(false);
+                        //localPref.setSSOEnabled(false);
                     }
                 }
                 setEnabled(true);
@@ -919,6 +949,22 @@ public final class LoginDialog {
             SettingsManager.saveSettings();
 
             return !hasErrors;
+        }
+
+        public void handle(Callback[] callbacks) throws IOException  {
+            for (int i=0; i<callbacks.length; i++) {
+                if(callbacks[i] instanceof NameCallback) {
+                    NameCallback ncb = (NameCallback) callbacks[i];
+                    ncb.setName(getUsername());
+                }
+                else if(callbacks[i] instanceof PasswordCallback) {
+                    PasswordCallback pcb = (PasswordCallback) callbacks[i];
+                    pcb.setPassword(getPassword().toCharArray());
+                }
+                else {
+                    Log.error("Uknown callback requested: "+callbacks[i].getClass().getSimpleName());
+                }
+            }
         }
     }
 
