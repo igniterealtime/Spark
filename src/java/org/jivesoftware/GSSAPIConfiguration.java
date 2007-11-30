@@ -22,6 +22,7 @@ public class GSSAPIConfiguration extends Configuration {
         //puts things in quotes, String is assumed. But boolean options
         //do not have quotes, and my represent different types internally.
         HashMap<String, String> c_options = new HashMap<String, String>();
+        c_options.put("refreshKrb5Config", "true");
         c_options.put("doNotPrompt", "true");
         c_options.put("useTicketCache", "true");
         c_options.put("debug", "true");
