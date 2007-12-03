@@ -96,6 +96,7 @@ public class FileTransferPreference implements Preference {
                 tout = Integer.parseInt(timeout);
             }
             catch (NumberFormatException e) {
+                // Nothing to do
             }
 
             pref.setFileTransferTimeout(tout);

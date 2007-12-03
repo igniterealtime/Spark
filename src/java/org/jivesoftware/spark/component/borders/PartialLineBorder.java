@@ -53,6 +53,10 @@ public class PartialLineBorder extends AbstractBorder {
         return new Insets(2, 2, 2, 2);
     }
 
+    public int getThickness() {
+        return thickness;
+    }
+
     public void paintBorder(Component component, Graphics g, int x, int y, int width, int height) {
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(1.0f));

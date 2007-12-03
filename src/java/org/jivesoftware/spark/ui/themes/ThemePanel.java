@@ -34,13 +34,11 @@ import java.io.File;
 public class ThemePanel extends JPanel {
     private TranscriptWindow transcript;
 
-    private JLabel messageStyleLabel;
     private JComboBox messageStyleBox;
 
     private JLabel emoticonsLabel;
     private JComboBox emoticonBox;
 
-    private JButton addThemeButton;
     private JButton addEmoticonButton;
 
     private JTextField contactListFontField;
@@ -64,7 +62,7 @@ public class ThemePanel extends JPanel {
     public ThemePanel() {
         setLayout(new GridBagLayout());
 
-        messageStyleLabel = new JLabel();
+        JLabel messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
 
         emoticonsLabel = new JLabel();
@@ -72,7 +70,7 @@ public class ThemePanel extends JPanel {
 
         emoticonCheckBox = new JCheckBox();
 
-        addThemeButton = new JButton();
+        JButton addThemeButton = new JButton();
         addEmoticonButton = new JButton();
 
         transcript = new TranscriptWindow();
@@ -142,7 +140,6 @@ public class ThemePanel extends JPanel {
 
         // Activate live one.
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        String theme = pref.getTheme();
 
         // messageStyleBox.setSelectedItem(theme);
 
@@ -200,17 +197,7 @@ public class ThemePanel extends JPanel {
             Log.error(e);
         }
     }
-
-    /**
-     * Adds a <code>TranscriptWindow</code> theme.
-     *
-     * @param dir the theme directory.
-     */
-    private void addTheme(File dir) {
-        messageStyleBox.addItem(dir.getName());
-    }
-
-
+    
     /**
      * Displays the active emoticon pack.
      */

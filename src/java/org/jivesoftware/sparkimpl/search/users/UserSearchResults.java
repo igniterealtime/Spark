@@ -61,7 +61,7 @@ public class UserSearchResults extends JPanel {
      * @param data the <code>ReportedData</code> returned by the Search Service.
      */
     public void showUsersFound(ReportedData data) {
-        List columnList = new ArrayList();
+        List<String> columnList = new ArrayList<String>();
         Iterator columns = data.getColumns();
         while (columns.hasNext()) {
             ReportedData.Column column = (ReportedData.Column)columns.next();
@@ -70,7 +70,7 @@ public class UserSearchResults extends JPanel {
         }
 
         if (resultsTable == null) {
-            resultsTable = new UsersInfoTable((String[])columnList.toArray(new String[columnList.size()]));
+            resultsTable = new UsersInfoTable(columnList.toArray(new String[columnList.size()]));
 
             final JScrollPane scrollPane = new JScrollPane(resultsTable);
             scrollPane.getViewport().setBackground(Color.white);
@@ -99,9 +99,9 @@ public class UserSearchResults extends JPanel {
         }
         // Populate with answers
         Iterator rows = data.getRows();
-        List modelList;
+        List<String> modelList;
         while (rows.hasNext()) {
-            modelList = new ArrayList();
+            modelList = new ArrayList<String>();
             ReportedData.Row row = (ReportedData.Row)rows.next();
             for (int i = 0; i < resultsTable.getColumnCount(); i++) {
                 String tableValue = (String)resultsTable.getTableHeader().getColumnModel().getColumn(i).getHeaderValue();
@@ -146,6 +146,7 @@ public class UserSearchResults extends JPanel {
                         column = resultsTable.getColumn("nick");
                     }
                     catch (Exception e1) {
+                        // Nothing to do
                     }
                 }
                 if (column != null) {
@@ -229,7 +230,7 @@ public class UserSearchResults extends JPanel {
         String jid = (String)resultsTable.getValueAt(row, 0);
         String nickname = StringUtils.parseName(jid);
 
-        TableColumn column = null;
+        TableColumn column;
         try {
             column = resultsTable.getColumn("nick");
             int col = column.getModelIndex();

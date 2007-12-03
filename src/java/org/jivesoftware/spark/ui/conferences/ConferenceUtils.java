@@ -137,6 +137,7 @@ public class ConferenceUtils {
             return;
         }
         catch (ChatRoomNotFoundException e) {
+            // Nothing to do
         }
 
 
@@ -214,7 +215,6 @@ public class ConferenceUtils {
                 if (errors.size() > 0) {
                     String error = errors.get(0);
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
-                    return;
                 }
                 else if (groupChat.isJoined()) {
                     ChatManager chatManager = SparkManager.getChatManager();
@@ -223,7 +223,6 @@ public class ConferenceUtils {
                 }
                 else {
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join the room.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
                 }
             }
         };
@@ -252,7 +251,7 @@ public class ConferenceUtils {
      * @return a List of errors, if any.
      */
     public static List joinRoom(MultiUserChat groupChat, String nickname, String password) {
-        final List errors = new ArrayList();
+        final List<String> errors = new ArrayList<String>();
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;
             while (true) {
@@ -313,7 +312,7 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static final void inviteUsersToRoom(String serviceName, String roomName, Collection jids) {
+    public static void inviteUsersToRoom(String serviceName, String roomName, Collection jids) {
         InvitationDialog inviteDialog = new InvitationDialog();
         inviteDialog.inviteUsersToRoom(serviceName, roomName, jids);
     }
@@ -324,7 +323,7 @@ public class ConferenceUtils {
      * @param roomJID the JID of the room.
      * @return true if the room requires a password.
      */
-    public static final boolean isPasswordRequired(String roomJID) {
+    public static boolean isPasswordRequired(String roomJID) {
         // Check to see if the room is password protected
         ServiceDiscoveryManager discover = new ServiceDiscoveryManager(SparkManager.getConnection());
 
@@ -360,7 +359,7 @@ public class ConferenceUtils {
             multiUserChat.create(pref.getNickname());
         }
         catch (XMPPException e) {
-            throw e;
+            throw new XMPPException(e);
         }
 
         try {
@@ -459,6 +458,7 @@ public class ConferenceUtils {
             return chatRoom;
         }
         catch (ChatRoomNotFoundException e) {
+            // Nothing to do
         }
 
         final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
@@ -476,7 +476,7 @@ public class ConferenceUtils {
         }
 
 
-        final List errors = new ArrayList();
+        final List<String> errors = new ArrayList<String>();
         final String userPassword = password;
 
 
@@ -533,7 +533,7 @@ public class ConferenceUtils {
 
 
         if (errors.size() > 0) {
-            String error = (String)errors.get(0);
+            String error = errors.get(0);
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
             return null;
         }
@@ -555,9 +555,7 @@ public class ConferenceUtils {
             return;
         }
 
-
-        final List errors = new ArrayList();
-
+        final List<String> errors = new ArrayList<String>();
 
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;
@@ -610,9 +608,8 @@ public class ConferenceUtils {
         }
 
         if (errors.size() > 0) {
-            String error = (String)errors.get(0);
+            String error = errors.get(0);
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Could Not Join Room", JOptionPane.ERROR_MESSAGE);
-            return;
         }
         else if (groupChat.isJoined()) {
             ChatManager chatManager = SparkManager.getChatManager();
@@ -621,7 +618,6 @@ public class ConferenceUtils {
         }
         else {
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join room.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
         }
 
     }

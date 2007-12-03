@@ -65,7 +65,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -173,11 +172,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
             public void finished() {
                 try {
-
-
-                    Iterator rooms = result.iterator();
-                    while (rooms.hasNext()) {
-                        RoomObject obj = (RoomObject)rooms.next();
+                    for (Object aResult : result) {
+                        RoomObject obj = (RoomObject) aResult;
                         addRoomToTable(obj.getRoomJID(), obj.getRoomName(), obj.getNumberOfOccupants());
                     }
                 }
@@ -193,14 +189,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
     }
 
     private Collection getRoomsAndInfo(final String serviceName) {
-        List roomList = new ArrayList();
+        List<RoomObject> roomList = new ArrayList<RoomObject>();
         boolean stillSearchForOccupants = true;
         try {
             Collection result = getRoomList(serviceName);
             try {
-                Iterator rooms = result.iterator();
-                while (rooms.hasNext()) {
-                    HostedRoom hostedRoom = (HostedRoom)rooms.next();
+                for (Object aResult : result) {
+                    HostedRoom hostedRoom = (HostedRoom) aResult;
                     String roomName = hostedRoom.getName();
                     String roomJID = hostedRoom.getJid();
                     int numberOfOccupants = -1;
@@ -210,6 +205,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                             roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
                         }
                         catch (Exception e) {
+                            // Nothing to do
                         }
 
                         if (roomInfo != null) {
@@ -217,8 +213,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                             if (numberOfOccupants == -1) {
                                 stillSearchForOccupants = false;
                             }
-                        }
-                        else {
+                        } else {
                             stillSearchForOccupants = false;
                         }
                     }
@@ -247,8 +242,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             return;
         }
 
-        final String roomJID = (String)roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-        final String roomName = (String)roomsTable.getValueAt(selectedRow, 1);
+        final String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+        final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
 
         // Check to see what type of room this is.
         try {
@@ -320,8 +315,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                 if (selectedRow != -1) {
                     joinRoomButton.setEnabled(true);
 
-                    String roomName = (String)roomsTable.getValueAt(selectedRow, 1);
-                    String roomJID = (String)roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                    String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
                     addRoomButton.setEnabled(true);
                     if (isBookmarked(roomJID)) {
                         addBookmarkUI(false);
@@ -365,9 +359,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                     }
                 }
                 try {
-                    Iterator iter = rooms.iterator();
-                    while (iter.hasNext()) {
-                        HostedRoom hostedRoom = (HostedRoom)iter.next();
+                    for (Object room : rooms) {
+                        HostedRoom hostedRoom = (HostedRoom) room;
                         String roomName = hostedRoom.getName();
                         String roomJID = hostedRoom.getJid();
 
@@ -381,6 +374,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                                 roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
                             }
                             catch (Exception e) {
+                                // Nothing to do
                             }
 
                             if (roomInfo != null) {
@@ -515,7 +509,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                     public void actionPerformed(ActionEvent actionEvent) {
                         int selectedRow = roomsTable.getSelectedRow();
                         if (selectedRow != -1) {
-                            String roomJID = (String)roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                            String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
                             RoomBrowser roomBrowser = new RoomBrowser();
                             roomBrowser.displayRoomInformation(roomJID);
                         }
@@ -545,7 +539,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.select.room.to.enter"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        final String roomJID = (String)roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+        final String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
         final String roomDescription = (String)roomsTable.getValueAt(selectedRow, 1);
 
         try {
@@ -561,7 +555,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
      *
      * @param serviceName the name of the conference service.
      * @return a Collection of all rooms in the Conference service.
-     * @throws Exception
+     * @throws Exception if a problem occurs while getting the room list
      */
     private static Collection getRoomList(String serviceName) throws Exception {
         return MultiUserChat.getHostedRooms(SparkManager.getConnection(), serviceName);
@@ -600,7 +594,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                     form.setAnswer("muc#roomconfig_persistentroom", true);
                 }
 
-                List owners = new ArrayList();
+                List<String> owners = new ArrayList<String>();
                 owners.add(SparkManager.getSessionManager().getBareAddress());
                 form.setAnswer("muc#roomconfig_roomowners", owners);
 
@@ -645,9 +639,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
      * @return true if the room is bookmarked.
      */
     private boolean isBookmarked(String roomJID) {
-        final Iterator bookmarks = conferences.getBookmarks().iterator();
-        while (bookmarks.hasNext()) {
-            BookmarkedConference bk = (BookmarkedConference)bookmarks.next();
+        for (Object o : conferences.getBookmarks()) {
+            BookmarkedConference bk = (BookmarkedConference) o;
             String jid = bk.getJid();
             if (jid != null && roomJID.equals(jid)) {
                 return true;

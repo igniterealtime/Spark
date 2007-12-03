@@ -58,7 +58,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -68,7 +67,7 @@ import java.util.TimerTask;
  */
 public class ChatRoomImpl extends ChatRoom {
 
-    private List messageEventListeners = new ArrayList();
+    private List<MessageEventListener> messageEventListeners = new ArrayList<MessageEventListener>();
     private String roomname;
     private Icon tabIcon;
     private String roomTitle;
@@ -127,7 +126,6 @@ public class ChatRoomImpl extends ChatRoom {
         this.tabTitle = title;
 
         // The name of the room will be the node of the user jid + conversation.
-        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
         this.roomTitle = participantNickname;
 
         // Add RoomInfo
@@ -523,16 +521,14 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public void fireOutgoingMessageSending(Message message) {
-        Iterator messageEventListeners = new ArrayList(getMessageEventListeners()).iterator();
-        while (messageEventListeners.hasNext()) {
-            ((MessageEventListener)messageEventListeners.next()).sendingMessage(message);
+        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+            messageEventListener.sendingMessage(message);
         }
     }
 
     public void fireReceivingIncomingMessage(Message message) {
-        Iterator messageEventListeners = new ArrayList(getMessageEventListeners()).iterator();
-        while (messageEventListeners.hasNext()) {
-            ((MessageEventListener)messageEventListeners.next()).receivingMessage(message);
+        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+            messageEventListener.receivingMessage(message);
         }
     }
 

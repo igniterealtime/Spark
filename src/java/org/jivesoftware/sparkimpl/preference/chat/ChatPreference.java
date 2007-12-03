@@ -64,11 +64,6 @@ public class ChatPreference implements Preference {
             }
 
             public void finished() {
-                String nickname = localPreferences.getDefaultNickname();
-                if (nickname == null) {
-                    nickname = SparkManager.getSessionManager().getUsername();
-                }
-
                 boolean showTime = localPreferences.isTimeDisplayedInChat();
                 boolean spellCheckerOn = localPreferences.isSpellCheckerEnabled();
                 boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
@@ -115,14 +110,7 @@ public class ChatPreference implements Preference {
     }
 
     public Object getData() {
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
-        String nickname = pref.getDefaultNickname();
-        if (nickname == null) {
-            nickname = SparkManager.getSessionManager().getUsername();
-        }
-
-        boolean showTime = pref.isTimeDisplayedInChat();
-        return pref;
+        return SettingsManager.getLocalPreferences();
     }
 
     public String getErrorMessage() {

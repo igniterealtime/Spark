@@ -215,11 +215,8 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     }
 
     public boolean isDataFlavorSupported(DataFlavor flavor) {
-        if (flavor == DATA_FLAVORS[0]) {
-            return true;
-        }
+        return flavor == DATA_FLAVORS[0];
 
-        return false;
     }
 
     public Object getTransferData(DataFlavor flavor)

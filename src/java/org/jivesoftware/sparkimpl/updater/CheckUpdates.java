@@ -101,6 +101,7 @@ public class CheckUpdates {
                 }
             }
             catch (XMPPException e) {
+                // Nothing to do
             }
 
         }
@@ -241,7 +242,7 @@ public class CheckUpdates {
                     frame.dispose();
                 }
                 catch (Exception ex) {
-
+                    // Nothing to do
                 }
                 finally {
                     timer.cancel();
@@ -324,6 +325,9 @@ public class CheckUpdates {
      * Common code for copy routines.  By convention, the streams are
      * closed in the same method in which they were opened.  Thus,
      * this method does not close the streams when the copying is done.
+     *
+     * @param in Source stream
+     * @param out Destination stream
      */
     private void copy(final InputStream in, final OutputStream out) {
         int read = 0;
@@ -349,7 +353,7 @@ public class CheckUpdates {
      * Checks Spark Manager and/or Jive Software for the latest version of Spark.
      *
      * @param explicit true if the user explicitly asks for the latest version.
-     * @throws Exception
+     * @throws Exception if there is an error during check
      */
     public void checkForUpdate(boolean explicit) throws Exception {
         if (UPDATING) {
@@ -531,7 +535,7 @@ public class CheckUpdates {
      *
      * @param connection the XMPPConnection to use.
      * @return the information for about the latest Spark Client.
-     * @throws XMPPException
+     * @throws XMPPException If unable to retrieve latest version.
      */
     public static SparkVersion getLatestVersion(XMPPConnection connection) throws XMPPException {
         SparkVersion request = new SparkVersion();
@@ -631,31 +635,33 @@ public class CheckUpdates {
         if (Spark.isWindows()) {
             File binDirectory = Spark.getBinDirectory();
             File[] files = binDirectory.listFiles();
-            int no = files != null ? files.length : 0;
-            for (int i = 0; i < no; i++) {
-                File file = files[i];
-                String fileName = file.getName();
-                if (fileName.endsWith(".exe")) {
-                    int index = fileName.indexOf("_");
+            if (files != null) {
+                int no = files.length;
+                for (int i = 0; i < no; i++) {
+                    File file = files[i];
+                    String fileName = file.getName();
+                    if (fileName.endsWith(".exe")) {
+                        int index = fileName.indexOf("_");
 
-                    // Add version number
-                    String versionNumber = fileName.substring(index + 1);
-                    int indexOfPeriod = versionNumber.indexOf(".");
+                        // Add version number
+                        String versionNumber = fileName.substring(index + 1);
+                        int indexOfPeriod = versionNumber.indexOf(".");
 
-                    versionNumber = versionNumber.substring(0, indexOfPeriod);
-                    versionNumber = versionNumber.replaceAll("_online", "");
-                    versionNumber = versionNumber.replaceAll("_", ".");
+                        versionNumber = versionNumber.substring(0, indexOfPeriod);
+                        versionNumber = versionNumber.replaceAll("_online", "");
+                        versionNumber = versionNumber.replaceAll("_", ".");
 
-                    boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
-                    if (isGreater) {
-                        // Prompt
-                        promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
-                        return true;
+                        boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
+                        if (isGreater) {
+                            // Prompt
+                            promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
+                            return true;
+                        }
+                        else {
+                            file.delete();
+                        }
+
                     }
-                    else {
-                        file.delete();
-                    }
-
                 }
             }
         }

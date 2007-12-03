@@ -47,10 +47,7 @@ import java.util.TimerTask;
  */
 public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
-    private JLabel iconLabel;
-    private JTextPane titleLabel;
     private RolloverButton acceptButton;
-    private RolloverButton rejectButton;
 
     private String room;
     private String inviter;
@@ -74,9 +71,9 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(inviter);
 
 
-        iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_48x48));
+        JLabel iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_48x48));
 
-        titleLabel = new JTextPane();
+        JTextPane titleLabel = new JTextPane();
         titleLabel.setOpaque(false);
         titleLabel.setEditable(false);
         titleLabel.setBackground(new Color(230, 239, 249));
@@ -84,7 +81,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         acceptButton = new RolloverButton("Accept", SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
         acceptButton.setForeground(new Color(63, 158, 61));
 
-        rejectButton = new RolloverButton("Reject", SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
+        RolloverButton rejectButton = new RolloverButton("Reject", SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
         rejectButton.setForeground(new Color(185, 33, 33));
 
         add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));

@@ -48,7 +48,6 @@ import javax.swing.text.Document;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -125,9 +124,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
 
             public void mouseReleased(MouseEvent e) {
+                mousePressed = false;
                 if (transcriptWindow.getSelectedText() == null) {
                     getChatInputEditor().requestFocus();
                 }
+            }
+
+            public void mousePressed(MouseEvent e) {
+                mousePressed = true;
             }
         };
 
@@ -787,9 +791,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
             final List<Component> buttons = new ArrayList<Component>();
             for (int i = 0; i < no; i++) {
-                Component component = comps[i];
-                if (component instanceof JButton) {
-                    buttons.add(component);
+                try {
+                    Component component = comps[i];
+                    if (component instanceof JButton) {
+                        buttons.add(component);
+                    }
+                }
+                catch (NullPointerException e) {
+                    Log.error(e);
                 }
             }
 

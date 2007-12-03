@@ -59,7 +59,7 @@ public class TimeTrackingLabel extends JLabel {
                 long numMinutes = diff / MS_IN_A_MINUTE;
                 diff = diff % MS_IN_A_MINUTE;
                 long numSeconds = diff / MS_IN_A_SECOND;
-                diff = diff % MS_IN_A_SECOND;
+//                diff = diff % MS_IN_A_SECOND;
                 //long numMilliseconds = diff;
 
                 StringBuffer buf = new StringBuffer();

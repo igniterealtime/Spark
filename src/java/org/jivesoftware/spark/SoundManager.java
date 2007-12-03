@@ -28,8 +28,8 @@ import java.util.Map;
  */
 public class SoundManager {
 
-    private final Map clipMap = new HashMap();
-    private final Map fileMap = new HashMap();
+    private final Map<String,AudioClip> clipMap = new HashMap<String,AudioClip>();
+    private final Map<URL,AudioClip> fileMap = new HashMap<URL,AudioClip>();
 
     /**
      * Default constructor
@@ -52,7 +52,7 @@ public class SoundManager {
             }
         }
 
-        return (AudioClip)clipMap.get(clip);
+        return clipMap.get(clip);
     }
 
     /**
@@ -101,7 +101,7 @@ public class SoundManager {
             public void run() {
                 try {
                     final URL url = soundFile.toURL();
-                    AudioClip ac = (AudioClip)fileMap.get(url);
+                    AudioClip ac = fileMap.get(url);
                     if (ac == null) {
                         ac = Applet.newAudioClip(url);
                         fileMap.put(url, ac);

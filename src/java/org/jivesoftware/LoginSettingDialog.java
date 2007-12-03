@@ -148,8 +148,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
         }
         else if (Res.getString("ok").equals(value)) {
 
-            boolean valid = true;
-            valid = valid && generalPanel.validate_settings();
+            boolean valid = generalPanel.validate_settings();
             valid = valid && proxyPanel.validate_settings();
             valid = valid && ssoPanel.validate_settings();
             valid = valid && pkiPanel.validate_settings();
@@ -500,9 +499,9 @@ public class LoginSettingDialog implements PropertyChangeListener {
          */
         private void enableFields(boolean enable) {
             Component[] comps = getComponents();
-            for (int i = 0; i < comps.length; i++) {
-                if (comps[i] instanceof JTextField || comps[i] instanceof JComboBox) {
-                    JComponent comp = (JComponent)comps[i];
+            for (Component comp1 : comps) {
+                if (comp1 instanceof JTextField || comp1 instanceof JComboBox) {
+                    JComponent comp = (JComponent) comp1;
                     comp.setEnabled(enable);
                 }
             }
@@ -668,7 +667,6 @@ public class LoginSettingDialog implements PropertyChangeListener {
         private JRadioButton ssoMethodDNSRadio = new JRadioButton();
         private JLabel ssoMethodManualLabel = new JLabel();
         private JRadioButton ssoMethodManualRadio = new JRadioButton();
-        private JLabel ssoMethodLabel = new JLabel();
         private ButtonGroup ssoMethodRadio = new ButtonGroup();
 
 
@@ -834,7 +832,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             GSSAPIConfiguration config = new GSSAPIConfiguration();
             Configuration.setConfiguration(config);
 
-            LoginContext lc = null;
+            LoginContext lc;
             try {
                 lc = new LoginContext("com.sun.security.jgss.krb5.initiate");
                 lc.login();
@@ -923,7 +921,6 @@ public class LoginSettingDialog implements PropertyChangeListener {
         private JLabel       pkiStoreLabel = new JLabel();
         private JComboBox    pkiStore = new JComboBox();
         private JFileChooser fileChooser = new JFileChooser();
-        private JLabel       fileLabel = new JLabel(); 
         private JButton      fileButton = new JButton();
         private JTextField   fileField = new JTextField();
         private JPanel       filePanel = new JPanel();
@@ -1089,7 +1086,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 fileButton.setEnabled(usePKIBox.isSelected());
             }
             else if(e.getSource() == pkiStore) {
-                if(((String)pkiStore.getSelectedItem()).equals("PKCS#11")) {
+                if((pkiStore.getSelectedItem()).equals("PKCS#11")) {
                     filePanel.setBorder(BorderFactory.createTitledBorder("PKCS#11 Configuration File"));
                     if(ModelUtil.hasLength(localPreferences.getPKCSConfig())) {
                         fileField.setText(localPreferences.getPKCSConfig());
@@ -1097,7 +1094,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                         fileField.setText("");
                     }
                 }
-                else if(((String)pkiStore.getSelectedItem()).equals("X.509 PEM File")) {
+                else if((pkiStore.getSelectedItem()).equals("X.509 PEM File")) {
                     filePanel.setBorder(BorderFactory.createTitledBorder("X.509 Certificate"));
                     //if(ModelUtil.hasLength(localPreferences.getPEMFile())) {
                     //    fileField.setText(localPreferences.getPEMFile());
@@ -1105,7 +1102,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     //    fileField.setText("");
                     //}
                 }
-                else if(((String)pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
+                else if((pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
                     filePanel.setBorder(BorderFactory.createTitledBorder("Apple KeyChain"));
                 }
                 else {
@@ -1152,15 +1149,15 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
             localPreferences.setPKIEnabled(usePKIBox.isSelected());
             localPreferences.setPKIStore((String)pkiStore.getSelectedItem());
-            if(((String)pkiStore.getSelectedItem()).equals("PKCS#11")) {
+            if((pkiStore.getSelectedItem()).equals("PKCS#11")) {
                 localPreferences.setPKIStore("PKCS11");
                 localPreferences.setPKCSConfig(fileField.getText());
             }
-            else if(((String)pkiStore.getSelectedItem()).equals("X.509 Certificate")) {
+            else if((pkiStore.getSelectedItem()).equals("X.509 Certificate")) {
                 localPreferences.setPKIStore("X509");
                 //localPreferences.setPEMFile(fileField.getText());
             }
-            else if(((String)pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
+            else if((pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
                 localPreferences.setPKIStore("Apple");
             }
             else {

@@ -119,7 +119,6 @@ public class RoomCreationDialog extends JPanel {
                 String value = (String)pane.getValue();
                 if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
-                    return;
                 }
                 else if (Res.getString("create").equals(value)) {
                     boolean isValid = validatePanel();
@@ -135,7 +134,7 @@ public class RoomCreationDialog extends JPanel {
                             return;
                         }
                         catch (XMPPException e1) {
-
+                            // Nothing to do
                         }
 
                         groupChat = createGroupChat(nameField.getText(), serviceName);
@@ -168,11 +167,9 @@ public class RoomCreationDialog extends JPanel {
 
     private boolean validatePanel() {
         String roomName = nameField.getText();
-        String topic = topicField.getText();
         String password = new String(passwordField.getPassword());
         String confirmPassword = new String(confirmPasswordField.getPassword());
         boolean isPrivate = privateCheckbox.isSelected();
-        boolean isPermanent = permanentCheckBox.isSelected();
 
         // Check for valid information
         if (!ModelUtil.hasLength(roomName)) {
@@ -226,7 +223,7 @@ public class RoomCreationDialog extends JPanel {
 
     public boolean isPasswordProtected() {
         String password = new String(passwordField.getPassword());
-        if (password != null) {
+        if (password.length() > 0) {
             return true;
         }
 

@@ -46,7 +46,7 @@ public class GSSAPIConfiguration extends Configuration {
         }
     }
 
-    public boolean putAppConfigurationEntry(String name, String module, AppConfigurationEntry.LoginModuleControlFlag controlFlag, Map options) {
+    public boolean putAppConfigurationEntry(String name, String module, AppConfigurationEntry.LoginModuleControlFlag controlFlag, Map<String,String> options) {
         Vector<AppConfigurationEntry> v;
         if (configs.containsKey(name)) {
             v = configs.get(name);

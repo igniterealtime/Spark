@@ -13,7 +13,6 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;

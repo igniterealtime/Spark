@@ -327,7 +327,7 @@ public class AccountCreationWizard extends JPanel {
         boolean useSSL = localPreferences.isSSL();
         boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
-        ConnectionConfiguration config = null;
+        ConnectionConfiguration config;
 
         if (useSSL) {
             if (!hostPortConfigured) {

@@ -36,9 +36,9 @@ package org.jivesoftware.sparkimpl.updater;
  */
 
 
-import com.sun.net.ssl.TrustManager;
-import com.sun.net.ssl.TrustManagerFactory;
-import com.sun.net.ssl.X509TrustManager;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -78,9 +78,6 @@ public class EasyX509TrustManager implements X509TrustManager {
      */
     private static final Log LOG = LogFactory.getLog(EasyX509TrustManager.class);
 
-    /**
-     * Constructor for EasyX509TrustManager.
-     */
     public EasyX509TrustManager(KeyStore keystore) throws NoSuchAlgorithmException, KeyStoreException {
         super();
         TrustManagerFactory factory = TrustManagerFactory.getInstance("SunX509");
@@ -92,16 +89,16 @@ public class EasyX509TrustManager implements X509TrustManager {
         this.standardTrustManager = (X509TrustManager)trustmanagers[0];
     }
 
-    /**
-     * @see com.sun.net.ssl.X509TrustManager#isClientTrusted(X509Certificate[])
-     */
     public boolean isClientTrusted(X509Certificate[] certificates) {
-        return this.standardTrustManager.isClientTrusted(certificates);
+        try {
+            this.standardTrustManager.checkClientTrusted(certificates, null);
+            return true;
+        }
+        catch (CertificateException e) {
+            return false;
+        }
     }
 
-    /**
-     * @see com.sun.net.ssl.X509TrustManager#isServerTrusted(X509Certificate[])
-     */
     public boolean isServerTrusted(X509Certificate[] certificates) {
         if ((certificates != null) && LOG.isDebugEnabled()) {
             LOG.debug("Server certificate chain:");
@@ -121,12 +118,24 @@ public class EasyX509TrustManager implements X509TrustManager {
             return true;
         }
         else {
-            return this.standardTrustManager.isServerTrusted(certificates);
+            try {
+                this.standardTrustManager.checkServerTrusted(certificates, null);
+                return true;
+            }
+            catch (CertificateException e) {
+                return false;
+            }
         }
     }
 
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+    }
+
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+    }
+
     /**
-     * @see com.sun.net.ssl.X509TrustManager#getAcceptedIssuers()
+     * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
      */
     public X509Certificate[] getAcceptedIssuers() {
         return this.standardTrustManager.getAcceptedIssuers();

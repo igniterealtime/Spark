@@ -26,7 +26,6 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import javax.swing.SwingUtilities;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -178,9 +177,8 @@ public final class SessionManager implements ConnectionListener {
      */
     public void changePresence(Presence presence) {
         // Fire Presence Listeners
-        final Iterator presenceListeners = new ArrayList(this.presenceListeners).iterator();
-        while (presenceListeners.hasNext()) {
-            ((PresenceListener)presenceListeners.next()).presenceChanged(presence);
+        for (PresenceListener listener : new ArrayList<PresenceListener>(this.presenceListeners)) {
+            listener.presenceChanged(presence);
         }
 
         // Do NOT  send presence if disconnected.

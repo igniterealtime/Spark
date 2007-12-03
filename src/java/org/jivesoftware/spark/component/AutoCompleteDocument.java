@@ -12,7 +12,6 @@ package org.jivesoftware.spark.component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -24,7 +23,7 @@ import javax.swing.text.PlainDocument;
 
 public class AutoCompleteDocument extends PlainDocument {
 
-    private List dictionary = new ArrayList();
+    private List<String> dictionary = new ArrayList<String>();
     private JTextComponent comp;
 
     public AutoCompleteDocument(JTextComponent field, String[] aDictionary) {
@@ -48,8 +47,8 @@ public class AutoCompleteDocument extends PlainDocument {
     }
 
     public String autoComplete(String text) {
-        for (Iterator i = dictionary.iterator(); i.hasNext();) {
-            String word = (String)i.next();
+        for (Object aDictionary : dictionary) {
+            String word = (String) aDictionary;
             if (word.startsWith(text)) {
                 return word.substring(text.length());
             }
@@ -83,6 +82,6 @@ public class AutoCompleteDocument extends PlainDocument {
         frame.getContentPane().setLayout(layout);
         frame.getContentPane().add(new javax.swing.JLabel("Text Field: "));
         frame.getContentPane().add(field);
-        frame.show();
+        frame.setVisible(true);
     }
 }

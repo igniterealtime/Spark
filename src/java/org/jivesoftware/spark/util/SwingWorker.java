@@ -11,8 +11,6 @@
 package org.jivesoftware.spark.util;
 
 
-import org.jivesoftware.spark.plugin.Invokable;
-
 import javax.swing.SwingUtilities;
 
 /**
@@ -23,8 +21,6 @@ import javax.swing.SwingUtilities;
  */
 public abstract class SwingWorker {
     private Object value;  // see getValue(), setValue()
-    private Thread thread;
-    private Invokable invokable;
 
     /**
      * Class to maintain reference to current worker thread
@@ -51,6 +47,8 @@ public abstract class SwingWorker {
     /**
      * Get the value produced by the worker thread, or null if it
      * hasn't been constructed yet.
+     *
+     * @return Object produced by worker thread.
      */
     protected synchronized Object getValue() {
         return value;
@@ -58,6 +56,8 @@ public abstract class SwingWorker {
 
     /**
      * Set the value produced by worker thread
+     *
+     * @param x Sets value for worker thread.
      */
     private synchronized void setValue(Object x) {
         value = x;
@@ -65,6 +65,8 @@ public abstract class SwingWorker {
 
     /**
      * Compute the value to be returned by the <code>get</code> method.
+     *
+     * @return Object computed.
      */
     public abstract Object construct();
 
@@ -117,7 +119,7 @@ public abstract class SwingWorker {
      * and then exit.
      */
     public SwingWorker() {
-        final Runnable doFinished = new Runnable() {
+        new Runnable() {
             public void run() {
                 finished();
             }
@@ -152,10 +154,6 @@ public abstract class SwingWorker {
         if (t != null) {
             t.start();
         }
-    }
-
-    public void setInvokable(Invokable invoker) {
-        invokable = invoker;
     }
 }
 

@@ -293,11 +293,11 @@ public class SparkRes {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("org/jivesoftware/resource/spark");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         return prb.getString(propertyName);
     }
 
-    public static final ImageIcon getImageIcon(String imageName) {
+    public static ImageIcon getImageIcon(String imageName) {
         try {
             final String iconURI = getString(imageName);
             final URL imageURL = cl.getResource(iconURI);
@@ -309,7 +309,7 @@ public class SparkRes {
         return null;
     }
 
-    public static final URL getURL(String propertyName) {
+    public static URL getURL(String propertyName) {
         return cl.getResource(getString(propertyName));
     }
 
@@ -342,32 +342,36 @@ public class SparkRes {
         File[] files = new File("c:\\code\\liveassistant\\client\\resources\\images").listFiles();
         final int no = files != null ? files.length : 0;
         for (int i = 0; i < no; i++) {
-            File imageFile = files[i];
-            String name = imageFile.getName();
+            try {
+                File imageFile = files[i];
+                String name = imageFile.getName();
 
-            // Check to see if the name of the file exists
-            boolean exists = false;
-            Enumeration enumeration = prb.getKeys();
-            while (enumeration.hasMoreElements()) {
-                String token = (String)enumeration.nextElement();
-                String value = prb.getString(token);
-                if (value.endsWith(name)) {
-                    exists = true;
+                // Check to see if the name of the file exists
+                boolean exists = false;
+                Enumeration enumeration = prb.getKeys();
+                while (enumeration.hasMoreElements()) {
+                    String token = (String)enumeration.nextElement();
+                    String value = prb.getString(token);
+                    if (value.endsWith(name)) {
+                        exists = true;
+                    }
+                }
+
+                if (!exists) {
+                    System.out.println(imageFile.getAbsolutePath() + " is not used.");
                 }
             }
-
-            if (!exists) {
-                System.out.println(imageFile.getAbsolutePath() + " is not used.");
+            catch (NullPointerException e) {
+                // TODO: Should we worry about this?
             }
         }
     }
 
-    public static final URL getURLWithoutException(String propertyName) {
+    public static URL getURLWithoutException(String propertyName) {
         // Otherwise, load and add to cache.
         try {
             final String iconURI = getString(propertyName);
-            final URL imageURL = cl.getResource(iconURI);
-            return imageURL;
+            return cl.getResource(iconURI);
         }
         catch (Exception ex) {
             Log.debug(propertyName + " not found.");

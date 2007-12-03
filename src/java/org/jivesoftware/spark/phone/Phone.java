@@ -8,8 +8,6 @@
 
 package org.jivesoftware.spark.phone;
 
-import org.jivesoftware.spark.ui.ContactItem;
-
 import javax.swing.Action;
 
 import java.util.Collection;

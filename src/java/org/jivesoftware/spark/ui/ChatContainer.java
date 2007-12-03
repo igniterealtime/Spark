@@ -28,7 +28,6 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
@@ -66,7 +65,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
@@ -257,7 +255,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Add to PresenceMap
         presenceMap.put(room.getRoomname(), myListener);
 
-        String tooltip = "";
+        String tooltip;
         if (room instanceof ChatRoomImpl) {
             tooltip = ((ChatRoomImpl)room).getParticipantJID();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl)room).getParticipantJID());
@@ -315,7 +313,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void addContainerComponent(ContainerComponent comp) {
         createFrameIfNeeded();
 
-        SparkTab tab = addTab(comp.getTabTitle(), comp.getTabIcon(), comp.getGUI(), comp.getToolTipDescription());
+        addTab(comp.getTabTitle(), comp.getTabIcon(), comp.getGUI(), comp.getToolTipDescription());
         chatFrame.setTitle(comp.getFrameTitle());
         checkVisibility(comp.getGUI());
 
@@ -515,9 +513,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        final Iterator rooms = new ArrayList<ChatRoom>(chatRoomList).iterator();
-        while (rooms.hasNext()) {
-            ChatRoom chatRoom = (ChatRoom)rooms.next();
+        for (ChatRoom chatRoom : new ArrayList<ChatRoom>(chatRoomList)) {
             closeTab(chatRoom);
             chatRoom.closeChatRoom();
         }
@@ -542,7 +538,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         fireChatRoomLeft(room);
         room.leaveChatRoom();
 
-        final PacketListener listener = (PacketListener)presenceMap.get(room.getRoomname());
+        final PacketListener listener = presenceMap.get(room.getRoomname());
         if (listener != null && SparkManager.getConnection().isConnected()) {
             SparkManager.getConnection().removePacketListener(listener);
         }
@@ -553,7 +549,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param roomName the name of the ChatRoom.
      * @return the ChatRoom
-     * @throws ChatRoomNotFoundException
+     * @throws ChatRoomNotFoundException if the room was not found.
      */
     public ChatRoom getChatRoom(String roomName) throws ChatRoomNotFoundException {
         for (int i = 0; i < getTabCount(); i++) {
@@ -661,20 +657,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void messageReceived(ChatRoom room, Message message) {
         room.increaseUnreadMessageCount();
 
-        // Check to see if it's a room update.
-        String from = message.getFrom();
-        String insertMessage = message.getBody();
-        if (room.getChatType() == Message.Type.chat) {
-            from = StringUtils.parseName(from);
-        }
-        else {
-            from = StringUtils.parseResource(from);
-        }
-
-        if (ModelUtil.hasLength(from)) {
-            insertMessage = from + ": " + insertMessage;
-        }
-
         fireNotifyOnMessage(room);
     }
 
@@ -758,7 +740,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void closeActiveRoom() {
-        ChatRoom room = null;
+        ChatRoom room;
         try {
             room = getActiveChatRoom();
         }
@@ -769,12 +751,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 if (canClose) {
                     closeTab(comp);
                 }
-                return;
             }
 
-            if (room == null) {
-                return;
-            }
+            return;
         }
 
         // Confirm end session
@@ -784,12 +763,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 room.closeChatRoom();
-                return;
             }
         }
         else {
             room.closeChatRoom();
-            return;
         }
 
 
@@ -797,9 +774,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        Iterator iter = chatRoomList.iterator();
-        while (iter.hasNext()) {
-            ChatRoom room = (ChatRoom)iter.next();
+        for (ChatRoom room : chatRoomList) {
             buf.append("Roomname=").append(room.getRoomname()).append("\n");
         }
         return buf.toString();
@@ -844,9 +819,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been opened.
      */
     protected void fireChatRoomOpened(ChatRoom room) {
-        final Iterator iter = new ArrayList(chatRoomListeners).iterator();
-        while (iter.hasNext()) {
-            ((ChatRoomListener)iter.next()).chatRoomOpened(room);
+        for (ChatRoomListener chatRoomListener : new ArrayList<ChatRoomListener>(chatRoomListeners)) {
+            chatRoomListener.chatRoomOpened(room);
         }
     }
 
@@ -856,10 +830,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been left
      */
     protected void fireChatRoomLeft(ChatRoom room) {
-        final Iterator iter = new HashSet(chatRoomListeners).iterator();
-        while (iter.hasNext()) {
-            final Object chatRoomListener = iter.next();
-            ((ChatRoomListener)chatRoomListener).chatRoomLeft(room);
+        for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+            chatRoomListener.chatRoomLeft(room);
         }
     }
 
@@ -869,10 +841,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been closed.
      */
     protected void fireChatRoomClosed(ChatRoom room) {
-        final Iterator iter = new HashSet(chatRoomListeners).iterator();
-        while (iter.hasNext()) {
-            final Object chatRoomListener = iter.next();
-            ((ChatRoomListener)chatRoomListener).chatRoomClosed(room);
+        for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+            chatRoomListener.chatRoomClosed(room);
         }
     }
 
@@ -882,9 +852,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been activated.
      */
     protected void fireChatRoomActivated(ChatRoom room) {
-        final Iterator iter = new HashSet(chatRoomListeners).iterator();
-        while (iter.hasNext()) {
-            ((ChatRoomListener)iter.next()).chatRoomActivated(room);
+        for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+            chatRoomListener.chatRoomActivated(room);
         }
     }
 
@@ -897,9 +866,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     protected void fireUserHasJoined(final ChatRoom room, final String userid) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final Iterator iter = new HashSet(chatRoomListeners).iterator();
-                while (iter.hasNext()) {
-                    ((ChatRoomListener)iter.next()).userHasJoined(room, userid);
+                for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+                    chatRoomListener.userHasJoined(room, userid);
                 }
             }
         });
@@ -915,9 +883,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     protected void fireUserHasLeft(final ChatRoom room, final String userid) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final Iterator iter = new HashSet(chatRoomListeners).iterator();
-                while (iter.hasNext()) {
-                    ((ChatRoomListener)iter.next()).userHasLeft(room, userid);
+                for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+                    chatRoomListener.userHasLeft(room, userid);
                 }
             }
         });
@@ -964,7 +931,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void fireChatRoomStateUpdated(final ChatRoom room) {
         final int index = indexOfComponent(room);
         if (index != -1) {
-            SparkTab tab = getTabAt(index);
             SparkManager.getChatManager().notifySparkTabHandlers(room);
         }
     }
@@ -1021,7 +987,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             toaster.setDisplayTime(5000);
             toaster.setBorder(BorderFactory.createBevelBorder(0));
 
-            String nickname = nickname = room.getRoomTitle();
+            String nickname = room.getRoomTitle();
             toaster.setTitle(nickname);
             toaster.setToasterHeight(150);
             toaster.setToasterWidth(200);
@@ -1029,7 +995,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             int size = room.getTranscripts().size();
             if (size > 0) {
-                Message message = (Message)room.getTranscripts().get(size - 1);
+                Message message = room.getTranscripts().get(size - 1);
 
                 toaster.showToaster(room.getTabIcon(), message.getBody());
             }
@@ -1080,6 +1046,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     chatFrame.setTitle(room.getRoomTitle());
                 }
                 catch (ChatRoomNotFoundException e1) {
+                    // Nothing to do
                 }
 
             }
@@ -1124,7 +1091,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         if (mainWindow.isFocusOwner()) {
             frame.setVisible(true);
-            return;
         }
         else {
             // Set to new tab.
@@ -1272,7 +1238,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     // Handle key listener events for mac only :)
     public void keyTyped(KeyEvent keyEvent) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // Nothing to do.
     }
 
     public void keyPressed(KeyEvent keyEvent) {
@@ -1288,7 +1254,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void keyReleased(KeyEvent keyEvent) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // Nothing to do.
     }
 
     /**

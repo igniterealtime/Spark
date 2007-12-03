@@ -32,17 +32,17 @@ public class ConfigurationRes {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("org/jivesoftware/resource/configuration");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         return prb.getString(propertyName);
     }
 
-    public static final ImageIcon getImageIcon(String imageName) {
+    public static ImageIcon getImageIcon(String imageName) {
         final String iconURI = getString(imageName);
         final URL imageURL = cl.getResource(iconURI);
         return new ImageIcon(imageURL);
     }
 
-    public static final URL getURL(String propertyName) {
+    public static URL getURL(String propertyName) {
         return cl.getResource(getString(propertyName));
     }
 }

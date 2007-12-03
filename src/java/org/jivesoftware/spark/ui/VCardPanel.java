@@ -27,7 +27,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -47,8 +46,6 @@ public class VCardPanel extends JPanel {
 
     private final String jid;
     private final JLabel avatarImage;
-
-    private static SimpleDateFormat utcFormat = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
 
     private String emailAddress = "";
 

@@ -76,26 +76,6 @@ public class BrowserLauncher {
     private static boolean loadedWithoutErrors;
 
     /**
-     * The com.apple.mrj.MRJFileUtils class
-     */
-    private static Class mrjFileUtilsClass;
-
-    /**
-     * The com.apple.mrj.MRJOSType class
-     */
-    private static Class mrjOSTypeClass;
-
-    /**
-     * The com.apple.MacOS.MacOSError class
-     */
-    private static Class macOSErrorClass;
-
-    /**
-     * The com.apple.MacOS.AEDesc class
-     */
-    private static Class aeDescClass;
-
-    /**
      * The <init>(int) method of com.apple.MacOS.AETarget
      */
     private static Constructor aeTargetConstructor;
@@ -277,19 +257,18 @@ public class BrowserLauncher {
             case MRJ_2_0:
                 try {
                     Class aeTargetClass = Class.forName("com.apple.MacOS.AETarget");
-                    macOSErrorClass = Class.forName("com.apple.MacOS.MacOSError");
                     Class osUtilsClass = Class.forName("com.apple.MacOS.OSUtils");
                     Class appleEventClass = Class.forName("com.apple.MacOS.AppleEvent");
                     Class aeClass = Class.forName("com.apple.MacOS.ae");
-                    aeDescClass = Class.forName("com.apple.MacOS.AEDesc");
+                    Class aeDescClass = Class.forName("com.apple.MacOS.AEDesc");
 
-                    aeTargetConstructor = aeTargetClass.getDeclaredConstructor(new Class[]{int.class});
-                    appleEventConstructor = appleEventClass.getDeclaredConstructor(new Class[]{int.class, int.class, aeTargetClass, int.class, int.class});
-                    aeDescConstructor = aeDescClass.getDeclaredConstructor(new Class[]{String.class});
+                    aeTargetConstructor = aeTargetClass.getDeclaredConstructor(int.class);
+                    appleEventConstructor = appleEventClass.getDeclaredConstructor(int.class, int.class, aeTargetClass, int.class, int.class);
+                    aeDescConstructor = aeDescClass.getDeclaredConstructor(String.class);
 
-                    makeOSType = osUtilsClass.getDeclaredMethod("makeOSType", new Class[]{String.class});
-                    putParameter = appleEventClass.getDeclaredMethod("putParameter", new Class[]{int.class, aeDescClass});
-                    sendNoReply = appleEventClass.getDeclaredMethod("sendNoReply", new Class[]{});
+                    makeOSType = osUtilsClass.getDeclaredMethod("makeOSType", String.class);
+                    putParameter = appleEventClass.getDeclaredMethod("putParameter", int.class, aeDescClass);
+                    sendNoReply = appleEventClass.getDeclaredMethod("sendNoReply");
 
                     Field keyDirectObjectField = aeClass.getDeclaredField("keyDirectObject");
                     keyDirectObject = (Integer)keyDirectObjectField.get(null);
@@ -317,12 +296,12 @@ public class BrowserLauncher {
                 break;
             case MRJ_2_1:
                 try {
-                    mrjFileUtilsClass = Class.forName("com.apple.mrj.MRJFileUtils");
-                    mrjOSTypeClass = Class.forName("com.apple.mrj.MRJOSType");
+                    Class mrjFileUtilsClass = Class.forName("com.apple.mrj.MRJFileUtils");
+                    Class mrjOSTypeClass = Class.forName("com.apple.mrj.MRJOSType");
                     Field systemFolderField = mrjFileUtilsClass.getDeclaredField("kSystemFolderType");
                     kSystemFolderType = systemFolderField.get(null);
-                    findFolder = mrjFileUtilsClass.getDeclaredMethod("findFolder", new Class[]{mrjOSTypeClass});
-                    getFileType = mrjFileUtilsClass.getDeclaredMethod("getFileType", new Class[]{File.class});
+                    findFolder = mrjFileUtilsClass.getDeclaredMethod("findFolder", mrjOSTypeClass);
+                    getFileType = mrjFileUtilsClass.getDeclaredMethod("getFileType", File.class);
                 }
                 catch (ClassNotFoundException cnfe) {
                     errorMessage = cnfe.getMessage();
@@ -365,16 +344,15 @@ public class BrowserLauncher {
         switch (jvm) {
             case MRJ_2_0:
                 try {
-                    Integer finderCreatorCode = (Integer)makeOSType.invoke(null, new Object[]{FINDER_CREATOR});
-                    Object aeTarget = aeTargetConstructor.newInstance(new Object[]{finderCreatorCode});
-                    Integer gurlType = (Integer)makeOSType.invoke(null, new Object[]{GURL_EVENT});
-                    Object appleEvent = appleEventConstructor.newInstance(new Object[]{gurlType, gurlType, aeTarget, kAutoGenerateReturnID, kAnyTransactionID});
+                    Integer finderCreatorCode = (Integer)makeOSType.invoke(null, FINDER_CREATOR);
+                    Object aeTarget = aeTargetConstructor.newInstance(finderCreatorCode);
+                    Integer gurlType = (Integer)makeOSType.invoke(null, GURL_EVENT);
                     // Don't set browser = appleEvent because then the next time we call
                     // locateBrowser(), we'll get the same AppleEvent, to which we'll already have
                     // added the relevant parameter. Instead, regenerate the AppleEvent every time.
                     // There's probably a way to do this better; if any has any ideas, please let
                     // me know.
-                    return appleEvent;
+                    return appleEventConstructor.newInstance(gurlType, gurlType, aeTarget, kAutoGenerateReturnID, kAnyTransactionID);
                 }
                 catch (IllegalAccessException iae) {
                     browser = null;
@@ -394,7 +372,7 @@ public class BrowserLauncher {
             case MRJ_2_1:
                 File systemFolder;
                 try {
-                    systemFolder = (File)findFolder.invoke(null, new Object[]{kSystemFolderType});
+                    systemFolder = (File)findFolder.invoke(null, kSystemFolderType);
                 }
                 catch (IllegalArgumentException iare) {
                     browser = null;
@@ -413,20 +391,19 @@ public class BrowserLauncher {
                 }
                 String[] systemFolderFiles = systemFolder.list();
                 // Avoid a FilenameFilter because that can't be stopped mid-list
-                for (int i = 0; i < systemFolderFiles.length; i++) {
+                for (String systemFolderFile : systemFolderFiles) {
                     try {
-                        File file = new File(systemFolder, systemFolderFiles[i]);
+                        File file = new File(systemFolder, systemFolderFile);
                         if (!file.isFile()) {
                             continue;
                         }
-                        Object fileType = getFileType.invoke(null, new Object[]{file});
+                        Object fileType = getFileType.invoke(null, file);
                         if (FINDER_TYPE.equals(fileType.toString())) {
                             browser = file.toString();    // Actually the Finder, but that's OK
                             return browser;
                         }
                     }
                     catch (IllegalArgumentException iare) {
-                        browser = browser;
                         errorMessage = iare.getMessage();
                         return null;
                     }
@@ -470,11 +447,11 @@ public class BrowserLauncher {
         }
         switch (jvm) {
             case MRJ_2_0:
-                Object aeDesc = null;
+                Object aeDesc;
                 try {
-                    aeDesc = aeDescConstructor.newInstance(new Object[]{url});
-                    putParameter.invoke(browser, new Object[]{keyDirectObject, aeDesc});
-                    sendNoReply.invoke(browser, new Object[]{});
+                    aeDesc = aeDescConstructor.newInstance(url);
+                    putParameter.invoke(browser, keyDirectObject, aeDesc);
+                    sendNoReply.invoke(browser);
                 }
                 catch (InvocationTargetException ite) {
                     throw new IOException("InvocationTargetException while creating AEDesc: " + ite.getMessage());
@@ -484,10 +461,6 @@ public class BrowserLauncher {
                 }
                 catch (InstantiationException ie) {
                     throw new IOException("InstantiationException while creating AEDesc: " + ie.getMessage());
-                }
-                finally {
-                    aeDesc = null;    // Encourage it to get disposed if it was created
-                    browser = null;    // Ditto
                 }
                 break;
             case MRJ_2_1:
@@ -503,7 +476,7 @@ public class BrowserLauncher {
                 // Assume that we're on Unix and that Netscape is installed
 
                 // First, attempt to open the URL in a currently running session of Netscape
-                Process process = Runtime.getRuntime().exec((String)browser +
+                Process process = Runtime.getRuntime().exec(browser +
                         NETSCAPE_OPEN_PARAMETER_START + url +
                         NETSCAPE_OPEN_PARAMETER_END);
                 try {
@@ -526,6 +499,9 @@ public class BrowserLauncher {
     /**
      * THERE HAS GOT TO BE A BETTER WAY TO DO THIS -- email out to mailing
      * lists; waiting for reply.
+     *
+     * @param url URL to launch.
+     * @throws IOException if there was an error while launching.
      */
     static protected void launchForOSX(String url)
             throws IOException {

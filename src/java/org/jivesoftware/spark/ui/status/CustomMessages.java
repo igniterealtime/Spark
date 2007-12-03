@@ -119,16 +119,15 @@ public class CustomMessages {
         final List customItems = load();
 
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        Iterator statusItems = statusBar.getStatusList().iterator();
-        while (statusItems.hasNext()) {
-            StatusItem item = (StatusItem)statusItems.next();
+        for (Object o : statusBar.getStatusList()) {
+            StatusItem item = (StatusItem) o;
             JiveTreeNode node = new JiveTreeNode(item.getText(), false, item.getIcon());
             Iterator cMessages = customItems.iterator();
 
             node.setAllowsChildren(true);
 
             while (cMessages.hasNext()) {
-                CustomStatusItem csi = (CustomStatusItem)cMessages.next();
+                CustomStatusItem csi = (CustomStatusItem) o;
                 if (csi.getType().equals(item.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
@@ -161,7 +160,6 @@ public class CustomMessages {
                 String value = (String)optionPane.getValue();
                 if (Res.getString("close").equals(value)) {
                     optionsDialog.setVisible(false);
-                    return;
                 }
             }
         });
@@ -220,14 +218,12 @@ public class CustomMessages {
                     JPopupMenu popup = new JPopupMenu();
                     Action deleteAction = new AbstractAction() {
                         public void actionPerformed(ActionEvent actionEvent) {
-                            List list = new ArrayList();
-                            Iterator iter = customItems.iterator();
-                            while (iter.hasNext()) {
-                                CustomStatusItem item = (CustomStatusItem)iter.next();
+                            List<CustomStatusItem> list = new ArrayList<CustomStatusItem>();
+                            for (Object customItem : customItems) {
+                                CustomStatusItem item = (CustomStatusItem) customItem;
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
 
-                                }
-                                else {
+                                } else {
                                     list.add(item);
                                 }
                             }
@@ -245,9 +241,8 @@ public class CustomMessages {
                     Action editAction = new AbstractAction() {
                         public void actionPerformed(ActionEvent actionEvent) {
                             List newItems = load();
-                            Iterator iter = newItems.iterator();
-                            while (iter.hasNext()) {
-                                CustomStatusItem item = (CustomStatusItem)iter.next();
+                            for (Object newItem : newItems) {
+                                CustomStatusItem item = (CustomStatusItem) newItem;
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
                                     CustomStatus customStatus = new CustomStatus();
                                     customStatus.showEditDialog(item);
@@ -277,9 +272,8 @@ public class CustomMessages {
     private static void reloadTree(JiveTreeNode rootNode, Tree tree) {
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         rootNode.removeAllChildren();
-        Iterator statusItems = statusBar.getStatusList().iterator();
-        while (statusItems.hasNext()) {
-            StatusItem statusItem = (StatusItem)statusItems.next();
+        for (Object o : statusBar.getStatusList()) {
+            StatusItem statusItem = (StatusItem) o;
             JiveTreeNode node = new JiveTreeNode(statusItem.getText(), false, statusItem.getIcon());
 
             List newItems = load();
@@ -288,7 +282,7 @@ public class CustomMessages {
             node.setAllowsChildren(true);
 
             while (cMessages.hasNext()) {
-                CustomStatusItem csi = (CustomStatusItem)cMessages.next();
+                CustomStatusItem csi = (CustomStatusItem) o;
                 if (csi.getType().equals(statusItem.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
@@ -303,7 +297,6 @@ public class CustomMessages {
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         model.nodeStructureChanged(rootNode);
         tree.expandTree();
-        return;
     }
 
     private static class CustomStatus extends JPanel {
@@ -343,10 +336,9 @@ public class CustomMessages {
 
             typeBox.setRenderer(new ListIconRenderer());
             // Add Types
-            Iterator statusIterator = statusBar.getStatusList().iterator();
-            while (statusIterator.hasNext()) {
-                final StatusItem statusItem = (StatusItem)statusIterator.next();
-                ImageIcon icon = (ImageIcon)statusItem.getIcon();
+            for (Object o : statusBar.getStatusList()) {
+                final StatusItem statusItem = (StatusItem) o;
+                ImageIcon icon = (ImageIcon) statusItem.getIcon();
 
                 ImageIcon newIcon = new ImageIcon(icon.getImage());
                 newIcon.setDescription(statusItem.getText());
@@ -414,7 +406,6 @@ public class CustomMessages {
                     String value = (String)optionPane.getValue();
                     if (Res.getString("cancel").equals(value)) {
                         optionsDialog.setVisible(false);
-                        return;
                     }
                     else if (Res.getString("ok").equals(value)) {
                         List list = load();

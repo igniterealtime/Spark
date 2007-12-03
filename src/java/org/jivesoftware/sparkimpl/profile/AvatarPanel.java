@@ -137,7 +137,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
     /**
      * Returns the Icon representation of the Avatar.
      *
-     * @return
+     * @return Icon of avatar.
      */
     public Icon getAvatar() {
         return avatar.getIcon();
@@ -146,7 +146,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
     /**
      * Returns the image file to use as the avatar.
      *
-     * @return
+     * @return File of avatar.
      */
     public File getAvatarFile() {
         return avatarFile;
@@ -156,7 +156,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         // init file chooser (if not already done)
         initFileChooser();
 
-        fileChooser.show();
+        fileChooser.setVisible(true);
 
         if (fileChooser.getDirectory() != null && fileChooser.getFile() != null) {
             File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
@@ -231,12 +231,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
             String extension = getExtension(f);
             if (extension != null) {
-                if (
-                        extension.equals(gif) ||
-                                extension.equals(jpeg) ||
-                                extension.equals(jpg) ||
-                                extension.equals(png)
-                        ) {
+                if (extension.equals(gif) || extension.equals(jpeg) ||extension.equals(jpg) || extension.equals(png)) {
                     return true;
                 }
                 else {
@@ -269,11 +264,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     public void allowEditing(boolean allowEditing) {
         Component[] comps = getComponents();
-        final int no = comps != null ? comps.length : 0;
-        for (int i = 0; i < no; i++) {
-            Component comp = comps[i];
-            if (comp instanceof JTextField) {
-                ((JTextField)comp).setEditable(allowEditing);
+        if (comps != null) {
+            final int no = comps.length;
+            for (int i = 0; i < no; i++) {
+                Component comp = comps[i];
+                if (comp instanceof JTextField) {
+                    ((JTextField)comp).setEditable(allowEditing);
+                }
             }
         }
     }

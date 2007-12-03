@@ -36,7 +36,6 @@ import javax.swing.plaf.basic.BasicPanelUI;
  * @author Derek DeMoro
  */
 public class TabPanelUI extends BasicPanelUI {
-    private Color backgroundColor = new Color(0, 0, 0, 0);
 
     private boolean selected;
     private boolean hideBorder;
@@ -56,13 +55,6 @@ public class TabPanelUI extends BasicPanelUI {
     }
 
     public void setSelected(boolean selected) {
-        if (selected) {
-            backgroundColor = getSelectedEndColor();
-        }
-        else {
-            backgroundColor = new Color(0, 0, 0, 0);
-        }
-
         this.selected = selected;
     }
 
@@ -82,7 +74,6 @@ public class TabPanelUI extends BasicPanelUI {
 
         int x = vInsets.left;
         int y = vInsets.top;
-        int arc = 8;
 
 
         Shape vOldClip = g.getClip();
@@ -139,41 +130,6 @@ public class TabPanelUI extends BasicPanelUI {
     }
 
 
-    private Color getSelectedStartColor() {
-        Color uiStartColor = (Color)UIManager.get("SparkTabbedPane.startColor");
-        if (uiStartColor != null) {
-            return uiStartColor;
-        }
-
-        if (Spark.isCustomBuild()) {
-            String end = Default.getString(Default.CONTACT_GROUP_END_COLOR);
-            return getColor(end);
-        }
-        else {
-            return new Color(193, 216, 248);
-        }
-    }
-
-
-    private Color getSelectedEndColor() {
-        if (fillerColor != null) {
-            return fillerColor;
-        }
-
-        Color uiEndColor = (Color)UIManager.get("SparkTabbedPane.endColor");
-        if (uiEndColor != null) {
-            return uiEndColor;
-        }
-
-        if (Spark.isCustomBuild()) {
-            String end = Default.getString(Default.CONTACT_GROUP_END_COLOR);
-            return getColor(end);
-        }
-        else {
-            return new Color(180, 207, 247);
-        }
-    }
-
     private Color getBorderColor() {
         if (border != null) {
             return border;
@@ -195,10 +151,8 @@ public class TabPanelUI extends BasicPanelUI {
 
 
     private static Color getColor(String commaColorString) {
-        Color color = null;
+        Color color;
         try {
-            color = null;
-
             StringTokenizer tkn = new StringTokenizer(commaColorString, ",");
             color = new Color(Integer.parseInt(tkn.nextToken()), Integer.parseInt(tkn.nextToken()), Integer.parseInt(tkn.nextToken()));
         }

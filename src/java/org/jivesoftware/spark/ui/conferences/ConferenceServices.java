@@ -37,7 +37,6 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -47,7 +46,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -65,11 +63,9 @@ import javax.swing.SwingUtilities;
 public class ConferenceServices {
     private static BookmarksUI bookmarksUI;
 
-    private boolean mucSupported;
-
     public ConferenceServices() {
         ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
-        mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
+        boolean mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
 
         if (mucSupported) {
             // Add an invitation listener.
@@ -81,7 +77,6 @@ public class ConferenceServices {
 
             // Add Join Conference Button to StatusBar
             // Get command panel and add View Online/Offline, Add Contact
-            StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
             JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
             RolloverButton joinConference = new RolloverButton(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
@@ -198,9 +193,6 @@ public class ConferenceServices {
      * Persists bookmarked data, if any.
      */
     public void shutdown() {
-        if (!mucSupported) {
-            return;
-        }
     }
 
     /**
@@ -272,9 +264,8 @@ public class ConferenceServices {
         String serviceName = null;
         Collection services = bookmarksUI.getMucServices();
         if (services != null) {
-            Iterator serviceIterator = services.iterator();
-            while (serviceIterator.hasNext()) {
-                serviceName = (String)serviceIterator.next();
+            for (Object service : services) {
+                serviceName = (String) service;
                 break;
             }
         }
@@ -335,10 +326,9 @@ public class ConferenceServices {
 
     private void startConference(Collection items) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        List jids = new ArrayList();
-        Iterator contacts = items.iterator();
-        while (contacts.hasNext()) {
-            ContactItem item = (ContactItem)contacts.next();
+        List<String> jids = new ArrayList<String>();
+        for (Object item1 : items) {
+            ContactItem item = (ContactItem) item1;
 
             ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
             contactGroup.clearSelection();

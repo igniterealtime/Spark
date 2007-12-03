@@ -14,22 +14,12 @@ import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
-import org.jivesoftware.smack.RosterListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.RosterPacket;
-import org.jivesoftware.smack.packet.StreamError;
+import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.LastActivityManager;
 import org.jivesoftware.smackx.SharedGroupManager;
 import org.jivesoftware.smackx.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
@@ -41,7 +31,6 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -50,10 +39,8 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -62,38 +49,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
     private JPanel mainPanel = new JPanel();
@@ -117,13 +75,13 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private final JCheckBoxMenuItem showHideMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineGroupMenu = new JCheckBoxMenuItem();
 
-    private List sharedGroups = new ArrayList();
+    private List<String> sharedGroups = new ArrayList<String>();
 
     private final List<ContextMenuListener> contextListeners = new ArrayList<ContextMenuListener>();
 
-    private List initialPresences = new ArrayList();
+    private List<Presence> initialPresences = new ArrayList<Presence>();
     private final Timer presenceTimer = new Timer();
-    private final List dndListeners = new ArrayList();
+    private final List<FileDropListener> dndListeners = new ArrayList<FileDropListener>();
     private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
     private Properties props;
     private File propertiesFile;
@@ -263,6 +221,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * Updates the users presence.
      *
      * @param presence the user to update.
+     * @throws Exception if there is a problem while updating the user's presence.
      */
     private synchronized void updateUserPresence(Presence presence) throws Exception {
         if (presence.getError() != null) {
@@ -305,12 +264,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * Updates the presence of one individual based on their JID.
      *
      * @param presence the users presence.
+     * @param entry    the roster entry being updated.
      * @param bareJID  the bare jid of the user.
      */
     private void updateContactItemsPresence(Presence presence, RosterEntry entry, String bareJID) {
-        final Iterator groupIterator = groupList.iterator();
-        while (groupIterator.hasNext()) {
-            ContactGroup group = (ContactGroup)groupIterator.next();
+        for (ContactGroup group : groupList) {
             ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
                 if (group == offlineGroup) {
@@ -330,9 +288,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param bareJID  the bareJID of the user.
      */
     private void moveToOfflineGroup(final Presence presence, final String bareJID) {
-        final Iterator groupIterator = new ArrayList(groupList).iterator();
-        while (groupIterator.hasNext()) {
-            final ContactGroup group = (ContactGroup)groupIterator.next();
+        for (ContactGroup grpItem : new ArrayList<ContactGroup>(groupList)) {
+            final ContactGroup group = grpItem;
             final ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
                 int numberOfMillisecondsInTheFuture = 3000;
@@ -366,8 +323,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         }
                     }, timeToRun);
                 }
-            }
-            else {
+            } else {
                 final ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
                 if (offlineItem != null) {
                     offlineItem.setPresence(presence);
@@ -418,7 +374,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     contactItem = contactGroup.getContactItemByJID(entry.getUser());
                 }
 
-                contactItem.setPresence(presence);
+                try {
+                    contactItem.setPresence(presence);
+                }
+                catch (NullPointerException e) {
+                    // TODO: Hrm, what should we do in this scenario?
+                }
                 contactItem.setAvailable(true);
                 toggleGroupVisibility(contactGroup.getGroupName(), true);
 
@@ -522,9 +483,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             public void run() {
                 Roster roster = SparkManager.getConnection().getRoster();
 
-                Iterator jids = addresses.iterator();
-                while (jids.hasNext()) {
-                    String jid = (String)jids.next();
+                for (Object address : addresses) {
+                    String jid = (String) address;
                     RosterEntry entry = roster.getEntry(jid);
                     addUser(entry);
                 }
@@ -538,11 +498,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param entry the <code>RosterEntry</code> of the the user.
      */
     private void addUser(RosterEntry entry) {
-        String name = entry.getName();
-        if (!ModelUtil.hasLength(name)) {
-            name = entry.getUser();
-        }
-
         String nickname = entry.getName();
         if (!ModelUtil.hasLength(nickname)) {
             nickname = entry.getUser();
@@ -550,7 +505,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         ContactItem newContactItem = new ContactItem(nickname, entry.getUser());
 
-        if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)) {
+        if (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from) {
             // Ignore, since the new user is pending to be added.
             for (RosterGroup group : entry.getGroups()) {
                 ContactGroup contactGroup = getContactGroup(group.getName());
@@ -558,7 +513,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     contactGroup = addContactGroup(group.getName());
                 }
 
-                boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
+                boolean isPending = entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
                 if (isPending) {
                     contactGroup.setVisible(true);
@@ -585,7 +540,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     /**
      * Handle when the Roster changes based on subscription notices.
      *
-     * @param addresses
+     * @param addresses List of entries that were updated.
      */
     public void entriesUpdated(final Collection addresses) {
         handleEntriesUpdated(addresses);
@@ -599,9 +554,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     public void entriesDeleted(final Collection addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Iterator jids = addresses.iterator();
-                while (jids.hasNext()) {
-                    String jid = (String)jids.next();
+                for (Object address : addresses) {
+                    String jid = (String) address;
                     removeContactItem(jid);
                 }
             }
@@ -825,9 +779,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @return the "first" contact item found.
      */
     public ContactItem getContactItemByNickname(String nickname) {
-        Iterator contactGroups = getContactGroups().iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
+        for (ContactGroup contactGroup : getContactGroups()) {
             ContactItem item = contactGroup.getContactItemByNickname(nickname);
             if (item != null) {
                 return item;
@@ -860,7 +812,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // Check state
         String prop = props.getProperty(group.getGroupName());
         if (prop != null) {
-            boolean isCollapsed = Boolean.valueOf(prop).booleanValue();
+            boolean isCollapsed = Boolean.valueOf(prop);
             group.setCollapsed(isCollapsed);
         }
     }
@@ -941,7 +893,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
             String prop = props.getProperty(newContactGroup.getGroupName());
             if (prop != null) {
-                boolean isCollapsed = Boolean.valueOf(prop).booleanValue();
+                boolean isCollapsed = Boolean.valueOf(prop);
                 newContactGroup.setCollapsed(isCollapsed);
             }
 
@@ -954,12 +906,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
 
-        final List tempList = new ArrayList();
+        final List<ContactGroup> tempList = new ArrayList<ContactGroup>();
         final Component[] comps = mainPanel.getComponents();
-        for (int i = 0; i < comps.length; i++) {
-            Component c = comps[i];
-            if (comps[i] instanceof ContactGroup && c != offlineGroup) {
-                tempList.add(c);
+        for (Component c : comps) {
+            if (c instanceof ContactGroup && c != offlineGroup) {
+                tempList.add((ContactGroup)c);
             }
         }
         tempList.add(rootGroup);
@@ -1200,9 +1151,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     private void removeContactItem(String jid) {
-        Iterator groups = new ArrayList(getContactGroups()).iterator();
-        while (groups.hasNext()) {
-            ContactGroup group = (ContactGroup)groups.next();
+        for (ContactGroup group : new ArrayList<ContactGroup>(getContactGroups())) {
             ContactItem item = group.getContactItemByJID(jid);
             group.removeOfflineContactItem(jid);
             if (item != null) {
@@ -1378,9 +1327,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Check if user is in shared group.
         boolean isInSharedGroup = false;
-        Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup cGroup = (ContactGroup)contactGroups.next();
+        for (ContactGroup cGroup : new ArrayList<ContactGroup>(getContactGroups())) {
             if (cGroup.isSharedGroup()) {
                 ContactItem it = cGroup.getContactItemByJID(item.getJID());
                 if (it != null) {
@@ -1415,7 +1362,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         Action lastActivityAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    LastActivity activity = LastActivity.getLastActivity(SparkManager.getConnection(), item.getJID());
+                    LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), item.getJID());
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
@@ -1460,11 +1407,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         popup.show(group.getList(), e.getX(), e.getY());
     }
 
-    public void showPopup(MouseEvent e, final Collection items) {
+    public void showPopup(MouseEvent e, final Collection<ContactItem> items) {
         ContactGroup group = null;
-        Iterator contactItems = items.iterator();
-        while (contactItems.hasNext()) {
-            ContactItem item = (ContactItem)contactItems.next();
+        for (ContactItem item : items) {
             group = getContactGroup(item.getGroupName());
             break;
         }
@@ -1484,7 +1429,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         });
 
-        popup.show(group.getList(), e.getX(), e.getY());
+        try {
+            popup.show(group.getList(), e.getX(), e.getY());
+        }
+        catch (NullPointerException ee) {
+            // TODO: Should we do something here?
+        }
     }
 
     private void clearSelectionList(ContactItem selectedItem) {
@@ -1495,9 +1445,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         final ContactGroup owner = getContactGroup(selectedItem.getGroupName());
-        Iterator groups = new ArrayList(groupList).iterator();
-        while (groups.hasNext()) {
-            ContactGroup contactGroup = (ContactGroup)groups.next();
+        for (ContactGroup contactGroup : new ArrayList<ContactGroup>(groupList)) {
             if (owner != contactGroup) {
                 contactGroup.clearSelection();
             }
@@ -1671,9 +1619,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         public void run() {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    final Iterator users = new ArrayList(initialPresences).iterator();
-                                    while (users.hasNext()) {
-                                        Presence userToUpdate = (Presence)users.next();
+                                    for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
                                         initialPresences.remove(userToUpdate);
                                         try {
                                             updateUserPresence(userToUpdate);
@@ -1769,13 +1715,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param show true to display empty contact groups within the ContactList, otherwise false.
      */
     private void showEmptyGroups(boolean show) {
-        Iterator contactGroups = getContactGroups().iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup group = (ContactGroup)contactGroups.next();
+        for (ContactGroup group : getContactGroups()) {
             if (show) {
                 group.setVisible(true);
-            }
-            else {
+            } else {
                 // Never hide offline group.
                 if (group != offlineGroup) {
                     group.setVisible(group.hasAvailableContacts());
@@ -1817,11 +1760,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     /**
      * Sorts ContactGroups
      */
-    public static final Comparator GROUP_COMPARATOR = new Comparator() {
-        public int compare(Object contactGroupOne, Object contactGroupTwo) {
-            final ContactGroup group1 = (ContactGroup)contactGroupOne;
-            final ContactGroup group2 = (ContactGroup)contactGroupTwo;
-
+    public static final Comparator<ContactGroup> GROUP_COMPARATOR = new Comparator<ContactGroup>() {
+        public int compare(ContactGroup group1, ContactGroup group2) {
             // Make sure that offline group is always on bottom.
             if (group2.isOfflineGroup()) {
                 return -1;
@@ -1855,8 +1795,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void fireContextMenuListenerPopup(JPopupMenu popup, Object object) {
-        for (ContextMenuListener o : new ArrayList<ContextMenuListener>(contextListeners)) {
-            ContextMenuListener listener = (ContextMenuListener) o;
+        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(contextListeners)) {
             listener.poppingUp(object, popup);
         }
     }
@@ -1872,13 +1811,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     public Collection<ContactItem> getSelectedUsers() {
         final List<ContactItem> list = new ArrayList<ContactItem>();
 
-        Iterator contactGroups = getContactGroups().iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup group = (ContactGroup)contactGroups.next();
-            List items = group.getSelectedContacts();
-            Iterator itemIterator = items.iterator();
-            while (itemIterator.hasNext()) {
-                ContactItem item = (ContactItem)itemIterator.next();
+        for (ContactGroup group : getContactGroups()) {
+            for (ContactItem item : group.getSelectedContacts()) {
                 list.add(item);
             }
         }
@@ -1900,9 +1834,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void fireFilesDropped(Collection files, ContactItem item) {
-        final Iterator listeners = new ArrayList(dndListeners).iterator();
-        while (listeners.hasNext()) {
-            ((FileDropListener)listeners.next()).filesDropped(files, item);
+        for (FileDropListener fileDropListener : new ArrayList<FileDropListener>(dndListeners)) {
+            fileDropListener.filesDropped(files, item);
         }
     }
 
@@ -1927,44 +1860,38 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void fireContactItemAdded(ContactItem item) {
-        final Iterator listeners = new ArrayList(contactListListeners).iterator();
-        while (listeners.hasNext()) {
-            ((ContactListListener)listeners.next()).contactItemAdded(item);
+        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+            contactListListener.contactItemAdded(item);
         }
     }
 
     public void fireContactItemRemoved(ContactItem item) {
-        final Iterator listeners = new ArrayList(contactListListeners).iterator();
-        while (listeners.hasNext()) {
-            ((ContactListListener)listeners.next()).contactItemRemoved(item);
+        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+            contactListListener.contactItemRemoved(item);
         }
     }
 
     public void fireContactGroupAdded(ContactGroup group) {
-        final Iterator listeners = new ArrayList(contactListListeners).iterator();
-        while (listeners.hasNext()) {
-            ((ContactListListener)listeners.next()).contactGroupAdded(group);
+        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+            contactListListener.contactGroupAdded(group);
         }
     }
 
     public void fireContactGroupRemoved(ContactGroup group) {
-        final Iterator listeners = new ArrayList(contactListListeners).iterator();
-        while (listeners.hasNext()) {
-            ((ContactListListener)listeners.next()).contactGroupRemoved(group);
+        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+            contactListListener.contactGroupRemoved(group);
         }
     }
 
     public void fireContactItemClicked(ContactItem contactItem) {
-        final Iterator listeners = new ArrayList(contactListListeners).iterator();
-        while (listeners.hasNext()) {
-            ((ContactListListener)listeners.next()).contactItemClicked(contactItem);
+        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+            contactListListener.contactItemClicked(contactItem);
         }
     }
 
     public void fireContactItemDoubleClicked(ContactItem contactItem) {
-        final Iterator listeners = new ArrayList(contactListListeners).iterator();
-        while (listeners.hasNext()) {
-            ((ContactListListener)listeners.next()).contactItemDoubleClicked(contactItem);
+        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+            contactListListener.contactItemDoubleClicked(contactItem);
         }
     }
 
@@ -2082,9 +2009,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private void removeAllUsers() {
         // Behind the scenes, move everyone to the offline group.
-        final Iterator contactGroups = new ArrayList(getContactGroups()).iterator();
-        while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
+        for (ContactGroup contactGroup : new ArrayList<ContactGroup>(getContactGroups())) {
             contactGroup.removeAllContacts();
         }
 
@@ -2130,10 +2055,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     /**
      * Sorts ContactItems.
      */
-    public final static Comparator<ContactItem> ContactItemComparator = new Comparator() {
-        public int compare(Object contactItemOne, Object contactItemTwo) {
-            final ContactItem item1 = (ContactItem)contactItemOne;
-            final ContactItem item2 = (ContactItem)contactItemTwo;
+    public final static Comparator<ContactItem> ContactItemComparator = new Comparator<ContactItem>() {
+        public int compare(ContactItem item1, ContactItem item2) {
             return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
         }
     };

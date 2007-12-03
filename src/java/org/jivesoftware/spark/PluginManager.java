@@ -36,7 +36,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -111,24 +110,26 @@ public class PluginManager implements MainWindowListener {
         newPlugins.mkdirs();
 
         File[] files = PLUGINS_DIRECTORY.listFiles();
-        final int no = files != null ? files.length : 0;
-        for (int i = 0; i < no; i++) {
-            File file = files[i];
-            if (file.isFile()) {
-                // Copy over
-                File newFile = new File(newPlugins, file.getName());
+        if (files != null) {
+            final int no = files.length;
+            for (int i = 0; i < no; i++) {
+                File file = files[i];
+                if (file.isFile()) {
+                    // Copy over
+                    File newFile = new File(newPlugins, file.getName());
 
-                if (newFile.lastModified() >= file.lastModified()) {
-                    continue;
-                }
+                    if (newFile.lastModified() >= file.lastModified()) {
+                        continue;
+                    }
 
-                try {
-                    URLFileSystem.copy(file.toURL(), newFile);
-                }
-                catch (IOException e) {
-                    Log.error(e);
-                }
+                    try {
+                        URLFileSystem.copy(file.toURL(), newFile);
+                    }
+                    catch (IOException e) {
+                        Log.error(e);
+                    }
 
+                }
             }
         }
 
@@ -141,14 +142,16 @@ public class PluginManager implements MainWindowListener {
     public void loadPlugins() {
         // Delete all old plugins
         File[] oldFiles = PLUGINS_DIRECTORY.listFiles();
-        final int no = oldFiles != null ? oldFiles.length : 0;
-        for (int i = 0; i < no; i++) {
-            File file = oldFiles[i];
-            if (file.isDirectory()) {
-                // Check to see if it has an associated .jar
-                File jarFile = new File(PLUGINS_DIRECTORY, file.getName() + ".jar");
-                if (!jarFile.exists()) {
-                    uninstall(file);
+        if (oldFiles != null) {
+            final int no = oldFiles.length;
+            for (int i = 0; i < no; i++) {
+                File file = oldFiles[i];
+                if (file.isDirectory()) {
+                    // Check to see if it has an associated .jar
+                    File jarFile = new File(PLUGINS_DIRECTORY, file.getName() + ".jar");
+                    if (!jarFile.exists()) {
+                        uninstall(file);
+                    }
                 }
             }
         }
@@ -201,17 +204,15 @@ public class PluginManager implements MainWindowListener {
         Plugin pluginClass = null;
 
         List plugins = pluginXML.selectNodes("/plugin");
-        Iterator iter = plugins.iterator();
-        while (iter.hasNext()) {
+        for (Object plugin1 : plugins) {
             PublicPlugin publicPlugin = new PublicPlugin();
 
             String clazz = null;
-            String name = null;
+            String name;
             String minVersion;
-            String operatingSystem;
 
             try {
-                Element plugin = (Element)iter.next();
+                Element plugin = (Element) plugin1;
 
                 name = plugin.selectSingleNode("name").getText();
                 clazz = plugin.selectSingleNode("class").getText();
@@ -263,7 +264,7 @@ public class PluginManager implements MainWindowListener {
 
 
                 try {
-                    pluginClass = (Plugin)getParentClassLoader().loadClass(clazz).newInstance();
+                    pluginClass = (Plugin) getParentClassLoader().loadClass(clazz).newInstance();
                     Log.debug(name + " has been loaded.");
                     publicPlugin.setPluginDir(pluginDir);
                     publicPlugins.add(publicPlugin);
@@ -300,20 +301,17 @@ public class PluginManager implements MainWindowListener {
             Log.error(e);
         }
         List plugins = pluginXML.selectNodes("/plugins/plugin");
-        Iterator iter = plugins.iterator();
-        while (iter.hasNext()) {
-
-
+        for (Object plugin1 : plugins) {
             String clazz = null;
-            String name = null;
+            String name;
             try {
-                Element plugin = (Element)iter.next();
+                Element plugin = (Element) plugin1;
 
 
                 name = plugin.selectSingleNode("name").getText();
                 clazz = plugin.selectSingleNode("class").getText();
 
-                Plugin pluginClass = (Plugin)Class.forName(clazz).newInstance();
+                Plugin pluginClass = (Plugin) Class.forName(clazz).newInstance();
                 Log.debug(name + " has been loaded. Internal plugin.");
 
                 registerPlugin(pluginClass);
@@ -377,9 +375,8 @@ public class PluginManager implements MainWindowListener {
      * @return the instance of the plugin.
      */
     public Plugin getPlugin(Class communicatorPlugin) {
-        Iterator iter = getPlugins().iterator();
-        while (iter.hasNext()) {
-            Plugin plugin = (Plugin)iter.next();
+        for (Object o : getPlugins()) {
+            Plugin plugin = (Plugin) o;
             if (plugin.getClass() == communicatorPlugin) {
                 return plugin;
             }
@@ -395,20 +392,18 @@ public class PluginManager implements MainWindowListener {
     public void initializePlugins() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final Iterator iter = plugins.iterator();
-                while (iter.hasNext()) {
+                for (Plugin plugin1 : plugins) {
                     long start = System.currentTimeMillis();
-                    Plugin plugin = (Plugin)iter.next();
-                    Log.debug("Trying to initialize " + plugin);
+                    Log.debug("Trying to initialize " + plugin1);
                     try {
-                        plugin.initialize();
+                        plugin1.initialize();
                     }
                     catch (Throwable e) {
                         Log.error(e);
                     }
 
                     long end = System.currentTimeMillis();
-                    Log.debug("Took " + (end - start) + " ms. to load " + plugin);
+                    Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
                 }
             }
         });
@@ -416,11 +411,9 @@ public class PluginManager implements MainWindowListener {
     }
 
     public void shutdown() {
-        final Iterator pluginIter = plugins.iterator();
-        while (pluginIter.hasNext()) {
-            Plugin plugin = (Plugin)pluginIter.next();
+        for (Plugin plugin1 : plugins) {
             try {
-                plugin.shutdown();
+                plugin1.shutdown();
             }
             catch (Exception e) {
                 Log.warning("Exception on shutdown of plugin.", e);
@@ -471,13 +464,12 @@ public class PluginManager implements MainWindowListener {
         }
 
 
-        for (int i = 0; i < jars.length; i++) {
-            if (jars[i].isFile()) {
-                File file = jars[i];
+        for (File jar : jars) {
+            if (jar.isFile()) {
 
                 URL url = null;
                 try {
-                    url = file.toURL();
+                    url = jar.toURL();
                 }
                 catch (MalformedURLException e) {
                     Log.error(e);
@@ -489,18 +481,17 @@ public class PluginManager implements MainWindowListener {
                     // If not, delete directory.
                     File pluginXML = new File(directory, "plugin.xml");
                     if (pluginXML.exists()) {
-                        if (pluginXML.lastModified() < file.lastModified()) {
+                        if (pluginXML.lastModified() < jar.lastModified()) {
                             uninstall(directory);
-                            unzipPlugin(file, directory);
+                            unzipPlugin(jar, directory);
                         }
                         continue;
                     }
 
                     uninstall(directory);
-                }
-                else {
+                } else {
                     // Unzip contents into directory
-                    unzipPlugin(file, directory);
+                    unzipPlugin(jar, directory);
                 }
             }
         }
@@ -522,9 +513,7 @@ public class PluginManager implements MainWindowListener {
             return;
         }
 
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
-
+        for (File file : files) {
             File pluginXML = new File(file, "plugin.xml");
             if (pluginXML.exists()) {
                 try {
@@ -586,7 +575,7 @@ public class PluginManager implements MainWindowListener {
                     FileOutputStream out = new FileOutputStream(entryFile);
                     InputStream zin = zipFile.getInputStream(entry);
                     byte[] b = new byte[512];
-                    int len = 0;
+                    int len;
                     while ((len = zin.read(b)) != -1) {
                         out.write(b, 0, len);
                     }
@@ -596,7 +585,6 @@ public class PluginManager implements MainWindowListener {
                 }
             }
             zipFile.close();
-            zipFile = null;
         }
         catch (Throwable e) {
             Log.error("Error unzipping plugin", e);
@@ -614,8 +602,7 @@ public class PluginManager implements MainWindowListener {
 
     private void uninstall(File pluginDir) {
         File[] files = pluginDir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            File f = files[i];
+        for (File f : files) {
             if (f.isFile()) {
                 f.delete();
             }
@@ -624,10 +611,12 @@ public class PluginManager implements MainWindowListener {
         File libDir = new File(pluginDir, "lib");
 
         File[] libs = libDir.listFiles();
-        final int no = libs != null ? libs.length : 0;
-        for (int i = 0; i < no; i++) {
-            File f = libs[i];
-            f.delete();
+        if (libs != null) {
+            final int no = libs.length;
+            for (int i = 0; i < no; i++) {
+                File f = libs[i];
+                f.delete();
+            }
         }
 
         libDir.delete();

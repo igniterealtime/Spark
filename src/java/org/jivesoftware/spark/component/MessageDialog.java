@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -105,6 +104,8 @@ public final class MessageDialog {
      *
      * @param message the message to display.
      * @param header  the header/title of the dialog.
+     * @param title   the title to display.
+     * @param icon    the icon for the alert dialog.
      */
     public static void showAlert(String message, String header, String title, Icon icon) {
         JTextPane textPane;
@@ -246,9 +247,8 @@ public final class MessageDialog {
         //add each element of the stack trace
         StackTraceElement[] stackTrace = aThrowable.getStackTrace();
         final List traceElements = Arrays.asList(stackTrace);
-        final Iterator traceElementsIter = traceElements.iterator();
-        while (traceElementsIter.hasNext()) {
-            result.append(traceElementsIter.next());
+        for (Object traceElement : traceElements) {
+            result.append(traceElement);
             result.append(lineSeperator);
         }
         return result.toString();

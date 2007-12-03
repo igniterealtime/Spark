@@ -106,6 +106,7 @@ public class BusinessPanel extends JPanel {
         this.add(webPageLabel, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(webPageField, new GridBagConstraints(3, 6, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
+        // TODO: Convert to newer focus API
         companyField.setNextFocusableComponent(streetField);
         streetField.setNextFocusableComponent(cityField);
         cityField.setNextFocusableComponent(stateField);
@@ -226,11 +227,13 @@ public class BusinessPanel extends JPanel {
 
     public void allowEditing(boolean allowEditing) {
         Component[] comps = getComponents();
-        final int no = comps != null ? comps.length : 0;
-        for (int i = 0; i < no; i++) {
-            Component comp = comps[i];
-            if (comp instanceof JTextField) {
-                ((JTextField)comp).setEditable(allowEditing);
+        if (comps != null) {
+            final int no = comps.length;
+            for (int i = 0; i < no; i++) {
+                Component comp = comps[i];
+                if (comp instanceof JTextField) {
+                    ((JTextField)comp).setEditable(allowEditing);
+                }
             }
         }
     }

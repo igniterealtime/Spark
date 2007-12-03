@@ -317,80 +317,85 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
             return;
         }
 
-        String value = (String)pane.getValue();
-        String errorMessage = Res.getString("title.error");
-        if (Res.getString("cancel").equals(value)) {
-            dialog.setVisible(false);
-        }
-        else if (Res.getString("add").equals(value)) {
-            String jid = getJID();
-            String contact = UserManager.escapeJID(jid);
-            String nickname = nicknameField.getText();
-            String group = (String)groupBox.getSelectedItem();
-
-            Transport transport = null;
-            if (publicBox.isSelected()) {
-                AccountItem item = (AccountItem)accounts.getSelectedItem();
-                transport = item.getTransport();
-            }
-
-            if (transport == null) {
-                if (contact.indexOf("@") == -1) {
-                    contact = contact + "@" + SparkManager.getConnection().getServiceName();
-                }
-            }
-            else {
-                if (contact.indexOf("@") == -1) {
-                    contact = contact + "@" + transport.getServiceName();
-                }
-            }
-
-            if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
-                // Try to load nickname from VCard
-                VCard vcard = new VCard();
-                try {
-                    vcard.load(SparkManager.getConnection(), contact);
-                    nickname = vcard.getNickName();
-                }
-                catch (XMPPException e1) {
-                    Log.error(e1);
-                }
-                // If no nickname, use first name.
-                if (!ModelUtil.hasLength(nickname)) {
-                    nickname = StringUtils.parseName(contact);
-                }
-                nicknameField.setText(nickname);
-            }
-
-            ContactGroup contactGroup = contactList.getContactGroup(group);
-            boolean isSharedGroup = contactGroup != null && contactGroup.isSharedGroup();
-
-            if (isSharedGroup) {
-                errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
-            }
-            else if (!ModelUtil.hasLength(contact)) {
-                errorMessage = Res.getString("message.specify.contact.jid");
-            }
-            else if (StringUtils.parseBareAddress(contact).indexOf("@") == -1) {
-                errorMessage = Res.getString("message.invalid.jid.error");
-            }
-            else if (!ModelUtil.hasLength(group)) {
-                errorMessage = Res.getString("message.specify.group");
-            }
-            else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group) && !isSharedGroup) {
-                addEntry();
+        try {
+            String value = (String)pane.getValue();
+            String errorMessage = Res.getString("title.error");
+            if (Res.getString("cancel").equals(value)) {
                 dialog.setVisible(false);
-                return;
             }
+            else if (Res.getString("add").equals(value)) {
+                String jid = getJID();
+                String contact = UserManager.escapeJID(jid);
+                String nickname = nicknameField.getText();
+                String group = (String)groupBox.getSelectedItem();
 
-            JOptionPane.showMessageDialog(dialog, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-            pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                Transport transport = null;
+                if (publicBox.isSelected()) {
+                    AccountItem item = (AccountItem)accounts.getSelectedItem();
+                    transport = item.getTransport();
+                }
+
+                if (transport == null) {
+                    if (contact.indexOf("@") == -1) {
+                        contact = contact + "@" + SparkManager.getConnection().getServiceName();
+                    }
+                }
+                else {
+                    if (contact.indexOf("@") == -1) {
+                        contact = contact + "@" + transport.getServiceName();
+                    }
+                }
+
+                if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
+                    // Try to load nickname from VCard
+                    VCard vcard = new VCard();
+                    try {
+                        vcard.load(SparkManager.getConnection(), contact);
+                        nickname = vcard.getNickName();
+                    }
+                    catch (XMPPException e1) {
+                        Log.error(e1);
+                    }
+                    // If no nickname, use first name.
+                    if (!ModelUtil.hasLength(nickname)) {
+                        nickname = StringUtils.parseName(contact);
+                    }
+                    nicknameField.setText(nickname);
+                }
+
+                ContactGroup contactGroup = contactList.getContactGroup(group);
+                boolean isSharedGroup = contactGroup != null && contactGroup.isSharedGroup();
+
+                if (isSharedGroup) {
+                    errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
+                }
+                else if (!ModelUtil.hasLength(contact)) {
+                    errorMessage = Res.getString("message.specify.contact.jid");
+                }
+                else if (StringUtils.parseBareAddress(contact).indexOf("@") == -1) {
+                    errorMessage = Res.getString("message.invalid.jid.error");
+                }
+                else if (!ModelUtil.hasLength(group)) {
+                    errorMessage = Res.getString("message.specify.group");
+                }
+                else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group) && !isSharedGroup) {
+                    addEntry();
+                    dialog.setVisible(false);
+                    return;
+                }
+
+                JOptionPane.showMessageDialog(dialog, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+            }
+        }
+        catch (NullPointerException ee) {
+            Log.error(ee);
         }
     }
 
     private void addEntry() {
         Transport transport = null;
-        AccountItem item = null;
+        AccountItem item;
         if (publicBox.isSelected()) {
             item = (AccountItem)accounts.getSelectedItem();
             transport = item.getTransport();
@@ -517,12 +522,10 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
     class AccountItem extends JPanel {
 
-        private String name;
         private Transport transport;
 
         public AccountItem(Icon icon, String name, Transport transport) {
             setLayout(new GridBagLayout());
-            this.name = name;
             this.transport = transport;
 
             JLabel iconLabel = new JLabel();

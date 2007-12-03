@@ -90,8 +90,7 @@ public class NotificationsPreference implements Preference {
     }
 
     public Object getData() {
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
-        return pref;
+        return SettingsManager.getLocalPreferences();
     }
 
     public String getErrorMessage() {

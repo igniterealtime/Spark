@@ -29,7 +29,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class ContactGroupTransferHandler extends TransferHandler {
 
@@ -68,26 +67,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     protected void exportDone(JComponent c, Transferable data, int action) {
-        if (data == null) {
-            return;
-        }
-
-        if (c instanceof JList) {
-            JList list = (JList)c;
-            ContactGroup group = getContactGroup(list);
-            try {
-                ContactItem item = (ContactItem)data.getTransferData(flavors[0]);
-                if (action == MOVE) {
-                }
-            }
-            catch (UnsupportedFlavorException e) {
-                Log.error(e);
-            }
-            catch (IOException e) {
-                Log.error(e);
-            }
-
-        }
     }
 
 
@@ -96,8 +75,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         if (comp instanceof JList) {
             JList list = (JList)comp;
             ContactItem source = (ContactItem)list.getSelectedValue();
-            Transferable transferable = new ContactItemTransferable(source);
-            return transferable;
+            return new ContactItemTransferable(source);
         }
         return null;
     }
@@ -110,7 +88,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
             if (t.isDataFlavorSupported(flavors[0])) {
                 try {
                     ContactItem item = (ContactItem)t.getTransferData(flavors[0]);
-                    int index = list.getSelectedIndex();
                     DefaultListModel model = (DefaultListModel)list.getModel();
                     int size = model.getSize();
                     for (int i = 0; i < size; i++) {
@@ -182,9 +159,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
     private ContactGroup getContactGroup(JList list) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-        Iterator groups = contactList.getContactGroups().iterator();
-        while (groups.hasNext()) {
-            ContactGroup group = (ContactGroup)groups.next();
+        for (ContactGroup group : contactList.getContactGroups()) {
             if (group.getList() == list) {
                 return group;
             }
@@ -198,9 +173,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     private ContactGroup getSubContactGroup(ContactGroup group, JList list) {
-        Iterator subGroups = group.getContactGroups().iterator();
-        while (subGroups.hasNext()) {
-            ContactGroup g = (ContactGroup)subGroups.next();
+        for (ContactGroup g : group.getContactGroups()) {
             if (g.getList() == list) {
                 return g;
             }
@@ -218,8 +191,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
     private ContactGroup getContactGroup(String groupName) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-        ContactGroup group = contactList.getContactGroup(groupName);
-        return group;
+        return contactList.getContactGroup(groupName);
     }
 
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item) {

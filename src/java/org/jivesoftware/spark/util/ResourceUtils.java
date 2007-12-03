@@ -97,8 +97,8 @@ public final class ResourceUtils {
         }
     }
 
-    public static final String stripMnemonic(String label) {
-        String text = "";
+    public static String stripMnemonic(String label) {
+        String text;
         int index = label.indexOf("&");
         if (index != -1) {
             text = label.substring(0, index);
@@ -110,15 +110,9 @@ public final class ResourceUtils {
         return label;
     }
 
-    public static final int getMnemonicKeyCode(String mnemonic) {
+    public static int getMnemonicKeyCode(String mnemonic) {
         int mindex = mnemonic.indexOf("&");
-        String text = "";
         if (mindex > -1) {
-            text = mnemonic.substring(0, mindex);
-            if (mnemonic.length() > mindex) {
-                text = text + mnemonic.substring(mindex + 1);
-            }
-
             return (int)mnemonic.charAt(mindex + 1);
         }
         return 0;

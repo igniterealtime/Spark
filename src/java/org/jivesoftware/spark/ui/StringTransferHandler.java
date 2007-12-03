@@ -46,8 +46,10 @@ public abstract class StringTransferHandler extends TransferHandler {
                 return true;
             }
             catch (UnsupportedFlavorException ufe) {
+                // Nothing to do
             }
             catch (IOException ioe) {
+                // Nothing to do
             }
         }
         return false;
@@ -58,8 +60,8 @@ public abstract class StringTransferHandler extends TransferHandler {
     }
 
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
-        for (int i = 0; i < flavors.length; i++) {
-            if (DataFlavor.stringFlavor.equals(flavors[i])) {
+        for (DataFlavor flavor : flavors) {
+            if (DataFlavor.stringFlavor.equals(flavor)) {
                 return true;
             }
         }

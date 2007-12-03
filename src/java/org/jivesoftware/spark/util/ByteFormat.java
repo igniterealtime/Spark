@@ -29,17 +29,13 @@ public class ByteFormat extends Format {
     // Implemented from the Format class
 
     /**
-     * Formats a long which represent a number of bytes.
-     */
-    public String format(long bytes) {
-        return format(new Long(bytes));
-    }
-
-    /**
      * Formats a long which represent a number of kilobytes.
+     *
+     * @param kilobytes Long kbytes to format as a string.
+     * @return String representation of kbytes.
      */
     public String formatKB(long kilobytes) {
-        return format(new Long(kilobytes * 1024));
+        return format(kilobytes * 1024);
     }
 
     /**
@@ -47,12 +43,12 @@ public class ByteFormat extends Format {
      *
      * @param obj assumed to be the number of bytes as a Long.
      * @param buf the StringBuffer to append to.
-     * @param pos
+     * @param pos field position.
      * @return A formatted string representing the given bytes in more human-readable form.
      */
     public StringBuffer format(Object obj, StringBuffer buf, FieldPosition pos) {
         if (obj instanceof Long) {
-            long numBytes = ((Long)obj).longValue();
+            long numBytes = (Long) obj;
             if (numBytes < 1024) {
                 DecimalFormat formatter = new DecimalFormat("#,##0");
                 buf.append(formatter.format((double)numBytes)).append(" bytes");
@@ -76,8 +72,8 @@ public class ByteFormat extends Format {
     /**
      * In this implementation, returns null always.
      *
-     * @param source
-     * @param pos
+     * @param source Source string to parse.
+     * @param pos Position to parse from.
      * @return returns null in this implementation.
      */
     public Object parseObject(String source, ParsePosition pos) {

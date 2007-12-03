@@ -34,7 +34,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Enables encapsulation of transfer capabilities within a ChatRoom.
@@ -92,9 +91,8 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
             ChatRoomImpl roomImpl = (ChatRoomImpl)component;
 
 
-            Iterator iter = files.iterator();
-            while (iter.hasNext()) {
-                SparkManager.getTransferManager().sendFile((File)iter.next(), roomImpl.getParticipantJID());
+            for (Object file : files) {
+                SparkManager.getTransferManager().sendFile((File) file, roomImpl.getParticipantJID());
             }
 
             SparkManager.getChatManager().getChatContainer().activateChatRoom(roomImpl);
@@ -125,7 +123,7 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
 
             public void finished() {
                 FileDialog fileChooser = SparkManager.getTransferManager().getFileChooser(SparkManager.getChatManager().getChatContainer().getChatFrame(), Res.getString("title.select.file.to.send"));
-                fileChooser.show();
+                fileChooser.setVisible(true);
 
                 if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
                     return;

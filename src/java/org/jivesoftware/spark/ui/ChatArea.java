@@ -45,7 +45,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -79,7 +78,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     private int fontSize;
 
-    private List contextMenuListener = new ArrayList();
+    private List<ContextMenuListener> contextMenuListener = new ArrayList<ContextMenuListener>();
 
     private JPopupMenu popup;
 
@@ -89,7 +88,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     private JMenuItem pasteMenu;
     private JMenuItem selectAll;
 
-    private List interceptors = new ArrayList();
+    private List<LinkInterceptor> interceptors = new ArrayList<LinkInterceptor>();
 
     private EmoticonManager emoticonManager;
 
@@ -198,7 +197,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * specified during message creation in either the thin or thick client.
      *
      * @param text - the text to insert.
-     * @throws BadLocationException
+     * @throws BadLocationException if location is not availaboe to insert into.
      */
     public void insert(String text) throws BadLocationException {
         boolean bold = false;
@@ -229,7 +228,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * Inserts text into the current document.
      *
      * @param text the text to insert
-     * @throws BadLocationException
+     * @throws BadLocationException if the location is not available for insertion.
      */
     public void insertText(String text) throws BadLocationException {
         final Document doc = getDocument();
@@ -242,7 +241,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      *
      * @param text  the text to insert
      * @param color the color of the text
-     * @throws BadLocationException
+     * @throws BadLocationException if the location is not available for insertion.
      */
     public void insertText(String text, Color color) throws BadLocationException {
         final Document doc = getDocument();
@@ -254,7 +253,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * Inserts a link into the current document.
      *
      * @param link - the link to insert( ex. http://www.javasoft.com )
-     * @throws BadLocationException
+     * @throws BadLocationException if the location is not available for insertion.
      */
     public void insertLink(String link) throws BadLocationException {
         final Document doc = getDocument();
@@ -385,26 +384,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         fontSize = size;
     }
 
-    /**
-     * Inserts the current font.
-     *
-     * @param text - the current font( string representation )
-     */
-    private void insertFont(String text) {
-        int index = text.indexOf("=");
-        int lastIndexOf = text.lastIndexOf(" ");
-        String font = text.substring(index + 1, lastIndexOf).replaceAll("_", " ");
-
-
-        index = text.lastIndexOf("=");
-        int slash = text.indexOf("/");
-
-        int fontSize = Integer.parseInt(text.substring(index + 1, slash));
-        setFontSize(fontSize);
-        setFont(font);
-    }
-
-
     public void mouseClicked(MouseEvent e) {
         try {
             final int pos = viewToModel(e.getPoint());
@@ -441,7 +420,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
             handlePopup(e);
-            return;
         }
     }
 
@@ -455,7 +433,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
             handlePopup(e);
-            return;
         }
 
 
@@ -638,9 +615,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     private void fireContextMenuListeners() {
-        Iterator listeners = new ArrayList(contextMenuListener).iterator();
-        while (listeners.hasNext()) {
-            ContextMenuListener listener = (ContextMenuListener)listeners.next();
+        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(contextMenuListener)) {
             listener.poppingUp(this, popup);
         }
     }
@@ -654,9 +629,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     public boolean fireLinkInterceptors(MouseEvent event, String link) {
-        final Iterator iter = new ArrayList(interceptors).iterator();
-        while (iter.hasNext()) {
-            boolean handled = ((LinkInterceptor)iter.next()).handleLink(event, link);
+        for (LinkInterceptor linkInterceptor : new ArrayList<LinkInterceptor>(interceptors)) {
+            boolean handled = linkInterceptor.handleLink(event, link);
             if (handled) {
                 return true;
             }

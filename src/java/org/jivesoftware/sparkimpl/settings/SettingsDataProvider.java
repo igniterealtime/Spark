@@ -23,17 +23,16 @@ public class SettingsDataProvider implements PrivateDataProvider {
     }
 
     public PrivateData parsePrivateData(XmlPullParser parser) throws Exception {
-        Map map = new HashMap();
-        int eventType = parser.getEventType();
-        if (eventType == 2) ;
-        eventType = parser.nextTag();
+        Map<String,String> map = new HashMap<String,String>();
+        parser.getEventType();
+        parser.nextTag();
         for (String text = parser.getName(); text.equals("entry"); text = parser.getName()) {
-            eventType = parser.nextTag();
+            parser.nextTag();
             String name = parser.getName();
             text = parser.nextText();
             map.put(name, text);
-            eventType = parser.nextTag();
-            eventType = parser.nextTag();
+            parser.nextTag();
+            parser.nextTag();
         }
 
         return new SettingsData(map);

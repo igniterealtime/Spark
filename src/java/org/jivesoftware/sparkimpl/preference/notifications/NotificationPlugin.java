@@ -128,6 +128,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
      * Notify client that a user has come online.
      *
      * @param jid the jid of the user that has come online.
+     * @param presence Presence of the online user.
      */
     private void notifyUserOnline(String jid, Presence presence) {
         SparkToaster toaster = new SparkToaster();
@@ -153,6 +154,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
      * Notify client that a user has gone offline.
      *
      * @param jid the jid of the user who has gone offline.
+     * @param presence of the offline user.
      */
     private void notifyUserOffline(String jid, Presence presence) {
         SparkToaster toaster = new SparkToaster();

@@ -65,7 +65,7 @@ public interface ContactGroupListener {
      * @param items the ContactItems within the ContactGroup.
      * @deprecated see <code>ContextMenuListener</code>
      */
-    public void showPopup(MouseEvent e, Collection items);
+    public void showPopup(MouseEvent e, Collection<ContactItem> items);
 
     /**
      * Notifies the user that a Popup event has occured on the ContactGroup title

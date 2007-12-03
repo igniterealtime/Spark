@@ -22,7 +22,6 @@ import javax.swing.table.TableCellRenderer;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -63,9 +62,8 @@ public class JiveTable extends JTable {
     }
 
     public void add(List list) {
-        final Iterator iter = list.iterator();
-        while (iter.hasNext()) {
-            Object[] newRow = (Object[])iter.next();
+        for (Object aList : list) {
+            Object[] newRow = (Object[]) aList;
             tableModel.addRow(newRow);
         }
     }

@@ -41,7 +41,7 @@ import java.util.StringTokenizer;
  * of an answer form to send back the the server.
  */
 public class DataFormUI extends JPanel {
-    private final Map valueMap = new HashMap();
+    private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
     private int row = 5;
     private Form searchForm;
 
@@ -70,7 +70,7 @@ public class DataFormUI extends JPanel {
             String type = field.getType();
 
             Iterator iter = field.getValues();
-            List valueList = new ArrayList();
+            List<Object> valueList = new ArrayList<Object>();
             while (iter.hasNext()) {
                 valueList.add(iter.next());
             }
@@ -106,7 +106,6 @@ public class DataFormUI extends JPanel {
                 iter = field.getOptions();
                 while (iter.hasNext()) {
                     FormField.Option option = (FormField.Option)iter.next();
-                    String value = option.getValue();
                     box.addItem(option);
                 }
                 if (valueList.size() > 0) {
@@ -145,7 +144,7 @@ public class DataFormUI extends JPanel {
                 answerForm.setAnswer(answer, isSelected);
             }
             else if (o instanceof JTextArea) {
-                List list = new ArrayList();
+                List<String> list = new ArrayList<String>();
                 String value = ((JTextArea)o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -163,21 +162,21 @@ public class DataFormUI extends JPanel {
             }
             else if (o instanceof JComboBox) {
                 Object v = ((JComboBox)o).getSelectedItem();
-                String value = "";
+                String value;
                 if (v instanceof FormField.Option) {
                     value = ((FormField.Option)v).getValue();
                 }
                 else {
                     value = (String)v;
                 }
-                List list = new ArrayList();
+                List<String> list = new ArrayList<String>();
                 list.add(value);
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
                 }
             }
             else if (o instanceof CheckBoxList) {
-                List list = (List)((CheckBoxList)o).getSelectedValues();
+                List list = ((CheckBoxList)o).getSelectedValues();
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
                 }
@@ -210,21 +209,7 @@ public class DataFormUI extends JPanel {
     }
 
     public Component getComponent(String label) {
-        Component comp = (Component)valueMap.get(label);
-        return comp;
-    }
-
-
-    private String getValue(String label) {
-        Component comp = (Component)valueMap.get(label);
-        if (comp instanceof JCheckBox) {
-            return "" + ((JCheckBox)comp).isSelected();
-        }
-
-        if (comp instanceof JTextField) {
-            return ((JTextField)comp).getText();
-        }
-        return null;
+        return valueMap.get(label);
     }
 }
 

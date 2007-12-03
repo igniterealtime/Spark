@@ -15,7 +15,6 @@ import org.jivesoftware.spark.SparkManager;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -31,7 +30,6 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
 
@@ -160,7 +158,7 @@ public final class PasswordDialog implements PropertyChangeListener {
             dialog.setVisible(false);
         }
         else if (Res.getString("ok").equals(value)) {
-            stringValue = passwordField.getText();
+            stringValue = String.valueOf(passwordField.getPassword());
             if (stringValue.trim().length() == 0) {
                 stringValue = null;
             }

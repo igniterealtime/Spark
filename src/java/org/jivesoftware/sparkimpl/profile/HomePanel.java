@@ -87,7 +87,7 @@ public class HomePanel extends JPanel {
         this.add(pagerField, new GridBagConstraints(3, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(mobileField, new GridBagConstraints(3, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-
+        // TODO: Convert to newer focus model
         streetField.setNextFocusableComponent(cityField);
         cityField.setNextFocusableComponent(stateField);
         stateField.setNextFocusableComponent(zipCodeField);
@@ -183,11 +183,13 @@ public class HomePanel extends JPanel {
 
     public void allowEditing(boolean allowEditing) {
         Component[] comps = getComponents();
-        final int no = comps != null ? comps.length : 0;
-        for (int i = 0; i < no; i++) {
-            Component comp = comps[i];
-            if (comp instanceof JTextField) {
-                ((JTextField)comp).setEditable(allowEditing);
+        if (comps != null) {
+            final int no = comps.length;
+            for (int i = 0; i < no; i++) {
+                Component comp = comps[i];
+                if (comp instanceof JTextField) {
+                    ((JTextField)comp).setEditable(allowEditing);
+                }
             }
         }
     }

@@ -32,14 +32,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
 public final class RosterTree extends JPanel {
     private final JiveTreeNode rootNode = new JiveTreeNode("Contact List");
     private final Tree rosterTree;
-    private final Map addressMap = new HashMap();
+    private final Map<JiveTreeNode,String> addressMap = new HashMap<JiveTreeNode,String>();
     private boolean showUnavailableAgents = true;
 
     /**
@@ -67,15 +66,13 @@ public final class RosterTree extends JPanel {
     }
 
     private void changePresence(String user, Presence presence){
-        final Iterator iter = addressMap.keySet().iterator();
-        while (iter.hasNext()) {
-            final JiveTreeNode node = (JiveTreeNode)iter.next();
-            final String nodeUser = (String)addressMap.get(node);
+        for (Object o : addressMap.keySet()) {
+            final JiveTreeNode node = (JiveTreeNode) o;
+            final String nodeUser = addressMap.get(node);
             if (user.startsWith(nodeUser)) {
                 if (!presence.isAvailable()) {
                     node.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
-                }
-                else {
+                } else {
                     node.setIcon(SparkRes.getImageIcon(SparkRes.GREEN_BALL));
                 }
             }
@@ -153,7 +150,7 @@ public final class RosterTree extends JPanel {
      * @return the selected agent nodes userobject.
      */
     public String getJID(JiveTreeNode node) {
-        return (String)addressMap.get(node);
+        return addressMap.get(node);
     }
 
     public String toString() {

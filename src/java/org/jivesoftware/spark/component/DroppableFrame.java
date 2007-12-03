@@ -24,13 +24,11 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,7 +36,6 @@ import java.util.List;
  * onto the actual frame via <code>File</code> object.
  */
 public abstract class DroppableFrame extends JFrame implements DropTargetListener, DragSourceListener, DragGestureListener {
-    private DropTarget dropTarget = new DropTarget(this, this);
     private DragSource dragSource = DragSource.getDefaultDragSource();
 
     /**
@@ -82,9 +79,8 @@ public abstract class DroppableFrame extends JFrame implements DropTargetListene
             if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 List fileList = (List)transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                Iterator iterator = fileList.iterator();
-                while (iterator.hasNext()) {
-                    File file = (File)iterator.next();
+                for (Object aFileList : fileList) {
+                    File file = (File) aFileList;
                     if (file.isFile()) {
                         fileDropped(file);
                     }

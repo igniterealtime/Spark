@@ -13,7 +13,6 @@ package org.jivesoftware.spark.component;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,11 +56,9 @@ public class CheckBoxList extends JPanel {
      */
     public List getSelectedValues() {
         List<String> list = new ArrayList<String>();
-        Iterator iter = valueMap.keySet().iterator();
-        while (iter.hasNext()) {
-            JCheckBox checkbox = (JCheckBox)iter.next();
+        for (JCheckBox checkbox : valueMap.keySet()) {
             if (checkbox.isSelected()) {
-                String value = (String)valueMap.get(checkbox);
+                String value = valueMap.get(checkbox);
                 list.add(value);
             }
         }

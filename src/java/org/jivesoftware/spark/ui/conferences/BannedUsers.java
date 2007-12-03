@@ -39,7 +39,6 @@ import java.util.Iterator;
  * Handles unbanning banned users in Chat Rooms.
  */
 public class BannedUsers extends JPanel {
-    private GroupChatRoom chatRoom;
     private MultiUserChat chat;
 
     private DefaultListModel listModel = new DefaultListModel();
@@ -99,7 +98,7 @@ public class BannedUsers extends JPanel {
      * @param cRoom the group chat room.
      */
     public void setChatRoom(ChatRoom cRoom) {
-        this.chatRoom = (GroupChatRoom)cRoom;
+        GroupChatRoom chatRoom = (GroupChatRoom) cRoom;
         chat = chatRoom.getMultiUserChat();
     }
 

@@ -38,7 +38,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -55,7 +54,7 @@ public class UserSearchForm extends JPanel {
 
     private TitlePanel titlePanel;
 
-    private Map serviceMap = new HashMap();
+    private Map<String,SearchForm> serviceMap = new HashMap<String,SearchForm>();
 
     /**
      * Initializes the UserSearchForm with all available search services.
@@ -80,9 +79,8 @@ public class UserSearchForm extends JPanel {
         // Populate with Search Services
         servicesBox = new JComboBox();
 
-        Iterator services = searchServices.iterator();
-        while (services.hasNext()) {
-            String service = (String)services.next();
+        for (Object searchService : searchServices) {
+            String service = (String) searchService;
             servicesBox.addItem(service);
         }
 
@@ -116,6 +114,7 @@ public class UserSearchForm extends JPanel {
                                 newForm = searchManager.getSearchForm(serviceName);
                             }
                             catch (XMPPException e) {
+                                // Nothing to do
                             }
                             return newForm;
                         }
@@ -123,7 +122,6 @@ public class UserSearchForm extends JPanel {
                         public void finished() {
                             if (newForm == null) {
                                 JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
-                                return;
                             }
                             else {
                                 servicesBox.addItem(serviceName);
@@ -180,9 +178,8 @@ public class UserSearchForm extends JPanel {
             cardLayout.show(cardPanel, service);
         }
 
-        SearchForm searchForm = (SearchForm)serviceMap.get(service);
+        SearchForm searchForm = serviceMap.get(service);
         Form form = searchForm.getSearchForm();
-        String title = form.getTitle();
         String description = form.getInstructions();
         titlePanel.setTitle(Res.getString("title.person.search"));
         titlePanel.setDescription(description);
@@ -204,7 +201,7 @@ public class UserSearchForm extends JPanel {
      * @return the QuestionForm retrieved by the search service.
      */
     public DataFormUI getQuestionForm() {
-        SearchForm searchForm = (SearchForm)serviceMap.get(getSearchService());
+        SearchForm searchForm = serviceMap.get(getSearchService());
         return searchForm.getQuestionForm();
     }
 
@@ -212,7 +209,7 @@ public class UserSearchForm extends JPanel {
      * Performs a search on the specified search service.
      */
     public void performSearch() {
-        SearchForm searchForm = (SearchForm)serviceMap.get(getSearchService());
+        SearchForm searchForm = serviceMap.get(getSearchService());
         searchForm.performSearch();
     }
 

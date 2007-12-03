@@ -79,9 +79,9 @@ public class PluginClassLoader extends URLClassLoader {
             return;
         }
 
-        for (int i = 0; i < jars.length; i++) {
-            if (jars[i].isFile()) {
-                final URL url = jars[i].toURL();
+        for (File jar : jars) {
+            if (jar.isFile()) {
+                final URL url = jar.toURL();
                 addURL(url);
                 try {
                     checkForSmackProviders(url);
@@ -190,6 +190,7 @@ public class PluginClassLoader extends URLClassLoader {
                 providerStream.close();
             }
             catch (Exception e) {
+                // Nothing to do
             }
         }
     }

@@ -63,7 +63,7 @@ public final class GraphicUtils {
     };
     protected final static MediaTracker tracker = new MediaTracker(component);
 
-    private static Hashtable imageCache = new Hashtable();
+    private static Hashtable<String,Image> imageCache = new Hashtable<String,Image>();
 
     /**
      * The default Hand cursor.
@@ -223,6 +223,8 @@ public final class GraphicUtils {
     /**
      * Centers the window over a component (usually another window).
      * The window must already have been sized.
+     * @param window Window to center.
+     * @param over Component to center over.
      */
     public static void centerWindowOnComponent(Window window, Component over) {
         if ((over == null) || !over.isShowing()) {
@@ -260,6 +262,7 @@ public final class GraphicUtils {
     }
 
     /**
+     * @param c Component to check on.
      * @return returns true if the component of one of its child has the focus
      */
     public static boolean isAncestorOfFocusedComponent(Component c) {
@@ -287,6 +290,7 @@ public final class GraphicUtils {
      * @param c the root of the component hierarchy to search
      * @see #focusComponentOrChild
      * @deprecated replaced by {@link #getFocusableComponentOrChild(Component,boolean)}
+     * @return Component that was focused on.
      */
     public static Component getFocusableComponentOrChild(Component c) {
         return getFocusableComponentOrChild(c, false);
@@ -301,13 +305,14 @@ public final class GraphicUtils {
      *                focus.  For example, if both a child and its parent are focusable and <code>deepest</code> is true, the child is
      *                returned.
      * @see #focusComponentOrChild
+     * @return Component that was focused on.
      */
     public static Component getFocusableComponentOrChild(Component c, boolean deepest) {
         if (c != null && c.isEnabled() && c.isVisible()) {
             if (c instanceof Container) {
                 Container cont = (Container)c;
 
-                if (deepest == false) { // first one is a good one
+                if (!deepest) { // first one is a good one
                     if (c instanceof JComponent) {
                         JComponent jc = (JComponent)c;
                         if (jc.isRequestFocusEnabled()) {
@@ -326,7 +331,7 @@ public final class GraphicUtils {
                 }
 
                 if (c instanceof JComponent) {
-                    if (deepest == true) {
+                    if (deepest) {
                         JComponent jc = (JComponent)c;
                         if (jc.isRequestFocusEnabled()) {
                             return jc;
@@ -347,6 +352,8 @@ public final class GraphicUtils {
      * can accept the focus.
      *
      * @see #getFocusableComponentOrChild
+     * @param c Component to focus on.
+     * @return Component that was focused on.
      */
     public static Component focusComponentOrChild(Component c) {
         return focusComponentOrChild(c, false);
@@ -361,6 +368,7 @@ public final class GraphicUtils {
      *                accept the focus.
      *                For example, if both a child and its parent are focusable and <code>deepest</code> is true, the child is focused.
      * @see #getFocusableComponentOrChild
+     * @return Component that was focused on.
      */
     public static Component focusComponentOrChild(Component c, boolean deepest) {
         final Component focusable = getFocusableComponentOrChild(c, deepest);
@@ -381,6 +389,9 @@ public final class GraphicUtils {
      *
      * @see Class#getResource(String)
      * @see Toolkit#createImage(URL)
+     * @param imageName Name of the resource to load.
+     * @param cls Class to pull resource from.
+     * @return Image loaded from resource.
      */
     public static Image loadFromResource(String imageName, Class cls) {
         try {
@@ -390,7 +401,7 @@ public final class GraphicUtils {
                 return null;
             }
 
-            Image image = (Image)imageCache.get(url.toString());
+            Image image = imageCache.get(url.toString());
 
             if (image == null) {
                 image = Toolkit.getDefaultToolkit().createImage(url);
@@ -420,49 +431,47 @@ public final class GraphicUtils {
     }
 
 
-    public static final void makeSameSize(JComponent... comps) {
+    public static void makeSameSize(JComponent... comps) {
         if (comps.length == 0) {
             return;
         }
 
         int max = 0;
-        for (int i = 0; i < comps.length; i++) {
-            int w = comps[i].getPreferredSize().width;
+        for (JComponent comp1 : comps) {
+            int w = comp1.getPreferredSize().width;
             max = w > max ? w : max;
         }
 
         Dimension dim = new Dimension(max, comps[0].getPreferredSize().height);
-        for (int i = 0; i < comps.length; i++) {
-            comps[i].setPreferredSize(dim);
+        for (JComponent comp : comps) {
+            comp.setPreferredSize(dim);
         }
     }
 
     /**
      * Return the hexidecimal color from a java.awt.Color
      *
-     * @param c
+     * @param c Color to convert.
      * @return hexadecimal string
      */
-    public static final String toHTMLColor(Color c) {
+    public static String toHTMLColor(Color c) {
         int color = c.getRGB();
         color |= 0xff000000;
         String s = Integer.toHexString(color);
         return s.substring(2);
     }
 
-    public static final String createToolTip(String text, int width) {
+    public static String createToolTip(String text, int width) {
         final String htmlColor = toHTMLColor(TOOLTIP_COLOR);
-        final String toolTip = "<html><table width=" + width + " bgColor=" + htmlColor + "><tr><td>" + text + "</td></tr></table></table>";
-        return toolTip;
+        return "<html><table width=" + width + " bgColor=" + htmlColor + "><tr><td>" + text + "</td></tr></table></table>";
     }
 
-    public static final String createToolTip(String text) {
+    public static String createToolTip(String text) {
         final String htmlColor = toHTMLColor(TOOLTIP_COLOR);
-        final String toolTip = "<html><table  bgColor=" + htmlColor + "><tr><td>" + text + "</td></tr></table></table>";
-        return toolTip;
+        return "<html><table  bgColor=" + htmlColor + "><tr><td>" + text + "</td></tr></table></table>";
     }
 
-    public static final String getHighlightedWords(String text, String query) {
+    public static String getHighlightedWords(String text, String query) {
         final StringTokenizer tkn = new StringTokenizer(query, " ");
         int tokenCount = tkn.countTokens();
         String[] words = new String[tokenCount];
@@ -486,7 +495,7 @@ public final class GraphicUtils {
     public static ImageIcon createShadowPicture(Image buf) {
         buf = removeTransparency(buf);
 
-        BufferedImage splash = null;
+        BufferedImage splash;
 
         JLabel label = new JLabel();
         int width = buf.getWidth(null);
@@ -561,9 +570,8 @@ public final class GraphicUtils {
         catch (InterruptedException e) {
             Log.error(e);
         }
-        byte[] bytes = baos.toByteArray();
 
-        return bytes;
+        return baos.toByteArray();
     }
 
 
@@ -604,11 +612,7 @@ public final class GraphicUtils {
      */
     public static ImageIcon scale(ImageIcon icon, int newHeight, int newWidth) {
         Image img = icon.getImage();
-        int height = icon.getIconHeight();
-        int width = icon.getIconWidth();
-        height = newHeight;
-        width = newWidth;
-        img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        img = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         return new ImageIcon(img);
     }
 
@@ -631,6 +635,7 @@ public final class GraphicUtils {
                 return new JFileChooser().getIcon(file);
             }
             catch (Exception e1) {
+                // Do nothing.
             }
         }
 
@@ -639,23 +644,8 @@ public final class GraphicUtils {
 
 
     public static BufferedImage getBufferedImage(File file) {
-        Icon icon = null;
-        try {
-            sun.awt.shell.ShellFolder sf = sun.awt.shell.ShellFolder.getShellFolder(file);
-
-            // Get large icon
-            icon = new ImageIcon(sf.getIcon(true), sf.getFolderType());
-        }
-        catch (Exception e) {
-            try {
-                icon = new JFileChooser().getIcon(file);
-            }
-            catch (Exception e1) {
-            }
-        }
-
-        icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
-
+        // Why wasn't this using it's code that pulled from the file?  Hrm.
+        Icon icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
 
         BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.OPAQUE);
         Graphics bg = bi.getGraphics();

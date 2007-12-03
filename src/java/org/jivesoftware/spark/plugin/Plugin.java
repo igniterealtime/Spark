@@ -54,6 +54,8 @@ public interface Plugin {
      * <p/>
      * Implementations should return <CODE>false</CODE> to cancel the shutdown
      * process.
+     *
+     * @return true if the plugin can shut currently.
      */
     public boolean canShutDown();
 

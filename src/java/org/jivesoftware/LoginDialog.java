@@ -81,7 +81,6 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.security.Principal;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.HashMap;
@@ -617,7 +616,7 @@ public final class LoginDialog {
                         enableComponents(true);
                         setProgressBarVisible(false);
                     }
-                    return Boolean.valueOf(loginSuccessfull);
+                    return loginSuccessfull;
                 }
             };
 
@@ -679,7 +678,7 @@ public final class LoginDialog {
                 GSSAPIConfiguration config = new GSSAPIConfiguration();
                 Configuration.setConfiguration(config);
 
-                LoginContext lc = null;
+                LoginContext lc;
                 String princName = localPref.getUsername();
                 String princRealm = null;
                 try {
@@ -711,7 +710,7 @@ public final class LoginDialog {
                     ssoMethod = "file";
                 }
 
-                String ssoKdc = null;
+                String ssoKdc;
                 if(ssoMethod.equals("dns")) {
                     ssoKdc = getDnsKdc(princRealm);
                     System.setProperty("java.security.krb5.realm",princRealm);
@@ -790,14 +789,14 @@ public final class LoginDialog {
                         String portString = serverName.substring(checkForPort + 1);
                         if (ModelUtil.hasLength(portString)) {
                             // Set new port.
-                            port = Integer.valueOf(portString).intValue();
+                            port = Integer.valueOf(portString);
                         }
                     }
 
                     boolean useSSL = localPref.isSSL();
                     boolean hostPortConfigured = localPref.isHostAndPortConfigured();
 
-                    ConnectionConfiguration config = null;
+                    ConnectionConfiguration config;
 
                     if (useSSL) {
                         if (!hostPortConfigured) {
@@ -923,7 +922,7 @@ public final class LoginDialog {
 
             // Check to see if the password should be saved.
             if (savePasswordBox.isSelected()) {
-                String encodedPassword = null;
+                String encodedPassword;
                 try {
                     encodedPassword = Encryptor.encrypt(getPassword());
                     localPref.setPassword(encodedPassword);
@@ -952,17 +951,15 @@ public final class LoginDialog {
         }
 
         public void handle(Callback[] callbacks) throws IOException  {
-            for (int i=0; i<callbacks.length; i++) {
-                if(callbacks[i] instanceof NameCallback) {
-                    NameCallback ncb = (NameCallback) callbacks[i];
+            for (Callback callback : callbacks) {
+                if (callback instanceof NameCallback) {
+                    NameCallback ncb = (NameCallback) callback;
                     ncb.setName(getUsername());
-                }
-                else if(callbacks[i] instanceof PasswordCallback) {
-                    PasswordCallback pcb = (PasswordCallback) callbacks[i];
+                } else if (callback instanceof PasswordCallback) {
+                    PasswordCallback pcb = (PasswordCallback) callback;
                     pcb.setPassword(getPassword().toCharArray());
-                }
-                else {
-                    Log.error("Uknown callback requested: "+callbacks[i].getClass().getSimpleName());
+                } else {
+                    Log.error("Uknown callback requested: " + callback.getClass().getSimpleName());
                 }
             }
         }
@@ -1152,7 +1149,7 @@ public final class LoginDialog {
         File settingsXML = new File(Spark.getSparkUserHome(), "/settings.xml");
         if (settingsXML.exists()) {
             SAXReader saxReader = new SAXReader();
-            Document pluginXML = null;
+            Document pluginXML;
             try {
                 pluginXML = saxReader.read(settingsXML);
             }
@@ -1162,9 +1159,8 @@ public final class LoginDialog {
             }
 
             List plugins = pluginXML.selectNodes("/settings");
-            Iterator iter = plugins.iterator();
-            while (iter.hasNext()) {
-                Element plugin = (Element)iter.next();
+            for (Object plugin1 : plugins) {
+                Element plugin = (Element) plugin1;
 
                 String password = plugin.selectSingleNode("password").getText();
                 localPref.setPassword(password);
@@ -1196,13 +1192,13 @@ public final class LoginDialog {
         //Assumption: the KDC will be found with the SRV record
         // _kerberos._udp.$realm
         try {
-            Hashtable env= new Hashtable();
+            Hashtable<String,String> env= new Hashtable<String,String>();
             env.put("java.naming.factory.initial","com.sun.jndi.dns.DnsContextFactory");
             DirContext context = new InitialDirContext(env);
             Attributes dnsLookup = context.getAttributes("_kerberos._udp."+realm, new String[]{"SRV"});
     
             ArrayList<Integer> priorities = new ArrayList<Integer>();
-            HashMap<Integer,List> records = new HashMap<Integer,List>();
+            HashMap<Integer,List<String>> records = new HashMap<Integer,List<String>>();
             for (Enumeration e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
                 Attribute record = (Attribute)e.nextElement();
                 for (Enumeration e2 = record.getAll() ; e2.hasMoreElements() ; ) {
@@ -1210,12 +1206,12 @@ public final class LoginDialog {
                     String [] sRecParts = sRecord.split(" ");
                     Integer pri = new Integer(sRecParts[0]);
                     if(priorities.contains(pri)) {
-                        List recs = records.get(pri);
+                        List<String> recs = records.get(pri);
                         if(recs == null) recs = new ArrayList<String>();
                         recs.add(sRecord);
                     } else {
                         priorities.add(pri);
-                        List recs = new ArrayList<String>();
+                        List<String> recs = new ArrayList<String>();
                         recs.add(sRecord);
                         records.put(pri,recs);
                     }

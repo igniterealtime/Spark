@@ -46,7 +46,7 @@ public class JContactItemField extends JPanel {
     private JWindow popup;
     private List<ContactItem> items;
 
-    public JContactItemField(List items) {
+    public JContactItemField(List<ContactItem> items) {
         setLayout(new BorderLayout());
         list = new JList(model) {
             public String getToolTipText(MouseEvent e) {
@@ -131,8 +131,8 @@ public class JContactItemField extends JPanel {
         popup.dispose();
     }
 
-    public void setItems(List list) {
-        this.items = items;
+    public void setItems(List<ContactItem> list) {
+        this.items = list;
     }
 
     public JList getList() {
@@ -229,8 +229,7 @@ public class JContactItemField extends JPanel {
     }
 
     public ContactItem getSelectedContactItem() {
-        ContactItem selection = (ContactItem)list.getSelectedValue();
-        return selection;
+        return (ContactItem)list.getSelectedValue();
     }
 
     public void setText(String text) {

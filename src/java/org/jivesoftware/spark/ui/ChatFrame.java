@@ -12,7 +12,6 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;

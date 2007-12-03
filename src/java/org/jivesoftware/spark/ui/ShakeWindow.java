@@ -19,7 +19,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ShakeWindow extends Object {
+public class ShakeWindow {
 
     public static final int SHAKE_DISTANCE = 10;
     public static final double SHAKE_CYCLE = 50;
@@ -30,7 +30,6 @@ public class ShakeWindow extends Object {
     private Point naturalLocation;
     private long startTime;
     private Timer shakeTimer;
-    private final double HALF_PI = Math.PI / 2.0;
     private final double TWO_PI = Math.PI * 2.0;
     private boolean added = false;
 
@@ -67,7 +66,7 @@ public class ShakeWindow extends Object {
                                         SHAKE_DISTANCE) +
                                         naturalLocation.x);
 
-                                int shakenY = 0;
+                                int shakenY;
                                 if (added) {
                                     shakenY = naturalLocation.y - 10;
                                     added = false;

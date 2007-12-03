@@ -18,14 +18,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -375,9 +369,9 @@ public final class Spark {
 
         if (ModelUtil.hasLength(setLanguage)) {
             Locale[] locales = Locale.getAvailableLocales();
-            for (int i = 0; i < locales.length; i++) {
-                if (locales[i].getLanguage().equals(setLanguage)) {
-                    Locale.setDefault(locales[i]);
+            for (Locale locale : locales) {
+                if (locale.getLanguage().equals(setLanguage)) {
+                    Locale.setDefault(locale);
                     break;
                 }
             }

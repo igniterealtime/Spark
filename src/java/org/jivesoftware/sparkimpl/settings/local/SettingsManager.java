@@ -56,7 +56,7 @@ public class SettingsManager {
 
         if (localPreferences == null) {
             // Do Initial Load from FileSystem.
-            File settingsFile = getSettingsFile();
+            getSettingsFile();
             localPreferences = load();
         }
 

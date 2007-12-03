@@ -265,10 +265,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         catch (Exception ex) {
             Log.error(ex);
         }
-        finally {
-            // Close application.
-            System.exit(1);
-        }
+        // Close application.
+        System.exit(1);
     }
 
     /**

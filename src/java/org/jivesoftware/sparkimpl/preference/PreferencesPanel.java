@@ -23,7 +23,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -37,7 +36,6 @@ import java.util.Iterator;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
     private final JLabel titleLabel = new JLabel();
-    private final JSeparator jSeparator1 = new JSeparator();
     private final JPanel flowPanel = new JPanel(new BorderLayout());
     private DefaultListModel listModel = new DefaultListModel();
     private JList list = new JList(listModel);

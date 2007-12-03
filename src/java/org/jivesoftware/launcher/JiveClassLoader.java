@@ -56,9 +56,9 @@ class JiveClassLoader extends URLClassLoader {
             return;
         }
 
-        for (int i = 0; i < jars.length; i++) {
-            if (jars[i].isFile()) {
-                addURL(jars[i].toURL());
+        for (File jar : jars) {
+            if (jar.isFile()) {
+                addURL(jar.toURL());
             }
         }
     }

@@ -173,6 +173,7 @@ public class VCardManager {
                     }
                     catch (InterruptedException e) {
                         e.printStackTrace();
+                        break;
                     }
                 }
             }
@@ -420,7 +421,7 @@ public class VCardManager {
             catch (XMPPException e) {
                 vcard.setJabberId(jid);
                 //Log.warning("Unable to load vcard for " + jid, e);
-                vcard.setError(new XMPPError(409));
+                vcard.setError(new XMPPError(XMPPError.Condition.conflict));
                 vcards.put(jid, vcard);
             }
             // Persist XML
@@ -445,7 +446,7 @@ public class VCardManager {
             vcards.put(jid, vcard);
         }
         catch (XMPPException e) {
-            vcard.setError(new XMPPError(409));
+            vcard.setError(new XMPPError(XMPPError.Condition.conflict));
             vcards.put(jid, vcard);
         }
 

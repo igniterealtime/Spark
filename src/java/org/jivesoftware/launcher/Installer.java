@@ -20,15 +20,11 @@ import com.install4j.api.windows.WinRegistry;
 
 import java.io.File;
 
-import javax.swing.JOptionPane;
-
 /**
  * The installer class is used by the Install4j Installer to setup registry entries
  * during the setup process.
  */
 public class Installer implements InstallAction {
-
-    private InstallerContext context;
 
     public int getPercentOfTotalInstallation() {
         return 0;
@@ -39,8 +35,6 @@ public class Installer implements InstallAction {
     }
 
     public boolean install(InstallerContext installerContext) throws UserCanceledException {
-        context = installerContext;
-
         final String osName = System.getProperty("os.name").toLowerCase();
         boolean isWindows = osName.startsWith("windows");
 

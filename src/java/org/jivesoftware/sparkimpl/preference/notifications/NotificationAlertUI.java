@@ -14,7 +14,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
@@ -36,18 +35,12 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
 
 public class NotificationAlertUI extends JPanel {
     private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel emailAddressLabel = new JLabel();
     private JLabel professionLabel = new JLabel();
-
-    private RolloverButton acceptButton;
-    private RolloverButton rejectButton;
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
     private VCard vcard;
     private String jid;
@@ -213,15 +206,6 @@ public class NotificationAlertUI extends JPanel {
         validate();
         repaint();
     }
-
-    public RolloverButton getAcceptButton() {
-        return acceptButton;
-    }
-
-    public RolloverButton getRejectButton() {
-        return rejectButton;
-    }
-
 
     public void paintComponent(Graphics g) {
         BufferedImage cache = new BufferedImage(2, getHeight(), BufferedImage.TYPE_INT_RGB);

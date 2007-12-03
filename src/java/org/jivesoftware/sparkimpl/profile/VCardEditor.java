@@ -248,10 +248,7 @@ public class VCardEditor {
         avatarLabel = new JLabel();
         avatarLabel.setHorizontalAlignment(JButton.RIGHT);
         avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
-
-        // Construct main panel w/ layout.
-        final JPanel mainPanel = new JPanel();
-
+        
         // The user should only be able to close this dialog.
         Object[] options = {"View Full Profile", Res.getString("close")};
         final JOptionPane pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);

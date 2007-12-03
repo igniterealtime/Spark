@@ -22,7 +22,7 @@ public interface BrowserListener {
     /**
      * Called when a document/page has been fully loaded.
      *
-     * @param documentURL
+     * @param documentURL URL of the document that was loaded.
      */
     void documentLoaded(String documentURL);
 }

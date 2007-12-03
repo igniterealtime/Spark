@@ -28,6 +28,7 @@ public interface MessageFilter {
     /**
      * Update the body of an outgoing message.
      *
+     * @param room Room the message is attached to.
      * @param message the message to update.
      */
     void filterOutgoing(ChatRoom room, Message message);
@@ -35,6 +36,7 @@ public interface MessageFilter {
     /**
      * Updates the body of an incoming message.
      *
+     * @param room Room the message is attached to.
      * @param message the message to update.
      */
     void filterIncoming(ChatRoom room, Message message);

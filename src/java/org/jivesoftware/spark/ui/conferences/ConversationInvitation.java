@@ -8,7 +8,6 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
@@ -26,7 +25,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,20 +46,15 @@ import javax.swing.JPanel;
 public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener {
 
     private JButton joinButton;
-    private JButton declineButton;
 
     private String roomName;
     private String password;
     private String inviter;
 
-    private Image backgroundImage;
-
 
     private String tabTitle;
     private String frameTitle;
     private String descriptionText;
-
-    private boolean declined = false;
 
     /**
      * Builds a new Conference Invitation UI.
@@ -77,8 +70,6 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         this.roomName = roomName;
         this.password = password;
         this.inviter = inviter;
-
-        backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
         // Set Layout
         setLayout(new GridBagLayout());
@@ -123,7 +114,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
 
         // Add accept and reject buttons
         joinButton = new JButton("");
-        declineButton = new JButton("");
+        JButton declineButton = new JButton("");
         ResourceUtils.resButton(joinButton, Res.getString("button.accept"));
         ResourceUtils.resButton(declineButton, Res.getString("button.decline"));
 

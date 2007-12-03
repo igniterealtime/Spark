@@ -205,10 +205,11 @@ public class ChatManager implements MessageEventNotificationListener {
      *
      * @param userJID  the jid of the user to chat with.
      * @param nickname the nickname to use for the user.
+     * @param title    the title to use for the room.
      * @return the newly created <code>ChatRoom</code>.
      */
     public ChatRoom createChatRoom(String userJID, String nickname, String title) {
-        ChatRoom chatRoom = null;
+        ChatRoom chatRoom;
         try {
             chatRoom = getChatContainer().getChatRoom(userJID);
         }
@@ -228,7 +229,7 @@ public class ChatManager implements MessageEventNotificationListener {
      * @return the ChatRoom.
      */
     public ChatRoom getChatRoom(String jid) {
-        ChatRoom chatRoom = null;
+        ChatRoom chatRoom;
         try {
             chatRoom = getChatContainer().getChatRoom(jid);
         }
@@ -308,7 +309,7 @@ public class ChatManager implements MessageEventNotificationListener {
                     chatRoom = chatRooms.getChatRoom(jid);
                 }
                 catch (ChatRoomNotFoundException e) {
-
+                    // Do nothing
                 }
                 return chatRoom;
             }
@@ -443,9 +444,8 @@ public class ChatManager implements MessageEventNotificationListener {
     public void filterOutgoingMessage(ChatRoom room, Message message) {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
-        Iterator filters = chatManager.getMessageFilters().iterator();
-        while (filters.hasNext()) {
-            ((MessageFilter)filters.next()).filterOutgoing(room, message);
+        for (Object o : chatManager.getMessageFilters()) {
+            ((MessageFilter) o).filterOutgoing(room, message);
         }
     }
 
@@ -596,7 +596,7 @@ public class ChatManager implements MessageEventNotificationListener {
             public void run() {
                 final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-                ChatRoom chatRoom = null;
+                ChatRoom chatRoom;
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
@@ -604,9 +604,9 @@ public class ChatManager implements MessageEventNotificationListener {
                         // Notify Decorators
                         notifySparkTabHandlers(chatRoom);
                     }
-
                 }
                 catch (ChatRoomNotFoundException e) {
+                    // Do nothing
                 }
 
 
@@ -624,7 +624,7 @@ public class ChatManager implements MessageEventNotificationListener {
             public void run() {
                 ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-                ChatRoom chatRoom = null;
+                ChatRoom chatRoom;
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
@@ -633,11 +633,10 @@ public class ChatManager implements MessageEventNotificationListener {
                         // Notify Decorators
                         notifySparkTabHandlers(chatRoom);
                     }
-
                 }
                 catch (ChatRoomNotFoundException e) {
+                    // Do nothing
                 }
-
 
                 contactList.useDefaults(from);
 
@@ -889,7 +888,7 @@ public class ChatManager implements MessageEventNotificationListener {
      * @param uriMapping the uri mapping.
      * @throws Exception thrown if the conference cannot be joined.
      */
-    private void handleConference(String uriMapping) {
+    private void handleConference(String uriMapping) throws Exception {
         int index = uriMapping.indexOf("xmpp:");
         int join = uriMapping.indexOf("?join");
 

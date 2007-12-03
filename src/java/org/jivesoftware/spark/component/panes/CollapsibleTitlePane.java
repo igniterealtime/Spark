@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.component.panes;
 
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ColorUtil;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -53,7 +52,6 @@ public class CollapsibleTitlePane extends JPanel {
     private Color endColor;
 
     private Color titleColor;
-    private Font titleFont;
 
     private boolean subPane;
 
@@ -63,7 +61,7 @@ public class CollapsibleTitlePane extends JPanel {
         setLayout(new GridBagLayout());
 
         titleColor = new Color(33, 93, 198);
-        titleFont = new Font("Dialog", Font.BOLD, 11);
+        Font titleFont = new Font("Dialog", Font.BOLD, 11);
 
         // Initialize color
         startColor = Color.white;
@@ -102,13 +100,13 @@ public class CollapsibleTitlePane extends JPanel {
         });
 
         // Handle Custom Spark Job.
-        if (false) {
-            titleColor = getColor(Default.getString(Default.TEXT_COLOR));
-            String start = Default.getString(Default.CONTACT_GROUP_START_COLOR);
-            String end = Default.getString(Default.CONTACT_GROUP_END_COLOR);
-            startColor = getColor(start);
-            endColor = getColor(end);
-        }
+//        if (false) {
+//            titleColor = getColor(Default.getString(Default.TEXT_COLOR));
+//            String start = Default.getString(Default.CONTACT_GROUP_START_COLOR);
+//            String end = Default.getString(Default.CONTACT_GROUP_END_COLOR);
+//            startColor = getColor(start);
+//            endColor = getColor(end);
+//        }
 
 
     }
@@ -214,11 +212,9 @@ public class CollapsibleTitlePane extends JPanel {
         setCollapsed(isCollapsed());
     }
 
-    private static Color getColor(String commaColorString) {
-        Color color = null;
+    public static Color getColor(String commaColorString) {
+        Color color;
         try {
-            color = null;
-
             StringTokenizer tkn = new StringTokenizer(commaColorString, ",");
             color = new Color(Integer.parseInt(tkn.nextToken()), Integer.parseInt(tkn.nextToken()), Integer.parseInt(tkn.nextToken()));
         }

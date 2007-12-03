@@ -61,7 +61,7 @@ import java.util.TimerTask;
  */
 public class UserManager {
 
-    private Map parents = new HashMap();
+    private Map<JFrame,Component> parents = new HashMap<JFrame,Component>();
 
     public UserManager() {
     }
@@ -102,10 +102,7 @@ public class UserManager {
      * @return a Collection of jids found in the room.
      */
     public Collection getUserJidsInRoom(String room, boolean fullJID) {
-        final List returnList = new ArrayList();
-
-
-        return returnList;
+        return new ArrayList();
     }
 
     /**
@@ -270,11 +267,7 @@ public class UserManager {
      * @see <code>ChatUser</code>
      */
     public Collection getAllParticipantsInRoom(ChatRoom chatRoom) {
-        final String room = chatRoom.getRoomname();
-        final List returnList = new ArrayList();
-
-
-        return returnList;
+        return new ArrayList();
     }
 
 
@@ -362,7 +355,7 @@ public class UserManager {
         }
 
         // Make sure we are using the default glass pane
-        final Component glassPane = (Component)parents.get(parent);
+        final Component glassPane = parents.get(parent);
         parent.setGlassPane(glassPane);
 
         final Map<String, ContactItem> contactMap = new HashMap<String, ContactItem>();
@@ -370,15 +363,11 @@ public class UserManager {
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-        final Iterator groups = contactList.getContactGroups().iterator();
-        while (groups.hasNext()) {
-            ContactGroup group = (ContactGroup)groups.next();
-            Iterator contactItems = group.getContactItems().iterator();
-            while (contactItems.hasNext()) {
-                ContactItem item = (ContactItem)contactItems.next();
-                if (!contactMap.containsKey(item.getJID())) {
-                    contacts.add(item);
-                    contactMap.put(item.getJID(), item);
+        for (ContactGroup contactGroup : contactList.getContactGroups()) {
+            for (ContactItem contactItem : contactGroup.getContactItems()) {
+                if (!contactMap.containsKey(contactItem.getJID())) {
+                    contacts.add(contactItem);
+                    contactMap.put(contactItem.getJID(), contactItem);
                 }
             }
         }
@@ -401,7 +390,7 @@ public class UserManager {
             public void keyReleased(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
                     if (ModelUtil.hasLength(contactField.getText())) {
-                        ContactItem item = (ContactItem)contactMap.get(contactField.getText());
+                        ContactItem item = contactMap.get(contactField.getText());
                         if (item == null) {
                             item = contactField.getSelectedContactItem();
                         }
@@ -426,7 +415,7 @@ public class UserManager {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     if (ModelUtil.hasLength(contactField.getText())) {
-                        ContactItem item = (ContactItem)contactMap.get(contactField.getText());
+                        ContactItem item = contactMap.get(contactField.getText());
                         if (item == null) {
                             item = contactField.getSelectedContactItem();
                         }
@@ -510,10 +499,8 @@ public class UserManager {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator() {
-        public int compare(Object contactItemOne, Object contactItemTwo) {
-            final ContactItem item1 = (ContactItem)contactItemOne;
-            final ContactItem item2 = (ContactItem)contactItemTwo;
+    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
+        public int compare(ContactItem item1, ContactItem item2) {
             return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
         }
     };

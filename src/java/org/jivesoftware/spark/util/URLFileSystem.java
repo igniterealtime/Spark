@@ -46,7 +46,7 @@ public class URLFileSystem {
 
     public static String getContents(InputStream is) {
         byte[] buffer = new byte[2048];
-        int length = -1;
+        int length;
         StringBuffer sb = new StringBuffer();
         try {
             while ((length = is.read(buffer)) != -1) {
@@ -70,6 +70,10 @@ public class URLFileSystem {
 
     /**
      * Copies the contents at <CODE>src</CODE> to <CODE>dst</CODE>.
+     *
+     * @param src URL to copy to local file.
+     * @param dst File to pull information from to copy to.
+     * @throws IOException if there is an error during copy.
      */
     public static void copy(URL src, File dst) throws IOException {
         InputStream in = null;
@@ -85,11 +89,13 @@ public class URLFileSystem {
                 if (in != null) in.close();
             }
             catch (IOException e) {
+                // Nothing to do
             }
             try {
                 if (out != null) out.close();
             }
             catch (IOException e) {
+                // Nothing to do
             }
         }
     }
@@ -98,9 +104,12 @@ public class URLFileSystem {
      * Common code for copy routines.  By convention, the streams are
      * closed in the same method in which they were opened.  Thus,
      * this method does not close the streams when the copying is done.
+     *
+     * @param in Source stream
+     * @param out Destination stream
+     * @throws IOException if there is an error during copy.
      */
-    public static void copy(InputStream in, OutputStream out)
-            throws IOException {
+    public static void copy(InputStream in, OutputStream out) throws IOException {
         final byte[] buffer = new byte[4096];
         while (true) {
             final int bytesRead = in.read(buffer);
@@ -121,6 +130,7 @@ public class URLFileSystem {
      * path, then the empty string is returned.
      *
      * @param url the URL.
+     * @return suffix of url path
      */
     public static String getSuffix(URL url) {
         final String path = url.getPath();
@@ -137,6 +147,7 @@ public class URLFileSystem {
      * path, then the empty string is returned.
      *
      * @param file the File.
+     * @return suffix of filename
      */
     public static String getSuffix(File file) {
         final String path = file.getAbsolutePath();
@@ -155,6 +166,9 @@ public class URLFileSystem {
      * <p/>
      * The default implementation just returns the specified {@link URL}
      * as-is.
+     *
+     * @param url URL to convert.
+     * @return Convert url.
      */
     public URL canonicalize(URL url) {
         return url;
@@ -167,6 +181,8 @@ public class URLFileSystem {
      * @return <CODE>true</CODE> if and only if the specified
      *         {@link URL} points to a resource that exists <EM>and</EM> can be
      *         read by the application; <CODE>false</CODE> otherwise.
+     *
+     * @param url URL to check if we can read from it.
      */
     public boolean canRead(URL url) {
         try {
@@ -187,6 +203,8 @@ public class URLFileSystem {
      *         {@link URL} points to a file that exists <EM>and</EM> the
      *         application is allowed to write to the file; <CODE>false</CODE>
      *         otherwise.
+     *
+     * @param url URL to check if we can write to.
      */
     public boolean canWrite(URL url) {
         try {
@@ -204,6 +222,8 @@ public class URLFileSystem {
      *
      * @return <CODE>true</CODE> if the resource at the specified {@link URL}
      *         exists or can be created; <CODE>false</CODE> otherwise.
+     *
+     * @param url URL to check if we can create things at.
      */
     public boolean canCreate(URL url) {
         return true;
@@ -216,6 +236,8 @@ public class URLFileSystem {
      * of the path can be created.
      *
      * @return <CODE>true</CODE> if the {@link URL} is valid.
+     *
+     * @param url URL to check for validity.
      */
     public boolean isValid(URL url) {
         if (exists(url)) {
@@ -232,6 +254,9 @@ public class URLFileSystem {
      * <p/>
      * The default implementation simply returns <CODE>false</CODE>
      * without doing anything.
+     *
+     * @param url URL to test for existance
+     * @return True if url exists
      */
     public static boolean exists(URL url) {
         return url2File(url).exists();
@@ -263,6 +288,9 @@ public class URLFileSystem {
      * The returned file name should only be used for display purposes
      * and not for opening streams or otherwise trying to locate the
      * resource indicated by the {@link URL}.
+     *
+     * @param url URL of resource to get filename of
+     * @return File name determined
      */
     public static String getFileName(URL url) {
         if (url == null) {
@@ -295,6 +323,8 @@ public class URLFileSystem {
      * some other an I/O exception, etc.), <CODE>-1</CODE> is returned.
      *
      * @see URLConnection
+     * @param url URL to get length of resource of
+     * @return Content length
      */
     public long getLength(URL url) {
         try {
@@ -328,6 +358,9 @@ public class URLFileSystem {
      * get the file name part.  Then all characters starting with the
      * first occurrence of '.' are removed.  The remaining string is then
      * returned.
+     *
+     * @param url URL of resource
+     * @return Name for URL
      */
     public static String getName(URL url) {
         final String fileName = getFileName(url);
@@ -340,6 +373,9 @@ public class URLFileSystem {
      * Returns the path part of the {@link URL}.
      * <p/>
      * The default implementation delegates to {@link URL#getPath()}.
+     *
+     * @param url URL of resource
+     * @return Path of URL
      */
     public String getPath(URL url) {
         return url.getPath();
@@ -396,6 +432,9 @@ public class URLFileSystem {
      * after the last "/" in the path.  If the last "." comes before
      * the last "/" or if there is no "." at all, then the entire path
      * is returned.
+     *
+     * @param url URL of resource
+     * @return Path without extension
      */
     public String getPathNoExt(URL url) {
         final String path = getPath(url);
@@ -438,6 +477,8 @@ public class URLFileSystem {
      *         platform-dependent notation.  This value should only be used for
      *         display purposes and not for opening streams or otherwise trying
      *         to locate the document.
+     *
+     * @param url URL of resource
      */
     public String getPlatformPathName(URL url) {
         return url != null ? url.toString() : "";
@@ -465,6 +506,9 @@ public class URLFileSystem {
      * {@link File#separatorChar} characters to forward slash ('/').
      * Also, a leading forward slash is prepended if the path does
      * not begin with one.
+     *
+     * @param path Path to sanitize
+     * @return Sanitized path
      */
     private static String sanitizePath(String path) {
         if (File.separatorChar != '/') {
@@ -494,6 +538,15 @@ public class URLFileSystem {
      * {@link URL}.
      * <p/>
      * Non-sanitizing.
+     *
+     * @param protocol Protocol portion of uri
+     * @param userinfo Username/Password portion of uri
+     * @param host Host portion of uri
+     * @param port Port portion of uri
+     * @param path Path portion of uri
+     * @param query Query portion of uri
+     * @param ref Ref portion of uri
+     * @return URL constructed from args
      */
     public static URL newURL(String protocol, String userinfo,
                              String host, int port,
@@ -503,7 +556,7 @@ public class URLFileSystem {
             final String authority = port < 0 ? host : host + ":" + port;
             final Object[] args = new Object[]
                     {
-                            protocol, host, new Integer(port),
+                            protocol, host, port,
                             authority, userinfo,
                             path, query, ref,
                     };
@@ -529,7 +582,7 @@ public class URLFileSystem {
     static {
         final Class str = String.class;
         try {
-            urlSet = URL.class.getDeclaredMethod("set", new Class[]{str, str, int.class, str, str, str, str, str});
+            urlSet = URL.class.getDeclaredMethod("set", str, str, int.class, str, str, str, str, str);
 
             //  IMPORTANT:  This call to setAccessible effectively overrides
             //  the "protected" visibility constraint on the URL.set(...)
@@ -561,10 +614,9 @@ public class URLFileSystem {
         }
     }
 
-    public static final File url2File(URL url) {
+    public static File url2File(URL url) {
         final String path = url.getPath();
-        final File file = new File(path);
-        return file;
+        return new File(path);
     }
 
     public static URL getParent(URL url) {
@@ -594,12 +646,11 @@ public class URLFileSystem {
 
         // Loop through the files and directories in the source directory and copy them
         File[] files = src.listFiles();
-        for (int i = 0; i < files.length; ++i) {
-            if (files[i].isFile()) {
-                copyFile(files[i], new File(dst, files[i].getName()));
-            }
-            else if (files[i].isDirectory()) {
-                copyDir(files[i], new File(dst, files[i].getName()));
+        for (File file : files) {
+            if (file.isFile()) {
+                copyFile(file, new File(dst, file.getName()));
+            } else if (file.isDirectory()) {
+                copyDir(file, new File(dst, file.getName()));
             }
         }
     }

@@ -54,11 +54,9 @@ public class ColorUtil {
         color1.getColorComponents(rgb1);
         color2.getColorComponents(rgb2);
 
-        Color color = new Color(rgb1[0] * r + rgb2[0] * ir,
+        return new Color(rgb1[0] * r + rgb2[0] * ir,
                 rgb1[1] * r + rgb2[1] * ir,
                 rgb1[2] * r + rgb2[2] * ir);
-
-        return color;
     }
 
 
@@ -150,8 +148,12 @@ public class ColorUtil {
      * to be coordinates in a 3D space [0.0-1.0], and this method returnes
      * the distance between the coordinates for the first and second color.
      *
-     * @param r1, g1, b1  First color.
-     * @param r2, g2, b2  Second color.
+     * @param r1  First color (red).
+     * @param g1  First color (green).
+     * @param b1  First color (blue).
+     * @param r2  Second color (red).
+     * @param g2  Second color (green).
+     * @param b2  Second color (blue).
      * @return Distance bwetween colors.
      */
     public static double colorDistance(double r1, double g1, double b1,
@@ -201,7 +203,9 @@ public class ColorUtil {
      * this color is to be labeled: Use white label on a "dark" color and
      * black label on a "light" color.
      *
-     * @param r,g,b Color to check.
+     * @param r Color to check (red part).
+     * @param g Color to check (green part).
+     * @param b Color to check (blue part).
      * @return True if this is a "dark" color, false otherwise.
      */
     public static boolean isDark(double r, double g, double b) {

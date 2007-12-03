@@ -122,7 +122,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     String selectedUser = getSelectedUser();
-                    startChat(groupChatRoom, (String)userMap.get(selectedUser));
+                    startChat(groupChatRoom, userMap.get(selectedUser));
                 }
             }
 
@@ -327,12 +327,9 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         }
 
         String nickname = StringUtils.parseResource(participantJID);
-        Occupant occupant = SparkManager.getUserManager().getOccupant(groupChatRoom, nickname);
-        boolean isOwnerOrAdmin = SparkManager.getUserManager().isOwnerOrAdmin(occupant);
-        boolean isModerator = SparkManager.getUserManager().isModerator(occupant);
 
         if (!exists(nickname)) {
-            Icon icon = null;
+            Icon icon;
 
             icon = PresenceManager.getIconFromPresence(presence);
             if (icon == null) {
@@ -400,7 +397,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             return;
         }
 
-        ChatRoom chatRoom = null;
+        ChatRoom chatRoom;
         try {
             chatRoom = chatManager.getChatContainer().getChatRoom(groupJID);
         }
@@ -435,11 +432,6 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
         return this;
     }
 
-
-    /**
-     * ****************************************************************
-     */
-    /*                     MUC Functions                                */
     private void kickUser(String nickname) {
         try {
             chat.kickParticipant(nickname, Res.getString("message.you.have.been.kicked"));
@@ -451,7 +443,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
 
     private void banUser(String nickname) {
         try {
-            Occupant occupant = chat.getOccupant((String)userMap.get(nickname));
+            Occupant occupant = chat.getOccupant(userMap.get(nickname));
             if (occupant != null) {
                 String bareJID = StringUtils.parseBareAddress(occupant.getJid());
                 chat.banUser(bareJID, Res.getString("message.you.have.been.banned"));
@@ -532,7 +524,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             participantsList.setSelectedIndex(index);
             final JLabel userLabel = (JLabel)model.getElementAt(index);
             final String selectedUser = userLabel.getText();
-            final String groupJID = (String)userMap.get(selectedUser);
+            final String groupJID = userMap.get(selectedUser);
             String groupJIDNickname = StringUtils.parseResource(groupJID);
 
             final String nickname = groupChatRoom.getNickname();
@@ -612,7 +604,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             Action chatAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent actionEvent) {
                     String selectedUser = getSelectedUser();
-                    startChat(groupChatRoom, (String)userMap.get(selectedUser));
+                    startChat(groupChatRoom, userMap.get(selectedUser));
                 }
             };
 
@@ -625,7 +617,7 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
             Action blockAction = new AbstractAction() {
                 public void actionPerformed(ActionEvent e) {
                     String user = getSelectedUser();
-                    ImageIcon icon = null;
+                    ImageIcon icon;
                     if (groupChatRoom.isBlocked(groupJID)) {
                         groupChatRoom.removeBlockedUser(groupJID);
                         icon = getImageIcon(groupJID);
@@ -841,10 +833,8 @@ public final class GroupChatParticipantList extends JPanel implements ChatRoomLi
     /**
      * Sorts ContactItems.
      */
-    final Comparator<JLabel> labelComp = new Comparator() {
-        public int compare(Object labelOne, Object labelTwo) {
-            final JLabel item1 = (JLabel)labelOne;
-            final JLabel item2 = (JLabel)labelTwo;
+    final Comparator<JLabel> labelComp = new Comparator<JLabel>() {
+        public int compare(JLabel item1, JLabel item2) {
             return item1.getText().toLowerCase().compareTo(item2.getText().toLowerCase());
         }
     };

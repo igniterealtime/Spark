@@ -200,8 +200,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
                 File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
                 File[] files = transcriptDir.listFiles();
 
-                for (int i = 0; i < files.length; i++) {
-                    File transcriptFile = files[i];
+                for (File transcriptFile : files) {
                     transcriptFile.delete();
                 }
             }

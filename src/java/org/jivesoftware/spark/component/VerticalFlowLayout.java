@@ -209,9 +209,9 @@ public class VerticalFlowLayout extends FlowLayout {
     private void placethem(Container target, int x, int y, int width, int height,
                            int first, int last) {
         int align = getAlignment();
-        if (align == this.MIDDLE)
+        if (align == MIDDLE)
             y += height / 2;
-        if (align == this.BOTTOM)
+        if (align == BOTTOM)
             y += height;
 
         for (int i = first; i < last; i++) {

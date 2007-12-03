@@ -46,7 +46,7 @@ public class Startup {
             // Load up the bootstrap container
             final ClassLoader parent = findParentClassLoader();
 
-            File libDir = null;
+            File libDir;
             final String workingDirectory = System.getProperty("appdir");
             if (workingDirectory == null) {
                 libDir = new File(DEFAULT_LIB_DIR);

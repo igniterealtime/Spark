@@ -14,7 +14,6 @@ import org.jivesoftware.spark.plugin.MetadataListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import java.util.Map;
  */
 public class DataManager {
     private List<MetadataListener> metadataListeners = new ArrayList<MetadataListener>();
-    private Map<ChatRoom, Map> metadata = new HashMap<ChatRoom, Map>();
 
     private static DataManager singleton;
     private static final Object LOCK = new Object();

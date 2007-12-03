@@ -20,25 +20,13 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -141,13 +129,18 @@ public class RosterPickList extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
 
-        List selectedContacts = new ArrayList();
+        List<String> selectedContacts = new ArrayList<String>();
 
         Object[] values = rosterList.getSelectedValues();
         final int no = values != null ? values.length : 0;
         for (int i = 0; i < no; i++) {
-            ContactItem item = (ContactItem)values[i];
-            selectedContacts.add(item.getJID());
+            try {
+                ContactItem item = (ContactItem)values[i];
+                selectedContacts.add(item.getJID());
+            }
+            catch (NullPointerException e) {
+                Log.error(e);
+            }
         }
 
         return selectedContacts;
@@ -157,10 +150,8 @@ public class RosterPickList extends JPanel {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator() {
-        public int compare(Object contactItemOne, Object contactItemTwo) {
-            final ContactItem item1 = (ContactItem)contactItemOne;
-            final ContactItem item2 = (ContactItem)contactItemTwo;
+    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
+        public int compare(ContactItem item1, ContactItem item2) {
             String nickname1 = item1.getNickname();
             String nickname2 = item2.getNickname();
             if (nickname1 == null || nickname2 == null) {

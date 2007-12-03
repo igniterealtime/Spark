@@ -81,9 +81,9 @@ public class Workspace extends JPanel implements PacketListener {
     private CommandPanel commandPanel;
     private ContactList contactList;
     private ConferenceServices conferences;
-    private ChatTranscriptPlugin transcriptPlugin;
     private GatewayPlugin gatewayPlugin;
     private BookmarkPlugin bookmarkPlugin;
+    private ChatTranscriptPlugin transcriptPlugin;
     private BroadcastPlugin broadcastPlugin;
 
     private static Workspace singleton;
@@ -356,8 +356,7 @@ public class Workspace extends JPanel implements PacketListener {
         if(!ModelUtil.hasLength(message.getBody())){
             return;
         }
-        
-        DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+
         String bareJID = StringUtils.parseBareAddress(message.getFrom());
         ContactItem contact = contactList.getContactItemByJID(bareJID);
         String nickname = StringUtils.parseName(bareJID);
@@ -462,5 +461,9 @@ public class Workspace extends JPanel implements PacketListener {
      */
     public CommandPanel getCommandPanel() {
         return commandPanel;
+    }
+
+    public ChatTranscriptPlugin getTranscriptPlugin() {
+        return transcriptPlugin;
     }
 }

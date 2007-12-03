@@ -84,8 +84,6 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
             final Transferable transferable = dropTargetDropEvent.getTransferable();
             if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY);
-                java.util.List fileList = (java.util.List)transferable.getTransferData(DataFlavor.javaFileListFlavor);
-
                 dropTargetDropEvent.getDropTargetContext().dropComplete(true);
             }
             else {
@@ -109,7 +107,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         }
     }
 
-    private class FileSelection extends Vector implements Transferable {
+    private class FileSelection extends Vector<File> implements Transferable {
         final static int FILE = 0;
         final static int STRING = 1;
         final static int PLAIN = 2;
@@ -129,7 +127,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
 
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             boolean b = false;
-            b |= flavor.equals(flavors[FILE]);
+            b = b | flavor.equals(flavors[FILE]);
             b |= flavor.equals(flavors[STRING]);
             b |= flavor.equals(flavors[PLAIN]);
             return (b);

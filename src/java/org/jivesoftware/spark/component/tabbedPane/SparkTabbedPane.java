@@ -10,21 +10,16 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -46,8 +41,6 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     private JPanel tabs;
     private JPanel mainPanel;
 
-    private Window parentWindow;
-
     private boolean closeButtonEnabled;
     private Icon closeInactiveButtonIcon;
     private Icon closeActiveButtonIcon;
@@ -55,8 +48,6 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
     private boolean popupAllowed;
 
     private boolean activeButtonBold;
-
-    private Map<Component, JFrame> framesMap = new HashMap<Component, JFrame>();
 
 
     private int tabPlacement = JTabbedPane.TOP;
@@ -104,9 +95,9 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
                         int rowH = 0;
                         Dimension d;
                         Component[] comps = getComponents();
-                        for (int i = 0; i < comps.length; i++) {
-                            if (comps[i].isVisible()) {
-                                d = comps[i].getPreferredSize();
+                        for (Component comp : comps) {
+                            if (comp.isVisible()) {
+                                d = comp.getPreferredSize();
                                 if (x + d.width > w && x > flow.getHgap()) {
                                     x = flow.getHgap();
                                     h += rowH;
@@ -461,7 +452,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
                     sparkTab.setSelected(false);
                     sparkTab.showBorder(true);
                 }
-                else if (sparkTab == tab) {
+                else {
                     int j = i - 1;
                     if (j >= 0) {
                         SparkTab previousTab = (SparkTab)comps[j];
@@ -476,8 +467,7 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
 
     public Component getSelectedComponent() {
         Component[] comps = mainPanel.getComponents();
-        for (int i = 0; i < comps.length; i++) {
-            Component c = comps[i];
+        for (Component c : comps) {
             if (c.isShowing()) {
                 return c;
             }
@@ -486,10 +476,6 @@ public class SparkTabbedPane extends JPanel implements MouseListener {
         return null;
     }
 
-
-    public void setParentWindow(Window window) {
-        this.parentWindow = window;
-    }
 
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();

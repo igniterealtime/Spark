@@ -80,9 +80,8 @@ public class ConferenceServiceBrowser {
                 if (ModelUtil.hasLength(address)) {
                     try {
                         Collection col = getConferenceServices(address);
-                        Iterator services = col.iterator();
-                        while (services.hasNext()) {
-                            String service = (String)services.next();
+                        for (Object aCol : col) {
+                            String service = (String) aCol;
                             model.addElement(service);
                         }
                     }
@@ -140,7 +139,7 @@ public class ConferenceServiceBrowser {
     }
 
     public Collection getConferenceServices(String server) throws Exception {
-        List answer = new ArrayList();
+        List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
         for (Iterator it = items.getItems(); it.hasNext();) {
@@ -156,7 +155,7 @@ public class ConferenceServiceBrowser {
                     }
                 }
                 catch (XMPPException e) {
-
+                    // Nothing to do
                 }
             }
         }

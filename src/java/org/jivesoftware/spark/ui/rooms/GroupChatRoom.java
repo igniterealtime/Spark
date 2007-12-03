@@ -79,15 +79,14 @@ public final class GroupChatRoom extends ChatRoom {
     private final String roomname;
     private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     private String tabTitle;
-    private final String roomTitle;
     private boolean isActive = true;
     private boolean showPresenceMessages = true;
     private SubjectPanel subjectPanel;
 
-    private List currentUserList = new ArrayList();
+    private List<String> currentUserList = new ArrayList<String>();
 
     private String conferenceService;
-    private List blockedUsers = new ArrayList();
+    private List<String> blockedUsers = new ArrayList<String>();
 
     private ChatRoomMessageManager messageManager;
     private Timer typingTimer;
@@ -96,7 +95,6 @@ public final class GroupChatRoom extends ChatRoom {
     private GroupChatParticipantList roomInfo;
 
     private long lastActivity;
-    private GroupChatRoomTransferHandler transferHandler;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -117,7 +115,6 @@ public final class GroupChatRoom extends ChatRoom {
 
         // Thie Room Name is the same as the ChatRoom name
         roomname = chat.getRoom();
-        roomTitle = roomname;
 
         // We are just using a generic Group Chat.
         tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
@@ -238,7 +235,7 @@ public final class GroupChatRoom extends ChatRoom {
         // set last activity to be right now
         lastActivity = System.currentTimeMillis();
 
-        transferHandler = new GroupChatRoomTransferHandler(this);
+        GroupChatRoomTransferHandler transferHandler = new GroupChatRoomTransferHandler(this);
         getTranscriptWindow().setTransferHandler(transferHandler);
     }
 
@@ -549,8 +546,6 @@ public final class GroupChatRoom extends ChatRoom {
             }
 
 
-            final boolean hasPacketID = packetIDExists(message.getPacketID());
-
             // Do not accept Administrative messages.
             String host = SparkManager.getSessionManager().getServerAddress();
             if (host.equals(message.getFrom())) {
@@ -591,9 +586,13 @@ public final class GroupChatRoom extends ChatRoom {
             }
         }
         else if (message.getType() == Message.Type.chat) {
-            ChatRoom chatRoom = null;
+            ChatRoom chatRoom;
             try {
                 chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(message.getFrom());
+                // TODO: Why was this not here before?  Is it supposed to be ignored??
+                if (message.getBody() != null) {
+                    chatRoom.insertMessage(message);
+                }
             }
             catch (ChatRoomNotFoundException e) {
                 String userNickname = StringUtils.parseResource(message.getFrom());
@@ -1084,7 +1083,6 @@ public final class GroupChatRoom extends ChatRoom {
      */
     public class SubjectPanel extends JPanel {
 
-        private JLabel iconLabel;
         private JLabel roomJIDLabel;
         private JLabel subjectLabel;
 

@@ -77,7 +77,7 @@ public class BookmarksUI extends JPanel {
 
     private Set<String> autoJoinRooms = new HashSet<String>();
 
-    private List listeners = new ArrayList();
+    private List<ContextMenuListener> listeners = new ArrayList<ContextMenuListener>();
 
     private BookmarkManager manager;
 
@@ -234,11 +234,11 @@ public class BookmarksUI extends JPanel {
             JMenuItem removeRoomMenu = new JMenuItem(removeRoomAction);
 
 
-            if (node != null && node.getAllowsChildren()) {
+            if (node.getAllowsChildren()) {
                 popupMenu.add(browseServiceMenu);
                 popupMenu.add(removeServiceMenu);
             }
-            else if (node != null) {
+            else {
                 popupMenu.add(joinRoomMenu);
                 popupMenu.add(removeRoomMenu);
                 popupMenu.addSeparator();
@@ -312,9 +312,8 @@ public class BookmarksUI extends JPanel {
                     return;
                 }
 
-                Iterator services = mucServices.iterator();
-                while (services.hasNext()) {
-                    String service = (String)services.next();
+                for (Object mucService : mucServices) {
+                    String service = (String) mucService;
                     if (!hasService(service)) {
                         addServiceToList(service);
                     }
@@ -404,7 +403,7 @@ public class BookmarksUI extends JPanel {
                     serviceField.setText("");
                 }
                 else {
-                    final List serviceList = new ArrayList();
+                    final List<String> serviceList = new ArrayList<String>();
                     serviceField.setText(Res.getString("message.searching.please.wait"));
                     serviceField.setEnabled(false);
                     addButton.setEnabled(false);
@@ -425,10 +424,9 @@ public class BookmarksUI extends JPanel {
                                     }
                                     else if ("server".equals(identity.getCategory())) {
                                         try {
-                                            Collection services = getConferenceServices(conferenceService);
-                                            Iterator serviceIterator = services.iterator();
-                                            while (serviceIterator.hasNext()) {
-                                                serviceList.add(serviceIterator.next());
+                                            Collection<String> services = getConferenceServices(conferenceService);
+                                            for (String service : services) {
+                                                serviceList.add(service);
                                             }
                                         }
                                         catch (Exception e1) {
@@ -446,9 +444,8 @@ public class BookmarksUI extends JPanel {
 
                         public void finished() {
                             if (discoInfo != null) {
-                                Iterator services = serviceList.iterator();
-                                while (services.hasNext()) {
-                                    addServiceToList((String)services.next());
+                                for (String aServiceList : serviceList) {
+                                    addServiceToList(aServiceList);
                                 }
                                 serviceField.setText("");
                                 serviceField.setEnabled(true);
@@ -481,8 +478,8 @@ public class BookmarksUI extends JPanel {
         return servicePanel;
     }
 
-    private Collection getConferenceServices(String server) throws Exception {
-        List answer = new ArrayList();
+    private Collection<String> getConferenceServices(String server) throws Exception {
+        List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
         for (Iterator it = items.getItems(); it.hasNext();) {
@@ -539,7 +536,7 @@ public class BookmarksUI extends JPanel {
 
             // Get Service Node
             TreePath path = tree.findByName(tree, new String[]{rootNode.getUserObject().toString(), serviceName});
-            JiveTreeNode serviceNode = null;
+            JiveTreeNode serviceNode;
             if (path == null) {
                 serviceNode = addServiceToList(serviceName);
                 path = tree.findByName(tree, new String[]{rootNode.getUserObject().toString(), serviceName});
@@ -582,9 +579,7 @@ public class BookmarksUI extends JPanel {
     }
 
     private void fireContextMenuListeners(JPopupMenu popup, JiveTreeNode node) {
-        final Iterator iter = new ArrayList(listeners).iterator();
-        while (iter.hasNext()) {
-            ContextMenuListener listener = (ContextMenuListener)iter.next();
+        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(listeners)) {
             listener.poppingUp(node, popup);
         }
     }

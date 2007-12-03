@@ -45,7 +45,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -204,9 +203,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
             // Has Children
             boolean hasChildren = false;
-            Iterator customItemIterator = custom.iterator();
-            while (customItemIterator.hasNext()) {
-                final CustomStatusItem cItem = (CustomStatusItem)customItemIterator.next();
+            for (Object aCustom : custom) {
+                final CustomStatusItem cItem = (CustomStatusItem) aCustom;
                 String type = cItem.getType();
                 if (type.equals(statusItem.getText())) {
                     hasChildren = true;
@@ -225,9 +223,8 @@ public class StatusBar extends JPanel implements VCardListener {
                 popup.add(mainStatusItem);
 
                 // Add Custom Messages
-                customItemIterator = custom.iterator();
-                while (customItemIterator.hasNext()) {
-                    final CustomStatusItem customItem = (CustomStatusItem)customItemIterator.next();
+                for (Object aCustom : custom) {
+                    final CustomStatusItem customItem = (CustomStatusItem) aCustom;
                     String type = customItem.getType();
                     if (type.equals(statusItem.getText())) {
                         // Add Child Menu
@@ -356,11 +353,9 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public StatusItem getStatusItem(String label) {
-        Iterator iter = statusList.iterator();
-        while (iter.hasNext()) {
-            StatusItem item = (StatusItem)iter.next();
-            if (item.getText().equals(label)) {
-                return item;
+        for (StatusItem aStatusList : statusList) {
+            if (aStatusList.getText().equals(label)) {
+                return aStatusList;
             }
         }
         return null;

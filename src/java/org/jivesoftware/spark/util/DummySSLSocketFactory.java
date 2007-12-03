@@ -8,9 +8,9 @@
 
 package org.jivesoftware.spark.util;
 
-import com.sun.net.ssl.SSLContext;
-import com.sun.net.ssl.TrustManager;
-import com.sun.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
 
 /**
  * An SSL socket factory that will let any certifacte past, even if it's expired or
@@ -105,6 +106,14 @@ class DummyTrustManager implements X509TrustManager {
         catch (CertificateNotYetValidException e) {
             return false;
         }
+    }
+
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        // Do nothing for now.
+    }
+
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        // Do nothing for now.
     }
 
     public X509Certificate[] getAcceptedIssuers() {

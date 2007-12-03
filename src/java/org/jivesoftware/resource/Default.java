@@ -14,7 +14,6 @@ import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.ImageIcon;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +23,9 @@ import java.util.ResourceBundle;
 public class Default {
     private static PropertyResourceBundle prb;
 
-    private static Map customMap = new HashMap();
+    private static Map<String,Object> customMap = new HashMap<String,Object>();
 
-    private static Map cache = new HashMap();
+    private static Map<String,ImageIcon> cache = new HashMap<String,ImageIcon>();
 
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
     public static final String APPLICATION_NAME = "APPLICATION_NAME";
@@ -68,11 +67,11 @@ public class Default {
         customMap.clear();
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         return prb.getString(propertyName);
     }
 
-    public static final ImageIcon getImageIcon(String imageName) {
+    public static ImageIcon getImageIcon(String imageName) {
         // Check custom map
         Object o = customMap.get(imageName);
         if (o != null && o instanceof ImageIcon) {
@@ -100,17 +99,16 @@ public class Default {
         return null;
     }
 
-    public static final URL getURL(String propertyName) {
+    public static URL getURL(String propertyName) {
         return cl.getResource(getString(propertyName));
     }
 
 
-    public static final URL getURLWithoutException(String propertyName) {
+    public static URL getURLWithoutException(String propertyName) {
         // Otherwise, load and add to cache.
         try {
             final String iconURI = getString(propertyName);
-            final URL imageURL = cl.getResource(iconURI);
-            return imageURL;
+            return cl.getResource(iconURI);
         }
         catch (Exception ex) {
             Log.debug(propertyName + " not found.");

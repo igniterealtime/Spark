@@ -14,7 +14,6 @@ import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
-import org.jivesoftware.sparkimpl.preference.notifications.NotificationsPreference;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 
@@ -79,7 +78,7 @@ public class PreferenceManager {
     }
 
     public Preference getPreference(String namespace) {
-        return (Preference)map.get(namespace);
+        return map.get(namespace);
     }
 
     public Object getPreferenceData(String namespace) {
@@ -87,10 +86,8 @@ public class PreferenceManager {
     }
 
     public Iterator getPreferences() {
-        final List returnList = new ArrayList();
-        final Iterator iter = map.keySet().iterator();
-        while (iter.hasNext()) {
-            final String namespace = (String)iter.next();
+        final List<Preference> returnList = new ArrayList<Preference>();
+        for (String namespace : map.keySet()) {
             returnList.add(map.get(namespace));
         }
         return returnList.iterator();
@@ -98,10 +95,8 @@ public class PreferenceManager {
     }
 
     private void fireShutdown() {
-        final Iterator iter = map.keySet().iterator();
-        while (iter.hasNext()) {
-            final String namespace = (String)iter.next();
-            final Preference preference = (Preference)map.get(namespace);
+        for (String namespace : map.keySet()) {
+            final Preference preference = map.get(namespace);
             preference.shutdown();
         }
     }

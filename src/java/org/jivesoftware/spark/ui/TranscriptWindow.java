@@ -150,7 +150,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
         try {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
-            Date sentDate = null;
+            Date sentDate;
             if (inf != null) {
                 sentDate = inf.getStamp();
 
@@ -328,7 +328,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
      */
     public void insertHistoryMessage(String userid, String message, Date date) {
         try {
-            String value = "";
+            String value;
 
             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
             long lastPostStartOfDay = DateUtils.startOfDayInMillis(lastPostTime);

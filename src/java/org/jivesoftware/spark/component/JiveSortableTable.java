@@ -32,7 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public abstract class JiveSortableTable extends Table {
      */
     public static final Color TOOLTIP_COLOR = new Color(166, 202, 240);
 
-    private final Map objectMap = new HashMap();
+    private final Map<Integer,Object> objectMap = new HashMap<Integer,Object>();
 
     /**
      * Empty Constructor.
@@ -66,7 +65,7 @@ public abstract class JiveSortableTable extends Table {
     public String getToolTipText(MouseEvent e) {
         int r = rowAtPoint(e.getPoint());
         int c = columnAtPoint(e.getPoint());
-        Object value = null;
+        Object value;
         try {
             value = getValueAt(r, c);
         }
@@ -146,9 +145,8 @@ public abstract class JiveSortableTable extends Table {
      * @param list the list to add to the model.
      */
     public void add(List list) {
-        final Iterator iter = list.iterator();
-        while (iter.hasNext()) {
-            Object[] newRow = (Object[])iter.next();
+        for (Object aList : list) {
+            Object[] newRow = (Object[]) aList;
             tableModel.addRow(newRow);
         }
     }
@@ -420,7 +418,7 @@ public abstract class JiveSortableTable extends Table {
      * @param object - the object to associate with the row.
      */
     public void addObject(int row, Object object) {
-        objectMap.put(new Integer(row), object);
+        objectMap.put(row, object);
     }
 
     /**
@@ -430,7 +428,7 @@ public abstract class JiveSortableTable extends Table {
      * @return The object associated with the row.
      */
     public Object getObject(int row) {
-        return objectMap.get(new Integer(row));
+        return objectMap.get(row);
     }
 
     /**

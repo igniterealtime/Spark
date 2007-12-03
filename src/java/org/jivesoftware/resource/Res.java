@@ -32,7 +32,7 @@ public class Res {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/spark_i18n");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         try {
             return prb.getString(propertyName);
         }
@@ -43,7 +43,7 @@ public class Res {
 
     }
 
-    public static final String getString(String propertyName, Object... obj) {
+    public static String getString(String propertyName, Object... obj) {
         String str = prb.getString(propertyName);
         if (str == null) {
             return propertyName;

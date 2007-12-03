@@ -53,8 +53,6 @@ import java.awt.event.ActionListener;
  */
 public class SubscriptionDialog {
 
-    private TitlePanel messageLabel;
-
     private final RolloverButton acceptButton = new RolloverButton();
     private final RolloverButton viewInfoButton = new RolloverButton();
     private final RolloverButton denyButton = new RolloverButton();
@@ -171,7 +169,7 @@ public class SubscriptionDialog {
             icon = transport.getIcon();
         }
 
-        messageLabel = new TitlePanel("", message, icon, true);
+        TitlePanel messageLabel = new TitlePanel("", message, icon, true);
 
         // Add Message Label
         mainPanel.add(messageLabel, new GridBagConstraints(0, 0, 6, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

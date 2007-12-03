@@ -17,7 +17,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
-import java.awt.Graphics2D;
 
 import javax.swing.JViewport;
 import javax.swing.JComponent;
@@ -28,17 +27,12 @@ import javax.swing.JComponent;
  */
 public class ScrollPaneWatermark extends JViewport {
 
-    private Image backgroundImage;
     private Image foregroundImage;
 
-    private TexturePaint texture;
-
-    public void setBackgroundImage(Image image) {
-        this.backgroundImage = image;
-
+    public void setBackgroundImage(Image backgroundImage) {
         Rectangle rect = new Rectangle(0, 0, backgroundImage.getWidth(null), backgroundImage.getHeight(null));
         try {
-            texture = new TexturePaint(GraphicUtils.convert(image), rect);
+            new TexturePaint(GraphicUtils.convert(backgroundImage), rect);
         }
         catch (Exception e) {
             Log.error(e);

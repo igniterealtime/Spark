@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class TreeFolder implements Serializable {
-    private Set subFolders = new HashSet();
-    private Set paletteItems = new HashSet();
+    private Set<TreeFolder> subFolders = new HashSet<TreeFolder>();
+    private Set<TreeItem> paletteItems = new HashSet<TreeItem>();
     private String displayName;
     private String description;
     private String icon;

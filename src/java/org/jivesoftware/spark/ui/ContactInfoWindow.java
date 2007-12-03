@@ -46,8 +46,6 @@ public class ContactInfoWindow extends JPanel {
 
     private JWindow window = new JWindow();
 
-    private ChatManager chatManager;
-
     private static ContactInfoWindow singleton;
     private static final Object LOCK = new Object();
 
@@ -74,7 +72,7 @@ public class ContactInfoWindow extends JPanel {
     private ContactInfoWindow() {
         setLayout(new GridBagLayout());
 
-        this.chatManager = SparkManager.getChatManager();
+        ChatManager chatManager = SparkManager.getChatManager();
 
         setBackground(Color.white);
 

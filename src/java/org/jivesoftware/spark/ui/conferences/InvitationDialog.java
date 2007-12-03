@@ -52,7 +52,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 final class InvitationDialog extends JPanel {
@@ -103,7 +102,6 @@ final class InvitationDialog extends JPanel {
                     JOptionPane.showMessageDialog(dlg, Res.getString("message.enter.valid.jid"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     jidField.setText("");
                     jidField.requestFocus();
-                    return;
                 }
                 else {
                     if (!invitedUsers.contains(jid)) {
@@ -119,9 +117,8 @@ final class InvitationDialog extends JPanel {
                 RosterPickList browser = new RosterPickList();
                 Collection col = browser.showRoster(dlg);
 
-                Iterator iter = col.iterator();
-                while (iter.hasNext()) {
-                    String jid = (String)iter.next();
+                for (Object aCol : col) {
+                    String jid = (String) aCol;
                     if (!invitedUsers.contains(jid)) {
                         invitedUsers.addElement(jid);
                     }
@@ -187,9 +184,8 @@ final class InvitationDialog extends JPanel {
 
         // Add jids to user list
         if (jids != null) {
-            Iterator iter = jids.iterator();
-            while (iter.hasNext()) {
-                invitedUsers.addElement(iter.next());
+            for (Object jid : jids) {
+                invitedUsers.addElement(jid);
             }
         }
 
@@ -250,11 +246,9 @@ final class InvitationDialog extends JPanel {
 
                     // Add all rooms the user is in to list.
                     ChatManager chatManager = SparkManager.getChatManager();
-                    Iterator rooms = chatManager.getChatContainer().getChatRooms().iterator();
-                    while (rooms.hasNext()) {
-                        ChatRoom chatRoom = (ChatRoom)rooms.next();
+                    for (ChatRoom chatRoom : chatManager.getChatContainer().getChatRooms()) {
                         if (chatRoom instanceof GroupChatRoom) {
-                            GroupChatRoom groupRoom = (GroupChatRoom)chatRoom;
+                            GroupChatRoom groupRoom = (GroupChatRoom) chatRoom;
                             if (groupRoom.getRoomname().equals(roomTitle)) {
                                 roomName = groupRoom.getMultiUserChat().getRoom();
                                 break;
@@ -269,17 +263,22 @@ final class InvitationDialog extends JPanel {
                     }
 
 
-                    GroupChatRoom chatRoom = null;
+                    GroupChatRoom chatRoom;
                     try {
                         chatRoom = SparkManager.getChatManager().getGroupChat(roomName);
                     }
                     catch (ChatNotFoundException e1) {
                         dlg.setVisible(false);
-                        final List jidList = new ArrayList();
+                        final List<String> jidList = new ArrayList<String>();
                         Object[] jids = invitedUserList.getSelectedValues();
                         final int no = jids != null ? jids.length : 0;
                         for (int i = 0; i < no; i++) {
-                            jidList.add(jids[i]);
+                            try {
+                                jidList.add((String)jids[i]);
+                            }
+                            catch (NullPointerException ee) {
+                                Log.error(ee);
+                            }
                         }
 
                         SwingWorker worker = new SwingWorker() {

@@ -32,14 +32,13 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class CheckTree extends JPanel {
     private JTree tree;
-    private CheckNode rootNode;
 
     /**
      * Constructs a new CheckBox tree.
+     *
+     * @param rootNode Node that is the root of this tree.
      */
     public CheckTree(CheckNode rootNode) {
-        this.rootNode = rootNode;
-
         tree = new JTree(rootNode);
         tree.setCellRenderer(new CheckRenderer());
         tree.setRowHeight(18);
@@ -91,13 +90,6 @@ public class CheckTree extends JPanel {
      * Closes the CheckTree.
      */
     public void close() {
-        final Enumeration nodeEnum = rootNode.breadthFirstEnumeration();
-        while (nodeEnum.hasMoreElements()) {
-            CheckNode node = (CheckNode)nodeEnum.nextElement();
-            if (node.isSelected()) {
-                String fullname = node.getFullName();
-            }
-        }
     }
 
 

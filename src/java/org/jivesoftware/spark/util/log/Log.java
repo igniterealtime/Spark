@@ -24,11 +24,9 @@ import java.util.logging.SimpleFormatter;
  * the Agent application.
  */
 public class Log {
-    private static File ERROR_LOG_FILE;
     private static java.util.logging.Logger ERROR_LOGGER;
 
     private static Logger WARNING_LOGGER;
-    private static File WARNING_LOG_FILE;
 
     private Log() {
         // Do not allow initialization
@@ -39,8 +37,8 @@ public class Log {
             Spark.getLogDirectory().mkdirs();
         }
 
-        ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
-        WARNING_LOG_FILE = new File(Spark.getLogDirectory(), "warn.log");
+        File ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
+        File WARNING_LOG_FILE = new File(Spark.getLogDirectory(), "warn.log");
 
 
         try {

@@ -44,7 +44,6 @@ import org.jivesoftware.spark.ui.FileDropListener;
 import org.jivesoftware.spark.ui.ImageSelectionPanel;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -109,7 +108,7 @@ public class SparkTransferManager {
     private static final Object LOCK = new Object();
 
     private FileTransferManager transferManager;
-    private Map waitMap = new HashMap();
+    private Map<String,ArrayList<File>> waitMap = new HashMap<String,ArrayList<File>>();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
@@ -208,9 +207,8 @@ public class SparkTransferManager {
                     ContactItem item = (ContactItem)component;
 
                     ChatRoom chatRoom = null;
-                    Iterator iter = files.iterator();
-                    while (iter.hasNext()) {
-                        chatRoom = sendFile((File)iter.next(), item.getJID());
+                    for (Object file : files) {
+                        chatRoom = sendFile((File) file, item.getJID());
                     }
 
                     if (chatRoom != null) {
@@ -227,7 +225,6 @@ public class SparkTransferManager {
         addPresenceListener();
 
         // Add View Downloads to Command Panel
-        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
         RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
@@ -297,7 +294,7 @@ public class SparkTransferManager {
 
     public void sendFileTo(ContactItem item) {
         FileDialog fileChooser = getFileChooser(SparkManager.getMainWindow(), Res.getString("title.select.file.to.send"));
-        fileChooser.show();
+        fileChooser.setVisible(true);
 
         if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
             return;
@@ -392,12 +389,11 @@ public class SparkTransferManager {
                             newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
                         }
                         catch (Exception e1) {
-
+                            // Nothing to do
                         }
 
                         if (newImage != null) {
                             sendImage(newImage, room);
-                            newImage = null;
                             bufferedImage = null;
                             selectionPanel.clear();
                         }
@@ -464,7 +460,7 @@ public class SparkTransferManager {
                     String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
                     // Iterate through map.
-                    List list = (List)waitMap.get(bareJID);
+                    ArrayList<File> list = waitMap.get(bareJID);
                     if (list != null) {
                         // Iterate through list and send.
                         Iterator iter = list.iterator();
@@ -501,9 +497,9 @@ public class SparkTransferManager {
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
         if (!PresenceManager.isOnline(jid)) {
-            List list = (List)waitMap.get(jid);
+            ArrayList<File> list = waitMap.get(jid);
             if (list == null) {
-                list = new ArrayList();
+                list = new ArrayList<File>();
             }
 
             list.add(file);
@@ -577,7 +573,12 @@ public class SparkTransferManager {
             }
         });
 
-        sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getNickname());
+        try {
+            sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getNickname());
+        }
+        catch (NullPointerException e) {
+            Log.error(e);
+        }
         StyleConstants.setComponent(style, sendingUI);
 
         // Insert the image at the end of the text
@@ -645,8 +646,10 @@ public class SparkTransferManager {
             }
         }
         catch (UnsupportedFlavorException e) {
+            // Nothing to do
         }
         catch (IOException e) {
+            // Nothing to do
         }
         return null;
     }
@@ -672,9 +675,7 @@ public class SparkTransferManager {
     }
 
     private boolean fireTransferListeners(FileTransferRequest request) {
-        final Iterator iter = new ArrayList(listeners).iterator();
-        while (iter.hasNext()) {
-            FileTransferListener listener = (FileTransferListener)iter.next();
+        for (FileTransferListener listener : new ArrayList<FileTransferListener>(listeners)) {
             boolean accepted = listener.handleTransfer(request);
             if (accepted) {
                 return true;
@@ -699,7 +700,6 @@ public class SparkTransferManager {
      * @return the FileChooser. (Native Widget)
      */
     public FileDialog getFileChooser(Frame parent, String title) {
-        FileDialog dialog = new FileDialog(parent, title, FileDialog.LOAD);
-        return dialog;
+        return new FileDialog(parent, title, FileDialog.LOAD);
     }
 }

@@ -13,11 +13,6 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.spark.component.RolloverButton;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
-
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * Button to use with ChatRooms to allow for conformity in the Chat Room look and feel.
