@@ -29,13 +29,20 @@ public class ByteFormat extends Format {
     // Implemented from the Format class
 
     /**
+     * Formats a long which represent a number of bytes.
+     */
+    public String format(long bytes) {
+        return super.format(bytes);
+    }
+
+    /**
      * Formats a long which represent a number of kilobytes.
      *
      * @param kilobytes Long kbytes to format as a string.
      * @return String representation of kbytes.
      */
     public String formatKB(long kilobytes) {
-        return format(kilobytes * 1024);
+        return super.format(kilobytes * 1024);
     }
 
     /**
