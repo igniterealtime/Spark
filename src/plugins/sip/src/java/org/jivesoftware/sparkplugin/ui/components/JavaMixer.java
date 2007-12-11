@@ -155,19 +155,28 @@ public class JavaMixer {
             if (mixer.isLineSupported(anInfosToCheck)) {
                 Port port = null;
                 DataLine dLine = null;
-                try {
-                    if (anInfosToCheck instanceof Port.Info) {
-                        port = (Port) mixer.getLine(anInfosToCheck);
-                        port.open();
-                    } else if (anInfosToCheck instanceof DataLine.Info) {
-                        dLine = (DataLine) mixer.getLine(anInfosToCheck);
-                        dLine.open();
+
+                int maxLines = mixer.getMaxLines(anInfosToCheck);
+                // Workaround to prevent a JVM crash on Mac OS X (Intel) 1.5.0_07 JVM
+                if (maxLines > 0) {
+                    try {
+                        if (anInfosToCheck instanceof Port.Info) {
+                            port = (Port) mixer.getLine(anInfosToCheck);
+                            port.open();
+                        }
+                        else if (anInfosToCheck instanceof DataLine.Info) {
+                            dLine = (DataLine) mixer.getLine(anInfosToCheck);
+                            if (!dLine.isOpen()) {
+                                dLine.open();
+                            }
+                        }
                     }
-                }
-                catch (LineUnavailableException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    // Do Nothing
+                    catch (LineUnavailableException e) {
+                        e.printStackTrace();
+                    }
+                    catch (Exception e) {
+                        // Do Nothing
+                    }
                 }
                 if (port != null) {
                     JavaMixer.PortNode portNode = new JavaMixer.PortNode(port);
