@@ -294,6 +294,8 @@ public class NonRosterPanel extends PhonePanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 manager.getDefaultGuiManager().hangup(activeCall);
                 hangUpButton.setEnabled(false);
+                muteButton.setButtonSelected(false);
+                holdButton.setButtonSelected(false);
             }
         });
 

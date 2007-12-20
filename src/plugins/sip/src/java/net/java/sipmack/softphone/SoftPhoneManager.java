@@ -69,6 +69,65 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.jivesoftware.sparkplugin.calllog.LogManager;
+import org.jivesoftware.sparkplugin.calllog.LogPacket;
+import org.jivesoftware.sparkplugin.preferences.SipPreference;
+import org.jivesoftware.sparkplugin.preferences.SipPreferences;
+import org.jivesoftware.sparkplugin.sipaccount.SipAccount;
+import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
+import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import net.java.sipmack.common.DialSoundManager;
+import net.java.sipmack.common.Log;
+import net.java.sipmack.events.UserActionListener;
+import net.java.sipmack.media.AudioMediaSession;
+import net.java.sipmack.media.AudioReceiverChannel;
+import net.java.sipmack.media.JmfMediaManager;
+import net.java.sipmack.media.MediaException;
+import net.java.sipmack.sip.Call;
+import net.java.sipmack.sip.CommunicationsException;
+import net.java.sipmack.sip.Interlocutor;
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.sip.NetworkAddressManager;
+import net.java.sipmack.sip.SIPConfig;
+import net.java.sipmack.sip.SipManager;
+import net.java.sipmack.sip.SipRegisterStatus;
+import net.java.sipmack.sip.event.CallEvent;
+import net.java.sipmack.sip.event.CallListener;
+import net.java.sipmack.sip.event.CallRejectedEvent;
+import net.java.sipmack.sip.event.CallStateEvent;
+import net.java.sipmack.sip.event.CommunicationsErrorEvent;
+import net.java.sipmack.sip.event.CommunicationsListener;
+import net.java.sipmack.sip.event.MessageEvent;
+import net.java.sipmack.sip.event.RegistrationEvent;
+import net.java.sipmack.sip.event.UnknownMessageEvent;
+import net.java.sipmack.softphone.gui.DefaultGuiManager;
+import net.java.sipmack.softphone.gui.GuiManager;
+import net.java.sipmack.softphone.listeners.InterlocutorListener;
+import net.java.sipmack.softphone.listeners.RegisterEvent;
+import net.java.sipmack.softphone.listeners.SoftPhoneListener;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.phone.PhoneManager;
+import org.jivesoftware.spark.preference.PreferenceManager;
+import org.jivesoftware.spark.util.ModelUtil;
+
+import javax.sdp.MediaDescription;
+import javax.sdp.SessionDescription;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Title: SIPark
@@ -842,7 +901,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
     public void handleDialRequest(String phoneNumber) {
         try {
 
-            System.err.println("Wesde " + PhoneManager.isUseStaticLocator() + " " + PhoneManager.isUsingMediaLocator());
+            System.err.println("Audio Static:" + PhoneManager.isUseStaticLocator() + " Using:" + PhoneManager.isUsingMediaLocator());
 
             // cancel call request if no Media Locator
             if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
