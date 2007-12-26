@@ -111,7 +111,7 @@ public class LayoutSettingsManager {
             props.load(new FileInputStream(file));
 
 
-            LayoutSettings settings = null;
+            LayoutSettings settings;
             String mainWindowX = props.getProperty("mainWindowX");
             String mainWindowY = props.getProperty("mainWindowY");
             String mainWindowHeight = props.getProperty("mainWindowHeight");

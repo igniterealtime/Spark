@@ -52,7 +52,7 @@ public class PresenceChangePlugin implements Plugin {
 
         final Action listenAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                ContactItem item = (ContactItem)contactList.getSelectedUsers().iterator().next();
+                ContactItem item = contactList.getSelectedUsers().iterator().next();
                 String bareAddress = StringUtils.parseBareAddress(item.getJID());
                 sparkContacts.add(bareAddress);
             }
@@ -63,7 +63,7 @@ public class PresenceChangePlugin implements Plugin {
 
         final Action removeAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                ContactItem item = (ContactItem)contactList.getSelectedUsers().iterator().next();
+                ContactItem item = contactList.getSelectedUsers().iterator().next();
                 String bareAddress = StringUtils.parseBareAddress(item.getJID());
                 sparkContacts.remove(bareAddress);
             }

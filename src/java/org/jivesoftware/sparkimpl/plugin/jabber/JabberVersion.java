@@ -134,6 +134,7 @@ public class JabberVersion implements Plugin {
                         Thread.sleep(10);
                     }
                     catch (InterruptedException e1) {
+                        // Nothing to do
                     }
                     return jid;
                 }

@@ -197,7 +197,7 @@ public class ConversationHistoryPlugin implements Plugin {
         for (final String user : historyList.subList(0, limit)) {
 
             ContactItem contactItem = contactList.getContactItemByJID(user);
-            Icon icon = null;
+            Icon icon;
             if (contactItem != null) {
                 icon = contactItem.getIcon();
                 if (icon == null) {

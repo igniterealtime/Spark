@@ -23,7 +23,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 public class EmoticonUI extends JPanel {
-    private Collection<Emoticon> emoticons;
     private EmoticonPickListener listener;
 
     public EmoticonUI() {
@@ -32,7 +31,7 @@ public class EmoticonUI extends JPanel {
         final EmoticonManager manager = EmoticonManager.getInstance();
 
 
-        emoticons = manager.getActiveEmoticonSet();
+        Collection<Emoticon> emoticons = manager.getActiveEmoticonSet();
 
         int no = emoticons.size();
 

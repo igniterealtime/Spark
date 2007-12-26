@@ -123,7 +123,7 @@ public class JabberBrowser implements Plugin {
         browsePanel.removeAll();
 
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(con);
-        DiscoverItems result = null;
+        DiscoverItems result;
         try {
             result = discoManager.discoverItems(serviceName);
         }
@@ -151,7 +151,7 @@ public class JabberBrowser implements Plugin {
         addAddress(discoveredItem.getEntityID());
         browsePanel.removeAll();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(con);
-        DiscoverItems result = null;
+        DiscoverItems result;
         try {
             result = discoManager.discoverItems(discoveredItem.getEntityID());
         }
@@ -163,7 +163,7 @@ public class JabberBrowser implements Plugin {
         }
 
         Iterator discoverItems = result.getItems();
-        List list = new ArrayList();
+        List<Entity> list = new ArrayList<Entity>();
 
         while (discoverItems.hasNext()) {
             DiscoverItems.Item item = (DiscoverItems.Item)discoverItems.next();

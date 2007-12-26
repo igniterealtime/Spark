@@ -20,10 +20,10 @@ import java.util.List;
 
 public class Features implements PacketExtension {
 
-    private List availableFeatures = new ArrayList();
+    private List<String> availableFeatures = new ArrayList<String>();
 
 
-    public List getAvailableFeatures() {
+    public List<String> getAvailableFeatures() {
         return availableFeatures;
     }
 

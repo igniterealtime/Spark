@@ -47,7 +47,6 @@ public class ContactListAssistantPlugin implements Plugin {
 
     private JMenu moveToMenu;
     private JMenu copyToMenu;
-    private boolean avatarsShowing = false;
 
     public void initialize() {
 
@@ -57,7 +56,7 @@ public class ContactListAssistantPlugin implements Plugin {
         final ContactList contactList = SparkManager.getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object object, final JPopupMenu popup) {
-                final Collection contactItems = Collections.unmodifiableCollection(contactList.getSelectedUsers());
+                final Collection<ContactItem> contactItems = Collections.unmodifiableCollection(contactList.getSelectedUsers());
                 if (!contactItems.isEmpty()) {
                     final List<ContactGroup> contactGroups = contactList.getContactGroups();
                     Collections.sort(contactGroups, ContactList.GROUP_COMPARATOR);
@@ -318,8 +317,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
     private ContactGroup getContactGroup(String groupName) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-        ContactGroup group = contactList.getContactGroup(groupName);
-        return group;
+        return contactList.getContactGroup(groupName);
     }
 
 }

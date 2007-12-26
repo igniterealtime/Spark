@@ -29,7 +29,6 @@ import org.jivesoftware.spark.util.log.Log;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
@@ -73,9 +72,8 @@ public class BookmarkPlugin implements Plugin {
                     Collection bookmarkedConferences = bookmarks.getBookmarkedConferences();
                     final Collection bookmarkedLinks = bookmarks.getBookmarkedURLS();
 
-                    final Iterator bookmarkLinks = bookmarkedLinks.iterator();
-                    while (bookmarkLinks.hasNext()) {
-                        final BookmarkedURL link = (BookmarkedURL)bookmarkLinks.next();
+                    for (Object bookmarkedLink : bookmarkedLinks) {
+                        final BookmarkedURL link = (BookmarkedURL) bookmarkedLink;
 
                         Action urlAction = new AbstractAction() {
                             public void actionPerformed(ActionEvent actionEvent) {
@@ -94,9 +92,8 @@ public class BookmarkPlugin implements Plugin {
                     }
 
 
-                    final Iterator bookmarkConferences = bookmarkedConferences.iterator();
-                    while (bookmarkConferences.hasNext()) {
-                        final BookmarkedConference conferences = (BookmarkedConference)bookmarkConferences.next();
+                    for (Object bookmarkedConference : bookmarkedConferences) {
+                        final BookmarkedConference conferences = (BookmarkedConference) bookmarkedConference;
 
                         Action conferenceAction = new AbstractAction() {
                             public void actionPerformed(ActionEvent actionEvent) {

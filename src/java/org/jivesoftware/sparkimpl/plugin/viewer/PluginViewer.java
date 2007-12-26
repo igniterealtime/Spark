@@ -36,7 +36,6 @@ import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -47,7 +46,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -73,11 +71,6 @@ import java.util.List;
 
 public class PluginViewer extends JPanel implements Plugin {
 
-    private JToolBar toolbar = new JToolBar();
-    private JButton installButton = new JButton();
-    private JButton uninstallButton = new JButton();
-
-
     private JTabbedPane tabbedPane = new JTabbedPane();
 
     private boolean loaded = false;
@@ -85,7 +78,6 @@ public class PluginViewer extends JPanel implements Plugin {
     private String retrieveListURL = "http://www.igniterealtime.org/updater/plugins.jsp";
 
     private JProgressBar progressBar;
-    private PluginViewer viewer;
 
     private final JPanel installedPanel = new JPanel();
     private final JPanel availablePanel = new JPanel();
@@ -112,10 +104,8 @@ public class PluginViewer extends JPanel implements Plugin {
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
                 if (tabbedPane.getSelectedIndex() == 1) {
-                    if (true) {
-                        loadAvailablePlugins();
-                        loaded = true;
-                    }
+                    loadAvailablePlugins();
+                    loaded = true;
                 }
             }
         });
@@ -124,9 +114,8 @@ public class PluginViewer extends JPanel implements Plugin {
     private void loadInstalledPlugins() {
         PluginManager pluginManager = PluginManager.getInstance();
         List plugins = pluginManager.getPublicPlugins();
-        Iterator iter = plugins.iterator();
-        while (iter.hasNext()) {
-            PublicPlugin plugin = (PublicPlugin)iter.next();
+        for (Object plugin1 : plugins) {
+            PublicPlugin plugin = (PublicPlugin) plugin1;
             final SparkPlugUI ui = new SparkPlugUI(plugin);
             ui.useLocalIcon();
             installedPanel.add(ui);
@@ -138,7 +127,6 @@ public class PluginViewer extends JPanel implements Plugin {
     public void initialize() {
         // Add Plugins Menu
         JMenuBar menuBar = SparkManager.getMainWindow().getJMenuBar();
-        int count = menuBar.getMenuCount();
 
         // Get last menu which is help
         JMenu sparkMenu = menuBar.getMenu(0);
@@ -164,7 +152,7 @@ public class PluginViewer extends JPanel implements Plugin {
             // Delete main jar.
             File pluginDir = plugin.getPluginDir();
             File pluginJAR = new File(plugin.getPluginDir().getParentFile(), pluginDir.getName() + ".jar");
-            boolean deleted = pluginJAR.delete();
+            pluginJAR.delete();
 
             JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark.changes"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
             PluginManager.getInstance().removePublicPlugin(plugin);
@@ -175,7 +163,7 @@ public class PluginViewer extends JPanel implements Plugin {
     }
 
     private void invokeViewer() {
-        viewer = new PluginViewer();
+        PluginViewer viewer = new PluginViewer();
         MessageDialog.showComponent(Res.getString("title.plugins"), "", null, viewer, SparkManager.getMainWindow(), 600, 600, false);
     }
 
@@ -229,6 +217,7 @@ public class PluginViewer extends JPanel implements Plugin {
                     pluginList = getPluginList(post.getResponseBodyAsStream());
                 }
                 catch (Exception ex) {
+                    // Nothing to do
                 }
                 return "ok";
             }
@@ -321,10 +310,9 @@ public class PluginViewer extends JPanel implements Plugin {
                         // Remove SparkPlugUI
                         // Clear all selections
                         Component[] comps = availablePanel.getComponents();
-                        for (int i = 0; i < comps.length; i++) {
-                            Component comp = comps[i];
+                        for (Component comp : comps) {
                             if (comp instanceof SparkPlugUI) {
-                                SparkPlugUI sparkPlug = (SparkPlugUI)comp;
+                                SparkPlugUI sparkPlug = (SparkPlugUI) comp;
                                 if (sparkPlug.getPlugin().getDownloadURL().equals(plugin.getDownloadURL())) {
                                     availablePanel.remove(sparkPlug);
 
@@ -344,7 +332,7 @@ public class PluginViewer extends JPanel implements Plugin {
                         }
                     }
                     catch (Exception ex) {
-
+                        // Nothing to do
                     }
                     finally {
                         // Release current connection to the connection pool once you are done
@@ -373,7 +361,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
 
     public Collection getPluginList(InputStream response) {
-        final List pluginList = new ArrayList();
+        final List<PublicPlugin> pluginList = new ArrayList<PublicPlugin>();
         SAXReader saxReader = new SAXReader();
         Document pluginXML = null;
 
@@ -386,18 +374,17 @@ public class PluginViewer extends JPanel implements Plugin {
 
         List plugins = pluginXML.selectNodes("/plugins/plugin");
 
-        Iterator iter = plugins.iterator();
-        while (iter.hasNext()) {
+        for (Object plugin1 : plugins) {
             PublicPlugin publicPlugin = new PublicPlugin();
 
-            String clazz = null;
+            String clazz;
             String name = null;
             try {
-                Element plugin = (Element)iter.next();
+                Element plugin = (Element) plugin1;
 
                 try {
                     String version = plugin.selectSingleNode("minSparkVersion").getText();
-                    if (!isGreaterOrEqual(JiveInfo.getVersion(), version)){
+                    if (!isGreaterOrEqual(JiveInfo.getVersion(), version)) {
                         Log.error("Unable to load plugin " + name + " due to min version incompatibility.");
                         continue;
                     }
@@ -480,6 +467,9 @@ public class PluginViewer extends JPanel implements Plugin {
      * Common code for copy routines.  By convention, the streams are
      * closed in the same method in which they were opened.  Thus,
      * this method does not close the streams when the copying is done.
+     *
+     * @param in Stream to copy from.
+     * @param out Stream to copy to.
      */
     private void copy(final InputStream in, final OutputStream out) {
         int read = 0;
@@ -513,20 +503,18 @@ public class PluginViewer extends JPanel implements Plugin {
             public void mouseClicked(MouseEvent mouseEvent) {
                 // Clear all selections
                 Component[] comps = installedPanel.getComponents();
-                for (int i = 0; i < comps.length; i++) {
-                    Component comp = (Component)comps[i];
+                for (Component comp : comps) {
                     if (comp instanceof SparkPlugUI) {
-                        SparkPlugUI sparkPlug = (SparkPlugUI)comp;
+                        SparkPlugUI sparkPlug = (SparkPlugUI) comp;
                         sparkPlug.setSelected(false);
                     }
                 }
 
                 // Clear all selections
                 comps = availablePanel.getComponents();
-                for (int i = 0; i < comps.length; i++) {
-                    Component comp = comps[i];
+                for (Component comp : comps) {
                     if (comp instanceof SparkPlugUI) {
-                        SparkPlugUI sparkPlug = (SparkPlugUI)comp;
+                        SparkPlugUI sparkPlug = (SparkPlugUI) comp;
                         sparkPlug.setSelected(false);
                     }
                 }
@@ -543,7 +531,6 @@ public class PluginViewer extends JPanel implements Plugin {
                                 installedPanel.remove(ui);
                                 installedPanel.invalidate();
                                 installedPanel.repaint();
-                                return;
                             }
                         }
                         else {
@@ -570,4 +557,7 @@ public class PluginViewer extends JPanel implements Plugin {
         return firstVersion.compareTo(secondVersion) >= 0;
     }
 
+    public boolean isLoaded() {
+        return loaded;
+    }
 }

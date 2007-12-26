@@ -22,11 +22,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -43,7 +41,6 @@ import java.beans.PropertyChangeListener;
  */
 public final class InputTextAreaDialog implements PropertyChangeListener {
     private JTextArea textArea;
-    private JTextField subjectField;
     private JOptionPane optionPane;
     private JDialog dialog;
 
@@ -85,7 +82,6 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
      */
     public String getInput(String title, String description, Icon icon, Component parent) {
         textArea = new JTextArea();
-        subjectField = new JTextField();
         textArea.setLineWrap(true);
 
         TitlePanel titlePanel = new TitlePanel(title, description, icon, true);
@@ -94,9 +90,6 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
-
-
-        final JPanel centerPanel = new JPanel(new GridBagLayout());
 
         // The user should only be able to close this dialog.
         final Object[] options = {Res.getString("ok"), Res.getString("cancel")};

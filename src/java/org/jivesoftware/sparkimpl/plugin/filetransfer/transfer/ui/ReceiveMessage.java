@@ -486,7 +486,7 @@ public class ReceiveMessage extends JPanel {
                 }
             }
             else if (Spark.isMac()) {
-                Process child = Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
+                Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
             }
         }
         catch (IOException e1) {
@@ -529,8 +529,8 @@ public class ReceiveMessage extends JPanel {
         fileName = fileName.toLowerCase();
 
         String[] imageTypes = {"jpeg", "gif", "jpg", "png"};
-        for (int i = 0; i < imageTypes.length; i++) {
-            if (fileName.endsWith(imageTypes[i])) {
+        for (String imageType : imageTypes) {
+            if (fileName.endsWith(imageType)) {
                 return true;
             }
         }

@@ -101,9 +101,6 @@ public class SparkToaster {
     // Last opened toaster
     private int maxToaster = 0;
 
-    // Max number of toasters for the sceen
-    private int maxToasterInSceen;
-
     // Font used to display message
     private Font font;
 
@@ -122,8 +119,6 @@ public class SparkToaster {
     // Flag that indicate if use alwaysOnTop or not.
     // method always on top start only SINCE JDK 5 !
     boolean useAlwaysOnTop = true;
-
-    private static final long serialVersionUID = 1L;
 
     private String title;
 
@@ -270,8 +265,10 @@ public class SparkToaster {
          * Animate vertically the toaster. The toaster could be moved from bottom
          * to upper or to upper to bottom
          *
-         * @param posx
-         * @throws InterruptedException
+         * @param posx X position for toaster.
+         * @param fromY Y from position
+         * @param toY Y to position
+         * @throws InterruptedException if animation is interrupted
          */
         protected void animateVertically(int posx, int fromY, int toY) throws InterruptedException {
 
@@ -301,7 +298,7 @@ public class SparkToaster {
                         .getLocalGraphicsEnvironment();
                 Rectangle screenRect = ge.getMaximumWindowBounds();
 
-                int screenHeight = (int)screenRect.height;
+                int screenHeight = screenRect.height;
 
                 int startYPosition;
                 int stopYPosition;
@@ -310,10 +307,10 @@ public class SparkToaster {
                     animateFromBottom = false; // Animate from top!
                 }
 
-                maxToasterInSceen = screenHeight / toasterHeight;
+                int maxToasterInSceen = screenHeight / toasterHeight;
 
 
-                int posx = (int)screenRect.width - toasterWidth - 1;
+                int posx = screenRect.width - toasterWidth - 1;
 
                 toaster.setLocation(posx, screenHeight);
                 toaster.setVisible(true);
@@ -364,6 +361,9 @@ public class SparkToaster {
 
     /**
      * Show a toaster with the specified message and the associated icon.
+     *
+     * @param icon Icon to show in toaster popup.
+     * @param msg Message to show in toaster popup.
      */
     public void showToaster(Icon icon, String msg) {
         SingleToaster singleToaster = new SingleToaster();
@@ -385,6 +385,9 @@ public class SparkToaster {
 
     /**
      * Show a toaster with the specified message and the associated icon.
+     *
+     * @param title Title to use in toaster popup
+     * @param comp Component to add to toaster popup
      */
     public void showToaster(String title, Component comp) {
         SingleToaster singleToaster = new SingleToaster();
@@ -412,6 +415,8 @@ public class SparkToaster {
 
     /**
      * Show a toaster with the specified message.
+     *
+     * @param msg Message to display.
      */
     public void showToaster(String msg) {
         showToaster(null, msg);
@@ -421,12 +426,13 @@ public class SparkToaster {
      * @return Returns the font
      */
     public Font getToasterMessageFont() {
-        // TODO Auto-generated method stub
         return font;
     }
 
     /**
      * Set the font for the message
+     *
+     * @param f Font to set on toaster messages.
      */
     public void setToasterMessageFont(Font f) {
         font = f;
@@ -664,6 +670,8 @@ public class SparkToaster {
 
     /**
      * Simple Example...
+     *
+     * @param args Command line args.
      */
     public static void main(String[] args) {
         SparkToaster toaster = new SparkToaster();

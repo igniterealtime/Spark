@@ -18,29 +18,15 @@ import javax.media.Renderer;
 import javax.media.format.AudioFormat;
 
 import java.awt.Frame;
-import java.awt.TextArea;
-import java.awt.Toolkit;
 import java.util.Vector;
 
 public class JMFInit extends Frame implements Runnable {
 
-    private String tempDir = "/tmp";
-
-    private TextArea textBox;
-
-    private boolean done = false;
-
-    private String userHome;
-
-    private boolean visible = false;
-
     public JMFInit(String[] args, boolean visible) {
         super("Initializing JMF...");
 
-        this.visible = visible;
-
-        Registry.set("secure.allowCaptureFromApplets", new Boolean(true));
-        Registry.set("secure.allowSaveFileFromApplets", new Boolean(true));
+        Registry.set("secure.allowCaptureFromApplets", true);
+        Registry.set("secure.allowSaveFileFromApplets", true);
 
 
         updateTemp(args);
@@ -73,18 +59,16 @@ public class JMFInit extends Frame implements Runnable {
         detectDirectAudio();
         detectS8DirectAudio();
         detectCaptureDevices();
-        done = true;
     }
 
     private void updateTemp(String[] args) {
         if (args != null && args.length > 0) {
-            tempDir = args[0];
+            String tempDir = args[0];
 
             message("Setting cache directory to " + tempDir);
-            Registry r = new Registry();
             try {
-                r.set("secure.cacheDir", tempDir);
-                r.commit();
+                Registry.set("secure.cacheDir", tempDir);
+                Registry.commit();
 
                 message("Updated registry");
             }
@@ -97,7 +81,7 @@ public class JMFInit extends Frame implements Runnable {
     private void detectCaptureDevices() {
         // check if JavaSound capture is available
         message("Looking for Audio capturer");
-        Class dsauto = null;
+        Class dsauto;
         try {
             dsauto = Class.forName("DirectSoundAuto");
             dsauto.newInstance();
@@ -107,9 +91,10 @@ public class JMFInit extends Frame implements Runnable {
             throw td;
         }
         catch (Throwable t) {
+            // Nothing to do
         }
 
-        Class jsauto = null;
+        Class jsauto;
         try {
             jsauto = Class.forName("JavaSoundAuto");
             jsauto.newInstance();
@@ -178,10 +163,10 @@ public class JMFInit extends Frame implements Runnable {
         String dar = "com.sun.media.renderer.audio.DirectAudioRenderer";
         try {
             // Check if this is the Windows Performance Pack - hack
-            cls = Class.forName("VFWAuto");
+            Class.forName("VFWAuto");
             // Check if DS capture is supported, otherwise fail DS renderer
             // since NT doesn't have capture
-            cls = Class.forName("com.sun.media.protocol.dsound.DSound");
+            Class.forName("com.sun.media.protocol.dsound.DSound");
             // Find the renderer class and instantiate it.
             cls = Class.forName(dar);
 
@@ -197,8 +182,7 @@ public class JMFInit extends Frame implements Runnable {
                 PlugInManager.addPlugIn(dar, inputFormats, new Format[0],
                         plType);
                 // Move it to the top of the list
-                Vector rendList = PlugInManager.getPlugInList(null, null,
-                        plType);
+                Vector rendList = PlugInManager.getPlugInList(null, null, plType);
                 int listSize = rendList.size();
                 if (rendList.elementAt(listSize - 1).equals(dar)) {
                     rendList.removeElementAt(listSize - 1);
@@ -214,6 +198,7 @@ public class JMFInit extends Frame implements Runnable {
             }
         }
         catch (Throwable tt) {
+            // Nothing to do
         }
     }
 
@@ -223,7 +208,7 @@ public class JMFInit extends Frame implements Runnable {
         String dar = "com.sun.media.renderer.audio.DirectAudioRenderer";
         try {
             // Check if this is the solaris Performance Pack - hack
-            cls = Class.forName("SunVideoAuto");
+            Class.forName("SunVideoAuto");
 
             // Find the renderer class and instantiate it.
             cls = Class.forName(dar);
@@ -237,7 +222,7 @@ public class JMFInit extends Frame implements Runnable {
                         plType);
                 int listSize = rendList.size();
                 boolean found = false;
-                String rname = null;
+                String rname;
 
                 for (int i = 0; i < listSize; i++) {
                     rname = (String)(rendList.elementAt(i));
@@ -256,6 +241,7 @@ public class JMFInit extends Frame implements Runnable {
             }
         }
         catch (Throwable tt) {
+            // Nothing to do
         }
     }
 
@@ -263,25 +249,25 @@ public class JMFInit extends Frame implements Runnable {
         Log.debug(message);
     }
 
-    private void createGUI() {
-        textBox = new TextArea(5, 50);
-        add("Center", textBox);
-        textBox.setEditable(false);
-        addNotify();
-        pack();
-
-        int scrWidth = (int)Toolkit.getDefaultToolkit().getScreenSize()
-                .getWidth();
-        int scrHeight = (int)Toolkit.getDefaultToolkit().getScreenSize()
-                .getHeight();
-
-        setLocation((scrWidth - getWidth()) / 2, (scrHeight - getHeight()) / 2);
-
-        setVisible(visible);
-
-    }
+//    private void createGUI() {
+//        TextArea textBox = new TextArea(5, 50);
+//        add("Center", textBox);
+//        textBox.setEditable(false);
+//        addNotify();
+//        pack();
+//
+//        int scrWidth = (int)Toolkit.getDefaultToolkit().getScreenSize()
+//                .getWidth();
+//        int scrHeight = (int)Toolkit.getDefaultToolkit().getScreenSize()
+//                .getHeight();
+//
+//        setLocation((scrWidth - getWidth()) / 2, (scrHeight - getHeight()) / 2);
+//
+//        setVisible(visible);
+//
+//    }
 
     public static void start(boolean visible) {
-        JMFInit init = new JMFInit(null, visible);
+        new JMFInit(null, visible);
     }
 }

@@ -29,14 +29,13 @@ import java.awt.event.MouseEvent;
  */
 public class BookmarkUI extends JPanel {
 
-    private CollapsiblePane pane;
     private DefaultListModel model;
     private JList list;
 
 
     public BookmarkUI() {
         setLayout(new BorderLayout());
-        pane = new CollapsiblePane();
+        CollapsiblePane pane = new CollapsiblePane();
         pane.setTitle("Bookmarks");
 
         model = new DefaultListModel();

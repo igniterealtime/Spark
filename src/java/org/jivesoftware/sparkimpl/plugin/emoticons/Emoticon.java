@@ -33,6 +33,7 @@ public class Emoticon {
      * @param nameOfImage  the name of the image that represents this emoticon (ex. smile.gif)
      * @param emoticonName the name of this emoticon
      * @param equivalants  all string representations of this emoticon.
+     * @param emoticonDirectory Directory that contains emoticons.
      */
     public Emoticon(String nameOfImage, String emoticonName, List<String> equivalants, File emoticonDirectory) {
         this.imageName = nameOfImage;

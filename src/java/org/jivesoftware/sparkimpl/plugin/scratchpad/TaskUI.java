@@ -33,7 +33,6 @@ public class TaskUI extends JPanel implements ActionListener {
 
     private Task task;
     private JCheckBox box;
-    private JLabel dueLabel;
 
 
     public TaskUI(Task task) {
@@ -44,7 +43,7 @@ public class TaskUI extends JPanel implements ActionListener {
 
         box = new JCheckBox();
         box.setOpaque(false);
-        dueLabel = new JLabel();
+        JLabel dueLabel = new JLabel();
         dueLabel.setOpaque(false);
 
         add(box, BorderLayout.CENTER);

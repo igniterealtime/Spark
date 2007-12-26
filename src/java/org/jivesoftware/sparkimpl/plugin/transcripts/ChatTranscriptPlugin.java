@@ -81,7 +81,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         final Action viewHistoryAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
-                ContactItem item = (ContactItem)contactList.getSelectedUsers().iterator().next();
+                ContactItem item = contactList.getSelectedUsers().iterator().next();
                 final String jid = item.getJID();
 
                 showHistory(jid);
@@ -317,7 +317,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                                     builder.append("<tr><td><br></td></tr>");
                                 }
 
-                                builder.append("<tr><td colspan=2><font size=4 color=gray><b><u>" + notificationDateFormatter.format(message.getDate()) + "</u></b></font></td></tr>");
+                                builder.append("<tr><td colspan=2><font size=4 color=gray><b><u>").append(notificationDateFormatter.format(message.getDate())).append("</u></b></font></td></tr>");
                                 lastPerson = null;
                                 initialized = true;
                             }
@@ -327,7 +327,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                             boolean newInsertions = lastPerson == null || !lastPerson.equals(nickname);
                             if (newInsertions) {
                                 builder.append("<tr valign=top><td colspan=2 nowrap>");
-                                builder.append("<font size=4 color='" + color + "'><b>");
+                                builder.append("<font size=4 color='").append(color).append("'><b>");
                                 builder.append(nickname);
                                 builder.append("</b></font>");
                                 builder.append("</td></tr>");
@@ -347,7 +347,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                         // Handle no history
                         if (transcript.getMessages().size() == 0) {
-                            builder.append("<b>" + Res.getString("message.no.history.found") + "</b>");
+                            builder.append("<b>").append(Res.getString("message.no.history.found")).append("</b>");
                         }
 
                         window.setText(builder.toString());

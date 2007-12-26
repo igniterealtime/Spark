@@ -112,25 +112,23 @@ public final class ChatTranscripts {
             return;
         }
 
-        if (append) {
-            // Append to File
-            try {
-                final RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
+        // Append to File
+        try {
+            final RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
 
-                // We want to append near the end of the document as the last
-                // child in the transcript.
-                final String endTag = "</messages></transcript>";
-                builder.append(endTag);
+            // We want to append near the end of the document as the last
+            // child in the transcript.
+            final String endTag = "</messages></transcript>";
+            builder.append(endTag);
 
-                raf.seek(transcriptFile.length() - endTag.length());
+            raf.seek(transcriptFile.length() - endTag.length());
 
-                // Append to the end
-                raf.write(builder.toString().getBytes("UTF-8"));
-                raf.close();
-            }
-            catch (IOException e) {
-                Log.error(e);
-            }
+            // Append to the end
+            raf.write(builder.toString().getBytes("UTF-8"));
+            raf.close();
+        }
+        catch (IOException e) {
+            Log.error(e);
         }
     }
 
@@ -232,7 +230,7 @@ public final class ChatTranscripts {
                 message.setBody(StringUtils.unescapeFromXML(parser.nextText()));
             }
             else if (eventType == XmlPullParser.START_TAG && "date".equals(parser.getName())) {
-                Date d = null;
+                Date d;
                 try {
                     d = FORMATTER.parse(parser.nextText());
                 }

@@ -49,13 +49,9 @@ import javax.swing.JTextArea;
  */
 public class BroadcastDialog extends JPanel {
 
-    private CheckTree checkTree;
-    private CheckNode rosterNode;
-
     private JTextArea messageBox;
 
     private JRadioButton normalMessageButton;
-    private JRadioButton alertMessageButton;
 
     private List<CheckNode> nodes = new ArrayList<CheckNode>();
     private List<CheckNode> groupNodes = new ArrayList<CheckNode>();
@@ -63,8 +59,8 @@ public class BroadcastDialog extends JPanel {
     public BroadcastDialog() {
         setLayout(new GridBagLayout());
 
-        rosterNode = new CheckNode("Roster");
-        checkTree = new CheckTree(rosterNode);
+        CheckNode rosterNode = new CheckNode("Roster");
+        CheckTree checkTree = new CheckTree(rosterNode);
 
         // Build out from Roster
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -98,7 +94,7 @@ public class BroadcastDialog extends JPanel {
 
         messageBox = new JTextArea();
         normalMessageButton = new JRadioButton(Res.getString("message.normal"));
-        alertMessageButton = new JRadioButton(Res.getString("message.alert.notify"));
+        JRadioButton alertMessageButton = new JRadioButton(Res.getString("message.alert.notify"));
 
         ButtonGroup group = new ButtonGroup();
         group.add(normalMessageButton);

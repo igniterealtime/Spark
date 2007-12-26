@@ -111,9 +111,7 @@ public class EmoticonManager {
         newEmoticonDir.mkdirs();
 
         File[] files = EMOTICON_DIRECTORY.listFiles();
-        final int no = files != null ? files.length : 0;
-        for (int i = 0; i < no; i++) {
-            File file = files[i];
+        for (File file : files) {
             if (file.isFile()) {
                 try {
                     // Copy over
@@ -238,7 +236,7 @@ public class EmoticonManager {
             e.printStackTrace();
         }
 
-        Document emoticonFile = null;
+        Document emoticonFile;
         try {
             emoticonFile = saxParser.read(plist);
         }
@@ -265,9 +263,8 @@ public class EmoticonManager {
             // Load equivilants
             final List<String> equivs = new ArrayList<String>();
             final List equivilants = dict.selectNodes("array/string");
-            Iterator iter = equivilants.iterator();
-            while (iter.hasNext()) {
-                Element equivilant = (Element)iter.next();
+            for (Object equivilant1 : equivilants) {
+                Element equivilant = (Element) equivilant1;
                 String equivilantString = equivilant.getText();
                 equivs.add(equivilantString);
             }
@@ -371,8 +368,7 @@ public class EmoticonManager {
         final List<String> emoticonList = new ArrayList<String>();
 
         File[] dirs = EMOTICON_DIRECTORY.listFiles();
-        for (int i = 0; i < dirs.length; i++) {
-            File file = dirs[i];
+        for (File file : dirs) {
             if (file.isDirectory() && file.getName().toLowerCase().endsWith("adiumemoticonset")) {
                 try {
                     String name = URLFileSystem.getName(file.toURL());
@@ -390,6 +386,9 @@ public class EmoticonManager {
 
     /**
      * Expands any zipped Emoticon Packs.
+     *
+     * @param file File to unpack.
+     * @param dist Dist file.
      */
     private void expandNewPack(File file, File dist) {
         URL url = null;
@@ -458,7 +457,7 @@ public class EmoticonManager {
                     FileOutputStream out = new FileOutputStream(entryFile);
                     InputStream zin = zipFile.getInputStream(entry);
                     byte[] b = new byte[512];
-                    int len = 0;
+                    int len;
                     while ((len = zin.read(b)) != -1) {
                         out.write(b, 0, len);
                     }
@@ -468,7 +467,6 @@ public class EmoticonManager {
                 }
             }
             zipFile.close();
-            zipFile = null;
         }
         catch (Exception e) {
             Log.error("Error unzipping emoticon pack", e);

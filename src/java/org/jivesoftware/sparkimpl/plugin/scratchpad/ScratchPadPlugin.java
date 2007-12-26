@@ -51,23 +51,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  *
  */
 public class ScratchPadPlugin implements Plugin {
-    private ContactList contactList;
 
     public static boolean SHOW_ALL_TASKS = true;
 
@@ -75,7 +70,7 @@ public class ScratchPadPlugin implements Plugin {
 
 
     public void initialize() {
-        contactList = SparkManager.getWorkspace().getContactList();
+        ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
 
         contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
@@ -241,7 +236,7 @@ public class ScratchPadPlugin implements Plugin {
                         task.setDueDate(date.getTime());
                     }
                     catch (ParseException e1) {
-
+                        // Nothing to do
                     }
 
                 }
@@ -266,9 +261,8 @@ public class ScratchPadPlugin implements Plugin {
         addButton.addActionListener(addAction);
 
         Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
-        Iterator taskIter = tasks.getTasks().iterator();
-        while (taskIter.hasNext()) {
-            Task task = (Task)taskIter.next();
+        for (Object o : tasks.getTasks()) {
+            Task task = (Task) o;
             final TaskUI taskUI = new TaskUI(task);
             mainPanel.add(taskUI);
             taskList.add(taskUI);
@@ -448,60 +442,60 @@ public class ScratchPadPlugin implements Plugin {
     public void uninstall() {
     }
 
-    private class DragWindowAdapter extends MouseAdapter
-            implements MouseMotionListener {
-        private JFrame m_msgWnd;
-        private int m_mousePrevX,
-                m_mousePrevY;
-        private int m_frameX,
-                m_frameY;
-
-        public DragWindowAdapter(JFrame mw) {
-            m_msgWnd = mw;
-        }
-
-        public void mousePressed(MouseEvent e) {
-            super.mousePressed(e);
-            m_mousePrevX = e.getX();
-            m_mousePrevY = e.getY();
-            m_frameX = 0;
-            m_frameY = 0;
-        }
-
-        public void mouseDragged(MouseEvent e) {
-            int X = e.getX();
-            int Y = e.getY();
-            int MsgX = m_msgWnd.getX();
-            int MsgY = m_msgWnd.getY();
-
-            int moveX = X - m_mousePrevX;  // Negative if move left
-            int moveY = Y - m_mousePrevY;  // Negative if move down
-            if (moveX == 0 && moveY == 0) return;
-            m_mousePrevX = X - moveX;
-            m_mousePrevY = Y - moveY;
-
-            //System.out.println("mouseDragged x,y = (" + X + "," + Y +
-            //        ") diff (" + moveX + "," + moveY +
-            //        ") MsgX/MsgY = " + MsgX + "," + MsgY);
-
-            // mouseDragged caused by setLocation() on frame.
-            if (m_frameX == MsgX && m_frameY == MsgY) {
-                m_frameX = 0;
-                m_frameY = 0;
-                return;
-            }
-
-            // '-' would cause wrong direction for movement.
-            int newFrameX = MsgX + moveX;
-            // '-' would cause wrong
-            int newFrameY = MsgY + moveY;
-
-            m_frameX = newFrameX;
-            m_frameY = newFrameY;
-            m_msgWnd.setLocation(newFrameX, newFrameY);
-        }
-
-        public void mouseMoved(MouseEvent e) {
-        }
-    }
+//    private class DragWindowAdapter extends MouseAdapter
+//            implements MouseMotionListener {
+//        private JFrame m_msgWnd;
+//        private int m_mousePrevX,
+//                m_mousePrevY;
+//        private int m_frameX,
+//                m_frameY;
+//
+//        public DragWindowAdapter(JFrame mw) {
+//            m_msgWnd = mw;
+//        }
+//
+//        public void mousePressed(MouseEvent e) {
+//            super.mousePressed(e);
+//            m_mousePrevX = e.getX();
+//            m_mousePrevY = e.getY();
+//            m_frameX = 0;
+//            m_frameY = 0;
+//        }
+//
+//        public void mouseDragged(MouseEvent e) {
+//            int X = e.getX();
+//            int Y = e.getY();
+//            int MsgX = m_msgWnd.getX();
+//            int MsgY = m_msgWnd.getY();
+//
+//            int moveX = X - m_mousePrevX;  // Negative if move left
+//            int moveY = Y - m_mousePrevY;  // Negative if move down
+//            if (moveX == 0 && moveY == 0) return;
+//            m_mousePrevX = X - moveX;
+//            m_mousePrevY = Y - moveY;
+//
+//            //System.out.println("mouseDragged x,y = (" + X + "," + Y +
+//            //        ") diff (" + moveX + "," + moveY +
+//            //        ") MsgX/MsgY = " + MsgX + "," + MsgY);
+//
+//            // mouseDragged caused by setLocation() on frame.
+//            if (m_frameX == MsgX && m_frameY == MsgY) {
+//                m_frameX = 0;
+//                m_frameY = 0;
+//                return;
+//            }
+//
+//            // '-' would cause wrong direction for movement.
+//            int newFrameX = MsgX + moveX;
+//            // '-' would cause wrong
+//            int newFrameY = MsgY + moveY;
+//
+//            m_frameX = newFrameX;
+//            m_frameY = newFrameY;
+//            m_msgWnd.setLocation(newFrameX, newFrameY);
+//        }
+//
+//        public void mouseMoved(MouseEvent e) {
+//        }
+//    }
 }

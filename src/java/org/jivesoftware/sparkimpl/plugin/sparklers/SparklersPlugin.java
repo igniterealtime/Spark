@@ -17,7 +17,7 @@ import org.jivesoftware.spark.ui.SparklerDecorator;
 public class SparklersPlugin implements Plugin {
 
     public void initialize() {
-        Sparkler sparkler = new Sparkler() {
+        new Sparkler() {
             public void decorateMessage(String message, SparklerDecorator decorator) {
                 decorator.setURL("Spark", "http://www.test.com");
             }

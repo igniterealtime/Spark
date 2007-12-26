@@ -47,7 +47,6 @@ public class Downloads {
 
     private static Downloads singleton;
     private static final Object LOCK = new Object();
-    private JDialog dlg;
     private JFileChooser chooser;
 
     private LocalPreferences pref;
@@ -75,7 +74,7 @@ public class Downloads {
 
     private Downloads() {
         ChatFrame frame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-        dlg = new JDialog(SparkManager.getMainWindow(), Res.getString("title.downloads"), false);
+        JDialog dlg = new JDialog(SparkManager.getMainWindow(), Res.getString("title.downloads"), false);
         dlg.setContentPane(mainPanel);
         dlg.pack();
         dlg.setSize(400, 400);
@@ -152,7 +151,7 @@ public class Downloads {
                 SparkManager.getNativeManager().openFile(downloadedFile);
             }
             else if (Spark.isMac()) {
-                Process child = Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
+                Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
             }
         }
         catch (IOException e1) {

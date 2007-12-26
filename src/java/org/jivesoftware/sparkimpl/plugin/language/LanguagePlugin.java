@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
+import java.nio.charset.Charset;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,9 +56,8 @@ public class LanguagePlugin implements Plugin {
             return;
         }
 
-        String url = URLDecoder.decode(sparkJar.getPath());
-
         try {
+            String url = URLDecoder.decode(sparkJar.getPath(), Charset.defaultCharset().toString());
             ZipFile zipFile = new JarFile(new File(url));
             for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
                 JarEntry entry = (JarEntry)e.nextElement();
@@ -76,7 +76,6 @@ public class LanguagePlugin implements Plugin {
                 }
             }
             zipFile.close();
-            zipFile = null;
         }
         catch (Throwable e) {
             Log.error("Error unzipping plugin", e);
@@ -86,8 +85,7 @@ public class LanguagePlugin implements Plugin {
     }
 
     private void addLanguage(String language) {
-        for (int i = 0; i < locales.length; i++) {
-            final Locale locale = locales[i];
+        for (final Locale locale : locales) {
             if (locale.getLanguage().equals(language)) {
                 Action action = new AbstractAction() {
                     public void actionPerformed(ActionEvent e) {

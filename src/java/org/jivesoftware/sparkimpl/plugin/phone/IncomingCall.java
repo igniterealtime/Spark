@@ -13,7 +13,6 @@ package org.jivesoftware.sparkimpl.plugin.phone;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 

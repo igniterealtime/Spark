@@ -262,7 +262,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
             ChatManager chatManager = SparkManager.getChatManager();
             ChatContainer container = chatManager.getChatContainer();
 
-            ChatRoomImpl chatRoom = null;
+            ChatRoomImpl chatRoom;
             try {
                 chatRoom = (ChatRoomImpl)container.getChatRoom(from);
             }
@@ -283,7 +283,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
             ChatManager chatManager = SparkManager.getChatManager();
             ChatContainer container = chatManager.getChatContainer();
 
-            ChatRoomImpl chatRoom = null;
+            ChatRoomImpl chatRoom;
             try {
                 chatRoom = (ChatRoomImpl)container.getChatRoom(jid);
             }
@@ -343,27 +343,30 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
 
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
-        if (broadcastRooms.contains(component)) {
-            final ChatRoomImpl room = (ChatRoomImpl)component;
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-            String nickname = room.getTabTitle();
-            nickname = Res.getString("message.broadcast.from", nickname);
-            tab.setTabTitle(nickname);
+        if (component instanceof ChatRoom) {
+            ChatRoom chatroom = (ChatRoom)component;
+            if (broadcastRooms.contains(chatroom)) {
+                final ChatRoomImpl room = (ChatRoomImpl)component;
+                tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                String nickname = room.getTabTitle();
+                nickname = Res.getString("message.broadcast.from", nickname);
+                tab.setTabTitle(nickname);
 
 
-            if ((!chatFrameFocused || !isSelectedTab) && room.getUnreadMessageCount() > 0) {
-                // Make tab red.
-                tab.setTitleColor(Color.red);
-                tab.setTabBold(true);
+                if ((!chatFrameFocused || !isSelectedTab) && room.getUnreadMessageCount() > 0) {
+                    // Make tab red.
+                    tab.setTitleColor(Color.red);
+                    tab.setTabBold(true);
+                }
+                else {
+                    tab.setTitleColor(Color.black);
+                    tab.setTabFont(tab.getDefaultFont());
+                    room.clearUnreadMessageCount();
+                }
+
+
+                return true;
             }
-            else {
-                tab.setTitleColor(Color.black);
-                tab.setTabFont(tab.getDefaultFont());
-                room.clearUnreadMessageCount();
-            }
-
-
-            return true;
         }
 
         return false;

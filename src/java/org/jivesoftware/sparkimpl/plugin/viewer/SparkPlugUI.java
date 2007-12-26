@@ -203,6 +203,7 @@ public class SparkPlugUI extends JPanel {
             filename = URLFileSystem.getFileName(downloadURL);
         }
         catch (MalformedURLException e) {
+            // Nothing to do
         }
         return filename;
     }

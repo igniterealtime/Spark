@@ -20,7 +20,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -28,7 +27,7 @@ import java.util.List;
  */
 public class Tasks implements PrivateData {
 
-    private List tasks = new ArrayList();
+    private List<Task> tasks = new ArrayList<Task>();
 
     /**
      * Required Empty Constructor to use Tasks.
@@ -37,11 +36,11 @@ public class Tasks implements PrivateData {
     }
 
 
-    public List getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 
@@ -76,11 +75,9 @@ public class Tasks implements PrivateData {
     public String toXML() {
         StringBuffer buf = new StringBuffer();
         buf.append("<scratchpad xmlns=\"scratchpad:tasks\">");
-        buf.append("<tasks showAll=\"" + ScratchPadPlugin.SHOW_ALL_TASKS + "\">");
+        buf.append("<tasks showAll=\"").append(ScratchPadPlugin.SHOW_ALL_TASKS).append("\">");
 
-        Iterator iter = getTasks().iterator();
-        while (iter.hasNext()) {
-            Task task = (Task)iter.next();
+        for (Task task : getTasks()) {
             buf.append("<task>");
             buf.append("<title>").append(task.getTitle()).append("</title>");
             buf.append("<dueDate>").append(task.getDueDate()).append("</dueDate>");
@@ -119,8 +116,7 @@ public class Tasks implements PrivateData {
                 int eventType = parser.next();
                 if (eventType == XmlPullParser.START_TAG && "tasks".equals(parser.getName())) {
                     String showAll = parser.getAttributeValue("", "showAll");
-                    boolean sAll = new Boolean(showAll);
-                    ScratchPadPlugin.SHOW_ALL_TASKS = sAll;
+                    ScratchPadPlugin.SHOW_ALL_TASKS = Boolean.parseBoolean(showAll);
                 }
 
                 if (eventType == XmlPullParser.START_TAG && "task".equals(parser.getName())) {

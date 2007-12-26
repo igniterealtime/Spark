@@ -153,7 +153,7 @@ public class FrequentContactsPlugin implements Plugin {
 
         for (final String user : getFavoriteContacts()) {
             ContactItem contactItem = contactList.getContactItemByJID(user);
-            Icon icon = null;
+            Icon icon;
             if (contactItem != null) {
                 icon = contactItem.getIcon();
                 if (icon == null) {
@@ -188,15 +188,12 @@ public class FrequentContactsPlugin implements Plugin {
      */
     private Collection<String> getFavoriteContacts() {
         if (!transcriptDir.exists()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         final File[] transcriptFiles = transcriptDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                if (!name.contains("_current") && !name.equals("conversations.xml")) {
-                    return true;
-                }
-                return false;
+                return !name.contains("_current") && !name.equals("conversations.xml");
             }
         });
         final List<File> files = Arrays.asList(transcriptFiles);
@@ -211,7 +208,7 @@ public class FrequentContactsPlugin implements Plugin {
         final List<String> jidList = new ArrayList<String>();
         for (int i = 0; i < size; i++) {
             File file = files.get(i);
-            String jid = null;
+            String jid;
 
             final String fileName = file.getName();
             final int dot = fileName.lastIndexOf('.');
@@ -271,11 +268,8 @@ public class FrequentContactsPlugin implements Plugin {
     /**
      * Sorts files by largest to smallest.
      */
-    final Comparator sizeComparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            final File item1 = (File) o1;
-            final File item2 = (File) o2;
-
+    final Comparator<File> sizeComparator = new Comparator<File>() {
+        public int compare(File item1, File item2) {
             long int1 = item1.length();
             long int2 = item2.length();
 

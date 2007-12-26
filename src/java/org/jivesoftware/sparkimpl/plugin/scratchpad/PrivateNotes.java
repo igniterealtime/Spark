@@ -69,7 +69,7 @@ public class PrivateNotes implements PrivateData {
         buf.append("<scratchpad xmlns=\"scratchpad:notes\">");
 
         if (getNotes() != null) {
-            buf.append("<text>" + getNotes() + "</text>");
+            buf.append("<text>").append(getNotes()).append("</text>");
         }
 
         buf.append("</scratchpad>");
