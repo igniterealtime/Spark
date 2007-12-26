@@ -649,7 +649,7 @@ public class ChatRoomImpl extends ChatRoom {
             }
 
             if (ModelUtil.hasLength(messageBody) && messageBody.startsWith("/me ")) {
-                messageBody = messageBody.replaceAll("/me", nickname);
+                messageBody = messageBody.replaceFirst("/me", nickname);
             }
 
             final Date messageDate = message.getDate();

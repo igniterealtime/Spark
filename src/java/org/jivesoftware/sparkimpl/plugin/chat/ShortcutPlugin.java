@@ -42,7 +42,7 @@ public class ShortcutPlugin implements Plugin, TranscriptWindowInterceptor {
     public boolean isMessageIntercepted(TranscriptWindow window, String userid, Message message) {
         String body = message.getBody();
         if (ModelUtil.hasLength(body) && body.startsWith("/me ")) {
-            body = body.replaceAll("/me", userid);
+            body = body.replaceFirst("/me", userid);
             window.insertNotificationMessage(body, Color.MAGENTA);
             return true;
         }
