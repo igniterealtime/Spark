@@ -566,8 +566,12 @@ public final class LoginDialog {
             passwordField.setEditable(editable);
             passwordField.setEnabled(editable);
 
-            serverField.setEditable(editable);
-            serverField.setEnabled(editable);
+            final String lockedDownURL = Default.getString(Default.HOST_NAME);
+            if (!ModelUtil.hasLength(lockedDownURL)) {
+                serverField.setEditable(editable);
+                serverField.setEnabled(editable);
+            }
+
 
             if (editable) {
                 // Reapply focus to username field
