@@ -52,6 +52,7 @@ public class PreferenceDialog implements PropertyChangeListener {
         pane.addPropertyChangeListener(this);
 
         preferenceDialog.setVisible(true);
+        preferenceDialog.toFront();
     }
 
     public void propertyChange(PropertyChangeEvent e) {
