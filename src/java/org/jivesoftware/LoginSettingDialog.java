@@ -1091,7 +1091,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             else if(e.getSource() == pkiStore) {
                 if((pkiStore.getSelectedItem()).equals("PKCS#11")) {
-                    filePanel.setBorder(BorderFactory.createTitledBorder("PKCS#11 Configuration File"));
+                    filePanel.setBorder(BorderFactory.createTitledBorder("PKCS#11 Library File"));
                     if(ModelUtil.hasLength(localPreferences.getPKCSConfig())) {
                         fileField.setText(localPreferences.getPKCSConfig());
                     } else {
