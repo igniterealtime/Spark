@@ -615,12 +615,12 @@ public class LocalPreferences {
         return props.getProperty("jksPath");
     }
 
-    public void setPKCSConfig(String file) {
-        props.setProperty("pkcsConfig",file);
+    public void setPKCS11Library(String file) {
+        props.setProperty("pkcs11Library",file);
     }
 
-    public String getPKCSConfig() {
-        return props.getProperty("pkcsConfig");
+    public String getPKCS11Library() {
+        return props.getProperty("pkcs11Library");
     }
 
     public void setTrustStorePath(String file) {

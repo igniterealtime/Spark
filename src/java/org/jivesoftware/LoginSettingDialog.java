@@ -952,8 +952,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
             if(ModelUtil.hasLength(localPreferences.getPKIStore())) {
                 if(localPreferences.getPKIStore().equals("PKCS11")) {
                     pkiStore.setSelectedItem("PKCS#11");
-                    if(ModelUtil.hasLength(localPreferences.getPKCSConfig())) {
-                        fileField.setText(localPreferences.getPKCSConfig());
+                    if(ModelUtil.hasLength(localPreferences.getPKCS11Library())) {
+                        fileField.setText(localPreferences.getPKCS11Library());
                     }
                     else {
                         fileField.setText("");
@@ -1092,8 +1092,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
             else if(e.getSource() == pkiStore) {
                 if((pkiStore.getSelectedItem()).equals("PKCS#11")) {
                     filePanel.setBorder(BorderFactory.createTitledBorder("PKCS#11 Library File"));
-                    if(ModelUtil.hasLength(localPreferences.getPKCSConfig())) {
-                        fileField.setText(localPreferences.getPKCSConfig());
+                    if(ModelUtil.hasLength(localPreferences.getPKCS11Library())) {
+                        fileField.setText(localPreferences.getPKCS11Library());
                     } else {
                         fileField.setText("");
                     }
@@ -1155,7 +1155,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             localPreferences.setPKIStore((String)pkiStore.getSelectedItem());
             if((pkiStore.getSelectedItem()).equals("PKCS#11")) {
                 localPreferences.setPKIStore("PKCS11");
-                localPreferences.setPKCSConfig(fileField.getText());
+                localPreferences.setPKCS11Library(fileField.getText());
             }
             else if((pkiStore.getSelectedItem()).equals("X.509 Certificate")) {
                 localPreferences.setPKIStore("X509");

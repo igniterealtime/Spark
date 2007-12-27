@@ -826,7 +826,7 @@ public final class LoginDialog {
                         SASLAuthentication.supportSASLMechanism("EXTERNAL");
                         config.setKeystoreType(localPref.getPKIStore());
                         if(localPref.getPKIStore().equals("PKCS11")) {
-                            config.setPKCSConfig(localPref.getPKCSConfig());
+                            config.setPKCS11Library(localPref.getPKCS11Library());
                         }
                         else if(localPref.getPKIStore().equals("JKS")) {
                             config.setKeystoreType("JKS");
