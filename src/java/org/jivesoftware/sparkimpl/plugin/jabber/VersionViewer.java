@@ -111,7 +111,7 @@ public class VersionViewer {
 
             public Object construct() {
                 SparkManager.getConnection().sendPacket(time);
-                timeResult = (IQ)collector2.nextResult();
+                timeResult = (IQ)collector2.nextResult(5000);
                 return timeResult;
             }
 
@@ -120,7 +120,12 @@ public class VersionViewer {
 
                 if (timeResult != null && timeResult.getType() == IQ.Type.RESULT) {
                     Time t = (Time)timeResult;
-                    timeField.setText(t.getDisplay());
+                    if (t.getDisplay() != null) {
+                        timeField.setText(t.getDisplay());
+                    }
+                    else {
+                        timeField.setText(t.getTime().toString());
+                    }
                 }
             }
         };
