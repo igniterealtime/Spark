@@ -86,7 +86,7 @@ public class Downloads {
         downloadedDir = new File(pref.getDownloadDir());
         downloadedDir.mkdirs();
         pref.setDownloadDir(downloadedDir.getAbsolutePath());
-
+        SettingsManager.saveSettings();
 
         list.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 1, true, false));
         list.setBackground(Color.white);

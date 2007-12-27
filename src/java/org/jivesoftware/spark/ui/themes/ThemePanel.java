@@ -54,7 +54,7 @@ public class ThemePanel extends JPanel {
 
     private JCheckBox showAvatarsBox;
     private JLabel avatarSizeLabel;
-    private JList avatarSizeField;
+    private JComboBox avatarSizeField;
 
     /**
      * Construct UI
@@ -74,14 +74,14 @@ public class ThemePanel extends JPanel {
         addEmoticonButton = new JButton();
 
         transcript = new TranscriptWindow();
+        transcript.setForceEmoticons(true);
 
         systemLookAndFeelBox = new JCheckBox();
 
         showAvatarsBox = new JCheckBox();
         avatarSizeLabel = new JLabel();
-        String [] sizeChoices = {"16x16", "24x24", "32x32"};
-        avatarSizeField = new JList(sizeChoices);
-
+        String[] sizeChoices = {"16x16", "24x24", "32x32"};
+        avatarSizeField = new JComboBox(sizeChoices);
 
         contactListFontField = new JTextField();
         contactListFontLabel = new JLabel();

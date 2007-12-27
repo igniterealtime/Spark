@@ -289,6 +289,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         try {
             // Set auto-login to false;
             SettingsManager.getLocalPreferences().setAutoLogin(false);
+            SettingsManager.saveSettings();
 
             fireWindowShutdown();
             setVisible(false);

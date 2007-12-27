@@ -165,6 +165,7 @@ public class EmoticonManager {
     public void setActivePack(String pack) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setEmoticonPack(pack);
+        SettingsManager.saveSettings();
         imageMap.clear();
     }
 

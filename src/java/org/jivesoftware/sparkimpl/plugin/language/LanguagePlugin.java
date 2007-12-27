@@ -91,6 +91,7 @@ public class LanguagePlugin implements Plugin {
                     public void actionPerformed(ActionEvent e) {
                         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
                         preferences.setLanguage(locale.getLanguage());
+                        SettingsManager.saveSettings();
 
                         int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
                         if (ok == JOptionPane.YES_OPTION) {

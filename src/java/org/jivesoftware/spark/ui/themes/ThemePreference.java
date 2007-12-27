@@ -99,6 +99,7 @@ public class ThemePreference implements Preference {
         catch (NumberFormatException e) {
             Log.error(e);
         }
+        SettingsManager.saveSettings();
     }
 
 

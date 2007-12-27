@@ -1180,6 +1180,8 @@ public final class LoginDialog {
 
                 String savePassword = plugin.selectSingleNode("savePassword").getText();
                 localPref.setSavePassword(Boolean.parseBoolean(savePassword));
+
+                SettingsManager.saveSettings();
             }
 
             // Delete settings File

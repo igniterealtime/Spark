@@ -73,7 +73,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
     private Font defaultFont;
 
     private Date lastPost;
-
+    
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
      */

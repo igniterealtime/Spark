@@ -308,6 +308,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             xmppHostField.setEnabled(!isSelected);
             portField.setEnabled(!isSelected);
             localPreferences.setHostAndPortConfigured(!isSelected);
+            SettingsManager.saveSettings();
         }
 
 
@@ -363,6 +364,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             localPreferences.setCompressionEnabled(compressionBox.isSelected());
             localPreferences.setDebuggerEnabled(debuggerBox.isSelected());
             localPreferences.setResource(resourceField.getText());
+            SettingsManager.saveSettings();
         }
     }
 
@@ -646,6 +648,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     localPreferences.setProxyEnabled(false);
                 }
             }
+            SettingsManager.saveSettings();
         }
     }
 
@@ -907,6 +910,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             else {
                 localPreferences.setSSOMethod("file");
             }
+            SettingsManager.saveSettings();
         }
     }
 
@@ -1166,6 +1170,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             localPreferences.setTrustStorePath(trustStoreField.getText());
             localPreferences.setTrustStorePassword(new String(trustStorePassword.getPassword()));
+            SettingsManager.saveSettings();
         }
     }
 }

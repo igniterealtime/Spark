@@ -1728,6 +1728,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         localPreferences.setEmptyGroupsShown(show);
         showHideMenu.setSelected(show);
+        SettingsManager.saveSettings();
     }
 
     /**
@@ -1738,6 +1739,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private void showOfflineGroup(boolean show) {
         // Save in preferences
         localPreferences.setOfflineGroupVisible(show);
+        SettingsManager.saveSettings();
 
         // Toggle Visibility of Offline Group.
         offlineGroup.setVisible(show);

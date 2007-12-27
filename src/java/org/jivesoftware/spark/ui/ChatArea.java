@@ -92,6 +92,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     private EmoticonManager emoticonManager;
 
+    protected Boolean forceEmoticons = false;
+
     /**
      * ChatArea Constructor.
      */
@@ -159,7 +161,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
         // Make sure the message is not null.
         //  message = message.trim();
-        message = message.replaceAll("/\"", "");
+        // Why?
+//        message = message.replaceAll("/\"", "");
         if (ModelUtil.hasLength(message)) {
             try {
                 insert(message);
@@ -197,7 +200,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * specified during message creation in either the thin or thick client.
      *
      * @param text - the text to insert.
-     * @throws BadLocationException if location is not availaboe to insert into.
+     * @throws BadLocationException if location is not available to insert into.
      */
     public void insert(String text) throws BadLocationException {
         boolean bold = false;
@@ -210,7 +213,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             String textFound = tokenizer.nextToken();
             if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
                     || textFound.startsWith("https://") || textFound.startsWith("www.") ||
-                    textFound.startsWith("\\") || textFound.indexOf("://") != -1) {
+                    textFound.startsWith("\\\\") || textFound.indexOf("://") != -1) {
                 insertLink(textFound);
             }
             else if (!insertImage(textFound)) {
@@ -276,6 +279,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @return true if the image was found, otherwise false.
      */
     public boolean insertImage(String imageKey) {
+        if(!forceEmoticons && !SettingsManager.getLocalPreferences().areEmoticonsEnabled()){
+            return false;
+        }
         final Document doc = getDocument();
         Icon emotion = emoticonManager.getEmoticonImage(imageKey.toLowerCase());
         if (emotion == null) {
@@ -673,5 +679,13 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getActionMap().remove("copy");
         getActionMap().remove("cut");
         getActionMap().remove("paste");
+    }
+
+    public Boolean getForceEmoticons() {
+        return forceEmoticons;
+    }
+
+    public void setForceEmoticons(Boolean forceEmoticons) {
+        this.forceEmoticons = forceEmoticons;
     }
 }
