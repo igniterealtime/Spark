@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.SparkManager;
 
 /**
@@ -60,6 +59,7 @@ public final class AppleUtils {
                             Thread.sleep(500);
                         }
                         catch (InterruptedException e) {
+                            // Nothing to do
                         }
                         final NSImage image2 = getImageForMessageCountOff();
                         NSApplication.sharedApplication().setApplicationIconImage(image2);
@@ -67,6 +67,7 @@ public final class AppleUtils {
                             Thread.sleep(500);
                         }
                         catch (InterruptedException e) {
+                            // Nothing to do
                         }
 
                         usingDefaultIcon = false;
@@ -147,6 +148,7 @@ public final class AppleUtils {
     /**
      * Creates a {@link com.apple.cocoa.application.NSImage} from a string that points to an image in the class
      *
+     * @param url URL to retrieve image from.
      * @return an cocoa image object
      */
     public static NSImage getImage(URL url) {
@@ -155,17 +157,19 @@ public final class AppleUtils {
             in = url.openStream();
         }
         catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            Log.error(e.getMessage(), e);
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         byte[] buff = new byte[10 * 1024];
         int len;
         try {
-            while ((len = in.read(buff)) != -1) {
-                out.write(buff, 0, len);
+            if (in != null) {
+                while ((len = in.read(buff)) != -1) {
+                    out.write(buff, 0, len);
+                }
+                in.close();
             }
-            in.close();
             out.close();
         }
         catch (IOException e) {

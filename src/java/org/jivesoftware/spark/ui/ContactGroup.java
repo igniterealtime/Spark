@@ -65,7 +65,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private JPanel listPanel;
 
     // Used to display no contacts in list.
-    private final ContactItem noContacts = new ContactItem("There are no online contacts in this group.", null);
+    private final ContactItem noContacts = new ContactItem(Res.getString("group.empty"), null);
 
     private final ListMotionListener motionListener = new ListMotionListener();
 
@@ -266,7 +266,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             model.remove(0);
         }
 
-        if ("Offline Group".equals(groupName)) {
+        if (Res.getString("group.offline").equals(groupName)) {
             item.getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
             item.getNicknameLabel().setForeground(Color.GRAY);
         }
@@ -587,8 +587,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void updateTitle() {
-        if ("Offline Group".equals(groupName)) {
-            setTitle("Offline Group");
+        if (Res.getString("group.offline").equals(groupName)) {
+            setTitle(Res.getString("group.offline"));
             return;
         }
 
@@ -602,7 +602,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         }
 
-        setTitle(getGroupTitle(groupName) + " (" + count + " online)");
+        setTitle(getGroupTitle(groupName) + " (" + count + " " + Res.getString("online") + ")");
 
 
         if (model.getSize() == 0) {
@@ -677,7 +677,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return true if OfflineGroup.
      */
     public boolean isOfflineGroup() {
-        return "Offline Group".equals(getGroupName());
+        return Res.getString("group.offline").equals(getGroupName());
     }
 
     /**
@@ -686,7 +686,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return true if UnfiledGroup.
      */
     public boolean isUnfiledGroup() {
-        return "Unfiled".equals(getGroupName());
+        return Res.getString("unfiled").equals(getGroupName());
     }
 
     public String toString() {

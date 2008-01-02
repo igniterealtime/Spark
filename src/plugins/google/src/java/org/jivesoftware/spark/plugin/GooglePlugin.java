@@ -14,8 +14,6 @@ package org.jivesoftware.spark.plugin;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
@@ -107,9 +105,8 @@ public class GooglePlugin implements Plugin {
                             panel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
 
 
-                            Iterator iter = list.iterator();
-                            while (iter.hasNext()) {
-                                GoogleSearchResult result = (GoogleSearchResult)iter.next();
+                            for (Object aList : list) {
+                                GoogleSearchResult result = (GoogleSearchResult) aList;
                                 GoogleDocument document = new GoogleDocument(room, result);
                                 panel.add(document);
                             }
@@ -175,7 +172,7 @@ public class GooglePlugin implements Plugin {
 
         VCardManager vcardManager = SparkManager.getVCardManager();
 
-        VCard vcard = vcardManager.getVCard(item.getFullJID());
+        VCard vcard = vcardManager.getVCard(item.getJID());
         String emailHome = vcard.getEmailHome();
         String emailWork = vcard.getEmailWork();
 
@@ -191,7 +188,7 @@ public class GooglePlugin implements Plugin {
         }
 
         if (buf.toString().trim().length() == 0) {
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No profile for " + item.getFullJID(), "No User Profile", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No profile for " + item.getJID(), "No User Profile", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

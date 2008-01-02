@@ -45,7 +45,7 @@ public class ReversiPanel extends JPanel {
     private String opponentJID;
     private PacketListener gameMoveListener;
 
-    private List blocks = new ArrayList();
+    private List<ReversiBlock> blocks = new ArrayList<ReversiBlock>();
     // Main game object
     private ReversiModel reversi;
 
@@ -62,10 +62,10 @@ public class ReversiPanel extends JPanel {
     /**
      * Creates a new Reversi panel.
      *
-     * @param connection
-     * @param gameID
-     * @param startingPlayer
-     * @param opponentJID
+     * @param connection Connection associated.
+     * @param gameID Game ID number
+     * @param startingPlayer Whether we are the starting player or not
+     * @param opponentJID JID of opponent
      */
     public ReversiPanel(XMPPConnection connection, final int gameID, boolean startingPlayer, String opponentJID) {
         this.connection = connection;
@@ -204,6 +204,8 @@ public class ReversiPanel extends JPanel {
 
         /**
          * Returns a handle on the game UI.
+         *
+         * @return ReversiPanel of block.
          */
         public ReversiPanel getReversiUI() {
             return ui;
@@ -211,6 +213,8 @@ public class ReversiPanel extends JPanel {
 
         /**
          * This block's index (0->63).
+         *
+         * @return Index of block
          */
         public int getIndex() {
             return index;
@@ -237,6 +241,9 @@ public class ReversiPanel extends JPanel {
 
         /**
          * Draws the disc.
+         *
+         * @param g Graphics to draw
+         * @param color Color
          */
         private void drawDisc(Graphics g, Color color) {
             int position = BLOCK_SIZE - ((BLOCK_SIZE+DISC_SIZE)/2);
@@ -307,5 +314,9 @@ public class ReversiPanel extends JPanel {
 
             }
         }
+    }
+
+    public List<ReversiBlock> getBlocks() {
+        return blocks;
     }
 }

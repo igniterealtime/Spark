@@ -112,7 +112,7 @@ public class CustomMessages {
     }
 
     public static void editCustomMessages() {
-        final JiveTreeNode rootNode = new JiveTreeNode("Custom Messages");
+        final JiveTreeNode rootNode = new JiveTreeNode(Res.getString("status.custom.messages"));
         final Tree tree = new Tree(rootNode);
         tree.setCellRenderer(new JiveTreeCellRenderer());
 
@@ -347,7 +347,7 @@ public class CustomMessages {
             }
 
             priorityField.setText("1");
-            statusField.setText("I'm Available");
+            statusField.setText(Res.getString("status.available"));
 
         }
 

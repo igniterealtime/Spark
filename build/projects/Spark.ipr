@@ -397,8 +397,16 @@
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/apple/ApplePlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/apple/ApplePlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/google/GooglePlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/google/GooglePlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/growl/GrowlPlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/growl/GrowlPlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/jingle/build/projects/JinglePlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/linux/LinuxPlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/linux/LinuxPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/reversi/ReversiPlugin.iml" filepath="$PROJECT_DIR$/../../src/plugins/reversi/ReversiPlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spark.iml" filepath="$PROJECT_DIR$/Spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/sip/build/projects/SparkPhone.iml" filepath="$PROJECT_DIR$/../../src/plugins/sip/build/projects/SparkPhone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/transferguard/TransferGuard.iml" filepath="$PROJECT_DIR$/../../src/plugins/transferguard/TransferGuard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/plugins/translator/Translator.iml" filepath="$PROJECT_DIR$/../../src/plugins/translator/Translator.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK" />

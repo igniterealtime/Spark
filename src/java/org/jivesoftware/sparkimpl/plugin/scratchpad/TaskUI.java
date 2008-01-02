@@ -33,7 +33,7 @@ public class TaskUI extends JPanel implements ActionListener {
 
     private Task task;
     private JCheckBox box;
-
+    private String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
 
     public TaskUI(Task task) {
         setLayout(new BorderLayout());
@@ -53,7 +53,7 @@ public class TaskUI extends JPanel implements ActionListener {
         long dueDate = task.getDueDate();
         if (dueDate != -1) {
             Date d = new Date(dueDate);
-            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+            SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
             String theDate = formatter.format(d);
             dueLabel.setText(theDate);
         }

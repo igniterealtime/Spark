@@ -11,7 +11,6 @@
 package org.jivesoftware.spark.plugin;
 
 
-import org.jivesoftware.spark.component.JiveSortableTable;
 import org.jivesoftware.spark.component.Table;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.browser.BrowserViewer;
@@ -28,7 +27,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -58,9 +56,8 @@ public class GoogleFileViewer {
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
-        Iterator iter = col.iterator();
-        while (iter.hasNext()) {
-            GoogleSearchResult result = (GoogleSearchResult)iter.next();
+        for (Object aCol : col) {
+            GoogleSearchResult result = (GoogleSearchResult) aCol;
             Icon icon = result.getIcon();
             if (icon.getIconWidth() == -1) {
                 icon = SparkRes.getImageIcon(SparkRes.SMALL_DOCUMENT_VIEW);
@@ -74,8 +71,7 @@ public class GoogleFileViewer {
             if (isFile && showFiles) {
                 Object[] obj = {label, result.getSubject(), result.getURL()};
                 table.getTableModel().addRow(obj);
-            }
-            else if (!isFile) {
+            } else if (!isFile) {
                 Object[] obj = {label, result.getSubject(), result.getURL()};
                 table.getTableModel().addRow(obj);
             }

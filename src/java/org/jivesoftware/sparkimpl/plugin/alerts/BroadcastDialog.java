@@ -59,7 +59,7 @@ public class BroadcastDialog extends JPanel {
     public BroadcastDialog() {
         setLayout(new GridBagLayout());
 
-        CheckNode rosterNode = new CheckNode("Roster");
+        CheckNode rosterNode = new CheckNode(Res.getString("title.roster"));
         CheckTree checkTree = new CheckTree(rosterNode);
 
         // Build out from Roster
@@ -159,7 +159,7 @@ public class BroadcastDialog extends JPanel {
         mainPanel.add(pane, BorderLayout.CENTER);
 
         JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(SparkManager.getMainWindow(), "Broadcast");
+        dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("broadcast"));
         dlg.setModal(false);
 
         dlg.pack();

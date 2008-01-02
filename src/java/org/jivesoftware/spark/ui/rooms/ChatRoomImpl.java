@@ -54,7 +54,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -368,8 +368,7 @@ public class ChatRoomImpl extends ChatRoom {
                     ContactList list = SparkManager.getWorkspace().getContactList();
                     ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
 
-                    final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
-                    String time = formatter.format(new Date());
+                    String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
 
                     if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
                         if (!isOnline()) {

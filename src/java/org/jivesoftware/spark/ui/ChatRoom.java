@@ -137,7 +137,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
-        chatAreaButton = new ChatAreaSendField(SparkRes.getString(SparkRes.SEND));
+        chatAreaButton = new ChatAreaSendField(Res.getString("button.send"));
         /*{
             public Dimension getPreferredSize() {
                 Dimension dim = super.getPreferredSize();
@@ -966,7 +966,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 saveTranscript();
             }
         };
-        saveAction.putValue(Action.NAME, "Save");
+        saveAction.putValue(Action.NAME, Res.getString("action.save"));
         saveAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SAVE_AS_16x16));
 
 

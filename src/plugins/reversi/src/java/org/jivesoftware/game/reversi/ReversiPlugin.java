@@ -28,10 +28,8 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.*;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Reversi plugin. Reversi is a two-player, turn-based game. See {@link ReversiModel} for more details
@@ -45,24 +43,24 @@ public class ReversiPlugin implements Plugin {
     private ChatRoomListener chatRoomListener;
     private PacketListener gameOfferListener;
 
-    private Map gameOffers;
-    private Map gameInvitations;
+    private ConcurrentHashMap<String,JPanel> gameOffers;
+    private ConcurrentHashMap<String,JPanel> gameInvitations;
 
     public void initialize() {
         // Offers and invitations hold all pending game offers we've sent to other users or incoming
         // invitations. The map key is always the opponent's JID. The map value is a transcript alert
         // UI component.
-        gameOffers = Collections.synchronizedMap(new HashMap());
-        gameInvitations = Collections.synchronizedMap(new HashMap());
+        gameOffers = new ConcurrentHashMap<String,JPanel>();
+        gameInvitations = new ConcurrentHashMap<String,JPanel>();
 
         // Add Reversi item to chat toolbar.
         addToolbarButton();
 
         // Add Smack providers. The plugin uses custom XMPP extensions to communicate game offers
         // and current game state. Adding the Smack providers lets us use the custom protocol.
-        ProviderManager.addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
-        ProviderManager.addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
-        ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
+        ProviderManager.getInstance().addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
+        ProviderManager.getInstance().addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
+        ProviderManager.getInstance().addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
 
         // Add IQ listener to listen for incoming game invitations.
         gameOfferListener = new PacketListener() {
@@ -85,20 +83,20 @@ public class ReversiPlugin implements Plugin {
 
         // See if there are any pending offers or invitations. If so, cancel them.
         for (Iterator i=gameOffers.keySet().iterator(); i.hasNext(); ) {
-            String opponentJID = (String)i.next();
+            //String opponentJID = (String)i.next();
             // TODO: cancel game offer.
         }
         for (Iterator i=gameInvitations.keySet().iterator(); i.hasNext(); ) {
-            String opponentJID = (String)i.next();
+            //String opponentJID = (String)i.next();
             // TODO: reject game invitation.
         }
         gameOffers.clear();
         gameInvitations.clear();
 
         // Remove Smack providers.
-        ProviderManager.removeIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE);
-        ProviderManager.removeExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
-        ProviderManager.removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
+        ProviderManager.getInstance().removeIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE);
+        ProviderManager.getInstance().removeExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+        ProviderManager.getInstance().removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
     }
 
     public boolean canShutDown() {
@@ -216,7 +214,7 @@ public class ReversiPlugin implements Plugin {
                         request.add(requestPanel, BorderLayout.WEST);
 
                         String opponentJID = ((ChatRoomImpl)room).getJID();
-                        String opponentName = opponentJID; // TODO: convert to more readable name.
+                        String opponentName = "["+opponentJID+"]"; // TODO: convert to more readable name.
 
                         JPanel content = new JPanel(new BorderLayout());
                         content.add(new JLabel("Requesting a Reversi game with " + opponentName + ", please wait..."), BorderLayout.CENTER);

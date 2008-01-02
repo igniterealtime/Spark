@@ -326,22 +326,22 @@ public class ContactItem extends JPanel {
         if (status == null && presence.isAvailable()) {
             Presence.Mode mode = presence.getMode();
             if (mode == Presence.Mode.available) {
-                status = "Available";
+                status = Res.getString("status.available");
                 isAvailable = true;
             }
             else if (mode == Presence.Mode.away) {
-                status = "I'm away";
+                status = Res.getString("status.away");
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
             else if (mode == Presence.Mode.chat) {
-                status = "I'm free to chat";
+                status = Res.getString("status.free.to.chat");
             }
             else if (mode == Presence.Mode.dnd) {
-                status = "Do not disturb";
+                status = Res.getString("status.do.not.disturb");
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
             else if (mode == Presence.Mode.xa) {
-                status = "Extended away";
+                status = Res.getString("status.extended.away");
                 statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
             }
         }
@@ -362,7 +362,7 @@ public class ContactItem extends JPanel {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
-                setStatusText("Pending");
+                setStatusText(Res.getString("status.pending"));
             }
             else {
                 setIcon(null);
@@ -404,7 +404,7 @@ public class ContactItem extends JPanel {
 
         if (isAvailable) {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
-            if ("Online".equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
+            if (Res.getString("status.online").equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
                 setStatusText("");
             }
             else {

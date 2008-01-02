@@ -40,9 +40,9 @@ public class TestTranslator {
 
             System.out.println("Great, now enter the translation id. Below are the following choices:");
 
-            for (Iterator iterator = translationMap.entrySet().iterator(); iterator.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                System.out.println(entry.getKey() + " - " + ((TranslatorUtil.TranslationType)entry.getValue()).getName());
+            for (Object o : translationMap.entrySet()) {
+                Map.Entry entry = (Map.Entry) o;
+                System.out.println(entry.getKey() + " - " + ((TranslatorUtil.TranslationType) entry.getValue()).getName());
             }
 
             String translationID = "";
@@ -67,7 +67,7 @@ public class TestTranslator {
             System.out.println("The result is:\n" + result);
 
             System.out.println("Do you want to continue testing?");
-            String cont = "";
+            String cont;
             try {
                 cont = reader.readLine();
                 if ("yes".equals(cont.toLowerCase().trim()) || "y".equals(cont.toLowerCase().trim())) {
@@ -83,20 +83,14 @@ public class TestTranslator {
 
     private static Map initalizeTranslationMap() {
         TranslatorUtil.TranslationType[] types = TranslatorUtil.TranslationType.getTypes();
-        Map map = new TreeMap(new Comparator() {
-            public int compare(Object o1, Object o2) {
-                if (o1 instanceof Integer && o2 instanceof Integer) {
-                    Integer i1 = (Integer) o1;
-                    Integer i2 = (Integer) o2;
-                    return i1.compareTo(i2);
-                }
-
-                return 0;
+        Map<Integer,TranslatorUtil.TranslationType> map = new TreeMap<Integer,TranslatorUtil.TranslationType>(new Comparator<Integer>() {
+            public int compare(Integer i1, Integer i2) {
+                return i1.compareTo(i2);
             }
         });
 
         for (int i = 1; i < types.length; i++) {
-            map.put(new Integer(i), types[i]);
+            map.put(i, types[i]);
         }
 
         return map;

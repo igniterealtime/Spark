@@ -876,16 +876,16 @@ public final class LoginDialog {
                             errorCode = error.getCode();
                         }
                         if (errorCode == 401) {
-                            errorMessage = SparkRes.getString(SparkRes.INVALID_USERNAME_PASSWORD);
+                            errorMessage = Res.getString("message.invalid.username.password");
                         }
                         else if (errorCode == 502 || errorCode == 504) {
-                            errorMessage = SparkRes.getString(SparkRes.SERVER_UNAVAILABLE);
+                            errorMessage = Res.getString("message.server.unavailable");
                         }
                         else if (errorCode == 409) {
                             errorMessage = Res.getString("label.conflict.error");
                         }
                         else {
-                            errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
+                            errorMessage = Res.getString("message.unrecoverable.error");
                         }
                     }
                     else {
@@ -904,11 +904,11 @@ public final class LoginDialog {
                 // Show error dialog
                 if (loginDialog.isVisible()) {
                     if (!localPref.isSSOEnabled()) {
-                        JOptionPane.showMessageDialog(loginDialog, errorMessage, SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
+                        JOptionPane.showMessageDialog(loginDialog, errorMessage, Res.getString("title.login.error"),
                                 JOptionPane.ERROR_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(loginDialog, "Unabled to connect using Single Sign-On. Please check your principal and server settings.", SparkRes.getString(SparkRes.ERROR_DIALOG_TITLE),
+                        JOptionPane.showMessageDialog(loginDialog, "Unabled to connect using Single Sign-On. Please check your principal and server settings.", Res.getString("title.login.error"),
                                 JOptionPane.ERROR_MESSAGE);
                         //useSSO(false);
                         //localPref.setSSOEnabled(false);

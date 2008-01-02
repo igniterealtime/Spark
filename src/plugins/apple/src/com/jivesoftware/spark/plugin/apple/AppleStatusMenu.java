@@ -24,7 +24,6 @@ import org.jivesoftware.spark.util.log.Log;
 import java.awt.Frame;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import javax.swing.SwingUtilities;
 
@@ -34,7 +33,7 @@ import javax.swing.SwingUtilities;
 public class AppleStatusMenu implements RosterListener, PresenceListener {
 
     private final NSMenu contactMenu;
-    private final Hashtable entries;
+    private final Hashtable<String,NSMenuItem> entries;
     private final NSStatusItem statusItem;
     private final NSMenuItem freeToChatItem;
     private final NSMenuItem availableItem;
@@ -42,11 +41,9 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
     private final NSMenuItem extendedAwayItem;
     private final NSMenuItem doNotDisturbItem;
 
-    private NSStatusBar bar;
-
 
     public AppleStatusMenu() {
-        entries = new Hashtable();
+        entries = new Hashtable<String,NSMenuItem>();
 
         Roster roster = SparkManager.getConnection().getRoster();
         roster.addRosterListener(this);
@@ -99,8 +96,8 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
         contactMenu.addItem(doNotDisturbItem);
 
         Workspace workspace = SparkManager.getWorkspace();
-        Presence presence = workspace.getStatusBar().getPresence();
         if (workspace != null) {
+            Presence presence = workspace.getStatusBar().getPresence();
             if (Presence.Mode.chat.equals(presence.getMode())) {
                 freeToChatItem.setState(NSCell.OnState);
                 availableItem.setState(NSCell.OffState);
@@ -144,7 +141,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
 
         populateMenu(roster);
 
-        bar = NSStatusBar.systemStatusBar();
+        NSStatusBar bar = NSStatusBar.systemStatusBar();
         statusItem = bar.statusItem(NSStatusBar.VariableStatusItemLength);
         statusItem.setImage(AppleUtils.getImage("/images/black-spark.gif"));
         statusItem.setHighlightMode(true);
@@ -176,9 +173,8 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Roster roster = SparkManager.getConnection().getRoster();
-                Iterator jids = addresses.iterator();
-                while (jids.hasNext()) {
-                    String jid = (String)jids.next();
+                for (Object address : addresses) {
+                    String jid = (String) address;
                     RosterEntry entry = roster.getEntry(jid);
                     addEntry(entry);
                 }
@@ -194,9 +190,8 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Roster roster = SparkManager.getConnection().getRoster();
-                Iterator jids = addresses.iterator();
-                while (jids.hasNext()) {
-                    String jid = (String)jids.next();
+                for (Object address : addresses) {
+                    String jid = (String) address;
                     RosterEntry entry = roster.getEntry(jid);
                     removeEntry(entry);
                 }
@@ -425,7 +420,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
             return;
         }
         String nickname = entry.getName();
-        NSMenuItem menuItem = (NSMenuItem)entries.remove(nickname);
+        NSMenuItem menuItem = entries.remove(nickname);
         if (menuItem != null) {
             contactMenu.removeItem(menuItem);
         }

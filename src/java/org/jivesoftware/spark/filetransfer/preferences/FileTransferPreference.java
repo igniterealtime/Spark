@@ -52,7 +52,7 @@ public class FileTransferPreference implements Preference {
     }
 
     public String getTooltip() {
-        return "Preferences for File Transfer.";
+        return Res.getString("tooltip.file.transfer");
     }
 
     public String getListName() {

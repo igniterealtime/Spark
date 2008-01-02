@@ -202,7 +202,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             ResourceUtils.resLabel(xmppHostLabel, xmppHostField, Res.getString("label.host"));
             ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
             ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
-            ResourceUtils.resButton(compressionBox, "Use Co&mpression");
+            ResourceUtils.resButton(compressionBox, Res.getString("checkbox.use.compression"));
             ResourceUtils.resButton(debuggerBox, "Start &Debugger on startup");
 
             portField.setText(Integer.toString(localPreferences.getXmppPort()));
@@ -676,7 +676,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
         public SsoPanel() {
             ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO) via GSSAPI");
-            ResourceUtils.resButton(showAdvBox,"Show Advanced Settings");
+            ResourceUtils.resButton(showAdvBox, Res.getString("title.advanced.connection.preferences"));
 
             useSSOBox.addActionListener(this);
             showAdvBox.addActionListener(this);

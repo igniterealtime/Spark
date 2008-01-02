@@ -189,10 +189,10 @@ public class ContactInfoWindow extends JPanel {
         String status = contactItem.getStatus();
         if (!ModelUtil.hasLength(status)) {
             if (contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable) {
-                status = "Offline";
+                status = Res.getString("offline");
             }
             else {
-                status = Res.getString("available");
+                status = Res.getString("online");
             }
         }
         statusLabel.setText(status);

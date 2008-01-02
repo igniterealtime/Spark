@@ -70,7 +70,7 @@ public class GoogleSearch {
             db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         }
         catch (ParserConfigurationException e) {
-
+            // Nothing to do
         }
     }
 
@@ -96,9 +96,10 @@ public class GoogleSearch {
      * Executed when a search has been started.
      *
      * @param query the query to search on.
+     * @param showFiles Show the files
      */
     public void search(String query, boolean showFiles) {
-        final List list = new ArrayList();
+        final List<GoogleSearchResult> list = new ArrayList<GoogleSearchResult>();
 
         if (query == null || "".equals(query)) {
             return;
@@ -115,6 +116,10 @@ public class GoogleSearch {
         }
         catch (SAXException e) {
             Log.error(e);
+        }
+
+        if (doc == null) {
+            return;
         }
 
         try {
@@ -142,9 +147,11 @@ public class GoogleSearch {
      * Executed when a search has been started.
      *
      * @param query the query to search on.
+     * @param maxDocuments Max documents to return
+     * @return List containing search resilts.
      */
-    public List searchText(String query, int maxDocuments) {
-        final List list = new ArrayList();
+    public List<GoogleSearchResult> searchText(String query, int maxDocuments) {
+        final List<GoogleSearchResult> list = new ArrayList<GoogleSearchResult>();
 
         if (query == null || "".equals(query)) {
             return null;
@@ -191,7 +198,7 @@ public class GoogleSearch {
      * @param query the query to search on.
      */
     public void searchConversations(String query) {
-        final List list = new ArrayList();
+        final List<GoogleSearchResult> list = new ArrayList<GoogleSearchResult>();
 
         if (query == null || "".equals(query)) {
             return;
@@ -210,6 +217,10 @@ public class GoogleSearch {
             Log.error(e);
         }
 
+        if (doc == null) {
+            return;
+        }
+
         try {
             Element e = doc.getDocumentElement();
             int count = Integer.parseInt(e.getAttribute("count"));
@@ -224,9 +235,7 @@ public class GoogleSearch {
             Log.error(e1);
         }
 
-        Iterator iter = list.iterator();
-        while (iter.hasNext()) {
-            GoogleSearchResult result = (GoogleSearchResult)iter.next();
+        for (GoogleSearchResult result : list) {
             String url = result.getURL();
             System.out.println(url);
         }
@@ -238,9 +247,10 @@ public class GoogleSearch {
      * Executed when a search has been started.
      *
      * @param query the query to search on.
+     * @return Collection of search documents retreived.
      */
-    public Collection searchDocuments(String query) {
-        final Set set = new HashSet();
+    public Collection<GoogleSearchResult> searchDocuments(String query) {
+        final Set<GoogleSearchResult> set = new HashSet<GoogleSearchResult>();
 
         if (query == null || "".equals(query)) {
             return null;
@@ -259,6 +269,10 @@ public class GoogleSearch {
             Log.error(e);
         }
 
+        if (doc == null) {
+            return null;
+        }
+
         try {
             Element e = doc.getDocumentElement();
             int count = Integer.parseInt(e.getAttribute("count"));
@@ -270,9 +284,7 @@ public class GoogleSearch {
                 File file = new File(url);
                 if (file.exists() && !file.getName().endsWith(".class")) {
                     boolean exists = false;
-                    Iterator iter = set.iterator();
-                    while (iter.hasNext()) {
-                        GoogleSearchResult r = (GoogleSearchResult)iter.next();
+                    for (GoogleSearchResult r : set) {
                         if (r.getSubject().equals(result.getSubject())) {
                             exists = true;
                             break;

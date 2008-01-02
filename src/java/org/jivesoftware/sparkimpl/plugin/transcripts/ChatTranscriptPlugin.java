@@ -64,6 +64,8 @@ import java.util.TimerTask;
  */
 public class ChatTranscriptPlugin implements ChatRoomListener {
 
+    private final String timeFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
+    private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
 
@@ -73,8 +75,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public ChatTranscriptPlugin() {
         SparkManager.getChatManager().addChatRoomListener(this);
 
-        notificationDateFormatter = new SimpleDateFormat("EEEEE, MMMMM d, yyyy");
-        messageDateFormatter = new SimpleDateFormat("h:mm a");
+        notificationDateFormatter = new SimpleDateFormat(dateFormat);
+        messageDateFormatter = new SimpleDateFormat(timeFormat);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 

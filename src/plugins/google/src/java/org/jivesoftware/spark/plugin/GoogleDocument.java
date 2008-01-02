@@ -14,6 +14,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.component.LinkLabel;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
@@ -39,8 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GoogleDocument extends JPanel {
-    private RolloverButton sendButton;
-    private LinkLabel documentLabel;
 
     private GoogleSearchResult result;
 
@@ -52,7 +51,7 @@ public class GoogleDocument extends JPanel {
 
         ClassLoader cl = getClass().getClassLoader();
         URL imageURL = cl.getResource("images/send_file_24x24.png");
-        sendButton = new RolloverButton(new ImageIcon(imageURL));
+        RolloverButton sendButton = new RolloverButton(new ImageIcon(imageURL));
         String url = result.getURL();
         String title = result.getSubject();
 
@@ -61,7 +60,7 @@ public class GoogleDocument extends JPanel {
             icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16);
         }
 
-        documentLabel = new LinkLabel(title, url, Color.blue, Color.red);
+        LinkLabel documentLabel = new LinkLabel(title, url, Color.blue, Color.red);
 
         add(sendButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(new JLabel(icon), new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -73,7 +72,7 @@ public class GoogleDocument extends JPanel {
                 try {
                     File file = new File(result.getURL());
                     if (file.exists()) {
-                        Process child = Runtime.getRuntime().exec("rundll32 SHELL32.DLL,ShellExec_RunDLL " + result.getURL());
+                        Runtime.getRuntime().exec("rundll32 SHELL32.DLL,ShellExec_RunDLL " + result.getURL());
                     }
                     else {
                         // Assume it's .html
@@ -81,6 +80,7 @@ public class GoogleDocument extends JPanel {
                     }
                 }
                 catch (IOException e1) {
+                    // Nothing to do
                 }
             }
         });
@@ -102,7 +102,7 @@ public class GoogleDocument extends JPanel {
                     message.setBody(result.getURL());
                     chatRoom.sendMessage(message);
 
-                    chatRoom.getTranscriptWindow().insertNotificationMessage("Sent URL: " + result.getURL());
+                    chatRoom.getTranscriptWindow().insertNotificationMessage("Sent URL: " + result.getURL(), ChatManager.NOTIFICATION_COLOR);
                 }
 
             }

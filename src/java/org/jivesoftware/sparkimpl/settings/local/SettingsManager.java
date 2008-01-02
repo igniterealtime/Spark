@@ -110,6 +110,16 @@ public class SettingsManager {
             return new LocalPreferences();
         }
 
+        // Override with global settings file
+        File globalSettingsFile = new File("spark.properties");
+        if (globalSettingsFile.exists()) {
+            try {
+                props.load(new FileInputStream(globalSettingsFile));
+            } catch (IOException e) {
+                Log.error(e);
+            }
+        }
+
         return new LocalPreferences(props);
     }
 

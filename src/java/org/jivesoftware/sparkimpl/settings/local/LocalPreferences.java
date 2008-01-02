@@ -310,6 +310,9 @@ public class LocalPreferences {
         props.setProperty("defaultNickname", defaultNickname);
     }
 
+    public int getCheckForUpdates(){
+        return Integer.parseInt(props.getProperty("checkForUpdates","7"));
+    }
 
     public Date getLastCheckForUpdates() {
         String date = props.getProperty("lastUpdateCheck");

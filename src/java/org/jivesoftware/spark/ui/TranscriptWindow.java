@@ -13,6 +13,7 @@ package org.jivesoftware.spark.ui;
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
@@ -63,7 +64,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-
+    private final String notificationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
+    private final String messageDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)).toPattern();
 
     private Date lastUpdated;
 
@@ -101,8 +103,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             }
         });
 
-        notificationDateFormatter = new SimpleDateFormat("EEEEE, MMMMM d, yyyy");
-        messageDateFormatter = new SimpleDateFormat("h:mm a");
+        notificationDateFormatter = new SimpleDateFormat(notificationDateFormat);
+        messageDateFormatter = new SimpleDateFormat(messageDateFormat);
     }
 
     /**
@@ -488,15 +490,24 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
         Action clearAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
-                clear();
+                int ok = JOptionPane.showConfirmDialog((TranscriptWindow)object,
+                    Res.getString("delete.permanently"), Res.getString("delete.log.permanently"),
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+                if (ok == JOptionPane.YES_OPTION) {
+                    File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts/");
+                    File transcriptFile = new File(transcriptDir + "transcriptUser" + ".xml");
+                    transcriptFile.delete();
+                    clear();
+                }
             }
         };
 
 
-        printAction.putValue(Action.NAME, "Print");
+        printAction.putValue(Action.NAME, Res.getString("action.print"));
         printAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PRINTER_IMAGE_16x16));
 
-        clearAction.putValue(Action.NAME, "Clear");
+        clearAction.putValue(Action.NAME, Res.getString("action.clear"));
         clearAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.ERASER_IMAGE));
         popup.addSeparator();
         popup.add(printAction);

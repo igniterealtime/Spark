@@ -153,15 +153,15 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         String password = getPassword();
         String nickname = getNickname();
         if (transport.requiresUsername() && !ModelUtil.hasLength(username)) {
-            JOptionPane.showMessageDialog(this, Res.getString("message.username.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, Res.getString("message.gateway.username.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (transport.requiresPassword() && !ModelUtil.hasLength(password)) {
-            JOptionPane.showMessageDialog(this, Res.getString("message.password.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, Res.getString("message.gateway.password.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (transport.requiresNickname() && !ModelUtil.hasLength(nickname)) {
-            JOptionPane.showMessageDialog(this, Res.getString("message.nickname.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, Res.getString("message.gateway.nickname.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 

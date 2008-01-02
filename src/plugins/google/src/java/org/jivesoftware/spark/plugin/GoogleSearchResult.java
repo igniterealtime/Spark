@@ -26,7 +26,6 @@ import javax.swing.JPanel;
  */
 public class GoogleSearchResult {
     private String searchBase;
-    private String searchUrl;
     private String query;
     private int relevance;
     String id;
@@ -54,7 +53,7 @@ public class GoogleSearchResult {
 
     private String getContent(String field, Element element) {
         try {
-            return ((Element)element.getElementsByTagName(field).item(0)).getChildNodes().item(0).getNodeValue();
+            return (element.getElementsByTagName(field).item(0)).getChildNodes().item(0).getNodeValue();
         }
         catch (Exception e) {
             return null;
@@ -167,8 +166,8 @@ public class GoogleSearchResult {
      *
      * @return the values to populate the table with.
      */
-    public List getFieldValues() {
-        final List returnList = new ArrayList();
+    public List<String> getFieldValues() {
+        final List<String> returnList = new ArrayList<String>();
         returnList.add(StringUtils.stripTags(snippet));
         returnList.add(getSubject());
         return returnList;
@@ -201,56 +200,4 @@ public class GoogleSearchResult {
         return getSubject();
     }
 
-    private String getGoogle() {
-        return "" +
-            "<html>" +
-            "<head>" +
-            "<style>\n" +
-            "BODY,TD,DIV,.P,A {\tFONT-FAMILY: arial,sans-serif}\n" +
-            "DIV,TD { COLOR: #000}\n" +
-            ".f { COLOR: #6f6f6f}\n" +
-            ".fl:link { COLOR: #6f6f6f}\n" +
-            "A:link, .w, A.w:link, .w A:link { COLOR: #00c}\n" +
-            "A:visited {\tCOLOR: #551a8b}\n" +
-            ".fl:visited { COLOR: #551a8b}\n" +
-            "A:active, .fl:active  {\tCOLOR: #f00}\n" +
-            ".h { COLOR: #3399CC}\n" +
-            ".i { COLOR: #a90a08}\n" +
-            ".i:link { COLOR: #a90a08}\n" +
-            ".a, .a:link, .a:visited { COLOR: #008000}\n" +
-            "DIV.n {\tMARGIN-TOP: 1ex}\n" +
-            ".n A { FONT-SIZE: 10pt; COLOR: #000}\n" +
-            ".n .i {\tFONT-WEIGHT: bold; FONT-SIZE: 10pt}\n" +
-            ".q A:visited { COLOR: #00c}\n" +
-            ".q A:link {\tCOLOR: #00c}\n" +
-            ".q A:active { COLOR: #00c}\n" +
-            ".q { COLOR: #00c}\n" +
-            ".b { FONT-WEIGHT: bold; FONT-SIZE: 12pt; COLOR: #00c}\n" +
-            ".ch { CURSOR: hand}\n" +
-            ".e { MARGIN-TOP: 0.75em; MARGIN-BOTTOM: 0.75em}\n" +
-            ".g { MARGIN-TOP: 1em; MARGIN-BOTTOM: 1em}\n" +
-            ".f { MARGIN-TOP: 0.5em; MARGIN-BOTTOM: 0.25em}\n" +
-            ".s { HEIGHT: 10px }\n" +
-            ".c:active {\tCOLOR: #ff0000}\n" +
-            ".c:visited { COLOR: #551a8b}\n" +
-            ".c:link { COLOR: #7777cc}\n" +
-            ".c { COLOR: #7777cc }\n" +
-            "</style>" +
-            "</head>" +
-            "<body>" +
-            "<table>" +
-            "<tr>" +
-            "<td rowspan=\"2\" valign=\"top\">&nbsp;<img style=\"vertical-align: middle;\" src=\"" + searchBase + "/read.gif\" border=\"0\" height=\"16\" width=\"16\">&nbsp;&nbsp;</td>" +
-            "<td width=\"98%\"><a href=\"" + cacheUrl + "\">" + title + "</a></td>" +
-            "</tr>" +
-            "<tr>" +
-            "<td><font size=\"-1\">" + snippet + "</font><br>" +
-            "<font color=\"#008000\" size=\"-1\">" + from + " - DATE </font>" +
-            "</td>" +
-            "</tr>" +
-            "</table>" +
-            "</body>" +
-            "</html>" +
-            "";
-    }
 }

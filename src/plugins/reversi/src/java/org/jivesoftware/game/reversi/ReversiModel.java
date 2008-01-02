@@ -118,8 +118,8 @@ public class ReversiModel {
      */
     public int getWhiteScore() {
         int score = 0;
-        for (int i=0; i<board.length; i++) {
-            if (board[i] == WHITE) {
+        for (int aBoard : board) {
+            if (aBoard == WHITE) {
                 score++;
             }
         }
@@ -133,8 +133,8 @@ public class ReversiModel {
      */
     public int getBlackScore() {
         int score = 0;
-        for (int i=0; i<board.length; i++) {
-            if (board[i] == BLACK) {
+        for (int aBoard : board) {
+            if (aBoard == BLACK) {
                 score++;
             }
         }

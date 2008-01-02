@@ -2,8 +2,6 @@ package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.preference.PreferenceManager;
-import org.jivesoftware.spark.plugins.transfersettings.FileTransferSettings;
-import org.jivesoftware.spark.plugins.transfersettings.TransferSettingsPanel;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;

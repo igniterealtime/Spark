@@ -14,7 +14,6 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
-import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -23,7 +22,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
@@ -31,7 +29,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jdesktop.jdic.systeminfo.SystemInfo;
 
 import java.awt.Component;
 import java.awt.Frame;
@@ -76,8 +73,7 @@ public class ApplePlugin implements Plugin, NativeHandler {
             JMenu helpMenu = mainWindow.getMenuByName("Help");
             Component[] menuComponents = helpMenu.getMenuComponents();
             Component prev = null;
-            for (int i = 0; i < menuComponents.length; i++) {
-                Component current = menuComponents[i];
+            for (Component current : menuComponents) {
                 if (current instanceof JMenuItem) {
                     JMenuItem item = (JMenuItem) current;
                     if ("About".equals(item.getText())) {
@@ -96,21 +92,18 @@ public class ApplePlugin implements Plugin, NativeHandler {
             connectMenu.setText("Connect");
             menuComponents = connectMenu.getMenuComponents();
             JSeparator lastSeperator = null;
-            for (int i = 0; i < menuComponents.length; i++) {
-                Component current = menuComponents[i];
+            for (Component current : menuComponents) {
                 if (current instanceof JMenuItem) {
                     JMenuItem item = (JMenuItem) current;
 
                     if ("Preferences".equals(item.getText())) {
                         connectMenu.remove(item);
-                    }
-                    else if ("Log Out".equals(item.getText())) {
+                    } else if ("Log Out".equals(item.getText())) {
                         connectMenu.remove(item);
                     }
 
 
-                }
-                else if (current instanceof JSeparator) {
+                } else if (current instanceof JSeparator) {
                     lastSeperator = (JSeparator) current;
                 }
             }
@@ -293,20 +286,22 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
             // Change Status
             Workspace workspace = SparkManager.getWorkspace();
-            Presence presence = workspace.getStatusBar().getPresence();
-            long diff = System.currentTimeMillis() - lastActive;
-            boolean idle = diff > 60000 * 60;
-            if (workspace != null && presence.getMode() == Presence.Mode.available && idle) {
-                unavailable = true;
-                StatusItem away = workspace.getStatusBar().getStatusItem("Away");
-                Presence p = away.getPresence();
-                p.setStatus(Res.getString("message.away.idle"));
+            if (workspace != null) {
+                Presence presence = workspace.getStatusBar().getPresence();
+                long diff = System.currentTimeMillis() - lastActive;
+                boolean idle = diff > 60000 * 60;
+                if (presence.getMode() == Presence.Mode.available && idle) {
+                    unavailable = true;
+                    StatusItem away = workspace.getStatusBar().getStatusItem("Away");
+                    Presence p = away.getPresence();
+                    p.setStatus(Res.getString("message.away.idle"));
 
-                previousPriority = presence.getPriority();
+                    previousPriority = presence.getPriority();
 
-                p.setPriority(0);
+                    p.setPriority(0);
 
-                SparkManager.getSessionManager().changePresence(p);
+                    SparkManager.getSessionManager().changePresence(p);
+                }
             }
         }
         catch (Exception e) {
@@ -339,11 +334,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
 
     public boolean openFile(File file) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     public boolean launchEmailClient(String to, String subject) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     public boolean launchBrowser(String url) {

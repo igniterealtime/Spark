@@ -95,13 +95,13 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resButton(emoticonCheckBox, Res.getString("checkbox.enable.emoticons"));
         ResourceUtils.resButton(systemLookAndFeelBox, Res.getString("checkbox.use.system.look.and.feel"));
 
-        ResourceUtils.resButton(addThemeButton, "&Add...");
-        ResourceUtils.resButton(addEmoticonButton, "A&dd...");
+        ResourceUtils.resButton(addThemeButton, Res.getString("button.add"));
+        ResourceUtils.resButton(addEmoticonButton, Res.getString("button.add2"));
 
-        ResourceUtils.resLabel(contactListFontLabel, contactListFontField, "Contact &List font size:");
-        ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, "Chat &Room font size:");
-        ResourceUtils.resButton(showAvatarsBox, "Show &Avatars in Contact List");
-        ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, "Contact List a&vatar size:");
+        ResourceUtils.resLabel(contactListFontLabel, contactListFontField, Res.getString("label.contactlist.fontsize"));
+        ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, Res.getString("label.chatroom.fontsize"));
+        ResourceUtils.resButton(showAvatarsBox, Res.getString("checkbox.show.avatars.in.contactlist"));
+        ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
 
         // Build UI
         buildUI();

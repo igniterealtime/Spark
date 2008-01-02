@@ -66,8 +66,8 @@ public class ScratchPadPlugin implements Plugin {
 
     public static boolean SHOW_ALL_TASKS = true;
 
-    private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
-
+    private static final String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
+    private SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
 
     public void initialize() {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -100,8 +100,8 @@ public class ScratchPadPlugin implements Plugin {
 
         RolloverButton taskButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
         RolloverButton notesButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
-        taskButton.setToolTipText("View Task List");
-        notesButton.setToolTipText("View Notes");
+        taskButton.setToolTipText(Res.getString("button.view.tasklist"));
+        notesButton.setToolTipText(Res.getString("button.view.notes"));
 
         taskButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -128,7 +128,7 @@ public class ScratchPadPlugin implements Plugin {
     }
 
     private void showTaskList() {
-        final JFrame frame = new JFrame("Tasks");
+        final JFrame frame = new JFrame(Res.getString("title.tasks"));
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
 
         final List<TaskUI> taskList = new ArrayList<TaskUI>();
@@ -141,8 +141,8 @@ public class ScratchPadPlugin implements Plugin {
         final JTextField taskField = new JTextField();
         final JTextField dueDateField = new JTextField();
 
-        final JButton addButton = new JButton("Add");
-        final JLabel addTaskLabel = new JLabel("Add Task");
+        final JButton addButton = new JButton(Res.getString("add"));
+        final JLabel addTaskLabel = new JLabel(Res.getString("label.add.task"));
         topPanel.setOpaque(false);
 
         topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, .9, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
@@ -151,14 +151,14 @@ public class ScratchPadPlugin implements Plugin {
         topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 50, 0));
         topPanel.add(addButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
 
-        topPanel.add(new JLabel("Use mm/dd/yy"), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        topPanel.add(new JLabel(Res.getString("label.timeformat")), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         mainPanel.add(topPanel);
 
         // Add Selection
         final JPanel middlePanel = new JPanel(new GridBagLayout());
-        final JLabel showLabel = new JLabel("Show:");
-        final JToggleButton allButton = new JToggleButton("All");
-        final JToggleButton activeButton = new JToggleButton("Active");
+        final JLabel showLabel = new JLabel(Res.getString("label.show"));
+        final JToggleButton allButton = new JToggleButton(Res.getString("button.tasks.all"));
+        final JToggleButton activeButton = new JToggleButton(Res.getString("button.tasks.active"));
         final ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(allButton);
         buttonGroup.add(activeButton);
@@ -187,7 +187,7 @@ public class ScratchPadPlugin implements Plugin {
             }
 
         };
-        final JLabel taskLabel = new JLabel("Due   ");
+        final JLabel taskLabel = new JLabel(Res.getString("label.due"));
         taskLabel.setFont(taskLabel.getFont().deriveFont(Font.BOLD));
         titlePanel.add(taskLabel, BorderLayout.EAST);
         mainPanel.add(titlePanel);
@@ -280,7 +280,7 @@ public class ScratchPadPlugin implements Plugin {
         }
 
         long tomorrow = DateUtils.addDays(new Date().getTime(), 1);
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+        SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
         dueDateField.setText(formatter.format(new Date(tomorrow)));
 
 
@@ -374,10 +374,10 @@ public class ScratchPadPlugin implements Plugin {
         pane.setText(text);
         final RolloverButton button = new RolloverButton(Res.getString("save"), null);
         final RolloverButton cancelButton = new RolloverButton(Res.getString("cancel"), null);
-        ResourceUtils.resButton(button, "&Save");
-        ResourceUtils.resButton(cancelButton, "&Cancel");
+        ResourceUtils.resButton(button, Res.getString("button.save"));
+        ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
 
-        final JFrame frame = new JFrame("Notes");
+        final JFrame frame = new JFrame(Res.getString("title.notes"));
 
 
         final JPanel mainPanel = new JPanel();

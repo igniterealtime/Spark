@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -97,7 +98,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(Res.getString("cancel"));
         add(cancelButton, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         cancelButton.setForeground(new Color(73, 113, 196));

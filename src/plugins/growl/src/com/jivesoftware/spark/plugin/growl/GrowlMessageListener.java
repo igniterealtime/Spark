@@ -12,7 +12,6 @@ package com.jivesoftware.spark.plugin.growl;
 
 import com.apple.cocoa.application.NSImage;
 import com.apple.cocoa.foundation.NSData;
-import com.growl.Growl;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;

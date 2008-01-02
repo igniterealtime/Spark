@@ -61,7 +61,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private ContactItem activeItem;
     private ContactGroup activeGroup;
-    private ContactGroup unfiledGroup = new ContactGroup("Unfiled");
+    private ContactGroup unfiledGroup = new ContactGroup(Res.getString("unfiled"));
 
 
     // Create Menus
@@ -105,7 +105,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // Load Local Preferences
         localPreferences = SettingsManager.getLocalPreferences();
 
-        offlineGroup = new ContactGroup("Offline Group");
+        offlineGroup = new ContactGroup(Res.getString("group.offline"));
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -1995,6 +1995,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             if ("conflict".equals(reason)) {
                 errorMessage = Res.getString("message.disconnected.conflict.error");
             }
+            else if ("system-shutdown".equals(reason)) {
+                errorMessage = Res.getString("message.disconnected.shutdown");
+            }
             else {
                 errorMessage = Res.getString("message.general.error", reason);
             }
@@ -2019,10 +2022,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     public void reconnectingIn(int i) {
         if (i == 0) {
-            retryPanel.setReconnectText("Attempting...");
+            retryPanel.setReconnectText(Res.getString("message.reconnect.attempting"));
         }
         else {
-            retryPanel.setReconnectText("Reconnecting in " + i + " seconds.");
+            retryPanel.setReconnectText(Res.getString("message.reconnect.wait",i));
         }
     }
 
@@ -2031,7 +2034,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void reconnectionFailed(Exception exception) {
-        retryPanel.setReconnectText("Reconnect Failed");
+        retryPanel.setReconnectText(Res.getString("message.reconnect.failed"));
     }
 
     /**

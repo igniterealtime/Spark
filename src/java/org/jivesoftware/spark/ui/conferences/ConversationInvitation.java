@@ -51,7 +51,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     private String password;
     private String inviter;
 
-
+    private String invitationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
     private String tabTitle;
     private String frameTitle;
     private String descriptionText;
@@ -107,7 +107,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         // Set Date Label
         dateLabel.setFont(new Font("dialog", Font.BOLD, 12));
         dateLabel.setText(Res.getString("date") + ":");
-        final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+        final SimpleDateFormat formatter = new SimpleDateFormat(invitationDateFormat);
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
         dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 12));

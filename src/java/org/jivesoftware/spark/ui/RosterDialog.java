@@ -137,7 +137,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         accounts.setRenderer(new JPanelRenderer());
 
         for (ContactGroup group : contactList.getContactGroups()) {
-            if (!group.isOfflineGroup() && !"Unfiled".equalsIgnoreCase(group.getGroupName()) && !group.isSharedGroup()) {
+            if (!group.isOfflineGroup() && !Res.getString("unfiled").equalsIgnoreCase(group.getGroupName()) && !group.isSharedGroup()) {
                 groupModel.add(group.getGroupName());
             }
         }

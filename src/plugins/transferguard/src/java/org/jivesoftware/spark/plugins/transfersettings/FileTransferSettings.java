@@ -125,7 +125,7 @@ public class FileTransferSettings {
 
                 String ignore = props.getProperty("checkFileSize");
                 if (ignore != null) {
-                    this.checkSize = Boolean.valueOf(checkSize).booleanValue();
+                    this.checkSize = Boolean.valueOf(ignore);
                 }
 
                 String maxSize = props.getProperty("maxSize");
@@ -186,8 +186,8 @@ public class FileTransferSettings {
      * @param settings  the string to convert.
      * @return  the resultant {@link List}.
      */
-    public static List convertSettingsStringToList(String settings) {
-        List list = new ArrayList();
+    public static List<String> convertSettingsStringToList(String settings) {
+        List<String> list = new ArrayList<String>();
         StringTokenizer tokenizer = new StringTokenizer(settings, ",;\n\t\r ");
         while (tokenizer.hasMoreTokens()) {
             list.add(tokenizer.nextToken());

@@ -82,7 +82,8 @@ public final class SparkManager {
     /**
      * The Date Formatter to use in Spark.
      */
-    public static final SimpleDateFormat DATE_SECOND_FORMATTER = new SimpleDateFormat("EEE MM/dd/yyyy h:mm:ss a");
+    private static final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL,SimpleDateFormat.MEDIUM)).toPattern();
+    public static final SimpleDateFormat DATE_SECOND_FORMATTER = new SimpleDateFormat(dateFormat);
 
     private static SessionManager sessionManager;
     private static SoundManager soundManager;

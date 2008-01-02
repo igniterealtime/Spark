@@ -68,13 +68,13 @@ public class RetryPanel extends JPanel implements ConnectionListener {
 
         setBackground(Color.white);
 
-        retryButton.setText("Reconnect");
+        retryButton.setText(Res.getString("button.reconnect2"));
 
         SparkManager.getConnection().addConnectionListener(this);
     }
 
     private void attemptReconnection() {
-        retryButton.setText("Attempting...");
+        retryButton.setText(Res.getString("message.reconnect.attempting"));
         retryButton.setEnabled(false);
 
         TimerTask task = new SwingTimerTask() {

@@ -368,6 +368,12 @@ public class CheckUpdates {
 
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
 
+        //defaults to 7, 0=disabled
+        int CheckForUpdates = localPreferences.getCheckForUpdates();
+        if (CheckForUpdates == 0) {
+            return;
+        }
+
         Date lastChecked = localPreferences.getLastCheckForUpdates();
         if (lastChecked == null) {
             lastChecked = new Date();
@@ -376,17 +382,17 @@ public class CheckUpdates {
             SettingsManager.saveSettings();
         }
 
-        // Check to see if it has been a week
+        // Check to see if it has been a CheckForUpdates (default 7) days
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(lastChecked);
-        calendar.add(Calendar.DATE, 7);
+        calendar.add(Calendar.DATE, CheckForUpdates);
 
-        final Date lastCheckedPlusAWeek = calendar.getTime();
+        final Date lastCheckedPlusAPeriod = calendar.getTime();
 
-        boolean weekOrLonger = new Date().getTime() >= lastCheckedPlusAWeek.getTime();
+        boolean periodOrLonger = new Date().getTime() >= lastCheckedPlusAPeriod.getTime();
 
 
-        if (weekOrLonger || explicit || sparkPluginInstalled) {
+        if (periodOrLonger || explicit || sparkPluginInstalled) {
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);
@@ -397,7 +403,7 @@ public class CheckUpdates {
                 UPDATING = false;
 
                 if (explicit) {
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "There are no updates.", "No Updates", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.no.updates"), Res.getString("title.no.updates"), JOptionPane.INFORMATION_MESSAGE);
                 }
                 return;
             }

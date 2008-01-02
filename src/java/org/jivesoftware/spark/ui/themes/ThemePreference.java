@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui.themes;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -34,7 +35,7 @@ public class ThemePreference implements Preference {
 
 
     public String getTitle() {
-        return "Customization";
+        return Res.getString("title.appearance.preferences");
     }
 
     public Icon getIcon() {
@@ -42,11 +43,11 @@ public class ThemePreference implements Preference {
     }
 
     public String getTooltip() {
-        return "Change the appearance of Spark.";
+        return Res.getString("tooltip.appearance");
     }
 
     public String getListName() {
-        return "Appearance";
+        return Res.getString("title.appearance");
     }
 
     public String getNamespace() {

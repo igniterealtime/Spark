@@ -9,7 +9,7 @@
  *
  */
 
-package com.growl;
+package com.jivesoftware.spark.plugin.growl;
 
 import com.apple.cocoa.foundation.NSDistributedNotificationCenter;
 import com.apple.cocoa.foundation.NSArray;
@@ -59,8 +59,7 @@ public class Growl {
 	private boolean      registered;    // We should only register once
 	private String       appName;       // "Application" Name
 	private NSData       appImageData;  // "application" Icon
-	private NSDictionary regDict;       // Registration Dictionary
-	private NSArray      allNotes;      // All notifications
+    private NSArray      allNotes;      // All notifications
 	private NSArray      defNotes;      // Default Notifications
 	private NSDistributedNotificationCenter theCenter;
 
@@ -184,13 +183,15 @@ public class Growl {
 					GROWL_APP_ICON};
 
 			// Make the Dictionary
-			regDict = new NSDictionary(objects, keys);
+            NSDictionary regDict = new NSDictionary(objects, keys);
 
 			theCenter.postNotification(GROWL_APP_REGISTRATION,	// notificationName
-									   (String)null,			// anObject
-									   regDict,					// userInfoDictionary
+									   null,			        // anObject
+                                       regDict,					// userInfoDictionary
 									   true);					// deliverImmediately
-		}
+
+            registered = true;
+        }
 
 		return true;
 	}
@@ -232,7 +233,7 @@ public class Growl {
 		}
 
 		if (inSticky) {
-			noteDict.setObjectForKey(new Integer(1), GROWL_NOTIFICATION_STICKY);
+			noteDict.setObjectForKey(1, GROWL_NOTIFICATION_STICKY);
 		}
 
 		if (inExtraInfo != null) {
@@ -240,7 +241,7 @@ public class Growl {
 		}
 
 		theCenter.postNotification(GROWL_NOTIFICATION,
-									(String)null,
+									null,
 									noteDict,
 									true);
 	}
@@ -289,8 +290,8 @@ public class Growl {
 	 */
 	public void notifyGrowlOf(String inNotificationName, String inTitle, 
 			       String inDescription) throws Exception {
-		notifyGrowlOf(inNotificationName, (NSData)null, 
-					   inTitle, inDescription, (NSDictionary)null, false);
+		notifyGrowlOf(inNotificationName, null,
+					   inTitle, inDescription, null, false);
 	}
 
 	/**
@@ -311,8 +312,8 @@ public class Growl {
 	  */
 	public void notifyGrowlOf(String inNotificationName, String inTitle, 
 							   String inDescription, boolean inSticky) throws Exception {
-		notifyGrowlOf(inNotificationName, (NSData)null, 
-					   inTitle, inDescription, (NSDictionary)null, inSticky);
+		notifyGrowlOf(inNotificationName, null,
+					   inTitle, inDescription, null, inSticky);
 	}
 
 	/**
@@ -358,7 +359,7 @@ public class Growl {
 
 		notifyGrowlOf(inNotificationName,
 					  new NSImage(inImagePath, false).TIFFRepresentation(), 
-					  inTitle, inDescription, (NSDictionary)null, false);
+					  inTitle, inDescription, null, false);
 	}
 
 	//************  Accessors **************//
@@ -430,7 +431,7 @@ public class Growl {
 	 */
 	public void setDefaultNotifications(NSArray inDefNotes) throws Exception {
 		int stop = inDefNotes.count();
-		int i = 0;
+		int i;
 
 		for(i = 0; i < stop; i++) {
 			if (!allNotes.containsObject(inDefNotes.objectAtIndex(i))) {
@@ -452,7 +453,7 @@ public class Growl {
 	 */
 	public void setDefaultNotifications(String [] inDefNotes) throws Exception {
 		int stop = inDefNotes.length;
-		int i = 0;
+		int i;
 
 		for(i = 0; i < stop; i++) {
 			if (! allNotes.containsObject(inDefNotes[i])) {

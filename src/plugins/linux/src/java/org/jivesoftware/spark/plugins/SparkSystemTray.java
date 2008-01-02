@@ -10,7 +10,6 @@
 
 package org.jivesoftware.spark.plugins;
 
-import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
@@ -24,8 +23,9 @@ import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jdesktop.jdic.tray.SystemTray;
+import org.jdesktop.jdic.tray.TrayIcon;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,27 +34,15 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.Point;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 /**
  * Handles tray icon operations inside of Spark. Use to display incoming chat requests, incoming messages
@@ -67,15 +55,14 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
     private WrappedLabel messageLabel = new WrappedLabel();
 
 
-    private final MenuItem openMenu = new MenuItem(Res.getString("menuitem.open"));
-    private final MenuItem hideMenu = new MenuItem(Res.getString("menuitem.hide"));
-    private final MenuItem exitMenu = new MenuItem(Res.getString("menuitem.exit"));
-    private final MenuItem logoutMenu = new MenuItem(Res.getString("menuitem.logout.no.status"));
+    private final JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
+    private final JMenuItem hideMenu = new JMenuItem(Res.getString("menuitem.hide"));
+    private final JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+    private final JMenuItem logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
 
     // Define DND MenuItems
-    private final Menu statusMenu = new Menu(Res.getString("menuitem.status"));
+    private final JMenu statusMenu = new JMenu(Res.getString("menuitem.status"));
 
-    private boolean isDisposed;
     private ImageTitlePanel headerLabel = new ImageTitlePanel();
 
     private JFrame hideWindow = null;
@@ -103,14 +90,14 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
         awayIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_AWAY);
         dndIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_DND);
 
-        trayIcon = new TrayIcon(availableIcon.getImage());
-        trayIcon.setImageAutoSize(true);
-        systemTray = SystemTray.getSystemTray();
+        trayIcon = new TrayIcon(new ImageIcon(availableIcon.getImage()));
+        trayIcon.setIconAutoSize(true);
+        systemTray = SystemTray.getDefaultSystemTray();
         setTrayIcon(availableIcon);
 
         trayIcon.setToolTip(Default.getString(Default.APPLICATION_NAME)); // NORES
 
-        PopupMenu popupMenu = new PopupMenu(Res.getString("title.tray.information"));
+        JPopupMenu popupMenu = new JPopupMenu(Res.getString("title.tray.information"));
 
         // Add DND Menus
         addStatusMenuItems();
@@ -151,17 +138,10 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
         SparkManager.getMainWindow().addMainWindowListener(this);
 
         trayIcon.setPopupMenu(popupMenu);
+        systemTray.addTrayIcon(trayIcon);
 
-        try {
-            systemTray.add(trayIcon);
-        }
-        catch (AWTException e) {
-            System.out.println("TrayIcon could not be added.");
-            return;
-        }
-
-        trayIcon.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+        trayIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 showMainWindow();
             }
         });
@@ -218,8 +198,8 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (!(o instanceof MenuItem)) {
-            MainWindow window = SparkManager.getMainWindow();
             /*
+            MainWindow window = SparkManager.getMainWindow();
             if (window.isVisible() && window.getState() == Frame.NORMAL) {
                 long now = System.currentTimeMillis();
                 if (now - madeVisibleTime > 1000) {
@@ -234,7 +214,7 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
             return;
         }
 
-        final MenuItem item = (MenuItem)e.getSource();
+        final JMenuItem item = (JMenuItem)e.getSource();
         if (item == openMenu) {
             showMainWindow();
         }
@@ -243,11 +223,10 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
             hideMenu.setEnabled(false);
         }
         else if (item == exitMenu) {
-            isDisposed = true;
             SparkManager.getMainWindow().shutdown();
         }
         else {
-            final String status = item.getLabel();
+            final String status = item.getText();
 
             // Change Status
             Workspace workspace = SparkManager.getWorkspace();
@@ -284,17 +263,16 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
         Workspace workspace = SparkManager.getWorkspace();
         StatusBar statusBar = workspace.getStatusBar();
 
-        Iterator iter = statusBar.getStatusList().iterator();
-        while (iter.hasNext()) {
-            StatusItem item = (StatusItem)iter.next();
-            final MenuItem menuItem = new MenuItem(item.getText());
+        for (Object o : statusBar.getStatusList()) {
+            StatusItem item = (StatusItem) o;
+            final JMenuItem menuItem = new JMenuItem(item.getText());
             menuItem.addActionListener(this);
             statusMenu.add(menuItem);
         }
     }
 
     public void shutdown() {
-        systemTray.remove(trayIcon);
+        systemTray.removeTrayIcon(trayIcon);
     }
 
     public void mainWindowActivated() {
@@ -359,7 +337,7 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
     }
 
     private void setTrayIcon(ImageIcon icon) {
-        trayIcon.setImage(icon.getImage());
+        trayIcon.setIcon(new ImageIcon(icon.getImage()));
 
     }
 

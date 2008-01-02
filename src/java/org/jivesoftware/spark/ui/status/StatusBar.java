@@ -101,8 +101,8 @@ public class StatusBar extends JPanel implements VCardListener {
         buildStatusItemList();
 
 
-        setStatus(Res.getString("available"));
-        currentPresence = new Presence(Presence.Type.available, Res.getString("available"), 1, Presence.Mode.available);
+        setStatus(Res.getString("status.online"));
+        currentPresence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
 
 
         setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));

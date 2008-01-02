@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.BrowserLauncher;
@@ -107,16 +108,16 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         setFontSize(fs);
 
 
-        cutMenu = new JMenuItem("Cut");
+        cutMenu = new JMenuItem(Res.getString("action.cut"));
         cutMenu.addActionListener(this);
 
-        copyMenu = new JMenuItem("Copy");
+        copyMenu = new JMenuItem(Res.getString("action.copy"));
         copyMenu.addActionListener(this);
 
-        pasteMenu = new JMenuItem("Paste");
+        pasteMenu = new JMenuItem(Res.getString("action.paste"));
         pasteMenu.addActionListener(this);
 
-        selectAll = new JMenuItem("Select All");
+        selectAll = new JMenuItem(Res.getString("action.select.all"));
         selectAll.addActionListener(this);
 
         // Set Default Font

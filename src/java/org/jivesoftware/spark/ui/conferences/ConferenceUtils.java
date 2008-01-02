@@ -22,6 +22,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
@@ -85,7 +86,6 @@ public class ConferenceUtils {
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
         final DateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
-        final SimpleDateFormat simpleFormat = new SimpleDateFormat("EEE MM/dd/yyyy h:mm:ss a");
         DiscoverInfo infoResult = discoManager.discoverInfo(roomJID);
         DataForm dataForm = (DataForm)infoResult.getExtension("x", "jabber:x:data");
         if (dataForm == null) {
@@ -104,7 +104,7 @@ public class ConferenceUtils {
                     Object oo = valueIterator.next();
                     creationDate = "" + oo;
                     Date date = dateFormatter.parse(creationDate);
-                    creationDate = simpleFormat.format(date);
+                    creationDate = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.MEDIUM).format(date);
                 }
             }
         }
@@ -392,7 +392,7 @@ public class ConferenceUtils {
 
         for (String jid : jids) {
             multiUserChat.invite(jid, message);
-            room.getTranscriptWindow().insertNotificationMessage("Waiting for " + jid + " to join.", ChatManager.NOTIFICATION_COLOR);
+            room.getTranscriptWindow().insertNotificationMessage(Res.getString("message.waiting.for.user.to.join",jid), ChatManager.NOTIFICATION_COLOR);
         }
     }
 

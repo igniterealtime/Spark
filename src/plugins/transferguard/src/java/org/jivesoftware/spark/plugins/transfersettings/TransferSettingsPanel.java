@@ -1,7 +1,6 @@
 package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.plugins.transfersettings.FileTransferSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -121,11 +120,11 @@ public class TransferSettingsPanel extends JPanel {
         }
 
         public void setMaxFileSize(int kb) {
-            spinMaxSize.setValue(new Integer(kb));
+            spinMaxSize.setValue(kb);
         }
 
         public int getMaxFileSize() {
-            return ((Integer)spinMaxSize.getValue()).intValue();
+            return (Integer) spinMaxSize.getValue();
         }
 
         public void setCheckFileSize(boolean check) {

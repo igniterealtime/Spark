@@ -417,7 +417,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         };
 
-        viewErrors.putValue(Action.NAME, "View Logs");
+        viewErrors.putValue(Action.NAME, Res.getString("menuitem.view.logs"));
 
         final Action viewHelpGuideAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -588,7 +588,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     private static void showAboutBox() {
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion(),
-            "About", JOptionPane.INFORMATION_MESSAGE);
+            Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -612,7 +612,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         frame.add(new JScrollPane(pane), BorderLayout.CENTER);
 
-        final JButton copyButton = new JButton("Copy To Clipboard");
+        final JButton copyButton = new JButton(Res.getString("button.copy.to.clipboard"));
         frame.add(copyButton, BorderLayout.SOUTH);
 
         copyButton.addActionListener(new ActionListener() {
