@@ -86,21 +86,25 @@ public class LanguagePlugin implements Plugin {
 
     private void addLanguage(String language) {
         for (final Locale locale : locales) {
-            if (locale.getLanguage().equals(language)) {
+            if (locale.toString().equals(language)) {
                 Action action = new AbstractAction() {
                     public void actionPerformed(ActionEvent e) {
                         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-                        preferences.setLanguage(locale.getLanguage());
+                        preferences.setLanguage(locale.toString());
                         SettingsManager.saveSettings();
 
-                        int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
+                        int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res. getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
                         if (ok == JOptionPane.YES_OPTION) {
                             SparkManager.getMainWindow().shutdown();
                         }
                     }
                 };
-
-                action.putValue(Action.NAME, locale.getDisplayLanguage(locale));
+                String label = locale.getDisplayLanguage(locale);
+                if (locale.getDisplayCountry(locale) != null &&
+                    locale.getDisplayCountry(locale).trim().length() > 0) {
+                    label = label + "-" + locale.getDisplayCountry(locale).trim();
+                }
+                action.putValue(Action.NAME, label);
                 languageMenu.add(action);
                 break;
             }

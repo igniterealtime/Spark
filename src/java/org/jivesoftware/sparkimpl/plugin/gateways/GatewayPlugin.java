@@ -150,6 +150,10 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     GaduGaduTransport gadugaduTransport = new GaduGaduTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), gadugaduTransport);
                 }
+                else if (entityName.startsWith("qq.")) {
+                    QQTransport qqTransport = new QQTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), qqTransport);
+                }
             }
         }
 
