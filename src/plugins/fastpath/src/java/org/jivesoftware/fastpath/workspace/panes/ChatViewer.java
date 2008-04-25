@@ -1,0 +1,174 @@
+/**
+ * $RCSfile: ,v $
+ * $Revision: 1.0 $
+ * $Date: 2005/05/25 04:20:03 $
+ *
+ * Copyright (C) 1999-2008 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
+
+package org.jivesoftware.fastpath.workspace.panes;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import com.jivesoftware.smack.workgroup.agent.AgentSession;
+import com.jivesoftware.smack.workgroup.ext.notes.ChatNotes;
+import com.jivesoftware.smack.workgroup.packet.Transcript;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
+import org.jivesoftware.spark.ui.ChatPrinter;
+import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.util.GraphicUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Displays Fastpath transcripts.
+ */
+public class ChatViewer extends JPanel {
+
+    /**
+     * Display a Fastpath transcript.
+     *
+     * @param transcript the <code>Transcript</code>
+     */
+    public ChatViewer(final Transcript transcript) {
+        List packets = transcript.getPackets();
+
+        final TranscriptWindow chatWindow = new TranscriptWindow();
+        chatWindow.setBackground(Color.white);
+        final List chatTranscript = new ArrayList();
+
+        Iterator iter = packets.iterator();
+        while (iter.hasNext()) {
+            Packet packet = (Packet)iter.next();
+            if (packet instanceof Message) {
+                Message message = (Message)packet;
+                String from = StringUtils.parseResource(message.getFrom());
+                DelayInformation delayInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+                Date stamp = null;
+                if (delayInformation != null) {
+                    stamp = delayInformation.getStamp();
+                }
+                message.removeExtension(delayInformation);
+                chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
+                message.setProperty("date", stamp);
+                message.setFrom(from);
+                chatTranscript.add(message);
+            }
+            else {
+                Presence presence = (Presence)packet;
+                String from = StringUtils.parseResource(presence.getFrom());
+                if (presence.getType() == Presence.Type.available) {
+                    from = FpRes.getString("message.user.joined.room", from);
+                }
+                else {
+                    from = FpRes.getString("message.user.left.room", from);
+                }
+                chatWindow.insertNotificationMessage(from, ChatManager.NOTIFICATION_COLOR);
+                Message message = new Message();
+                message.setBody(from);
+                message.setFrom("Room Notice");
+                chatTranscript.add(message);
+            }
+        }
+
+        final RolloverButton saveTranscriptButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SAVE_AS_16x16));
+        final RolloverButton printChatButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.PRINTER_IMAGE_16x16));
+        final JPanel toolbar = new JPanel();
+        toolbar.setOpaque(false);
+        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        toolbar.add(saveTranscriptButton);
+        toolbar.add(printChatButton);
+        saveTranscriptButton.setToolTipText(GraphicUtils.createToolTip(FpRes.getString("tooltip.save.transcript")));
+        printChatButton.setToolTipText(GraphicUtils.createToolTip(FpRes.getString("tooltip.print.transcript")));
+
+        final BackgroundPane mainPanel = new BackgroundPane();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(toolbar, BorderLayout.NORTH);
+
+        JScrollPane scrollPane = new JScrollPane(chatWindow);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        this.setLayout(new GridBagLayout());
+
+
+        saveTranscriptButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                chatWindow.saveTranscript(transcript.getSessionID() + ".html", chatTranscript, null);
+            }
+        });
+
+        printChatButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final ChatPrinter printer = new ChatPrinter();
+                printer.print(chatWindow);
+            }
+        });
+
+        chatWindow.setCaretPosition(0);
+
+
+        final JPanel notesPanel = new JPanel();
+
+        // Create Notes Pane to show text and do not allow editing.
+        JTextPane pane = new JTextPane();
+        pane.setBackground(Color.white);
+        pane.setEditable(false);
+
+        JScrollPane notesScroller = new JScrollPane(pane);
+        notesScroller.setMaximumSize(new Dimension(1000, 100));
+        notesPanel.setLayout(new BorderLayout());
+
+        AgentSession agentSession = FastpathPlugin.getAgentSession();
+        try {
+            ChatNotes note = agentSession.getNote(transcript.getSessionID());
+            pane.setText(note.getNotes());
+        }
+        catch (XMPPException e) {
+            pane.setText("");
+            // Log.error(e);
+        }
+        notesScroller.setPreferredSize(new Dimension(400, 100));
+        notesPanel.add(notesScroller, BorderLayout.CENTER);
+        pane.setCaretPosition(0);
+
+        final SparkTabbedPane tabbedPane = new SparkTabbedPane();
+        tabbedPane.getMainPanel().setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
+        tabbedPane.addTab(FpRes.getString("tab.transcript"), null, mainPanel);
+        tabbedPane.addTab(FpRes.getString("tab.notes"), null, notesPanel);
+
+        setBackground(Color.white);
+
+
+        add(tabbedPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    }
+}

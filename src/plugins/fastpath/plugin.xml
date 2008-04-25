@@ -1,0 +1,10 @@
+<plugin>
+    <name>Fastpath</name>
+    <version>3.2.2</version>
+    <author>Jive Software</author>
+    <email>spark@jivesoftware.com</email>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <description>Adds Fastpath functionality to Spark</description>
+    <class>org.jivesoftware.fastpath.FastpathPlugin</class>
+    <minSparkVersion>2.5.0</minSparkVersion>
+</plugin>
