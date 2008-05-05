@@ -130,15 +130,16 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             Log.error(e);
         }
     }
-
+   
     /**
      * Create and insert a message from the current user.
      *
      * @param nickname   the nickname of the current user.
      * @param message    the message to insert.
      * @param foreground the color to use for the message foreground.
+     * @param background the color to use for the message background.
      */
-    public void insertMessage(String nickname, Message message, Color foreground) {
+    public void insertMessage(String nickname, Message message, Color foreground, Color background) {
         // Check interceptors.
         for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
             boolean handled = interceptor.isMessageIntercepted(this, nickname, message);
@@ -167,6 +168,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             // Agent color is always blue
             StyleConstants.setBold(styles, false);
             StyleConstants.setForeground(styles, foreground);
+            StyleConstants.setBackground(styles, background);
             final Document doc = getDocument();
             styles.removeAttribute("link");
 

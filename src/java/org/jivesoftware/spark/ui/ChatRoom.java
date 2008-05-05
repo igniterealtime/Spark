@@ -344,6 +344,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(message.getTo());
         newMessage.setFrom(message.getFrom());
         newMessage.setBody(message.getBody());
+        
+        
+        
         newMessage.setProperty("date", new Date());
 
         transcript.add(newMessage);

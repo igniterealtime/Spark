@@ -58,6 +58,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -271,6 +272,33 @@ public final class GroupChatRoom extends ChatRoom {
     }
 
     /**
+     * Determines the background color to use for messages.
+     *
+     * @param nickname Nickname associated with message.
+     * @param body Body of message to scan for reasons to highlight.
+     * @return Color of message background.
+     */
+    private Color getMessageBackground(String nickname, String body) {
+        // define some vcard information
+        String myNickName = chat.getNickname();
+        String myUserName = SparkManager.getSessionManager().getUsername();
+        Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
+        Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
+
+        // could be inefficent, haven't looked yet
+        if (myNickName.equalsIgnoreCase(nickname) || myUserName.equalsIgnoreCase(nickname)) {
+            // my username, my message
+            return new Color(244, 248, 255);
+        } else if (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find()) {
+            // match to username found
+            return new Color(255, 255, 153);
+        } else {
+            // didn't match to username
+            return Color.white;
+        }
+    }
+
+    /**
      * Sends a message.
      *
      * @param message - the message to send.
@@ -296,7 +324,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, getColor(getNickname()));
+            getTranscriptWindow().insertMessage(getNickname(), message, getColor(getNickname()), getMessageBackground(getNickname(), message.getBody()));
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -339,7 +367,7 @@ public final class GroupChatRoom extends ChatRoom {
         }
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, getColor(getNickname()));
+            getTranscriptWindow().insertMessage(getNickname(), message, getColor(getNickname()), getMessageBackground(getNickname(), message.getBody()));
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -577,7 +605,7 @@ public final class GroupChatRoom extends ChatRoom {
                         return;
                     }
 
-                    getTranscriptWindow().insertMessage(from, message, getColor(from));
+                    getTranscriptWindow().insertMessage(from, message, getColor(from), getMessageBackground(from, message.getBody()));
                 }
 
                 if (typingTimer != null) {

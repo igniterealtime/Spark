@@ -176,7 +176,7 @@ public class Workspace extends JPanel implements PacketListener {
         });
 
         // Set background
-        setBackground(Color.white);
+        setBackground(new Color(235, 239, 254));
     }
 
     /**
@@ -368,7 +368,7 @@ public class Workspace extends JPanel implements PacketListener {
         ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
 
         // Insert offline message
-        room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
+        room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR, Color.white);
         room.addToTranscript(message, true);
 
         // Send display and notified message back.

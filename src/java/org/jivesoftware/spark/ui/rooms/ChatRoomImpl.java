@@ -51,8 +51,7 @@ import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -257,7 +256,7 @@ public class ChatRoomImpl extends ChatRoom {
         lastActivity = System.currentTimeMillis();
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
+            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR, Color.white);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -482,7 +481,7 @@ public class ChatRoomImpl extends ChatRoom {
             checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
         }
 
-        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR);
+        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, Color.white);
 
         // Set the participant jid to their full JID.
         participantJID = message.getFrom();

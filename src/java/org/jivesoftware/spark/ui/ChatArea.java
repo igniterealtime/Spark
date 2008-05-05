@@ -212,11 +212,14 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t,", true);
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
-            if (textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www.") ||
-                    textFound.startsWith("\\\\") || textFound.indexOf("://") != -1) {
+            if ((textFound.startsWith("http://") || textFound.startsWith("ftp://")
+                    || textFound.startsWith("https://") || textFound.startsWith("www.")) &&
+                    textFound.indexOf(".") > 1) {
                 insertLink(textFound);
             }
+            else if ( textFound.startsWith("\\\\") || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
+                insertAddress(textFound);
+            }     
             else if (!insertImage(textFound)) {
                 insertText(textFound);
             }
@@ -266,6 +269,26 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         StyleConstants.setForeground(styles, (Color)UIManager.get("Link.foreground"));
         StyleConstants.setUnderline(styles, true);
         doc.insertString(doc.getLength(), link, styles);
+        StyleConstants.setUnderline(styles, false);
+        StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
+        styles.removeAttribute("link");
+        setCharacterAttributes(styles, false);
+
+    }
+    
+     /**
+     * Inserts a network address into the current document. 
+     *
+     * @param address - the address to insert( ex. \superpc\etc\file\ OR http://localhost/ )
+     * @throws BadLocationException if the location is not available for insertion.
+     */
+    public void insertAddress(String address) throws BadLocationException {
+        final Document doc = getDocument();
+        styles.addAttribute("link", address);
+
+        StyleConstants.setForeground(styles, (Color)UIManager.get("Address.foreground"));
+        StyleConstants.setUnderline(styles, true);
+        doc.insertString(doc.getLength(), address, styles);
         StyleConstants.setUnderline(styles, false);
         StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
         styles.removeAttribute("link");
