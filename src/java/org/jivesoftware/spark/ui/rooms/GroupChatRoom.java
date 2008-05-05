@@ -286,14 +286,14 @@ public final class GroupChatRoom extends ChatRoom {
         Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
 
         // could be inefficent, haven't looked yet
-        if (myNickName.equalsIgnoreCase(nickname) || myUserName.equalsIgnoreCase(nickname)) {
+        if (myNickName.equalsIgnoreCase(nickname)) {
             // my username, my message
             return new Color(244, 248, 255);
         } else if (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find()) {
-            // match to username found
+            // match to username or nickname found
             return new Color(255, 255, 153);
         } else {
-            // didn't match to username
+            // didn't match to username or nickname
             return Color.white;
         }
     }
