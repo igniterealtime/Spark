@@ -95,7 +95,7 @@ public class LanguagePlugin implements Plugin {
 
                         int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res. getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
                         if (ok == JOptionPane.YES_OPTION) {
-                            SparkManager.getMainWindow().shutdown();
+                            SparkManager.getMainWindow().closeConnectionAndInvoke("Language Change");
                         }
                     }
                 };

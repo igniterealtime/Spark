@@ -1,0 +1,22 @@
+#! /bin/sh
+set -e
+
+case "$1" in
+	configure)
+
+	chmod -R 755 /usr/share/spark/bin/spark
+
+
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+

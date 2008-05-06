@@ -119,6 +119,7 @@ public class BuzzPlugin implements Plugin {
         ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
         if (chatFrame != null && chatFrame.isVisible()) {
             chatFrame.buzz();
+            SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
         }
 
         // Insert offline message

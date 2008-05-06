@@ -553,6 +553,14 @@ public class LocalPreferences {
     public boolean isBetaCheckingEnabled() {
         return getBoolean("checkForBeta", false);
     }
+    
+    public boolean isMucHighEnabled() {
+        return getBoolean("isMucHighOn", false);
+    }
+    
+    public void setMucHighEnabled(boolean setMucHigh) {
+        setBoolean("isMucHighOn", setMucHigh);
+    }
 
     public void setSSOEnabled(boolean enabled) {
         setBoolean("ssoEnabled", enabled);

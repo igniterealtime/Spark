@@ -69,7 +69,6 @@
     <property name="xtra.dir" location="${basedir}/src/xtra"/>
     <property name="target.xtra" location="${target.build}/xtra"/>
 
-
     <!-- Installer Ant Script -->
 
     <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
@@ -607,6 +606,55 @@
         <!-- <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/> -->
     </target>
 
+    <!--
+     Debian package ========================================================================= 
+    -->
+    <property name="work.dir" value="${basedir}/work"/>
+    <property name="debian.dir" value="${basedir}/build/debian"/>
+    <property name="debian.version" value="${version.major}.${version.minor}.${version.revision}"/>
+    <property name="debian.work.dir" value="${work.dir}/debian/spark-${debian.version}"/>  
+    <property name="debian.release.dir" value="${basedir}/installer"/>
+    <tstamp>
+      <format property="debian.builddate" pattern="EEE, dd MMM yyyy HH:mm:ss Z" locale="en"/>
+    </tstamp>
+    <target name="installer.debian" depends="" description="build release deb file for the Debian,Ubuntu">
+
+	<copy todir="${debian.work.dir}/debian">
+	  <fileset dir="${debian.dir}/" includes="**/*"/>
+	  <filterset>
+	    <filter token="builddate" value="${debian.builddate}"/>
+	    <filter token="version" value="${debian.version}"/>
+	  </filterset>
+	</copy>
+
+	<copy todir="${debian.work.dir}/documentation/">
+   	   <fileset dir="${basedir}/documentation/" includes="**/*"/>
+	</copy>
+
+	<copy todir="${debian.work.dir}/src/">
+   	   <fileset dir="${basedir}/src/" includes="**/*"/>
+	</copy>
+
+	<copy todir="${debian.work.dir}/build/">
+   	   <fileset dir="${basedir}/build/" includes="**/*"/>
+	</copy>
+
+        <chmod file="${debian.work.dir}/debian/rules" perm="755"/>
+	<exec executable="dpkg-buildpackage" dir="${debian.work.dir}" failonerror="false">
+	  <arg line="-d"/>
+	</exec>
+
+	<mkdir dir="${debian.release.dir}"/>
+
+        <copy todir="${debian.release.dir}">
+          <fileset dir="${debian.work.dir}/.." followsymlinks="false">
+            <include name="**/*.deb"/>
+            <include name="**/*.changes"/>
+            <include name="**/*.dsc"/>
+            <include name="**/*.gz"/>
+          </fileset>
+        </copy>
+    </target>
 </project>
 
 

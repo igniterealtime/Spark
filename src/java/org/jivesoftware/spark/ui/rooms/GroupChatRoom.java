@@ -45,6 +45,8 @@ import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -96,6 +98,9 @@ public final class GroupChatRoom extends ChatRoom {
     private GroupChatParticipantList roomInfo;
 
     private long lastActivity;
+    
+    LocalPreferences pref = SettingsManager.getLocalPreferences();
+    private boolean isMucHighlightingEnabled = pref.isMucHighEnabled();
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -285,15 +290,20 @@ public final class GroupChatRoom extends ChatRoom {
         Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
         Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
 
-        // could be inefficent, haven't looked yet
-        if (myNickName.equalsIgnoreCase(nickname)) {
-            // my username, my message
-            return new Color(244, 248, 255);
-        } else if (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find()) {
-            // match to username or nickname found
-            return new Color(255, 255, 153);
+        // Should we even highlight this packet?
+        if (isMucHighlightingEnabled) {
+            // could be inefficent, haven't looked yet
+            if (myNickName.equalsIgnoreCase(nickname)) {
+                // my username, my message
+                return new Color(244, 248, 255);
+            } else if (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find()) {
+                // match to username or nickname found
+                return new Color(255, 255, 153);
+            } else {
+                // didn't match to username or nickname
+                return Color.white;
+            }
         } else {
-            // didn't match to username or nickname
             return Color.white;
         }
     }

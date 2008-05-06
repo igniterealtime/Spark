@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/ant.mk
+
+DEST := $(CURDIR)/debian/spark
+TARGET := $(CURDIR)/target/build
+SPARK := $(DEST)/usr/share/spark
+
+JAVA_HOME := /usr/lib/jvm/java-6-sun
+DEB_ANT_BUILDFILE := build/build.xml
+DEB_ANT_BUILD_TARGET := jar
+DEB_ANT_CLEAN_TARGET := clean
+
+install/spark::
+	cp $(TARGET)/bin/startup.sh $(SPARK)/bin/spark
+	cp $(TARGET)/lib/*.jar $(SPARK)/lib/
+	cp $(TARGET)/lib/linux/*.jar $(SPARK)/lib/linux/
+	cp $(TARGET)/lib/linux/libjdic.so $(SPARK)/lib/linux/
+	cp $(TARGET)/lib/linux/libtray.so $(SPARK)/lib/linux/
+	cp $(TARGET)/lib/linux/libmozembed-linux-gtk2.so $(SPARK)/lib/linux/
+	cp -r $(TARGET)/resources $(SPARK)/
+	cp -r $(TARGET)/plugins $(SPARK)/
+	cp -r $(TARGET)/xtra $(SPARK)/
+	

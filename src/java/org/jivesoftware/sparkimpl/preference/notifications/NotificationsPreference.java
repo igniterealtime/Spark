@@ -65,12 +65,14 @@ public class NotificationsPreference implements Preference {
                 boolean offlineNotification = localPreferences.isOfflineNotificationsOn();
                 boolean onlineNotification = localPreferences.isOnlineNotificationsOn();
                 boolean betaChecking = localPreferences.isBetaCheckingEnabled();
+                boolean mucHighlighting = localPreferences.isMucHighEnabled();
 
                 panel.setShowToaster(toaster);
                 panel.setShowWindowPopup(windowFocus);
                 panel.setOfflineNotification(offlineNotification);
                 panel.setOnlineNotification(onlineNotification);
                 panel.setCheckForBeta(betaChecking);
+                panel.setMucHighEnabled(mucHighlighting);
             }
         };
 
@@ -86,6 +88,7 @@ public class NotificationsPreference implements Preference {
         pref.setOfflineNotifications(panel.isOfflineNotificationOn());
         pref.setOnlineNotifications(panel.isOnlineNotificationOn());
         pref.setCheckForBeta(panel.isBetaCheckingEnabled());
+        pref.setMucHighEnabled(panel.isMucHighEnabled());
         SettingsManager.saveSettings();
     }
 
