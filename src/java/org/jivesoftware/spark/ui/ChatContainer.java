@@ -363,7 +363,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setVisible(true);
         }
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(component);
+            startFlashing(component, false, null);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -372,12 +372,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            startFlashing(component);
+            startFlashing(component, false, null);
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible()) {
-            startFlashing(component);
+            startFlashing(component, false, null);
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -395,10 +395,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                startFlashing(component);
+                startFlashing(component, false, null);
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                startFlashing(component);
+                startFlashing(component, false, null);
             }
 
             if (component instanceof ChatRoom) {
@@ -408,7 +408,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
 
-    private void handleMessageNotification(final ChatRoom chatRoom) {
+    private void handleMessageNotification(final ChatRoom chatRoom, boolean fNameT, String fNameN) {
         ChatRoom activeChatRoom = null;
         try {
             activeChatRoom = getActiveChatRoom();
@@ -420,7 +420,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 20000)) {
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
-            startFlashing(chatRoom);
+            startFlashing(chatRoom, fNameT, fNameN);
             return;
         }
 
@@ -429,7 +429,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setVisible(true);
         }
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(chatRoom);
+            startFlashing(chatRoom, fNameT, fNameN);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -438,12 +438,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            startFlashing(chatRoom);
+            startFlashing(chatRoom, fNameT, fNameN);
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(chatRoom);
+            startFlashing(chatRoom, fNameT, fNameN);
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -460,16 +460,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                startFlashing(chatRoom);
+                startFlashing(chatRoom, fNameT, fNameN);
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                startFlashing(chatRoom);
+                startFlashing(chatRoom, fNameT, fNameN);
             }
 
             chatFrame.setTitle(chatRoom.getRoomTitle());
         }
         else if (chatRoom != activeChatRoom) {
-            startFlashing(chatRoom);
+            startFlashing(chatRoom, fNameT, fNameN);
         }
     }
 
@@ -657,13 +657,20 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void messageReceived(ChatRoom room, Message message) {
         room.increaseUnreadMessageCount();
 
-        fireNotifyOnMessage(room);
+        fireNotifyOnMessage(room, false, null);
     }
-
-    public void fireNotifyOnMessage(final ChatRoom chatRoom) {
+    
+    /**
+     * Used for Tray Notifications.
+     *
+     * @param chatRoom the ChatRoom where the message was received.
+     * @param fileTransfer whether the notification is a file transfer
+     * @param fileTName the filename of the transfering files (if true)
+     */    
+    public void fireNotifyOnMessage(final ChatRoom chatRoom, final boolean fileTransferD, final String fileTNameC) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                handleMessageNotification(chatRoom);
+                handleMessageNotification(chatRoom, fileTransferD, fileTNameC);
             }
         });
     }
@@ -897,7 +904,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param comp the Component to check if a message has been inserted
      *             but the room is not the selected room.
      */
-    public void startFlashing(final Component comp) {
+    public void startFlashing(final Component comp, final boolean fTransferB, final String fTransferA) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -906,7 +913,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                         // Check notifications.
                         if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom)) {
                             if (comp instanceof ChatRoom) {
-                                checkNotificationPreferences((ChatRoom)comp);
+                                checkNotificationPreferences((ChatRoom)comp, fTransferB, fTransferA);
                             }
                         }
 
@@ -963,8 +970,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Handles Notification preferences for incoming messages and rooms.
      *
      * @param room the chat room.
+     * @param fileTransfer if it is a file transfer then true
+     * @param fileTName the file name being transfered (if fileTransfer applies)
+     *
      */
-    private void checkNotificationPreferences(final ChatRoom room) {
+    private void checkNotificationPreferences(final ChatRoom room, boolean fileTransfer, String fileTName) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (pref.getWindowTakesFocus()) {
             chatFrame.setState(Frame.NORMAL);
@@ -986,18 +996,23 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             toaster.setDisplayTime(5000);
             toaster.setBorder(BorderFactory.createBevelBorder(0));
-
+            
             String nickname = room.getRoomTitle();
-            toaster.setTitle(nickname);
             toaster.setToasterHeight(150);
             toaster.setToasterWidth(200);
 
 
             int size = room.getTranscripts().size();
-            if (size > 0) {
-                Message message = room.getTranscripts().get(size - 1);
+            if(fileTransfer) {
+                toaster.setTitle(Res.getString("message.file.transfer.notification"));
+                toaster.showToaster(room.getTabIcon(), nickname + " " + Res.getString("message.file.transfer.short.message") + " " + fileTName);
+            } else {
+                toaster.setTitle(nickname);
+                if (size > 0) {
+                    Message message = room.getTranscripts().get(size - 1);
 
-                toaster.showToaster(room.getTabIcon(), message.getBody());
+                    toaster.showToaster(room.getTabIcon(), message.getBody());
+                }
             }
         }
     }

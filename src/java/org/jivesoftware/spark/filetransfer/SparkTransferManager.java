@@ -54,6 +54,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import java.awt.AWTException;
 import java.awt.Component;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FileDialog;
 import java.awt.Frame;
@@ -246,6 +247,7 @@ public class SparkTransferManager {
 
         String requestor = request.getRequestor();
         String bareJID = StringUtils.parseBareAddress(requestor);
+        String fileName = request.getFileName();
 
 
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
@@ -260,7 +262,8 @@ public class SparkTransferManager {
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
         StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
-
+        transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);
+        
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
 
@@ -288,7 +291,7 @@ public class SparkTransferManager {
 
         chatRoom.scrollToBottom();
 
-        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom);
+        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileName);
     }
 
 
