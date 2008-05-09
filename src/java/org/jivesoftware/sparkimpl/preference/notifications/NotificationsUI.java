@@ -30,7 +30,6 @@ public class NotificationsUI extends JPanel {
     private JCheckBox offlineNotificationBox;
     private JCheckBox onlineNotificationBox;
     private JCheckBox betaCheckBox;
-    private JCheckBox mucHighlightingBox;
 
     public NotificationsUI() {
         setLayout(new VerticalFlowLayout());
@@ -53,9 +52,6 @@ public class NotificationsUI extends JPanel {
 
         betaCheckBox = new JCheckBox( Res.getString("menuitem.check.for.updates"));
         add(betaCheckBox);
-        
-        mucHighlightingBox = new JCheckBox( Res.getString("menuitem.add.group.highlighting"));
-        add(mucHighlightingBox);
     }
 
     public void setShowToaster(boolean show) {
@@ -98,11 +94,4 @@ public class NotificationsUI extends JPanel {
         return betaCheckBox.isSelected();
     }
     
-    public void setMucHighEnabled(boolean mucHigh) {
-        mucHighlightingBox.setSelected(mucHigh);
-    }
-    
-    public boolean isMucHighEnabled() {
-        return mucHighlightingBox.isSelected();
-    }
 }

@@ -100,7 +100,8 @@ public final class GroupChatRoom extends ChatRoom {
     private long lastActivity;
     
     LocalPreferences pref = SettingsManager.getLocalPreferences();
-    private boolean isMucHighlightingEnabled = pref.isMucHighEnabled();
+    private boolean isMucHighlightingNameEnabled = pref.isMucHighNameEnabled();
+    private boolean isMucHighlightingTextEnabled = pref.isMucHighTextEnabled();
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -291,18 +292,10 @@ public final class GroupChatRoom extends ChatRoom {
         Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
 
         // Should we even highlight this packet?
-        if (isMucHighlightingEnabled) {
-            // could be inefficent, haven't looked yet
-            if (myNickName.equalsIgnoreCase(nickname)) {
-                // my username, my message
-                return new Color(244, 248, 255);
-            } else if (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find()) {
-                // match to username or nickname found
-                return new Color(255, 255, 153);
-            } else {
-                // didn't match to username or nickname
-                return Color.white;
-            }
+        if (isMucHighlightingNameEnabled && myNickName.equalsIgnoreCase(nickname)) {
+            return new Color(244, 248, 255);
+        } else if (isMucHighlightingTextEnabled && (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find())) {
+            return new Color(255, 255, 153);
         } else {
             return Color.white;
         }
@@ -478,7 +471,7 @@ public final class GroupChatRoom extends ChatRoom {
         disableToolbar();
 
         getToolBar().setVisible(false);
-
+        
         // Update Room Notice To Inform Agent that he has left the chat.
         getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", getNickname()), ChatManager.NOTIFICATION_COLOR);
 

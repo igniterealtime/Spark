@@ -8,7 +8,7 @@
  * a copy of which is included in this distribution.
  */
 
-package org.jivesoftware.sparkimpl.preference.notifications;
+package org.jivesoftware.sparkimpl.preference.groupchat;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -21,33 +21,33 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 /**
- * Handles the preferences for notification behavior within the Spark IM Client.
+ * Essentially adds a new panel to the menu.
+ * Allows users to define MUC/Group Chat functions.
  *
- * @author Derek DeMoro
  */
-public class NotificationsPreference implements Preference {
+public class GroupChatPreference implements Preference {
 
-    private NotificationsUI panel = new NotificationsUI();
+    private GroupChatPreferencePanel panel = new GroupChatPreferencePanel();
 
     /**
      * Define the Namespace used for this preference.
      */
-    public static final String NAMESPACE = "http://www.jivesoftware.org/spark/notifications";
+    public static final String NAMESPACE = "Group Chat";
 
     public String getTitle() {
-        return Res.getString("title.notifications");
+        return Res.getString("title.group.chat");
     }
 
     public String getListName() {
-        return Res.getString("title.notifications");
+        return Res.getString("title.group.chat");
     }
 
     public String getTooltip() {
-        return Res.getString("tooltip.notifications");
+        return Res.getString("title.group.chat");
     }
 
     public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.PROFILE_ICON);
+        return SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE);
     }
 
     public void load() {
@@ -60,17 +60,11 @@ public class NotificationsPreference implements Preference {
             }
 
             public void finished() {
-                boolean toaster = localPreferences.getShowToasterPopup();
-                boolean windowFocus = localPreferences.getWindowTakesFocus();
-                boolean offlineNotification = localPreferences.isOfflineNotificationsOn();
-                boolean onlineNotification = localPreferences.isOnlineNotificationsOn();
-                boolean betaChecking = localPreferences.isBetaCheckingEnabled();
+                boolean highlightMyName = localPreferences.isMucHighNameEnabled();
+                boolean highlightMyText = localPreferences.isMucHighTextEnabled();
 
-                panel.setShowToaster(toaster);
-                panel.setShowWindowPopup(windowFocus);
-                panel.setOfflineNotification(offlineNotification);
-                panel.setOnlineNotification(onlineNotification);
-                panel.setCheckForBeta(betaChecking);
+                panel.setMucHighNameEnabled(highlightMyName);
+                panel.setMucHighTextEnabled(highlightMyText);
             }
         };
 
@@ -81,11 +75,8 @@ public class NotificationsPreference implements Preference {
     public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-        pref.setShowToasterPopup(panel.showToaster());
-        pref.setWindowTakesFocus(panel.shouldWindowPopup());
-        pref.setOfflineNotifications(panel.isOfflineNotificationOn());
-        pref.setOnlineNotifications(panel.isOnlineNotificationOn());
-        pref.setCheckForBeta(panel.isBetaCheckingEnabled());
+        pref.setMucHighNameEnabled(panel.isMucHighNameEnabled());
+        pref.setMucHighTextEnabled(panel.isMucHighTextEnabled());
         SettingsManager.saveSettings();
     }
 
@@ -94,7 +85,7 @@ public class NotificationsPreference implements Preference {
     }
 
     public String getErrorMessage() {
-        return "";
+        return null;
     }
 
 
@@ -116,3 +107,4 @@ public class NotificationsPreference implements Preference {
 
 
 }
+

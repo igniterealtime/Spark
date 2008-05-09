@@ -554,14 +554,22 @@ public class LocalPreferences {
         return getBoolean("checkForBeta", false);
     }
     
-    public boolean isMucHighEnabled() {
-        return getBoolean("isMucHighOn", false);
+    public boolean isMucHighNameEnabled() {
+        return getBoolean("isMucHighNameOn", false);
     }
     
-    public void setMucHighEnabled(boolean setMucHigh) {
-        setBoolean("isMucHighOn", setMucHigh);
+    public boolean isMucHighTextEnabled() {
+        return getBoolean("isMucHighTextOn", false);
+    }
+    
+    public void setMucHighNameEnabled(boolean setMucNHigh) {
+        setBoolean("isMucHighNameOn", setMucNHigh);
     }
 
+    public void setMucHighTextEnabled(boolean setMucTHigh) {
+        setBoolean("isMucHighTextOn", setMucTHigh);
+    }
+    
     public void setSSOEnabled(boolean enabled) {
         setBoolean("ssoEnabled", enabled);
     }

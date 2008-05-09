@@ -15,6 +15,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
+import org.jivesoftware.sparkimpl.preference.groupchat.GroupChatPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 
 import javax.swing.JDialog;
@@ -39,6 +40,10 @@ public class PreferenceManager {
         ChatPreference chatPreferences = new ChatPreference();
         addPreference(chatPreferences);
         chatPreferences.load();
+        
+        GroupChatPreference groupChatPreferences = new GroupChatPreference();
+        addPreference(groupChatPreferences);
+        groupChatPreferences.load();
 
         LocalPreference localPreferences = new LocalPreference();
         addPreference(localPreferences);

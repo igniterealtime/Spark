@@ -239,6 +239,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             doc.insertString(doc.getLength(), "", styles);
 
             // Reset Styles for message
+            StyleConstants.setBackground(styles, Color.white);
             StyleConstants.setBold(styles, false);
             StyleConstants.setForeground(styles, foregroundColor);
             setText(message);
