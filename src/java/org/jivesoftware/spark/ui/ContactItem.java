@@ -27,6 +27,9 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -132,7 +135,16 @@ public class ContactItem extends JPanel {
      */
     public void setNickname(String nickname) {
         this.nickname = nickname;
-        nicknameLabel.setText(StringUtils.unescapeNode(nickname));
+        int nickLength = nickname.length();
+        
+        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+        int windowWidth = (int)Math.round((settings.getMainWindowHeight() / 15.2));
+        
+        if (nickLength > windowWidth) {
+            nicknameLabel.setText(StringUtils.unescapeNode(nickname).substring(0, windowWidth) + "...");
+        } else {
+            nicknameLabel.setText(StringUtils.unescapeNode(nickname));
+        }
     }
 
     /**
