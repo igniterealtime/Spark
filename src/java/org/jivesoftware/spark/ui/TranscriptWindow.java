@@ -130,6 +130,17 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             Log.error(e);
         }
     }
+
+   /*
+    * Create and insert a message from the current user.
+    *
+    * @param nickname   the nickname of the current user.
+    * @param message    the message to insert.
+    * @param foreground the color to use for the message foreground.
+    */
+    public void insertMessage(String nickname, Message message, Color foreground) {
+        insertMessage(nickname, message, foreground, Color.white);
+    }
    
     /**
      * Create and insert a message from the current user.
