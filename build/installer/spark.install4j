@@ -13,7 +13,7 @@
     </searchSequence>
     <variables>
       <variable name="VERSION_MAJOR" value="2" />
-      <variable name="VERSION_MINOR" value="5" />
+      <variable name="VERSION_MINOR" value="6" />
       <variable name="VERSION_REVISION" value="0" />
       <variable name="APP_NAME" value="Spark" />
       <variable name="APP_SHORT_NAME" value="Spark" />
@@ -233,6 +233,11 @@
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                  <void property="file">
+                    <object class="java.io.File">
+                      <string>Spark</string>
+                    </object>
+                  </void>
                   <void property="name">
                     <string>${compiler:sys.fullName}</string>
                   </void>
@@ -436,7 +441,7 @@
     </win32>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="2" />
+    <mediaSet refId="19" />
   </buildIds>
 </install4j>
 
