@@ -66,6 +66,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.TimerTask;
 
@@ -87,6 +88,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
 
     private ChatFrame chatFrame;
+    
+    private LocalPreferences localPref;
 
     private final TimerTask focusTask;
 
@@ -363,7 +366,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setVisible(true);
         }
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(component, false, null);
+            startFlashing(component, false, null, null);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -372,12 +375,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            startFlashing(component, false, null);
+            startFlashing(component, false, null, null);
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible()) {
-            startFlashing(component, false, null);
+            startFlashing(component, false, null, null);
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -395,10 +398,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                startFlashing(component, false, null);
+                startFlashing(component, false, null, null);
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                startFlashing(component, false, null);
+                startFlashing(component, false, null, null);
             }
 
             if (component instanceof ChatRoom) {
@@ -407,20 +410,22 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
     }
 
-
-    private void handleMessageNotification(final ChatRoom chatRoom, boolean fNameT, String fNameN) {
-        ChatRoom activeChatRoom = null;
+ 
+    
+    private void handleMessageNotification(final ChatRoom chatRoom, boolean customMsg, String customMsgText, String customMsgTitle) {
+        ChatRoom activeChatRoom = null;        
+        
         try {
             activeChatRoom = getActiveChatRoom();
         }
         catch (ChatRoomNotFoundException e1) {
             Log.error(e1);
         }
-
+                
         if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 20000)) {
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
-            startFlashing(chatRoom, fNameT, fNameN);
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
             return;
         }
 
@@ -429,7 +434,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setVisible(true);
         }
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(chatRoom, fNameT, fNameN);
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -438,12 +443,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            startFlashing(chatRoom, fNameT, fNameN);
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
-            startFlashing(chatRoom, fNameT, fNameN);
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -460,16 +465,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                startFlashing(chatRoom, fNameT, fNameN);
+                groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                startFlashing(chatRoom, fNameT, fNameN);
+                groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
             }
 
             chatFrame.setTitle(chatRoom.getRoomTitle());
         }
         else if (chatRoom != activeChatRoom) {
-            startFlashing(chatRoom, fNameT, fNameN);
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
         }
     }
 
@@ -657,7 +662,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void messageReceived(ChatRoom room, Message message) {
         room.increaseUnreadMessageCount();
 
-        fireNotifyOnMessage(room, false, null);
+        fireNotifyOnMessage(room, false, null, null);
     }
     
     /**
@@ -667,10 +672,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param fileTransfer whether the notification is a file transfer
      * @param fileTName the filename of the transfering files (if true)
      */    
-    public void fireNotifyOnMessage(final ChatRoom chatRoom, final boolean fileTransferD, final String fileTNameC) {
+    public void fireNotifyOnMessage(final ChatRoom chatRoom, final boolean customMsg, final String customMsgText, final String customMsgTitle) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                handleMessageNotification(chatRoom, fileTransferD, fileTNameC);
+                handleMessageNotification(chatRoom, customMsg, customMsgText, customMsgTitle);
             }
         });
     }
@@ -904,7 +909,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param comp the Component to check if a message has been inserted
      *             but the room is not the selected room.
      */
-    public void startFlashing(final Component comp, final boolean fTransferB, final String fTransferA) {
+    public void startFlashing(final Component comp, final boolean customMsg, final String customMsgText, final String customMsgTitle) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -913,7 +918,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                         // Check notifications.
                         if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom)) {
                             if (comp instanceof ChatRoom) {
-                                checkNotificationPreferences((ChatRoom)comp, fTransferB, fTransferA);
+                                checkNotificationPreferences((ChatRoom)comp, customMsg, customMsgText, customMsgTitle);
                             }
                         }
 
@@ -974,7 +979,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param fileTName the file name being transfered (if fileTransfer applies)
      *
      */
-    private void checkNotificationPreferences(final ChatRoom room, boolean fileTransfer, String fileTName) {
+    private void checkNotificationPreferences(final ChatRoom room, boolean customMsg, String customMsgText, String customMsgTitle) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (pref.getWindowTakesFocus()) {
             chatFrame.setState(Frame.NORMAL);
@@ -1003,9 +1008,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
 
             int size = room.getTranscripts().size();
-            if(fileTransfer) {
-                toaster.setTitle(Res.getString("message.file.transfer.notification"));
-                toaster.showToaster(room.getTabIcon(), nickname + " " + Res.getString("message.file.transfer.short.message") + " " + fileTName);
+            if(customMsg) {
+                toaster.setTitle(customMsgTitle);
+                toaster.showToaster(room.getTabIcon(), customMsgText);
             } else {
                 toaster.setTitle(nickname);
                 if (size > 0) {
@@ -1017,6 +1022,84 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
     }
 
+     /**
+     * Performs several group chat checks
+     *
+     * chatRoom the chat room that needs to be passed
+     * customMsg whether or not this is a custom message
+     * customMsgText if any custom message should appear in the popup
+     * customMsgTitle whether or not the toaster should have any popup
+     *
+     **/
+    private void groupChatMessageCheck(ChatRoom chatRoom, boolean customMsg, String customMsgText, String customMsgTitle) {
+        // predefine if this is a group chat message or not
+        localPref = SettingsManager.getLocalPreferences();
+        boolean isGroupChat = chatRoom.getChatType() == Message.Type.groupchat;
+        int size = chatRoom.getTranscripts().size();
+        
+        // is this a group chat message and is my name in it?
+        if (isGroupChat) {
+            // is a group chat, perform some functions
+            Message lastChatMessage = chatRoom.getTranscripts().get(size - 1);
+            String mucNickNameT = lastChatMessage.getFrom();
+            String[] mucNickName = mucNickNameT.split("/");
+            String finalRoomName = chatRoom.getRoomTitle();
+            
+            if (localPref.isMucHighToastEnabled()) {
+                // allowed to check for new messages containing name
+                String myNickName = chatRoom.getNickname();
+                String myUserName = SparkManager.getSessionManager().getUsername();
+                Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
+                Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
+                
+                if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
+                    // match, send new message
+                    boolean customMsgS = true;
+                    String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + mucNickName[1] + " (" + lastChatMessage.getBody() + ")";
+                    String customMsgTitleS = Res.getString("group.chat.name.notification");
+                       
+                    startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                    return;
+                } else {
+                    // regular group message
+                    boolean customMsgS = true;
+                    String customMsgTextS = mucNickName[1] + " says: " + lastChatMessage.getBody();
+                    String customMsgTitleS = finalRoomName;
+                    
+                    startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                    return;
+                }
+            } else {
+                // regular group message
+                boolean customMsgS = true;
+                String customMsgTextS = mucNickName[1] + " says: " + lastChatMessage.getBody();
+                String customMsgTitleS = finalRoomName;
+                
+                startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                return;
+            }
+        } else if (customMsg) {
+            // probablt a file transfer request
+            boolean customMsgS = customMsg;
+            String customMsgTextS = customMsgText;
+            String customMsgTitleS = customMsgTitle;
+            
+            startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+            return;
+        } else {
+            // normal personal chat
+            Message lastChatMessage = chatRoom.getTranscripts().get(size - 1);
+            String finalRoomName = chatRoom.getRoomTitle();
+            
+            boolean customMsgS = true;
+            String customMsgTextS = lastChatMessage.getBody();
+            String customMsgTitleS = finalRoomName;
+            
+            startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+            return;
+        }
+    }
+    
     public void setChatRoomTitle(ChatRoom room, String title) {
         int index = indexOfComponent(room);
         if (index != -1) {

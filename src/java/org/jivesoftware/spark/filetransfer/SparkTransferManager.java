@@ -290,8 +290,9 @@ public class SparkTransferManager {
         chatRoom.increaseUnreadMessageCount();
 
         chatRoom.scrollToBottom();
-
-        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileName);
+        
+        String fileTransMsg = contactItem.getNickname() + " " + Res.getString("message.file.transfer.short.message") + " " + fileName;
+        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileTransMsg, Res.getString("message.file.transfer.notification"));
     }
 
 

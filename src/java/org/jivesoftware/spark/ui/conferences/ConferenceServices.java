@@ -154,7 +154,7 @@ public class ConferenceServices {
 
                             chatRoom.scrollToBottom();
 
-                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, false, null);
+                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, false, null, null);
                         }
                         catch (ChatRoomNotFoundException e) {
                             // If it doesn't exists. Create a new Group Chat Room
@@ -178,7 +178,7 @@ public class ConferenceServices {
 
                             groupChatRoom.scrollToBottom();
 
-                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom, false, null);
+                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom, false, null, null);
                         }
                         // If no listeners handled the invitation, default to generic invite.
                         //new ConversationInvitation(conn, room, inviter, reason, password, message);

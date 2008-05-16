@@ -562,12 +562,20 @@ public class LocalPreferences {
         return getBoolean("isMucHighTextOn", false);
     }
     
+    public boolean isMucHighToastEnabled() {
+        return getBoolean("isMucHighToastOn", false);
+    }
+    
     public void setMucHighNameEnabled(boolean setMucNHigh) {
         setBoolean("isMucHighNameOn", setMucNHigh);
     }
 
     public void setMucHighTextEnabled(boolean setMucTHigh) {
         setBoolean("isMucHighTextOn", setMucTHigh);
+    }
+    
+    public void setMuchHighToastEnabled(boolean setMucPHigh) {
+        setBoolean("isMucHighToastOn", setMucPHigh);
     }
     
     public void setSSOEnabled(boolean enabled) {

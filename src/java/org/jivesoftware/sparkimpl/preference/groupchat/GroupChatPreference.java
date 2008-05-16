@@ -62,9 +62,11 @@ public class GroupChatPreference implements Preference {
             public void finished() {
                 boolean highlightMyName = localPreferences.isMucHighNameEnabled();
                 boolean highlightMyText = localPreferences.isMucHighTextEnabled();
+                boolean highlightPopName= localPreferences.isMucHighToastEnabled();
 
                 panel.setMucHighNameEnabled(highlightMyName);
                 panel.setMucHighTextEnabled(highlightMyText);
+                panel.setMuchHighToastEnabled(highlightPopName);
             }
         };
 
@@ -77,6 +79,7 @@ public class GroupChatPreference implements Preference {
 
         pref.setMucHighNameEnabled(panel.isMucHighNameEnabled());
         pref.setMucHighTextEnabled(panel.isMucHighTextEnabled());
+        pref.setMuchHighToastEnabled(panel.isMucHighToastEnabled());
         SettingsManager.saveSettings();
     }
 
@@ -104,7 +107,6 @@ public class GroupChatPreference implements Preference {
     public void shutdown() {
         commit();
     }
-
-
+    
 }
 

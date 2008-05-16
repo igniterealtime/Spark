@@ -37,6 +37,7 @@ public class GroupChatPreferencePanel extends JPanel {
 
     private JCheckBox highlightMyName = new JCheckBox();
     private JCheckBox highlightMyText = new JCheckBox();
+    private JCheckBox highlightPopName= new JCheckBox();
 
     private JPanel gCPanel = new JPanel();
     /**
@@ -52,6 +53,7 @@ public class GroupChatPreferencePanel extends JPanel {
 
         ResourceUtils.resButton(highlightMyName, Res.getString("menuitem.add.groupchat.myname"));
         ResourceUtils.resButton(highlightMyText, Res.getString("menuitem.add.groupchat.mytext"));
+        ResourceUtils.resButton(highlightPopName,Res.getString("menuitem.add.groupchat.popname"));
 
         gCPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("title.group.chat.settings")));
 
@@ -61,6 +63,7 @@ public class GroupChatPreferencePanel extends JPanel {
         
         gCPanel.add(highlightMyName, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(highlightMyText, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(highlightPopName,new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     public void setMucHighNameEnabled(boolean mucNHigh) {
@@ -71,12 +74,20 @@ public class GroupChatPreferencePanel extends JPanel {
         highlightMyText.setSelected(mucTHigh);
     }
     
+    public void setMuchHighToastEnabled(boolean mucPHigh) {
+        highlightPopName.setSelected(mucPHigh);
+    }
+    
     public boolean isMucHighNameEnabled() {
         return highlightMyName.isSelected();
     }
     
     public boolean isMucHighTextEnabled() {
         return highlightMyText.isSelected();
+    }
+    
+    public boolean isMucHighToastEnabled() {
+        return highlightPopName.isSelected();
     }
 
 }

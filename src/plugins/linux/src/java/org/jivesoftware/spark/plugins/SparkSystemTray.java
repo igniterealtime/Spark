@@ -153,7 +153,7 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
             }
         });
     }
-
+    
     /**
      * Change the presence of the tray.
      *

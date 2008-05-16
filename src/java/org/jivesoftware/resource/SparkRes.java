@@ -111,6 +111,7 @@ public class SparkRes {
     public static final String BRICKWALL_IMAGE = "BRICKWALL_IMAGE";
     public static final String MESSAGE_AWAY = "MESSAGE_AWAY";
     public static final String IM_DND = "IM_DND";
+    public static final String MESSAGE_NEW_TRAY = "MESSAGE_NEW_TRAY";
     public static final String SMALL_DELETE = "SMALL_DELETE";
     public static final String LINK_16x16 = "LINK_16x16";
     public static final String CALL_ICON = "CALL_ICON";
