@@ -133,7 +133,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         addingGroupButton.addActionListener(this);
 
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-        mainPanel.setBackground((Color)UIManager.get("List.background"));
+        mainPanel.setBackground((Color)UIManager.get("ContactItem.background"));
         contactListScrollPane = new JScrollPane(mainPanel);
         contactListScrollPane.setAutoscrolls(true);
 

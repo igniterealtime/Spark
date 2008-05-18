@@ -286,9 +286,9 @@ public final class Spark {
         if (isLinux()) {
             return ".Spark";
         }
-        else if (isWindows()) {
+        /*else if (isWindows()) {
             return "Spark";
-        }
+        } (not needed really)*/
 
         return "Spark";
     }
@@ -338,7 +338,7 @@ public final class Spark {
         UIManager.put("ChatInput.SelectionColor", new Color(209, 223, 242));
         UIManager.put("ContactItemNickname.foreground", Color.black);
         UIManager.put("ContactItemDescription.foreground", Color.gray);
-        UIManager.put("ContactItem.background", new Color(181, 196, 255));
+        UIManager.put("ContactItem.background", new Color(240, 243, 253));
         UIManager.put("ContactItem.border", BorderFactory.createLineBorder(Color.white));
         UIManager.put("ContactItemOffline.color", Color.gray);
         UIManager.put("Table.foreground", Color.black);

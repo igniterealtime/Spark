@@ -51,10 +51,10 @@ public class JPanelRenderer extends JPanel implements ListCellRenderer {
         else {
             panel.setBackground(list.getBackground());
             panel.setForeground(list.getForeground());
-            panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("List.background")));
+            panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("ContactItem.background")));
         }
 
-        list.setBackground((Color)UIManager.get("List.background"));
+        list.setBackground((Color)UIManager.get("ContactItem.background"));
 
 
         return panel;
