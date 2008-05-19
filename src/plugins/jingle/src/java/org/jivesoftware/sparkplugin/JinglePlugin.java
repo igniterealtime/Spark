@@ -21,12 +21,13 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.jingle.JingleManager;
+import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.smackx.jingle.JingleSessionRequest;
-import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
+import org.jivesoftware.smackx.jingle.media.JingleMediaManager;
 import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
 import org.jivesoftware.smackx.jingle.mediaimpl.jspeex.SpeexMediaManager;
-import org.jivesoftware.smackx.jingle.mediaimpl.multi.MultiMediaManager;
+import org.jivesoftware.smackx.jingle.mediaimpl.sshare.ScreenShareMediaManager;
 import org.jivesoftware.smackx.jingle.nat.BridgedTransportManager;
 import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
 import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
@@ -44,21 +45,13 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import java.awt.event.ActionEvent;
+import java.util.*;
 
 
 /**
@@ -100,25 +93,16 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 }
 
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
+                List<JingleMediaManager> mediaManagers = new ArrayList<JingleMediaManager>();
 
                 // if running on Windows use Direct Sound for better performance
                 String locator = Spark.isWindows() ? "dsound://" : "javasound://";
 
-                MultiMediaManager jingleMediaManager = new MultiMediaManager();
-                jingleMediaManager.addMediaManager(new JmfMediaManager(locator));
-                jingleMediaManager.addMediaManager(new SpeexMediaManager());
+                mediaManagers.add(new JmfMediaManager(locator, transportManager));
+                mediaManagers.add(new SpeexMediaManager(transportManager));
+                mediaManagers.add(new ScreenShareMediaManager(transportManager));
 
-                if (System.getProperty("codec") != null) {
-                    try {
-                        int codec = Integer.parseInt(System.getProperty("codec"));
-                        jingleMediaManager.setPreferredPayloadType(jingleMediaManager.getPayloads().get(codec));
-                    }
-                    catch (NumberFormatException e) {
-                        // Do Nothing
-                    }
-                }
-
-                jingleManager = new JingleManager(SparkManager.getConnection(), transportManager, jingleMediaManager);
+                jingleManager = new JingleManager(SparkManager.getConnection(), mediaManagers);
 
                 if (transportManager instanceof BridgedTransportManager) {
                     jingleManager.addCreationListener((BridgedTransportManager)transportManager);
@@ -237,7 +221,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
 
         // Create a new Jingle Call with a full JID
-        OutgoingJingleSession session = null;
+        JingleSession session = null;
         try {
             session = jingleManager.createOutgoingJingleSession(jid);
         }

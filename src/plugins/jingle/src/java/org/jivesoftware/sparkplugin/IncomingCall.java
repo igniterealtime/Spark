@@ -13,13 +13,11 @@ package org.jivesoftware.sparkplugin;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.jingle.IncomingJingleSession;
 import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.smackx.jingle.JingleSessionRequest;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
-import org.jivesoftware.smackx.packet.JingleError;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -29,16 +27,17 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
-import javax.swing.SwingUtilities;
-
+import javax.swing.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimerTask;
 
 /**
  * Incoming call handles a single incoming Jingle call.
@@ -55,7 +54,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
     private GenericNotification notificationUI;
 
-    private IncomingJingleSession session;
+    private JingleSession session;
 
     private boolean established = false;
 
@@ -263,13 +262,8 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             ringing.stop();
         }
 
-        try {
-            // Start the call
-            session.start();
-        }
-        catch (XMPPException ee) {
-            Log.error(ee);
-        }
+        // Start the call
+        session.startIncoming();
 
         if (chatRoom == null) {
             chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(request.getFrom()));

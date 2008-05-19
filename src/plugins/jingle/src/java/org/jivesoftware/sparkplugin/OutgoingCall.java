@@ -10,17 +10,16 @@
 
 package org.jivesoftware.sparkplugin;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.jingle.JingleNegotiator;
 import org.jivesoftware.smackx.jingle.JingleSession;
-import org.jivesoftware.smackx.jingle.OutgoingJingleSession;
+import org.jivesoftware.smackx.jingle.JingleSessionStatePending;
 import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
-import org.jivesoftware.smackx.jingle.listeners.JingleSessionStateListener;
 import org.jivesoftware.smackx.jingle.media.PayloadType;
 import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.component.FileDragLabel;
+import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -28,24 +27,11 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.resource.Res;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
+import javax.swing.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
@@ -55,7 +41,7 @@ import java.util.TimerTask;
 /**
  * Handles UI controls for outgoing jingle calls.
  */
-public class OutgoingCall extends JPanel implements JingleSessionStateListener, JingleSessionListener, ChatRoomClosingListener {
+public class OutgoingCall extends JPanel implements JingleSessionListener, ChatRoomClosingListener {
 
     private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
@@ -63,7 +49,7 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
 
     private CallButton cancelButton = new CallButton();
 
-    private OutgoingJingleSession session;
+    private JingleSession session;
     private JingleRoom jingleRoom;
 
     private AudioClip ringing;
@@ -115,24 +101,19 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
      * @param chatRoom the room the session is associated with.
      * @param jid      the users jid.
      */
-    public void handleOutgoingCall(final OutgoingJingleSession session, ChatRoom chatRoom, final String jid) {
+    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
         this.chatRoom = chatRoom;
 
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.ringing);
 
         chatRoom.addClosingListener(this);
         session.addListener(this);
-        session.addStateListener(this);
         cancelButton.setVisible(true);
 
         this.session = session;
 
-        this.session.addStateListener(this);
-
         // Start the call
-        if (this.session != null) {
-            this.session.start();
-        }
+        this.session.startOutgoing();
 
         fileLabel.setText(jid);
 
@@ -173,9 +154,9 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         if (session == null || session.isClosed()) {
             return;
         }
-        else if (session instanceof OutgoingJingleSession) {
+        else if (session instanceof JingleSession) {
             showAlert(false);
-            if (session.getState() instanceof OutgoingJingleSession.Inviting) {
+            if (session.getSessionState() instanceof JingleSessionStatePending) {
                 titleLabel.setText("Calling user. Please wait...");
                 cancelButton.setVisible(true);
             }
@@ -313,23 +294,6 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
     }
 
-    public void beforeChange(JingleNegotiator.State old, JingleNegotiator.State newOne) throws JingleNegotiator.JingleException {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
-    }
-
-    public void afterChanged(JingleNegotiator.State old, JingleNegotiator.State newOne) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
-    }
-
-
     public void closing() {
         if (session != null) {
             try {
@@ -366,18 +330,35 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
             }
         };
         TaskEngine.getInstance().schedule(mediaReceivedTask, WAIT_FOR_MEDIA_DELAY, WAIT_FOR_MEDIA_DELAY);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
+            }
+        });
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
         showCallEndedState("The Session was rejected.");
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
+            }
+        });
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
+            }
+        });
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
         
-        if (jingleSession instanceof OutgoingJingleSession) {
+        if (jingleSession instanceof JingleSession) {
             if (established && mediaReceived) {
                 final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
                 showCallEndedState("Voice chat ended on " + formatter.format(new Date()));
@@ -389,6 +370,12 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
             PhoneManager.setUsingMediaLocator(false);
         }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
+            }
+        });
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
@@ -396,7 +383,11 @@ public class OutgoingCall extends JPanel implements JingleSessionStateListener, 
         if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
             PhoneManager.setUsingMediaLocator(false);
         }                
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateOutgoingCallPanel();
+            }
+        });
     }
-
-
 }

@@ -10,6 +10,7 @@ package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.JingleSession;
+import org.jivesoftware.smackx.jingle.media.JingleMediaManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -53,7 +54,7 @@ public class JingleRoom extends JPanel {
     private PreviousConversationPanel historyPanel;
 
     private boolean onHold;
-    private boolean muted;
+    private boolean transmitting;
 
     private CallPanelButton muteButton;
 
@@ -273,8 +274,8 @@ public class JingleRoom extends JPanel {
 
 
     private void toggleMute() {
-        if (muted) {
-            muted = false;
+        if (transmitting) {
+            transmitting = false;
             muteButton.setToolTipText("Mute");
             muteButton.setButtonSelected(false);
             setStatus(CONNECTED, false);
@@ -282,7 +283,7 @@ public class JingleRoom extends JPanel {
             // Change state
             JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
         } else {
-            muted = true;
+            transmitting = true;
             muteButton.setToolTipText("Unmute");
             muteButton.setButtonSelected(true);
             setStatus("Muted", true);
@@ -291,7 +292,9 @@ public class JingleRoom extends JPanel {
             JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.muted);
         }
 
-        session.getJingleMediaSession().setTrasmit(!muted);
+        for (JingleMediaManager mediaManager : session.getMediaManagers()) {
+            session.getMediaSession(mediaManager.getName()).setTrasmit(!transmitting);
+        }
 
         muteButton.invalidate();
         muteButton.validate();
