@@ -150,7 +150,7 @@ public class TransportUtils {
             attributes.put("password", password);
         }
         if (nickname != null) {
-            attributes.put("nickname", nickname);
+            attributes.put("nick", nickname);
         }
         registration.setAttributes(attributes);
 
