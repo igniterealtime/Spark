@@ -19,7 +19,7 @@ public class GSSAPIConfiguration extends Configuration {
 
     GSSAPIConfiguration(boolean config_from_file) {
         super();
-        init(confi_from_file);
+        init(config_from_file);
     }
 
 
