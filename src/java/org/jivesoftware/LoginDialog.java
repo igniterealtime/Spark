@@ -678,8 +678,14 @@ public final class LoginDialog {
                     System.setProperty("java.security.krb5.debug","false");
                     System.setProperty("sun.security.krb5.debug","false");
                 }
+
+                String ssoMethod = localPref.getSSOMethod();
+                if(!ModelUtil.hasLength(ssoMethod)) {
+                    ssoMethod = "file";
+                }
+
                 System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-                GSSAPIConfiguration config = new GSSAPIConfiguration();
+                GSSAPIConfiguration config = new GSSAPIConfiguration( ssoMethod.equals("file") );
                 Configuration.setConfiguration(config);
 
                 LoginContext lc;
@@ -707,11 +713,6 @@ public final class LoginDialog {
                     Log.debug(le.getMessage());
                     accountNameLabel.setText("Unable to determine.");
                     //useSSO(false);
-                }
-
-                String ssoMethod = localPref.getSSOMethod();
-                if(!ModelUtil.hasLength(ssoMethod)) {
-                    ssoMethod = "file";
                 }
 
                 String ssoKdc;
