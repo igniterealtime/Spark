@@ -832,7 +832,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 System.setProperty("java.security.krb5.debug", "true");
             }
             System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-            GSSAPIConfiguration config = new GSSAPIConfiguration();
+            GSSAPIConfiguration config = new GSSAPIConfiguration(false);
             Configuration.setConfiguration(config);
 
             LoginContext lc;
