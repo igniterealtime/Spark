@@ -61,7 +61,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private ContactItem activeItem;
     private ContactGroup activeGroup;
-    private ContactGroup unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+    private ContactGroup unfiledGroup;
 
 
     // Create Menus
@@ -162,7 +162,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         // Add ActionListener(s) to menus
-        addContactGroup(unfiledGroup);
+//        addContactGroup(unfiledGroup);
         addContactGroup(offlineGroup);
 
         showHideMenu.setSelected(false);
@@ -408,6 +408,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 name = entry.getUser();
             }
             ContactItem contactItem = new ContactItem(name, entry.getUser());
+            if (unfiledGroup == null) {
+                unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+                addContactGroup(unfiledGroup);
+            }
             unfiledGroup.addContactItem(contactItem);
             contactItem.setPresence(presence);
             contactItem.setAvailable(true);
@@ -456,12 +460,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                     }
                 }
             }
-
         }
 
         // Add Unfiled Group
-        // addContactGroup(unfiledGroup);
         for (RosterEntry entry : roster.getUnfiledEntries()) {
+            if (unfiledGroup == null) {
+                unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+                addContactGroup(unfiledGroup);
+            }
             String name = entry.getName();
             if (!ModelUtil.hasLength(name)) {
                 name = entry.getUser();
@@ -470,7 +476,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             ContactItem contactItem = new ContactItem(name, entry.getUser());
             moveToOffline(contactItem);
         }
-        unfiledGroup.setVisible(false);
     }
 
     /**
@@ -1716,11 +1721,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      */
     private void showEmptyGroups(boolean show) {
         for (ContactGroup group : getContactGroups()) {
-            if (show) {
-                group.setVisible(true);
-            } else {
-                // Never hide offline group.
-                if (group != offlineGroup) {
+            if (group != offlineGroup) {
+                if (show) {
+                    group.setVisible(true);
+                } else {
+                    // Never hide offline group.
                     group.setVisible(group.hasAvailableContacts());
                 }
             }
@@ -2047,13 +2052,18 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         String jid = contactItem.getJID();
+        Boolean isFiled = false;
 
         final Roster roster = SparkManager.getConnection().getRoster();
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
             if (contactGroup != null) {
+                isFiled = true;
                 contactGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
             }
+        }
+        if (!isFiled) {
+            unfiledGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
         }
     }
 
@@ -2067,4 +2077,5 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
+
 

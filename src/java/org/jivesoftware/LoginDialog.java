@@ -374,8 +374,10 @@ public final class LoginDialog {
             String userProp = localPref.getUsername();
             String serverProp = localPref.getServer();
 
-            if (userProp != null && serverProp != null) {
+            if (userProp != null) {
                 usernameField.setText(StringUtils.unescapeNode(userProp));
+            }
+            if (serverProp != null) {
                 serverField.setText(serverProp);
                 serverNameLabel.setText(serverProp);
             }
@@ -664,13 +666,6 @@ public final class LoginDialog {
 
                 headerLabel.setVisible(true);
 
-
-                String server = localPref.getServer();
-                if (ModelUtil.hasLength(server)) {
-                    serverNameLabel.setText(localPref.getServer());
-                    serverField.setText(localPref.getServer());
-                }
-
                 if(localPref.getDebug()) {
                     System.setProperty("java.security.krb5.debug","true");
                     System.setProperty("sun.security.krb5.debug","true");
@@ -717,16 +712,19 @@ public final class LoginDialog {
 
                 String ssoKdc;
                 if(ssoMethod.equals("dns")) {
-                    ssoKdc = getDnsKdc(princRealm);
-                    System.setProperty("java.security.krb5.realm",princRealm);
-                    System.setProperty("java.security.krb5.kdc",ssoKdc);
+                    if (princRealm != null) { //princRealm is null if we got a LoginException above.
+                        ssoKdc = getDnsKdc(princRealm);
+                        System.setProperty("java.security.krb5.realm",princRealm);
+                        System.setProperty("java.security.krb5.kdc",ssoKdc);
+                    }
                 } else if(ssoMethod.equals("manual")) {
                     princRealm = localPref.getSSORealm();
                     ssoKdc = localPref.getSSOKDC();
                     System.setProperty("java.security.krb5.realm",princRealm);
                     System.setProperty("java.security.krb5.kdc",ssoKdc);
                 } else {
-                    //else do nothing, java takes care of it for us. Unset the props if they are set
+                    //Assume "file" method.  We don't have to do anything special, 
+                    //java takes care of it for us. Unset the props if they are set
                     System.clearProperty("java.security.krb5.realm");
                     System.clearProperty("java.security.krb5.kdc");
                 }
@@ -909,7 +907,7 @@ public final class LoginDialog {
                                 JOptionPane.ERROR_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(loginDialog, "Unabled to connect using Single Sign-On. Please check your principal and server settings.", Res.getString("title.login.error"),
+                        JOptionPane.showMessageDialog(loginDialog, "Unable to connect using Single Sign-On. Please check your principal and server settings.", Res.getString("title.login.error"),
                                 JOptionPane.ERROR_MESSAGE);
                         //useSSO(false);
                         //localPref.setSSOEnabled(false);
@@ -943,9 +941,9 @@ public final class LoginDialog {
             localPref.setSavePassword(savePasswordBox.isSelected());
             localPref.setAutoLogin(autoLoginBox.isSelected());
 
-            if (localPref.isSSOEnabled()) {
-                localPref.setAutoLogin(true);
-            }
+//            if (localPref.isSSOEnabled()) {
+//                localPref.setAutoLogin(true);
+//            }
 
             localPref.setServer(serverField.getText());
 
@@ -964,7 +962,7 @@ public final class LoginDialog {
                     PasswordCallback pcb = (PasswordCallback) callback;
                     pcb.setPassword(getPassword().toCharArray());
                 } else {
-                    Log.error("Uknown callback requested: " + callback.getClass().getSimpleName());
+                    Log.error("Unknown callback requested: " + callback.getClass().getSimpleName());
                 }
             }
         }

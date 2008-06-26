@@ -686,6 +686,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return true if UnfiledGroup.
      */
     public boolean isUnfiledGroup() {
+        //TODO: Don't identify the unfiled group by name, because the user
+        //could have a custom group of that name.
+
         return Res.getString("unfiled").equals(getGroupName());
     }
 
@@ -858,5 +861,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         ContactInfoWindow.getInstance().display(this, e);
     }
 }
+
 
 
