@@ -1313,6 +1313,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
 
+                //TODO: It should be possible to remove a user from the only group they're in
+                // which would put them into the unfiled group.
                 if (groupCount > 1) {
                     popup.add(removeContactFromGroupMenu);
                 }
@@ -2077,5 +2079,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
+
 
 

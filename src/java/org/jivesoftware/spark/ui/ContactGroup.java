@@ -248,6 +248,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 model.removeElement(item);
             }
         }
+        if (model.getSize() == 0) {
+            model.addElement(noContacts);
+        }
 
 
     }
@@ -376,6 +379,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public void removeContactItem(ContactItem item) {
         contactItems.remove(item);
+        if (contactItems.size() == 0) {
+            removeContactGroup(this);
+        } 
 
         model.removeElement(item);
         updateTitle();
@@ -861,6 +867,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         ContactInfoWindow.getInstance().display(this, e);
     }
 }
+
 
 
 
