@@ -626,7 +626,11 @@ public class ChatRoomImpl extends ChatRoom {
         if (!localPreferences.isChatHistoryEnabled()) {
             return;
         }
-
+        
+        if (!localPreferences.isPrevChatHistoryEnabled()) {
+        	return;
+        }
+        
         final String bareJID = StringUtils.parseBareAddress(getParticipantJID());
         final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(bareJID);
         final String personalNickname = SparkManager.getUserManager().getNickname();

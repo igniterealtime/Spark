@@ -390,8 +390,16 @@ public class LocalPreferences {
         return getBoolean("showHistory", true);
     }
 
-    public void setChatHistoryEnabled(boolean hideChatHistory) {
-        setBoolean("showHistory", hideChatHistory);
+    public void setChatHistoryEnabled(boolean hidePrevChatHistory) {
+        setBoolean("showHistory", hidePrevChatHistory);
+    }
+    
+    public boolean isPrevChatHistoryEnabled() {
+        return getBoolean("showPrevHistory", true);
+    }
+
+    public void setPrevChatHistoryEnabled(boolean hidePrevChatHistory) {
+        setBoolean("showPrevHistory", hidePrevChatHistory);
     }
 
     public boolean isEmptyGroupsShown() {

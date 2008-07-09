@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.preference.chat;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -47,6 +48,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private JLabel passwordLabel = new JLabel();
     private JLabel confirmationPasswordLabel = new JLabel();
     private JCheckBox hideChatHistory = new JCheckBox();
+    private JCheckBox hidePrevChatHistory = new JCheckBox();
     private JCheckBox tabsOnTopBox = new JCheckBox();
     private JTextField chatTimeoutField = new JTextField();
     private JCheckBox buzzBox = new JCheckBox();
@@ -69,13 +71,16 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         ResourceUtils.resButton(spellCheckBox, Res.getString("checkbox.perform.spell.check"));
         ResourceUtils.resButton(groupChatNotificationBox, Res.getString("checkbox.show.notifications.in.conference"));
         ResourceUtils.resButton(hideChatHistory, Res.getString("checkbox.disable.chat.history"));
+        ResourceUtils.resButton(hidePrevChatHistory, Res.getString("checkbox.disable.prev.chat.history"));
         ResourceUtils.resButton(tabsOnTopBox, Res.getString("checkbox.tabs.on.top"));
         ResourceUtils.resButton(buzzBox, Res.getString("checkbox.allow.buzz"));
 
         generalPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.general.information")));
         chatWindowPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.chat.window.information")));
 
-        add(generalPanel);
+        if (!"true".equals(Default.getString(Default.CHANGE_PASSWORD_DISABLED))) {
+        	add(generalPanel);
+        }
         add(chatWindowPanel);
 
         generalPanel.setLayout(new GridBagLayout());
@@ -86,9 +91,10 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(spellCheckBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
+        chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        
         JLabel chatTimeoutLabel = new JLabel();
         ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, Res.getString("label.minutes.before.stale.chat") + ":");
         chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -163,6 +169,14 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     public boolean isChatHistoryHidden() {
         return hideChatHistory.isSelected();
     }
+    
+    public void setPrevChatHistoryHidden(boolean hide) {
+        hidePrevChatHistory.setSelected(hide);
+    }
+
+    public boolean isPrevChatHistoryHidden() {
+        return hidePrevChatHistory.isSelected();
+    }
 
     public void setChatTimeoutTime(int time) {
         chatTimeoutField.setText(Integer.toString(time));
@@ -200,10 +214,15 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
                 File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
                 File[] files = transcriptDir.listFiles();
 
+                hidePrevChatHistory.setEnabled(false);
+                hidePrevChatHistory.setSelected(false);
+
                 for (File transcriptFile : files) {
                     transcriptFile.delete();
                 }
             }
+    } else {
+            hidePrevChatHistory.setEnabled(true);            
         }
     }
 

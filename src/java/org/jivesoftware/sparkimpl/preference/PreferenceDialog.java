@@ -13,12 +13,15 @@ package org.jivesoftware.sparkimpl.preference;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.resource.Res;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -40,7 +43,38 @@ public class PreferenceDialog implements PropertyChangeListener {
                 Res.getString("title.preferences"),
                 false);
 
-        Object[] options = {Res.getString("close")};
+        JButton btn_apply = new JButton(Res.getString("apply"));
+        JButton btn_save = new JButton(Res.getString("save"));
+        JButton btn_close = new JButton(Res.getString("close"));
+        
+        btn_close.addActionListener(new ActionListener () {
+			public void actionPerformed(ActionEvent e) {
+				preferenceDialog.setVisible(false);
+				preferenceDialog.dispose();
+			}
+        });
+        btn_save.addActionListener(new ActionListener () {
+			public void actionPerformed(ActionEvent e) {
+				boolean okToClose = prefPanel.closing();
+	            if (okToClose) {
+	                preferenceDialog.setVisible(false);
+	                preferenceDialog.dispose();
+	            }
+	            else {
+	                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+	            }
+			}
+        });
+        btn_apply.addActionListener(new ActionListener () {
+			public void actionPerformed(ActionEvent e) {
+				boolean okToClose = prefPanel.closing();
+	            if (!okToClose) {
+	                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+	            }
+			}
+        });
+        
+        Object[] options = {btn_apply, btn_save, btn_close};
         pane = new JOptionPane(contentPane, JOptionPane.PLAIN_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
@@ -56,20 +90,10 @@ public class PreferenceDialog implements PropertyChangeListener {
     }
 
     public void propertyChange(PropertyChangeEvent e) {
-        if (pane.getValue() instanceof Integer) {
+    	if (pane.getValue() instanceof Integer) {
             pane.removePropertyChangeListener(this);
             preferenceDialog.dispose();
             return;
-        }
-        String value = (String)pane.getValue();
-        if (value.equals(Res.getString("close"))) {
-            boolean okToClose = prefPanel.closing();
-            if (okToClose) {
-                preferenceDialog.setVisible(false);
-            }
-            else {
-                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-            }
         }
     }
 

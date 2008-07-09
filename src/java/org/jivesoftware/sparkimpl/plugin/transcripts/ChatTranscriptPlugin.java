@@ -390,12 +390,17 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         private ChatRoom chatRoom;
         private ChatRoomButton chatHistoryButton;
+        private final LocalPreferences localPreferences;
 
         public ChatRoomDecorator(ChatRoom chatRoom) {
             this.chatRoom = chatRoom;
             chatRoom.addClosingListener(this);
 
             // Add History Button
+            localPreferences = SettingsManager.getLocalPreferences();
+            if (!localPreferences.isChatHistoryEnabled()) {
+                return;
+            }
             chatHistoryButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE));
             chatRoom.getToolBar().addChatRoomButton(chatHistoryButton);
             chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
@@ -404,7 +409,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
         public void closing() {
-            chatHistoryButton.removeActionListener(this);
+        	if (localPreferences.isChatHistoryEnabled()) {
+        		chatHistoryButton.removeActionListener(this);
+            }
             chatRoom.removeClosingListener(this);
         }
 

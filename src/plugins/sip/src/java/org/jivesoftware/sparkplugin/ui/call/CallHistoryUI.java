@@ -10,20 +10,6 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
-import org.jivesoftware.sparkplugin.calllog.CallLog;
-import org.jivesoftware.sparkplugin.calllog.LogManager;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -54,6 +40,25 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.java.sipmack.softphone.SoftPhoneManager;
+
+import org.jdesktop.swingx.JXList;
+import org.jdesktop.swingx.decorator.Filter;
+import org.jdesktop.swingx.decorator.FilterPipeline;
+import org.jdesktop.swingx.decorator.PatternFilter;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
+import org.jivesoftware.sparkplugin.calllog.CallLog;
+import org.jivesoftware.sparkplugin.calllog.LogManager;
+
 /**
  *
  */
@@ -67,7 +72,8 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
     private RolloverButton callButton;
     private RolloverButton deleteButton;
 
-    private JList activeList;
+    private JXList activeList;
+    private DefaultListModel model;
 
     private CallHistoryRenderer renderer;
 
@@ -88,18 +94,24 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
 
         List<HistoryCall> calls = new ArrayList<HistoryCall>(logManager.getCallHistory());
         Collections.sort(calls, itemComparator);
+        
+        model = new DefaultListModel();
+        for (HistoryCall call : calls) {
+            final CallEntry callEntry = new CallEntry(call);
+            model.addElement(callEntry);
+        }        
 
         tabs = new SparkTabbedPane();
 
         add(tabs, BorderLayout.CENTER);
 
-        addAllPanel(calls);
+        addAllPanel(model);
 
-        addDialedCalls(calls);
+        addDialedCalls(model);
 
-        addCallsReceived(calls);
+        addCallsReceived(model);
 
-        addCallsMissed(calls);
+        addCallsMissed(model);
 
         callButton = new RolloverButton(PhoneRes.getIString("phone.tocall"), PhoneRes.getImageIcon("PHONE_CALL_24x24_IMAGE"));
         deleteButton = new RolloverButton(PhoneRes.getIString("phone.delete"), PhoneRes.getImageIcon("DELETE_24x24_IMAGE"));
@@ -112,7 +124,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
         final JPanel flowPanel = new JPanel(new FlowLayout());
         flowPanel.setOpaque(false);
         flowPanel.add(callButton);
-        //flowPanel.add(deleteButton);
+        flowPanel.add(deleteButton);
 
         add(flowPanel, BorderLayout.SOUTH);
 
@@ -131,7 +143,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
 
             public void tabSelected(SparkTab tab, Component component, int index) {
                 JScrollPane pane = (JScrollPane)component;
-                JList list = (JList)pane.getViewport().getView();
+                JXList list = (JXList)pane.getViewport().getView();
                 activeList = list;
 
                 boolean selections = list.getSelectedValue() != null;
@@ -148,9 +160,8 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
         });
     }
 
-    private void addAllPanel(List<HistoryCall> callList) {
-        final DefaultListModel model = new DefaultListModel();
-        final JList list = new JList(model);
+    private void addAllPanel(DefaultListModel model) {
+        final JXList list = new JXList(model);
         list.addListSelectionListener(this);
         list.setCellRenderer(renderer);
 
@@ -163,18 +174,12 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
                 }
             }
         });
-
-        for (HistoryCall call : callList) {
-            final CallEntry callEntry = new CallEntry(call);
-            model.addElement(callEntry);
-        }
 
         tabs.addTab(PhoneRes.getIString("phone.all"), null, new JScrollPane(list), PhoneRes.getIString("phone.allcalls"));
     }
 
-    private void addDialedCalls(List<HistoryCall> callList) {
-        final DefaultListModel model = new DefaultListModel();
-        final JList list = new JList(model);
+    private void addDialedCalls(DefaultListModel model) {
+        final JXList list = new JXList(model);
         list.addListSelectionListener(this);
         list.setCellRenderer(renderer);
         list.addMouseListener(new MouseAdapter() {
@@ -187,20 +192,17 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
         });
 
-
-        for (HistoryCall call : callList) {
-            if (call.getGroupName().equals(CallLog.Type.dialed.toString())) {
-                final CallEntry callEntry = new CallEntry(call);
-                model.addElement(callEntry);
-            }
-        }
+        list.setFilterEnabled(true);
+        Filter[] filterArray = { 
+            new PatternFilter("\\Q" + CallLog.Type.dialed.toString() + "",0,0)
+        };
+        list.setFilters(new FilterPipeline(filterArray));
 
         tabs.addTab(PhoneRes.getIString("phone.dialed"), null, new JScrollPane(list), PhoneRes.getIString("phone.dialedcalls"));
     }
 
-    private void addCallsReceived(List<HistoryCall> callList) {
-        final DefaultListModel model = new DefaultListModel();
-        final JList list = new JList(model);
+    private void addCallsReceived(DefaultListModel model) {
+        final JXList list = new JXList(model);
         list.addListSelectionListener(this);
         list.setCellRenderer(renderer);
         list.addMouseListener(new MouseAdapter() {
@@ -213,20 +215,18 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
         });
 
-
-        for (HistoryCall call : callList) {
-            if (call.getGroupName().equals(CallLog.Type.received.toString())) {
-                final CallEntry callEntry = new CallEntry(call);
-                model.addElement(callEntry);
-            }
-        }
+        list.setFilterEnabled(true);
+        Filter[] filterArray = { 
+            new PatternFilter("\\Q" + CallLog.Type.received.toString() +  "\\E",0,0)
+        };
+        
+        list.setFilters(new FilterPipeline(filterArray));
 
         tabs.addTab(PhoneRes.getIString("phone.received"), null, new JScrollPane(list), PhoneRes.getIString("phone.receivedcalls"));
     }
 
-    private void addCallsMissed(List<HistoryCall> callList) {
-        final DefaultListModel model = new DefaultListModel();
-        final JList list = new JList(model);
+    private void addCallsMissed(DefaultListModel model) {
+        final JXList list = new JXList(model);
         list.addListSelectionListener(this);
         list.setCellRenderer(renderer);
         list.addMouseListener(new MouseAdapter() {
@@ -239,13 +239,12 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
         });
 
-
-        for (HistoryCall call : callList) {
-            if (call.getGroupName().equals(CallLog.Type.missed.toString())) {
-                final CallEntry callEntry = new CallEntry(call);
-                model.addElement(callEntry);
-            }
-        }
+        list.setFilterEnabled(true);
+        Filter[] filterArray = { 
+            new PatternFilter("\\Q" + CallLog.Type.missed.toString() + "\\E",0,0)
+        };
+        
+        list.setFilters(new FilterPipeline(filterArray));
 
         tabs.addTab(PhoneRes.getIString("phone.missed"), null, new JScrollPane(list), PhoneRes.getIString("phone.missedcalls"));
     }
@@ -261,13 +260,14 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
     public class CallEntry extends JPanel {
         private String number;
         private HistoryCall call;
+        private String type;
 
         public CallEntry(HistoryCall call) {
             setLayout(new GridBagLayout());
 
             this.number = call.getNumber();
             this.call = call;
-
+            this.type = call.getGroupName();
             long time = call.getTime();
             long duration = call.getCallLength();
 
@@ -335,6 +335,12 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
         public HistoryCall getCall() {
             return call;
         }
+        
+        // needed by PatternFilter
+        public String toString()
+        {
+        	return type;
+        }
     }
 
 
@@ -345,7 +351,13 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             SoftPhoneManager.getInstance().getDefaultGuiManager().dial(entry.getNumber());
         }
         else if (actionEvent.getSource() == deleteButton) {
-
+        	int[] selected = activeList.getSelectedIndices();
+        	for (int i = selected.length - 1; i >= 0 ; i--)
+        	{
+        		int modelindex = activeList.convertIndexToModel(selected[i]);
+                logManager.getCallHistory().remove( ( (CallEntry)model.elementAt(modelindex)).getCall() );
+        		model.remove(modelindex);	        		
+        	}        
         }
     }
 
@@ -370,7 +382,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             return;
         }
 
-        final JList list = (JList)listSelectionEvent.getSource();
+        final JXList list = (JXList)listSelectionEvent.getSource();
         activeList = list;
         CallEntry callEntry = (CallEntry)list.getSelectedValue();
         callButton.setEnabled(callEntry != null);

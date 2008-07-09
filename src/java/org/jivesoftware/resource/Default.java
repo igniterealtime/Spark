@@ -46,6 +46,7 @@ public class Default {
     public static final String PROXY_HOST = "PROXY_HOST";
     public static final String PROXY_PORT = "PROXY_PORT";
     public static final String ACCOUNT_DISABLED = "ACCOUNT_DISABLED";
+    public static final String CHANGE_PASSWORD_DISABLED = "CHANGE_PASSWORD_DISABLED";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
     public static final String FRAME_IMAGE = "FRAME_IMAGE";
 

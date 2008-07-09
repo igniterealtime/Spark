@@ -10,6 +10,9 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.PrivateDataManager;
@@ -18,9 +21,6 @@ import org.jivesoftware.smackx.provider.PrivateDataProvider;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Derek DeMoro
@@ -43,11 +43,10 @@ public class Tasks implements PrivateData {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
-
+    
     public void addTask(Task task) {
         tasks.add(task);
     }
-
 
     /**
      * Returns the root element name.
@@ -57,7 +56,7 @@ public class Tasks implements PrivateData {
     public String getElementName() {
         return "scratchpad";
     }
-
+    
     /**
      * Returns the root element XML namespace.
      *
@@ -201,5 +200,34 @@ public class Tasks implements PrivateData {
         }
 
         return tasks;
+    }
+    
+    /**
+     * Delete task
+     * 
+     * @param task : task to delete
+     */
+    public static void deleteTask(Task task) {
+    	
+    	List<TaskUI> taskList = (List<TaskUI>) ScratchPadPlugin.getTaskList();
+    	
+    	// find and delete task in list
+    	for ( int i = 0; i < taskList.size(); i++ ) {
+            Task t = taskList.get(i).getTask();
+            if ( t == task ) {
+            	taskList.remove(i);
+            	break;
+            }
+        }
+    	
+    	// save Tasks
+    	Tasks tasks = new Tasks();
+        for (TaskUI ui : taskList) {
+            Task nTask = ui.getTask();            
+            tasks.addTask(nTask);
+        }
+        
+        // update GUI
+        ScratchPadPlugin.updateTaskUI(tasks);
     }
 }

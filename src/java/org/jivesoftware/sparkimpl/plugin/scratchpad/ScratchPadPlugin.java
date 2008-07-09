@@ -68,6 +68,10 @@ public class ScratchPadPlugin implements Plugin {
 
     private static final String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
     private SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
+    private static List<TaskUI> taskList = new ArrayList<TaskUI>();
+    private static JPanel panel_events = new JPanel();
+    private static JPanel mainPanel = new JPanel();
+    private static JFrame frame;
 
     public void initialize() {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -128,14 +132,15 @@ public class ScratchPadPlugin implements Plugin {
     }
 
     private void showTaskList() {
-        final JFrame frame = new JFrame(Res.getString("title.tasks"));
+        frame = new JFrame(Res.getString("title.tasks"));
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
+        panel_events.removeAll();
+        mainPanel.removeAll();
 
-        final List<TaskUI> taskList = new ArrayList<TaskUI>();
-        final JPanel mainPanel = new JPanel();
+        //final List<TaskUI> taskList = new ArrayList<TaskUI>();
+        //final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground(Color.white);
-
 
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JTextField taskField = new JTextField();
@@ -187,7 +192,7 @@ public class ScratchPadPlugin implements Plugin {
             }
 
         };
-        final JLabel taskLabel = new JLabel(Res.getString("label.due"));
+        final JLabel taskLabel = new JLabel(Res.getString("label.due") + "        ");
         taskLabel.setFont(taskLabel.getFont().deriveFont(Font.BOLD));
         titlePanel.add(taskLabel, BorderLayout.EAST);
         mainPanel.add(titlePanel);
@@ -243,16 +248,27 @@ public class ScratchPadPlugin implements Plugin {
 
                 taskField.setText("");
 
-
                 final TaskUI taskUI = new TaskUI(task);
-                mainPanel.add(taskUI);
+                //mainPanel.add(taskUI);
+                panel_events.add(taskUI);
                 taskList.add(taskUI);
+                
+                panel_events.invalidate();
+                panel_events.validate();
+                panel_events.repaint();                
                 mainPanel.invalidate();
                 mainPanel.validate();
                 mainPanel.repaint();
+                frame.invalidate();
+                frame.validate();
+                frame.repaint();                
             }
         };
-
+        
+        mainPanel.add(panel_events);
+        panel_events.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
+        panel_events.setBackground(Color.white);
+        
         allButton.addActionListener(showAllAction);
         activeButton.addActionListener(showActiveAction);
 
@@ -261,15 +277,7 @@ public class ScratchPadPlugin implements Plugin {
         addButton.addActionListener(addAction);
 
         Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
-        for (Object o : tasks.getTasks()) {
-            Task task = (Task) o;
-            final TaskUI taskUI = new TaskUI(task);
-            mainPanel.add(taskUI);
-            taskList.add(taskUI);
-            mainPanel.invalidate();
-            mainPanel.validate();
-            mainPanel.repaint();
-        }
+        updateTaskUI(tasks);
 
         if (SHOW_ALL_TASKS) {
             allButton.setSelected(true);
@@ -332,6 +340,42 @@ public class ScratchPadPlugin implements Plugin {
 
         GraphicUtils.centerWindowOnComponent(frame, SparkManager.getMainWindow());
         frame.setVisible(true);
+    }
+    
+    /**
+     * Updates the GUI of Tasks
+     * 
+     * @param Tasks : all Tasks
+     */
+    public static void updateTaskUI(Tasks tasks) {
+    	panel_events.removeAll();
+    	taskList.clear();
+    	
+        for (Object o : tasks.getTasks()) {
+            Task task = (Task) o;
+            final TaskUI taskUI = new TaskUI(task);
+            
+            if ( SHOW_ALL_TASKS == false ) {
+            	if ( taskUI.isSelected() ) {
+            		taskUI.setVisible(false);
+            	}else {
+            		taskUI.setVisible(true);
+            	}
+            }
+            
+            panel_events.add(taskUI);
+            taskList.add(taskUI);
+        }
+        
+        panel_events.invalidate();
+        panel_events.validate();
+        panel_events.repaint();
+        mainPanel.invalidate();
+        mainPanel.validate();
+        mainPanel.repaint();
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
     }
 
     /**
@@ -440,6 +484,10 @@ public class ScratchPadPlugin implements Plugin {
     }
 
     public void uninstall() {
+    }
+    
+    public static List<TaskUI> getTaskList() {
+        return taskList;
     }
 
 //    private class DragWindowAdapter extends MouseAdapter

@@ -1,7 +1,9 @@
 package org.jivesoftware.spark.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -156,6 +158,11 @@ public class BrowserLauncher {
     static private final int OS_X = 3;
 
     /**
+     * JVM 
+     */
+    static private final int LINUX = 4;
+    
+    /**
      * JVM constant for any other platform
      */
     private static final int OTHER = -1;
@@ -230,7 +237,9 @@ public class BrowserLauncher {
         else if (osName.startsWith("Mac OS X")) {
             jvm = OS_X;
         }
-        else {
+        else if (osName.startsWith("Linux")) {
+            jvm = LINUX;
+        } else {
             jvm = OTHER;
         }
 
@@ -423,12 +432,36 @@ public class BrowserLauncher {
             case WINDOWS:
                 browser = "rundll32.exe";
                 break;
+            case LINUX:
+            	try {
+            		browser = executeWhich("firefox");
+                	if (browser == null)
+                		browser = executeWhich("mozilla");
+                	if (browser == null)
+                		browser = executeWhich("opera");
+                	if (browser == null)
+                		browser = executeWhich("konqueror");
+            	}
+				catch (Exception e) { 
+					// if no which is installed then use firefox
+					browser = "firefox";
+				}
+                break;                                
             case OTHER:
             default:
                 browser = "netscape";
                 break;
         }
         return browser;
+    }
+        
+    private static String executeWhich(String binaryName) throws IOException {
+        Process which = Runtime.getRuntime().exec(new String[] {"which", binaryName});
+        BufferedReader reader = new BufferedReader(new InputStreamReader(which.getInputStream()));
+        String result = reader.readLine();
+        reader.close();
+
+        return result;
     }
 
     /**
@@ -442,6 +475,7 @@ public class BrowserLauncher {
             throw new IOException("Exception in finding browser: " + errorMessage);
         }
         Object browser = locateBrowser();
+        System.out.println(browser);
         if (browser == null) {
             throw new IOException("Unable to locate browser: " + errorMessage);
         }
