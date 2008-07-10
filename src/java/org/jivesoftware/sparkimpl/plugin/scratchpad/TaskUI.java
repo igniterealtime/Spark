@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jdesktop.swingx.calendar.DateUtils;
+import org.jivesoftware.resource.SparkRes;
 
 /**
  *
@@ -52,7 +53,7 @@ public class TaskUI extends JPanel implements ActionListener {
         JPanel p_east = new JPanel(new BorderLayout());
         p_east.setBackground(Color.white);
         
-        JLabel btn_del = new JLabel(new ImageIcon(ClassLoader.getSystemResource("images/delete.png")));
+        JLabel btn_del = new JLabel(SparkRes.getImageIcon(SparkRes.TASK_DELETE_IMAGE));
 
         p_east.add(btn_del, BorderLayout.EAST);
         p_east.add(new JLabel("  "), BorderLayout.CENTER);

@@ -289,7 +289,8 @@ public class SparkRes {
     public static final String XMPP_TRANSPORT_ACTIVE_IMAGE = "XMPP_TRANSPORT_ACTIVE_IMAGE";
     public static final String XMPP_TRANSPORT_INACTIVE_IMAGE = "XMPP_TRANSPORT_INACTIVE_IMAGE";
     public static final String OFFLINE_IMAGE = "OFFLINE_IMAGE";
-
+    public static final String TASK_DELETE_IMAGE = "TASK_DELETE_IMAGE";
+    
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
