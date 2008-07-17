@@ -41,9 +41,10 @@ import java.net.URL;
  */
 public class ContactItem extends JPanel {
     private JLabel imageLabel;
-    private JLabel nicknameLabel;
+    private JLabel displayNameLabel;
     private JLabel descriptionLabel;
     private String nickname;
+    private String alias;
     private String fullyQualifiedJID;
     private Icon icon;
 
@@ -69,10 +70,11 @@ public class ContactItem extends JPanel {
     /**
      * Creates a new instance of a contact.
      *
+     * @param alias             the alias of the contact
      * @param nickname          the nickname of the contact.
      * @param fullyQualifiedJID the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
      */
-    public ContactItem(String nickname, String fullyQualifiedJID) {
+    public ContactItem(String alias, String nickname, String fullyQualifiedJID) {
         setLayout(new GridBagLayout());
 
         // Set Default Font
@@ -86,7 +88,7 @@ public class ContactItem extends JPanel {
 
         contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
 
-        nicknameLabel = new JLabel();
+        displayNameLabel = new JLabel();
         descriptionLabel = new JLabel();
         imageLabel = new JLabel();
         sideIcon = new JLabel();
@@ -96,9 +98,9 @@ public class ContactItem extends JPanel {
             sideIcon.setPreferredSize(new Dimension(iconSize, iconSize));
         }
 
-        nicknameLabel.setHorizontalTextPosition(JLabel.LEFT);
-        nicknameLabel.setHorizontalAlignment(JLabel.LEFT);
-        nicknameLabel.setText(nickname);
+        displayNameLabel.setHorizontalTextPosition(JLabel.LEFT);
+        displayNameLabel.setHorizontalAlignment(JLabel.LEFT);
+        //displayNameLabel.setText(nickname);
 
 
         descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
@@ -110,24 +112,52 @@ public class ContactItem extends JPanel {
         this.setOpaque(true);
 
         add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 0), 0, 0));
-        add(nicknameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+        add(displayNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
         add(descriptionLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
         add(sideIcon, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
-        setNickname(nickname);
-
+        this.alias = alias;
+        this.nickname = nickname;
         this.fullyQualifiedJID = fullyQualifiedJID;
+        
+        setDisplayName();
     }
+
+	/**
+	 * Returns the name that should be displayed to represent the the contact.
+	 * If an alias has been set, this alias will be returned. If no alias has
+	 * been set, the nickname will be returned. If that hasn't been set either,
+	 * the JID will be returned.
+	 * 
+	 * @return a name suitable to be displayed
+	 */
+    public String getDisplayName() {
+    	final String displayName;
+		if (alias != null) {
+			displayName = alias;
+		} else if (nickname != null) {
+			displayName = nickname;
+		} else {
+			displayName = getJID();
+		}
+		
+		if (displayName != null) {
+		return displayName;
+		} else {
+			return ""; // weird, but happens.
+		}
+	}
 
     /**
-     * Returns the nickname of the contact.
-     *
-     * @return the nickname.
-     */
-    public String getNickname() {
-        return nickname;
-    }
-
+	 * Returns the nickname of the contact. Note that for typical user-interface
+	 * related tasks, you probably should use {@link #getDisplayName()} instead.
+	 * 
+	 * @return the contact nickname.
+	 */
+	public String getNickname() {
+		return nickname;
+	}
+	
     /**
      * Sets the nickname of the contact.
      *
@@ -135,18 +165,51 @@ public class ContactItem extends JPanel {
      */
     public void setNickname(String nickname) {
         this.nickname = nickname;
-        int nickLength = nickname.length();
+        if (alias == null) {
+        	setDisplayName();
+        }
+    }
+
+    /**
+	 * Returns the alias of the contact. Note that for typical user-interface
+	 * related tasks, you probably should use {@link #getDisplayName()} instead.
+	 * 
+	 * @return the contact alias.
+	 */
+	public String getAlias() {
+		return alias;
+	}
+    
+    /**
+     * Sets the alias of the contact. 
+     *
+     * @param alias the contact alias.
+     */
+    public void setAlias(String alias) {
+    	this.alias = alias;
+    	setDisplayName();
+    }
+
+    /**
+	 * Updates the displayed name for the contact. This method tries to use an
+	 * alias first. If that's not set, the nickname will be used instead. If
+	 * that's not set either, the JID of the user will be used.
+	 */
+    private void setDisplayName() {
+    	final String displayName = getDisplayName();
+    	
+        int nickLength = displayName.length();
         
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         int windowWidth = (int)Math.round((settings.getMainWindowHeight() / 15.2));
         
         if (nickLength > windowWidth) {
-            nicknameLabel.setText(StringUtils.unescapeNode(nickname).substring(0, windowWidth) + "...");
+            displayNameLabel.setText(StringUtils.unescapeNode(displayName).substring(0, windowWidth) + "...");
         } else {
-            nicknameLabel.setText(StringUtils.unescapeNode(nickname));
-        }
+            displayNameLabel.setText(StringUtils.unescapeNode(displayName));
+        }    	
     }
-
+    
     /**
      * Returns the fully qualified JID of the contact. (If available). Otherwise will
      * return the bare jid.
@@ -226,7 +289,7 @@ public class ContactItem extends JPanel {
      * @return the nickname label.
      */
     public JLabel getNicknameLabel() {
-        return nicknameLabel;
+        return displayNameLabel;
     }
 
     /**
@@ -316,7 +379,7 @@ public class ContactItem extends JPanel {
     }
 
     public String toString() {
-        return nicknameLabel.getText();
+        return displayNameLabel.getText();
     }
 
 

@@ -205,7 +205,7 @@ public class ConversationHistoryPlugin implements Plugin {
                 }
 
                 JLabel label = new JLabel();
-                label.setText(contactItem.getNickname());
+                label.setText(contactItem.getDisplayName());
                 label.setIcon(icon);
 
                 model.addElement(label);

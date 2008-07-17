@@ -142,7 +142,7 @@ public class ReceiveMessage extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
-        titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", contactItem.getNickname()));
+        titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", contactItem.getDisplayName()));
 
         File tempFile = new File(Spark.getSparkUserHome(), "/tmp");
         try {
@@ -261,7 +261,7 @@ public class ReceiveMessage extends JPanel {
                             titleLabel.setText(Res.getString("message.negotiate.stream"));
                         }
                         else if (status == FileTransfer.Status.in_progress) {
-                            titleLabel.setText(Res.getString("message.receiving.file", contactItem.getNickname()));
+                            titleLabel.setText(Res.getString("message.receiving.file", contactItem.getDisplayName()));
                         }
                     }
 
@@ -375,7 +375,7 @@ public class ReceiveMessage extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
-        titleLabel.setText(Res.getString("message.received.file", contactItem.getNickname()));
+        titleLabel.setText(Res.getString("message.received.file", contactItem.getDisplayName()));
         fileLabel.setText(request.getFileName());
 
         remove(acceptLabel);

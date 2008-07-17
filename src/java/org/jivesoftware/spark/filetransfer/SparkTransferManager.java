@@ -254,7 +254,7 @@ public class SparkTransferManager {
 
         ChatRoom chatRoom;
         if (contactItem != null) {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getNickname(), contactItem.getNickname());
+            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getDisplayName(), contactItem.getDisplayName());
         }
         else {
             chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, bareJID, bareJID);
@@ -291,7 +291,7 @@ public class SparkTransferManager {
 
         chatRoom.scrollToBottom();
         
-        String fileTransMsg = contactItem.getNickname() + " " + Res.getString("message.file.transfer.short.message") + " " + fileName;
+        String fileTransMsg = contactItem.getDisplayName() + " " + Res.getString("message.file.transfer.short.message") + " " + fileName;
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileTransMsg, Res.getString("message.file.transfer.notification"));
     }
 
@@ -512,7 +512,7 @@ public class SparkTransferManager {
             ChatRoom chatRoom;
             ContactItem contactItem = contactList.getContactItemByJID(jid);
             if (contactItem != null) {
-                chatRoom = SparkManager.getChatManager().createChatRoom(jid, contactItem.getNickname(), contactItem.getNickname());
+                chatRoom = SparkManager.getChatManager().createChatRoom(jid, contactItem.getDisplayName(), contactItem.getDisplayName());
             }
             else {
                 chatRoom = SparkManager.getChatManager().createChatRoom(jid, jid, jid);
@@ -530,7 +530,7 @@ public class SparkTransferManager {
 
         ChatRoom chatRoom;
         if (contactItem != null) {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getNickname(), contactItem.getNickname());
+            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getDisplayName(), contactItem.getDisplayName());
         }
         else {
             chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, bareJID, bareJID);
@@ -578,7 +578,7 @@ public class SparkTransferManager {
         });
 
         try {
-            sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getNickname());
+            sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getDisplayName());
         }
         catch (NullPointerException e) {
             Log.error(e);

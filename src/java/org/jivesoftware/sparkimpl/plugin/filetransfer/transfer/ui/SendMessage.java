@@ -134,7 +134,7 @@ public class SendMessage extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
-        titleLabel.setText(Res.getString("message.transfer.waiting.on.user", contactItem.getNickname()));
+        titleLabel.setText(Res.getString("message.transfer.waiting.on.user", contactItem.getDisplayName()));
 
         if (isImage(fileName)) {
             try {

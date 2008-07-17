@@ -184,7 +184,7 @@ public class ContactInfoWindow extends JPanel {
             return;
         }
 
-        nicknameLabel.setText(contactItem.getNickname());
+        nicknameLabel.setText(contactItem.getDisplayName());
 
         String status = contactItem.getStatus();
         if (!ModelUtil.hasLength(status)) {

@@ -275,7 +275,7 @@ public class UserManager {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem item = contactList.getContactItemByJID(jid);
         if (item != null) {
-            return item.getNickname();
+            return item.getDisplayName();
         }
 
         return unescapeJID(jid);
@@ -321,15 +321,15 @@ public class UserManager {
     }
 
     /**
-     * Returns the full jid w/ resource of a user by their nickname
+     * Returns the full jid w/ resource of a user by their display name
      * in the ContactList.
      *
-     * @param nickname the nickname of the user.
+     * @param displayName the displayed name of the user.
      * @return the full jid w/ resource of the user.
      */
-    public String getJIDFromNickname(String nickname) {
+    public String getJIDFromDisplayName(String displayName) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-        ContactItem item = contactList.getContactItemByNickname(nickname);
+        ContactItem item = contactList.getContactItemByDisplayName(displayName);
         if (item != null) {
             return getFullJID(item.getJID());
         }
@@ -398,7 +398,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getJID(), item.getNickname());
+                            SparkManager.getChatManager().activateChat(item.getJID(), item.getDisplayName());
                         }
                     }
 
@@ -423,7 +423,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getJID(), item.getNickname());
+                            SparkManager.getChatManager().activateChat(item.getJID(), item.getDisplayName());
                         }
                     }
                 }
@@ -501,10 +501,11 @@ public class UserManager {
      */
     final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
         public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
         }
     };
 
 }
+
 
 

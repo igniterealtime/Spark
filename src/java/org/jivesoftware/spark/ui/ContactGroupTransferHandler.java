@@ -92,7 +92,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     int size = model.getSize();
                     for (int i = 0; i < size; i++) {
                         ContactItem it = (ContactItem)model.getElementAt(i);
-                        if (it.getNickname().equals(item.getNickname())) {
+                        if (it.getDisplayName().equals(item.getDisplayName())) {
                             return false;
                         }
                     }
@@ -195,13 +195,13 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item) {
-        ContactItem newContact = new ContactItem(item.getNickname(), item.getJID());
+        ContactItem newContact = new ContactItem(item.getAlias(), item.getNickname(), item.getJID());
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
 
         if (!PresenceManager.isOnline(item.getJID())) {
-            contactGroup.addOfflineContactItem(item.getNickname(), item.getJID(), null);
+            contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJID(), null);
         }
         else {
             contactGroup.addContactItem(newContact);
@@ -297,4 +297,5 @@ public class ContactGroupTransferHandler extends TransferHandler {
         return false;
     }
 }
+
 

@@ -65,7 +65,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private JPanel listPanel;
 
     // Used to display no contacts in list.
-    private final ContactItem noContacts = new ContactItem(Res.getString("group.empty"), null);
+    private final ContactItem noContacts = new ContactItem(Res.getString("group.empty"), null, null);
 
     private final ListMotionListener motionListener = new ListMotionListener();
 
@@ -153,13 +153,14 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     /**
      * Adds a new offline contact.
      *
+     * @param alias    the alias of the offline contact.
      * @param nickname the nickname of the offline contact.
      * @param jid      the jid of the offline contact.
      * @param status   the current status of the offline contact.
      */
-    public void addOfflineContactItem(String nickname, String jid, String status) {
+    public void addOfflineContactItem(String alias, String nickname, String jid, String status) {
         // Build new ContactItem
-        final ContactItem offlineItem = new ContactItem(nickname, jid);
+        final ContactItem offlineItem = new ContactItem(alias, nickname, jid);
         offlineItem.setGroupName(getGroupName());
 
         final Presence offlinePresence = PresenceManager.getPresence(jid);
@@ -173,7 +174,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             offlineItem.setStatusText(status);
         }
 
-        // Add to offlien contacts.
+        // Add to offline contacts.
         offlineContacts.add(offlineItem);
 
         insertOfflineContactItem(offlineItem);
@@ -390,14 +391,14 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     /**
-     * Returns a <code>ContactItem</code> by the nickname the user has been assigned.
+     * Returns a <code>ContactItem</code> by the displayed name the user has been assigned.
      *
-     * @param nickname the nickname of the user.
+     * @param displayName the displayed name of the user.
      * @return the ContactItem.
      */
-    public ContactItem getContactItemByNickname(String nickname) {
+    public ContactItem getContactItemByDisplayName(String displayName) {
         for (ContactItem item : new ArrayList<ContactItem>(contactItems)) {
-            if (item.getNickname().equals(nickname)) {
+            if (item.getDisplayName().equals(displayName)) {
                 return item;
             }
         }
@@ -673,7 +674,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
         public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
         }
     };
 
@@ -867,6 +868,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         ContactInfoWindow.getInstance().display(this, e);
     }
 }
+
 
 
 

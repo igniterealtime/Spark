@@ -361,7 +361,7 @@ public class Workspace extends JPanel implements PacketListener {
         ContactItem contact = contactList.getContactItemByJID(bareJID);
         String nickname = StringUtils.parseName(bareJID);
         if (contact != null) {
-            nickname = contact.getNickname();
+            nickname = contact.getDisplayName();
         }
 
         // Create the room if it does not exist.
@@ -386,7 +386,7 @@ public class Workspace extends JPanel implements PacketListener {
         ContactItem contact = contactList.getContactItemByJID(bareJID);
         String nickname = StringUtils.parseName(bareJID);
         if (contact != null) {
-            nickname = contact.getNickname();
+            nickname = contact.getDisplayName();
         }
         else {
             // Attempt to load VCard from users who we are not subscribed to.

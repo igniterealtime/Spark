@@ -65,7 +65,7 @@ public class RosterPickList extends JPanel {
         for (RosterEntry entry : roster.getEntries()) {
             Presence presence = PresenceManager.getPresence(entry.getUser());
             if (presence.isAvailable()) {
-                ContactItem item = new ContactItem(entry.getName(), entry.getUser());
+                ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
                 item.setPresence(presence);
                 userList.add(item);
             }
@@ -152,8 +152,8 @@ public class RosterPickList extends JPanel {
      */
     final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
         public int compare(ContactItem item1, ContactItem item2) {
-            String nickname1 = item1.getNickname();
-            String nickname2 = item2.getNickname();
+            String nickname1 = item1.getDisplayName();
+            String nickname2 = item2.getDisplayName();
             if (nickname1 == null || nickname2 == null) {
                 return 0;
             }

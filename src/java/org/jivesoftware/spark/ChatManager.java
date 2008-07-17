@@ -237,7 +237,7 @@ public class ChatManager implements MessageEventNotificationListener {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             ContactItem item = contactList.getContactItemByJID(jid);
             if (item != null) {
-                String nickname = item.getNickname();
+                String nickname = item.getDisplayName();
                 chatRoom = new ChatRoomImpl(jid, nickname, nickname);
             }
             else {

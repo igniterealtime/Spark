@@ -104,7 +104,7 @@ public class BuzzPlugin implements Plugin {
         ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
         String nickname = StringUtils.parseName(bareJID);
         if (contact != null) {
-            nickname = contact.getNickname();
+            nickname = contact.getDisplayName();
         }
 
         ChatRoom room;

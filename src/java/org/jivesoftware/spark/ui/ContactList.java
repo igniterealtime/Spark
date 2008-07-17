@@ -39,6 +39,8 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import sun.util.logging.resources.logging;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -359,14 +361,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
 
             if (contactGroup != null) {
-                String name = entry.getName();
-                if (name == null) {
-                    name = entry.getUser();
-                }
-
-                ContactItem contactItem = null;
+                 ContactItem contactItem = null;
                 if (contactGroup.getContactItemByJID(entry.getUser()) == null) {
-                    contactItem = new ContactItem(name, entry.getUser());
+                    contactItem = new ContactItem(entry.getName(), null, entry.getUser());
                     contactGroup.addContactItem(contactItem);
                 }
                 else if (contactGroup.getContactItemByJID(entry.getUser()) != null) {
@@ -403,11 +400,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         if (!isFiled) {
-            String name = entry.getName();
-            if (name == null) {
-                name = entry.getUser();
-            }
-            ContactItem contactItem = new ContactItem(name, entry.getUser());
+            ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
             if (unfiledGroup == null) {
                 unfiledGroup = new ContactGroup(Res.getString("unfiled"));
                 addContactGroup(unfiledGroup);
@@ -441,12 +434,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             ContactGroup contactGroup = getContactGroup(group.getName());
 
             for (RosterEntry entry : group.getEntries()) {
-                String name = entry.getName();
-                if (!ModelUtil.hasLength(name)) {
-                    name = entry.getUser();
-                }
-
-                ContactItem contactItem = new ContactItem(name, entry.getUser());
+                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
                 contactItem.setPresence(new Presence(Presence.Type.unavailable));
                 if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
@@ -468,12 +456,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 unfiledGroup = new ContactGroup(Res.getString("unfiled"));
                 addContactGroup(unfiledGroup);
             }
-            String name = entry.getName();
-            if (!ModelUtil.hasLength(name)) {
-                name = entry.getUser();
-            }
-
-            ContactItem contactItem = new ContactItem(name, entry.getUser());
+            ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
             moveToOffline(contactItem);
         }
     }
@@ -503,12 +486,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @param entry the <code>RosterEntry</code> of the the user.
      */
     private void addUser(RosterEntry entry) {
-        String nickname = entry.getName();
-        if (!ModelUtil.hasLength(nickname)) {
-            nickname = entry.getUser();
-        }
-
-        ContactItem newContactItem = new ContactItem(nickname, entry.getUser());
+        ContactItem newContactItem = new ContactItem(entry.getName(), null, entry.getUser());
 
         if (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from) {
             // Ignore, since the new user is pending to be added.
@@ -594,12 +572,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                 ContactGroup contactGroup = addContactGroup(group.getName());
                                 contactGroup.setVisible(false);
                                 contactGroup = getContactGroup(group.getName());
-                                String name = rosterEntry.getName();
-                                if (name == null) {
-                                    name = rosterEntry.getUser();
-                                }
-
-                                ContactItem contactItem = new ContactItem(name, rosterEntry.getUser());
+                                ContactItem contactItem = new ContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
                                 contactGroup.addContactItem(contactItem);
                                 Presence presence = PresenceManager.getPresence(jid);
                                 contactItem.setPresence(presence);
@@ -615,11 +588,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                 }
                                 // Check to see if this entry is new to a pre-existing group.
                                 if (item == null) {
-                                    String name = rosterEntry.getName();
-                                    if (name == null) {
-                                        name = rosterEntry.getUser();
-                                    }
-                                    item = new ContactItem(name, rosterEntry.getUser());
+                                    item = new ContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
                                     Presence presence = PresenceManager.getPresence(jid);
                                     item.setPresence(presence);
                                     if (presence.isAvailable()) {
@@ -778,14 +747,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
     /**
-     * Retrieve the ContactItem by their nickname.
+     * Retrieve the ContactItem by their displayed name (either alias, nickname or username).
      *
-     * @param nickname the users nickname in the contact list.
+     * @param displayName the users nickname in the contact list.
      * @return the "first" contact item found.
      */
-    public ContactItem getContactItemByNickname(String nickname) {
+    public ContactItem getContactItemByDisplayName(String displayName) {
         for (ContactGroup contactGroup : getContactGroups()) {
-            ContactItem item = contactGroup.getContactItemByNickname(nickname);
+            ContactItem item = contactGroup.getContactItemByDisplayName(displayName);
             if (item != null) {
                 return item;
             }
@@ -1066,7 +1035,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
         else if (e.getSource() == chatMenu) {
             if (activeItem != null) {
-                SparkManager.getChatManager().activateChat(activeItem.getJID(), activeItem.getNickname());
+                SparkManager.getChatManager().activateChat(activeItem.getJID(), activeItem.getDisplayName());
             }
         }
         else if (e.getSource() == addContactMenu) {
@@ -1086,29 +1055,35 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 return;
             }
 
-            String oldNickname = activeItem.getNickname();
-            String newNickname = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldNickname);
-            if (ModelUtil.hasLength(newNickname)) {
-                String address = activeItem.getJID();
-                ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
-                ContactItem contactItem = contactGroup.getContactItemByNickname(activeItem.getNickname());
-                contactItem.setNickname(newNickname);
-
-                final Roster roster = SparkManager.getConnection().getRoster();
-                RosterEntry entry = roster.getEntry(address);
-                entry.setName(newNickname);
-
-
-                final Iterator contactGroups = groupList.iterator();
-                String user = StringUtils.parseBareAddress(address);
-                while (contactGroups.hasNext()) {
-                    ContactGroup cg = (ContactGroup)contactGroups.next();
-                    ContactItem ci = cg.getContactItemByJID(user);
-                    if (ci != null) {
-                        ci.setNickname(newNickname);
-                    }
-                }
-
+            String oldAlias = activeItem.getAlias();
+            String newAlias = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldAlias);
+            
+            // if user pressed 'cancel', output will be null.
+        	// if user removed alias, output will be an empty String.
+            if (newAlias != null) {
+	            if (!ModelUtil.hasLength(newAlias)) {
+	            	newAlias = null; // allows you to remove an alias.
+	            }
+	            
+	            String address = activeItem.getJID();
+	            ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
+	            ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
+	            contactItem.setAlias(newAlias);
+	
+	            final Roster roster = SparkManager.getConnection().getRoster();
+	            RosterEntry entry = roster.getEntry(address);
+	            entry.setName(newAlias);
+	
+	
+	            final Iterator contactGroups = groupList.iterator();
+	            String user = StringUtils.parseBareAddress(address);
+	            while (contactGroups.hasNext()) {
+	                ContactGroup cg = (ContactGroup)contactGroups.next();
+	                ContactItem ci = cg.getContactItemByJID(user);
+	                if (ci != null) {
+	                    ci.setAlias(newAlias);
+	                }
+	            }
             }
         }
     }
@@ -1185,7 +1160,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         boolean handled = chatManager.fireContactItemDoubleClicked(item);
 
         if (!handled) {
-            chatManager.activateChat(item.getJID(), item.getNickname());
+            chatManager.activateChat(item.getJID(), item.getDisplayName());
         }
 
         clearSelectionList(item);
@@ -1473,7 +1448,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 message.setProperty("broadcast", true);
                 message.setBody(messageText);
                 if (!broadcastMessages.containsKey(item.getJID())) {
-                    buf.append(item.getNickname()).append("\n");
+                    buf.append(item.getDisplayName()).append("\n");
                     broadcastMessages.put(item.getJID(), message);
                 }
             }
@@ -1582,11 +1557,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         final Roster roster = SparkManager.getConnection().getRoster();
                         RosterEntry entry = roster.getEntry(jid);
                         if (entry != null) {
-                            String nickname = entry.getName();
-                            if (nickname == null) {
-                                nickname = entry.getUser();
-                            }
-                            item = new ContactItem(nickname, jid);
+                            item = new ContactItem(entry.getName(), null, jid);
                             moveToOffline(item);
                             offlineGroup.fireContactGroupUpdated();
                         }
@@ -2061,11 +2032,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             ContactGroup contactGroup = getContactGroup(group.getName());
             if (contactGroup != null) {
                 isFiled = true;
-                contactGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
+                contactGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
             }
         }
         if (!isFiled) {
-            unfiledGroup.addOfflineContactItem(contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
+            unfiledGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
         }
     }
 
@@ -2074,11 +2045,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      */
     public final static Comparator<ContactItem> ContactItemComparator = new Comparator<ContactItem>() {
         public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getNickname().toLowerCase().compareTo(item2.getNickname().toLowerCase());
+            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
         }
     };
 
 }
+
 
 
 

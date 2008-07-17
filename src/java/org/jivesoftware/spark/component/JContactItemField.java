@@ -75,7 +75,7 @@ public class JContactItemField extends JPanel {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
                         ContactItem selection = (ContactItem)list.getSelectedValue();
-                        textField.setText(selection.getNickname());
+                        textField.setText(selection.getDisplayName());
                         popup.setVisible(false);
                     }
                 }
@@ -119,7 +119,7 @@ public class JContactItemField extends JPanel {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
                         ContactItem selection = (ContactItem)list.getSelectedValue();
-                        textField.setText(selection.getNickname());
+                        textField.setText(selection.getDisplayName());
                         popup.setVisible(false);
                     }
                 }
@@ -146,7 +146,7 @@ public class JContactItemField extends JPanel {
 
         final List<ContactItem> validItems = new ArrayList<ContactItem>();
         for (ContactItem contactItem : items) {
-            String nickname = contactItem.getNickname().toLowerCase();
+            String nickname = contactItem.getDisplayName().toLowerCase();
             if (nickname.startsWith(typedItem.toLowerCase())) {
                 validItems.add(contactItem);
             }
@@ -275,7 +275,7 @@ public class JContactItemField extends JPanel {
 
 
             ContactItem contactItem = (ContactItem)value;
-            setText(contactItem.getNickname());
+            setText(contactItem.getDisplayName());
             if (contactItem.getIcon() == null) {
                 setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
             }

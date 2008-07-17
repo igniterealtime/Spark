@@ -416,6 +416,13 @@ public class VCardManager {
                 // Otherwise retrieve vCard from server and persist back out.
                 vcard.load(SparkManager.getConnection(), jid);
                 vcard.setJabberId(jid);
+                if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
+                {
+                	// update nickname.
+                	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+                	item.setNickname(vcard.getNickName());
+                	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
+                }
                 vcards.put(jid, vcard);
             }
             catch (XMPPException e) {
@@ -443,6 +450,13 @@ public class VCardManager {
         try {
             vcard.load(SparkManager.getConnection(), jid);
             vcard.setJabberId(jid);
+            if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
+            {
+            	// update nickname.
+            	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+            	item.setNickname(vcard.getNickName());
+            	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
+            }
             vcards.put(jid, vcard);
         }
         catch (XMPPException e) {

@@ -75,7 +75,7 @@ public class BroadcastDialog extends JPanel {
 
             // Now add contact items from contact group.
             for (ContactItem item : group.getContactItems()) {
-                CheckNode itemNode = new CheckNode(item.getNickname(), false, item.getIcon());
+                CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
                 itemNode.setAssociatedObject(item.getJID());
                 groupNode.add(itemNode);
                 nodes.add(itemNode);
@@ -85,7 +85,7 @@ public class BroadcastDialog extends JPanel {
             Collections.sort(offlineContacts, ContactList.ContactItemComparator);
 
             for (ContactItem item : offlineContacts) {
-                CheckNode itemNode = new CheckNode(item.getNickname(), false, item.getIcon());
+                CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
                 itemNode.setAssociatedObject(item.getJID());
                 groupNode.add(itemNode);
                 nodes.add(itemNode);
