@@ -10,21 +10,12 @@
 
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.CheckNode;
-import org.jivesoftware.spark.component.CheckTree;
-import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.ui.ContactGroup;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.ModelUtil;
-
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -35,12 +26,30 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.CheckNode;
+import org.jivesoftware.spark.component.CheckTree;
+import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.ui.ChatInputEditor;
+import org.jivesoftware.spark.ui.ContactGroup;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.ModelUtil;
 
 /**
  * Allows for better selective broadcasting.
@@ -49,30 +58,58 @@ import javax.swing.JTextArea;
  */
 public class BroadcastDialog extends JPanel {
 
-    private JTextArea messageBox;
+    /**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
 
+	private ChatInputEditor messageBox;
+	 private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
     private JRadioButton normalMessageButton;
-
+    
+    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<ArrayList<Object>>();
     private List<CheckNode> nodes = new ArrayList<CheckNode>();
+    private List<CheckNode> nodes2 = new ArrayList<CheckNode>();
     private List<CheckNode> groupNodes = new ArrayList<CheckNode>();
-
+    private CheckNode rosterNode; 
+    private CheckTree checkTree; 
+    private Integer OfflineGroup;
+    
     public BroadcastDialog() {
         setLayout(new GridBagLayout());
-
-        CheckNode rosterNode = new CheckNode(Res.getString("title.roster"));
-        CheckTree checkTree = new CheckTree(rosterNode);
-
-        // Build out from Roster
+        rosterNode = new CheckNode(Res.getString("title.roster"));
+        checkTree = new CheckTree(rosterNode);
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        
+        // creates the List for the Online Users
+        String groupName = "Online";
+        CheckNode groupNode = new CheckNode(groupName);
+        groupNodes.add(groupNode);
+        rosterNode.add(groupNode);
+        //ContactGroup groupp;
+        for(ContactGroup group : contactList.getContactGroups())
+	        for (ContactItem item : group.getContactItems()) 
+	        {
+	      	  if(item.isAvailable())
+	      	  {
+	           CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
+	           itemNode.setAssociatedObject(item.getJID());
+	           groupNode.add(itemNode);
+	           nodes.add(itemNode);
+	      	  }
+	        }
+	        
+        // Build out from Roster
+       
         for (ContactGroup group : contactList.getContactGroups()) {
-            String groupName = group.getGroupName();
+            groupName = group.getGroupName();
             if (!group.hasAvailableContacts()) {
                 continue;
             }
-            CheckNode groupNode = new CheckNode(groupName);
+            groupNode = new CheckNode(groupName);
             groupNodes.add(groupNode);
             rosterNode.add(groupNode);
-
+            
             // Now add contact items from contact group.
             for (ContactItem item : group.getContactItems()) {
                 CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
@@ -92,7 +129,7 @@ public class BroadcastDialog extends JPanel {
             }
         }
 
-        messageBox = new JTextArea();
+        messageBox = new ChatInputEditor();
         normalMessageButton = new JRadioButton(Res.getString("message.normal"));
         JRadioButton alertMessageButton = new JRadioButton(Res.getString("message.alert.notify"));
 
@@ -111,7 +148,16 @@ public class BroadcastDialog extends JPanel {
         add(normalMessageButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(alertMessageButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
         add(treePane, new GridBagConstraints(1, 0, 1, 3, 0.5, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
-
+        add(OfflineUsers, new GridBagConstraints(1, 3, 1, 0, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
+        
+        OfflineUsers.addActionListener(new ActionListener()
+ 	     {
+      	  public void actionPerformed(ActionEvent e)
+      	  {
+      		  hideOfflineUsers();
+           }
+ 	     });
+        
         normalMessageButton.setSelected(true);
         checkTree.expandTree();
 
@@ -163,7 +209,7 @@ public class BroadcastDialog extends JPanel {
         dlg.setModal(false);
 
         dlg.pack();
-        dlg.setSize(600, 400);
+        dlg.setSize(800, 600);
         dlg.setResizable(true);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
@@ -194,6 +240,66 @@ public class BroadcastDialog extends JPanel {
         messageBox.requestFocus();
     }
 
+    private void hideOfflineUsers()
+    {
+   	 
+   	  int i = 0;
+		  if(OfflineUsers.isSelected())
+		  {
+			  final ContactList contactList = SparkManager.getWorkspace().getContactList();
+			  i = 0;
+			  for(CheckNode node : nodes)
+			  {
+				  if(contactList.getContactItemByDisplayName(node.toString()).getPresence().getType() == Presence.Type.unavailable)
+				  {
+					  if(node.getParent() != null)
+					  {
+					  TreeNode parent = node.getParent();
+					  TreeNode[] path = ((DefaultTreeModel)checkTree.getTree().getModel()).getPathToRoot(parent);
+					  ((DefaultTreeModel)checkTree.getTree().getModel()).removeNodeFromParent(node);
+					  checkTree.getTree().setSelectionPath(new TreePath(path));
+					  NodesGroups.add(new ArrayList<Object>());
+					  NodesGroups.get(i).add(parent);
+					  NodesGroups.get(i).add(node);
+					  i++;
+					  }
+				  }
+			  }
+			  for(int x = 0; x < groupNodes.size(); x++)
+			  {
+				  if(groupNodes.get(x).toString().equals("Offline Group"))
+				  {
+					  OfflineGroup = x;
+					  TreeNode parent = groupNodes.get(x).getParent();
+					  TreeNode[] path = ((DefaultTreeModel)checkTree.getTree().getModel()).getPathToRoot(parent);
+					  ((DefaultTreeModel)checkTree.getTree().getModel()).removeNodeFromParent(groupNodes.get(x));
+					  checkTree.getTree().setSelectionPath(new TreePath(path));
+				  }
+			  }
+		  }
+		  else
+		  {
+			  i = 0;
+			  DefaultMutableTreeNode child = groupNodes.get(OfflineGroup);
+			  ((DefaultTreeModel)checkTree.getTree().getModel()).insertNodeInto(child, rosterNode, rosterNode.getChildCount()); 
+			  TreeNode[] path = ((DefaultTreeModel)checkTree.getTree().getModel()).getPathToRoot(rosterNode);
+			  checkTree.getTree().expandPath(new TreePath(path));
+			  checkTree.expandTree();
+			  for(CheckNode node : nodes)
+			  {
+				  if(node.getParent() == null)
+				  {
+					  child = (CheckNode)NodesGroups.get(i).get(1);
+					  ((DefaultTreeModel)checkTree.getTree().getModel()).insertNodeInto(child, ((CheckNode) NodesGroups.get(i).get(0)), ((CheckNode) NodesGroups.get(i).get(0)).getChildCount()); 
+					  path = ((DefaultTreeModel)checkTree.getTree().getModel()).getPathToRoot(node);
+					  checkTree.getTree().expandPath(new TreePath(path));
+					  checkTree.expandTree();
+					  i++;
+				  }
+			  }
+		  }
+    }
+    
     /**
      * Sends a broadcast message to all users selected.
      */

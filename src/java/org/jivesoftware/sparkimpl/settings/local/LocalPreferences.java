@@ -369,6 +369,15 @@ public class LocalPreferences {
     public void setTimeDisplayedInChat(boolean timeDisplayedInChat) {
         setBoolean("timeDisplayed", timeDisplayedInChat);
     }
+    
+    public void setTimeFormat(String format) {
+   	 props.setProperty("timeFormat", format);
+    }
+    
+    public String getTimeFormat()
+    {
+   	 return props.getProperty("timeFormat", "HH:mm");
+    }
 
     public boolean isSpellCheckerEnabled() {
         return getBoolean("spellCheckerEnabled", true);
@@ -409,6 +418,14 @@ public class LocalPreferences {
     public void setEmptyGroupsShown(boolean shown) {
         setBoolean("showEmptyGroups", shown);
     }
+    
+    public boolean isOfflineUsersShown() {
+       return getBoolean("showOfflineUsers", false);
+   }
+
+   public void setOfflineUsersShown(boolean shown) {
+       setBoolean("showOfflineUsers", shown);
+   }
 
     public int getFileTransferTimeout() {
         return Integer.parseInt(props.getProperty("fileTransferTimeout", "30"));
@@ -737,6 +754,14 @@ public class LocalPreferences {
     public boolean areAvatarsVisible() {
         return getBoolean("showAvatar", false);
     }
+    
+    public void setVCardsVisible(boolean visible) {
+       setBoolean("showVCards", visible);
+   }
+    
+    public boolean areVCardsVisible() {
+       return getBoolean("showVCards", true);
+   }
 
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));

@@ -53,6 +53,7 @@ public class ThemePanel extends JPanel {
     private JCheckBox systemLookAndFeelBox;
 
     private JCheckBox showAvatarsBox;
+    private JCheckBox showVCards;
     private JLabel avatarSizeLabel;
     private JComboBox avatarSizeField;
 
@@ -88,6 +89,8 @@ public class ThemePanel extends JPanel {
 
         chatRoomFontField = new JTextField();
         chatRoomFontLabel = new JLabel();
+        
+        showVCards = new JCheckBox(Res.getString("title.appearance.showVCards"));
 
         // Set ResourceUtils
         ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
@@ -136,6 +139,7 @@ public class ThemePanel extends JPanel {
         add(showAvatarsBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(avatarSizeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         // Activate live one.
@@ -171,7 +175,10 @@ public class ThemePanel extends JPanel {
 
         systemLookAndFeelBox.setSelected(pref.useSystemLookAndFeel());
 
+        showVCards.setSelected(pref.areVCardsVisible());
+        
         showAvatarsBox.setSelected(pref.areAvatarsVisible());
+       
 
         if (pref.getContactListIconSize() == 16) {
             avatarSizeField.setSelectedIndex(0);
@@ -349,4 +356,8 @@ public class ThemePanel extends JPanel {
     public boolean areAvatarsVisible(){
         return showAvatarsBox.isSelected();
     }
+    
+    public boolean areVCardsVisible(){
+       return showVCards.isSelected();
+   }
 }

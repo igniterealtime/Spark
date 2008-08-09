@@ -70,8 +70,9 @@ public class ContactInfoWindow extends JPanel {
     }
 
     private ContactInfoWindow() {
+   	 
         setLayout(new GridBagLayout());
-
+       
         ChatManager chatManager = SparkManager.getChatManager();
 
         setBackground(Color.white);
@@ -129,7 +130,6 @@ public class ContactInfoWindow extends JPanel {
                 }
             }
         });
-
     }
 
     public void display(ContactGroup group, MouseEvent e) {

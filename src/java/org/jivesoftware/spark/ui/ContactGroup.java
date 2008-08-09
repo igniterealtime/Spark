@@ -148,6 +148,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // Add Popup Window
         addPopupWindow();
+        
+       
     }
 
     /**
@@ -865,9 +867,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param e the mouseEvent that triggered this event.
      */
     private void displayWindow(MouseEvent e) {
-        ContactInfoWindow.getInstance().display(this, e);
+   	 if(preferences.areVCardsVisible())
+   		 ContactInfoWindow.getInstance().display(this, e);
     }
 }
+
 
 
 

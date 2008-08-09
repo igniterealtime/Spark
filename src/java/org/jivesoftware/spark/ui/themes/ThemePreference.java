@@ -89,6 +89,7 @@ public class ThemePreference implements Preference {
         pref.setUseSystemLookAndFeel(panel.useSystemLookAndFeel());
         pref.setAvatarVisible(panel.areAvatarsVisible());
         pref.setContactListIconSize(panel.getContactListIconSize());
+        pref.setVCardsVisible(panel.areVCardsVisible());
 
         try {
             String chatRoomFontSize = panel.getChatRoomFontSize();
@@ -110,4 +111,5 @@ public class ThemePreference implements Preference {
 
 
 }
+
 

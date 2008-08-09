@@ -445,7 +445,9 @@ public class BookmarksUI extends JPanel {
                         public void finished() {
                             if (discoInfo != null) {
                                 for (String aServiceList : serviceList) {
-                                    addServiceToList(aServiceList);
+                                	if (!hasService(aServiceList)) {
+                                		addServiceToList(aServiceList);
+                                	}
                                 }
                                 serviceField.setText("");
                                 serviceField.setEnabled(true);

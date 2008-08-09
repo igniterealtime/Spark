@@ -24,13 +24,14 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.KeyListener;
 
 /**
  * Creates a Firefox Search type box that allows for icons inside of a textfield. This
  * could be used to build out your own search objects.
  */
 public class ChatAreaSendField extends JPanel {
-    private ChatInputEditor textField;
+	 private ChatInputEditor textField;
     private JButton button;
 
     /**
@@ -41,12 +42,11 @@ public class ChatAreaSendField extends JPanel {
     public ChatAreaSendField(String text) {
         setLayout(new GridBagLayout());
         setBackground((Color)UIManager.get("TextPane.background"));
-
         textField = new ChatInputEditor();
         textField.setBorder(null);
         setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.lightGray));
         button = new JButton();
-
+        
         if (Spark.isMac()) {
             button.setContentAreaFilled(false);
         }
@@ -56,10 +56,10 @@ public class ChatAreaSendField extends JPanel {
         add(button, new GridBagConstraints(1, 0, 1, 1, 0.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
 
         button.setVisible(false);
-
+        
         final JScrollPane pane = new JScrollPane(textField);
         pane.setBorder(null);
-        add(textField, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
+        add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
         button.setEnabled(false);
     }
 
@@ -99,6 +99,7 @@ public class ChatAreaSendField extends JPanel {
     }
 
 }
+
 
 
 

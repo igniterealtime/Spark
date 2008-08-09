@@ -20,6 +20,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
@@ -36,11 +37,18 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import java.awt.BorderLayout;
@@ -51,6 +59,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -69,6 +78,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
 
+    private JDialog Frame;
+    private JEditorPane jEditorPane1 ;
     /**
      * Register the listeners for transcript persistence.
      */
@@ -92,11 +103,21 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         viewHistoryAction.putValue(Action.NAME, Res.getString("menuitem.view.contact.history"));
         viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
+        
+        final Action showStatusMessageAction = new AbstractAction() {
+           public void actionPerformed(ActionEvent actionEvent) {
+               ContactItem item = contactList.getSelectedUsers().iterator().next();
+               showStatusMessage(item);
+           }
+       };
+
+       showStatusMessageAction.putValue(Action.NAME, Res.getString("menuitem.show.contact.statusmessage"));
 
         contactList.addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
-                    popup.add(viewHistoryAction);
+               	 	popup.add(viewHistoryAction);
+               	 	popup.add(showStatusMessageAction);
                 }
             }
 
@@ -364,6 +385,41 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         transcriptLoader.start();
     }
 
+    private void showStatusMessage(ContactItem item) 
+    {
+   	 Frame = new JDialog();
+   	 Frame.setTitle(item.getDisplayName() + " - Status");
+   	 JPanel pane = new JPanel();
+   	 JTextArea textArea = new JTextArea(5, 30);
+   	 JButton btn_close = new JButton(Res.getString("button.close"));
+   	 
+   	 btn_close.addActionListener(new ActionListener()
+	    {
+	      public void actionPerformed(ActionEvent e)
+	      {
+	    	  	Frame.setVisible(false);
+	      }
+	    });
+
+   	 textArea.setLineWrap(true);
+   	 textArea.setWrapStyleWord(true);
+   	
+   	 pane.add(new JScrollPane(textArea));
+   	 Frame.setLayout(new BorderLayout());
+   	 Frame.add(pane, BorderLayout.CENTER);
+   	 Frame.add(btn_close, BorderLayout.SOUTH);
+   	 
+   	 textArea.setEditable(false);
+   	 textArea.setText(item.getStatus());
+   	
+   	 Frame.setLocationRelativeTo(SparkManager.getMainWindow());
+   	 Frame.setBounds(Frame.getX() - 175, Frame.getY() - 75, 350, 150);
+   	 Frame.setSize(350, 150);
+   	 Frame.setResizable(false);
+   	 Frame.setVisible(true);
+    }
+    
+    
     /**
      * Sort HistoryMessages by date.
      */

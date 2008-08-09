@@ -316,7 +316,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         StyleConstants.setFontSize(styles, defaultFont.getSize());
 
         if (pref.isTimeDisplayedInChat()) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+      	  
+            final SimpleDateFormat formatter = new SimpleDateFormat(pref.getTimeFormat());
             final String date = formatter.format(insertDate);
 
             return "(" + date + ") ";

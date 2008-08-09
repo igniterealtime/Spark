@@ -76,7 +76,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private ContactGroup offlineGroup;
     private final JCheckBoxMenuItem showHideMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineGroupMenu = new JCheckBoxMenuItem();
-
+    private final JCheckBoxMenuItem showOfflineUsersMenu = new JCheckBoxMenuItem();
+    
     private List<String> sharedGroups = new ArrayList<String>();
 
     private final List<ContextMenuListener> contextListeners = new ArrayList<ContextMenuListener>();
@@ -108,7 +109,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         localPreferences = SettingsManager.getLocalPreferences();
 
         offlineGroup = new ContactGroup(Res.getString("group.offline"));
-
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
         addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
@@ -215,8 +215,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 new RosterDialog().showRosterDialog();
             }
         });
-
-
+        
     }
 
     /**
@@ -259,7 +258,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 updateContactItemsPresence(rosterPresence, entry, bareJID);
             }
         }
-
+        
     }
 
     /**
@@ -1504,6 +1503,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Hide all groups initially
         showEmptyGroups(show);
+        
+        // Hide all Offline Users
+        showOfflineUsers(localPreferences.isOfflineUsersShown());
 
         // Add a subscription listener.
         addSubscriptionListener();
@@ -1672,17 +1674,29 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         ResourceUtils.resButton(showOfflineGroupMenu, Res.getString("menuitem.show.offline.group"));
         contactsMenu.add(showOfflineGroupMenu);
-
+        
         showOfflineGroupMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 showOfflineGroup(showOfflineGroupMenu.isSelected());
             }
         });
-
+        
+        ResourceUtils.resButton(showOfflineUsersMenu, Res.getString("menuitem.show.offline.users"));
+        contactsMenu.add(showOfflineUsersMenu);
+        
+        showOfflineUsersMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                showOfflineUsers(showOfflineUsersMenu.isSelected());
+            }
+        });
+        
         // Show or Hide Offline Group
         showOfflineGroupMenu.setSelected(localPreferences.isOfflineGroupVisible());
         showOfflineGroup(localPreferences.isOfflineGroupVisible());
 
+        // sets showOfflineUsersMenu selected or not selected
+        showOfflineUsersMenu.setSelected(localPreferences.isOfflineUsersShown());
+        
         // Initialize vcard support
         SparkManager.getVCardManager();
     }
@@ -1708,6 +1722,33 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         showHideMenu.setSelected(show);
         SettingsManager.saveSettings();
     }
+    
+    private void showOfflineUsers(boolean show) {
+       for (ContactGroup group : getContactGroups()) 
+       {
+      	  if(group != offlineGroup)
+      	  {
+      		  group.toggleOfflineVisibility(show);
+      	  }
+      	  
+      	  if (group == offlineGroup) {
+               if (show) 
+               {
+                   group.setVisible(true);
+                   showOfflineGroupMenu.setEnabled(true);
+                   showOfflineGroupMenu.setSelected(localPreferences.isOfflineGroupVisible());
+                   showOfflineGroup(showOfflineGroupMenu.isSelected());
+               } 
+               else 
+               {
+                   group.setVisible(false);
+                   showOfflineGroupMenu.setEnabled(false);
+               }
+           }
+       }
+       localPreferences.setOfflineUsersShown(show);
+       SettingsManager.saveSettings();
+   }
 
     /**
      * Toggles the visiblity of the Offline Group.
@@ -2022,8 +2063,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      */
     private void moveToOffline(ContactItem contactItem) {
         offlineGroup.addContactItem(contactItem);
-
-
+        	  
         String jid = contactItem.getJID();
         Boolean isFiled = false;
 
@@ -2038,6 +2078,17 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         if (!isFiled) {
             unfiledGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
         }
+        
+        if(localPreferences.isOfflineUsersShown() == false)
+        {
+	        for (ContactGroup group : getContactGroups()) 
+	        {
+	       	  if(group != offlineGroup)
+	       	  {
+	       		  group.toggleOfflineVisibility(false);
+	       	  }
+	        }
+        }
     }
 
     /**
@@ -2050,6 +2101,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
+
 
 
 
