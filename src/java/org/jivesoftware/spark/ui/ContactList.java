@@ -1168,7 +1168,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void contactGroupPopup(MouseEvent e, final ContactGroup group) {
-        // Do nothing with offline group
+   	  // Do nothing with offline group
         if (group == offlineGroup || group == unfiledGroup) {
             return;
         }
@@ -1183,10 +1183,16 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         JMenuItem delete = new JMenuItem(Res.getString("menuitem.delete"));
         JMenuItem rename = new JMenuItem(Res.getString("menuitem.rename"));
+        JMenuItem expand = new JMenuItem(Res.getString("menuitem.expand.all.groups"));
+        JMenuItem collapse = new JMenuItem(Res.getString("menuitem.collapse.all.groups"));
+        
         if (!group.isSharedGroup()) {
             popup.addSeparator();
             popup.add(delete);
             popup.add(rename);
+            popup.addSeparator();
+            popup.add(expand);
+            popup.add(collapse);
         }
 
         delete.addActionListener(new ActionListener() {
@@ -1234,6 +1240,24 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 }
 
             }
+        });
+        
+        expand.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+         	Collection<ContactGroup> groups = getContactGroups();  
+         	for (ContactGroup group : groups) {
+               group.setCollapsed(false);
+           }  
+           }
+        });
+        
+        collapse.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+         	Collection<ContactGroup> groups = getContactGroups();  
+         	for (ContactGroup group : groups) {
+               group.setCollapsed(true);
+           }  
+           }
         });
 
         // popup.add(inviteFirstAcceptor);
@@ -2101,6 +2125,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
+
 
 
 

@@ -13,8 +13,9 @@
     <property name="target.lib.dir" value="${plug.dir}/target/lib"/>
     <property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
 
-    <property name="spark.home" value="c:\code\spark"/>
+    <property name="spark.home" value="${basedir}/../../.."/>
     <property name="spark.libs.dir" value="${spark.home}/target/build/lib"/>
+    <property name="spark.build" value="${basedir}/../../../target/build"/>
 
     <path id="lib.classpath">
         <fileset dir="${spark.libs.dir}" includes="**/*.jar, **/*.zip"/>
@@ -67,9 +68,7 @@
 
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
-
-
-        <zip zipfile="${target.dir}/translator.jar" basedir="${target.dir}"/>
+	<zip zipfile="${spark.build}/plugins/translator.jar" basedir="${target.dir}"/>
     </target>
 
 </project>

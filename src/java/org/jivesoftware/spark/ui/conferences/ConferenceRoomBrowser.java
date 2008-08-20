@@ -36,8 +36,10 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -57,6 +59,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -66,28 +70,42 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * A UI that handles all Group Rooms contained in an XMPP Messenger server.  This handles
  * creation and joining of rooms for group chat discussions as well as the listing
  * of the creation times, number of occupants in a room, and the room name itself.
  */
-public class ConferenceRoomBrowser extends JPanel implements ActionListener {
+public class ConferenceRoomBrowser extends JPanel implements ActionListener, ComponentListener{
     private final RoomList roomsTable;
     private final RolloverButton createButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
     private final RolloverButton joinRoomButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
     private final RolloverButton refreshButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
     private final RolloverButton addRoomButton = new RolloverButton("", SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+    
+    private final RolloverButton showHiddenButtons = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
+    private JMenuItem joinRoomItem;
+    private JMenuItem addRoomItem;
+    private JMenuItem createItem;
+    private JMenuItem refreshItem; 
+    
     private ChatManager chatManager;
 
     private JDialog dlg;
-
+    
     private BookmarksUI conferences;
     private String serviceName;
 
+    private int allButtonWidth;
+    private int threeButtonWidth;
+    private int twoButtonWidth;
+    private int oneButtonWidth;
+    
     private boolean partialDiscovery = false;
-
+    
+    private JPopupMenu popup;
     /**
      * Creates a new instance of ConferenceRooms.
      *
@@ -102,15 +120,42 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
         this.conferences = conferences;
         this.serviceName = serviceName;
 
+        
+        
+        popup = new JPopupMenu();
+        
+        joinRoomItem 	= new JMenuItem(Res.getString("menuitem.join.room"));
+        addRoomItem 		= new JMenuItem(Res.getString("menuitem.bookmark.room"));
+        createItem 		= new JMenuItem(Res.getString("menuitem.create.room"));
+        refreshItem 		= new JMenuItem(Res.getString("menuitem.refresh"));
+        
+        joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
+        addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+        createItem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
+        refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+        
+        popup.add(joinRoomItem);
+        popup.add(addRoomItem);
+        popup.add(createItem);
+        popup.add(refreshItem);
+       
+
         // Add Toolbar
-        final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final JPanel Hauptpanel = new JPanel(new BorderLayout());
+        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel pane_hiddenButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         toolbar.add(joinRoomButton);
         toolbar.add(addRoomButton);
         toolbar.add(createButton);
         toolbar.add(refreshButton);
-
-        this.add(toolbar, BorderLayout.NORTH);
+        pane_hiddenButtons.add(showHiddenButtons);
+        
+        Hauptpanel.add(toolbar, BorderLayout.WEST);
+        Hauptpanel.add(pane_hiddenButtons, BorderLayout.EAST);
+        this.add(Hauptpanel, BorderLayout.NORTH);
+        
         createButton.addActionListener(this);
+        createItem.addActionListener(this);
         joinRoomButton.addActionListener(this);
         refreshButton.addActionListener(this);
 
@@ -125,7 +170,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
         // Add Group Chat Table
         roomsTable = new RoomList();
-
+       
         final JScrollPane pane = new JScrollPane(roomsTable);
         pane.setBackground(Color.white);
         pane.setForeground(Color.white);
@@ -153,10 +198,38 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                 refreshRoomList(serviceName);
             }
         });
+        
+        joinRoomItem.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent actionEvent) {
+               joinSelectedRoom();
+           }
+       });
 
+       addRoomItem.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent actionEvent) {
+               bookmarkRoom(serviceName);
+           }
+       });
+
+       refreshItem.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent actionEvent) {
+               refreshRoomList(serviceName);
+           }
+       });
+        
+        showHiddenButtons.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent actionEvent) {
+         	  popup.show(showHiddenButtons, 0, showHiddenButtons.getHeight());
+           }
+       });
+
+        
+        
         joinRoomButton.setEnabled(false);
         addRoomButton.setEnabled(false);
-
+        joinRoomItem.setEnabled(false);
+        addRoomItem.setEnabled(false);
+        
         addTableListener();
     }
 
@@ -314,9 +387,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                 int selectedRow = roomsTable.getSelectedRow();
                 if (selectedRow != -1) {
                     joinRoomButton.setEnabled(true);
-
+                    joinRoomItem.setEnabled(true);
                     String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
                     addRoomButton.setEnabled(true);
+                    addRoomItem.setEnabled(true);
                     if (isBookmarked(roomJID)) {
                         addBookmarkUI(false);
                     }
@@ -327,6 +401,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
                 else {
                     joinRoomButton.setEnabled(false);
                     addRoomButton.setEnabled(false);
+                    joinRoomItem.setEnabled(false);
+                    addRoomItem.setEnabled(false);
                     addBookmarkUI(true);
                 }
             }
@@ -417,12 +493,21 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
-
+        
         dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.browse.room.service", serviceName));
         dlg.setModal(false);
-
         dlg.pack();
-        dlg.setSize(500, 400);
+        dlg.addComponentListener(this);
+        
+        /* looking up which bundle is used to set the size of the Window 
+           (not using Localpreferences getLanguage() because sometimes language is not saved
+           in the properties file and so the method only returns an empty String) */
+        if(Res.getBundle().getLocale().toString().equals("de"))
+      	  dlg.setSize(700, 400);
+        else  
+      	  dlg.setSize(500, 400);
+        
+      	  
         dlg.setResizable(true);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
@@ -450,6 +535,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
             }
         });
 
+        // will need that, when the window is smaller then the buttons width...
+        setButtonsWidth();
+        
+        showHiddenButtons.setVisible(false);
+        
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();
@@ -528,7 +618,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == createButton) {
+        if (e.getSource() == createButton || e.getSource() == createItem) {
             createRoom();
         }
     }
@@ -714,5 +804,111 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener {
     }
 
 
+	public void componentHidden(ComponentEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentMoved(ComponentEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentResized(ComponentEvent e)
+	{
+		 if(this.getWidth() <= (oneButtonWidth + 19))
+		{
+			joinRoomButton.setVisible(false);
+	      addRoomButton.setVisible(false);
+	      createButton.setVisible(false);
+	      refreshButton.setVisible(false);
+			
+			joinRoomItem.setVisible(true);
+			addRoomItem.setVisible(true);
+			createItem.setVisible(true);
+			refreshItem.setVisible(true);
+			
+			showHiddenButtons.setVisible(true);
+		}
+		
+		else if(this.getWidth() <= (twoButtonWidth + 19))
+		{
+			joinRoomButton.setVisible(true);
+	      addRoomButton.setVisible(false);
+	      createButton.setVisible(false);
+	      refreshButton.setVisible(false);
+			
+			joinRoomItem.setVisible(false);
+			addRoomItem.setVisible(true);
+			createItem.setVisible(true);
+			refreshItem.setVisible(true);
+			
+			showHiddenButtons.setVisible(true);
+		}
+		
+		else if(this.getWidth() <= (threeButtonWidth + 19))
+		{
+			joinRoomButton.setVisible(true);
+	      addRoomButton.setVisible(true);
+	      createButton.setVisible(false);
+	      refreshButton.setVisible(false);
+			
+			joinRoomItem.setVisible(false);
+			addRoomItem.setVisible(false);
+			createItem.setVisible(true);
+			refreshItem.setVisible(true);
+			
+			showHiddenButtons.setVisible(true);
+		}
+		
+		else if(this.getWidth() <= (allButtonWidth + 19))
+		{
+			joinRoomButton.setVisible(true);
+	      addRoomButton.setVisible(true);
+	      createButton.setVisible(true);
+	      refreshButton.setVisible(false);
+			
+			joinRoomItem.setVisible(false);
+			addRoomItem.setVisible(false);
+			createItem.setVisible(false);
+			refreshItem.setVisible(true);
+			
+			showHiddenButtons.setVisible(true);
+		}
+		 
+		else if(this.getWidth() > (allButtonWidth + 19))
+		{
+			joinRoomButton.setVisible(true);
+		   addRoomButton.setVisible(true);
+		   createButton.setVisible(true);
+		   refreshButton.setVisible(true);
+				
+			joinRoomItem.setVisible(false);
+			addRoomItem.setVisible(false);
+			createItem.setVisible(false);
+			refreshItem.setVisible(false);
+				
+			showHiddenButtons.setVisible(false);
+		}
+	}
+
+	public void componentShown(ComponentEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	// will need that, when the window is smaller than the buttons width...
+	private void setButtonsWidth()
+	{
+      allButtonWidth 	= createButton.getWidth() + refreshButton.getWidth() + addRoomButton.getWidth() + joinRoomButton.getWidth();
+      threeButtonWidth 	= createButton.getWidth() + addRoomButton.getWidth() + joinRoomButton.getWidth() + showHiddenButtons.getWidth();
+      twoButtonWidth 	= addRoomButton.getWidth() + joinRoomButton.getWidth() + showHiddenButtons.getWidth();
+      oneButtonWidth 	= joinRoomButton.getWidth() + showHiddenButtons.getWidth();
+	}
+
 }
+
 

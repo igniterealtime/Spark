@@ -39,6 +39,13 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import java.io.File; 
+import java.io.FileInputStream; 
+import java.io.FileOutputStream;
+import java.io.IOException; 
+
 
 /**
  * UserSearchForm is used to do explicit searching of users using the JEP 55 Search Service.
@@ -56,6 +63,9 @@ public class UserSearchForm extends JPanel {
 
     private Map<String,SearchForm> serviceMap = new HashMap<String,SearchForm>();
 
+    
+    private static File pluginsettings = new File(System.getProperty("user.home") + "\\Spark\\search.properties"); //new
+    
     /**
      * Initializes the UserSearchForm with all available search services.
      *
@@ -75,20 +85,62 @@ public class UserSearchForm extends JPanel {
         showService(getSearchService());
     }
 
+    
+    
+    
+    
+    
     private void addSearchServices() {
         // Populate with Search Services
         servicesBox = new JComboBox();
-
+    
         for (Object searchService : searchServices) {
             String service = (String) searchService;
-            servicesBox.addItem(service);
+        	servicesBox.addItem(service);
         }
 
-        if (servicesBox.getItemCount() > 0) {
-            servicesBox.setSelectedIndex(0);
-        }
+        
+        // Load the property file and add the search services that are read
+        final Properties props = new Properties();
+        String nextprop;
+        boolean numbprop_bool=true;
+        int numbprop;
+        if (pluginsettings.exists()) { 
+        	Log.warning("Search-service Properties-file does exist= " + pluginsettings.getPath()); 
+            try { 
+                numbprop=0;
+                props.load(new FileInputStream(pluginsettings)); 
+               	String testsearch; 
+               	numbprop_bool=true;
+               	while (numbprop_bool)
+               		{
+               		nextprop = "search"+numbprop;
+               		testsearch = props.getProperty(nextprop);
+               		if (null != testsearch)
+               			{
+               			Log.warning("Search-Info: SearchService-" + numbprop + " from properties-file is " + nextprop + " : " + testsearch); 
+               			servicesBox.addItem(testsearch); 
+                   		numbprop++;
+               			} 
+               		else 
+               			numbprop_bool=false; 
+               		}
+
+               	} catch (IOException ioe) {
+                 System.err.println(ioe); 
+                
+               } 
+           } 
+           else { 
+        	   Log.error("Search-Searvice-Error: Properties-file does not exist= " + pluginsettings.getPath()); 
+           }        
 
 
+           if (servicesBox.getItemCount() > 0) {
+               servicesBox.setSelectedIndex(0);
+           }
+           
+        
         titlePanel = new TitlePanel("", "", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
         add(titlePanel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
@@ -126,7 +178,31 @@ public class UserSearchForm extends JPanel {
                             else {
                                 servicesBox.addItem(serviceName);
                                 servicesBox.setSelectedItem(serviceName);
+
+                                int numbprop=0;
+                                boolean numbprop_bool = true;
+                                String nextprop, testsearch;
+                                while (numbprop_bool)
+                            	{
+                                nextprop = "search"+numbprop;
+                               	testsearch = props.getProperty(nextprop);
+                               	if (testsearch != null)
+                               		numbprop++;
+                               	else 
+                               		{
+                               		Log.warning("Search-Service: " + nextprop + " : " + serviceName + " added");
+                               		props.setProperty(nextprop, serviceName);
+                               		numbprop_bool = false;
+                               		}
+                               	}   
+                                try {
+                                    props.store(new FileOutputStream(pluginsettings), null);
+                                } catch (IOException e) {
+                                	 System.err.println(e);
+                                }          
+
                             }
+                            
                         }
 
                     };
@@ -157,8 +233,7 @@ public class UserSearchForm extends JPanel {
         });
 
         add(cardPanel, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
-
+ 
     }
 
     /**
