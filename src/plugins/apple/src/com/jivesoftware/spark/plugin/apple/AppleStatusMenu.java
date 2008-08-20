@@ -274,7 +274,7 @@ public class AppleStatusMenu implements RosterListener, PresenceListener {
             public void run() {
 
                 String nickname = item.title();
-                String jid = SparkManager.getUserManager().getJIDFromNickname(nickname);
+                String jid = SparkManager.getUserManager().getJIDFromDisplayName(nickname);
                 if (jid != null) {
                     String bareJID = StringUtils.parseBareAddress(jid);
                     ChatManager chatManager = SparkManager.getChatManager();
