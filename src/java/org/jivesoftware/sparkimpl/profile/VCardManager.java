@@ -143,7 +143,7 @@ public class VCardManager {
 
                 if (personalVCard != null) {
                     byte[] bytes = personalVCard.getAvatar();
-                    if (bytes != null) {
+                    if (bytes != null && bytes.length > 0) {
                         update.setPhotoHash(personalVCard.getAvatarHash());
                         jax.setPhotoHash(personalVCard.getAvatarHash());
 
@@ -322,7 +322,7 @@ public class VCardManager {
 
                 // If VCard is loaded, then save the avatar to the personal folder.
                 byte[] bytes = personalVCard.getAvatar();
-                if (bytes != null) {
+                if (bytes != null && bytes.length > 0) {
                     ImageIcon icon = new ImageIcon(bytes);
                     icon = VCardManager.scale(icon);
                     if (icon != null && icon.getIconWidth() != -1) {
@@ -348,7 +348,7 @@ public class VCardManager {
     public static ImageIcon getAvatarIcon(VCard vcard) {
         // Set avatar
         byte[] bytes = vcard.getAvatar();
-        if (bytes != null) {
+        if (bytes != null && bytes.length > 0) {
             ImageIcon icon = new ImageIcon(bytes);
             return GraphicUtils.scaleImageIcon(icon, 40, 40);
         }
@@ -620,7 +620,7 @@ public class VCardManager {
         String fileName = Base64.encodeBytes(jid.getBytes());
 
         byte[] bytes = vcard.getAvatar();
-        if (bytes != null) {
+        if (bytes != null && bytes.length > 0) {
             vcard.setAvatar(bytes);
             try {
                 String hash = vcard.getAvatarHash();

@@ -339,7 +339,7 @@ public class VCardEditor {
 
         // Set avatar
         byte[] bytes = vcard.getAvatar();
-        if (bytes != null) {
+        if (bytes != null && bytes.length > 0) {
             ImageIcon icon = new ImageIcon(bytes);
             avatarPanel.setAvatar(icon);
             avatarPanel.setAvatarBytes(bytes);
@@ -455,4 +455,5 @@ public class VCardEditor {
 
 
 }
+
 

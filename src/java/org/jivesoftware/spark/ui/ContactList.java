@@ -379,6 +379,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 contactItem.setAvailable(true);
                 toggleGroupVisibility(contactGroup.getGroupName(), true);
 
+                contactItem.updateAvatarInSideIcon();
                 contactItem.showUserComingOnline();
                 contactGroup.fireContactGroupUpdated();
 
@@ -2125,6 +2126,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
+
 
 
 

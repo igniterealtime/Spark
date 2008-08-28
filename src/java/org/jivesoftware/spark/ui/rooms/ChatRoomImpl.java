@@ -669,7 +669,6 @@ public class ChatRoomImpl extends ChatRoom {
     // I would normally use the command pattern, but
     // have no real use when dealing with just a couple options.
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
 
         if (e.getSource() == infoButton) {
             VCardManager vcard = SparkManager.getVCardManager();
@@ -680,6 +679,8 @@ public class ChatRoomImpl extends ChatRoom {
             rosterDialog.setDefaultJID(participantJID);
             rosterDialog.setDefaultNickname(getParticipantNickname());
             rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
+        } else {
+            super.actionPerformed(e);
         }
     }
 }

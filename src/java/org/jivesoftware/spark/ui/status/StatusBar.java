@@ -417,7 +417,7 @@ public class StatusBar extends JPanel implements VCardListener {
                 }
 
 
-                if (avatarBytes != null) {
+                if (avatarBytes != null && avatarBytes.length > 0) {
                     try {
                         ImageIcon avatarIcon = new ImageIcon(avatarBytes);
                         avatarIcon = VCardManager.scale(avatarIcon);

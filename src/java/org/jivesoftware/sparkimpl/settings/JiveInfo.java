@@ -17,11 +17,17 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "2.6.0 Beta 1";
+        return "2.6.0 Beta 2";
     }
 
+    /*
+     * This should be used for an actual
+     * build number, rather than duplicating
+     * getVersion(); i propose to use the
+     * SVN revision number of the build 
+     */
     public static String getBuildNumber() {
-        return "2.6.0 Beta 1";
+        return "10370"; //example number
     }
 
     public static String getOS() {

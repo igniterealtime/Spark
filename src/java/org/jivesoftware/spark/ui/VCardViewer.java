@@ -87,7 +87,7 @@ public class VCardViewer extends JPanel {
                 ImageIcon icon = null;
 
                 byte[] bytes = vcard.getAvatar();
-                if (bytes != null) {
+                if (bytes != null && bytes.length > 0) {
                     try {
                         icon = new ImageIcon(bytes);
                         Image aImage = icon.getImage();

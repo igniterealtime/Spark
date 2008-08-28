@@ -221,7 +221,7 @@ public class PluginManager implements MainWindowListener {
                 try {
                     minVersion = plugin.selectSingleNode("minSparkVersion").getText();
 
-                    String buildNumber = JiveInfo.getBuildNumber();
+                    String buildNumber = JiveInfo.getVersion();
                     boolean ok = buildNumber.compareTo(minVersion) >= 0;
 
                     if (!ok) {
