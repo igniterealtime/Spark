@@ -179,7 +179,6 @@ public class SparkTransferManager {
         downloadsMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Downloads downloads = Downloads.getInstance();
-                downloads.showDownloadsDirectory();
             }
         });
 
@@ -234,7 +233,6 @@ public class SparkTransferManager {
         viewDownloads.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Downloads downloads = Downloads.getInstance();
-                downloads.showDownloadsDirectory();
             }
         });
     }

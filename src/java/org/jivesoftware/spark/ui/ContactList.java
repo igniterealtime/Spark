@@ -1946,12 +1946,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // Do nothing.
     }
 
-    private void saveState() {
+    public void saveState() {
         if (props == null) {
             return;
         }
-        for (ContactGroup contactGroup : getContactGroups()) {
-            props.put(contactGroup.getGroupName(), Boolean.toString(contactGroup.isCollapsed()));
+        for (ContactGroup contactGroup : getContactGroups()) { 
+      	  props.put(contactGroup.getGroupName(), Boolean.toString(contactGroup.isCollapsed()));
         }
 
         try {
@@ -2126,6 +2126,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
+
 
 
 

@@ -14,6 +14,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
@@ -73,7 +74,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private LocalPreferences preferences;
 
-
+    private ContactList contactList =  Workspace.getInstance().getContactList();
     /**
      * Create a new ContactGroup.
      *
@@ -106,17 +107,26 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         getTitlePane().addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 checkPopup(e);
+                
             }
 
             public void mouseReleased(MouseEvent e) {
                 checkPopup(e);
             }
 
+            public void mouseClicked(MouseEvent e) {
+	             if(e.getButton() == MouseEvent.BUTTON1)
+	             {
+	           	 	contactList.saveState();
+	             }
+            }
+
             public void checkPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    e.consume();
-                    fireContactGroupPopupEvent(e);
-                }
+	             if (e.isPopupTrigger()) 
+	             {
+	               e.consume();
+	               fireContactGroupPopupEvent(e);
+	             }
             }
         });
 
@@ -871,6 +881,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
    		 ContactInfoWindow.getInstance().display(this, e);
     }
 }
+
 
 
 

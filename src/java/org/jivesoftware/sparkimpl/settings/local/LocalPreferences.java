@@ -253,6 +253,14 @@ public class LocalPreferences {
     public void setDownloadDir(String downloadDir) {
         props.setProperty("downloadDirectory", downloadDir);
     }
+    
+    public String getFileExplorer(){
+   	 return props.getProperty("fileExplorer");
+    }
+    
+    public void setFileExplorer(String fileExplorer){
+   	 props.setProperty("fileExplorer", fileExplorer);
+    }
 
     public boolean isProxyEnabled() {
         return getBoolean("proxyEnabled", false);

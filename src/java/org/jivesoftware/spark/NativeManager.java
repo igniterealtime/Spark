@@ -107,8 +107,8 @@ public class NativeManager {
             final NativeHandler alert = (NativeHandler)alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
-                alert.openFile(file);
-                return true;
+                boolean couldOpenFile = alert.openFile(file);
+                return couldOpenFile;
             }
         }
 
