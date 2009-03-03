@@ -79,7 +79,7 @@ public class PreferenceDialog implements PropertyChangeListener {
                 JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
         preferenceDialog.pack();
-        preferenceDialog.setSize(700, 480);
+        preferenceDialog.setSize(700, 550);
         preferenceDialog.setContentPane(mainPanel);
         preferenceDialog.setLocationRelativeTo(SparkManager.getMainWindow());
 
