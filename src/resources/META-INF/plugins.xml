@@ -164,5 +164,23 @@
         <email>derek@jivesoftware.com</email>
         <description>Allows users to explicitly set their language.</description>
         <class>org.jivesoftware.sparkimpl.plugin.language.LanguagePlugin</class>
+    </plugin>    
+    <plugin>
+        <name>SystemTray</name>
+        <version>1.0</version>
+        <author>Michael Will</author>
+        <homePage>http://www.igniterealtime.org</homePage>
+        <email>michael-will@gmx.net</email>
+        <description>SystemTray.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.systray.SysTrayPlugin</class>
+    </plugin>
+    <plugin>
+        <name>UserIdle</name>
+        <version>1.0</version>
+        <author>Michael Will</author>
+        <homePage>http://www.igniterealtime.org</homePage>
+        <email>michael-will@gmx.net</email>
+        <description>SystemTray.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin</class>
     </plugin>
 </plugins>

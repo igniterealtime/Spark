@@ -376,14 +376,14 @@ public class Downloads {
 						pref.setFileExplorer("");
 						renewExplorer.setEnabled(false);
 					}
-		            /*   	try
-								{
-									Desktop.getDesktop().open(new File(pref.getDownloadDir()));
-								}
-								catch (IOException e1)
-								{
-									JOptionPane.showMessageDialog(dlg, "Der Dateimanager konnte nicht geöffnet werden!");
-								}
+		            /*	try
+						{
+							Desktop.getDesktop().open(new File(pref.getDownloadDir()));
+						}
+						catch (IOException e1)
+						{
+							JOptionPane.showMessageDialog(dlg, "Der Dateimanager konnte nicht geÃ¶ffnet werden!");
+						}
 						*/
         	}
     }

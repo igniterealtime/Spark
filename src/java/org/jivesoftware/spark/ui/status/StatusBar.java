@@ -347,6 +347,15 @@ public class StatusBar extends JPanel implements VCardListener {
     public Collection getStatusList() {
         return statusList;
     }
+    
+    public Collection getCustomStatusList()
+    {
+    	List custom = CustomMessages.load();;;
+    	if (custom == null)
+    		custom = new ArrayList();
+    	
+    	return custom;
+    }
 
     public Presence getPresence() {
         return currentPresence;
