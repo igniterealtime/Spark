@@ -61,7 +61,7 @@ public class URLFileSystem {
 
     public static String getContents(File file) {
         try {
-            return getContents(file.toURL());
+            return getContents(file.toURI().toURL());
         }
         catch (MalformedURLException e) {
             return "";
@@ -580,7 +580,7 @@ public class URLFileSystem {
     private static final Method urlSet;
 
     static {
-        final Class str = String.class;
+        final Class<String> str = String.class;
         try {
             urlSet = URL.class.getDeclaredMethod("set", str, str, int.class, str, str, str, str, str);
 
@@ -624,7 +624,7 @@ public class URLFileSystem {
         final File parentFile = file.getParentFile();
         if (parentFile != null && !file.equals(parentFile)) {
             try {
-                return parentFile.toURL();
+                return parentFile.toURI().toURL();
             }
             catch (Exception ex) {
                 return null;

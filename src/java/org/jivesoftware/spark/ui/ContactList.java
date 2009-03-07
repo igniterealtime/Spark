@@ -10,14 +10,70 @@
 
 package org.jivesoftware.spark.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.RosterListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.RosterPacket;
+import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.LastActivityManager;
 import org.jivesoftware.smackx.SharedGroupManager;
@@ -39,24 +95,10 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import sun.util.logging.resources.logging;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
-import java.util.Timer;
-
 public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
-    private JPanel mainPanel = new JPanel();
+
+	private static final long serialVersionUID = -4391111935248627078L;
+	private JPanel mainPanel = new JPanel();
     private JScrollPane contactListScrollPane;
     private final List<ContactGroup> groupList = new ArrayList<ContactGroup>();
     private final RolloverButton addingGroupButton;
@@ -172,7 +214,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // Add KeyMappings
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = -5956142123453578689L;
+
+			public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
         });
@@ -180,7 +224,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         // Handle Command-F on Macs
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 7883006402414136652L;
+
+			public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
         });
@@ -987,11 +1033,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      * @return the nested ContactGroup. If not found, null will be returned.
      */
     private ContactGroup getSubContactGroup(ContactGroup group, String groupName) {
-        final Iterator contactGroups = group.getContactGroups().iterator();
+        final Iterator<ContactGroup> contactGroups = group.getContactGroups().iterator();
         ContactGroup grp = null;
 
         while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = (ContactGroup)contactGroups.next();
+            ContactGroup contactGroup = contactGroups.next();
             if (contactGroup.getGroupName().equals(groupName)) {
                 grp = contactGroup;
                 break;
@@ -1075,10 +1121,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 	            entry.setName(newAlias);
 	
 	
-	            final Iterator contactGroups = groupList.iterator();
+	            final Iterator<ContactGroup> contactGroups = groupList.iterator();
 	            String user = StringUtils.parseBareAddress(address);
 	            while (contactGroups.hasNext()) {
-	                ContactGroup cg = (ContactGroup)contactGroups.next();
+	                ContactGroup cg = contactGroups.next();
 	                ContactItem ci = cg.getContactItemByJID(user);
 	                if (ci != null) {
 	                    ci.setAlias(newAlias);
@@ -1287,7 +1333,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Add Send File Action
         Action sendAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -7519717310558205566L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 SparkManager.getTransferManager().sendFileTo(item);
             }
         };
@@ -1323,7 +1371,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Define remove entry action
         Action removeAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -2565914214685979320L;
+
+			public void actionPerformed(ActionEvent e) {
                 removeContactFromRoster(item);
             }
         };
@@ -1351,7 +1401,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         Action viewProfile = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -2562731455090634805L;
+
+			public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
                 String jid = item.getJID();
                 vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
@@ -1366,7 +1418,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         popup.addSeparator();
 
         Action lastActivityAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -4884230635430933060L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), item.getJID());
                     long idleTime = (activity.getIdleTime() * 1000);
@@ -1388,7 +1442,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         Action subscribeAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -7754905015338902300L;
+
+			public void actionPerformed(ActionEvent e) {
                 String jid = item.getJID();
                 Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);

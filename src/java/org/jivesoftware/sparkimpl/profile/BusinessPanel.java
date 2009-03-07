@@ -10,20 +10,24 @@
 
 package org.jivesoftware.sparkimpl.profile;
 
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.resource.Res;
+import java.awt.Component;
+import java.awt.FocusTraversalPolicy;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.component.focus.SpecifiedOrderFocusTraversalPolicy;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 public class BusinessPanel extends JPanel {
-    private JLabel companyLabel = new JLabel();
+
+	private static final long serialVersionUID = -6319059605447012843L;
+	private JLabel companyLabel = new JLabel();
     private JLabel streetLabel = new JLabel();
     private JLabel cityLabel = new JLabel();
     private JLabel stateLabel = new JLabel();
@@ -106,19 +110,18 @@ public class BusinessPanel extends JPanel {
         this.add(webPageLabel, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(webPageField, new GridBagConstraints(3, 6, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        // TODO: Convert to newer focus API
-        companyField.setNextFocusableComponent(streetField);
-        streetField.setNextFocusableComponent(cityField);
-        cityField.setNextFocusableComponent(stateField);
-        stateField.setNextFocusableComponent(zipCodeField);
-        zipCodeField.setNextFocusableComponent(countryField);
-        countryField.setNextFocusableComponent(jobTitleField);
-        jobTitleField.setNextFocusableComponent(departmentField);
-        departmentField.setNextFocusableComponent(phoneField);
-        phoneField.setNextFocusableComponent(faxField);
-        faxField.setNextFocusableComponent(pagerField);
-        pagerField.setNextFocusableComponent(mobileField);
-        mobileField.setNextFocusableComponent(webPageField);
+
+        final Component order[] = new Component[] {	
+        											companyField, streetField,cityField,
+        											stateField, zipCodeField,countryField,
+        											jobTitleField,departmentField,phoneField,
+        											faxField, pagerField,mobileField,
+        											webPageField 
+        										   };
+        
+        FocusTraversalPolicy policy = new SpecifiedOrderFocusTraversalPolicy(order);
+        setFocusTraversalPolicy(policy);
+        setFocusTraversalPolicyProvider(true); 
     }
 
     public void setCompany(String company) {

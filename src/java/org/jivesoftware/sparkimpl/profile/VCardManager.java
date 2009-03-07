@@ -507,7 +507,7 @@ public class VCardManager {
         if (jid != null && StringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()).equals(StringUtils.parseBareAddress(jid))) {
             if (imageFile.exists()) {
                 try {
-                    return imageFile.toURL();
+                    return imageFile.toURI().toURL();
                 }
                 catch (MalformedURLException e) {
                     Log.error(e);
@@ -601,7 +601,7 @@ public class VCardManager {
 
             final File avatarFile = new File(contactsDir, hash);
             try {
-                return avatarFile.toURL();
+                return avatarFile.toURI().toURL();
             }
             catch (MalformedURLException e) {
                 Log.error(e);

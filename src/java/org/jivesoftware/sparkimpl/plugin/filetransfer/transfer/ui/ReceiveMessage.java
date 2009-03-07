@@ -61,7 +61,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 
 public class ReceiveMessage extends JPanel {
-    private FileDragLabel imageLabel = new FileDragLabel();
+
+	private static final long serialVersionUID = -2974192409566650923L;
+	private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
@@ -461,7 +463,7 @@ public class ReceiveMessage extends JPanel {
 
         if (isImage(downloadedFile.getName())) {
             try {
-                URL imageURL = downloadedFile.toURL();
+                URL imageURL = downloadedFile.toURI().toURL();
                 ImageIcon image = new ImageIcon(imageURL);
                 image = GraphicUtils.scaleImageIcon(image, 64, 64);
                 imageLabel.setIcon(image);
@@ -496,7 +498,10 @@ public class ReceiveMessage extends JPanel {
 
     private class TransferButton extends JButton {
 
-        public TransferButton() {
+		private static final long serialVersionUID = -9198495278243559064L;
+
+
+		public TransferButton() {
             decorate();
         }
 
@@ -590,7 +595,9 @@ public class ReceiveMessage extends JPanel {
 
             final ReceiveMessage ui = this;
             Action saveAsAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent e) {
+				private static final long serialVersionUID = -3010501340128285438L;
+
+				public void actionPerformed(ActionEvent e) {
                     final JFileChooser chooser = Downloads.getInstance().getFileChooser();
                     File selectedFile = chooser.getSelectedFile();
                     if (selectedFile != null) {
@@ -611,7 +618,7 @@ public class ReceiveMessage extends JPanel {
                                     return;
                                 }
                             }
-                            URLFileSystem.copy(downloadedFile.toURL(), file);
+                            URLFileSystem.copy(downloadedFile.toURI().toURL(), file);
                         }
                         catch (IOException e1) {
                             Log.error(e1);

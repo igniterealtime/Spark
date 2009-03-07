@@ -42,7 +42,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SparkPlugUI extends JPanel {
-    private PublicPlugin plugin;
+
+	private static final long serialVersionUID = -4206533328807591854L;
+	private PublicPlugin plugin;
     private final JButton installButton = new JButton();
     private JLabel imageIcon = new JLabel();
 
@@ -184,10 +186,10 @@ public class SparkPlugUI extends JPanel {
             File smallIcon = new File(pluginDIR, "logo_small.gif");
             File largeIcon = new File(pluginDIR, "logo_large.gif");
             if (largeIcon.exists()) {
-                setIcon(new ImageIcon(largeIcon.toURL()));
+                setIcon(new ImageIcon(largeIcon.toURI().toURL()));
             }
             else if (smallIcon.exists()) {
-                setIcon(new ImageIcon(smallIcon.toURL()));
+                setIcon(new ImageIcon(smallIcon.toURI().toURL()));
             }
         }
         catch (MalformedURLException e) {

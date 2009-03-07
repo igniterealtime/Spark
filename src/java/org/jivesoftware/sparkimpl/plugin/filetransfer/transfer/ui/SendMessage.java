@@ -52,7 +52,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 public class SendMessage extends JPanel {
-    private FileDragLabel imageLabel = new FileDragLabel();
+
+	private static final long serialVersionUID = -4403839897649365671L;
+	private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
@@ -138,7 +140,7 @@ public class SendMessage extends JPanel {
 
         if (isImage(fileName)) {
             try {
-                URL imageURL = new File(transfer.getFilePath()).toURL();
+                URL imageURL = new File(transfer.getFilePath()).toURI().toURL();
                 ImageIcon image = new ImageIcon(imageURL);
                 image = GraphicUtils.scaleImageIcon(image, 64, 64);
                 imageLabel.setIcon(image);
@@ -297,7 +299,9 @@ public class SendMessage extends JPanel {
 
     private class TransferButton extends JButton {
 
-        public TransferButton() {
+		private static final long serialVersionUID = 8807434179541503654L;
+
+		public TransferButton() {
             decorate();
         }
 

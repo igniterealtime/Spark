@@ -123,7 +123,7 @@ public class PluginManager implements MainWindowListener {
                     }
 
                     try {
-                        URLFileSystem.copy(file.toURL(), newFile);
+                        URLFileSystem.copy(file.toURI().toURL(), newFile);
                     }
                     catch (IOException e) {
                         Log.error(e);
@@ -143,9 +143,7 @@ public class PluginManager implements MainWindowListener {
         // Delete all old plugins
         File[] oldFiles = PLUGINS_DIRECTORY.listFiles();
         if (oldFiles != null) {
-            final int no = oldFiles.length;
-            for (int i = 0; i < no; i++) {
-                File file = oldFiles[i];
+            for (File file : oldFiles) {
                 if (file.isDirectory()) {
                     // Check to see if it has an associated .jar
                     File jarFile = new File(PLUGINS_DIRECTORY, file.getName() + ".jar");
@@ -364,7 +362,7 @@ public class PluginManager implements MainWindowListener {
      *
      * @return a Collection of Plugins.
      */
-    public Collection getPlugins() {
+    public Collection<Plugin> getPlugins() {
         return plugins;
     }
 
@@ -374,7 +372,7 @@ public class PluginManager implements MainWindowListener {
      * @param communicatorPlugin the plugin to find.
      * @return the instance of the plugin.
      */
-    public Plugin getPlugin(Class communicatorPlugin) {
+    public Plugin getPlugin(Class<? extends Plugin> communicatorPlugin) {
         for (Object o : getPlugins()) {
             Plugin plugin = (Plugin) o;
             if (plugin.getClass() == communicatorPlugin) {
@@ -469,7 +467,7 @@ public class PluginManager implements MainWindowListener {
 
                 URL url = null;
                 try {
-                    url = jar.toURL();
+                    url = jar.toURI().toURL();
                 }
                 catch (MalformedURLException e) {
                     Log.error(e);
@@ -612,9 +610,7 @@ public class PluginManager implements MainWindowListener {
 
         File[] libs = libDir.listFiles();
         if (libs != null) {
-            final int no = libs.length;
-            for (int i = 0; i < no; i++) {
-                File f = libs[i];
+            for (File f : libs) {
                 f.delete();
             }
         }

@@ -397,7 +397,7 @@ public class VCardEditor {
         if (avatarFile != null) {
             try {
                 // Make it 48x48
-                ImageIcon icon = new ImageIcon(avatarFile.toURL());
+                ImageIcon icon = new ImageIcon(avatarFile.toURI().toURL());
                 Image image = icon.getImage();
                 image = image.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
                 avatarBytes = GraphicUtils.getBytesFromImage(image);

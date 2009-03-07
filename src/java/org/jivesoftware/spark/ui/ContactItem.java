@@ -40,7 +40,9 @@ import java.net.URL;
  * Represent a single contact within the <code>ContactList</code>.
  */
 public class ContactItem extends JPanel {
-    private JLabel imageLabel;
+
+	private static final long serialVersionUID = 1514044406550293152L;
+	private JLabel imageLabel;
     private JLabel displayNameLabel;
     private JLabel descriptionLabel;
     private String nickname;
@@ -364,7 +366,7 @@ public class ContactItem extends JPanel {
         if (ModelUtil.hasLength(hash)) {
             final File imageFile = new File(contactsDir, hash);
             if (imageFile.exists()) {
-                return imageFile.toURL();
+                return imageFile.toURI().toURL();
             }
         }
 

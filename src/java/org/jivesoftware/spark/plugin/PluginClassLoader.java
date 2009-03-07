@@ -48,7 +48,7 @@ public class PluginClassLoader extends URLClassLoader {
      * @throws java.net.MalformedURLException if the libDir path is not valid.
      */
     public PluginClassLoader(ClassLoader parent, File libDir) throws MalformedURLException {
-        super(new URL[]{libDir.toURL()}, parent);
+        super(new URL[]{libDir.toURI().toURL()}, parent);
     }
 
     /**
@@ -81,7 +81,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         for (File jar : jars) {
             if (jar.isFile()) {
-                final URL url = jar.toURL();
+                final URL url = jar.toURI().toURL();
                 addURL(url);
                 try {
                     checkForSmackProviders(url);
@@ -134,7 +134,7 @@ public class PluginClassLoader extends URLClassLoader {
                         // reflection later to create instances of the class.
                         try {
                             // Add the provider to the map.
-                            Class provider = this.loadClass(className);
+                            Class<?> provider = this.loadClass(className);
                             if (IQProvider.class.isAssignableFrom(provider)) {
                                 ProviderManager.getInstance().addIQProvider(elementName, namespace, provider.newInstance());
                             }
@@ -166,7 +166,7 @@ public class PluginClassLoader extends URLClassLoader {
                         // of the class.
                         try {
                             // Add the provider to the map.
-                            Class provider = this.loadClass(className);
+                            Class<?> provider = this.loadClass(className);
                             if (PacketExtensionProvider.class.isAssignableFrom(
                                     provider)) {
                                 ProviderManager.getInstance().addExtensionProvider(elementName, namespace, provider.newInstance());

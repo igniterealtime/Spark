@@ -10,20 +10,24 @@
 
 package org.jivesoftware.sparkimpl.profile;
 
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.resource.Res;
+import java.awt.Component;
+import java.awt.FocusTraversalPolicy;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.component.focus.SpecifiedOrderFocusTraversalPolicy;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 public class HomePanel extends JPanel {
-    private JLabel streetLabel = new JLabel();
+
+	private static final long serialVersionUID = -838061087276345124L;
+	private JLabel streetLabel = new JLabel();
     private JLabel cityLabel = new JLabel();
     private JLabel stateLabel = new JLabel();
     private JLabel zipCodeLabel = new JLabel();
@@ -87,16 +91,14 @@ public class HomePanel extends JPanel {
         this.add(pagerField, new GridBagConstraints(3, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(mobileField, new GridBagConstraints(3, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        // TODO: Convert to newer focus model
-        streetField.setNextFocusableComponent(cityField);
-        cityField.setNextFocusableComponent(stateField);
-        stateField.setNextFocusableComponent(zipCodeField);
-        zipCodeField.setNextFocusableComponent(countryField);
-        phoneField.setNextFocusableComponent(faxField);
-        faxField.setNextFocusableComponent(pagerField);
-        pagerField.setNextFocusableComponent(mobileField);
-        mobileField.setNextFocusableComponent(webPageField);
-        countryField.setNextFocusableComponent(phoneField);
+        final Component order[] = new Component[] {	 
+        											 streetField, cityField, stateField,
+        											 zipCodeField,countryField, phoneField, 
+        											 faxField, pagerField, mobileField, 
+        										   };
+        FocusTraversalPolicy policy = new SpecifiedOrderFocusTraversalPolicy(order);
+        setFocusTraversalPolicy(policy);
+        setFocusTraversalPolicyProvider(true); 
     }
 
 

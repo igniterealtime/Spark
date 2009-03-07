@@ -100,7 +100,7 @@ public class SoundManager {
         final Runnable playThread = new Runnable() {
             public void run() {
                 try {
-                    final URL url = soundFile.toURL();
+                    final URL url = soundFile.toURI().toURL();
                     AudioClip ac = fileMap.get(url);
                     if (ac == null) {
                         ac = Applet.newAudioClip(url);
