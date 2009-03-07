@@ -122,9 +122,21 @@ public class EmoticonManager {
                     long copiedFile = newFile.lastModified();
 
                     if (installerFile > copiedFile) {
-                        // Copy over and expand :)
-                        URLFileSystem.copy(file.toURL(), newFile);
-                        expandNewPack(newFile, newEmoticonDir);
+                    	//Check if File is Zip-File
+                    	int endIndex = file.getName().indexOf(".zip");
+                    	
+                    	if(endIndex > 0)
+                    	{
+                    		String unzipURL = file.getName().substring( 0, endIndex );
+                    		File unzipFile = new File(newEmoticonDir, unzipURL);
+                    		
+                    		if(!unzipFile.exists())	
+                    		{
+                    			// Copy over and expand :)
+                    			URLFileSystem.copy(file.toURI().toURL(), newFile);
+                    			expandNewPack(newFile, newEmoticonDir);
+                    		}
+                    	}
                     }
                 }
                 catch (IOException e) {
@@ -184,10 +196,10 @@ public class EmoticonManager {
 
         // Copy to the emoticon area
         try {
-            URLFileSystem.copy(pack.toURL(), new File(EMOTICON_DIRECTORY, pack.getName()));
+            URLFileSystem.copy(pack.toURI().toURL(), new File(EMOTICON_DIRECTORY, pack.getName()));
 
             File rootDirectory = unzipPack(pack, EMOTICON_DIRECTORY);
-            name = URLFileSystem.getName(rootDirectory.toURL());
+            name = URLFileSystem.getName(rootDirectory.toURI().toURL());
             addEmoticonPack(name);
         }
         catch (IOException e) {
@@ -288,7 +300,7 @@ public class EmoticonManager {
 
         File file = new File(emoticon.getEmoticonDirectory(), imageName);
         try {
-            return file.toURL();
+            return file.toURI().toURL();
         }
         catch (MalformedURLException e) {
             e.printStackTrace();
@@ -372,7 +384,7 @@ public class EmoticonManager {
         for (File file : dirs) {
             if (file.isDirectory() && file.getName().toLowerCase().endsWith("adiumemoticonset")) {
                 try {
-                    String name = URLFileSystem.getName(file.toURL());
+                    String name = URLFileSystem.getName(file.toURI().toURL());
                     name = name.replaceAll("adiumemoticonset", "");
                     name = name.replaceAll("AdiumEmoticonset", "");
                     emoticonList.add(name);
@@ -394,7 +406,7 @@ public class EmoticonManager {
     private void expandNewPack(File file, File dist) {
         URL url = null;
         try {
-            url = file.toURL();
+            url = file.toURI().toURL();
         }
         catch (MalformedURLException e) {
             Log.error(e);
