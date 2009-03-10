@@ -11,26 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace.invite;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import com.jivesoftware.smack.workgroup.agent.Agent;
-import com.jivesoftware.smack.workgroup.agent.AgentRoster;
-import com.jivesoftware.smack.workgroup.agent.WorkgroupQueue;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.component.JiveTreeCellRenderer;
-import org.jivesoftware.spark.component.JiveTreeNode;
-import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.Tree;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -57,6 +37,26 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.workgroup.agent.Agent;
+import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
+import org.jivesoftware.smackx.workgroup.agent.WorkgroupQueue;
+import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.component.JiveTreeCellRenderer;
+import org.jivesoftware.spark.component.JiveTreeNode;
+import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.Tree;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 
 /**

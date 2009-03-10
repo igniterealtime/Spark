@@ -11,15 +11,31 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import com.jivesoftware.smack.workgroup.agent.Offer;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.workgroup.agent.Offer;
 import org.jivesoftware.spark.component.LinkLabel;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.WrappedLabel;
@@ -28,24 +44,10 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.FlowLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-
 public class ChatQueue extends JPanel {
-    private JLabel nameLabel = new JLabel();
+
+	private static final long serialVersionUID = 1L;
+	private JLabel nameLabel = new JLabel();
     private RolloverButton acceptButton;
     private RolloverButton declineButton;
     private LinkLabel viewLabel;

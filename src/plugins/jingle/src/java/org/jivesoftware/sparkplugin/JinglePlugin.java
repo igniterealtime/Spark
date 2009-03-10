@@ -69,6 +69,9 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         // Add Jingle to discovered items list.
         SparkManager.addFeature(JINGLE_NAMESPACE);
 
+        // Set Jingle Enabled
+        JingleManager.setJingleServiceEnabled();
+        
         // Add to PhoneManager
         PhoneManager.getInstance().addPhone(this);
 

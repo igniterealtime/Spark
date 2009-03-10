@@ -28,7 +28,9 @@ import java.util.Date;
 import org.jivesoftware.spark.UserManager;
 
 public class AgentConversation extends JPanel {
-    private JLabel agentLabel = new JLabel();
+
+	private static final long serialVersionUID = 4723796422650155313L;
+	private JLabel agentLabel = new JLabel();
     private JLabel visitorLabel = new JLabel();
     private JLabel emailLabel = new JLabel();
     private JLabel dateLabel = new JLabel();

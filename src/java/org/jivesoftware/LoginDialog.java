@@ -821,6 +821,11 @@ public final class LoginDialog {
 
 
                     }
+                    
+                    config.setReconnectionAllowed(true);
+                    config.setRosterLoadedAtLogin(true);
+                    config.setSendPresence(false);
+                    
                     if (localPref.isPKIEnabled()) {
                         SASLAuthentication.supportSASLMechanism("EXTERNAL");
                         config.setKeystoreType(localPref.getPKIStore());
@@ -840,8 +845,7 @@ public final class LoginDialog {
                         }
                     }
 
-                    if (config != null) {
-                        config.setReconnectionAllowed(true);
+                    if (config != null) {                        
                         boolean compressionEnabled = localPref.isCompressionEnabled();
                         config.setCompressionEnabled(compressionEnabled);
                         connection = new XMPPConnection(config,this);
@@ -850,14 +854,14 @@ public final class LoginDialog {
                             config.setTruststorePassword(localPref.getTrustStorePassword());
                         }
                     }
-
+                    
                     connection.connect();
 
                     String resource = localPref.getResource();
                     if (!ModelUtil.hasLength(resource)) {
                         resource = "spark";
-                    }
-                    connection.login(getUsername(), getPassword(), resource, false);
+                    }                   
+                    connection.login(getUsername(), getPassword(), resource);
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getUsername(), getPassword());

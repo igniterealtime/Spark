@@ -14,9 +14,9 @@ package org.jivesoftware.fastpath.workspace.panes;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
-import com.jivesoftware.smack.workgroup.agent.AgentRoster;
-import com.jivesoftware.smack.workgroup.agent.AgentRosterListener;
-import com.jivesoftware.smack.workgroup.packet.AgentStatus;
+import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
+import org.jivesoftware.smackx.workgroup.agent.AgentRosterListener;
+import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -56,7 +56,9 @@ import java.util.List;
  * AgentsTable is responsible for managing all agents in the owning workgroup.
  */
 public final class OnlineAgents extends JPanel {
-    private AgentRoster agentRoster;
+
+	private static final long serialVersionUID = 1L;
+	private AgentRoster agentRoster;
     private ContactGroup contactGroup;
     private JPanel topToolbar = new JPanel();
 
@@ -156,7 +158,7 @@ public final class OnlineAgents extends JPanel {
                         nickname = agent;
                     }
 
-                    ContactItem item = new ContactItem(nickname, agent) {
+                    ContactItem item = new ContactItem("",nickname, agent) {
                         public String getToolTipText() {
                             Presence agentPresence = agentRoster.getPresence(agent);
                             return buildTooltip(agentPresence);
@@ -289,7 +291,7 @@ public final class OnlineAgents extends JPanel {
 
             Presence agentPresence = agentRoster.getPresence(agent);
             if (agentPresence.isAvailable()) {
-                ContactItem item = new ContactItem(nickname, agent) {
+                ContactItem item = new ContactItem("",nickname, agent) {
                     public String getToolTipText() {
                         Presence agentPresence = agentRoster.getPresence(agent);
                         return buildTooltip(agentPresence);
@@ -332,7 +334,7 @@ public final class OnlineAgents extends JPanel {
                     if (nickname == null) {
                         nickname = agent;
                     }
-                    ContactItem contactItem = new ContactItem(nickname, StringUtils.parseBareAddress(presence.getFrom()));
+                    ContactItem contactItem = new ContactItem("",nickname, StringUtils.parseBareAddress(presence.getFrom()));
                     contactItem.setPresence(presence);
                     contactGroup.addContactItem(contactItem);
                 }

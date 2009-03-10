@@ -10,10 +10,10 @@
  */
 package org.jivesoftware.fastpath.internal;
 
-import com.jivesoftware.smack.workgroup.settings.ChatSetting;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.jivesoftware.smackx.workgroup.settings.ChatSetting;
 
 public class FormText {
 

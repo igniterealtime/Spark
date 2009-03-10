@@ -11,22 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace.search;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
-import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
-import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
-import com.jivesoftware.smack.workgroup.agent.AgentSession;
-import com.jivesoftware.smack.workgroup.packet.Transcript;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.ReportedData;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.search.Searchable;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,6 +34,22 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
+import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.workgroup.agent.AgentSession;
+import org.jivesoftware.smackx.workgroup.packet.Transcript;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.search.Searchable;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 public class ChatSearch implements Searchable {
 

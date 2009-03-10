@@ -11,76 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.assistants.ChatMacroMenu;
-import org.jivesoftware.fastpath.workspace.assistants.CoBrowser;
-import org.jivesoftware.fastpath.workspace.assistants.Notes;
-import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
-import org.jivesoftware.fastpath.workspace.assistants.UserHistory;
-import org.jivesoftware.fastpath.workspace.invite.InvitationManager;
-import org.jivesoftware.fastpath.workspace.invite.WorkgroupInvitationDialog;
-import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
-import org.jivesoftware.fastpath.workspace.panes.AgentConversations;
-import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
-import org.jivesoftware.fastpath.workspace.panes.ChatHistory;
-import org.jivesoftware.fastpath.workspace.panes.ChatQueue;
-import org.jivesoftware.fastpath.workspace.panes.InvitationPane;
-import org.jivesoftware.fastpath.workspace.panes.OnlineAgents;
-import org.jivesoftware.fastpath.workspace.panes.QueueActivity;
-import org.jivesoftware.fastpath.workspace.panes.UserInvitationPane;
-import org.jivesoftware.fastpath.workspace.search.ChatSearch;
-import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import com.jivesoftware.smack.workgroup.MetaData;
-import com.jivesoftware.smack.workgroup.agent.InvitationRequest;
-import com.jivesoftware.smack.workgroup.agent.Offer;
-import com.jivesoftware.smack.workgroup.agent.OfferListener;
-import com.jivesoftware.smack.workgroup.agent.RevokedOffer;
-import com.jivesoftware.smack.workgroup.agent.TransferRequest;
-import com.jivesoftware.smack.workgroup.user.Workgroup;
-import org.jivesoftware.MainWindow;
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SoundsRes;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.DataManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.search.SearchManager;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.PresenceListener;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
-import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
-import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Dimension;
@@ -107,6 +37,76 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.jivesoftware.MainWindow;
+import org.jivesoftware.Spark;
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.assistants.ChatMacroMenu;
+import org.jivesoftware.fastpath.workspace.assistants.CoBrowser;
+import org.jivesoftware.fastpath.workspace.assistants.Notes;
+import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
+import org.jivesoftware.fastpath.workspace.assistants.UserHistory;
+import org.jivesoftware.fastpath.workspace.invite.InvitationManager;
+import org.jivesoftware.fastpath.workspace.invite.WorkgroupInvitationDialog;
+import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
+import org.jivesoftware.fastpath.workspace.panes.AgentConversations;
+import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.fastpath.workspace.panes.ChatHistory;
+import org.jivesoftware.fastpath.workspace.panes.ChatQueue;
+import org.jivesoftware.fastpath.workspace.panes.InvitationPane;
+import org.jivesoftware.fastpath.workspace.panes.OnlineAgents;
+import org.jivesoftware.fastpath.workspace.panes.QueueActivity;
+import org.jivesoftware.fastpath.workspace.panes.UserInvitationPane;
+import org.jivesoftware.fastpath.workspace.search.ChatSearch;
+import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.resource.SoundsRes;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.workgroup.MetaData;
+import org.jivesoftware.smackx.workgroup.agent.InvitationRequest;
+import org.jivesoftware.smackx.workgroup.agent.Offer;
+import org.jivesoftware.smackx.workgroup.agent.OfferListener;
+import org.jivesoftware.smackx.workgroup.agent.RevokedOffer;
+import org.jivesoftware.smackx.workgroup.agent.TransferRequest;
+import org.jivesoftware.smackx.workgroup.user.Workgroup;
+import org.jivesoftware.spark.DataManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.search.SearchManager;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.PresenceListener;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
+import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 public class Workpane {
     // Tracks all the offers coming into the client.
@@ -549,7 +549,7 @@ public class Workpane {
         }
 
         private void handleOffer(final Offer offer) {
-            if (offer.getContent().isInvitation() || offer.getContent().isTransfer()) {
+            if (offer.getContent() instanceof InvitationRequest || offer.getContent() instanceof TransferRequest) {
                 handleOfferInvite(offer);
                 return;
             }
@@ -624,10 +624,10 @@ public class Workpane {
                         return;
                     }
 
-                    UserInvitationPane pane = invitations.get(revokedOffer.getRequestID());
+                    UserInvitationPane pane = invitations.get(revokedOffer.getSessionID());
                     if (pane != null) {
                         pane.dispose();
-                        invitations.remove(revokedOffer.getRequestID());
+                        invitations.remove(revokedOffer.getSessionID());
                     }
                 }
             });
@@ -707,11 +707,11 @@ public class Workpane {
 
         UserInvitationPane invitationPane = null;
 
-        if (offer.getContent().isInvitation()) {
+        if (offer.getContent() instanceof InvitationRequest) {
             InvitationRequest request = (InvitationRequest)offer.getContent();
             invitationPane = new UserInvitationPane(offer, utils, request.getRoom(), request.getInviter(), request.getReason());
         }
-        else if (offer.getContent().isTransfer()) {
+        else if (offer.getContent() instanceof TransferRequest) {
             TransferRequest request = (TransferRequest)offer.getContent();
             invitationPane = new UserInvitationPane(offer, utils, request.getRoom(), request.getInviter(), request.getReason());
         }

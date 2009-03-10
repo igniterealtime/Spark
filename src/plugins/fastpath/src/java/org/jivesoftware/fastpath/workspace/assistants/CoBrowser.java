@@ -10,26 +10,6 @@
  */
 package org.jivesoftware.fastpath.workspace.assistants;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
-import com.jivesoftware.smack.workgroup.util.ModelUtil;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.browser.BrowserFactory;
-import org.jivesoftware.spark.component.browser.BrowserListener;
-import org.jivesoftware.spark.component.browser.BrowserViewer;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.MessageEventManager;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -50,6 +30,26 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.MessageEventManager;
+import org.jivesoftware.smackx.workgroup.util.ModelUtil;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.browser.BrowserFactory;
+import org.jivesoftware.spark.component.browser.BrowserListener;
+import org.jivesoftware.spark.component.browser.BrowserViewer;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 
 /**

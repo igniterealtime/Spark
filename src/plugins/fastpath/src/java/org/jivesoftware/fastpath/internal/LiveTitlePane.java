@@ -25,7 +25,9 @@ import javax.swing.JLabel;
 
 public class LiveTitlePane extends BackgroundPane {
 
-    public LiveTitlePane(String title, Icon icon) {
+	private static final long serialVersionUID = 1L;
+
+	public LiveTitlePane(String title, Icon icon) {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 

@@ -35,7 +35,9 @@ import java.util.Date;
 
 
 public class QueueItem extends JPanel {
-    private JLabel queueNameLabel = new JLabel();
+
+	private static final long serialVersionUID = 1L;
+	private JLabel queueNameLabel = new JLabel();
     private JLabel numberInQueueLabel = new JLabel();
     private JLabel averageWaitTimeLabel = new JLabel();
     private JLabel lastCustomerLabel = new JLabel();

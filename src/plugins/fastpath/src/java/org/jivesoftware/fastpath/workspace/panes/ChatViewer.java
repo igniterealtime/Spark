@@ -11,30 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import com.jivesoftware.smack.workgroup.agent.AgentSession;
-import com.jivesoftware.smack.workgroup.ext.notes.ChatNotes;
-import com.jivesoftware.smack.workgroup.packet.Transcript;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
-import org.jivesoftware.spark.ui.ChatPrinter;
-import org.jivesoftware.spark.ui.TranscriptWindow;
-import org.jivesoftware.spark.util.GraphicUtils;
-
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -49,12 +25,38 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.workgroup.agent.AgentSession;
+import org.jivesoftware.smackx.workgroup.ext.notes.ChatNotes;
+import org.jivesoftware.smackx.workgroup.packet.Transcript;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
+import org.jivesoftware.spark.ui.ChatPrinter;
+import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.util.GraphicUtils;
+
 /**
  * Displays Fastpath transcripts.
  */
 public class ChatViewer extends JPanel {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Display a Fastpath transcript.
      *
      * @param transcript the <code>Transcript</code>

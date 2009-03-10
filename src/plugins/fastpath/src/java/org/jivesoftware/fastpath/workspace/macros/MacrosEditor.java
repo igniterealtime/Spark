@@ -10,19 +10,17 @@
  */
 package org.jivesoftware.fastpath.workspace.macros;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.workspace.Workpane;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import com.jivesoftware.smack.workgroup.ext.macros.Macro;
-import com.jivesoftware.smack.workgroup.ext.macros.MacroGroup;
-import org.jivesoftware.spark.component.MessageDialog;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.Table;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.smack.XMPPException;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -32,23 +30,27 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.Workpane;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.workgroup.ext.macros.Macro;
+import org.jivesoftware.smackx.workgroup.ext.macros.MacroGroup;
+import org.jivesoftware.spark.component.MessageDialog;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.Table;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 public class MacrosEditor extends JPanel {
-    private JLabel initialResponseLabel = new JLabel();
+
+	private static final long serialVersionUID = 1L;
+	private JLabel initialResponseLabel = new JLabel();
     private JTextArea initialResponseField = new JTextArea();
     private RolloverButton newButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_ADD_IMAGE));
     private RolloverButton deleteButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
@@ -138,7 +140,9 @@ public class MacrosEditor extends JPanel {
      */
     private static final class MacroTable extends Table {
 
-        MacroTable() {
+		private static final long serialVersionUID = 4777649199509083939L;
+
+		MacroTable() {
             super(new String[]{FpRes.getString("title.response.name"), FpRes.getString("title.response.text")});
 
             getColumnModel().setColumnMargin(0);

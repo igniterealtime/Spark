@@ -30,7 +30,9 @@ import org.jivesoftware.fastpath.FpRes;
  * UI to create a single personal macro within the FastPath Client.
  */
 public class MacroPanel extends JPanel {
-    private JLabel titleLabel;
+
+	private static final long serialVersionUID = 1L;
+	private JLabel titleLabel;
     private JLabel typeLabel;
     private JLabel responseLabel;
 

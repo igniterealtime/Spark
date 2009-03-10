@@ -10,38 +10,6 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import com.jivesoftware.smack.workgroup.agent.AgentRoster;
-import com.jivesoftware.smack.workgroup.agent.AgentRosterListener;
-import com.jivesoftware.smack.workgroup.packet.AgentStatus;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.muc.Affiliate;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -56,12 +24,45 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
+import org.jivesoftware.smackx.workgroup.agent.AgentRosterListener;
+import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
 /**
  * UI to show all chats occuring.
  */
 public final class AgentConversations extends JPanel implements ChangeListener {
 
-    private DefaultListModel model = new DefaultListModel();
+	private static final long serialVersionUID = 1L;
+	private DefaultListModel model = new DefaultListModel();
     private JList list;
 
     private Map<String, AgentConversation> sessionMap = new HashMap<String, AgentConversation>();
@@ -212,7 +213,10 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
     private void calculateNumberOfChats(AgentRoster agentRoster) {
         int counter = 0;
-        for (String agent : agentRoster.getAgents()) {
+        // TODO: CHECK FASTPATH
+        //for (String agent : agentRoster.getAgents()) {
+        for (Iterator it = agentRoster.getAgents().iterator(); it.hasNext();) {
+            String agent = (String)it.next();        	
             Presence presence = agentRoster.getPresence(agent);
             if (presence.isAvailable()) {
                 AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");

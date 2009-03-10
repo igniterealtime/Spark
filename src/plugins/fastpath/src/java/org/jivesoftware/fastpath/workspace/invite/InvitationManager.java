@@ -11,19 +11,19 @@
 
 package org.jivesoftware.fastpath.workspace.invite;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
-import com.jivesoftware.smack.workgroup.packet.RoomInvitation;
-import com.jivesoftware.smack.workgroup.packet.RoomTransfer;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.workgroup.packet.RoomInvitation;
+import org.jivesoftware.smackx.workgroup.packet.RoomTransfer;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InvitationManager {
     private static List<ChatRoom> inviteListeners = new ArrayList<ChatRoom>();
@@ -48,10 +48,12 @@ public class InvitationManager {
         String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
-                FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.user, jid, workgroup, sessionID, msg);
+            	// TODO : CHECK FASHPATH
+                FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.user, jid, sessionID, msg);
             }
             else {
-                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.user, jid, workgroup, sessionID, msg);
+            	// TODO : CHECK FASHPATH
+                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.user, jid, sessionID, msg);
             }
         }
         catch (XMPPException e) {
@@ -84,10 +86,12 @@ public class InvitationManager {
         String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
-                FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.queue, jid, workgroup, sessionID, msg);
+            	// TODO : CHECK FASHPATH
+                FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.queue, jid, sessionID, msg);
             }
             else {
-                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.queue, jid, workgroup, sessionID, msg);
+            	// TODO : CHECK FASHPATH
+                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.queue, jid, sessionID, msg);
             }
         }
         catch (XMPPException e) {
@@ -120,10 +124,11 @@ public class InvitationManager {
         String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
-                FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.workgroup, jid, workgroup, sessionID, msg);
+            	// TODO : CHECK FASHPATH
+                FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.workgroup, jid, sessionID, msg);
             }
             else {
-                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.workgroup, jid, workgroup, sessionID, msg);
+                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.workgroup, jid, sessionID, msg);
             }
         }
         catch (XMPPException e) {

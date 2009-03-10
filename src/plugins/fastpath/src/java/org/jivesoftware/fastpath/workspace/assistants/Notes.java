@@ -11,20 +11,14 @@
 
 package org.jivesoftware.fastpath.workspace.assistants;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
-import com.jivesoftware.smack.workgroup.agent.AgentSession;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomClosingListener;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,14 +30,20 @@ import javax.swing.JToolBar;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.workgroup.agent.AgentSession;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomClosingListener;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 public class Notes extends JPanel {
     private JFrame notesFrame;

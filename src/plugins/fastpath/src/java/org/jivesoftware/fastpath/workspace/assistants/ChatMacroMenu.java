@@ -10,26 +10,26 @@
  */
 package org.jivesoftware.fastpath.workspace.assistants;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
-import com.jivesoftware.smack.workgroup.ext.macros.Macro;
-import com.jivesoftware.smack.workgroup.ext.macros.MacroGroup;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.smack.XMPPException;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.List;
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.workgroup.ext.macros.Macro;
+import org.jivesoftware.smackx.workgroup.ext.macros.MacroGroup;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 /*
  * $RCSfile$

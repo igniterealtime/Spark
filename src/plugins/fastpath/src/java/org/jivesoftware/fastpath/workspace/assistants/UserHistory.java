@@ -10,17 +10,6 @@
  */
 package org.jivesoftware.fastpath.workspace.assistants;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
-import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
-import com.jivesoftware.smack.workgroup.packet.Transcript;
-import com.jivesoftware.smack.workgroup.packet.Transcripts;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.smack.XMPPException;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,6 +26,17 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
+import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.workgroup.packet.Transcript;
+import org.jivesoftware.smackx.workgroup.packet.Transcripts;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 public class UserHistory extends JPanel {
     private DefaultListModel model = new DefaultListModel();

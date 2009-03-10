@@ -11,16 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import com.jivesoftware.smack.workgroup.agent.QueueUsersListener;
-import com.jivesoftware.smack.workgroup.agent.WorkgroupQueue;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.BorderFactory;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.Date;
@@ -28,12 +18,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.smackx.workgroup.agent.QueueUsersListener;
+import org.jivesoftware.smackx.workgroup.agent.WorkgroupQueue;
+
 
 /**
  * UI for displaying all queue information pertaining to a single workgroup.
  */
 public final class QueueActivity extends JPanel implements QueueUsersListener {
-    private DefaultListModel model = new DefaultListModel();
+
+	private static final long serialVersionUID = 1L;
+	private DefaultListModel model = new DefaultListModel();
     private JList list;
 
     private Map<WorkgroupQueue, QueueItem> queues = new HashMap<WorkgroupQueue, QueueItem>();

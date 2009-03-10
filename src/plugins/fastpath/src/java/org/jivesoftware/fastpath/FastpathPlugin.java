@@ -11,29 +11,6 @@
 
 package org.jivesoftware.fastpath;
 
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.Workpane;
-import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
-import com.jivesoftware.smack.workgroup.agent.Agent;
-import com.jivesoftware.smack.workgroup.agent.AgentSession;
-import com.jivesoftware.smack.workgroup.ext.macros.Macros;
-import com.jivesoftware.smack.workgroup.user.Workgroup;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.jivesoftware.spark.PluginManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -54,6 +31,29 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.Workpane;
+import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.workgroup.agent.Agent;
+import org.jivesoftware.smackx.workgroup.agent.AgentSession;
+import org.jivesoftware.smackx.workgroup.ext.macros.Macros;
+import org.jivesoftware.smackx.workgroup.user.Workgroup;
+import org.jivesoftware.spark.PluginManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
 
 public class FastpathPlugin implements Plugin, ConnectionListener {
     private static Workgroup wgroup;
@@ -78,9 +78,9 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            Iterator iter = items.getItems();
+            Iterator<DiscoverItems.Item> iter = items.getItems();
             while (iter.hasNext()) {
-                DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+                DiscoverItems.Item item = iter.next();
                 String entityID = item.getEntityID() != null ? item.getEntityID() : "";
                 if (entityID.startsWith("workgroup")) {
                     // Log into workgroup

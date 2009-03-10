@@ -10,19 +10,6 @@
  */
 package org.jivesoftware.fastpath.workspace.panes;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import com.jivesoftware.smack.workgroup.agent.AgentSession;
-import com.jivesoftware.smack.workgroup.ext.history.AgentChatHistory;
-import com.jivesoftware.smack.workgroup.ext.history.AgentChatSession;
-import com.jivesoftware.smack.workgroup.packet.Transcript;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,12 +28,27 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JOptionPane;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.workgroup.agent.AgentSession;
+import org.jivesoftware.smackx.workgroup.ext.history.AgentChatHistory;
+import org.jivesoftware.smackx.workgroup.ext.history.AgentChatSession;
+import org.jivesoftware.smackx.workgroup.packet.Transcript;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 
 public class ChatHistory extends JPanel {
-    private DefaultListModel model = new DefaultListModel();
+
+	private static final long serialVersionUID = 1L;
+	private DefaultListModel model = new DefaultListModel();
     private AgentSession agentSession;
     private JList list;
     private JFrame mainFrame;

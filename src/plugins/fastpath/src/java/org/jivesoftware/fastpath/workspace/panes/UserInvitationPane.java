@@ -10,34 +10,6 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.Workpane;
-import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
-import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import com.jivesoftware.smack.workgroup.agent.Offer;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.muc.Affiliate;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.ChatNotFoundException;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.LinkLabel;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.WrappedLabel;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -58,6 +30,35 @@ import java.util.TimerTask;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.Workpane;
+import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
+import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.workgroup.agent.Offer;
+import org.jivesoftware.smackx.workgroup.agent.TransferRequest;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.ChatNotFoundException;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.LinkLabel;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.WrappedLabel;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 /**
  * Handles invitations and transfers of Fastpath Requests.
@@ -108,7 +109,7 @@ public class UserInvitationPane {
         JLabel userImage = new JLabel(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
         userImage.setHorizontalAlignment(JLabel.LEFT);
         String title = FpRes.getString("title.fastpath.invitation");
-        if (offer.getContent().isTransfer()) {
+        if (offer.getContent() instanceof TransferRequest) {
             title = FpRes.getString("title.fastpath.transfer");
         }
 

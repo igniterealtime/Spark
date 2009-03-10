@@ -11,12 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace.assistants;
 
-import org.jivesoftware.fastpath.FpRes;
-import com.jivesoftware.smack.workgroup.packet.Transcripts;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.component.WrappedLabel;
-import org.jivesoftware.spark.util.ModelUtil;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,6 +25,12 @@ import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.smackx.workgroup.packet.Transcripts;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.component.WrappedLabel;
+import org.jivesoftware.spark.util.ModelUtil;
 
 public class UserHistoryItem extends JPanel {
     private WrappedLabel agentsLabel = new WrappedLabel();

@@ -11,33 +11,6 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
-import org.jivesoftware.fastpath.FastpathPlugin;
-import org.jivesoftware.fastpath.FpRes;
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
-import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import org.jivesoftware.fastpath.workspace.Workpane.RoomState;
-import com.jivesoftware.smack.workgroup.MetaData;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.muc.Affiliate;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.ChatNotFoundException;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.LinkLabel;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.WrappedLabel;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -55,6 +28,33 @@ import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.fastpath.workspace.Workpane.RoomState;
+import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
+import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.workgroup.MetaData;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.ChatNotFoundException;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.LinkLabel;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.WrappedLabel;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 public class InvitationPane {
 

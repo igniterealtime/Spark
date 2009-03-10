@@ -27,7 +27,9 @@ import javax.swing.JPanel;
  * to specify an image to use in the background of the panel.
  */
 public class BackgroundPane extends JPanel {
-    private ImageIcon backgroundImage;
+
+	private static final long serialVersionUID = 1L;
+	private ImageIcon backgroundImage;
 
     /**
      * Creates a background panel using the default Spark background image.

@@ -11,39 +11,6 @@
 
 package org.jivesoftware.fastpath.internal;
 
-import org.jivesoftware.fastpath.resources.FastpathRes;
-import com.jivesoftware.smack.workgroup.settings.ChatSetting;
-import com.jivesoftware.smack.workgroup.settings.ChatSettings;
-import com.jivesoftware.smack.workgroup.user.Workgroup;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
-import org.jivesoftware.spark.ui.ContactGroup;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.ContactListListener;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
-import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -59,6 +26,39 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.workgroup.settings.ChatSetting;
+import org.jivesoftware.smackx.workgroup.settings.ChatSettings;
+import org.jivesoftware.smackx.workgroup.user.Workgroup;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
+import org.jivesoftware.spark.ui.ContactGroup;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.ContactListListener;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 
 /**
