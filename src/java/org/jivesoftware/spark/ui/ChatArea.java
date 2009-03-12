@@ -54,7 +54,9 @@ import java.util.StringTokenizer;
  * formatting of bold, italics, underlined and urls.
  */
 public class ChatArea extends JTextPane implements MouseListener, MouseMotionListener, ActionListener {
-    /**
+	private static final long serialVersionUID = -2155445968040220072L;
+
+	/**
      * The SimpleAttributeSet used within this instance of JTextPane.
      */
     public final SimpleAttributeSet styles = new SimpleAttributeSet();
@@ -127,7 +129,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl x"), "cut");
 
         getActionMap().put("cut", new AbstractAction("cut") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 9117190151545566922L;
+
+			public void actionPerformed(ActionEvent evt) {
                 cutAction();
             }
         });
@@ -135,7 +139,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 4949716854440264528L;
+
+			public void actionPerformed(ActionEvent evt) {
                 SparkManager.setClipboard(getSelectedText());
             }
         });
@@ -143,7 +149,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl v"), "paste");
 
         getActionMap().put("paste", new AbstractAction("paste") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = -8767763580660683678L;
+
+			public void actionPerformed(ActionEvent evt) {
                 pasteAction();
             }
         });
@@ -312,10 +320,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             return false;
         }
 
-        setEditable(true);
         select(doc.getLength(), doc.getLength());
         insertIcon(emotion);
-        setEditable(false);
 
         return true;
     }
