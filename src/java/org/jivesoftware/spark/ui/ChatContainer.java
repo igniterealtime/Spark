@@ -10,6 +10,41 @@
 
 package org.jivesoftware.spark.ui;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TimerTask;
+import java.util.regex.Pattern;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
@@ -35,48 +70,15 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.Map;
-import java.util.TimerTask;
-
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
  *
  * @author Derek DeMoro
  */
 public class ChatContainer extends SparkTabbedPane implements MessageListener, ChangeListener, KeyListener {
-    /**
+	private static final long serialVersionUID = 3725711237490056136L;
+
+	/**
      * List of all ChatRoom Listeners.
      */
     private final List<ChatRoomListener> chatRoomListeners = new ArrayList<ChatRoomListener>();
@@ -180,7 +182,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
         this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
         this.getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = -8677467560602512074L;
+
+			public void actionPerformed(ActionEvent evt) {
                 navigateLeft();
             }
         });
@@ -195,7 +199,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
 
         this.getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = -7676330627598261416L;
+
+			public void actionPerformed(ActionEvent evt) {
                 navigateRight();
             }
         });
@@ -207,14 +213,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "escape");
 
         this.getActionMap().put("escape", new AbstractAction("escape") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 5165074248488666495L;
+
+			public void actionPerformed(ActionEvent evt) {
                 closeActiveRoom();
             }
         });
 
         this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_MASK), "shiftCmdW");
         this.getActionMap().put("shiftCmdW", new AbstractAction("shiftCmdW") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = -1179625099164632251L;
+
+			public void actionPerformed(ActionEvent evt) {
                 closeAllChatRooms();
             }
         });
@@ -223,7 +233,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "searchContacts");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = -6904085783599775675L;
+
+			public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getChatManager().getChatContainer().getChatFrame());
             }
         });
@@ -661,7 +673,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     public void messageReceived(ChatRoom room, Message message) {
         room.increaseUnreadMessageCount();
-
+        SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(room);
         fireNotifyOnMessage(room, false, null, null);
     }
     
@@ -989,7 +1001,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (pref.getShowToasterPopup()) {
             SparkToaster toaster = new SparkToaster();
             toaster.setCustomAction(new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
+				private static final long serialVersionUID = -2759404307378067515L;
+
+				public void actionPerformed(ActionEvent actionEvent) {
                     chatFrame.setState(Frame.NORMAL);
                     chatFrame.setVisible(true);
                     int tabLocation = indexOfComponent(room);
@@ -1218,7 +1232,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         // Handle closing this room.
         Action closeThisAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 5002889397735856123L;
+
+			public void actionPerformed(ActionEvent e) {
                 ChatRoom chatRoom = (ChatRoom)getComponentInTab(tab);
                 if (chatRoom != null) {
                     closeTab(chatRoom);
@@ -1232,7 +1248,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (getChatRooms().size() > 1) {
             // Handle closing other rooms.
             Action closeOthersAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent e) {
+				private static final long serialVersionUID = 1869236917427431585L;
+
+				public void actionPerformed(ActionEvent e) {
                     ChatRoom chatRoom = (ChatRoom)getComponentInTab(tab);
                     if (chatRoom != null) {
                         for (ChatRoom cRoom : getChatRooms()) {
@@ -1248,7 +1266,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             popup.add(closeOthersAction);
 
             Action closeOldAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent e) {
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {
                     for (ChatRoom rooms : getStaleChatRooms()) {
                         closeTab(rooms);
                     }

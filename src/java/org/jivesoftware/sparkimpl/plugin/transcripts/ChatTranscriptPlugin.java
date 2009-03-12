@@ -20,7 +20,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
@@ -41,14 +40,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import java.awt.BorderLayout;
@@ -59,7 +54,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -77,9 +71,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-
+    private Message lastMessage;
     private JDialog Frame;
-    private JEditorPane jEditorPane1 ;
+    
     /**
      * Register the listeners for transcript persistence.
      */
@@ -93,7 +87,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
         final Action viewHistoryAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -6498776252446416099L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
                 final String jid = item.getJID();
 
@@ -105,10 +101,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
         
         final Action showStatusMessageAction = new AbstractAction() {
-           public void actionPerformed(ActionEvent actionEvent) {
-               ContactItem item = contactList.getSelectedUsers().iterator().next();
-               showStatusMessage(item);
-           }
+			private static final long serialVersionUID = -5000370836304286019L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
+				ContactItem item = contactList.getSelectedUsers().iterator().next();
+				showStatusMessage(item);
+			}
        };
 
        showStatusMessageAction.putValue(Action.NAME, Res.getString("menuitem.show.contact.statusmessage"));
@@ -184,13 +182,14 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
-
+        
         final String jid = room.getRoomname();
+      
         File transcriptFile = ChatTranscripts.getTranscriptFile(jid);
         if (!transcriptFile.exists()) {
             return;
         }
-
+       
         if (room instanceof ChatRoomImpl) {
             new ChatRoomDecorator(room);
         }
@@ -207,7 +206,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
     }
 
-    private void persistChatRoom(final ChatRoom room) {
+    public void persistChatRoom(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
             return;
@@ -218,6 +217,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final List<Message> transcripts = room.getTranscripts();
         ChatTranscript transcript = new ChatTranscript();
         for (Message message : transcripts) {
+      	  	lastMessage = message;
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
@@ -233,6 +233,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         ChatTranscripts.appendToTranscript(jid, transcript);
+
+        if(room instanceof ChatRoomImpl)
+      	  room.getTranscripts().clear();
     }
 
     public void chatRoomActivated(ChatRoom room) {
@@ -251,6 +254,11 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         // Do nothing.
     }
 
+    public Message getLastMessage()
+    {
+   	 return lastMessage;
+    }
+    
     private void showHistory(final String jid) {
 
         SwingWorker transcriptLoader = new SwingWorker() {

@@ -70,7 +70,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener {
-    private final JPanel chatPanel;
+	private static final long serialVersionUID = 7981019929515888299L;
+	private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private JSplitPane verticalSplit;
 
@@ -260,7 +261,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent evt) {
                 // Leave this chat.
                 closeChatRoom();
             }
@@ -328,6 +331,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         addToTranscript(message, true);
 
         fireMessageReceived(message);
+        
+        SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
     }
 
 
@@ -473,6 +478,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             sendMessage();
             getChatInputEditor().setText("");
             getChatInputEditor().setCaretPosition(0);
+            
+            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);   
         }
         else if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))) {
             final Document document = getChatInputEditor().getDocument();
@@ -762,7 +769,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Used for the top toolbar.
      */
     public class ChatToolBar extends JPanel {
-        private JPanel buttonPanel;
+		private static final long serialVersionUID = 5926527530611601841L;
+		private JPanel buttonPanel;
 
 
         /**
@@ -965,7 +973,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     public void poppingUp(Object component, JPopupMenu popup) {
         Action saveAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -3582301239832606653L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 saveTranscript();
             }
         };
