@@ -54,7 +54,8 @@ import javax.swing.Timer;
  * Container representing a RosterGroup within the Contact List.
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
-    private List<ContactItem> contactItems = new ArrayList<ContactItem>();
+	private static final long serialVersionUID = 6578057848913010799L;
+	private List<ContactItem> contactItems = new ArrayList<ContactItem>();
     private List<ContactGroup> contactGroups = new ArrayList<ContactGroup>();
     private List<ContactGroupListener> listeners = new ArrayList<ContactGroupListener>();
     private List<ContactItem> offlineContacts = new ArrayList<ContactItem>();
@@ -117,7 +118,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             public void mouseClicked(MouseEvent e) {
 	             if(e.getButton() == MouseEvent.BUTTON1)
 	             {
-	           	 	contactList.saveState();
+	            	 contactList =  Workspace.getInstance().getContactList();
+	           	 	 contactList.saveState(); 
 	             }
             }
 
@@ -533,7 +535,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
 
 
-            final Collection selectedItems = SparkManager.getChatManager().getSelectedContactItems();
+            final Collection<ContactItem> selectedItems = SparkManager.getChatManager().getSelectedContactItems();
             if (selectedItems.size() > 1) {
                 firePopupEvent(e, selectedItems);
             }
@@ -581,7 +583,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
     }
 
-    private void firePopupEvent(MouseEvent e, Collection items) {
+    private void firePopupEvent(MouseEvent e, Collection<ContactItem> items) {
         for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
             contactGroupListener.showPopup(e, items);
         }
