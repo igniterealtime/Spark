@@ -10,25 +10,9 @@
 
 package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.filetransfer.FileTransfer;
-import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
-import org.jivesoftware.smackx.filetransfer.FileTransferManager;
-import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.FileDragLabel;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.ByteFormat;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -47,9 +31,24 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.FileDragLabel;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.ByteFormat;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 public class SendMessage extends JPanel {
 
@@ -231,20 +230,11 @@ public class SendMessage extends JPanel {
     }
 
     private void openFile(File downloadedFile) {
-        try {
-            if (!Spark.isMac()) {
-                boolean opened = SparkManager.getNativeManager().openFile(downloadedFile);
-                if (!opened) {
-                    JOptionPane.showMessageDialog(this, Res.getString("title.error"), "No application associated with file type.", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-            else if (Spark.isMac()) {
-                Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
-            }
-        }
-        catch (IOException e1) {
-            Log.error("Exception occured while opening file.", e1);
-        }
+    	try {
+    		Desktop.getDesktop().open(downloadedFile);
+		} catch (IOException e) {
+			Log.error(e);
+		}
     }
 
     private void updateBar(final OutgoingFileTransfer transfer, String nickname) {

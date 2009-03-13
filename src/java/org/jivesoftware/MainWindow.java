@@ -10,29 +10,6 @@
 
 package org.jivesoftware;
 
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.URLFileSystem;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.updater.CheckUpdates;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -61,6 +38,29 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.sparkimpl.updater.CheckUpdates;
+
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
  * to the Workspace in Spark.
@@ -68,7 +68,9 @@ import javax.swing.JToolBar;
  * @version 1.0, 03/12/14
  */
 public final class MainWindow extends ChatFrame implements ActionListener {
-    private final Set<MainWindowListener> listeners = new HashSet<MainWindowListener>();
+	private static final long serialVersionUID = -6062104959613603510L;
+
+	private final Set<MainWindowListener> listeners = new HashSet<MainWindowListener>();
 
     private final JMenu connectMenu = new JMenu();
     private final JMenu contactsMenu = new JMenu();
@@ -324,10 +326,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
                 command = starterExe + " \"" + sparkExe + "\"";
             }
+            else if (Spark.isLinux()) {
+            	command = Spark.getBinDirectory().getParentFile().getCanonicalPath() + File.separator + "spark";
+            }
             else if (Spark.isMac()) {
                 command = "open -a Spark";
             }
-
             Runtime.getRuntime().exec(command);
         }
         catch (IOException e) {
@@ -383,11 +387,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         });
 
 
-        if (Spark.isWindows()) {
-            connectMenu.add(logoutMenuItem);
-            connectMenu.add(logoutWithStatus);
-        }
-
+		if (Spark.isWindows()) {
+        	connectMenu.add(logoutMenuItem);
+	        connectMenu.add(logoutWithStatus);
+		}
+		
         connectMenu.addSeparator();
 
         if (!Spark.isMac()) {
@@ -396,7 +400,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
 
         Action updateAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -2159350387773310325L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 checkForUpdates(true);
             }
         };
@@ -406,7 +412,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Add Error Dialog Viewer
         Action viewErrors = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -420926784631340112L;
+
+			public void actionPerformed(ActionEvent e) {
                 File logDir = new File(Spark.getLogDirectory(), "errors.log");
                 if (!logDir.exists()) {
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No error logs found.", "Error Log", JOptionPane.INFORMATION_MESSAGE);
@@ -420,11 +428,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         viewErrors.putValue(Action.NAME, Res.getString("menuitem.view.logs"));
 
         final Action viewHelpGuideAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = 2680369963282231348L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     BrowserLauncher.openURL("http://www.igniterealtime.org/builds/spark/docs/spark_user_guide.pdf");
                 }
-                catch (IOException e) {
+                catch (Exception e) {
                     Log.error("Unable to load online help.", e);
                 }
             }
@@ -453,13 +463,17 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Register shutdown with the exit menu.
         exitMenuItem.addActionListener(new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -2301236575241532698L;
+
+			public void actionPerformed(ActionEvent e) {
                 shutdown();
             }
         });
 
         helpMenuItem.addActionListener(new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -1423433460333010339L;
+
+			public void actionPerformed(ActionEvent e) {
                 try {
                     BrowserLauncher.openURL("http://www.igniterealtime.org/forum/forum.jspa?forumID=49");
                 }
@@ -471,7 +485,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Show About Box
         menuAbout.addActionListener(new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -7173666373051354502L;
+
+			public void actionPerformed(ActionEvent e) {
                 showAboutBox();
             }
         });

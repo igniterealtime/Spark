@@ -10,6 +10,14 @@
 
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
+import java.awt.event.ActionEvent;
+import java.util.Collection;
+import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JMenu;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -25,15 +33,6 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
-
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JMenu;
 
 /**
  * Allows for adding and removal of Bookmarks within Spark.
@@ -76,11 +75,13 @@ public class BookmarkPlugin implements Plugin {
                         final BookmarkedURL link = (BookmarkedURL) bookmarkedLink;
 
                         Action urlAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent actionEvent) {
+							private static final long serialVersionUID = 4246574779205966917L;
+
+							public void actionPerformed(ActionEvent actionEvent) {
                                 try {
                                     BrowserLauncher.openURL(link.getURL());
                                 }
-                                catch (IOException e) {
+                                catch (Exception e) {
                                     Log.error(e);
                                 }
                             }
@@ -96,7 +97,9 @@ public class BookmarkPlugin implements Plugin {
                         final BookmarkedConference conferences = (BookmarkedConference) bookmarkedConference;
 
                         Action conferenceAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent actionEvent) {
+							private static final long serialVersionUID = 5964584172262968704L;
+
+							public void actionPerformed(ActionEvent actionEvent) {
                                 final TimerTask task = new SwingTimerTask() {
                                     public void doRun() {
                                         ConferenceUtils.joinConferenceOnSeperateThread(conferences.getName(), conferences.getJid(), conferences.getPassword());

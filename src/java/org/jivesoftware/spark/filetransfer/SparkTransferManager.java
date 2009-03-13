@@ -56,6 +56,7 @@ import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -177,8 +178,12 @@ public class SparkTransferManager {
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.add(downloadsMenu);
         downloadsMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Downloads downloads = Downloads.getInstance();
+            public void actionPerformed(ActionEvent e) {        
+                try {
+					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
             }
         });
 
@@ -202,13 +207,13 @@ public class SparkTransferManager {
 
 
         contactList.addFileDropListener(new FileDropListener() {
-            public void filesDropped(Collection files, Component component) {
+            public void filesDropped(Collection<File> files, Component component) {
                 if (component instanceof ContactItem) {
                     ContactItem item = (ContactItem)component;
 
                     ChatRoom chatRoom = null;
-                    for (Object file : files) {
-                        chatRoom = sendFile((File) file, item.getJID());
+                    for (File file : files) {
+                        chatRoom = sendFile(file, item.getJID());
                     }
 
                     if (chatRoom != null) {
@@ -231,8 +236,12 @@ public class SparkTransferManager {
         viewDownloads.setToolTipText(Res.getString("menuitem.view.downloads"));
         commandPanel.add(viewDownloads);
         viewDownloads.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Downloads downloads = Downloads.getInstance();
+            public void actionPerformed(ActionEvent e) {              
+                try {
+					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
             }
         });
     }
@@ -465,10 +474,10 @@ public class SparkTransferManager {
                     ArrayList<File> list = waitMap.get(bareJID);
                     if (list != null) {
                         // Iterate through list and send.
-                        Iterator iter = list.iterator();
+                        Iterator<File> iter = list.iterator();
                         ChatRoom room = null;
                         while (iter.hasNext()) {
-                            File file = (File)iter.next();
+                            File file = iter.next();
                             room = sendFile(file, bareJID);
                         }
 

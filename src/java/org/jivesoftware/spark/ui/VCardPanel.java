@@ -10,6 +10,26 @@
 
 package org.jivesoftware.spark.ui;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -18,22 +38,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
  *
@@ -41,7 +45,8 @@ import javax.swing.JPanel;
  */
 public class VCardPanel extends JPanel {
 
-    private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+	private static final long serialVersionUID = -5810110243694315630L;
+	private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
     private final String jid;
@@ -185,7 +190,15 @@ public class VCardPanel extends JPanel {
     }
 
     private void startEmailClient(String emailAddress) {
-        SparkManager.getNativeManager().launchEmailClient(emailAddress, "");
+   		try {
+			Desktop.getDesktop().mail(new URI("mailto:" + emailAddress));
+		} catch (IOException e) {
+			Log.error("Can't open Mailer", e);
+		} catch (URISyntaxException e) {
+			Log.error("URI Wrong", e);
+		}
+
+
     }
 
 

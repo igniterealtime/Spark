@@ -10,16 +10,17 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -37,17 +38,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
@@ -225,7 +224,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                     textFound.indexOf(".") > 1) {
                 insertLink(textFound);
             }
-            else if ( textFound.startsWith("\\\\") || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
+            else if ( textFound.startsWith("\\\\")  || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
                 insertAddress(textFound);
             }     
             else if (!insertImage(textFound)) {
@@ -434,12 +433,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         final String url = (String)o;
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
-                            if (Spark.isWindows()) {
-                                SparkManager.getNativeManager().launchBrowser(url);
-                            }
-                            else {
-                                BrowserLauncher.openURL(url);
-                            }
+                        	BrowserLauncher.openURL(url);
                         }
                     }
                     catch (Exception ioe) {

@@ -459,7 +459,7 @@ public class CheckUpdates {
                                     }
                                 }
 
-                                catch (IOException e) {
+                                catch (Exception e) {
                                     Log.error(e);
                                 }
                                 UPDATING = false;
@@ -580,7 +580,7 @@ public class CheckUpdates {
 
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            Iterator iter = items.getItems();
+            Iterator<DiscoverItems.Item> iter = items.getItems();
             while (iter.hasNext()) {
                 DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
                 if ("Spark Updater".equals(item.getName())) {

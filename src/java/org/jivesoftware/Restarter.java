@@ -46,10 +46,13 @@ public class Restarter {
 
         try {
             String command = "";
-            if (Spark.isWindows()) {
+            if (isWindows()) {
                 command = file.getCanonicalPath();
             }
-            else if (Spark.isMac()) {
+            if (isLinux()) {
+                command = file.getCanonicalPath();
+            }
+            else if (isMac()) {
                 command = "open -a Spark";
             }
 
@@ -60,7 +63,47 @@ public class Restarter {
         }
 
     }
+    
+    /**
+     * Return if we are running on windows.
+     *
+     * @return true if we are running on windows, false otherwise.
+     */
+    public static boolean isWindows() {
+        final String osName = System.getProperty("os.name").toLowerCase();
+        return osName.startsWith("windows");
+    }
 
+    /**
+     * Returns true if Spark is running on vista.
+     *
+     * @return true if running on Vista.
+     */
+    public static boolean isVista() {
+        final String osName = System.getProperty("os.name").toLowerCase();
+        return osName.contains("vista");
+    }
 
+    /**
+     * Return if we are running on a mac.
+     *
+     * @return true if we are running on a mac, false otherwise.
+     */
+    public static boolean isMac() {
+        String lcOSName = System.getProperty("os.name").toLowerCase();
+        return lcOSName.indexOf("mac") != -1;
+    }
+    
+    /**
+     * Return if we are running on Linux.
+     *
+     * @return true if we are running on Linux, false otherwise.
+     */
+
+    public static boolean isLinux() {
+        final String osName = System.getProperty("os.name").toLowerCase();
+        return osName.startsWith("linux");
+    }
+    
 }
 

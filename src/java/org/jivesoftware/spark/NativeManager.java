@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 /**
  * The AlertManager handles the delegation of Alerting based.
  *
@@ -99,48 +101,6 @@ public class NativeManager {
                 break;
             }
         }
-    }
-
-    public boolean openFile(File file) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
-        while (alertNotifiers.hasNext()) {
-            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
-            boolean handle = alert.handleNotification();
-            if (handle) {
-                boolean couldOpenFile = alert.openFile(file);
-                return couldOpenFile;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean launchBrowser(String url) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
-        while (alertNotifiers.hasNext()) {
-            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
-            boolean handle = alert.handleNotification();
-            if (handle) {
-                alert.launchBrowser(url);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean launchEmailClient(String to, String subject) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
-        while (alertNotifiers.hasNext()) {
-            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
-            boolean handle = alert.handleNotification();
-            if (handle) {
-                alert.launchEmailClient(to, subject);
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }

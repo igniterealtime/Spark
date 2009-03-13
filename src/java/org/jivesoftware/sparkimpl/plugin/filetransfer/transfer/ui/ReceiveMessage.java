@@ -32,6 +32,7 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -218,9 +219,7 @@ public class ReceiveMessage extends JPanel {
         transfer = request.accept();
         try {
 
-
-            Downloads downloads = Downloads.getInstance();
-            final File downloadedFile = new File(downloads.getDownloadDirectory(), request.getFileName());
+            final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
 
 
             progressBar.setMaximum((int)request.getFileSize());
@@ -390,8 +389,7 @@ public class ReceiveMessage extends JPanel {
         add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
-        Downloads downloads = Downloads.getInstance();
-        final File downloadedFile = new File(downloads.getDownloadDirectory(), request.getFileName());
+        final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
 
         openFileButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
@@ -419,18 +417,11 @@ public class ReceiveMessage extends JPanel {
             }
 
             public void mousePressed(MouseEvent event) {
-                try {
-                    Downloads downloads = Downloads.getInstance();
-                    if (!Spark.isMac()) {
-                        SparkManager.getNativeManager().openFile(downloads.getDownloadDirectory());
-                    }
-                    else if (Spark.isMac()) {
-                        Runtime.getRuntime().exec("open " + downloads.getDownloadDirectory().getCanonicalPath());
-                    }
-                }
-                catch (IOException e1) {
-                    Log.error(e1);
-                }
+            	try {
+            		Desktop.getDesktop().open(Downloads.getDownloadDirectory());
+        		} catch (IOException e) {
+        			Log.error(e);
+        		}
             }
         });
 
@@ -480,20 +471,11 @@ public class ReceiveMessage extends JPanel {
     }
 
     private void openFile(File downloadedFile) {
-        try {
-            if (!Spark.isMac()) {
-                boolean opened = SparkManager.getNativeManager().openFile(downloadedFile);
-                if (!opened) {
-                    JOptionPane.showMessageDialog(this, Res.getString("title.error"), "No application associated with file type.", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-            else if (Spark.isMac()) {
-                Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
-            }
-        }
-        catch (IOException e1) {
-            Log.error(e1);
-        }
+    	try {
+    		Desktop.getDesktop().open(downloadedFile);
+		} catch (IOException e) {
+			Log.error(e);
+		}
     }
 
     private class TransferButton extends JButton {
@@ -598,7 +580,7 @@ public class ReceiveMessage extends JPanel {
 				private static final long serialVersionUID = -3010501340128285438L;
 
 				public void actionPerformed(ActionEvent e) {
-                    final JFileChooser chooser = Downloads.getInstance().getFileChooser();
+                    final JFileChooser chooser = Downloads.getFileChooser();
                     File selectedFile = chooser.getSelectedFile();
                     if (selectedFile != null) {
                         selectedFile = new File(selectedFile.getParent(), downloadedFile.getName());

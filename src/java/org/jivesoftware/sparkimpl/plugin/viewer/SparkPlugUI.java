@@ -10,23 +10,6 @@
 
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.PluginManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.plugin.PublicPlugin;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.URLFileSystem;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -37,9 +20,25 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.PluginManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.PublicPlugin;
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.log.Log;
 
 public class SparkPlugUI extends JPanel {
 
@@ -108,7 +107,7 @@ public class SparkPlugUI extends JPanel {
                     try {
                         BrowserLauncher.openURL("http://www.igniterealtime.org/updater/retrieve.jsp?filename=" + getFilename() + "&changeLog=true");
                     }
-                    catch (IOException e1) {
+                    catch (Exception e1) {
                         Log.error(e1);
                     }
                 }
@@ -119,7 +118,7 @@ public class SparkPlugUI extends JPanel {
                     try {
                         BrowserLauncher.openURL("http://www.igniterealtime.org/updater/retrieve.jsp?filename=" + getFilename() + "&readme=true");
                     }
-                    catch (IOException e1) {
+                    catch (Exception e1) {
                         Log.error(e1);
                     }
                 }

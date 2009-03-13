@@ -10,6 +10,19 @@
 
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.bookmark.BookmarkedURL;
@@ -18,26 +31,13 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-
 /**
  *
  */
 public class BookmarkItem extends JPanel {
 
-    private JLabel imageLabel;
+	private static final long serialVersionUID = -3120765894005887305L;
+	private JLabel imageLabel;
     private JLabel nameLabel;
     private JLabel descriptionLabel;
 
@@ -70,11 +70,13 @@ public class BookmarkItem extends JPanel {
         descriptionLabel.setText(bookmark.getURL());
 
         action = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 6986851628853679682L;
+
+			public void actionPerformed(ActionEvent e) {
                 try {
                     BrowserLauncher.openURL(bookmark.getURL());
                 }
-                catch (IOException e1) {
+                catch (Exception e1) {
                     Log.error(e1);
                 }
             }
@@ -86,7 +88,9 @@ public class BookmarkItem extends JPanel {
         nameLabel.setText(bookmark.getName());
         descriptionLabel.setText(bookmark.getJid());
         action = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 4324785627112595384L;
+
+			public void actionPerformed(ActionEvent e) {
                 SwingWorker worker = new SwingWorker() {
                     public Object construct() {
                         try {

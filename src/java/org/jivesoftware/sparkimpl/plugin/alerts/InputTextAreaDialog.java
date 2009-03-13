@@ -132,7 +132,9 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
      * Move to focus forward action.
      */
     public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
-        public void actionPerformed(ActionEvent evt) {
+		private static final long serialVersionUID = 1238373124060258519L;
+
+		public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocus();
         }
     };
@@ -141,18 +143,20 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
      * Moves the focus backwards in the dialog.
      */
     public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
-        public void actionPerformed(ActionEvent evt) {
+		private static final long serialVersionUID = 7927553016576134725L;
+
+		public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocusBackward();
         }
     };
 
     public void propertyChange(PropertyChangeEvent e) {
         String value = (String)optionPane.getValue();
-        if ("Cancel".equals(value)) {
+        if (Res.getString("cancel").equals(value)) {
             stringValue = null;
             dialog.setVisible(false);
         }
-        else if ("Ok".equals(value)) {
+        else if (Res.getString("ok").equals(value)) {
             stringValue = textArea.getText();
             if (stringValue.trim().length() == 0) {
                 stringValue = null;

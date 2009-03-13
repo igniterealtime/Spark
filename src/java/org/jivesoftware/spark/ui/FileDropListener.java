@@ -11,6 +11,7 @@
 package org.jivesoftware.spark.ui;
 
 import java.awt.Component;
+import java.io.File;
 import java.util.Collection;
 
 /**
@@ -28,6 +29,6 @@ public interface FileDropListener {
      * @param files     the Collection of Files.
      * @param component the Component the files were dropped on.
      */
-    void filesDropped(Collection files, Component component);
+    void filesDropped(Collection<File> files, Component component);
 
 }
