@@ -30,6 +30,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -165,7 +166,8 @@ public class SoundPreference implements Preference {
 
 
     private class SoundPanel extends JPanel {
-        final JCheckBox incomingMessageBox = new JCheckBox();
+		private static final long serialVersionUID = 4332294589601051699L;
+		final JCheckBox incomingMessageBox = new JCheckBox();
         final JTextField incomingMessageSound = new JTextField();
         final JButton incomingBrowseButton = new JButton("..");
 
@@ -186,6 +188,7 @@ public class SoundPreference implements Preference {
         public SoundPanel() {
             setLayout(new GridBagLayout());
 
+            setBorder(BorderFactory.createTitledBorder(Res.getString("title.sound.preferences")));
             // Add ResourceUtils
             ResourceUtils.resButton(incomingMessageBox, Res.getString("checkbox.play.sound.on.new.message"));
             ResourceUtils.resButton(outgoingMessageBox, Res.getString("checkbox.play.sound.on.outgoing.message"));

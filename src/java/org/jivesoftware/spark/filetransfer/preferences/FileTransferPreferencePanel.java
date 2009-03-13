@@ -15,6 +15,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -35,7 +36,8 @@ import java.io.File;
  */
 public class FileTransferPreferencePanel extends JPanel {
 
-    private JTextField timeoutField;
+	private static final long serialVersionUID = -2404221882867691253L;
+	private JTextField timeoutField;
     private JTextField downloadDirectoryField;
 
     private JFileChooser fc;
@@ -43,7 +45,8 @@ public class FileTransferPreferencePanel extends JPanel {
 
     public FileTransferPreferencePanel() {
         setLayout(new GridBagLayout());
-
+        setBorder(BorderFactory.createTitledBorder(Res.getString("title.file.transfer.preferences")));
+        
         timeoutField = new JTextField();
         downloadDirectoryField = new JTextField();
 

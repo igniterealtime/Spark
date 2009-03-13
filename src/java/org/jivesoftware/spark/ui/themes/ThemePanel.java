@@ -32,7 +32,9 @@ import java.io.File;
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
  */
 public class ThemePanel extends JPanel {
-    private TranscriptWindow transcript;
+	private static final long serialVersionUID = 2943854311454590459L;
+
+	private TranscriptWindow transcript;
 
     private JComboBox messageStyleBox;
 
@@ -62,7 +64,8 @@ public class ThemePanel extends JPanel {
      */
     public ThemePanel() {
         setLayout(new GridBagLayout());
-
+        setBorder(BorderFactory.createTitledBorder(Res.getString("title.appearance.preferences")));
+        
         JLabel messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
 

@@ -390,9 +390,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 		if (Spark.isWindows()) {
         	connectMenu.add(logoutMenuItem);
 	        connectMenu.add(logoutWithStatus);
+	        connectMenu.addSeparator();
 		}
-		
-        connectMenu.addSeparator();
 
         if (!Spark.isMac()) {
             connectMenu.add(exitMenuItem);
