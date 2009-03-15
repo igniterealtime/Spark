@@ -46,7 +46,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -387,7 +386,7 @@ public class SparkTransferManager {
                     return;
                 }
 
-                final JWindow frame = new JWindow();
+                final Frame frame = new Frame();
                 frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
                 selectionPanel.setImage(bufferedImage);
@@ -442,8 +441,8 @@ public class SparkTransferManager {
 
 
                 frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
-                frame.getContentPane().add(selectionPanel);
-
+                frame.add(selectionPanel);
+                frame.setUndecorated(true);
                 // Determine if full-screen mode is supported directly
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 GraphicsDevice gs = ge.getDefaultScreenDevice();
