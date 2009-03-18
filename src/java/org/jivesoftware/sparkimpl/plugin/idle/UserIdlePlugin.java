@@ -21,6 +21,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	private boolean hasChanged = false;
 	private int counter = 0;
 	private LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private Presence latestPresence;
 	
 	@Override
 	public boolean canShutDown() {
@@ -47,14 +48,14 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	
 	private void setIdle()
 	{
+		latestPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
 		Presence presence = new Presence(Presence.Type.available, Res.getString("status.away"), 1, Presence.Mode.away);			
 		SparkManager.getSessionManager().changePresence(presence);
 	}
 	
 	private void setOnline()
 	{
-		Presence presence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
-		SparkManager.getSessionManager().changePresence(presence);
+		SparkManager.getSessionManager().changePresence(latestPresence);
 	}
 	
 	@Override
