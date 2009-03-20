@@ -10,6 +10,10 @@
 
 package org.jivesoftware.sparkimpl.preference.chat;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -20,10 +24,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 /**
  * Handles the preferences for Chatting. This handles preferences used in chatting such as the nickname
@@ -65,14 +65,12 @@ public class ChatPreference implements Preference {
 
             public void finished() {
                 boolean showTime = localPreferences.isTimeDisplayedInChat();
-                boolean spellCheckerOn = localPreferences.isSpellCheckerEnabled();
                 boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
                 boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
                 boolean prevChatHistoryHidden = !localPreferences.isPrevChatHistoryEnabled();
                 boolean tabsOnTop = localPreferences.isTabTopPosition();
                 boolean buzzAllowed = localPreferences.isBuzzEnabled();
                 panel.setShowTime(showTime);
-                panel.setSpellCheckerOn(spellCheckerOn);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
                 panel.setPrevChatHistoryHidden(prevChatHistoryHidden);
@@ -93,7 +91,6 @@ public class ChatPreference implements Preference {
         {
       	  pref.setTimeFormat(panel.getFormatTime());
         }
-        pref.setSpellCheckerEnabled(panel.isSpellCheckerOn());
         pref.setChatRoomNotifications(panel.isGroupChatNotificationsOn());
         pref.setChatHistoryEnabled(!panel.isChatHistoryHidden());
         pref.setPrevChatHistoryEnabled(!panel.isPrevChatHistoryHidden());

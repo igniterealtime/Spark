@@ -1,0 +1,4 @@
+File			| Version	    	| License 	| URL
+----------------+-------------------+-----------+-------------------------------------------
+myspell-core 	| SVN-80	        | LGPL		| http://javahispano.net/projects/jmyspell/
+myspell-swing 	| SVN-80 + [#1902]  | LGPL		| http://javahispano.net/projects/jmyspell/
