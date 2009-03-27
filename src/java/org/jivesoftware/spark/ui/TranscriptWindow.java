@@ -17,6 +17,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -61,8 +62,8 @@ import java.util.List;
  */
 public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
-
-    private final SimpleDateFormat notificationDateFormatter;
+	private static final long serialVersionUID = -2168845249388070573L;
+	private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
     private final String notificationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final String messageDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)).toPattern();
@@ -97,7 +98,9 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 1797491846835591379L;
+
+			public void actionPerformed(ActionEvent evt) {
                 StringSelection stringSelection = new StringSelection(getSelectedText());
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
             }
@@ -405,7 +408,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
      * @param headerData the string to prepend to the transcript.
      * @see ChatRoom#getTranscripts()
      */
-    public void saveTranscript(String fileName, List transcript, String headerData) {
+    public void saveTranscript(String fileName, List<Message> transcript, String headerData) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         try {
@@ -421,7 +424,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
             if (selFile != null && result == JFileChooser.APPROVE_OPTION) {
                 final StringBuffer buf = new StringBuffer();
-                final Iterator transcripts = transcript.iterator();
+                final Iterator<Message> transcripts = transcript.iterator();
                 buf.append("<html><body>");
                 if (headerData != null) {
                     buf.append(headerData);
@@ -429,7 +432,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
                 buf.append("<table width=600>");
                 while (transcripts.hasNext()) {
-                    final Message message = (Message)transcripts.next();
+                    final Message message = transcripts.next();
                     String from = message.getFrom();
                     if (from == null) {
                         from = pref.getNickname();
@@ -497,23 +500,45 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
      */
     public void poppingUp(final Object object, JPopupMenu popup) {
         Action printAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -244227593637660347L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 SparkManager.printChatTranscript((TranscriptWindow)object);
             }
         };
 
 
         Action clearAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -5664307353522844588L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
+            	
+            	String user = null;
+            	try {
+            		ChatManager manager = SparkManager.getChatManager();
+            		ChatRoom room = manager.getChatContainer().getActiveChatRoom();
+            		user = room.getRoomname();
+            		
+				} catch (ChatRoomNotFoundException e) {
+					e.printStackTrace();
+				}
+				
                 int ok = JOptionPane.showConfirmDialog((TranscriptWindow)object,
                     Res.getString("delete.permanently"), Res.getString("delete.log.permanently"),
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.YES_OPTION) {
-                    File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts/");
-                    File transcriptFile = new File(transcriptDir + "transcriptUser" + ".xml");
-                    transcriptFile.delete();
-                    clear();
+                	if(user != null){
+	                    File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
+	                    File transcriptFile = new File(transcriptDir ,user + ".xml");
+	                    transcriptFile.delete();
+	                    transcriptFile = new File(transcriptDir,user + "_current.xml");
+	                    transcriptFile.delete();
+	                    clear();
+                    }
+                }
+                else if (ok == JOptionPane.NO_OPTION) {
+                	clear();
                 }
             }
         };
