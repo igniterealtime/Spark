@@ -10,6 +10,33 @@
 
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.text.html.HTMLEditorKit;
+
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.resource.Res;
@@ -34,32 +61,6 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.text.html.HTMLEditorKit;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
-
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
  *
@@ -71,7 +72,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private Message lastMessage;
+    private HashMap<ChatRoom,Message> lastMessage = new HashMap<ChatRoom,Message>();
     private JDialog Frame;
     
     /**
@@ -216,8 +217,19 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         final List<Message> transcripts = room.getTranscripts();
         ChatTranscript transcript = new ChatTranscript();
+        int count = 0;
+        int i = 0;
+    	if (lastMessage.get(room) != null)
+    	{            		
+    		count = transcripts.indexOf(lastMessage.get(room)) + 1;
+    	}
         for (Message message : transcripts) {
-      	  	lastMessage = message;
+        	if (i < count)
+        	{
+            	i++;
+        		continue;
+        	}
+      	  	lastMessage.put(room,message);
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
@@ -233,9 +245,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         ChatTranscripts.appendToTranscript(jid, transcript);
-
-        if(room instanceof ChatRoomImpl)
-      	  room.getTranscripts().clear();
     }
 
     public void chatRoomActivated(ChatRoom room) {
@@ -253,12 +262,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public void uninstall() {
         // Do nothing.
     }
-
-    public Message getLastMessage()
-    {
-   	 return lastMessage;
-    }
-    
+   
     private void showHistory(final String jid) {
 
         SwingWorker transcriptLoader = new SwingWorker() {
