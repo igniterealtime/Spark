@@ -1,0 +1,12 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>Window Flashing Plugin</name>
+    <version>1.0</version>
+    <author>Michael Will</author>
+    <homePage>http://www.igniterealtime.org</homePage>
+    <email>michael-will@gmx.net</email>
+    <description>Flash window on new messages.</description>
+    <class>org.jivesoftware.spark.plugin.flashing.FlashingPlugin</class>
+    <minSparkVersion>2.5.0</minSparkVersion>
+    <os>Windows</os>
+</plugin>
