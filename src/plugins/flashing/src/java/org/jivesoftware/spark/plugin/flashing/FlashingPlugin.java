@@ -11,7 +11,9 @@ public class FlashingPlugin implements Plugin {
 	}
 
 	@Override
-	public void initialize() {		
+	public void initialize() {
+		FlashingPreference preference = new FlashingPreference();
+		SparkManager.getPreferenceManager().addPreference(preference);
 		SparkManager.getNativeManager().addNativeHandler(new FlashingHandler());
 	}
 
