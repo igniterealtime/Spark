@@ -8,7 +8,7 @@
 
     <property name="src.dir" value="${plug.dir}/src"/>
     <property name="java.dir" value="${src.dir}/java"/>
-    <property name="resources.dir" value="${src.dir}/resources"/>
+    <property name="resources.dir" value="resources"/>
     <property name="target.dir" value="${plug.dir}/target"/>
     <property name="target.lib.dir" value="${plug.dir}/target/lib"/>
     <property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
@@ -22,12 +22,14 @@
         <fileset dir="${spark.home}/build/lib/dist/windows" includes="**/*.jar"/>
     </path>
 
+	<!-- clean =================================================================================== -->
 	<target name="clean" description="Cleans all build related output">
 		<delete file="${jar.file}"/>
 		<delete dir="${classes.dir}"/>
 		<delete dir="${target.dir}"/>
 	</target>	
-	
+
+	<!-- jni-compile =================================================================================== -->
 	<target name="jni-compile">
 		<mkdir dir="${target.dir}"/>
 
@@ -41,6 +43,7 @@
 		<javah destdir="src/c" class="org.jivesoftware.spark.plugin.flashing.FlashWindow" classpath="${target.dir}"/>
 	</target>
 	
+	<!-- compile =================================================================================== -->
     <target name="compile" description="Compiles plugin source">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${java.dir}"
@@ -49,9 +52,30 @@
                source="1.5"
                debug="true"
                target="1.5"/>
+    	 <copy todir="${classes.dir}">
+    	            <fileset dir="${src.dir}" includes="**/*.png"/>
+    	            <fileset dir="${src.dir}" includes="**/*.gif"/>
+    	            <fileset dir="${src.dir}" includes="**/*.jpg"/>
+    	            <fileset dir="${src.dir}" includes="**/*.jpeg"/>
+    	            <fileset dir="${src.dir}" includes="**/*.wav"/>
+    	            <fileset dir="${src.dir}" includes="**/*.properties"/>
+		</copy>
+    </target>
+
+    <!-- resources =================================================================================== -->
+    <target name="resources">
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}">
+                <include name="**/*"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
     </target>
 	
-    <target name="jar" depends="clean, compile" description="Makes a plugin jar">
+	<!-- jar =================================================================================== -->
+    <target name="jar" depends="clean,compile,resources" description="Makes a plugin jar">
         <mkdir dir="${target.dir}"/>
         <mkdir dir="${target.lib.dir}"/>
 
