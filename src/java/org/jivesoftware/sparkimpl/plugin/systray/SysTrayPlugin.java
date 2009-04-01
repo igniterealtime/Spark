@@ -257,8 +257,10 @@ public class SysTrayPlugin implements Plugin
 	}
 
 	public void shutdown() {
-
-		
+		if (SystemTray.isSupported()) {
+			SystemTray tray = SystemTray.getSystemTray();
+			tray.remove(trayIcon);
+		}
 	}
 
 	public void uninstall()	{
