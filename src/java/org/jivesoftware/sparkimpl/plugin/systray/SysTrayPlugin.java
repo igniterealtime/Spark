@@ -306,7 +306,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 
 	@Override
 	public void composingNotification(String from, String packetID) {
-		trayIcon.setImage(typingIcon.getImage());
+		if (pref.isTypingNotificationShown()) {
+			trayIcon.setImage(typingIcon.getImage());
+		}
 	}
 
 	@Override
