@@ -25,11 +25,14 @@ import javax.swing.JPanel;
  */
 public class NotificationsUI extends JPanel {
 
-    private JCheckBox toasterBox;
+	private static final long serialVersionUID = -3372199803443605883L;
+	private JCheckBox toasterBox;
     private JCheckBox windowFocusBox;
     private JCheckBox offlineNotificationBox;
     private JCheckBox onlineNotificationBox;
     private JCheckBox betaCheckBox;
+    private JCheckBox SystemTrayNotificationBox;
+    private JCheckBox showTypingNotificationBox;
 
     public NotificationsUI() {
         setLayout(new VerticalFlowLayout());
@@ -50,6 +53,12 @@ public class NotificationsUI extends JPanel {
         onlineNotificationBox = new JCheckBox(Res.getString("checkbox.notify.user.comes.online"));
         add(onlineNotificationBox);
 
+        SystemTrayNotificationBox = new JCheckBox(Res.getString("checkbox.notify.systemtray"));
+        add(SystemTrayNotificationBox);
+        
+        showTypingNotificationBox = new JCheckBox(Res.getString("checkbox.notify.typing.systemtray"));
+        add(showTypingNotificationBox);
+        
         betaCheckBox = new JCheckBox( Res.getString("menuitem.check.for.updates"));
         add(betaCheckBox);
     }
@@ -85,7 +94,23 @@ public class NotificationsUI extends JPanel {
     public boolean isOnlineNotificationOn() {
         return onlineNotificationBox.isSelected();
     }
-
+    
+    public void setTypingNotification(boolean notify) {
+    	showTypingNotificationBox.setSelected(notify);
+    }
+    
+    public boolean isTypingNotification() {
+    	return showTypingNotificationBox.isSelected();
+    }
+    
+    public void setSystemTrayNotification(boolean notify) {
+    	SystemTrayNotificationBox.setSelected(notify);
+    }
+    
+    public boolean isSystemTrayNotificationEnabled() {
+    	return SystemTrayNotificationBox.isSelected();
+    }
+    
     public void setCheckForBeta(boolean check) {
         betaCheckBox.setSelected(check);
     }

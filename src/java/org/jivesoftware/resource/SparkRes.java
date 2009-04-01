@@ -112,6 +112,7 @@ public class SparkRes {
     public static final String MESSAGE_AWAY = "MESSAGE_AWAY";
     public static final String IM_DND = "IM_DND";
     public static final String MESSAGE_NEW_TRAY = "MESSAGE_NEW_TRAY";
+    public static final String TYPING_TRAY = "TYPING_TRAY";
     public static final String SMALL_DELETE = "SMALL_DELETE";
     public static final String LINK_16x16 = "LINK_16x16";
     public static final String CALL_ICON = "CALL_ICON";
@@ -325,9 +326,9 @@ public class SparkRes {
         frame.getContentPane().add(new JScrollPane(pane));
 
         StringBuffer buf = new StringBuffer();
-        Enumeration enumeration = prb.getKeys();
+        Enumeration<String> enumeration = prb.getKeys();
         while (enumeration.hasMoreElements()) {
-            String token = (String)enumeration.nextElement();
+            String token = enumeration.nextElement();
             String value = prb.getString(token).toLowerCase();
             if (value.endsWith(".gif") || value.endsWith(".png") || value.endsWith(".jpg") || value.endsWith("jpeg")) {
                 SparkRes.getImageIcon(token);
@@ -352,7 +353,7 @@ public class SparkRes {
 
                 // Check to see if the name of the file exists
                 boolean exists = false;
-                Enumeration enumeration = prb.getKeys();
+                Enumeration<String> enumeration = prb.getKeys();
                 while (enumeration.hasMoreElements()) {
                     String token = (String)enumeration.nextElement();
                     String value = prb.getString(token);

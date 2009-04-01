@@ -2,6 +2,7 @@ package org.jivesoftware.sparkimpl.plugin.systray;
 
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,240 +20,245 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.MessageEventNotificationListener;
+import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-public class SysTrayPlugin implements Plugin
-{
+public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotificationListener {
 	private JPopupMenu popupMenu = new JPopupMenu();
-	
-	private final JMenuItem openMenu 		= new JMenuItem(Res.getString("menuitem.open"));
-	private final JMenuItem minimizeMenu 	= new JMenuItem(Res.getString("menuitem.hide"));
-	private final JMenuItem exitMenu 		= new JMenuItem(Res.getString("menuitem.exit"));
-	private final JMenu 	statusMenu		= new JMenu(Res.getString("menuitem.status"));
-	private final JMenuItem logoutMenu 		= new JMenuItem(Res.getString("menuitem.logout.no.status"));
-	
+
+	private final JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
+	private final JMenuItem minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
+	private final JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+	private final JMenu statusMenu = new JMenu(Res.getString("menuitem.status"));
+	private final JMenuItem logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
+
+	private LocalPreferences pref = SettingsManager.getLocalPreferences();
 	private ImageIcon availableIcon;
+	private ImageIcon newMessageIcon;
+	private ImageIcon typingIcon;
 	private TrayIcon trayIcon;
 
-	public boolean canShutDown() 
-	{
+	public boolean canShutDown() {
 		return true;
 	}
 
-	public void initialize() 
-	{		
+	public void initialize() {
 		SystemTray tray = SystemTray.getSystemTray();
+
+		SparkManager.getNativeManager().addNativeHandler(this);
+		SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
 		
-		if (SystemTray.isSupported()) {
-						
-			
+		newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
+
+		typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
+		
+		if (SystemTray.isSupported()) {		
 			availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);
-	        if (availableIcon == null) {
-	            availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
-	        }
-	          
-	        popupMenu.add(openMenu);
-	        openMenu.addActionListener(new AbstractAction() {
-	
+			if (availableIcon == null) {
+				availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
+			}
+
+			popupMenu.add(openMenu);
+			openMenu.addActionListener(new AbstractAction() {
+
 				private static final long serialVersionUID = 1L;
-	
+
 				public void actionPerformed(ActionEvent event) {
 					SparkManager.getMainWindow().setVisible(true);
 					SparkManager.getMainWindow().toFront();
 				}
-	        	
-	        });
-	        popupMenu.add(minimizeMenu);
-	        minimizeMenu.addActionListener(new AbstractAction() {
-	        	private static final long serialVersionUID = 1L;
-	        	public void actionPerformed(ActionEvent event) {
-	        		SparkManager.getMainWindow().setVisible(false);
-	        	}
-	        });
-	        popupMenu.addSeparator();
-	        addStatusMessages();
-	        popupMenu.add(statusMenu);
-	        statusMenu.addActionListener(new AbstractAction() {
-	        	private static final long serialVersionUID = 1L;
-	        	public void actionPerformed(ActionEvent event) {
-	        		
-	        	}
-	        });
-	        
-	        if (Spark.isWindows())
-	        {
-	        	popupMenu.add(logoutMenu);
-	        	logoutMenu.addActionListener(new AbstractAction() {
-	    			private static final long serialVersionUID = 1L;
-	
-	    			public void actionPerformed(ActionEvent e) {
-	    				 SparkManager.getMainWindow().logout(false);
-	                }	
-	        	});
-	        }
-	        // Exit Menu
-	        exitMenu.addActionListener(new AbstractAction() {
-				private static final long serialVersionUID = 1L;
-	
-				public void actionPerformed(ActionEvent e) {
-	            	SparkManager.getMainWindow().shutdown();
-	            }
-	        });
-	        popupMenu.add(exitMenu);
-	        
-	        
-	        // init Presence Listener
-	        // Small feature preview
-	        /*
-			SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
-				public void presenceChanged(Presence presence) {
-					Icon icon = PresenceManager.getIconFromPresence(presence);
-					if (icon instanceof ImageIcon)
-					{
-						// Add Change Icon
-						trayIcon.setImage( ((ImageIcon) icon).getImage()  );
-						
-						// Add 
-						trayIcon.displayMessage("Status", presence.getMode().toString(), TrayIcon.MessageType.INFO);
-					}
-					
-				}	
+
 			});
-			*/
-	        //
-	                
-		    try {        
-		    	trayIcon = new TrayIcon(availableIcon.getImage(),"Spark",null);		
-			    trayIcon.setImageAutoSize(true);
-			    
+			popupMenu.add(minimizeMenu);
+			minimizeMenu.addActionListener(new AbstractAction() {
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent event) {
+					SparkManager.getMainWindow().setVisible(false);
+				}
+			});
+			popupMenu.addSeparator();
+			addStatusMessages();
+			popupMenu.add(statusMenu);
+			statusMenu.addActionListener(new AbstractAction() {
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent event) {
+
+				}
+			});
+
+			if (Spark.isWindows()) {
+				popupMenu.add(logoutMenu);
+				logoutMenu.addActionListener(new AbstractAction() {
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e) {
+						SparkManager.getMainWindow().logout(false);
+					}
+				});
+			}
+			// Exit Menu
+			exitMenu.addActionListener(new AbstractAction() {
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {
+					SparkManager.getMainWindow().shutdown();
+				}
+			});
+			popupMenu.add(exitMenu);
+
+			// init Presence Listener
+			// Small feature preview
+			/*
+			 * SparkManager.getSessionManager().addPresenceListener(new
+			 * PresenceListener() { public void presenceChanged(Presence
+			 * presence) { Icon icon =
+			 * PresenceManager.getIconFromPresence(presence); if (icon
+			 * instanceof ImageIcon) { // Add Change Icon trayIcon.setImage(
+			 * ((ImageIcon) icon).getImage() );
+			 * 
+			 * // Add trayIcon.displayMessage("Status",
+			 * presence.getMode().toString(), TrayIcon.MessageType.INFO); }
+			 * 
+			 * } });
+			 */
+			//
+			try {
+				trayIcon = new TrayIcon(availableIcon.getImage(), "Spark", null);
+				trayIcon.setImageAutoSize(true);
+
 				trayIcon.addMouseListener(new MouseListener() {
-		
-						public void mouseClicked(MouseEvent event) {
-							if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 1)
-							{
 
-								if (SparkManager.getMainWindow().isVisible())
-								{
-									SparkManager.getMainWindow().setVisible(false);
-								}
-								else
-								{
-									SparkManager.getMainWindow().setVisible(true);
-									SparkManager.getMainWindow().toFront();
-								}
-							}
-							else if (event.getButton() == MouseEvent.BUTTON1)
-							{
+					public void mouseClicked(MouseEvent event) {
+						if (event.getButton() == MouseEvent.BUTTON1
+								&& event.getClickCount() == 1) {
+
+							if (SparkManager.getMainWindow().isVisible()) {
+								SparkManager.getMainWindow().setVisible(false);
+							} else {
+								SparkManager.getMainWindow().setVisible(true);
 								SparkManager.getMainWindow().toFront();
-								//SparkManager.getMainWindow().requestFocus();
 							}
-							else if (event.getButton() == MouseEvent.BUTTON3) {
-				            	popupMenu.setLocation(event.getX(), event.getY());
-				            	popupMenu.setInvoker(popupMenu);
-				            	popupMenu.setVisible(true);
-							}
+						} else if (event.getButton() == MouseEvent.BUTTON1) {
+							SparkManager.getMainWindow().toFront();
+							// SparkManager.getMainWindow().requestFocus();
+						} else if (event.getButton() == MouseEvent.BUTTON3) {
+							popupMenu.setLocation(event.getX(), event.getY());
+							popupMenu.setInvoker(popupMenu);
+							popupMenu.setVisible(true);
 						}
-		
-						public void mouseEntered(MouseEvent event) {
-		
-						}
-		
-						public void mouseExited(MouseEvent event) {
-		
-						}
-		
-						public void mousePressed(MouseEvent event) {
-		
-						}
-		
-						public void mouseReleased(MouseEvent event) {
+					}
 
-						}
-				    	
-				    }
-			    );
+					public void mouseEntered(MouseEvent event) {
 
-		    	tray.add(trayIcon);
-		    } catch (Exception e) { 
-		    	// Not Supported
-		    }
+					}
+
+					public void mouseExited(MouseEvent event) {
+
+					}
+
+					public void mousePressed(MouseEvent event) {
+
+					}
+
+					public void mouseReleased(MouseEvent event) {
+
+					}
+
+				});
+
+				tray.add(trayIcon);
+			} catch (Exception e) {
+				// Not Supported
+			}
 		}
 	}
-	
+
 	public void addStatusMessages() {
 		StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
 		for (Object o : statusBar.getStatusList()) {
-			  final StatusItem statusItem = (StatusItem) o;
-			
-			  final AbstractAction action = new AbstractAction() {
-				  private static final long serialVersionUID = 1L;
+			final StatusItem statusItem = (StatusItem) o;
 
-				  public void actionPerformed(ActionEvent e) {
+			final AbstractAction action = new AbstractAction() {
+				private static final long serialVersionUID = 1L;
 
-					  StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-					
-					  SparkManager.getSessionManager().changePresence(statusItem.getPresence());
-					  statusBar.setStatus(statusItem.getText());
-				  }
-			  };
-			  action.putValue(Action.NAME, statusItem.getText());
-			  action.putValue(Action.SMALL_ICON, statusItem.getIcon());
+				public void actionPerformed(ActionEvent e) {
 
-			  boolean hasChildren = false;
-			  for (Object aCustom : SparkManager.getWorkspace().getStatusBar().getCustomStatusList()) {
-	                final CustomStatusItem cItem = (CustomStatusItem) aCustom;
-	                String type = cItem.getType();
-	                if (type.equals(statusItem.getText())) {
-	                    hasChildren = true;
-	                }
-			  }
-			  
-			  if (!hasChildren) {
-				  JMenuItem status = new JMenuItem(action);
-				  statusMenu.add(status);
-			  }
-			  else {
-				  final JMenu status = new JMenu(action);
-				  statusMenu.add(status);
-				  
-				  status.addMouseListener(new MouseAdapter() {
-	                    public void mouseClicked(MouseEvent mouseEvent) {	
-	                    	action.actionPerformed(null);
-	                    	popupMenu.setVisible(false);
-	                    }
-				  });
-				  
-				  for (Object aCustom : SparkManager.getWorkspace().getStatusBar().getCustomStatusList()) {
-					  final CustomStatusItem customItem = (CustomStatusItem) aCustom;
-					  String type = customItem.getType();
-					  if (type.equals(statusItem.getText())) {
-						  AbstractAction customAction = new AbstractAction() {
-							  private static final long serialVersionUID = 1L;
-	
-							  public void actionPerformed(ActionEvent e) {
-								  StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-								  
-								  Presence oldPresence = statusItem.getPresence(); 
-								  Presence presence = StatusBar.copyPresence(oldPresence);
-                                  presence.setStatus(customItem.getStatus());
-                                  presence.setPriority(customItem.getPriority());
-                                  SparkManager.getSessionManager().changePresence(presence);
+					StatusBar statusBar = SparkManager.getWorkspace()
+							.getStatusBar();
 
-								  statusBar.setStatus(statusItem.getName()  + " - " +  customItem.getStatus());
-							  }
-						  };
-						  customAction.putValue(Action.NAME, customItem.getStatus());
-						  customAction.putValue(Action.SMALL_ICON, statusItem.getIcon());
-						  JMenuItem menuItem = new JMenuItem(customAction);
-						  status.add(menuItem);
-					  }
-				  }
-				 
-			  }
+					SparkManager.getSessionManager().changePresence(
+							statusItem.getPresence());
+					statusBar.setStatus(statusItem.getText());
+				}
+			};
+			action.putValue(Action.NAME, statusItem.getText());
+			action.putValue(Action.SMALL_ICON, statusItem.getIcon());
+
+			boolean hasChildren = false;
+			for (Object aCustom : SparkManager.getWorkspace().getStatusBar()
+					.getCustomStatusList()) {
+				final CustomStatusItem cItem = (CustomStatusItem) aCustom;
+				String type = cItem.getType();
+				if (type.equals(statusItem.getText())) {
+					hasChildren = true;
+				}
+			}
+
+			if (!hasChildren) {
+				JMenuItem status = new JMenuItem(action);
+				statusMenu.add(status);
+			} else {
+				final JMenu status = new JMenu(action);
+				statusMenu.add(status);
+
+				status.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent mouseEvent) {
+						action.actionPerformed(null);
+						popupMenu.setVisible(false);
+					}
+				});
+
+				for (Object aCustom : SparkManager.getWorkspace()
+						.getStatusBar().getCustomStatusList()) {
+					final CustomStatusItem customItem = (CustomStatusItem) aCustom;
+					String type = customItem.getType();
+					if (type.equals(statusItem.getText())) {
+						AbstractAction customAction = new AbstractAction() {
+							private static final long serialVersionUID = 1L;
+
+							public void actionPerformed(ActionEvent e) {
+								StatusBar statusBar = SparkManager
+										.getWorkspace().getStatusBar();
+
+								Presence oldPresence = statusItem.getPresence();
+								Presence presence = StatusBar
+										.copyPresence(oldPresence);
+								presence.setStatus(customItem.getStatus());
+								presence.setPriority(customItem.getPriority());
+								SparkManager.getSessionManager()
+										.changePresence(presence);
+
+								statusBar.setStatus(statusItem.getName()
+										+ " - " + customItem.getStatus());
+							}
+						};
+						customAction.putValue(Action.NAME, customItem.getStatus());
+						customAction.putValue(Action.SMALL_ICON, statusItem.getIcon());
+						JMenuItem menuItem = new JMenuItem(customAction);
+						status.add(menuItem);
+					}
+				}
+
+			}
 		}
 	}
 
@@ -263,9 +269,59 @@ public class SysTrayPlugin implements Plugin
 		}
 	}
 
-	public void uninstall()	{
+	public void uninstall() {
 
-		
+	}
+
+	// Info on new Messages
+	@Override
+	public void flashWindow(Window window) {		
+		if (pref.isSystemTrayNotificationEnabled())
+		{
+			trayIcon.setImage(newMessageIcon.getImage());
+		}
+	}
+
+	@Override
+	public void flashWindowStopWhenFocused(Window window) {
+		trayIcon.setImage(availableIcon.getImage());
+	}
+
+	@Override
+	public boolean handleNotification() {
+		return true;
+	}
+
+	@Override
+	public void stopFlashing(Window window) {
+		trayIcon.setImage(availableIcon.getImage());
+	}
+
+	
+	// For Typing
+	@Override
+	public void cancelledNotification(String from, String packetID) {
+		trayIcon.setImage(availableIcon.getImage());
+	}
+
+	@Override
+	public void composingNotification(String from, String packetID) {
+		trayIcon.setImage(typingIcon.getImage());
+	}
+
+	@Override
+	public void deliveredNotification(String from, String packetID) {
+		// Nothing
+	}
+
+	@Override
+	public void displayedNotification(String from, String packetID) {
+		// Nothing
+	}
+
+	@Override
+	public void offlineNotification(String from, String packetID) {
+		// Nothing
 	}
 
 }
