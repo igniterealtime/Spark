@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<shortcuts>
+	<skipIfNotSupported/>
+	<programGroup defaultName="Spark" location="applications"/>
+	
+	<shortcut
+		name="Spark"
+		programGroup="yes"
+		desktop="no"
+		applications="no"
+		startMenu="no"
+		startup="no"
+		target="$INSTALL_PATH/spark"
+		commandLine=""
+		type="Application"
+        encoding="UTF-8"
+        KdeSubstUID="true"
+		workingDirectory="$INSTALL_PATH/"
+		description="Spark"
+		iconIndex="0"
+		iconFile="$INSTALL_PATH/resources/spark-32x32.png"
+		initialState="noShow">
+  		description="Spark - XMPP Client"
+		<createForPack name="Spark"/>
+	</shortcut>
+	
+	<shortcut
+            name="Spark Uninstaller"
+            programGroup="yes"
+            desktop="no"
+            applications="no"
+            startMenu="no"
+            startup="no"
+            target="java"
+            commandLine="-jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
+            iconFile="trashcan_full"
+            iconIndex="0"
+            type="Application"
+            encoding="UTF-8"
+            KdeSubstUID="true"
+            workingDirectory=""
+            description="This uninstalls Spark @build.number@">
+		<createForPack name="Spark"/>
+	</shortcut>
+	
+</shortcuts>

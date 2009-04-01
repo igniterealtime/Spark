@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<registry>
+    <pack name="Spark">
+        <value name="DisplayName"
+               keypath="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spark"
+               root="HKLM"
+               string="Spark"/>
+        <value name="UninstallString"
+               keypath="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spark"
+               root="HKLM"
+               string="&quot;$JAVA_HOME\bin\javaw.exe&quot; -jar &quot;$INSTALL_PATH\uninstaller\uninstaller.jar&quot;"/>
+        <value name="DisplayIcon"
+               keypath="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spark"
+               root="HKLM"
+               string="$INSTALL_PATH\bin\icons\izpack.ico"/>
+        <value name="HelpLink"
+               keypath="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spark"
+               root="HKLM"
+               string="Spark"/>
+        <value name="TaskbarGroupIcon"
+	       keypath="Applications\Spark.exe"
+	       root="HKCR"
+	       string="$INSTALL_PATH\resources\spark.ico" />	                  
+    </pack>
+</registry>
+

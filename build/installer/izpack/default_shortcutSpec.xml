@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<shortcuts>
+
+	<programGroup defaultName="Spark" location="applications"/>
+	
+	<shortcut
+		name="Spark"
+		programGroup="yes"
+		desktop="yes"
+		applications="no"
+		startMenu="no"
+		startup="no"
+		target="$INSTALL_PATH\Spark.exe"
+		commandLine=""
+		description="Spark"
+		iconFile="$INSTALL_PATH\resources\spark.ico"
+		iconIndex="0"
+		initialState="noShow">
+  
+		<createForPack name="Spark"/>
+
+	</shortcut>
+	
+	<shortcut
+            name="Spark Uninstaller"
+            programGroup="yes"
+            desktop="no"
+            applications="no"
+            startMenu="no"
+            startup="no"
+            target="$INSTALL_PATH\Uninstaller\uninstaller.jar"
+            commandLine=""
+            iconFile="%SystemRoot%\system32\SHELL32.dll"
+            iconIndex="31"
+            description="This uninstalls Spark @build.number@">
+		<createForPack name="Spark"/>
+	</shortcut>
+	
+</shortcuts>

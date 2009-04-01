@@ -47,6 +47,7 @@
     <description>Spark Build</description>
     <!--set global properties for this build-->
     <property name="src" location="${basedir}/src/java"/>
+	<property name="patch.dir" location="${basedir}/patches/"/>
     <property name="lib.dir" location="${basedir}/build/lib"/>
     <property name="dist.libs.dir" location="${basedir}/build/lib/dist"/>
     <property name="merge.libs.dir" location="${basedir}/build/lib/merge"/>
@@ -68,7 +69,8 @@
     <property name="commercial.plugin.dir" location="${basedir}/src/commercial"/>
     <property name="xtra.dir" location="${basedir}/src/xtra"/>
     <property name="target.xtra" location="${target.build}/xtra"/>
-
+	<property name="release.dir" value="${basedir}/installer"/>
+	
     <!-- Installer Ant Script -->
 
     <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
@@ -92,6 +94,10 @@
     <property name="pack200.excludes"
               value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
 
+	<!-- IzPack Installer -->
+	<property name="installer.izpack.dir" value="/opt/IzPack/"/>
+	<property name="launch4j.dir" location="/opt/Launch4j" />
+	
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
         <fileset dir="${dist.libs.dir}" includes="*.jar"/>
@@ -106,6 +112,8 @@
         <delete failonerror="false">
             <fileset dir="${target}" followsymlinks="false"/>
         </delete>
+    	<delete dir="${release.dir}"  failonerror="false" followsymlinks="false" />
+    	<delete dir="${basedir}/work" failonerror="false" followsymlinks="false" />
     </target>
 
     <!-- init =================================================================================== -->
@@ -160,6 +168,18 @@
         <mkdir dir="${target.xtra}"/>
 
     </target>
+	
+	<!-- patch =================================================================================== -->
+	<target name="patch">
+		<for param="patch">
+			<path>
+				<fileset dir="${patch.dir}" includes="*.patch" />
+			</path>
+			<sequential>
+				<patch patchfile="@{patch}" dir="${basedir}/src" strip="1"/>	
+			</sequential>			
+		</for>		  
+	</target>
 
     <!-- resources =================================================================================== -->
     <target name="resources">
@@ -200,10 +220,11 @@
     <target name="build" depends="init, resources, base">
         <!--Compiles the java code from ${src} directory into ${classes} directory-->
         <javac destdir="${classes}"
-               debug="on"
+               debug="true"
                source="1.6"
                target="1.6"
-                >
+            >
+        	<compilerarg value="-Xlint:deprecation" />
             <classpath>
                 <path refid="agent.dependencies"/>
             </classpath>
@@ -606,9 +627,7 @@
         <!-- <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/> -->
     </target>
 
-    <!--
-     Debian package ========================================================================= 
-    -->
+    <!-- Debian package =========================================================================  -->
     <property name="work.dir" value="${basedir}/work"/>
     <property name="debian.dir" value="${basedir}/build/debian"/>
     <property name="debian.version" value="${version.major}.${version.minor}.${version.revision}"/>
@@ -618,33 +637,33 @@
       <format property="debian.builddate" pattern="EEE, dd MMM yyyy HH:mm:ss Z" locale="en"/>
     </tstamp>
     <target name="installer.debian" depends="" description="build release deb file for the Debian,Ubuntu">
-
-	<copy todir="${debian.work.dir}/debian">
-	  <fileset dir="${debian.dir}/" includes="**/*"/>
-	  <filterset>
-	    <filter token="builddate" value="${debian.builddate}"/>
-	    <filter token="version" value="${debian.version}"/>
-	  </filterset>
-	</copy>
-
-	<copy todir="${debian.work.dir}/documentation/">
-   	   <fileset dir="${basedir}/documentation/" includes="**/*"/>
-	</copy>
-
-	<copy todir="${debian.work.dir}/src/">
-   	   <fileset dir="${basedir}/src/" includes="**/*"/>
-	</copy>
-
-	<copy todir="${debian.work.dir}/build/">
-   	   <fileset dir="${basedir}/build/" includes="**/*"/>
-	</copy>
-
-        <chmod file="${debian.work.dir}/debian/rules" perm="755"/>
-	<exec executable="dpkg-buildpackage" dir="${debian.work.dir}" failonerror="false">
-	  <arg line="-d"/>
-	</exec>
-
-	<mkdir dir="${debian.release.dir}"/>
+	
+		<copy todir="${debian.work.dir}/debian">
+		  <fileset dir="${debian.dir}/" includes="**/*"/>
+		  <filterset>
+		    <filter token="builddate" value="${debian.builddate}"/>
+		    <filter token="version" value="${debian.version}"/>
+		  </filterset>
+		</copy>
+	
+		<copy todir="${debian.work.dir}/documentation/">
+	   	   <fileset dir="${basedir}/documentation/" includes="**/*"/>
+		</copy>
+	
+		<copy todir="${debian.work.dir}/src/">
+	   	   <fileset dir="${basedir}/src/" includes="**/*"/>
+		</copy>
+	
+		<copy todir="${debian.work.dir}/build/">
+	   	   <fileset dir="${basedir}/build/" includes="**/*"/>
+		</copy>
+	
+	        <chmod file="${debian.work.dir}/debian/rules" perm="755"/>
+		<exec executable="dpkg-buildpackage" dir="${debian.work.dir}" failonerror="false">
+		  <arg line="-d"/>
+		</exec>
+	
+		<mkdir dir="${debian.release.dir}"/>
 
         <copy todir="${debian.release.dir}">
           <fileset dir="${debian.work.dir}/.." followsymlinks="false">
@@ -655,6 +674,120 @@
           </fileset>
         </copy>
     </target>
+	
+    <!-- IzPack package ========================================================================= -->
+	  
+	<target name="installer.izpack" depends="jar" description="build release a izpack installer">
+		<mkdir dir="${basedir}/installer/" />
+	    <taskdef name="IzPack" 
+	             classpath="${installer.izpack.dir}/lib/standalone-compiler.jar"
+				 classname="com.izforge.izpack.ant.IzPackTask"/>
+			
+		<taskdef name="launch4j" 
+				 classname="net.sf.launch4j.ant.Launch4jTask"
+				 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		
+		<copy file="${basedir}/build/installer/izpack/launch4j.tmpl" tofile="${basedir}/build/installer/izpack/launch4j.xml" />
+		<copy file="${basedir}/build/installer/izpack/launch4j-starter.tmpl" tofile="${basedir}/build/installer/izpack/launch4j-starter.xml" />
+		
+    	<replace file="${basedir}/build/installer/izpack/launch4j.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
+    	<replace file="${basedir}/build/installer/izpack/launch4j-starter.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
+		
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j.xml" tmpdir="${basedir}" />
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j-starter.xml" tmpdir="${basedir}" />
+			 
+		<IzPack input="${basedir}/build/installer/spark-izpack.xml" output="${basedir}/installer/spark-installer.jar" 
+				installerType="standard" izPackDir="${installer.izpack.dir}" basedir="${basedir}"/>
+	</target>
+	
+	
+	<!-- dist.src =============================================================================== -->
+	<property name="release.src.out.dir" value="target/src/Spark-${version}" />
+    <property name="release.fullname.src" value="spark_src_${version}"/>
+    <target name="dist.src" depends="release.javadocs" description="Creates a source distribution package">
+
+	<mkdir dir="${release.dir}"/>
+
+        <!-- Copy non-java source -->
+        <copy todir="${release.src.out.dir}/src">
+            <fileset dir="${basedir}/src/" excludes="**/*.java"/>
+        </copy>
+
+        <!-- Copy java source -->
+        <copy todir="${release.src.out.dir}/src">
+            <fileset dir="${basedir}/src/">
+                <include name="**/*.java" />
+            </fileset>
+            <filterset>
+                <filter token="DATE" value="${builddate}"/>
+            </filterset>
+        </copy>
+
+        <!-- Copy documentation -->
+        <copy todir="${release.src.out.dir}/documentation">
+            <fileset dir="${basedir}/target/build/documentation/"/>
+        </copy>
+
+        <!-- Copy build -->
+        <copy todir="${release.src.out.dir}/build">
+            <fileset dir="${basedir}/build"/>
+        </copy>
+
+         <!-- Source Packages -->
+         <zip zipfile="${release.dir}/${release.fullname.src}.zip"
+                 basedir="${release.src.out.dir}/.."
+                 includes="**/*"
+                 />
+         <tar tarfile="${release.dir}/${release.fullname.src}.tar.gz"
+                 basedir="${release.src.out.dir}/.."
+                 includes="**/*"
+                 compression="gzip"
+                 longfile="gnu"
+                />
+
+    </target>
+	
+    <!-- installer.rpm ========================================================================= -->
+    <property name="bundle.jre" value="true" />
+    <property name="target.work.subdir" value="rpm" />
+    <property name="target.rpm" value="${work.dir}/${target.work.subdir}" />
+    <property name="rpm.spec.file" value="${basedir}/build/rpm/spark.spec"/>
+    <tstamp>
+        <format property="rpm.builddate" pattern="EEE MMM dd yyyy" locale="en"/>
+    </tstamp>
+    <target name="installer.rpm" depends="dist.src" description="Builds a rpm of spark.">
+
+        <mkdir dir="${target.rpm}/SPECS" />
+        <mkdir dir="${target.rpm}/SOURCES" />
+        <mkdir dir="${target.rpm}/BUILD" />
+        <mkdir dir="${target.rpm}/SRPMS" />
+        <mkdir dir="${target.rpm}/RPMS" />
+
+        <copy tofile="${target.rpm}/SPECS/spark.spec" file="${rpm.spec.file}" />
+        <if>
+            <equals arg1="${bundle.jre}" arg2="true"/>
+            <then>
+                <!-- Include bundled jre -->
+                <copy todir="${target.rpm}/SOURCES" file="${basedir}/build/rpm/jre-dist.tar.gz" />
+            </then>
+        </if>
+        <copy todir="${target.rpm}/SOURCES" file="${release.dir}/${release.fullname.src}.tar.gz" />
+
+
+        <rpm specFile="spark.spec"
+             topDir="${target.rpm}"
+             command="-ba --define 'SPARK_VERSION ${version}' --define 'SPARK_SOURCE ${release.fullname.src}.tar.gz'"
+             failOnError="true"
+             />
+
+        <copy todir="${release.dir}" >
+            <fileset dir="${target.rpm}/SRPMS" />
+            <fileset dir="${target.rpm}/" >
+            	<include name="**/*.rpm"/>
+            </fileset>
+        </copy>
+    </target>
+	
 </project>
 
 
