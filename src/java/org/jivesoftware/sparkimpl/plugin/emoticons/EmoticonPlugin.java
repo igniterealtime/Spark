@@ -12,6 +12,7 @@ package org.jivesoftware.sparkimpl.plugin.emoticons;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.Collection;
 
 import javax.swing.ImageIcon;
@@ -73,11 +74,13 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 		if (emoticonPacks != null) {
 
 			// Add Emoticon button
-			ImageIcon icon = null;
 			final RolloverButton emoticonPicker;
-			icon = new ImageIcon(getClass().getClassLoader().getResource(
-					"images/smileBtn.png"));
-
+			
+			final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
+			final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
+			URL smileURL = emoticonManager.getEmoticonURL(smileEmoticon);
+			ImageIcon icon = new ImageIcon(smileURL);
+			
 			if (icon == null) {
 				emoticonPicker = new RolloverButton("Smiley's", icon);
 
@@ -97,21 +100,15 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 								public void emoticonPicked(String emoticon) {
 									try {
 										popup.setVisible(false);
-										final ChatInputEditor editor = room
-												.getChatInputEditor();
+										final ChatInputEditor editor = room.getChatInputEditor();
 										String currentText = editor.getText();
-										if (currentText.length() == 0
-												|| currentText.endsWith(" ")) {
-											room.getChatInputEditor()
-													.insertText(emoticon + " ");
+										if (currentText.length() == 0 || currentText.endsWith(" ")) {
+											room.getChatInputEditor().insertText(emoticon + " ");
 										} else {
 											room.getChatInputEditor()
-													.insertText(
-															" " + emoticon
-																	+ " ");
+													.insertText(" " + emoticon + " ");
 										}
-										room.getChatInputEditor()
-												.requestFocus();
+										room.getChatInputEditor().requestFocus();
 									} catch (BadLocationException e1) {
 										Log.error(e1);
 									}
