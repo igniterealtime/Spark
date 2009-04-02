@@ -10,15 +10,10 @@
 
 package org.jivesoftware.spark.component;
 
-import org.jivesoftware.MainWindow;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.SparkManager;
-
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
@@ -34,6 +29,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+
+import org.jivesoftware.MainWindow;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.SparkManager;
 
 
 /**
@@ -202,10 +202,16 @@ public final class MessageDialog {
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    dlg.setVisible(false);
+                String value;
+                try {
+                    value= (String)pane.getValue();
+                    if (Res.getString("close").equals(value)) {
+                        dlg.setVisible(false);
+                    }    
+                } catch (Exception ex) {
+                    // probably <ESC> pressed ;-)
                 }
+                
             }
         };
 
@@ -246,8 +252,8 @@ public final class MessageDialog {
 
         //add each element of the stack trace
         StackTraceElement[] stackTrace = aThrowable.getStackTrace();
-        final List traceElements = Arrays.asList(stackTrace);
-        for (Object traceElement : traceElements) {
+        final List<StackTraceElement> traceElements = Arrays.asList(stackTrace);
+        for (StackTraceElement traceElement : traceElements) {
             result.append(traceElement);
             result.append(lineSeperator);
         }
