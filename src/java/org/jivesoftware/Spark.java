@@ -10,19 +10,26 @@
 
 package org.jivesoftware;
 
-import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Locale;
+import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -40,6 +47,9 @@ public final class Spark {
     private static File RESOURCE_DIRECTORY;
     private static File BIN_DIRECTORY;
     private static File LOG_DIRECTORY;
+    private static File USER_DIRECTORY;
+    private static File PLUGIN_DIRECTORY;
+    private static File XTRA_DIRECTORY;
 
 
     /**
@@ -61,16 +71,45 @@ public final class Spark {
         StringBuffer buf = new StringBuffer();
         buf.append(current);
         buf.append(";");
+        
+        RESOURCE_DIRECTORY = new File(USER_SPARK_HOME, "/resources").getAbsoluteFile();
+        if(!RESOURCE_DIRECTORY.exists()){
+        	
+        	RESOURCE_DIRECTORY.mkdirs();
+        }
+        BIN_DIRECTORY = new File(USER_SPARK_HOME, "/bin").getAbsoluteFile();
+        if(!BIN_DIRECTORY.exists()){
+        	
+        	BIN_DIRECTORY.mkdirs();
+        }
+        LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
+        if (!LOG_DIRECTORY.exists()){
+        	
+        	LOG_DIRECTORY.mkdirs();
+        }
+        USER_DIRECTORY = new File(USER_SPARK_HOME, "/user").getAbsoluteFile();
+        if(!USER_DIRECTORY.exists()){
+        	
+        	USER_DIRECTORY.mkdirs();
+        }
+        PLUGIN_DIRECTORY = new File(USER_SPARK_HOME, "/plugins").getAbsoluteFile();
+        if(!PLUGIN_DIRECTORY.exists()){
+        	
+        	PLUGIN_DIRECTORY.mkdirs();
+        }
+        XTRA_DIRECTORY = new File(USER_SPARK_HOME, "/xtra").getAbsoluteFile();
+        if(!XTRA_DIRECTORY.exists()){
+        	
+        	XTRA_DIRECTORY.mkdirs();
+        	//TODO methode an richtige stelle setzen
+        	//copyEmoticonFiles();
 
+        }
 
         final String workingDirectory = System.getProperty("appdir");
         if (workingDirectory == null) {
-            RESOURCE_DIRECTORY = new File(USER_SPARK_HOME, "/resources").getAbsoluteFile();
-            BIN_DIRECTORY = new File(USER_SPARK_HOME, "/bin").getAbsoluteFile();
-            LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
-            RESOURCE_DIRECTORY.mkdirs();
-            LOG_DIRECTORY.mkdirs();
-            if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists()) {
+            
+            if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists()) {
                 JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
             }
@@ -83,8 +122,12 @@ public final class Spark {
 
             RESOURCE_DIRECTORY = new File(workingDir, "resources").getAbsoluteFile();
             BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
-
-
+            File emoticons = new File(XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
+            if(!emoticons.exists()){
+            	
+            	//Copy emoticon files from install directory to the spark user home directory
+            }
+            
             LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
             try {
@@ -378,4 +421,22 @@ public final class Spark {
             }
         }
     }
+   /* public void copyEmoticonFiles() {
+        // Current Plugin directory
+        File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(), "xtra/emoticons").getAbsoluteFile();
+        newEmoticonDir.mkdirs();
+        //TODO emoticondirectory anpassen
+        File EMOTICON_DIRECTORY = new File("D:/workspace/Spark 2.6 beta/src","xtra/emoticons");
+        File[] files = EMOTICON_DIRECTORY.listFiles();
+        
+        
+        for (File file : files) {
+            if (file.isFile()) {
+                
+               // Copy over
+               File newFile = new File(newEmoticonDir, file.getName());
+                
+            }
+        }
+    }*/
 }

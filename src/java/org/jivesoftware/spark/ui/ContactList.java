@@ -447,16 +447,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         if (!isFiled) {
             ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-            if (unfiledGroup == null) {
-                unfiledGroup = new ContactGroup(Res.getString("unfiled"));
-                addContactGroup(unfiledGroup);
-            }
-            unfiledGroup.addContactItem(contactItem);
+            
+            ContactGroup unfiledGrp = getUnfiledGroup();
+            unfiledGrp.addContactItem(contactItem);
             contactItem.setPresence(presence);
             contactItem.setAvailable(true);
 
-            unfiledGroup.setVisible(true);
-            unfiledGroup.fireContactGroupUpdated();
+            unfiledGrp.setVisible(true);
+            unfiledGrp.fireContactGroupUpdated();
         }
     }
 
@@ -477,31 +475,40 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
 
         for (RosterGroup group : roster.getGroups()) {
-            ContactGroup contactGroup = getContactGroup(group.getName());
+        	
+        	if(group.getName() == null || group.getName() == ""){
+        		for(RosterEntry entry : group.getEntries()){
+        			
+        			ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                    moveToOffline(contactItem);
+        		}
+        	}else{
+        		
+	            ContactGroup contactGroup = getContactGroup(group.getName());
+	            if (contactGroup == null) {
+	                contactGroup = getUnfiledGroup();
+	            }
 
-            for (RosterEntry entry : group.getEntries()) {
-                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-                contactItem.setPresence(new Presence(Presence.Type.unavailable));
-                if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
-                    // Add to contact group.
-                    contactGroup.addContactItem(contactItem);
-                    contactGroup.setVisible(true);
-                }
-                else {
-                    if (offlineGroup.getContactItemByJID(entry.getUser()) == null) {
-                        moveToOffline(contactItem);
-                    }
-                }
+	            for (RosterEntry entry : group.getEntries()) {
+	                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+	                contactItem.setPresence(new Presence(Presence.Type.unavailable));
+	                if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
+	                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+	                    // Add to contact group.
+	                    contactGroup.addContactItem(contactItem);
+	                    contactGroup.setVisible(true);
+	                }
+	                else {
+	                    if (offlineGroup.getContactItemByJID(entry.getUser()) == null) {
+	                        moveToOffline(contactItem);
+	                    }
+	                }
+            	}
             }
         }
 
         // Add Unfiled Group
         for (RosterEntry entry : roster.getUnfiledEntries()) {
-            if (unfiledGroup == null) {
-                unfiledGroup = new ContactGroup(Res.getString("unfiled"));
-                addContactGroup(unfiledGroup);
-            }
             ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
             moveToOffline(contactItem);
         }
@@ -512,13 +519,12 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      *
      * @param addresses the address added.
      */
-    public void entriesAdded(final Collection addresses) {
+    public void entriesAdded(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Roster roster = SparkManager.getConnection().getRoster();
 
-                for (Object address : addresses) {
-                    String jid = (String) address;
+                for (String jid : addresses) {
                     RosterEntry entry = roster.getEntry(jid);
                     addUser(entry);
                 }
@@ -571,7 +577,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      *
      * @param addresses List of entries that were updated.
      */
-    public void entriesUpdated(final Collection addresses) {
+    public void entriesUpdated(final Collection<String> addresses) {
         handleEntriesUpdated(addresses);
     }
 
@@ -580,11 +586,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      *
      * @param addresses the addresses removed from the roster.
      */
-    public void entriesDeleted(final Collection addresses) {
+    public void entriesDeleted(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                for (Object address : addresses) {
-                    String jid = (String) address;
+                for (String jid : addresses) {
                     removeContactItem(jid);
                 }
             }
@@ -597,14 +602,14 @@ public final class ContactList extends JPanel implements ActionListener, Contact
      *
      * @param addresses the Collection of addresses that have been modified within the Roster.
      */
-    private synchronized void handleEntriesUpdated(final Collection addresses) {
+    private synchronized void handleEntriesUpdated(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Roster roster = SparkManager.getConnection().getRoster();
 
-                Iterator jids = addresses.iterator();
+                Iterator<String> jids = addresses.iterator();
                 while (jids.hasNext()) {
-                    String jid = (String)jids.next();
+                    String jid = jids.next();
                     RosterEntry rosterEntry = roster.getEntry(jid);
                     if (rosterEntry != null) {
                         // Check for new Roster Groups and add them if they do not exist.
@@ -685,7 +690,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
                             for (ContactGroup group : new ArrayList<ContactGroup>(getContactGroups())) {
                                 ContactItem itemFound = group.getContactItemByJID(jid);
-                                if (itemFound != null && !unfiled && group != unfiledGroup && group != offlineGroup) {
+                                if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
                                     if (!userGroupSet.contains(group.getGroupName())) {
                                         removeContactGroup(group);
                                     }
@@ -698,8 +703,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                         if (!isUnfiled) {
                             return;
                         }
-
-                        ContactItem unfiledItem = unfiledGroup.getContactItemByJID(jid);
+                        
+                        ContactGroup unfiledGrp = getUnfiledGroup();
+                        ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid);
                         if (unfiledItem != null) {
 
                         }
@@ -710,9 +716,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
                                     // Remove from offlineItem and add to unfiledItem.
                                     offlineGroup.removeContactItem(offlineItem);
-                                    unfiledGroup.addContactItem(offlineItem);
-                                    unfiledGroup.fireContactGroupUpdated();
-                                    unfiledGroup.setVisible(true);
+                                    unfiledGrp.addContactItem(offlineItem);
+                                    unfiledGrp.fireContactGroupUpdated();
+                                    unfiledGrp.setVisible(true);
                                 }
                             }
                         }
@@ -878,7 +884,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 newContactGroup.setGroupName(realGroupName);
             }
             else {
-                if (newContactGroup != offlineGroup && newContactGroup != unfiledGroup) {
+                if (newContactGroup != offlineGroup && newContactGroup != getUnfiledGroup()) {
                     rootGroup = newContactGroup;
                     continue;
                 }
@@ -1216,7 +1222,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     public void contactGroupPopup(MouseEvent e, final ContactGroup group) {
    	  // Do nothing with offline group
-        if (group == offlineGroup || group == unfiledGroup) {
+        if (group == offlineGroup || group == getUnfiledGroup()) {
             return;
         }
 
@@ -1354,7 +1360,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         ContactGroup contactGroup = getContactGroup(groupName);
 
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
-        if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != unfiledGroup) {
+        if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
             Roster roster = SparkManager.getConnection().getRoster();
             RosterEntry entry = roster.getEntry(item.getJID());
             if (entry != null) {
@@ -1922,7 +1928,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     private void checkGroup(ContactGroup group) {
-        if (!group.hasAvailableContacts() && group != offlineGroup && group != unfiledGroup && !showHideMenu.isSelected()) {
+        if (!group.hasAvailableContacts() && group != offlineGroup && group != getUnfiledGroup() && !showHideMenu.isSelected()) {
             group.setVisible(false);
         }
     }
@@ -1935,7 +1941,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         dndListeners.remove(listener);
     }
 
-    public void fireFilesDropped(Collection files, ContactItem item) {
+    public void fireFilesDropped(Collection<File> files, ContactItem item) {
         for (FileDropListener fileDropListener : new ArrayList<FileDropListener>(dndListeners)) {
             fileDropListener.filesDropped(files, item);
         }
@@ -2151,13 +2157,16 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         final Roster roster = SparkManager.getConnection().getRoster();
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
+            if(contactGroup == null && group.getName() != ""){
+            	contactGroup = addContactGroup(group.getName());
+            }
             if (contactGroup != null) {
                 isFiled = true;
                 contactGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
             }
         }
         if (!isFiled) {
-            unfiledGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
+            getUnfiledGroup().addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
         }
         
         if(localPreferences.isOfflineUsersShown() == false)
@@ -2172,6 +2181,15 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
     }
 
+    private ContactGroup getUnfiledGroup() {
+        if (unfiledGroup == null) {
+            // Add Unfiled Group
+            unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+            addContactGroup(unfiledGroup);
+        }
+        return unfiledGroup;
+    }
+
     /**
      * Sorts ContactItems.
      */
@@ -2182,11 +2200,3 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     };
 
 }
-
-
-
-
-
-
-
-

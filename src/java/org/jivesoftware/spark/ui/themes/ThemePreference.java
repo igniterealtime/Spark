@@ -84,7 +84,9 @@ public class ThemePreference implements Preference {
         final String pack = panel.getSelectedEmoticonPack();
         boolean emotEnabled = panel.areEmoticonsEnabled();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        pref.setEmoticonPack(pack);
+        if(pack != null){
+            pref.setEmoticonPack(pack);
+        }
         pref.setEmoticonsEnabled(emotEnabled);
         pref.setUseSystemLookAndFeel(panel.useSystemLookAndFeel());
         pref.setAvatarVisible(panel.areAvatarsVisible());

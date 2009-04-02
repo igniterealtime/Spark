@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -95,12 +96,21 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     private EmoticonManager emoticonManager;
 
     protected Boolean forceEmoticons = false;
+    
+    private Boolean emoticonsAvailable = true;
 
     /**
      * ChatArea Constructor.
      */
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
+        
+        Collection<String> emoticonPacks = null; 
+        emoticonPacks = emoticonManager.getEmoticonPacks();
+        
+        if(emoticonPacks == null) {
+        	emoticonsAvailable = false;
+        }
 
         // Set Default Font
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -310,7 +320,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @return true if the image was found, otherwise false.
      */
     public boolean insertImage(String imageKey) {
-        if(!forceEmoticons && !SettingsManager.getLocalPreferences().areEmoticonsEnabled()){
+    	
+        if(!forceEmoticons && !SettingsManager.getLocalPreferences().areEmoticonsEnabled() || !emoticonsAvailable){
             return false;
         }
         final Document doc = getDocument();
