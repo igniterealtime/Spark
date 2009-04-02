@@ -18,15 +18,16 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.PrivateDataManager;
+import org.jivesoftware.smackx.bookmark.BookmarkManager;
 import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.bookmark.BookmarkedURL;
-import org.jivesoftware.smackx.bookmark.Bookmarks;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.conferences.BookmarksListener;
+import org.jivesoftware.spark.ui.conferences.BookmarksUI;
+import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.SwingTimerTask;
@@ -42,34 +43,103 @@ public class BookmarkPlugin implements Plugin {
     public void initialize() {
         final SwingWorker bookmarkThreadWorker = new SwingWorker() {
             public Object construct() {
-                // Register own provider for simpler implementation.
-                PrivateDataManager.addPrivateDataProvider("storage", "storage:bookmarks", new Bookmarks.Provider());
-                PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
-                Bookmarks bookmarks = null;
-                try {
-                    bookmarks = (Bookmarks)manager.getPrivateData("storage", "storage:bookmarks");
+                return this; 
                 }
-                catch (XMPPException e) {
-                    Log.error(e);
-                }
-                return bookmarks;
 
-            }
-
+            /**
+             * Installing menu into spark menu and adding events to bookmarks
+             */
+            @Override
             public void finished() {
-                final Bookmarks bookmarks = (Bookmarks)get();
-
+                
                 final JMenu bookmarkMenu = new JMenu("Bookmarks");
 
-                if (bookmarks != null) {
-                    bookmarkMenu.setToolTipText(Res.getString("title.view.bookmarks"));
+                createMenu(bookmarkMenu);
+
+                if (bookmarkMenu.getMenuComponentCount() > 0) {
+                    int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
+                    SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 1);
+                }
+
+                BookmarksUI bookmarksUi = ConferenceServices.getBookmarkedConferences();
+                if ( bookmarksUi != null ) {
+                    bookmarksUi.addBookmarksListener(new BookmarksListener() {
+
+                        public void bookmarkAdded(String roomJID) {
+                            rescan(bookmarkMenu);
+            }
+
+                        public void bookmarkRemoved(String roomJID) {
+                            rescan(bookmarkMenu);
+                        }
+                    });
+                }
+            }
+
+            /**
+             * Rescaning our bookmarks and remaking menu items
+             *
+             * @param Bookmark menu Jmenu
+             */
+            public void rescan(JMenu bookmarkMenu)
+            {
+                bookmarkMenu.removeAll(); // removing old menus
+                try {
+                    setBookmarks(bookmarkMenu); // making new 
+                    int onPanel = SparkManager.getMainWindow().getMenu().getComponentIndex(bookmarkMenu);
+
+                    if (onPanel < 0) {
+                        if (bookmarkMenu.getMenuComponentCount() > 0) {
+                            int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
+                            SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 1);
+                        }
+                    }
+                    
+                    if (onPanel >= 0) {
+                        if (bookmarkMenu.getMenuComponentCount() <= 0) {
+                            SparkManager.getMainWindow().getMenu().remove(bookmarkMenu);
+                        }
+                    }
+                    // Refreshing menu panel
                     SparkManager.getWorkspace().getStatusBar().invalidate();
                     SparkManager.getWorkspace().getStatusBar().validate();
                     SparkManager.getWorkspace().getStatusBar().repaint();
+                } catch (XMPPException ex) {
+                    Log.error(ex);
+                }
+            }
 
+            /**
+             * Updating statusbar and generating menu items
+             *
+             * @param Bookmark menu Jmenu
+             */
+            public void createMenu(JMenu bookmarkMenu)
+            {
+                SparkManager.getWorkspace().getStatusBar().invalidate();
+                SparkManager.getWorkspace().getStatusBar().validate();
+                SparkManager.getWorkspace().getStatusBar().repaint();
+                try {
+                    setBookmarks(bookmarkMenu);
+                } catch (XMPPException ex) {
+                    Log.error(ex);
+                }
 
-                    Collection bookmarkedConferences = bookmarks.getBookmarkedConferences();
-                    final Collection bookmarkedLinks = bookmarks.getBookmarkedURLS();
+            }
+
+            /**
+             * loading menu items and setting bookmarks listeners
+             *
+             * @param Bookmark menu Jmenu
+             */
+            public void setBookmarks(JMenu bookmarkMenu ) throws XMPPException
+            {
+                BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+
+                if (manager != null) {
+
+                    Collection bookmarkedConferences = manager.getBookmarkedConferences();
+                    final Collection bookmarkedLinks = manager.getBookmarkedURLs();
 
                     for (Object bookmarkedLink : bookmarkedLinks) {
                         final BookmarkedURL link = (BookmarkedURL) bookmarkedLink;
@@ -115,12 +185,7 @@ public class BookmarkPlugin implements Plugin {
                         bookmarkMenu.add(conferenceAction);
                     }
                 }
-
-                if (bookmarkMenu.getMenuComponentCount() > 0) {
-                    int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
-                    SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 1);
                 }
-            }
         };
 
         bookmarkThreadWorker.start();

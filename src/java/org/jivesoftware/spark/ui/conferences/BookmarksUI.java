@@ -10,29 +10,6 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.bookmark.BookmarkManager;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.JiveTreeCellRenderer;
-import org.jivesoftware.spark.component.JiveTreeNode;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.Tree;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -44,12 +21,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
-import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -65,19 +42,50 @@ import javax.swing.JTextField;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.bookmark.BookmarkManager;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.packet.DiscoverInfo.Identity;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.JiveTreeCellRenderer;
+import org.jivesoftware.spark.component.JiveTreeNode;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.Tree;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
+
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
  */
 public class BookmarksUI extends JPanel {
-    private Tree tree;
+	private static final long serialVersionUID = -315974309284551232L;
+
+	private Tree tree;
 
     private JiveTreeNode rootNode;
 
-    private Collection mucServices;
+    private Collection<String> mucServices;
 
     private Set<String> autoJoinRooms = new HashSet<String>();
 
     private List<ContextMenuListener> listeners = new ArrayList<ContextMenuListener>();
+
+    /**
+     * Bookmarks listeners
+     */
+    private List<BookmarksListener> bookmarkListeners = new ArrayList<BookmarksListener>();
 
     private BookmarkManager manager;
 
@@ -92,7 +100,9 @@ public class BookmarksUI extends JPanel {
 
         rootNode = new JiveTreeNode("Conference Services");
         tree = new Tree(rootNode) {
-            protected void setExpandedState(TreePath path, boolean state) {
+			private static final long serialVersionUID = -8445572224948613446L;
+
+			protected void setExpandedState(TreePath path, boolean state) {
                 // Ignore all collapse requests; collapse events will not be fired
                 if (state) {
                     super.setExpandedState(path, state);
@@ -186,7 +196,9 @@ public class BookmarksUI extends JPanel {
 
             // Define service actions
             Action browseAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
+				private static final long serialVersionUID = -8866708581713789939L;
+
+				public void actionPerformed(ActionEvent actionEvent) {
                     browseRooms(node.toString());
                 }
             };
@@ -194,7 +206,9 @@ public class BookmarksUI extends JPanel {
             browseAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
 
             Action removeServiceAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
+				private static final long serialVersionUID = -5276754429117462223L;
+
+				public void actionPerformed(ActionEvent actionEvent) {
                     DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
                     treeModel.removeNodeFromParent(node);
                 }
@@ -207,7 +221,9 @@ public class BookmarksUI extends JPanel {
 
             // Define room actions
             Action joinRoomAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
+				private static final long serialVersionUID = -356016505214728244L;
+
+				public void actionPerformed(ActionEvent actionEvent) {
                     String roomName = node.getUserObject().toString();
                     String roomJID = node.getAssociatedObject().toString();
                     ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null);
@@ -218,7 +234,9 @@ public class BookmarksUI extends JPanel {
             joinRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER_ENTER));
 
             Action removeRoomAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
+				private static final long serialVersionUID = -7560090091884746914L;
+
+				public void actionPerformed(ActionEvent actionEvent) {
                     DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
                     treeModel.removeNodeFromParent(node);
                     String roomJID = node.getAssociatedObject().toString();
@@ -244,7 +262,9 @@ public class BookmarksUI extends JPanel {
                 popupMenu.addSeparator();
 
                 Action autoJoin = new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
+					private static final long serialVersionUID = 7857469398581933449L;
+
+					public void actionPerformed(ActionEvent e) {
                         String roomJID = node.getAssociatedObject().toString();
                         if (autoJoinRooms.contains(roomJID)) {
                             autoJoinRooms.remove(roomJID);
@@ -267,7 +287,9 @@ public class BookmarksUI extends JPanel {
 
                 // Define service actions
                 Action roomInfoAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
+					private static final long serialVersionUID = -8336773839944003744L;
+
+					public void actionPerformed(ActionEvent actionEvent) {
                         String roomJID = node.getAssociatedObject().toString();
                         RoomBrowser roomBrowser = new RoomBrowser();
                         roomBrowser.displayRoomInformation(roomJID);
@@ -362,6 +384,7 @@ public class BookmarksUI extends JPanel {
     public void addBookmark(String roomName, String roomJID, boolean autoJoin) {
         try {
             manager.addBookmarkedConference(roomName, roomJID, autoJoin, null, null);
+            fireBookmarksAdded(roomJID);  //fire bookmark event
         }
         catch (XMPPException e) {
             Log.error(e);
@@ -371,6 +394,7 @@ public class BookmarksUI extends JPanel {
     public void removeBookmark(String roomJID) {
         try {
             manager.removeBookmarkedConference(roomJID);
+            fireBookmarksRemoved(roomJID); // fire bookmark remove event
         }
         catch (XMPPException e) {
             Log.error(e);
@@ -396,7 +420,9 @@ public class BookmarksUI extends JPanel {
         ResourceUtils.resLabel(serviceLabel, serviceField, Res.getString("label.add.conference.service"));
 
         final Action conferenceAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 7973928300442518496L;
+
+			public void actionPerformed(ActionEvent e) {
                 final String conferenceService = serviceField.getText();
                 if (hasService(conferenceService)) {
                     JOptionPane.showMessageDialog(null, Res.getString("message.service.already.exists"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
@@ -415,7 +441,7 @@ public class BookmarksUI extends JPanel {
 
                             try {
                                 discoInfo = discoManager.discoverInfo(conferenceService);
-                                Iterator iter = discoInfo.getIdentities();
+                                Iterator<Identity> iter = discoInfo.getIdentities();
                                 while (iter.hasNext()) {
                                     DiscoverInfo.Identity identity = (DiscoverInfo.Identity)iter.next();
                                     if ("conference".equals(identity.getCategory())) {
@@ -484,7 +510,7 @@ public class BookmarksUI extends JPanel {
         List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
-        for (Iterator it = items.getItems(); it.hasNext();) {
+        for (Iterator<DiscoverItems.Item> it = items.getItems(); it.hasNext();) {
             DiscoverItems.Item item = (DiscoverItems.Item)it.next();
             if (item.getEntityID().startsWith("conference") || item.getEntityID().startsWith("private")) {
                 answer.add(item.getEntityID());
@@ -558,7 +584,7 @@ public class BookmarksUI extends JPanel {
      *
      * @return a collection of MUC services.
      */
-    public Collection getMucServices() {
+    public Collection<String> getMucServices() {
         return mucServices;
     }
 
@@ -583,6 +609,36 @@ public class BookmarksUI extends JPanel {
     private void fireContextMenuListeners(JPopupMenu popup, JiveTreeNode node) {
         for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(listeners)) {
             listener.poppingUp(node, popup);
+        }
+    }
+
+    /**
+     * Adds a new BookmarksListener.
+     *
+     * @param listener the bookmarkListener.
+     */
+    public void addBookmarksListener(BookmarksListener bookmarkListener) {
+        bookmarkListeners.add(bookmarkListener);
+    }
+
+    /**
+     * Removes a BookmarksListener.
+     *
+     * @param listener the bookmarkListener.
+     */
+    public void removeBookmarksListener(BookmarksListener bookmarkListener) {
+        bookmarkListeners.remove(bookmarkListener);
+    }
+
+    private void fireBookmarksAdded(String roomJID) {
+        for (BookmarksListener bookmarkListener : new ArrayList<BookmarksListener>(bookmarkListeners)) {
+            bookmarkListener.bookmarkAdded(roomJID);
+        }
+    }
+
+    private void fireBookmarksRemoved(String roomJID) {
+        for (BookmarksListener bookmarkListener : new ArrayList<BookmarksListener>(bookmarkListeners)) {
+            bookmarkListener.bookmarkRemoved(roomJID);
         }
     }
 
