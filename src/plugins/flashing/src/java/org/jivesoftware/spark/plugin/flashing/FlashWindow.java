@@ -31,20 +31,24 @@ public class FlashWindow {
 	 * @param intertime The amount of time between different flashes
 	 * @param count The number of times to flash the window
 	 */
-	public void flash(final Window frame, final int intratime,
+	public void flash(final Window window, final int intratime,
 			final int intertime, final int count) {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					// flash on and off each time
-					for (int i = 0; i < count; i++) {
-						flash(frame.getName(), true);
-						Thread.sleep(intratime);
-						flash(frame.getName(), true);
-						Thread.sleep(intertime);
+					if (window instanceof JFrame)
+					{
+						// flash on and off each time
+						for (int i = 0; i < count; i++) {
+							
+							flash(((JFrame) window).getTitle(), true);
+							Thread.sleep(intratime);
+							flash(((JFrame) window).getTitle(), true);
+							Thread.sleep(intertime);
+						}
+						// turn the flash off
+						flash(((JFrame) window).getTitle(), false);
 					}
-					// turn the flash off
-					flash(frame.getName(), false);
 				} catch (Exception ex) {
 					// System.out.println(ex.getMessage());
 				}
