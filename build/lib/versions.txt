@@ -4,6 +4,8 @@ ant-contrib.jar			 			| ?			 	 		| Apache			| http://ant-contrib.sourceforge.net
 i4jruntime.jar			 			| ?			 			| Commercial		| http://www.ej-technologies.com
 jarbundler-1.4.jar		 			| ?			 	 		| GPL				| http://informagen.com/JarBundler/index.html
 pack200task.jar			 			| ?			 	 		| Sun				| https://java-pack200-ant-task.dev.java.net/
+pmd.jar					 			| 4.2.5		 	 		| BSD				| https://pmd.sf.net
+asm.jar					 			| 3.1		 	 		| BSD				| https://pmd.sf.net
 dist/activation.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html
 dist/asterisk-im-client.jar			| 1.2.0			 		| GPL				| http://igniterealtime.org/
 dist/dom4j.jar						| ? 			 		| BSD				| http://www.dom4j.org/
@@ -26,6 +28,6 @@ dist/xstream.jar					| ? 			 		| ?					| http://xstream.codehaus.org/
 merge/commons-codec.jar				| 1.3			 		| Apache			| http://commons.apache.org/codec/
 merge/commons-httpclient.jar		| ? 			 		| Apache			| http://hc.apache.org/
 merge/commons-logging.jar			| ? 			 		| Apache			| http://commons.apache.org/logging/
-merge/jaxen.jar						| ? 			 		| ?					| http://jaxen.codehaus.org/
+merge/jaxen.jar						| 1.1.1 		 		| BSD				| http://jaxen.codehaus.org/
 merge/looks.jar						| ? 			 		| BSD				| http://www.jgoodies.com/downloads/libraries.html
 merge/updater.jar					| ? 			 		| ?					| Jive?

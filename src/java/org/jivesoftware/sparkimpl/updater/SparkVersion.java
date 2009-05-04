@@ -122,7 +122,7 @@ public class SparkVersion extends IQ {
                         version.setVersion(parser.nextText());
                     }
                     else if (parser.getName().equals("updatedTime")) {
-                        Long time = new Long(parser.nextText());
+                        Long time = Long.valueOf(parser.nextText());
                         version.setUpdateTime(time);
                     }
                     else if (parser.getName().equals("downloadURL")) {

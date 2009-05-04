@@ -787,7 +787,25 @@
             </fileset>
         </copy>
     </target>
-	
+
+    <!-- checkcode.pmd ========================================================================= -->
+    <target name="checkcode.pmd" description="Checkcode with pmd.">
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+        	<classpath>
+				<pathelement location="${basedir}/build/lib/pmd.jar" />
+				<pathelement location="${basedir}/build/lib/asm.jar" />
+            	<pathelement location="${basedir}/build/lib/merge/jaxen.jar" />
+        	</classpath>
+		</taskdef>
+		<pmd shortFilenames="true">
+			<ruleset>migrating</ruleset>
+			<formatter type="html" toFile="target/pmd_report.html" />
+			<fileset dir="src/">
+				<include name="**/*.java" />
+			</fileset>
+		</pmd>
+    </target>
+
 </project>
 
 

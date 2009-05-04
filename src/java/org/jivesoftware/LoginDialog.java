@@ -198,7 +198,8 @@ public final class LoginDialog {
      * Define Login Panel implementation.
      */
     private final class LoginPanel extends JPanel implements KeyListener, ActionListener, FocusListener, CallbackHandler {
-        private final JLabel usernameLabel = new JLabel();
+		private static final long serialVersionUID = 2445523786538863459L;
+		private final JLabel usernameLabel = new JLabel();
         private final JTextField usernameField = new JTextField();
 
         private final JLabel passwordLabel = new JLabel();
@@ -1095,7 +1096,8 @@ public final class LoginDialog {
      * Defines the background to use with the Login panel.
      */
     public class LoginBackgroundPanel extends JPanel {
-        final ImageIcon icons = Default.getImageIcon(Default.LOGIN_DIALOG_BACKGROUND_IMAGE);
+		private static final long serialVersionUID = -2449309600851007447L;
+		final ImageIcon icons = Default.getImageIcon(Default.LOGIN_DIALOG_BACKGROUND_IMAGE);
 
         /**
          * Empty constructor.
@@ -1123,7 +1125,8 @@ public final class LoginDialog {
      */
     public class ImagePanel extends JPanel {
 
-        private final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
+		private static final long serialVersionUID = -1778389077647562606L;
+		private final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
 
         /**
          * Uses the Spark logo to paint as the background.
@@ -1213,7 +1216,7 @@ public final class LoginDialog {
                 for (Enumeration e2 = record.getAll() ; e2.hasMoreElements() ; ) {
                     String sRecord = (String)e2.nextElement();
                     String [] sRecParts = sRecord.split(" ");
-                    Integer pri = new Integer(sRecParts[0]);
+                    Integer pri = Integer.valueOf(sRecParts[0]);
                     if(priorities.contains(pri)) {
                         List<String> recs = records.get(pri);
                         if(recs == null) recs = new ArrayList<String>();
@@ -1227,7 +1230,7 @@ public final class LoginDialog {
                 }
             }
             Collections.sort(priorities);
-            List l = records.get(priorities.get(0));
+            List<String> l = records.get(priorities.get(0));
             String toprec = (String)l.get(0);
             String [] sRecParts = toprec.split(" ");
             return sRecParts[3];
