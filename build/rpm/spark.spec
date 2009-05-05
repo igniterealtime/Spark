@@ -100,6 +100,7 @@ exit 0
 /usr/share/spark/plugins/jingle.jar
 /usr/share/spark/plugins/jniwrapper.jar
 /usr/share/spark/plugins/spelling-plugin.jar
+/usr/share/spark/plugins/flashing.jar
 %dir /usr/share/spark/resources/
 /usr/share/spark/resources/Info.plist
 /usr/share/spark/resources/jniwrap.dll
