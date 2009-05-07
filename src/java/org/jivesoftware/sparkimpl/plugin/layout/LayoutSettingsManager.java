@@ -10,15 +10,17 @@
 
 package org.jivesoftware.sparkimpl.plugin.layout;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Responsbile for the loading and persisting of LocalSettings.
@@ -133,41 +135,28 @@ public class LayoutSettingsManager {
             int mainWindowHeightInt = Integer.parseInt(mainWindowHeight);
             int mainWindowWidthInt = Integer.parseInt(mainWindowWidth);
 
-            if (mainWindowXInt + mainWindowWidthInt > width || mainWindowXInt < 0) {
+            if (!isValidWindowPosition(mainWindowXInt, mainWindowYInt,
+					mainWindowWidthInt, mainWindowHeightInt)) {
                 mainWindowXInt = (width - mainWindowWidthInt) / 2;
-            }
-
-            if (mainWindowYInt + mainWindowHeightInt > height || mainWindowYInt < 0) {
                 mainWindowYInt = (height - mainWindowHeightInt) / 2;
             }
-
-
+            
             int chatFrameXInt = Integer.parseInt(chatFrameX);
-            if (chatFrameXInt < 0) {
-                chatFrameXInt = 0;
-            }
-
             int chatFrameYInt = Integer.parseInt(chatFrameY);
-            if (chatFrameYInt < 0) {
-                chatFrameYInt = 0;
-            }
-
             int chatFrameWidthInt = Integer.parseInt(chatFrameWidth);
             int chatFrameHeightInt = Integer.parseInt(chatFrameHeight);
+            
+            if (!isValidWindowPosition(chatFrameXInt, chatFrameYInt,
+            		chatFrameWidthInt, chatFrameHeightInt)) {
+            	chatFrameXInt = (width - chatFrameWidthInt) / 2;
+            	chatFrameYInt = (height - chatFrameHeightInt) / 2;
+            }
+            
             int splitDividerLocationInt = splitDividerLocation == null ? -1 : Integer.parseInt(splitDividerLocation);
-
-            if (chatFrameXInt + chatFrameWidthInt > width) {
-                chatFrameXInt = (width - chatFrameWidthInt) / 2;
-            }
-
-            if (chatFrameYInt + chatFrameHeightInt > height) {
-                chatFrameYInt = (height - chatFrameHeightInt) / 2;
-            }
 
             if (chatFrameHeightInt < 100) {
                 chatFrameHeightInt = 100;
             }
-
 
             settings.setMainWindowX(mainWindowXInt);
             settings.setMainWindowY(mainWindowYInt);
@@ -185,6 +174,25 @@ public class LayoutSettingsManager {
             Log.error(e);
             return new LayoutSettings();
         }
+    }
+    
+    protected static boolean isValidWindowPosition(int x, int y, int width, int height) {
+    	Rectangle windowTitleBounds = new Rectangle(x,y,width,20);
+        double windowTitleArea = windowTitleBounds.getWidth() * windowTitleBounds.getHeight();
+        
+        Rectangle[] screenBounds = GraphicUtils.getScreenBounds();
+        for (int i = 0; i < screenBounds.length; i++) {
+           	Rectangle screen = screenBounds[i].getBounds();
+        	Rectangle intersection = screen.intersection(windowTitleBounds);
+        	double visibleArea = intersection.getWidth() * intersection.getHeight();
+        	
+        	// if 25% of it is visible in the device, then it is good
+        	if ((visibleArea/windowTitleArea) > 0.25)
+        		return true;
+        	
+        }
+        
+        return false;
     }
 
 }
