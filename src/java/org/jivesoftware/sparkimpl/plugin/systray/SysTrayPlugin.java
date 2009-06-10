@@ -24,6 +24,7 @@ import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
@@ -41,6 +42,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 
 	private LocalPreferences pref = SettingsManager.getLocalPreferences();
 	private ImageIcon availableIcon;
+	private ImageIcon dndIcon;
+	private ImageIcon awayIcon;
 	private ImageIcon newMessageIcon;
 	private ImageIcon typingIcon;
 	private TrayIcon trayIcon;
@@ -56,7 +59,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 		SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
 		
 		newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
-
+		
 		typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
 		
 		if (SystemTray.isSupported()) {		
@@ -64,7 +67,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			if (availableIcon == null) {
 				availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
 			}
-
+			awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
+			dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
+			
 			popupMenu.add(openMenu);
 			openMenu.addActionListener(new AbstractAction() {
 
@@ -115,22 +120,22 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			});
 			popupMenu.add(exitMenu);
 
-			// init Presence Listener
-			// Small feature preview
-			/*
-			 * SparkManager.getSessionManager().addPresenceListener(new
-			 * PresenceListener() { public void presenceChanged(Presence
-			 * presence) { Icon icon =
-			 * PresenceManager.getIconFromPresence(presence); if (icon
-			 * instanceof ImageIcon) { // Add Change Icon trayIcon.setImage(
-			 * ((ImageIcon) icon).getImage() );
-			 * 
-			 * // Add trayIcon.displayMessage("Status",
-			 * presence.getMode().toString(), TrayIcon.MessageType.INFO); }
-			 * 
-			 * } });
-			 */
-			//
+			SparkManager.getSessionManager().addPresenceListener(new
+			PresenceListener() {
+				public void presenceChanged(Presence presence) { 
+					if (presence.getMode() == Presence.Mode.available) {
+						trayIcon.setImage(availableIcon.getImage());
+					} else if (presence.getMode() == Presence.Mode.away) {
+						trayIcon.setImage(awayIcon.getImage());
+					} else if (presence.getMode() == Presence.Mode.dnd) {
+						trayIcon.setImage(dndIcon.getImage());
+					} else {
+						trayIcon.setImage(availableIcon.getImage());
+					}
+				} 
+			});
+			 
+		
 			try {
 				trayIcon = new TrayIcon(availableIcon.getImage(), "Spark", null);
 				trayIcon.setImageAutoSize(true);

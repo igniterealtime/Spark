@@ -279,6 +279,8 @@ public class SparkRes {
     public static final String HEADSET_IMAGE = "HEADSET_IMAGE";
     public static final String SPARK_IMAGE_32x32 = "SPARK_IMAGE_32x32";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
+    public static final String TRAY_DND = "TRAY_DND";
+    public static final String TRAY_AWAY = "TRAY_AWAY";
     public static final String BUZZ_IMAGE = "BUZZ_IMAGE";
     public static final String CONFERENCE_IMAGE_48x48 = "CONFERENCE_IMAGE_48x48";
     public static final String ACCEPT_INVITE_IMAGE = "ACCEPT_INVITE_IMAGE";
