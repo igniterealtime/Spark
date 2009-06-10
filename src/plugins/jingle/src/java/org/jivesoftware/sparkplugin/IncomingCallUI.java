@@ -10,21 +10,6 @@
 
 package org.jivesoftware.sparkplugin;
 
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -34,17 +19,30 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 
 public class IncomingCallUI extends JPanel {
-    private JLabel avatarLabel = new JLabel();
+	private static final long serialVersionUID = -7758898282948774412L;
+	private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel professionLabel = new JLabel();
 
     private RolloverButton acceptButton;
     private RolloverButton rejectButton;
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
     private VCard vcard;
     private String jid;

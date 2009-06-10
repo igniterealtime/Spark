@@ -48,22 +48,19 @@ import javax.swing.JPanel;
  */
 public class JingleRoom extends JPanel {
 
-    private JLabel connectedLabel;
+	private static final long serialVersionUID = 2910998210426650565L;
+	private JLabel connectedLabel;
     private String phoneNumber;
     private JLabel phoneLabel;
     private PreviousConversationPanel historyPanel;
 
-    private boolean onHold;
     private boolean transmitting;
 
     private CallPanelButton muteButton;
 
     private RolloverButton hangUpButton;
 
-    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-
     private static String CONNECTED = "Connected";
-
 
     protected final Color greenColor = new Color(91, 175, 41);
     protected final Color orangeColor = new Color(229, 139, 11);

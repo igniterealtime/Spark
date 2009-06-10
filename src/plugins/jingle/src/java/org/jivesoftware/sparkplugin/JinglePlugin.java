@@ -10,7 +10,22 @@
 
 package org.jivesoftware.sparkplugin;
 
-import org.jivesoftware.Spark;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -27,7 +42,6 @@ import org.jivesoftware.smackx.jingle.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingle.media.JingleMediaManager;
 import org.jivesoftware.smackx.jingle.mediaimpl.jmf.JmfMediaManager;
 import org.jivesoftware.smackx.jingle.mediaimpl.jspeex.SpeexMediaManager;
-import org.jivesoftware.smackx.jingle.mediaimpl.sshare.ScreenShareMediaManager;
 import org.jivesoftware.smackx.jingle.nat.BridgedTransportManager;
 import org.jivesoftware.smackx.jingle.nat.ICETransportManager;
 import org.jivesoftware.smackx.jingle.nat.JingleTransportManager;
@@ -44,14 +58,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
-
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import java.awt.event.ActionEvent;
-import java.util.*;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 
 /**
@@ -71,6 +78,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
         // Set Jingle Enabled
         JingleManager.setJingleServiceEnabled();
+        JingleManager.setServiceEnabled(SparkManager.getConnection(), true);
         
         // Add to PhoneManager
         PhoneManager.getInstance().addPhone(this);
@@ -98,12 +106,12 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                 JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
                 List<JingleMediaManager> mediaManagers = new ArrayList<JingleMediaManager>();
 
-                // if running on Windows use Direct Sound for better performance
-                String locator = Spark.isWindows() ? "dsound://" : "javasound://";
+                // Get the Locator from the Settings
+                String locator =  SettingsManager.getLocalPreferences().getAudioDevice();
 
                 mediaManagers.add(new JmfMediaManager(locator, transportManager));
                 mediaManagers.add(new SpeexMediaManager(transportManager));
-                mediaManagers.add(new ScreenShareMediaManager(transportManager));
+                //mediaManagers.add(new ScreenShareMediaManager(transportManager));
 
                 jingleManager = new JingleManager(SparkManager.getConnection(), mediaManagers);
 
@@ -142,7 +150,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
         // Listen in for new incoming Jingle requests.
         jingleManager.addJingleSessionRequestListener(new JingleSessionRequestListener() {
-            public void sessionRequested(final JingleSessionRequest request) {
+            public void sessionRequested(final JingleSessionRequest request) {            	
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         incomingJingleSession(request);
@@ -193,7 +201,9 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
         final List<Action> actions = new ArrayList<Action>();
         Action action = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 1467355627829748086L;
+
+			public void actionPerformed(ActionEvent e) {
                 placeCall(jid);
             }
         };
@@ -211,7 +221,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
             return;
         }
-
+        
         PhoneManager.setUsingMediaLocator(true);
 
         jid = SparkManager.getUserManager().getFullJID(jid);

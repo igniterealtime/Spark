@@ -243,7 +243,8 @@ public class JavaMixer {
 
     public class MixerNode extends DefaultMutableTreeNode {
 
-        Mixer mixer;
+		private static final long serialVersionUID = -987278469391244202L;
+		private Mixer mixer;
 
         public MixerNode(Mixer mixer) {
             super(mixer.getMixerInfo(), true);
@@ -258,7 +259,8 @@ public class JavaMixer {
 
     public class PortNode extends DefaultMutableTreeNode {
 
-        Line port;
+		private static final long serialVersionUID = -7774055649714159518L;
+		private Line port;
 
         public PortNode(Line port) {
             super(port.getLineInfo(), true);
@@ -273,8 +275,9 @@ public class JavaMixer {
 
     public class ControlNode extends DefaultMutableTreeNode {
 
-        Control control;
-        Component component;
+		private static final long serialVersionUID = 2014062750235264630L;
+		private Control control;
+		private Component component;
 
         public ControlNode(Control control) {
             super(control.getType(), true);
@@ -328,7 +331,8 @@ public class JavaMixer {
     }
 
     public class BooleanControlButtonModel extends DefaultButtonModel {
-        private BooleanControl control;
+		private static final long serialVersionUID = -4667054823378068382L;
+		private BooleanControl control;
 
         public BooleanControlButtonModel(BooleanControl control) {
             this.control = control;
@@ -349,8 +353,8 @@ public class JavaMixer {
     }
 
     public class FloatControlBoundedRangeModel extends DefaultBoundedRangeModel {
-
-        private FloatControl control;
+		private static final long serialVersionUID = 4469386606588434901L;
+		private FloatControl control;
         private float factor;
 
         public FloatControlBoundedRangeModel(FloatControl control) {
@@ -426,8 +430,8 @@ public class JavaMixer {
         }
 
         if (node.getChildCount() >= 0) {
-            for (Enumeration e = node.children(); e.hasMoreElements();) {
-                TreeNode n = (TreeNode) e.nextElement();
+            for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
+                TreeNode n = e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 boolean find;
 

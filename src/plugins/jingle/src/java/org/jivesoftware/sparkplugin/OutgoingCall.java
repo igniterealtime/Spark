@@ -10,6 +10,28 @@
 
 package org.jivesoftware.sparkplugin;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimerTask;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.JingleSession;
@@ -28,22 +50,13 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.*;
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimerTask;
-
 /**
  * Handles UI controls for outgoing jingle calls.
  */
 public class OutgoingCall extends JPanel implements JingleSessionListener, ChatRoomClosingListener {
 
-    private FileDragLabel imageLabel = new FileDragLabel();
+	private static final long serialVersionUID = 7051515951813136423L;
+	private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
@@ -231,8 +244,9 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
     }
 
     private class CallButton extends JButton {
+		private static final long serialVersionUID = 7083309769944609925L;
 
-        public CallButton() {
+		public CallButton() {
             decorate();
         }
 

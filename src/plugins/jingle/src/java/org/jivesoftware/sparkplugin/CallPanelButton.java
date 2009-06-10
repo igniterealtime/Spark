@@ -26,7 +26,8 @@ import javax.swing.JButton;
  */
 public class CallPanelButton extends JButton implements MouseListener {
 
-    private Icon normalIcon;
+	private static final long serialVersionUID = -2299269454442767625L;
+	private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;
     private Image backgroundImage;

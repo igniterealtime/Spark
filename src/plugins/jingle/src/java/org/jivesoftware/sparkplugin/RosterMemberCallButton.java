@@ -8,25 +8,25 @@
 
 package org.jivesoftware.sparkplugin;
 
-import javax.swing.JButton;
-import javax.swing.Icon;
-import javax.swing.JFrame;
-
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
 
 /**
  *
  */
 public class RosterMemberCallButton extends JButton implements MouseListener {
 
-    private Icon normalIcon;
+	private static final long serialVersionUID = 8056708231977922612L;
+	private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;
     private Image backgroundImage;

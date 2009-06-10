@@ -26,7 +26,9 @@ import java.util.Date;
  */
 public class PreviousConversationPanel extends JPanel {
 
-    private final Color greenColor = new Color(91, 175, 41);
+	private static final long serialVersionUID = -8392478440078855765L;
+
+	private final Color greenColor = new Color(91, 175, 41);
 
     private final JLabel currentCallLabel = new JLabel();
     private final JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));

@@ -26,7 +26,8 @@ import java.awt.Insets;
  */
 public class GenericNotification extends JPanel {
 
-    private FileDragLabel imageLabel = new FileDragLabel();
+	private static final long serialVersionUID = -90291335105747619L;
+	private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
 
     /**
