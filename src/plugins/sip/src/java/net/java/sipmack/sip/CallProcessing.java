@@ -1,68 +1,18 @@
-/* ====================================================================
- * The Apache Software License, Version 1.1
+/**
+ * $Revision: $
+ * $Date: $
  *
- * Copyright (c) 2000 The Apache Software Foundation.  All rights
- * reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Apache" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
- * Portions of this software are based upon public domain software
- * originally written at the National Center for Supercomputing Applications,
- * University of Illinois, Urbana-Champaign.
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
  */
-
 package net.java.sipmack.sip;
 
 import gov.nist.javax.sip.header.CSeq;
-import gov.nist.javax.sip.header.Via;
-import gov.nist.javax.sip.message.SIPRequest;
-import net.java.sipmack.common.Log;
-import net.java.sipmack.sip.security.SipSecurityException;
+
+import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -74,12 +24,21 @@ import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
 import javax.sip.address.SipURI;
 import javax.sip.address.URI;
-import javax.sip.header.*;
+import javax.sip.header.AllowHeader;
+import javax.sip.header.CSeqHeader;
+import javax.sip.header.CallIdHeader;
+import javax.sip.header.ContactHeader;
+import javax.sip.header.ContentLengthHeader;
+import javax.sip.header.ContentTypeHeader;
+import javax.sip.header.FromHeader;
+import javax.sip.header.MaxForwardsHeader;
+import javax.sip.header.ToHeader;
+import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
-import java.text.ParseException;
-import java.util.ArrayList;
+import net.java.sipmack.common.Log;
+import net.java.sipmack.sip.security.SipSecurityException;
 
 import org.jivesoftware.spark.phone.PhoneManager;
 
@@ -216,18 +175,26 @@ public class CallProcessing {
         try {
             // Need to use dialog generated ACKs so that the remote UA core
             // sees them - Fixed by M.Ranganathan
-            Request ack = (Request) clientTransaction.getDialog()
-                    .createRequest(Request.ACK);
-            clientTransaction.getDialog().sendAck(ack);
+            Request ackRequest = clientTransaction.getDialog()
+					 			.createAck(((CSeqHeader)ok.getHeader(CSeqHeader.NAME)).getSeqNumber());
+
+            clientTransaction.getDialog().sendAck(ackRequest);
+            
         }
         catch (SipException ex) {
-
+        	ex.printStackTrace();
             call.setState(Call.DISCONNECTED);
             sipManCallback
                     .fireCommunicationsError(new CommunicationsException(
                             "Failed to acknowledge call!", ex));
             return;
-        }
+        } catch (InvalidArgumentException e) {
+			e.printStackTrace();
+			call.setState(Call.DISCONNECTED);
+	            sipManCallback.fireCommunicationsError(new CommunicationsException(
+	                            "Failed to create ack!", e));
+	            return;
+		}
         call.setRemoteSdpDescription(new String(ok.getRawContent()));
         // change status
         if (!call.getState().equals(Call.CONNECTED)) {
@@ -278,8 +245,6 @@ public class CallProcessing {
     void processAuthenticationChallenge(ClientTransaction clientTransaction,
                                         Response response) {
         try {
-            Request challengedRequest = clientTransaction.getRequest();
-
             ClientTransaction retryTran = sipManCallback.sipSecurityManager
                     .handleChallenge(response, clientTransaction);
             // There is a new dialog that will be started with this request. Get

@@ -33,7 +33,9 @@ import java.awt.event.WindowListener;
  */
 public class SnapWindow extends JWindow implements ComponentListener, WindowListener, FocusListener, MouseMotionListener {
 
-    private final JFrame parentFrame;
+	private static final long serialVersionUID = -3546188378308911117L;
+
+	private final JFrame parentFrame;
 
     private int preferredWidth = 300;
 
@@ -97,9 +99,7 @@ public class SnapWindow extends JWindow implements ComponentListener, WindowList
         if (width == 0) {
             width = preferredWidth;
         }
-        if ((int)screenSize.getWidth() - width >= x) {
-        }
-        else {
+        if ((int)screenSize.getWidth() - width < x) {
             x = (int)mainWindowLocation.getX() - width;
         }
 

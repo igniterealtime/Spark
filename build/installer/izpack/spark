@@ -2,7 +2,7 @@
 #
 # Spark Startup
 #
-$SPARK_OPTS=""
+SPARK_OPTS=""
 
 # Detect Java
 JAVACMD=$(which java)
@@ -21,5 +21,5 @@ fi
 
 # Start Spark
 "$JAVACMD" $SPARK_OPTS -Xmx64M -Dappdir=$INSTALL_PATH \
-   -cp $INSTALL_PATH/lib/linux/jmf.jar:$INSTALL_PATH/lib/startup.jar:$INSTALL_PATH/lib/linux/jdic.jar:$INSTALL_PATH/resources \
+   -cp $INSTALL_PATH/lib/log4j.jar:$INSTALL_PATH/lib/linux/fmj.jar:$INSTALL_PATH/lib/startup.jar:$INSTALL_PATH/lib/linux/jdic.jar:$INSTALL_PATH/resources \
    org.jivesoftware.launcher.Startup $@

@@ -2,19 +2,18 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
  */
-
 package net.java.sipmack.sip.simple;
 
-import net.java.sipmack.common.Log;
-import net.java.sipmack.sip.CommunicationsException;
-import net.java.sipmack.sip.SIPConfig;
-import net.java.sipmack.sip.SipManager;
-import net.java.sipmack.sip.security.SipSecurityException;
+import gov.nist.javax.sip.stack.SIPClientTransaction;
+
+import java.net.InetAddress;
+import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.sip.ClientTransaction;
 import javax.sip.InvalidArgumentException;
@@ -31,18 +30,15 @@ import javax.sip.header.ExpiresHeader;
 import javax.sip.header.FromHeader;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.ToHeader;
+import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
-import java.net.InetAddress;
-import java.text.ParseException;
-import java.util.ArrayList;
-
-import gov.nist.javax.sip.message.SIPRequest;
-import gov.nist.javax.sip.message.SIPMessage;
-import gov.nist.javax.sip.stack.MessageChannel;
-import gov.nist.javax.sip.stack.SIPClientTransaction;
-import gov.nist.javax.sip.ListeningPointImpl;
+import net.java.sipmack.common.Log;
+import net.java.sipmack.sip.CommunicationsException;
+import net.java.sipmack.sip.SIPConfig;
+import net.java.sipmack.sip.SipManager;
+import net.java.sipmack.sip.security.SipSecurityException;
 
 
 public class MessageProcessing {
@@ -69,10 +65,6 @@ public class MessageProcessing {
     void processAuthenticationChallenge(ClientTransaction clientTransaction,
                                         Response response) {
         try {
-
-            Request challengedRequest = clientTransaction.getRequest();
-            Request reoriginatedRequest = null;
-
             ClientTransaction retryTran = sipManCallback.sipSecurityManager
                     .handleChallenge(response, clientTransaction);
 
@@ -230,7 +222,7 @@ public class MessageProcessing {
             }
 
             // ViaHeaders
-            ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+            ArrayList<ViaHeader> viaHeaders = sipManCallback.getLocalViaHeaders();
             // MaxForwards
             MaxForwardsHeader maxForwards = sipManCallback
                     .getMaxForwardsHeader();
@@ -258,7 +250,27 @@ public class MessageProcessing {
             }
 
             try {
-                ((SIPClientTransaction) messageTransaction).sendRequest("\0".getBytes(), InetAddress.getByName(SIPConfig.getDefaultDomain()), SIPConfig.getRegistrarPort());
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+                //((SIPClientTransaction) messageTransaction).sendRequest("\0".getBytes(), InetAddress.getByName(SIPConfig.getDefaultDomain()), SIPConfig.getRegistrarPort());
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
+            	// TODO : Anpassen
             }
             catch (Exception e) {
                 Log.error("sendKeepAlive", e);

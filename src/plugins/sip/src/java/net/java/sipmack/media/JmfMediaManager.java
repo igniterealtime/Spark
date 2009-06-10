@@ -10,26 +10,37 @@
 
 package net.java.sipmack.media;
 
-import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
-import org.jivesoftware.Spark;
-
-import javax.sdp.*;
-import javax.media.format.AudioFormat;
-import javax.media.format.VideoFormat;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-import java.util.Hashtable;
-import java.net.InetSocketAddress;
-import java.net.InetAddress;
-import java.net.Inet6Address;
+
+import javax.media.format.AudioFormat;
+import javax.media.format.VideoFormat;
+import javax.sdp.Connection;
+import javax.sdp.Media;
+import javax.sdp.MediaDescription;
+import javax.sdp.Origin;
+import javax.sdp.SdpException;
+import javax.sdp.SdpFactory;
+import javax.sdp.SdpParseException;
+import javax.sdp.SessionDescription;
+import javax.sdp.SessionName;
+import javax.sdp.TimeDescription;
+import javax.sdp.Version;
 
 import net.java.sipmack.common.Log;
+import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.NetworkAddressManager;
 import net.java.sipmack.sip.SIPConfig;
-import net.java.sipmack.sip.Call;
+
+import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * JmfMediaManager using JMF based API.
@@ -41,6 +52,7 @@ import net.java.sipmack.sip.Call;
 public class JmfMediaManager {
 
     private List<AudioFormat> audioFormats = new ArrayList<AudioFormat>();
+    private List<VideoFormat> videoFormats = new ArrayList<VideoFormat>();
     protected SdpFactory sdpFactory = SdpFactory.getInstance();
 
     /**
@@ -48,6 +60,7 @@ public class JmfMediaManager {
      */
     public JmfMediaManager() {
         setupAudioFormats();
+        setupVideoFormats();
     }
 
     /**
@@ -58,12 +71,8 @@ public class JmfMediaManager {
      * @param local
      * @return
      */
-    public AudioMediaSession createMediaSession(final AudioFormat audioFormat, final TransportCandidate remote, final TransportCandidate local) {
-        String locator = "javasound://";
-        if (Spark.isWindows()) {
-            locator = "dsound://";
-        }
-        return new AudioMediaSession(audioFormat, remote, local, locator);
+    public AudioMediaSession createMediaSession(final AudioFormat audioFormat, final TransportCandidate remote, final TransportCandidate local) {    	
+        return new AudioMediaSession(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
     }
 
     /**
@@ -73,8 +82,17 @@ public class JmfMediaManager {
         audioFormats.add(new AudioFormat(AudioFormat.GSM_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.G723_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
+        audioFormats.add(new AudioFormat(AudioFormat.ALAW));
     }
 
+    /**
+     * Setup API supported VideoFormats
+     */
+    private void setupVideoFormats() {
+    	videoFormats.add(new VideoFormat(VideoFormat.H261_RTP));
+    	videoFormats.add(new VideoFormat(VideoFormat.H263_RTP));
+    }
+    
     /**
      * Return all supported Payloads for this Manager
      *
@@ -83,19 +101,24 @@ public class JmfMediaManager {
     public List<AudioFormat> getAudioFormats() {
         return audioFormats;
     }
+    
+    /**
+     * Return all supported Payloads for this Manager
+     *
+     * @return The Payload List
+     */
+    public List<VideoFormat> getVideoFormats() {
+        return videoFormats;
+    }
 
     /**
-     * Creates a new AudioMedia Session for a given sdpData
+     * Creates a new VideoMedia Session for a given sdpData
      *
      * @param sdpData
      * @return
      * @throws MediaException
      */
-    public AudioMediaSession createAudioMediaSession(String sdpData, int localPort) throws MediaException {
-        String locator = "javasound://";
-        if (Spark.isWindows()) {
-            locator = "dsound://";
-        }
+    public VideoMediaSession createVideoMediaSession(String sdpData, int localPort) throws MediaException {
         SessionDescription sessionDescription = null;
         if (sdpData == null) {
             throw new MediaException("The SDP data was null! Cannot open "
@@ -135,11 +158,11 @@ public class JmfMediaManager {
         int mediaPort = -1;
         boolean atLeastOneTransmitterStarted = false;
         ArrayList mediaTypes = new ArrayList();
-        ArrayList remoteAddresses = new ArrayList();
+        ArrayList<String> remoteAddresses = new ArrayList<String>();
         // A hashtable that indicates what addresses are different media
         // types
         // coming from.
-        Hashtable remoteTransmisionDetails = new Hashtable();
+        Hashtable<String, String> remoteTransmisionDetails = new Hashtable<String, String>();
         // by default everything is supposed to be coming from the address
         // specified in the session (global) connection parameter so store
         // this address for now.
@@ -147,10 +170,10 @@ public class JmfMediaManager {
             remoteTransmisionDetails.put("audio", sessionRemoteAddress);
             remoteTransmisionDetails.put("video", sessionRemoteAddress);
         }
-        ArrayList ports = new ArrayList();
+        ArrayList<Integer> ports = new ArrayList<Integer>();
         ArrayList formatSets = new ArrayList();
-        ArrayList contents = new ArrayList();
-        ArrayList localPorts = new ArrayList();
+        ArrayList<String> contents = new ArrayList<String>();
+        ArrayList<Integer> localPorts = new ArrayList<Integer>();
         for (int i = 0; i < mediaDescriptions.size(); i++) {
             MediaDescription mediaDescription = (MediaDescription) mediaDescriptions
                     .get(i);
@@ -219,11 +242,174 @@ public class JmfMediaManager {
                 // Selecting local ports for NAT
 
                 if (mediaType.trim().equals("video"))
-                    localPorts.add(new Integer(22444));
+                    localPorts.add(Integer.valueOf(22444));
                 else if (mediaType.trim().equals("audio"))
-                    localPorts.add(new Integer(localPort));
+                    localPorts.add(Integer.valueOf(localPort));
                 else
-                    localPorts.add(new Integer(mediaPort));
+                    localPorts.add(Integer.valueOf(mediaPort));
+
+                formatSets.add(extractTransmittableJmfFormats(sdpFormats));
+            }
+            catch (MediaException ex) {
+                Log.error("StartMedia", ex);
+                throw (new MediaException(
+                        "Could not start a transmitter for media type ["
+                                + mediaType + "]\nIgnoring media ["
+                                + mediaType + "]!", ex));
+            }
+            atLeastOneTransmitterStarted = true;
+        }
+        if (atLeastOneTransmitterStarted) {
+
+            TransportCandidate.Fixed remote = new TransportCandidate.Fixed(remoteAddresses.get(0).toString(), (Integer) ports.get(0));
+            TransportCandidate.Fixed local = new TransportCandidate.Fixed(NetworkAddressManager.getLocalHost().getHostAddress(), localPort);
+
+            // TODO : FORCED TO JPEG_RTP -> deteced format
+            // VideoFormat videoFormat = new VideoFormat((String) (((ArrayList) formatSets.get(0)).get(0)));
+            VideoFormat videoFormat = new VideoFormat(VideoFormat.JPEG_RTP);         
+            VideoMediaSession videoMediaSession = new VideoMediaSession(videoFormat, remote, local, SettingsManager.getLocalPreferences().getVideoDevice());;
+
+            return videoMediaSession;
+        }
+        return null;
+    }
+    
+    /**
+     * Creates a new AudioMedia Session for a given sdpData
+     *
+     * @param sdpData
+     * @return
+     * @throws MediaException
+     */
+    public AudioMediaSession createAudioMediaSession(String sdpData, int localPort) throws MediaException {
+        SessionDescription sessionDescription = null;
+        if (sdpData == null) {
+            throw new MediaException("The SDP data was null! Cannot open "
+                    + "a stream withour an SDP Description!");
+        }
+        try {
+            sessionDescription = sdpFactory
+                    .createSessionDescription(sdpData);
+
+        }
+        catch (SdpParseException ex) {
+
+            throw new MediaException("Incorrect SDP data!", ex);
+        }
+        Vector mediaDescriptions;
+        try {
+            mediaDescriptions = sessionDescription
+                    .getMediaDescriptions(true);
+        }
+        catch (SdpException ex) {
+            throw new MediaException(
+                    "Failed to extract media descriptions from provided session description!",
+                    ex);
+        }
+        Connection sessionConnection = sessionDescription.getConnection();
+        String sessionRemoteAddress = null;
+        if (sessionConnection != null) {
+            try {
+                sessionRemoteAddress = sessionConnection.getAddress();
+            }
+            catch (SdpParseException ex) {
+                throw new MediaException(
+                        "Failed to extract the connection address parameter"
+                                + "from privided session description", ex);
+            }
+        }
+        int mediaPort = -1;
+        boolean atLeastOneTransmitterStarted = false;
+        ArrayList mediaTypes = new ArrayList();
+        ArrayList<String> remoteAddresses = new ArrayList<String>();
+        // A hashtable that indicates what addresses are different media
+        // types
+        // coming from.
+        Hashtable<String, String> remoteTransmisionDetails = new Hashtable<String, String>();
+        // by default everything is supposed to be coming from the address
+        // specified in the session (global) connection parameter so store
+        // this address for now.
+        if (sessionRemoteAddress != null) {
+            remoteTransmisionDetails.put("audio", sessionRemoteAddress);
+            remoteTransmisionDetails.put("video", sessionRemoteAddress);
+        }
+        ArrayList<Integer> ports = new ArrayList<Integer>();
+        ArrayList formatSets = new ArrayList();
+        ArrayList<String> contents = new ArrayList<String>();
+        ArrayList<Integer> localPorts = new ArrayList<Integer>();
+        for (int i = 0; i < mediaDescriptions.size(); i++) {
+            MediaDescription mediaDescription = (MediaDescription) mediaDescriptions
+                    .get(i);
+            Media media = mediaDescription.getMedia();
+            // Media Type
+            String mediaType = null;
+            try {
+                mediaType = media.getMediaType();
+            }
+            catch (SdpParseException ex) {
+                continue;
+            }
+            // Find ports
+            try {
+                mediaPort = media.getMediaPort();
+            }
+            catch (SdpParseException ex) {
+                throw (new MediaException(
+                        "Failed to extract port for media type ["
+                                + mediaType + "]. Ignoring description!",
+                        ex));
+            }
+            // Find formats
+            Vector sdpFormats = null;
+            try {
+                sdpFormats = media.getMediaFormats(true);
+            }
+            catch (SdpParseException ex) {
+                throw (new MediaException(
+                        "Failed to extract media formats for media type ["
+                                + mediaType + "]. Ignoring description!",
+                        ex));
+
+            }
+
+            Connection mediaConnection = mediaDescription.getConnection();
+            String mediaRemoteAddress = null;
+            if (mediaConnection == null) {
+                if (sessionConnection == null) {
+                    throw new MediaException(
+                            "A connection parameter was not present in provided session/media description");
+                } else {
+                    mediaRemoteAddress = sessionRemoteAddress;
+                }
+            } else {
+                try {
+                    mediaRemoteAddress = mediaConnection.getAddress();
+                }
+                catch (SdpParseException ex) {
+                    throw new MediaException(
+                            "Failed to extract the connection address parameter"
+                                    + "from privided media description", ex);
+                }
+            }
+
+            // update the remote address for the current media type in case
+            // it is specific for this media (i.e. differs from the main
+            // connection address)
+            remoteTransmisionDetails.put(mediaType, mediaRemoteAddress);
+            // START TRANSMISSION
+            try {
+                remoteAddresses.add(mediaRemoteAddress);
+                ports.add(new Integer(mediaPort));
+                contents.add(mediaType);
+
+                // Selecting local ports for NAT
+
+                if (mediaType.trim().equals("video"))
+                    localPorts.add(Integer.valueOf(22445));
+                else if (mediaType.trim().equals("audio"))
+                    localPorts.add(Integer.valueOf(localPort));
+                else
+                    localPorts.add(Integer.valueOf(mediaPort));
 
                 formatSets
                         .add(extractTransmittableJmfFormats(sdpFormats));
@@ -244,7 +430,7 @@ public class JmfMediaManager {
 
             AudioFormat audioFormat = new AudioFormat((String) (((ArrayList) formatSets.get(0)).get(0)));
 
-            AudioMediaSession audioMediaSession = new AudioMediaSession(audioFormat, remote, local, locator);
+            AudioMediaSession audioMediaSession = new AudioMediaSession(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
 
             return audioMediaSession;
         }
@@ -275,9 +461,8 @@ public class JmfMediaManager {
      */
     protected ArrayList<String> extractTransmittableJmfFormats(Vector sdpFormats)
             throws MediaException {
-        ArrayList jmfFormats = new ArrayList();
+        ArrayList<String> jmfFormats = new ArrayList<String>();
         for (int i = 0; i < sdpFormats.size(); i++) {
-            int sdpFormat = -1;
             String jmfFormat = AudioFormatUtils.findCorrespondingJmfFormat(sdpFormats
                     .elementAt(i).toString());
             if (jmfFormat != null) {
@@ -330,33 +515,39 @@ public class JmfMediaManager {
                     publicIpAddress.getHostAddress());
             // "t=0 0"
             TimeDescription t = sdpFactory.createTimeDescription();
-            Vector timeDescs = new Vector();
+            Vector<TimeDescription> timeDescs = new Vector<TimeDescription>();
             timeDescs.add(t);
             // --------Audio media description
             // make sure preferred formats come first
-            String[] formats = new String[getAudioFormats().size()];
+            String[] aformats = new String[getAudioFormats().size()];
 
             int i = 0;
             for (AudioFormat audioFormat : getAudioFormats()) {
-                formats[i++] = AudioFormatUtils.findCorrespondingSdpFormat(audioFormat.getEncoding());
+                aformats[i++] = AudioFormatUtils.findCorrespondingSdpFormat(audioFormat.getEncoding());
             }
 
             MediaDescription am = sdpFactory.createMediaDescription(
                     "audio", publicAudioAddress.getPort(), 1, "RTP/AVP",
-                    formats);
-            //if (!isAudioTransmissionSupported()) {
-            //am.setAttribute("recvonly", null);
-            // --------Video media description
-            //} else {
+                    aformats);
             am.setAttribute("sendrecv", null);
-            //}
-
+            
             am.setAttribute("rtmap:101", "telephone-event/"
                     + publicAudioAddress.getPort());
 
-            Vector mediaDescs = new Vector();
+            i = 0;
+            String[] vformats = new String[getVideoFormats().size()];
+            for (VideoFormat videoFormat : getVideoFormats()) {
+                vformats[i++] = AudioFormatUtils.findCorrespondingSdpFormat(videoFormat.getEncoding());
+            }
+            
+            MediaDescription vam = sdpFactory.createMediaDescription(
+                    "video", publicVideoAddress.getPort(), 1, "RTP/AVP",
+                    vformats);
+            
+            Vector<MediaDescription> mediaDescs = new Vector<MediaDescription>();
 
             mediaDescs.add(am);
+            mediaDescs.add(vam);
 
             sessDescr.setVersion(v);
             sessDescr.setOrigin(o);
@@ -400,7 +591,7 @@ public class JmfMediaManager {
             Origin o = sdpFactory.createOrigin(SIPConfig.getUserName()
                     .replace(' ', '_'), 20109217, 2, "IN", addrType,
                     publicIpAddress.getHostAddress());
-            SessionName s = sdpFactory.createSessionName("<SIPmack>");
+            SessionName s = sdpFactory.createSessionName("<SparkPhone>");
             Connection c = sdpFactory.createConnection("IN", addrType,
                     publicIpAddress.getHostAddress());
             TimeDescription t = sdpFactory.createTimeDescription();

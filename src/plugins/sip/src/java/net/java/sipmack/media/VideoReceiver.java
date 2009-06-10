@@ -10,24 +10,43 @@
 
 package net.java.sipmack.media;
 
-import javax.media.*;
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.media.ControllerErrorEvent;
+import javax.media.ControllerEvent;
+import javax.media.ControllerListener;
+import javax.media.Player;
+import javax.media.RealizeCompleteEvent;
 import javax.media.protocol.DataSource;
-import javax.media.rtp.*;
-import javax.media.rtp.event.*;
+import javax.media.rtp.Participant;
+import javax.media.rtp.RTPControl;
+import javax.media.rtp.ReceiveStream;
+import javax.media.rtp.ReceiveStreamListener;
+import javax.media.rtp.SessionListener;
+import javax.media.rtp.event.ByeEvent;
+import javax.media.rtp.event.NewParticipantEvent;
+import javax.media.rtp.event.NewReceiveStreamEvent;
+import javax.media.rtp.event.ReceiveStreamEvent;
+import javax.media.rtp.event.RemotePayloadChangeEvent;
+import javax.media.rtp.event.SessionEvent;
+import javax.media.rtp.event.StreamMappedEvent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
- * This class implements receive methods and listeners to be used in AudioChannel
+ * This class implements receive methods and listeners to be used in VideoChannel
  *
  * @author Thiago Camargo 
  */
-public class AudioReceiver implements ReceiveStreamListener, SessionListener,
+public class VideoReceiver implements ReceiveStreamListener, SessionListener,
         ControllerListener {
 
     boolean dataReceived = false;
 
     Object dataSync;
 
-    public AudioReceiver(Object dataSync) {
+    public VideoReceiver(Object dataSync) {
         this.dataSync = dataSync;
     }
 
@@ -61,6 +80,8 @@ public class AudioReceiver implements ReceiveStreamListener, SessionListener,
                 stream = ((NewReceiveStreamEvent) evt).getReceiveStream();
                 DataSource ds = stream.getDataSource();
 
+                System.out.println("DataSource:" + ds);
+                
                 // Find out the formats.
                 RTPControl ctl = (RTPControl) ds.getControl("javax.jmf.rtp.RTPControl");
                 if (ctl != null) {
@@ -78,16 +99,20 @@ public class AudioReceiver implements ReceiveStreamListener, SessionListener,
                 Player p = javax.media.Manager.createPlayer(ds);
                 if (p == null)
                     return;
-
+                
                 p.addControllerListener(this);
-                p.realize();
-
+                p.realize();	
+  
                 // Notify intialize() that a new stream had arrived.
                 synchronized (dataSync) {
                     dataReceived = true;
                     dataSync.notifyAll();
                 }
 
+                
+                
+                System.out.println("Start2");
+                
             } catch (Exception e) {
                 System.err.println("NewReceiveStreamEvent exception " + e.getMessage());
                 return;
@@ -125,6 +150,26 @@ public class AudioReceiver implements ReceiveStreamListener, SessionListener,
         // Get this when the internal players are realized.
         if (ce instanceof RealizeCompleteEvent) {
             p.start();
+            
+            Component vc = p.getVisualComponent();
+            System.out.println("Start1.1" + vc);
+            if ( null != vc )
+            {
+                System.out.println("### visual component is " + vc);
+
+                JFrame aFrame = new JFrame("Video Frame");
+                JPanel aPanel = new JPanel();
+                aPanel.setBounds(0, 0, 176, 144);
+                aPanel.add(vc);
+                aFrame.add(aPanel);
+
+                aPanel.setBackground(Color.gray);
+
+                vc.setVisible(true);
+                aPanel.setVisible(true);
+                aFrame.setVisible(true);
+                aFrame.pack();
+            }
         }
 
         if (ce instanceof ControllerErrorEvent) {

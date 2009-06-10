@@ -2,7 +2,7 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
@@ -12,16 +12,10 @@ package net.java.sipmack.sip.event;
 
 import java.util.EventObject;
 
-/**
- * Title: SIP Register Tester
- * Description:JAIN-SIP Test application
- *
- * @author Thiago Rocha Camargo (thiago@jivesoftware.com)
- */
-
 public class RegistrationEvent extends EventObject {
+	private static final long serialVersionUID = 6759871915588020048L;
 
-    public enum Type {
+	public enum Type {
         Normal, WrongPass, NotFound, Forbidden, WrongAuthUser, TimeOut
     };
 

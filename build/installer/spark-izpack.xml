@@ -83,7 +83,7 @@
         	<file src="target/build/xtra" 						targetdir="$INSTALL_PATH"/>
         	
         	<parsable targetfile="$INSTALL_PATH/spark" os="unix"/>
-        	<parsable targetfile="$INSTALL_PATH/starter" os="unix"/>
+        	<!--  <parsable targetfile="$INSTALL_PATH/starter" os="unix"/>  -->
         	
         	<executable targetfile="$INSTALL_PATH/spark" os="unix"/>
         	<executable targetfile="$INSTALL_PATH/starter.exe" 	os="windows"/>

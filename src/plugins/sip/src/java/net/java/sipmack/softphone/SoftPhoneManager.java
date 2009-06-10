@@ -10,14 +10,20 @@
 
 package net.java.sipmack.softphone;
 
-import org.jivesoftware.sparkplugin.calllog.LogManager;
-import org.jivesoftware.sparkplugin.calllog.LogPacket;
-import org.jivesoftware.sparkplugin.preferences.SipPreference;
-import org.jivesoftware.sparkplugin.preferences.SipPreferences;
-import org.jivesoftware.sparkplugin.sipaccount.SipAccount;
-import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
-import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.sdp.MediaDescription;
+import javax.sdp.SessionDescription;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+
 import net.java.sipmack.common.DialSoundManager;
 import net.java.sipmack.common.Log;
 import net.java.sipmack.events.UserActionListener;
@@ -25,6 +31,7 @@ import net.java.sipmack.media.AudioMediaSession;
 import net.java.sipmack.media.AudioReceiverChannel;
 import net.java.sipmack.media.JmfMediaManager;
 import net.java.sipmack.media.MediaException;
+import net.java.sipmack.media.VideoMediaSession;
 import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.CommunicationsException;
 import net.java.sipmack.sip.Interlocutor;
@@ -47,6 +54,7 @@ import net.java.sipmack.softphone.gui.GuiManager;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
 import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -54,21 +62,10 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.ModelUtil;
-
-import javax.sdp.MediaDescription;
-import javax.sdp.SessionDescription;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkplugin.calllog.LogManager;
 import org.jivesoftware.sparkplugin.calllog.LogPacket;
 import org.jivesoftware.sparkplugin.preferences.SipPreference;
@@ -76,58 +73,6 @@ import org.jivesoftware.sparkplugin.preferences.SipPreferences;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccount;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
 import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import net.java.sipmack.common.DialSoundManager;
-import net.java.sipmack.common.Log;
-import net.java.sipmack.events.UserActionListener;
-import net.java.sipmack.media.AudioMediaSession;
-import net.java.sipmack.media.AudioReceiverChannel;
-import net.java.sipmack.media.JmfMediaManager;
-import net.java.sipmack.media.MediaException;
-import net.java.sipmack.sip.Call;
-import net.java.sipmack.sip.CommunicationsException;
-import net.java.sipmack.sip.Interlocutor;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.sip.NetworkAddressManager;
-import net.java.sipmack.sip.SIPConfig;
-import net.java.sipmack.sip.SipManager;
-import net.java.sipmack.sip.SipRegisterStatus;
-import net.java.sipmack.sip.event.CallEvent;
-import net.java.sipmack.sip.event.CallListener;
-import net.java.sipmack.sip.event.CallRejectedEvent;
-import net.java.sipmack.sip.event.CallStateEvent;
-import net.java.sipmack.sip.event.CommunicationsErrorEvent;
-import net.java.sipmack.sip.event.CommunicationsListener;
-import net.java.sipmack.sip.event.MessageEvent;
-import net.java.sipmack.sip.event.RegistrationEvent;
-import net.java.sipmack.sip.event.UnknownMessageEvent;
-import net.java.sipmack.softphone.gui.DefaultGuiManager;
-import net.java.sipmack.softphone.gui.GuiManager;
-import net.java.sipmack.softphone.listeners.InterlocutorListener;
-import net.java.sipmack.softphone.listeners.RegisterEvent;
-import net.java.sipmack.softphone.listeners.SoftPhoneListener;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.phone.PhoneManager;
-import org.jivesoftware.spark.preference.PreferenceManager;
-import org.jivesoftware.spark.util.ModelUtil;
-
-import javax.sdp.MediaDescription;
-import javax.sdp.SessionDescription;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Title: SIPark
@@ -168,7 +113,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 
     protected String msgBuffer = "";
 
-    protected Integer unregistrationLock = new Integer(0);
+    protected Integer unregistrationLock = Integer.valueOf(0);
 
     private static SipRegisterStatus status = SipRegisterStatus.Unregistered;
 
@@ -513,8 +458,8 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      * @param evt CallRejectedEvent
      */
     public void callRejectedLocally(CallRejectedEvent evt) {
-        String reason = evt.getReason();
-        String detailedReason = evt.getDetailedReason();
+//        String reason = evt.getReason();
+//        String detailedReason = evt.getDetailedReason();
     }
 
     /**
@@ -687,18 +632,45 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                     PhoneManager.setUsingMediaLocator(false);
                 }
 
-                int localPort = ((MediaDescription) (call.getLocalSdpDescription().getMediaDescriptions(true).get(0))).getMedia().getMediaPort();
-
-                AudioMediaSession audioMediaSession = mediaManager.createAudioMediaSession(call.getRemoteSdpDescription().toString(), localPort);
+                int localAudioPort = -1;
+                int localVideoPort = -1;
+                
+               
+                Vector<MediaDescription> mediaDescriptions = call.getLocalSdpDescription().getMediaDescriptions(true);
+                for (MediaDescription mediaDescription : mediaDescriptions)
+                {
+                	if (mediaDescription.getMedia().getMediaType().equals("audio"))
+                		localAudioPort = mediaDescription.getMedia().getMediaPort();
+                	else if (mediaDescription.getMedia().getMediaType().equals("video"))
+                		localVideoPort = mediaDescription.getMedia().getMediaPort();
+                }
+                
+                AudioMediaSession audioMediaSession = mediaManager.createAudioMediaSession(call.getRemoteSdpDescription().toString(), localAudioPort);                
                 call.setAudioMediaSession(audioMediaSession);
 
                 if (audioMediaSession != null) {
                     audioMediaSession.startTrasmit();
                     audioMediaSession.startReceive();
                 }
+                
+                // If remote client have video
+                if (localVideoPort > 0)
+                {
+                	System.out.println("Port:" + localVideoPort);
+                	System.out.println("Device: "+ SettingsManager.getLocalPreferences().getVideoDevice());
+                	if (SettingsManager.getLocalPreferences().getVideoDevice() != null && !"".equals(SettingsManager.getLocalPreferences().getVideoDevice()))
+                	{
+		                VideoMediaSession videoMediaSession = mediaManager.createVideoMediaSession(call.getRemoteSdpDescription().toString(), localVideoPort);
+		                if (videoMediaSession != null) {
+		                	videoMediaSession.startTrasmit();
+		                	videoMediaSession.startReceive();
+		                }
+                	}
+                }
 
+                
                 evt.getSourceCall().start();
-
+                
                 Log.debug("MEDIA STREAMS OPENED");
 
             } else if (evt.getNewState() == Call.RINGING) {

@@ -10,16 +10,16 @@
 
 package net.java.sipmack.softphone.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.java.sipmack.common.AlertManager;
 import net.java.sipmack.common.Log;
-import net.java.sipmack.events.UserActionListener;
 import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.Interlocutor;
 import net.java.sipmack.sip.InterlocutorUI;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.java.sipmack.events.UserActionListener;
 
 /**
  * The <code>GuiManager</code> class that Manage all the actions and Events of
@@ -288,7 +288,6 @@ public class GuiManager implements GuiCallback, DefaultGuiManager {
             Log.debug("hangup", "No interlocutors");
             return false;
         }
-        int selectedRow = 0;
         Interlocutor inter;
         for (int i = 0; i < interlocutors.size(); i++) {
             inter = (Interlocutor) interlocutors.get(i);

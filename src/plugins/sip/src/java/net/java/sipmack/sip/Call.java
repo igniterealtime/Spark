@@ -63,8 +63,6 @@ public class Call implements ReceiveStreamListener {
 
     private long start = 0;
 
-    private int id = (int)Math.round(Math.random() * 50000);
-
     private Dialog dialog = null;
 
     private SessionDescription localSdpDescription = null;

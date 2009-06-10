@@ -2,57 +2,46 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
  */
-
 package net.java.sipmack.media;
 
-import net.java.sipmack.sip.SIPConfig;
-
-import javax.media.*;
-import javax.media.control.TrackControl;
-import javax.media.control.BufferControl;
-import javax.media.control.PacketSizeControl;
-import javax.media.format.AudioFormat;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.DataSource;
-import javax.media.protocol.PushBufferDataSource;
-import javax.media.protocol.PushBufferStream;
-import javax.media.rtp.RTPManager;
-import javax.media.rtp.SendStream;
-import javax.media.rtp.SessionAddress;
-import javax.media.rtp.ReceiveStreamListener;
-import javax.media.rtp.rtcp.SourceDescription;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
-import org.jivesoftware.spark.phone.PhoneManager;
+import javax.media.Controller;
+import javax.media.ControllerClosedEvent;
+import javax.media.ControllerEvent;
+import javax.media.ControllerListener;
+import javax.media.Format;
+import javax.media.MediaLocator;
+import javax.media.NoProcessorException;
+import javax.media.Processor;
+import javax.media.control.BufferControl;
+import javax.media.control.PacketSizeControl;
+import javax.media.control.TrackControl;
+import javax.media.format.AudioFormat;
+import javax.media.protocol.ContentDescriptor;
+import javax.media.protocol.DataSource;
+import javax.media.protocol.PushBufferDataSource;
+import javax.media.protocol.PushBufferStream;
+import javax.media.rtp.RTPManager;
+import javax.media.rtp.ReceiveStreamListener;
+import javax.media.rtp.SendStream;
+import javax.media.rtp.SessionAddress;
 
-/**
- * An Easy to use Audio Channel implemented using JMF.
- * It sends and receives jmf for and from desired IPs and ports.
- * Also has a rport Symetric behavior for better NAT Traversal.
- * It send data from a defined port and receive data in the same port, making NAT binds easier.
- * <p/>
- * Send from portA to portB and receive from portB in portA.
- * <p/>
- * Sending
- * portA ---> portB
- * <p/>
- * Receiving
- * portB ---> portA
- * <p/>
- * <i>Transmit and Receive are interdependents. To receive you MUST trasmit. </i>
- *
- * @author Thiago Camargo
- */
+import net.java.sipmack.sip.SIPConfig;
+
+import org.jivesoftware.spark.phone.PhoneManager;
+import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
+
+
 public class AudioChannel {
 
     private MediaLocator locator;
@@ -259,6 +248,9 @@ public class AudioChannel {
                         System.err.println("Track " + i + " is set to transmit as:");
                         System.err.println("  " + chosen);
 
+         
+                        
+                        
                         if (tracks[i].getFormat() instanceof AudioFormat) {
                             int packetRate = 20;
                             PacketSizeControl pktCtrl = (PacketSizeControl) processor.getControl(PacketSizeControl.class.getName());
@@ -270,22 +262,24 @@ public class AudioChannel {
                                     // Do nothing
                                 }
                             }
+                            
 
-                            if (tracks[i].getFormat().getEncoding().equals(AudioFormat.ULAW_RTP)) {
-                                Codec codec[] = new Codec[3];
 
-                                codec[0] = new com.ibm.media.codec.audio.rc.RCModule();
-                                codec[1] = new com.ibm.media.codec.audio.ulaw.JavaEncoder();
-                                codec[2] = new com.sun.media.codec.audio.ulaw.Packetizer();
-                                ((com.sun.media.codec.audio.ulaw.Packetizer) codec
-                                        [2]).setPacketSize(160);
-
-                                try {
-                                    tracks[i].setCodecChain(codec);
-                                } catch (UnsupportedPlugInException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+//                            if (tracks[i].getFormat().getEncoding().equals(AudioFormat.ULAW_RTP)) {
+//                                Codec codec[] = new Codec[3];
+//
+//                                codec[0] = new com.ibm.media.codec.audio.rc.RCModule();
+//                                codec[1] = new com.ibm.media.codec.audio.ulaw.JavaEncoder();
+//                                codec[2] = new com.sun.media.codec.audio.ulaw.Packetizer();
+//                                ((com.sun.media.codec.audio.ulaw.Packetizer) codec
+//                                        [2]).setPacketSize(160);
+//
+//                                try {
+//                                    tracks[i].setCodecChain(codec);
+//                                } catch (UnsupportedPlugInException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
 
                         }
 
@@ -347,7 +341,6 @@ public class AudioChannel {
         SendStream sendStream;
         audioReceiver = new AudioReceiver(this);
         int port;
-        SourceDescription srcDesList[];
 
         for (int i = 0; i < pbss.length; i++) {
             try {

@@ -801,6 +801,22 @@ public class LocalPreferences {
 		return getBoolean("showVCards", true);
 	}
 
+	public void setAudioDevice(String device) {
+		 props.setProperty("audioDevice", device);
+	}
+	
+	public String getAudioDevice() {
+		return props.getProperty("audioDevice","javasound://");
+	}
+	
+	public void setVideoDevice(String device) {
+		 props.setProperty("videoDevice", device);
+	}
+	
+	public String getVideoDevice() {
+		return props.getProperty("videoDevice",null);
+	}
+	
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean
 				.toString(defaultValue)));

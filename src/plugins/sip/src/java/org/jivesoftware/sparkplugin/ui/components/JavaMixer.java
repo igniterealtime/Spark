@@ -9,21 +9,42 @@
  */
 
 package org.jivesoftware.sparkplugin.ui.components;
-import javax.sound.sampled.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeNode;
-import javax.swing.*;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
-import java.util.List;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.util.List;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.BooleanControl;
+import javax.sound.sampled.CompoundControl;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.EnumControl;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Port;
+import javax.swing.AbstractButton;
+import javax.swing.BoundedRangeModel;
+import javax.swing.ButtonModel;
+import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.DefaultButtonModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTree;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 /**
  * Pure Java Audio Mixer. Control Volume and Settings for any Sound device in the OS.
@@ -149,8 +170,9 @@ public class JavaMixer {
     }
 
     private void createMixerChildren(JavaMixer.MixerNode mixerNode) {
-        Mixer mixer = mixerNode.getMixer();
+        Mixer mixer = mixerNode.getMixer();       
         Line.Info[] infosToCheck = getPortInfo(mixer);
+        
         for (Line.Info anInfosToCheck : infosToCheck) {
             if (mixer.isLineSupported(anInfosToCheck)) {
                 Port port = null;
@@ -172,7 +194,7 @@ public class JavaMixer {
                         }
                     }
                     catch (LineUnavailableException e) {
-                        e.printStackTrace();
+                        // Do Nothing
                     }
                     catch (Exception e) {
                         // Do Nothing

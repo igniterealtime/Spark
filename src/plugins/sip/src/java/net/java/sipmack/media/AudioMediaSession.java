@@ -2,7 +2,7 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
@@ -10,29 +10,30 @@
 
 package net.java.sipmack.media;
 
-import org.jivesoftware.spark.phone.PhoneManager;
-
-import javax.media.MediaLocator;
-import javax.media.rtp.ReceiveStreamListener;
-import javax.media.format.AudioFormat;
 import java.io.IOException;
 import java.net.ServerSocket;
+
+import javax.media.format.AudioFormat;
+import javax.media.rtp.ReceiveStreamListener;
+
+import org.jivesoftware.spark.phone.PhoneManager;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
 
 /**
  * This Class implements a complete JingleMediaSession.
  * It sould be used to transmit and receive audio captured from the Mic.
  * This Class should be automaticly controlled by JingleSession.
  * But you could also use in any VOIP application.
- * For better NAT Traversal support this implementation don´t support only receive or only transmit.
+ * For better NAT Traversal support this implementation donï¿½t support only receive or only transmit.
  * To receive you MUST transmit. So the only implemented and functionally methods are startTransmit() and stopTransmit()
  *
  * @author Thiago Camargo
  */
 public class AudioMediaSession {
 
-    private AudioFormat format;
     private AudioChannel audioChannel;
-    private String locator = "dsound://";
+    private String locator = "javasound://";
     // AudioFormat of the Session
     private AudioFormat audioFormat;
     // Local Transport details
@@ -49,7 +50,7 @@ public class AudioMediaSession {
      */
     public AudioMediaSession(final AudioFormat audioFormat, final TransportCandidate remote,
                              final TransportCandidate local) {
-        this(audioFormat, remote, local, "dsound://");
+        this(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
     }
 
     /**
@@ -66,6 +67,7 @@ public class AudioMediaSession {
         this.audioFormat = audioFormat;
         if (locator != null && !locator.equals(""))
             this.locator = locator;
+        
         initialize();
     }
 

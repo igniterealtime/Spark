@@ -2,7 +2,7 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
@@ -10,10 +10,10 @@
 
 package net.java.sipmack.sip;
 
-import net.java.sipmack.common.Log;
-import net.java.sipmack.sip.event.RegistrationEvent;
-import net.java.sipmack.sip.security.SipSecurityException;
-import net.java.sipmack.softphone.SoftPhoneManager;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.sip.ClientTransaction;
 import javax.sip.InvalidArgumentException;
@@ -23,14 +23,24 @@ import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
 import javax.sip.address.SipURI;
 import javax.sip.address.URI;
-import javax.sip.header.*;
+import javax.sip.header.AllowHeader;
+import javax.sip.header.CSeqHeader;
+import javax.sip.header.CallIdHeader;
+import javax.sip.header.ContactHeader;
+import javax.sip.header.EventHeader;
+import javax.sip.header.ExpiresHeader;
+import javax.sip.header.FromHeader;
+import javax.sip.header.MaxForwardsHeader;
+import javax.sip.header.ToHeader;
+import javax.sip.header.UserAgentHeader;
+import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import net.java.sipmack.common.Log;
+import net.java.sipmack.sip.event.RegistrationEvent;
+import net.java.sipmack.sip.security.SipSecurityException;
+import net.java.sipmack.softphone.SoftPhoneManager;
 
 /**
  * Title: SIPark
@@ -147,9 +157,6 @@ class RegisterProcessing {
     void processAuthenticationChallenge(ClientTransaction clientTransaction,
                                         Response response) {
         try {
-
-            Request register = clientTransaction.getRequest();
-
             ClientTransaction retryTran = sipManCallback.sipSecurityManager
                     .handleChallenge(response, clientTransaction);
 
@@ -248,7 +255,7 @@ class RegisterProcessing {
             }
             // User Agent Header
             UserAgentHeader uaHeader = null;
-            ArrayList userAgentList = new ArrayList();
+            ArrayList<String> userAgentList = new ArrayList<String>();
             userAgentList.add(SoftPhoneManager.userAgent);
 
             try {
@@ -263,7 +270,7 @@ class RegisterProcessing {
             }
 
             // Via Headers
-            ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+            ArrayList<ViaHeader> viaHeaders = sipManCallback.getLocalViaHeaders();
             // MaxForwardsHeader
             MaxForwardsHeader maxForwardsHeader = sipManCallback
                     .getMaxForwardsHeader();
@@ -450,7 +457,7 @@ class RegisterProcessing {
         }
         // User Agent Header
         UserAgentHeader uaHeader = null;
-        ArrayList userAgentList = new ArrayList();
+        ArrayList<String> userAgentList = new ArrayList<String>();
         userAgentList.add(SoftPhoneManager.userAgent);
 
         try {
@@ -465,7 +472,7 @@ class RegisterProcessing {
         }
 
         // Via Headers
-        ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+        ArrayList<ViaHeader> viaHeaders = sipManCallback.getLocalViaHeaders();
         // MaxForwardsHeader
         MaxForwardsHeader maxForwardsHeader = sipManCallback
                 .getMaxForwardsHeader();
@@ -599,7 +606,7 @@ class RegisterProcessing {
         public KeepAliveTask(int s) {
             sec = s;
         }
-
+       
         public void run() {
             try {
                 if (sipManCallback.isRegistered()) {

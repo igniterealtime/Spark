@@ -2,22 +2,17 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
  */
-
 package net.java.sipmack.media;
 
-import org.jivesoftware.smack.XMPPConnection;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
-import java.io.IOException;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Arrays;
+import org.jivesoftware.smack.XMPPConnection;
 
 /**
  * Transport candidate.
@@ -136,7 +131,7 @@ public abstract class TransportCandidate {
     }
 
     /**
-     * Get the jingle´s sessionId that is using this candidate
+     * Get the jingleï¿½s sessionId that is using this candidate
      *
      * @return
      */
@@ -145,7 +140,7 @@ public abstract class TransportCandidate {
     }
 
     /**
-     * Set the jingle´s sessionId that is using this candidate
+     * Set the jingleï¿½s sessionId that is using this candidate
      *
      * @param sessionId
      */

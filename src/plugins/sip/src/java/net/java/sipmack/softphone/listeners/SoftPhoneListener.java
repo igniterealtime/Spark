@@ -10,11 +10,10 @@
 
 package net.java.sipmack.softphone.listeners;
 
+import net.java.sipmack.sip.event.CallRejectedEvent;
 import net.java.sipmack.sip.event.CallStateEvent;
 import net.java.sipmack.sip.event.MessageEvent;
 import net.java.sipmack.sip.event.UnknownMessageEvent;
-import net.java.sipmack.sip.event.CallRejectedEvent;
-import net.java.sipmack.sip.InterlocutorUI;
 
 /**
  * Title: SIPark

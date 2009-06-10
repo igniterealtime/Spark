@@ -2,7 +2,7 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
@@ -25,7 +25,7 @@ import java.util.Hashtable;
  */
 
 public class AlertManager {
-    private Hashtable alertClips = new Hashtable();
+    private Hashtable<String, AudioClip> alertClips = new Hashtable<String, AudioClip>();
 
     public AlertManager() {
     }
@@ -45,9 +45,9 @@ public class AlertManager {
     }
 
     public void stopAllAlerts() {
-        Enumeration alertClipsEnum = alertClips.keys();
+        Enumeration<String> alertClipsEnum = alertClips.keys();
         while (alertClipsEnum.hasMoreElements()) {
-            String alert = (String) alertClipsEnum.nextElement();
+            String alert = alertClipsEnum.nextElement();
             stopAlert(alert);
         }
     }

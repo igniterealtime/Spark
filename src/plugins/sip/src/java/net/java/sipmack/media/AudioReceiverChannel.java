@@ -2,7 +2,7 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
@@ -10,26 +10,13 @@
 
 package net.java.sipmack.media;
 
-import net.java.sipmack.sip.SIPConfig;
-
-import javax.media.*;
-import javax.media.format.AudioFormat;
-import javax.media.control.TrackControl;
-import javax.media.control.PacketSizeControl;
-import javax.media.control.BufferControl;
-import javax.media.protocol.DataSource;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.PushBufferDataSource;
-import javax.media.protocol.PushBufferStream;
-import javax.media.rtp.RTPManager;
-import javax.media.rtp.SendStream;
-import javax.media.rtp.SessionAddress;
-import javax.media.rtp.rtcp.SourceDescription;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+
+import javax.media.control.BufferControl;
+import javax.media.rtp.RTPManager;
+import javax.media.rtp.SessionAddress;
+
+import net.java.sipmack.sip.SIPConfig;
 
 /**
  * An Easy to use Audio Channel implemented using JMF.
@@ -130,11 +117,7 @@ public class AudioReceiverChannel {
 
         rtpMgrs = new RTPManager[1];
         SessionAddress localAddr, destAddr;
-        InetAddress ipAddr;
-        SendStream sendStream;
         audioReceiver = new AudioReceiver(this);
-        int port;
-        SourceDescription srcDesList[];
 
         for (int i = 0; i < 3; i++) {
             try {

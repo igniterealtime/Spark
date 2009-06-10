@@ -10,21 +10,22 @@
 
 package org.jivesoftware.spark.preference;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JDialog;
+
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.groupchat.GroupChatPreference;
+import org.jivesoftware.sparkimpl.preference.media.MediaPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
-
-import javax.swing.JDialog;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Usage of the PreferenceManager to handle loading of preferences within Spark.
@@ -44,6 +45,10 @@ public class PreferenceManager {
         GroupChatPreference groupChatPreferences = new GroupChatPreference();
         addPreference(groupChatPreferences);
         groupChatPreferences.load();
+        
+        MediaPreference preferenes = new MediaPreference();
+        addPreference(preferenes);
+        preferenes.load();
 
         LocalPreference localPreferences = new LocalPreference();
         addPreference(localPreferences);
@@ -90,7 +95,7 @@ public class PreferenceManager {
         return getPreference(namespace).getData();
     }
 
-    public Iterator getPreferences() {
+    public Iterator<Preference> getPreferences() {
         final List<Preference> returnList = new ArrayList<Preference>();
         for (String namespace : map.keySet()) {
             returnList.add(map.get(namespace));

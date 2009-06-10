@@ -16,7 +16,9 @@ import java.util.EventObject;
 
 public class RegisterEvent extends EventObject {
 
-    private SipRegisterStatus status = SipRegisterStatus.Unregistered;
+	private static final long serialVersionUID = 6673006341746488777L;
+
+	private SipRegisterStatus status = SipRegisterStatus.Unregistered;
 
     private String reason = "";
 

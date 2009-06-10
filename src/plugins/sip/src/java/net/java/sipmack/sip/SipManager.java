@@ -10,29 +10,15 @@
 
 package net.java.sipmack.sip;
 
-import gov.nist.javax.sip.stack.SIPTransaction;
-import net.java.sipmack.common.Log;
-import net.java.sipmack.sip.event.CallEvent;
-import net.java.sipmack.sip.event.CallRejectedEvent;
-import net.java.sipmack.sip.event.CommunicationsErrorEvent;
-import net.java.sipmack.sip.event.CommunicationsListener;
-import net.java.sipmack.sip.event.MessageEvent;
-import net.java.sipmack.sip.event.RegistrationEvent;
-import net.java.sipmack.sip.event.UnknownMessageEvent;
-import net.java.sipmack.sip.security.SecurityAuthority;
-import net.java.sipmack.sip.security.SipSecurityManager;
-import net.java.sipmack.sip.security.Credentials;
-import net.java.sipmack.sip.simple.MessageProcessing;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Inet4Address;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TooManyListenersException;
 
+import javax.sdp.SessionDescription;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogTerminatedEvent;
@@ -69,7 +55,19 @@ import javax.sip.message.Message;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
-import javax.sdp.SessionDescription;
+
+import net.java.sipmack.common.Log;
+import net.java.sipmack.sip.event.CallEvent;
+import net.java.sipmack.sip.event.CallRejectedEvent;
+import net.java.sipmack.sip.event.CommunicationsErrorEvent;
+import net.java.sipmack.sip.event.CommunicationsListener;
+import net.java.sipmack.sip.event.MessageEvent;
+import net.java.sipmack.sip.event.RegistrationEvent;
+import net.java.sipmack.sip.event.UnknownMessageEvent;
+import net.java.sipmack.sip.security.Credentials;
+import net.java.sipmack.sip.security.SecurityAuthority;
+import net.java.sipmack.sip.security.SipSecurityManager;
+import net.java.sipmack.sip.simple.MessageProcessing;
 
 /**
  * Title: SIPark
@@ -190,7 +188,7 @@ public class SipManager implements SipListener {
      */
     protected ContactHeader contactHeader = null;
 
-    protected ArrayList viaHeaders = null;
+    protected ArrayList<ViaHeader> viaHeaders = null;
 
     protected static final int MAX_FORWARDS = 70;
 
@@ -585,7 +583,17 @@ public class SipManager implements SipListener {
 
         try {
 
-            SIPTransaction.setRegisterTimeout(10);
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+        	// TODO : Anpassen
+            //SIPTransaction.setRegisterTimeout(10);
 
             //registerRetries = 0;
 
@@ -985,7 +993,7 @@ public class SipManager implements SipListener {
     public ArrayList<ViaHeader> getLocalViaHeaders() throws CommunicationsException {
 
         ListeningPoint lp = sipProvider.getListeningPoint();
-        viaHeaders = new ArrayList();
+        viaHeaders = new ArrayList<ViaHeader>();
         try {
 
             ViaHeader viaHeader = headerFactory.createViaHeader(SIPConfig
@@ -1247,7 +1255,17 @@ public class SipManager implements SipListener {
 
     // ------------ registerred
     void fireRegistered(String address) {
-        SIPTransaction.setRegisterTimeout(64);
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+    	// TODO : Anpassen
+        //SIPTransaction.setRegisterTimeout(64);
         try {
             registerProcessing.subscribe(registrarAddress, registrarPort, registrarTransport);
         } catch (CommunicationsException e) {
@@ -1505,6 +1523,7 @@ public class SipManager implements SipListener {
 
         // OK
         if (response.getStatusCode() == Response.OK) {
+        	
             // REGISTER
             if (method.equals(Request.REGISTER)) {
                 registerProcessing.processOK(clientTransaction, response);

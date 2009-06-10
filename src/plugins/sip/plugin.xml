@@ -8,6 +8,6 @@
     <description>SIP Softphone Plugin</description>
     <class>org.jivesoftware.sparkplugin.SoftPhonePlugin</class>
     <minSparkVersion>2.5.0</minSparkVersion>
-    <os>Windows,Mac</os>
+    <os>Windows,Mac,Linux</os>
 </plugin>
 

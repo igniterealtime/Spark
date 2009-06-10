@@ -1,34 +1,21 @@
+/**
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2009 Jive Software. All rights reserved.
+ *
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
+ */
 package net.java.sipmack.events;
+
+import java.util.EventListener;
 
 import net.java.sipmack.media.MediaException;
 import net.java.sipmack.sip.Interlocutor;
 import net.java.sipmack.sip.InterlocutorUI;
 
-/**
- * <p/>
- * Title: SIP COMMUNICATOR
- * </p>
- * <p/>
- * Description:JAIN-SIP Audio/Video phone application
- * </p>
- * <p/>
- * Copyright: Copyright (c) 2003
- * </p>
- * <p/>
- * Organisation: LSIIT laboratory (http://lsiit.u-strasbg.fr)
- * </p>
- * <p/>
- * Network Research Team (http://www-r2.u-strasbg.fr))
- * </p>
- * <p/>
- * Louis Pasteur University - Strasbourg - France
- * </p>
- *
- * @author Emil Ivov (http://www.emcho.com)
- * @version 1.1
- */
-
-public interface UserActionListener extends java.util.EventListener {
+public interface UserActionListener extends EventListener {
 
     public void createSoftPhone(String server) throws MediaException;
 

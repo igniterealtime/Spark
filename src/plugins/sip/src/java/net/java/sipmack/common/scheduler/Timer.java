@@ -1,108 +1,16 @@
-/* ====================================================================
- * The Apache Software License, Version 1.1
+/**
+ * $Revision: $
+ * $Date: $
  *
- * Copyright (c) 2000 The Apache Software Foundation.  All rights
- * reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Apache" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
- * Portions of this software are based upon public domain software
- * originally written at the National Center for Supercomputing Applications,
- * University of Illinois, Urbana-Champaign.
+ * This software is published under the terms of the GNU Lesser Public License (LGPL),
+ * a copy of which is included in this distribution.
  */
 
 package net.java.sipmack.common.scheduler;
 
 import java.util.Date;
-
-/**
- * A facility for threads to schedule tasks for future execution in a background
- * thread. Tasks may be scheduled for one-time execution, or for repeated
- * execution at regular intervals.
- * <p/>
- * Corresponding to each <tt>Timer</tt> object is a single background thread
- * that is used to execute all of the timer's tasks, sequentially. Timer tasks
- * should complete quickly. If a timer task takes excessive time to complete, it
- * "hogs" the timer's task execution thread. This can, in turn, delay the
- * execution of subsequent tasks, which may "bunch up" and execute in rapid
- * succession when (and if) the offending task finally completes.
- * <p/>
- * After the last live reference to a <tt>Timer</tt> object goes away <i>and</i>
- * all outstanding tasks have completed execution, the timer's task execution
- * thread terminates gracefully (and becomes subject to garbage collection).
- * However, this can take arbitrarily long to occur. By default, the task
- * execution thread does not run as a <i>daemon thread</i>, so it is capable of
- * keeping an application from terminating. If a caller wants to terminate a
- * timer's task execution thread rapidly, the caller should invoke the the
- * timer's <tt>cancel</tt> method.
- * <p/>
- * If the timer's task execution thread terminates unexpectedly, for example,
- * because its <tt>stop</tt> method is invoked, any further attempt to
- * schedule a task on the timer will result in an <tt>IllegalStateException</tt>,
- * as if the timer's <tt>cancel</tt> method had been invoked.
- * <p/>
- * This class is thread-safe: multiple threads can share a single <tt>Timer</tt>
- * object without the need for external synchronization.
- * <p/>
- * This class does <i>not</i> offer real-time guarantees: it schedules tasks
- * using the <tt>Object.wait(long)</tt> method.
- * <p/>
- * Implementation note: This class scales to large numbers of concurrently
- * scheduled tasks (thousands should present no problem). Internally, it uses a
- * binary heap to represent its task queue, so the cost to schedule a task is
- * O(log n), where n is the number of concurrently scheduled tasks.
- *
- * @author Josh Bloch
- * @version 1.9, 01/23/03
- * @see TimerTask
- * @see Object#wait(long)
- * @since 1.3
- */
 
 public class Timer {
     /**

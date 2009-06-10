@@ -2,12 +2,11 @@
  * $Revision: $
  * $Date: $
  *
- * Copyright (C) 2007 Jive Software. All rights reserved.
+ * Copyright (C) 2009 Jive Software. All rights reserved.
  *
  * This software is published under the terms of the GNU Lesser Public License (LGPL),
  * a copy of which is included in this distribution.
  */
-
 package net.java.sipmack.sip;
 
 import net.java.sipmack.common.Log;
@@ -93,7 +92,7 @@ public class NetworkAddressManager {
             return cachedLocalhost;
         }
 
-        Enumeration ifaces = null;
+        Enumeration<NetworkInterface> ifaces = null;
         int i = 0;
 
         // Try to get the Preferred IP Address
@@ -120,10 +119,10 @@ public class NetworkAddressManager {
             while (ifaces.hasMoreElements()) {
 
                 NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
-                Enumeration iaddresses = iface.getInetAddresses();
+                Enumeration<InetAddress> iaddresses = iface.getInetAddresses();
 
                 while (iaddresses.hasMoreElements()) {
-                    InetAddress iaddress = (InetAddress) iaddresses.nextElement();
+                    InetAddress iaddress = iaddresses.nextElement();
                     if (iaddress.getHostAddress().equals(SIPConfig.getPreferredNetworkAddress())) {
                         addresses.add(new InetAddressWrapper(iaddress, i++));
                         break;
@@ -144,7 +143,7 @@ public class NetworkAddressManager {
         while (ifaces.hasMoreElements()) {
 
             NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
-            Enumeration iaddresses = iface.getInetAddresses();
+            Enumeration<InetAddress> iaddresses = iface.getInetAddresses();
 
             while (iaddresses.hasMoreElements()) {
                 InetAddress iaddress = (InetAddress) iaddresses.nextElement();
@@ -165,7 +164,7 @@ public class NetworkAddressManager {
         while (ifaces.hasMoreElements()) {
 
             NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
-            Enumeration iaddresses = iface.getInetAddresses();
+            Enumeration<InetAddress> iaddresses = iface.getInetAddresses();
 
             while (iaddresses.hasMoreElements()) {
                 InetAddress iaddress = (InetAddress) iaddresses.nextElement();

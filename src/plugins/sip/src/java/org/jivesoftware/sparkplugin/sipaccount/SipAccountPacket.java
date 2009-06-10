@@ -225,9 +225,9 @@ public class SipAccountPacket extends IQ {
                 .getInstanceFor(con);
         try {
             DiscoverItems items = disco.discoverItems(con.getServiceName());
-            Iterator iter = items.getItems();
+            Iterator<DiscoverItems.Item> iter = items.getItems();
             while (iter.hasNext()) {
-                DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+                DiscoverItems.Item item = iter.next();
                 if ("SIP Controller".equals(item.getName())) {
                     Log.debug("SIP Controller Found");
                     return true;
