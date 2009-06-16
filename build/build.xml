@@ -675,8 +675,7 @@
         </copy>
     </target>
 	
-    <!-- IzPack package ========================================================================= -->
-	  
+    <!-- IzPack package ========================================================================= -->  
 	<target name="installer.izpack" depends="jar" description="build release a izpack installer">
 		<mkdir dir="${basedir}/installer/" />
 	    <taskdef name="IzPack" 
@@ -700,7 +699,16 @@
 				installerType="standard" izPackDir="${installer.izpack.dir}" basedir="${basedir}"/>
 	</target>
 	
-	
+    <!-- IzPack exe package ===================================================================== -->
+	<target name="installer.izpack.exe" depends="installer.izpack" description="build release executable izpack installer">
+		<exec executable="python" failonerror="true">
+			<arg line="${installer.izpack.dir}/utils/wrappers/izpack2exe/izpack2exe.py"/>
+			<arg line="--file=${basedir}/installer/spark-installer.jar"/>
+			<arg line="--output=${basedir}/installer/spark-installer.exe"/>
+			<arg line="--no-upx"/>
+		</exec>
+	</target> 
+		
 	<!-- dist.src =============================================================================== -->
 	<property name="release.src.out.dir" value="target/src/Spark-${version}" />
     <property name="release.fullname.src" value="spark_src_${version}"/>
