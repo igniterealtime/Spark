@@ -1,7 +1,11 @@
 package org.jivesoftware.sparkimpl.plugin.idle;
 
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
 import java.awt.MouseInfo;
 import java.awt.PointerInfo;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,15 +29,16 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	
 	@Override
 	public boolean canShutDown() {
-
 		return false;
 	}
 
 	@Override
 	public void initialize() {
-		 Timer timer = new Timer();
-		 // Check all 5 secounds
-		 timer.schedule  ( this, (1000 * 10), (1000 * CHECKTIME)  );
+	    Timer timer = new Timer();
+	    // Check all 5 secounds
+	    timer.schedule  ( this, (1000 * 10), (1000 * CHECKTIME)  );
+		 
+	    addGlobalListener();	 
 	}
 
 	@Override
@@ -120,5 +125,25 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 				x = info.getLocation().getX();
 			}
 		}
+	}
+
+	private void addGlobalListener()
+	{
+	    EventQueue e = Toolkit.getDefaultToolkit().getSystemEventQueue();
+	    e.push(new EventQueue()
+	    {
+		protected void dispatchEvent(AWTEvent event)
+		{
+		    if(event instanceof KeyEvent)
+		    {
+			counter = 0;
+			if (hasChanged) {
+				setOnline();
+				hasChanged = false;
+			}
+		    }
+		    super.dispatchEvent(event);
+		}
+	    });
 	}
 }
