@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,6 +34,7 @@ import org.jivesoftware.resource.SparkRes;
  */
 public class TaskUI extends JPanel implements ActionListener {
 
+    private static final long serialVersionUID = -8443764502684168188L;
     private Task task;
     private JCheckBox box;
     private String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();

@@ -78,7 +78,9 @@ public class ScratchPadPlugin implements Plugin {
         contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
 
         contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
-            public void actionPerformed(ActionEvent evt) {
+	    private static final long serialVersionUID = -3258500919859584696L;
+
+	    public void actionPerformed(ActionEvent evt) {
                 // Retrieve notes and dispaly in editor.
                 retrieveNotes();
             }
@@ -87,7 +89,9 @@ public class ScratchPadPlugin implements Plugin {
         contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F5"), "viewTasks");
 
         contactList.getActionMap().put("viewTasks", new AbstractAction("viewTasks") {
-            public void actionPerformed(ActionEvent evt) {
+	    private static final long serialVersionUID = 8589614513097901484L;
+
+	    public void actionPerformed(ActionEvent evt) {
                 // Retrieve notes and dispaly in editor.
                 showTaskList();
             }
@@ -156,7 +160,7 @@ public class ScratchPadPlugin implements Plugin {
         topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 50, 0));
         topPanel.add(addButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
 
-        topPanel.add(new JLabel(Res.getString("label.timeformat")), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+        topPanel.add(new JLabel(Res.getString("label.timeformat", formatter.toPattern())), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         mainPanel.add(topPanel);
 
         // Add Selection
@@ -177,7 +181,9 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.setBackground(Color.white);
 
         final JPanel titlePanel = new JPanel(new BorderLayout()) {
-            public void paintComponent(Graphics g) {
+	    private static final long serialVersionUID = -8812868562658925280L;
+
+	    public void paintComponent(Graphics g) {
                 Color startColor = Color.white;
                 Color endColor = new Color(198, 211, 247);
 
@@ -198,7 +204,9 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.add(titlePanel);
 
         Action showAllAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = -7031122285194582204L;
+
+	    public void actionPerformed(ActionEvent e) {
                 for (TaskUI ui : taskList) {
                     ui.setVisible(true);
                 }
@@ -208,7 +216,9 @@ public class ScratchPadPlugin implements Plugin {
         };
 
         Action showActiveAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = -7551153291479117311L;
+
+	    public void actionPerformed(ActionEvent e) {
                 for (TaskUI ui : taskList) {
                     if (ui.isSelected()) {
                         ui.setVisible(false);
@@ -220,7 +230,9 @@ public class ScratchPadPlugin implements Plugin {
         };
 
         final Action addAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = -5937301529216080813L;
+
+	    public void actionPerformed(ActionEvent e) {
                 String taskTitle = taskField.getText();
                 if (!ModelUtil.hasLength(taskTitle)) {
                     return;
@@ -300,7 +312,9 @@ public class ScratchPadPlugin implements Plugin {
         frame.setSize(400, 400);
 
         final Action saveAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+	    private static final long serialVersionUID = -4287799161421970177L;
+
+	    public void actionPerformed(ActionEvent actionEvent) {
                 // Save it.
                 Tasks tasks = new Tasks();
                 for (TaskUI ui : taskList) {

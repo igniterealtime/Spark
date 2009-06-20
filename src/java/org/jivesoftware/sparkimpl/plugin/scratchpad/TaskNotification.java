@@ -54,11 +54,13 @@ public class TaskNotification {
 
         long now = System.currentTimeMillis();
         Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
-        Iterator taskIter = tasks.getTasks().iterator();
+        Iterator<Task> taskIter = tasks.getTasks().iterator();
 
 
         final JPanel titlePanel = new JPanel(new BorderLayout()) {
-            public void paintComponent(Graphics g) {
+	    private static final long serialVersionUID = -8871487137643685431L;
+
+	    public void paintComponent(Graphics g) {
                 Color startColor = Color.white;
                 Color endColor = new Color(198, 211, 247);
 
