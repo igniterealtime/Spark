@@ -32,7 +32,8 @@ import javax.swing.JTextField;
  * UI for editing Local Preferences.
  */
 public class LocalPreferencePanel extends JPanel {
-    private JLabel portLabel = new JLabel();
+	private static final long serialVersionUID = -1675058807882383560L;
+	private JLabel portLabel = new JLabel();
     private JTextField portField = new JTextField();
 
     private JLabel timeOutLabel = new JLabel();

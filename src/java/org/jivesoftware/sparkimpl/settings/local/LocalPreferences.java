@@ -792,7 +792,7 @@ public class LocalPreferences {
 	public boolean areAvatarsVisible() {
 		return getBoolean("showAvatar", false);
 	}
-
+	
 	public void setVCardsVisible(boolean visible) {
 		setBoolean("showVCards", visible);
 	}
@@ -815,6 +815,14 @@ public class LocalPreferences {
 	
 	public String getVideoDevice() {
 		return props.getProperty("videoDevice",null);
+	}
+	
+	public boolean isAlwaysOnTop() {
+		return getBoolean("alwaysOnTop", false);
+	}
+	
+	public void setAlwaysOnTop(boolean onTop) {
+		setBoolean("alwaysOnTop", onTop);
 	}
 	
 	private boolean getBoolean(String property, boolean defaultValue) {

@@ -28,6 +28,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -79,7 +80,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private final JMenu helpMenu = new JMenu();
 
     private JMenuItem preferenceMenuItem;
-
+    private JCheckBoxMenuItem alwaysOnTopItem;
+    
     private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
     private final JMenuItem helpMenuItem = new JMenuItem();
 
@@ -368,6 +370,33 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
         preferenceMenuItem.addActionListener(this);
         connectMenu.add(preferenceMenuItem);
+
+        
+        alwaysOnTopItem = new JCheckBoxMenuItem();
+        ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
+        alwaysOnTopItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                	if (alwaysOnTopItem.isSelected())
+                	{
+                		SettingsManager.getLocalPreferences().setAlwaysOnTop(true);
+                		MainWindow.getInstance().setAlwaysOnTop(true);
+                	}
+                	else
+                	{
+                		SettingsManager.getLocalPreferences().setAlwaysOnTop(false);
+                		MainWindow.getInstance().setAlwaysOnTop(false);
+                	}
+                }
+        });
+        
+        if (SettingsManager.getLocalPreferences().isAlwaysOnTop())
+        {
+        	alwaysOnTopItem.setSelected(true);
+        	this.setAlwaysOnTop(true);
+        }
+        connectMenu.add(alwaysOnTopItem);
+        
+        
         connectMenu.addSeparator();
 
         JMenuItem logoutMenuItem = new JMenuItem();
@@ -385,7 +414,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 logout(true);
             }
         });
-
 
 		if (Spark.isWindows()) {
         	connectMenu.add(logoutMenuItem);
