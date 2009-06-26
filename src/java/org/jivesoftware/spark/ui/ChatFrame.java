@@ -10,36 +10,80 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.MainWindow;
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+
+import org.jivesoftware.MainWindow;
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * The Window used to display the ChatRoom container.
  */
 public class ChatFrame extends JFrame implements WindowFocusListener {
 
+    private static final long serialVersionUID = -7789413067818105293L;
     private long inactiveTime;
-
     private boolean focused;
-
+    
+    private JMenuBar chatWindowBar;
+    private JMenu optionMenu; 
+    private JCheckBoxMenuItem alwaysOnTopItem;
+    private ChatFrame chatFrame;
     /**
      * Creates default ChatFrame.
      */
     public ChatFrame() {
+	
+	chatFrame = this;
+	chatWindowBar = new JMenuBar();
+	optionMenu = new JMenu();
+	ResourceUtils.resButton(optionMenu, Res.getString("menuitem.chatframe.option"));
+	
+	alwaysOnTopItem = new JCheckBoxMenuItem();
+        ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
+        alwaysOnTopItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                	if (alwaysOnTopItem.isSelected())
+                	{
+                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                		chatFrame.setAlwaysOnTop(true);
+                	}
+                	else
+                	{
+                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                		chatFrame.setAlwaysOnTop(false);
+                	}
+                }
+        });
+        
+        if (SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop())
+        {
+        	alwaysOnTopItem.setSelected(true);
+        	chatFrame.setAlwaysOnTop(true);
+        }
+        
+        optionMenu.add(alwaysOnTopItem);
+        chatWindowBar.add(optionMenu);
+	setJMenuBar(chatWindowBar);
         setIconImage(SparkManager.getApplicationImage().getImage());
 
         getContentPane().setLayout(new BorderLayout());

@@ -817,13 +817,22 @@ public class LocalPreferences {
 		return props.getProperty("videoDevice",null);
 	}
 	
-	public boolean isAlwaysOnTop() {
+	public boolean isMainWindowAlwaysOnTop() {
 		return getBoolean("alwaysOnTop", false);
 	}
 	
-	public void setAlwaysOnTop(boolean onTop) {
-		setBoolean("alwaysOnTop", onTop);
+	public void setMainWindowAlwaysOnTop(boolean onTop) {
+		setBoolean("MainWindowAlwaysOnTop", onTop);
 	}
+	
+	public boolean isChatWindowAlwaysOnTop() {
+		return getBoolean("ChatFrameAlwaysOnTop", false);
+	}
+	
+	public void setChatWindowAlwaysOnTop(boolean onTop) {
+		setBoolean("ChatWindowAlwaysOnTop", onTop);
+	}
+	
 	
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean

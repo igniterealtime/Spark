@@ -378,18 +378,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 public void actionPerformed(ActionEvent actionEvent) {
                 	if (alwaysOnTopItem.isSelected())
                 	{
-                		SettingsManager.getLocalPreferences().setAlwaysOnTop(true);
+                		SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
                 		MainWindow.getInstance().setAlwaysOnTop(true);
                 	}
                 	else
                 	{
-                		SettingsManager.getLocalPreferences().setAlwaysOnTop(false);
+                		SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
                 		MainWindow.getInstance().setAlwaysOnTop(false);
                 	}
                 }
         });
         
-        if (SettingsManager.getLocalPreferences().isAlwaysOnTop())
+        if (SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop())
         {
         	alwaysOnTopItem.setSelected(true);
         	this.setAlwaysOnTop(true);
