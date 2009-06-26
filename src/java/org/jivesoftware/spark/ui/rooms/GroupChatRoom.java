@@ -10,6 +10,31 @@
 
 package org.jivesoftware.spark.ui.rooms;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -48,42 +73,18 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
  */
 public final class GroupChatRoom extends ChatRoom {
+    private static final long serialVersionUID = 4469579438292227006L;
+
     private final MultiUserChat chat;
 
     private final String roomname;
     private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     private String tabTitle;
     private boolean isActive = true;
-    private boolean showPresenceMessages = true;
     private SubjectPanel subjectPanel;
 
     private List<String> currentUserList = new ArrayList<String>();
@@ -100,6 +101,7 @@ public final class GroupChatRoom extends ChatRoom {
     private long lastActivity;
     
     LocalPreferences pref = SettingsManager.getLocalPreferences();
+    private boolean showPresenceMessages = pref.isShowJoinLeaveMessagesEnabled();
     private boolean isMucHighlightingNameEnabled = pref.isMucHighNameEnabled();
     private boolean isMucHighlightingTextEnabled = pref.isMucHighTextEnabled();
 
@@ -149,7 +151,9 @@ public final class GroupChatRoom extends ChatRoom {
             public void poppingUp(Object component, JPopupMenu popup) {
                 popup.addSeparator();
                 Action inviteAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
+		    private static final long serialVersionUID = -2493782261839364071L;
+
+		    public void actionPerformed(ActionEvent actionEvent) {
                         ConferenceUtils.inviteUsersToRoom(conferenceService, getRoomname(), null);
                     }
                 };
@@ -161,7 +165,9 @@ public final class GroupChatRoom extends ChatRoom {
 
 
                 Action configureAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
+		    private static final long serialVersionUID = -7463450970328104297L;
+
+		    public void actionPerformed(ActionEvent actionEvent) {
                         try {
                             ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
                             Form form = chat.getConfigurationForm().createAnswerForm();
@@ -180,7 +186,9 @@ public final class GroupChatRoom extends ChatRoom {
                 }
 
                 Action subjectAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent actionEvent) {
+		    private static final long serialVersionUID = 6730534406025965089L;
+
+		    public void actionPerformed(ActionEvent actionEvent) {
                         String newSubject = JOptionPane.showInputDialog(getChatRoom(), Res.getString("message.enter.new.subject") + ":", Res.getString("title.change.subject"), JOptionPane.QUESTION_MESSAGE);
                         if (ModelUtil.hasLength(newSubject)) {
                             try {
@@ -199,7 +207,9 @@ public final class GroupChatRoom extends ChatRoom {
 
                 // Define actions to modify/view room information
                 Action destroyRoomAction = new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
+		    private static final long serialVersionUID = 6494204166819377882L;
+
+		    public void actionPerformed(ActionEvent e) {
                         int ok = JOptionPane.showConfirmDialog(getChatRoom(), Res.getString("message.confirm.destruction.of.room"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (ok == JOptionPane.NO_OPTION) {
                             return;
@@ -873,7 +883,7 @@ public final class GroupChatRoom extends ChatRoom {
      *
      * @return the user format (e.g. darkcave@macbeth.shakespeare.lit/thirdwitch) of each user in the room.
      */
-    public Collection getParticipants() {
+    public Collection<String> getParticipants() {
         return currentUserList;
     }
 
@@ -1052,9 +1062,9 @@ public final class GroupChatRoom extends ChatRoom {
         if (typedChars >= 10) {
             try {
                 if (typingTimer != null) {
-                    final Iterator iter = chat.getOccupants();
+                    final Iterator<String> iter = chat.getOccupants();
                     while (iter.hasNext()) {
-                        String from = (String)iter.next();
+                        String from = iter.next();
                         String tFrom = StringUtils.parseResource(from);
                         String nickname = chat.getNickname();
                         if (tFrom != null && !tFrom.equals(nickname)) {
@@ -1114,7 +1124,8 @@ public final class GroupChatRoom extends ChatRoom {
      */
     public class SubjectPanel extends JPanel {
 
-        private JLabel roomJIDLabel;
+	private static final long serialVersionUID = -1459165526561181321L;
+	private JLabel roomJIDLabel;
         private JLabel subjectLabel;
 
         public SubjectPanel() {

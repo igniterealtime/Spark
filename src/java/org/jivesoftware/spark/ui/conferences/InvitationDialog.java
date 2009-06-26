@@ -55,6 +55,7 @@ import java.util.Collection;
 import java.util.List;
 
 final class InvitationDialog extends JPanel {
+    private static final long serialVersionUID = -8588678602429200581L;
     private JLabel roomsLabel = new JLabel();
     private JTextField roomsField = new JTextField();
 
@@ -159,7 +160,9 @@ final class InvitationDialog extends JPanel {
         final int index = invitedUserList.locationToIndex(e.getPoint());
 
         Action removeAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = 7837533277115442942L;
+
+	    public void actionPerformed(ActionEvent e) {
                 invitedUsers.remove(index);
             }
         };

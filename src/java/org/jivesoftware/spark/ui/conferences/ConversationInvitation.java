@@ -44,6 +44,7 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener {
+    private static final long serialVersionUID = -5830187619047598274L;
 
     private JButton joinButton;
 

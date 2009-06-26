@@ -39,6 +39,8 @@ import java.util.Iterator;
  * Handles unbanning banned users in Chat Rooms.
  */
 public class BannedUsers extends JPanel {
+    private static final long serialVersionUID = 6422162361752646645L;
+
     private MultiUserChat chat;
 
     private DefaultListModel listModel = new DefaultListModel();
@@ -109,7 +111,7 @@ public class BannedUsers extends JPanel {
         // Clear all elements from model
         listModel.clear();
 
-        Iterator bannedUsers = null;
+        Iterator<Affiliate> bannedUsers = null;
         try {
             bannedUsers = chat.getOutcasts().iterator();
         }
@@ -118,7 +120,7 @@ public class BannedUsers extends JPanel {
         }
 
         while (bannedUsers != null && bannedUsers.hasNext()) {
-            Affiliate bannedUser = (Affiliate)bannedUsers.next();
+            Affiliate bannedUser = bannedUsers.next();
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.STAR_RED_IMAGE);
             icon.setDescription(bannedUser.getJid());
             listModel.addElement(icon);

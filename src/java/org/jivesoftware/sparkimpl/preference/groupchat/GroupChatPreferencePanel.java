@@ -10,34 +10,28 @@
 
 package org.jivesoftware.sparkimpl.preference.groupchat;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.util.ResourceUtils;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 /**
  * The Preference UI used to handle changing of Chat Preferences.
  */
 public class GroupChatPreferencePanel extends JPanel {
 
-    private JCheckBox highlightMyName = new JCheckBox();
-    private JCheckBox highlightMyText = new JCheckBox();
-    private JCheckBox highlightPopName= new JCheckBox();
+    private static final long serialVersionUID = -4216417602756915148L;
+    private JCheckBox highlightMyName 		= new JCheckBox();
+    private JCheckBox highlightMyText 		= new JCheckBox();
+    private JCheckBox highlightPopName		= new JCheckBox();
+    private JCheckBox showjoinleavemessage 	= new JCheckBox();
 
     private JPanel gCPanel = new JPanel();
     /**
@@ -51,9 +45,10 @@ public class GroupChatPreferencePanel extends JPanel {
     private void createUI() {
         setLayout(new VerticalFlowLayout());
 
-        ResourceUtils.resButton(highlightMyName, Res.getString("menuitem.add.groupchat.myname"));
-        ResourceUtils.resButton(highlightMyText, Res.getString("menuitem.add.groupchat.mytext"));
-        ResourceUtils.resButton(highlightPopName,Res.getString("menuitem.add.groupchat.popname"));
+        ResourceUtils.resButton(highlightMyName		, Res.getString("menuitem.add.groupchat.myname"));
+        ResourceUtils.resButton(highlightMyText		, Res.getString("menuitem.add.groupchat.mytext"));
+        ResourceUtils.resButton(highlightPopName	, Res.getString("menuitem.add.groupchat.popname"));
+        ResourceUtils.resButton(showjoinleavemessage	, Res.getString("menuitem.add.groupchat.showjoinleavemessage"));
 
         gCPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("title.group.chat.settings")));
 
@@ -61,9 +56,10 @@ public class GroupChatPreferencePanel extends JPanel {
 
         gCPanel.setLayout(new GridBagLayout());
         
-        gCPanel.add(highlightMyName, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        gCPanel.add(highlightMyText, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        gCPanel.add(highlightPopName,new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(highlightMyName	, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(highlightMyText	, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(highlightPopName	, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(showjoinleavemessage, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     public void setMucHighNameEnabled(boolean mucNHigh) {
@@ -76,6 +72,14 @@ public class GroupChatPreferencePanel extends JPanel {
     
     public void setMuchHighToastEnabled(boolean mucPHigh) {
         highlightPopName.setSelected(mucPHigh);
+    }
+    
+    public void setShowJoinLeaveMessagesEnabled(boolean mucPHigh) {
+	showjoinleavemessage.setSelected(mucPHigh);
+    }
+    
+    public boolean isShowJoinLeaveMessagesEnabled() {
+        return showjoinleavemessage.isSelected();
     }
     
     public boolean isMucHighNameEnabled() {

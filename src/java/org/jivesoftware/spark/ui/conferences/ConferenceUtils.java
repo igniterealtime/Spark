@@ -21,13 +21,14 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.packet.DataForm;
@@ -59,7 +60,7 @@ public class ConferenceUtils {
      * @return a collection of rooms.
      * @throws Exception if an error occured during fetch.
      */
-    public static Collection getRoomList(String serviceName) throws Exception {
+    public static Collection<HostedRoom> getRoomList(String serviceName) throws Exception {
         return MultiUserChat.getHostedRooms(SparkManager.getConnection(), serviceName);
     }
 
@@ -91,15 +92,15 @@ public class ConferenceUtils {
         if (dataForm == null) {
             return "Not available";
         }
-        Iterator fieldIter = dataForm.getFields();
+        Iterator<FormField> fieldIter = dataForm.getFields();
         String creationDate = "";
         while (fieldIter.hasNext()) {
-            FormField field = (FormField)fieldIter.next();
+            FormField field = fieldIter.next();
             String label = field.getLabel();
 
 
             if (label != null && "Creation date".equalsIgnoreCase(label)) {
-                Iterator valueIterator = field.getValues();
+                Iterator<String> valueIterator = field.getValues();
                 while (valueIterator.hasNext()) {
                     Object oo = valueIterator.next();
                     creationDate = "" + oo;
@@ -250,7 +251,7 @@ public class ConferenceUtils {
      * @param password  the password to join the room with.
      * @return a List of errors, if any.
      */
-    public static List joinRoom(MultiUserChat groupChat, String nickname, String password) {
+    public static List<String> joinRoom(MultiUserChat groupChat, String nickname, String password) {
         final List<String> errors = new ArrayList<String>();
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;

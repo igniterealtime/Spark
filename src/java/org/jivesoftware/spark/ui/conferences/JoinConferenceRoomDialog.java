@@ -34,6 +34,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 final class JoinConferenceRoomDialog extends JPanel {
+    private static final long serialVersionUID = -6400555509113588047L;
     private JLabel roomNameLabel = new JLabel();
     private JLabel nicknameLabel = new JLabel();
     private JLabel passwordLabel = new JLabel();

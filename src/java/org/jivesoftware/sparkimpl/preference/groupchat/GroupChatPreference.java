@@ -60,13 +60,15 @@ public class GroupChatPreference implements Preference {
             }
 
             public void finished() {
-                boolean highlightMyName = localPreferences.isMucHighNameEnabled();
-                boolean highlightMyText = localPreferences.isMucHighTextEnabled();
-                boolean highlightPopName= localPreferences.isMucHighToastEnabled();
-
+                boolean highlightMyName 	= localPreferences.isMucHighNameEnabled();
+                boolean highlightMyText 	= localPreferences.isMucHighTextEnabled();
+                boolean highlightPopName	= localPreferences.isMucHighToastEnabled();
+                boolean showjoinleavemessage 	= localPreferences.isShowJoinLeaveMessagesEnabled();
+                
                 panel.setMucHighNameEnabled(highlightMyName);
                 panel.setMucHighTextEnabled(highlightMyText);
                 panel.setMuchHighToastEnabled(highlightPopName);
+                panel.setShowJoinLeaveMessagesEnabled(showjoinleavemessage);
             }
         };
 
@@ -80,6 +82,7 @@ public class GroupChatPreference implements Preference {
         pref.setMucHighNameEnabled(panel.isMucHighNameEnabled());
         pref.setMucHighTextEnabled(panel.isMucHighTextEnabled());
         pref.setMuchHighToastEnabled(panel.isMucHighToastEnabled());
+        pref.setShowJoinLeaveMessagesEnabled(panel.isShowJoinLeaveMessagesEnabled());
         SettingsManager.saveSettings();
     }
 

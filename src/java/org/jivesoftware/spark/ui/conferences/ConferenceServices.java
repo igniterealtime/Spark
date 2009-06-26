@@ -262,7 +262,7 @@ public class ConferenceServices {
 
     public static String getDefaultServiceName() {
         String serviceName = null;
-        Collection services = bookmarksUI.getMucServices();
+        Collection<String> services = bookmarksUI.getMucServices();
         if (services != null) {
             for (Object service : services) {
                 serviceName = (String) service;
@@ -277,8 +277,10 @@ public class ConferenceServices {
 
         // Add ContactList items.
         final Action inviteAllAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                Collection contacts = contactList.getActiveGroup().getContactItems();
+	    private static final long serialVersionUID = -7486282521151183678L;
+
+	    public void actionPerformed(ActionEvent actionEvent) {
+                Collection<ContactItem> contacts = contactList.getActiveGroup().getContactItems();
                 startConference(contacts);
 
             }
@@ -289,8 +291,10 @@ public class ConferenceServices {
 
 
         final Action conferenceAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                Collection contacts = contactList.getSelectedUsers();
+	    private static final long serialVersionUID = 4724119680969496581L;
+
+	    public void actionPerformed(ActionEvent actionEvent) {
+                Collection<ContactItem> contacts = contactList.getSelectedUsers();
                 startConference(contacts);
             }
         };
@@ -301,7 +305,7 @@ public class ConferenceServices {
 
         contactList.addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object component, JPopupMenu popup) {
-                Collection col = contactList.getSelectedUsers();
+                Collection<ContactItem> col = contactList.getSelectedUsers();
                 if (component instanceof ContactGroup) {
                     popup.add(inviteAllAction);
                 }
@@ -324,12 +328,10 @@ public class ConferenceServices {
         actionsMenu.add(conferenceAction);
     }
 
-    private void startConference(Collection items) {
+    private void startConference(Collection<ContactItem> items) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         List<String> jids = new ArrayList<String>();
-        for (Object item1 : items) {
-            ContactItem item = (ContactItem) item1;
-
+        for (ContactItem item : items) {
             ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
             contactGroup.clearSelection();
 

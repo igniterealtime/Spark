@@ -47,6 +47,8 @@ import java.util.TimerTask;
  */
 public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
+    private static final long serialVersionUID = 6066796370413837508L;
+
     private RolloverButton acceptButton;
 
     private String room;

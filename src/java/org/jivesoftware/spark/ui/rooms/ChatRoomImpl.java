@@ -65,7 +65,7 @@ import java.util.TimerTask;
  * This room only allows for 1 to 1 conversations.
  */
 public class ChatRoomImpl extends ChatRoom {
-
+    private static final long serialVersionUID = 6163762803773980872L;
     private List<MessageEventListener> messageEventListeners = new ArrayList<MessageEventListener>();
     private String roomname;
     private Icon tabIcon;
@@ -514,7 +514,7 @@ public class ChatRoomImpl extends ChatRoom {
         messageEventListeners.remove(listener);
     }
 
-    public Collection getMessageEventListeners() {
+    public Collection<MessageEventListener> getMessageEventListeners() {
         return messageEventListeners;
     }
 

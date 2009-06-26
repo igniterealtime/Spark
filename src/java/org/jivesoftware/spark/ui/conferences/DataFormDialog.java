@@ -10,31 +10,6 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.spark.component.CheckBoxList;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.resource.Res;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -51,7 +26,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.spark.component.CheckBoxList;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
+
 public class DataFormDialog extends JPanel {
+    private static final long serialVersionUID = -1536217028590811636L;
     private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
     private int row = 0;
     JDialog dialog = null;
@@ -73,11 +74,11 @@ public class DataFormDialog extends JPanel {
 
         // Create a new form to submit based on the original form
         try {
-            Iterator fields = form.getFields();
+            Iterator<FormField> fields = form.getFields();
 
             // Add default answers to the form to submit
             while (fields.hasNext()) {
-                FormField field = (FormField)fields.next();
+                FormField field = fields.next();
                 submitForm.addField(field);
                 String variable = field.getVariable();
                 String label = field.getLabel();

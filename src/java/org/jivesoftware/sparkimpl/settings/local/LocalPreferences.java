@@ -628,21 +628,29 @@ public class LocalPreferences {
 	public boolean isMucHighToastEnabled() {
 		return getBoolean("isMucHighToastOn", false);
 	}
+	
+	public boolean isShowJoinLeaveMessagesEnabled() {
+	    return getBoolean("isShowJoinLeaveMessagesOn", true);
+	}
+	
+	public void setShowJoinLeaveMessagesEnabled(boolean enabled) {
+	    setBoolean("isShowJoinLeaveMessagesOn", enabled);
+	}
 
 	public void setMucHighNameEnabled(boolean setMucNHigh) {
-		setBoolean("isMucHighNameOn", setMucNHigh);
+	    setBoolean("isMucHighNameOn", setMucNHigh);
 	}
 
 	public void setMucHighTextEnabled(boolean setMucTHigh) {
-		setBoolean("isMucHighTextOn", setMucTHigh);
+	    setBoolean("isMucHighTextOn", setMucTHigh);
 	}
 
 	public void setMuchHighToastEnabled(boolean setMucPHigh) {
-		setBoolean("isMucHighToastOn", setMucPHigh);
+	    setBoolean("isMucHighToastOn", setMucPHigh);
 	}
 
 	public void setSSOEnabled(boolean enabled) {
-		setBoolean("ssoEnabled", enabled);
+	    setBoolean("ssoEnabled", enabled);
 	}
 
 	public boolean isSSOEnabled() {
@@ -832,8 +840,7 @@ public class LocalPreferences {
 	public void setChatWindowAlwaysOnTop(boolean onTop) {
 		setBoolean("ChatWindowAlwaysOnTop", onTop);
 	}
-	
-	
+		
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean
 				.toString(defaultValue)));

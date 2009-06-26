@@ -40,6 +40,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 public class RoomBrowser extends JPanel {
+    private static final long serialVersionUID = 8820670697089268423L;
     private JLabel descriptionLabel = new JLabel();
     private JLabel subjectLabel = new JLabel();
     private JLabel occupantsLabel = new JLabel();
@@ -128,9 +129,9 @@ public class RoomBrowser extends JPanel {
             }
             roomNameValue.setText(roomInfo.getRoom());
 
-            Iterator iter = items.getItems();
+            Iterator<DiscoverItems.Item> iter = items.getItems();
             while (iter.hasNext()) {
-                DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+                DiscoverItems.Item item = iter.next();
                 String jid = item.getEntityID();
                 rootNode.add(new JiveTreeNode(jid, false, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION)));
             }

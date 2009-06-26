@@ -37,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class RoomCreationDialog extends JPanel {
+    private static final long serialVersionUID = -8391698290385575601L;
     private JLabel nameLabel = new JLabel();
     private JLabel topicLabel = new JLabel();
     private JLabel passwordLabel = new JLabel();

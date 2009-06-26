@@ -80,6 +80,8 @@ import javax.swing.SwingUtilities;
  */
 public final class GroupChatParticipantList extends JPanel implements
 		ChatRoomListener {
+
+    	private static final long serialVersionUID = 3809155443119207342L;
 	private GroupChatRoom groupChatRoom;
 	private final ImageTitlePanel agentInfoPanel;
 	private ChatManager chatManager;
