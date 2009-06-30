@@ -137,7 +137,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			 
 		
 			try {
-				trayIcon = new TrayIcon(availableIcon.getImage(), "Spark", null);
+				trayIcon = new TrayIcon(availableIcon.getImage(), Default.APPLICATION_NAME, null);
 				trayIcon.setImageAutoSize(true);
 
 				trayIcon.addMouseListener(new MouseListener() {
