@@ -24,7 +24,7 @@
     <property name="version.major" value="2"/>
     <property name="version.minor" value="6"/>
     <property name="version.revision" value="0"/>
-    <property name="version.extra" value="beta2"/>
+    <property name="version.extra" value="11093"/>
     <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
@@ -84,13 +84,13 @@
     <property name="installer.file_prefix" value="${installer.app_short_name}"/>
     <property name="installer.release_root_path" value="${target.build}"/>
 
-    <property name="advinst.path" value="C:\Program Files\Caphyon\Advanced Installer"/>
+    <property name="advinst.path" value="C:\Programme\Caphyon\Advanced Installer 7.0.1"/>
     <property name="mac.build.dir" value="${target}/spark_${version.filename}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
-    <property name="win.msi.withjre" value="${target}/installer/spark_${version.filename}.msi"/>
-    <property name="win.msi.nojre" value="${target}/installer/spark_${version.filename}_online.msi"/>
+    <property name="win.msi.withjre" value="${target}\installer\spark_${version.filename}.msi"/>
+    <property name="win.msi.nojre" value="${target}\installer\spark_${version.filename}_online.msi"/>
     <property name="pack200.excludes"
               value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
 
@@ -416,7 +416,7 @@
 
     <!-- installers ============================================================================= -->
 
-    <target name="installer.win" depends="jar"
+    <target name="installer.install4j" depends="jar"
             description="build Install4J release executable and docs dirs for Windows">
 
         <condition property="install4j.not.ok" value="true">
@@ -460,7 +460,7 @@
 
     </target>
 
-    <target name="installer.msi" depends="release">
+    <target name="installer.advinst" depends="jar">
         <condition property="advinst.not.ok" value="true">
             <not>
                 <available file="${advinst.path}\AdvancedInstaller.com"/>
@@ -473,24 +473,26 @@
 
         <mkdir dir="${installer.dest.dir}"/>
 
+   	<echo message="${win.msi.nojre}" />
+
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
             <arg line="/SetVersion ${version}"/>
         </exec>
-
+            	
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
-            <arg line="/SetPackageName ${win.msi.withjre} -withjre"/>
+            <arg line="/SetPackageName '${win.msi.withjre}' -withjre"/>
         </exec>
 
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/edit build\installer\spark.aip"/>
-            <arg line="/SetPackageName ${win.msi.nojre}"/>
+            <arg line="/SetPackageName '${win.msi.nojre}' -buildname DefaultBuild"/>
         </exec>
-
+		
         <exec executable="${advinst.path}\AdvancedInstaller.com"
               failonerror="true">
             <arg line="/build build\installer\spark.aip"/>
