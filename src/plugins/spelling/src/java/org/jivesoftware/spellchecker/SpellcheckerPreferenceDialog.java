@@ -11,7 +11,6 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -41,11 +40,11 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		spellcheckingEnabled.addActionListener(this);
 		
 		autospellcheckingEnabled.setText(SpellcheckerResource.getString("preference.autoSpellcheckingEnabled"));
-				
+
 		for (int i = 0; i < languages.size(); i++) {
 			for (final Locale locale : locales) {
 				if (locale.toString().equals(languages.get(i))) {
-	                String label = locale.getDisplayLanguage(locale);
+					String label = locale.getDisplayLanguage(Locale.getDefault());
 	                if (locale.getDisplayCountry(locale) != null &&
 	                    locale.getDisplayCountry(locale).trim().length() > 0) {
 	                    label = label + "-" + locale.getDisplayCountry(locale).trim();

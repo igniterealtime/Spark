@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.jivesoftware.Spark;
@@ -47,7 +48,7 @@ public class SpellcheckerPreferences
     }
     
     public String getSpellLanguage() {
-       return props.getProperty("selectedSpellLanguage");
+       return props.getProperty("selectedSpellLanguage", Locale.getDefault().getLanguage());
     }
 	
     public void setSpellCheckerEnabled(boolean enabled) {
