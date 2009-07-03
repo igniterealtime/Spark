@@ -40,7 +40,9 @@ import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
  */
 public final class Spark {
 
-    private static final String USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
+    private static final String USER_SPARK_HOME = System.getenv("APPDATA") != null && !System.getenv("APPDATA").equals("") 
+    													?  System.getenv("APPDATA") + "/" + getUserConf()  
+    													:  System.getProperties().getProperty("user.home") + "/" + getUserConf();
 
     public static String ARGUMENTS;
 
