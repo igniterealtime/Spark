@@ -26,8 +26,8 @@ import javax.swing.JPanel;
  *
  */
 public class TransportItem extends JPanel {
-
-    private JLabel iconLabel;
+	private static final long serialVersionUID = 6321253573105576262L;
+	private JLabel iconLabel;
     private JLabel titleLabel;
     private JLabel descriptionLabel;
     private JLabel activeLabel;

@@ -109,7 +109,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
         DiscoverItems.Item item;
 
-        Iterator items = discoItems.getItems();
+        Iterator<DiscoverItems.Item> items = discoItems.getItems();
         while (items.hasNext()) {
             item = (Item)items.next();
             String entityName = item.getEntityID();
@@ -154,6 +154,18 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     QQTransport qqTransport = new QQTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), qqTransport);
                 }
+                else if (entityName.startsWith("sametime.")) {
+                	SametimeTransport sametimeTransport = new SametimeTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), sametimeTransport);
+                }
+                else if (entityName.startsWith("facebook.")) {
+                	FacebookTransport facebookTransport = new FacebookTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), facebookTransport);
+                }
+                else if (entityName.startsWith("myspace.")) {
+                	MySpaceTransport myspaceTransport = new MySpaceTransport(item.getEntityID());
+                    TransportUtils.addTransport(item.getEntityID(), myspaceTransport);
+                }                
             }
         }
 

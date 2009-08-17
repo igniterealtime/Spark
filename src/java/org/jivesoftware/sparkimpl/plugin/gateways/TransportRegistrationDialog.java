@@ -47,8 +47,8 @@ import java.awt.event.KeyListener;
  * @author Derek DeMoro
  */
 public class TransportRegistrationDialog extends JPanel implements ActionListener, KeyListener {
-
-    private JTextField usernameField = new JTextField();
+	private static final long serialVersionUID = -5766084489027807577L;
+	private JTextField usernameField = new JTextField();
     private JPasswordField passwordField = new JPasswordField();
     private JTextField nicknameField = new JTextField();
     private RolloverButton registerButton = new RolloverButton("", null);
