@@ -10,6 +10,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.bookmark.BookmarkedURL;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
@@ -28,15 +29,15 @@ import java.awt.event.MouseEvent;
  *
  */
 public class BookmarkUI extends JPanel {
-
-    private DefaultListModel model;
+	private static final long serialVersionUID = 2724141541874364121L;
+	private DefaultListModel model;
     private JList list;
 
 
     public BookmarkUI() {
         setLayout(new BorderLayout());
         CollapsiblePane pane = new CollapsiblePane();
-        pane.setTitle("Bookmarks");
+        pane.setTitle(Res.getString("title.bookmarks"));
 
         model = new DefaultListModel();
         list = new JList(model);

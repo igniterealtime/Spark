@@ -18,6 +18,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.bookmark.BookmarkManager;
@@ -52,7 +53,7 @@ public class BookmarkPlugin implements Plugin {
             @Override
             public void finished() {
                 
-                final JMenu bookmarkMenu = new JMenu("Bookmarks");
+                final JMenu bookmarkMenu = new JMenu(Res.getString("menuitem.bookmarks"));
 
                 createMenu(bookmarkMenu);
 
@@ -138,8 +139,8 @@ public class BookmarkPlugin implements Plugin {
 
                 if (manager != null) {
 
-                    Collection bookmarkedConferences = manager.getBookmarkedConferences();
-                    final Collection bookmarkedLinks = manager.getBookmarkedURLs();
+                    Collection<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences();
+                    final Collection<BookmarkedURL> bookmarkedLinks = manager.getBookmarkedURLs();
 
                     for (Object bookmarkedLink : bookmarkedLinks) {
                         final BookmarkedURL link = (BookmarkedURL) bookmarkedLink;
