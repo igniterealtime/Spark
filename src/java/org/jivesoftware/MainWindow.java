@@ -147,7 +147,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         this.getContentPane().add(topToolbar, BorderLayout.NORTH);
 
         setTitle(title + " - " + SparkManager.getSessionManager().getUsername());
-
         setIconImage(icon.getImage());
 
         // Setup WindowListener to be the proxy to the actual window listener
@@ -643,7 +642,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Read file and show
         final String errorLogs = URLFileSystem.getContents(logDir);
 
-        final JFrame frame = new JFrame("Client Logs");
+        final JFrame frame = new JFrame(Res.getString("title.client.logs"));
         frame.setLayout(new BorderLayout());
         frame.setIconImage(SparkManager.getApplicationImage().getImage());
 
