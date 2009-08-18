@@ -160,7 +160,7 @@ public class PreviousConversationPanel extends JPanel {
         durationLabel.stopTimer();
 
         currentCallLabel.setForeground(Color.black);
-        currentCallLabel.setText("Call ended.");
+        currentCallLabel.setText(JingleResources.getString("label.call.ended"));
 
         today.setText("Time: ");
     }
@@ -175,10 +175,10 @@ public class PreviousConversationPanel extends JPanel {
         statusLabel.setVisible(false);
 
         currentCallLabel.setForeground(Color.black);
-        currentCallLabel.setText("Call ended.");
+        currentCallLabel.setText(JingleResources.getString("label.call.ended"));
 
         today.setText("Time: ");
-        currentCallLabel.setText("Call transferred to " + user);
+        currentCallLabel.setText(JingleResources.getString("label.call.transfer",user));
 
         Date now = new Date();
         final SimpleDateFormat timeFormatter = new SimpleDateFormat("h:mm");

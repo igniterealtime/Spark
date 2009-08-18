@@ -78,7 +78,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             Log.error(e);
         }
 
-        notificationUI = new GenericNotification("Establishing call. Please wait...", SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+        notificationUI = new GenericNotification(JingleResources.getString("label.establishing.call"), SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 
         // Accept the request
         try {

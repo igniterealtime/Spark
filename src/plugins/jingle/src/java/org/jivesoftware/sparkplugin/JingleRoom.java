@@ -8,6 +8,7 @@
 
 package org.jivesoftware.sparkplugin;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingle.JingleSession;
 import org.jivesoftware.smackx.jingle.media.JingleMediaManager;
@@ -167,7 +168,7 @@ public class JingleRoom extends JPanel {
         // Build ControlPanel List
 
         muteButton = new CallPanelButton(JinglePhoneRes.getImageIcon("MUTE_IMAGE").getImage(), "Mute");
-        muteButton.setToolTipText("Mute this call.");
+        muteButton.setToolTipText(JingleResources.getString("label.mute.call"));
 
         // Add Components to Main Panel
         mainPanel.add(muteButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 1, 2, 1), 0, 0));
@@ -273,7 +274,7 @@ public class JingleRoom extends JPanel {
     private void toggleMute() {
         if (transmitting) {
             transmitting = false;
-            muteButton.setToolTipText("Mute");
+            muteButton.setToolTipText(JingleResources.getString("label.mute"));
             muteButton.setButtonSelected(false);
             setStatus(CONNECTED, false);
 
@@ -281,7 +282,7 @@ public class JingleRoom extends JPanel {
             JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
         } else {
             transmitting = true;
-            muteButton.setToolTipText("Unmute");
+            muteButton.setToolTipText(JingleResources.getString("label.unmute"));
             muteButton.setButtonSelected(true);
             setStatus("Muted", true);
 

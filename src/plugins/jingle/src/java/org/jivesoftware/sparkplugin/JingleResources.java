@@ -1,5 +1,6 @@
 package org.jivesoftware.sparkplugin;
 
+import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -22,6 +23,14 @@ public class JingleResources {
             Log.error(e);
             return propertyName;
         }
-
+    }
+    
+    public static String getString(String propertyName, Object... obj) {
+        String str = prb.getString(propertyName);
+        if (str == null) {
+            return propertyName;
+        }
+        
+        return MessageFormat.format(str, obj);
     }
 }

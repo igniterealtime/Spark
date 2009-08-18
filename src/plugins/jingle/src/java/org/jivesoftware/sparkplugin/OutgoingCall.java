@@ -134,7 +134,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
 
-        titleLabel.setText("Outgoing Voice Chat To " + contactItem.getNickname());
+        titleLabel.setText(JingleResources.getString("label.outgoing.voicechat", contactItem.getNickname()));
 
 
         cancelButton.addMouseListener(new MouseAdapter() {

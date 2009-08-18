@@ -59,7 +59,7 @@ public class IncomingCallUI extends JPanel {
         topLabel.setIcon(JinglePhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));
         topLabel.setHorizontalTextPosition(JLabel.RIGHT);
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        topLabel.setText("Voice chat request from ...");
+        topLabel.setText(JingleResources.getString("label.voice.request.from"));
         topLabel.setForeground(Color.DARK_GRAY);
 
         // Add Top Label
@@ -112,14 +112,14 @@ public class IncomingCallUI extends JPanel {
 
     private void addButtons() {
         // Build Accept Button
-        acceptButton = new RolloverButton("      Accept", JinglePhoneRes.getImageIcon("TOASTER_ACCEPT_BUTTON"));
+        acceptButton = new RolloverButton("      " + JingleResources.getString("button.accept"), JinglePhoneRes.getImageIcon("TOASTER_ACCEPT_BUTTON"));
         acceptButton.setHorizontalTextPosition(JLabel.CENTER);
         acceptButton.setFont(new Font("Dialog", Font.BOLD, 11));
         acceptButton.setForeground(new Color(91, 175, 41));
         acceptButton.setMargin(new Insets(0, 0, 0, 0));
 
         // Build Reject Button
-        rejectButton = new RolloverButton("      Reject", JinglePhoneRes.getImageIcon("TOASTER_REJECT_BUTTON"));
+        rejectButton = new RolloverButton("      " + JingleResources.getString("button.accept"), JinglePhoneRes.getImageIcon("TOASTER_REJECT_BUTTON"));
         rejectButton.setHorizontalTextPosition(JLabel.CENTER);
         rejectButton.setFont(new Font("Dialog", Font.BOLD, 11));
         rejectButton.setForeground(new Color(153, 32, 10));
