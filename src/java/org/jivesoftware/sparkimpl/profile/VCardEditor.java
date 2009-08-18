@@ -250,7 +250,7 @@ public class VCardEditor {
         avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
         
         // The user should only be able to close this dialog.
-        Object[] options = {"View Full Profile", Res.getString("close")};
+        Object[] options = { Res.getString("button.view.profile"), Res.getString("close")};
         final JOptionPane pane = new JOptionPane(viewer, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         //  mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
@@ -276,7 +276,7 @@ public class VCardEditor {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
                 }
-                else if ("View Full Profile".equals(value)) {
+                else if (Res.getString("button.view.profile").equals(value)) {
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     SparkManager.getVCardManager().viewFullProfile(jid, pane);
                 }
