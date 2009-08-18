@@ -208,7 +208,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             }
         };
 
-        action.putValue(Action.NAME, "<html><b>Computer To Computer</b></html>");
+        action.putValue(Action.NAME, "<html><b>" + JingleResources.getString("jingle.computer.to.computer") + "</b></html>");
         action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COMPUTER_IMAGE_16x16));
         actions.add(action);
         return actions;
