@@ -34,7 +34,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -64,12 +63,11 @@ public class BroadcastDialog extends JPanel {
 	private static final long	serialVersionUID	= 1L;
 
 	private ChatInputEditor messageBox;
-	 private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
+	private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
     private JRadioButton normalMessageButton;
     
     private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<ArrayList<Object>>();
     private List<CheckNode> nodes = new ArrayList<CheckNode>();
-    private List<CheckNode> nodes2 = new ArrayList<CheckNode>();
     private List<CheckNode> groupNodes = new ArrayList<CheckNode>();
     private CheckNode rosterNode; 
     private CheckTree checkTree; 
@@ -82,7 +80,7 @@ public class BroadcastDialog extends JPanel {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         
         // creates the List for the Online Users
-        String groupName = "Online";
+        String groupName = Res.getString("status.online");
         CheckNode groupNode = new CheckNode(groupName);
         groupNodes.add(groupNode);
         rosterNode.add(groupNode);

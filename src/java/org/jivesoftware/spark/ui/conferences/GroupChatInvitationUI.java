@@ -8,6 +8,7 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -82,10 +83,10 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         titleLabel.setEditable(false);
         titleLabel.setBackground(new Color(230, 239, 249));
 
-        acceptButton = new RolloverButton("Accept", SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
+        acceptButton = new RolloverButton(Res.getString("button.accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
         acceptButton.setForeground(new Color(63, 158, 61));
 
-        RolloverButton rejectButton = new RolloverButton("Reject", SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
+        RolloverButton rejectButton = new RolloverButton(Res.getString("button.reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
         rejectButton.setForeground(new Color(185, 33, 33));
 
         add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
@@ -101,8 +102,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         Document document = titleLabel.getDocument();
         try {
             document.insertString(0, "[" + invitationTime + "] ", styles);
-            StyleConstants.setBold(styles, true);
-            document.insertString(document.getLength(), nickname + " is inviting you to join a group chat.", styles);
+            StyleConstants.setBold(styles, true);            
+            document.insertString(document.getLength(), Res.getString("message.invite.to.groupchat",nickname) , styles);
 
             if (ModelUtil.hasLength(reason)) {
                 StyleConstants.setBold(styles, false);

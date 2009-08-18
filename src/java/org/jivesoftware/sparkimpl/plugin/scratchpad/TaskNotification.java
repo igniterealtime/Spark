@@ -8,6 +8,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -112,7 +113,7 @@ public class TaskNotification {
             toaster.setBorder(BorderFactory.createBevelBorder(0));
             JScrollPane pane = new JScrollPane(mainPanel);
             pane.getViewport().setBackground(Color.white);
-            toaster.showToaster("Task Notification", pane);
+            toaster.showToaster(Res.getString("title.task.notification"), pane);
         }
     }
 }

@@ -622,8 +622,8 @@ public class SparkToaster {
 
 
     class TitleLabel extends JPanel {
-
-        private JLabel label;
+		private static final long serialVersionUID = -5163519932953987400L;
+		private JLabel label;
         private RolloverButton closeButton;
 
         public TitleLabel(String text, boolean showCloseIcon) {
