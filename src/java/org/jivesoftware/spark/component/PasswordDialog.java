@@ -91,7 +91,7 @@ public final class PasswordDialog implements PropertyChangeListener {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         final JPanel passwordPanel = new JPanel(new GridBagLayout());
-        JLabel passwordLabel = new JLabel("Enter Password:");
+        JLabel passwordLabel = new JLabel(Res.getString("label.enter.password") + ":");
         passwordPanel.add(passwordLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         passwordPanel.add(passwordField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -136,8 +136,10 @@ public final class PasswordDialog implements PropertyChangeListener {
     /**
      * Move to focus forward action.
      */
-    public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
-        public void actionPerformed(ActionEvent evt) {
+    public Action nextFocusAction = new AbstractAction(Res.getString("label.move.focus.forwards")) {
+		private static final long serialVersionUID = 6465350147231073505L;
+
+		public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocus();
         }
     };
@@ -145,8 +147,10 @@ public final class PasswordDialog implements PropertyChangeListener {
     /**
      * Moves the focus backwards in the dialog.
      */
-    public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
-        public void actionPerformed(ActionEvent evt) {
+    public Action prevFocusAction = new AbstractAction(Res.getString("label.move.focus.backwards")) {
+		private static final long serialVersionUID = -91177056113094990L;
+
+		public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocusBackward();
         }
     };
