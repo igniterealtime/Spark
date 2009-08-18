@@ -98,14 +98,14 @@ public class LoginSettingDialog implements PropertyChangeListener {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel("Advanced Connection Preferences", "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
+        titlePanel = new TitlePanel(Res.getString("title.advanced.connection.preferences"), "", SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
 
 
 
         tabbedPane.addTab(Res.getString("tab.general"), generalPanel);
         tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
-        tabbedPane.addTab("SSO", ssoPanel);
-        tabbedPane.addTab("PKI", pkiPanel);
+        tabbedPane.addTab(Res.getString("tab.sso"), ssoPanel);
+        tabbedPane.addTab(Res.getString("tab.pki"), pkiPanel);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -177,8 +177,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
      * Internal class to set General settings
      */
     private class GeneralPanel extends JPanel implements ActionListener {
-
-        private JCheckBox autoDiscoverBox = new JCheckBox();
+		private static final long serialVersionUID = -3628642430429935901L;
+		private JCheckBox autoDiscoverBox = new JCheckBox();
         private JLabel portLabel = new JLabel();
         private JTextField portField = new JTextField();
         private JLabel xmppHostLabel = new JLabel();
@@ -203,8 +203,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
             ResourceUtils.resButton(autoDiscoverBox, Res.getString("checkbox.auto.discover.port"));
             ResourceUtils.resLabel(resourceLabel, resourceField, Res.getString("label.resource"));
             ResourceUtils.resButton(compressionBox, Res.getString("checkbox.use.compression"));
-            ResourceUtils.resButton(debuggerBox, "Start &Debugger on startup");
-
+            ResourceUtils.resButton(debuggerBox, Res.getString("checkbox.use.debugger.on.startup"));
+            
             portField.setText(Integer.toString(localPreferences.getXmppPort()));
             timeOutField.setText(Integer.toString(localPreferences.getTimeOut()));
             autoLoginBox.setSelected(localPreferences.isAutoLogin());
@@ -373,7 +373,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
      * Internal class to allow setting of proxies within Spark.
      */
     private class ProxyPanel extends JPanel {
-        private JCheckBox useProxyBox = new JCheckBox();
+		private static final long serialVersionUID = 4652063977305639878L;
+		private JCheckBox useProxyBox = new JCheckBox();
         private JComboBox protocolBox = new JComboBox();
         private JTextField hostField = new JTextField();
         private JTextField portField = new JTextField();
@@ -657,7 +658,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
      * Internal class to set SSO settings
      */
     private class SsoPanel extends JPanel implements ActionListener {
-        private JCheckBox useSSOBox = new JCheckBox();
+		private static final long serialVersionUID = 3661245275095536202L;
+		private JCheckBox useSSOBox = new JCheckBox();
         private JPanel settingsPanel = new JPanel();
         private JCheckBox showAdvBox = new JCheckBox();
         private JLabel ssoRealmLabel = new JLabel();
@@ -675,7 +677,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
 
         public SsoPanel() {
-            ResourceUtils.resButton(useSSOBox, "&Use Single Sign-On (SSO) via GSSAPI");
+            ResourceUtils.resButton(useSSOBox, Res.getString("title.advanced.connection.usesso"));
             ResourceUtils.resButton(showAdvBox, Res.getString("title.advanced.connection.preferences"));
 
             useSSOBox.addActionListener(this);
@@ -723,11 +725,11 @@ public class LoginSettingDialog implements PropertyChangeListener {
                 ssoKDCField.setText(localPreferences.getSSOKDC());
             }
 
-            ssoMethodFileLabel.setText("Use krb5.conf or krb5.ini:");
-            ssoMethodDNSLabel.setText("Use DNS:");
-            ssoMethodManualLabel.setText("Specify Below:");
-            ssoRealmLabel.setText("    Realm:");
-            ssoKDCLabel.setText("    KDC:");
+            ssoMethodFileLabel.setText(Res.getString("checkbox.use.krbconf"));
+            ssoMethodDNSLabel.setText(Res.getString("checkbox.use.krb.dns"));
+            ssoMethodManualLabel.setText(Res.getString("checkbox.use.specify.below"));
+            ssoRealmLabel.setText("    " + Res.getString("label.krb.realm"));
+            ssoKDCLabel.setText("    " + Res.getString("label.krb.kdc"));
 
             ssoMethodRadio.add(ssoMethodFileRadio);
             ssoMethodRadio.add(ssoMethodDNSRadio);
@@ -920,7 +922,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
      */
 
     private class PkiPanel extends JPanel implements ActionListener {
-        private JLabel       usePKILabel = new JLabel();
+		private static final long serialVersionUID = 2872543055208753622L;
+		private JLabel       usePKILabel = new JLabel();
         private JCheckBox    usePKIBox = new JCheckBox();
         private JLabel       pkiStoreLabel = new JLabel();
         private JComboBox    pkiStore = new JComboBox();
@@ -935,11 +938,11 @@ public class LoginSettingDialog implements PropertyChangeListener {
         private JPanel       trustStorePanel = new JPanel();
 
         public PkiPanel() {
-            ResourceUtils.resButton(usePKIBox, "&Use PKI Authentication");
-            ResourceUtils.resLabel(pkiStoreLabel, pkiStore, "Which PKI Method?");
-            ResourceUtils.resButton(fileButton, "Choose File");
-            ResourceUtils.resButton(trustStoreButton, "Choose File");
-            ResourceUtils.resLabel(trustStorePasswordLabel, trustStorePassword, "Trust Store Password");
+            ResourceUtils.resButton(usePKIBox, Res.getString("checkbox.use.pki.authentication"));
+            ResourceUtils.resLabel(pkiStoreLabel, pkiStore, Res.getString("label.which.pki.method"));
+            ResourceUtils.resButton(fileButton, Res.getString("label.choose.file"));
+            ResourceUtils.resButton(trustStoreButton, Res.getString("label.choose.file"));
+            ResourceUtils.resLabel(trustStorePasswordLabel, trustStorePassword, Res.getString("label.trust.store.password"));
 
 
             pkiStore.addItem("Java Keystore");
