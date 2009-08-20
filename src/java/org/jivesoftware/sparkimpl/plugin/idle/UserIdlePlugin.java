@@ -19,7 +19,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class UserIdlePlugin extends TimerTask implements Plugin {
 
-	private final int CHECKTIME = 5;
+	private final int CHECKTIME = 2;
 	private double x = 0;
 	private double y = 0;
 	private boolean hasChanged = false;
