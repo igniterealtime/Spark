@@ -98,6 +98,13 @@
 	<property name="installer.izpack.dir" value="/opt/IzPack/"/>
 	<property name="launch4j.dir" location="/opt/Launch4j" />
 	
+	<!-- Inno Setup -->
+	<property name="innosetup.dir" location="C:\\Programme\\Inno Setup 5\\" />
+	
+	<!-- User Defined Properties -->
+	<property file="build.properties"/>
+	
+	
     <!-- Define Default Library Archives -->
     <path id="agent.dependencies">
         <fileset dir="${dist.libs.dir}" includes="*.jar"/>
@@ -710,6 +717,30 @@
 			<arg line="--no-upx"/>
 		</exec>
 	</target> 
+	
+	
+	<!-- installer.innosetup ========================================================================= -->
+	<target name="installer.innosetup" depends="jar" description="build release a izpack installer">
+
+		<taskdef name="launch4j" 
+				 classname="net.sf.launch4j.ant.Launch4jTask"
+				 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		
+		<copy file="${basedir}/build/installer/izpack/launch4j.tmpl" tofile="${basedir}/build/installer/izpack/launch4j.xml" />
+		<copy file="${basedir}/build/installer/izpack/launch4j-starter.tmpl" tofile="${basedir}/build/installer/izpack/launch4j-starter.xml" />
+				
+		<replace file="${basedir}/build/installer/izpack/launch4j.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
+		<replace file="${basedir}/build/installer/izpack/launch4j-starter.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
+				
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j.xml" tmpdir="${basedir}" />
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j-starter.xml" tmpdir="${basedir}" />	
+
+		<exec executable="${innosetup.dir}/ISCC.exe" failonerror="true">
+			<arg line="/Oinstaller"/>
+			<arg line="/Fspark-setup-iss.exe"/>
+			<arg line="build/installer/spark.iss"/>
+		</exec>
+	</target>
 		
 	<!-- dist.src =============================================================================== -->
 	<property name="release.src.out.dir" value="target/src/Spark-${version}" />
