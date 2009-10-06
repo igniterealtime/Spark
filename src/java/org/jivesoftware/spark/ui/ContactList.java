@@ -1243,10 +1243,11 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             popup.addSeparator();
             popup.add(delete);
             popup.add(rename);
-            popup.addSeparator();
-            popup.add(expand);
-            popup.add(collapse);
         }
+        
+        popup.addSeparator();
+        popup.add(expand);
+        popup.add(collapse);
 
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
