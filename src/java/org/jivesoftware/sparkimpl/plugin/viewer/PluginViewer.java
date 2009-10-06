@@ -71,7 +71,9 @@ import java.util.List;
 
 public class PluginViewer extends JPanel implements Plugin {
 
-    private JTabbedPane tabbedPane = new JTabbedPane();
+	private static final long serialVersionUID = -4249017716988031394L;
+
+	private JTabbedPane tabbedPane = new JTabbedPane();
 
     private boolean loaded = false;
 
@@ -113,7 +115,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
     private void loadInstalledPlugins() {
         PluginManager pluginManager = PluginManager.getInstance();
-        List plugins = pluginManager.getPublicPlugins();
+        List<PublicPlugin> plugins = pluginManager.getPublicPlugins();
         for (Object plugin1 : plugins) {
             PublicPlugin plugin = (PublicPlugin) plugin1;
             final SparkPlugUI ui = new SparkPlugUI(plugin);
@@ -134,12 +136,14 @@ public class PluginViewer extends JPanel implements Plugin {
         JMenuItem viewPluginsMenu = new JMenuItem();
 
         Action viewAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 6518407602062984752L;
+
+			public void actionPerformed(ActionEvent e) {
                 invokeViewer();
             }
         };
 
-        viewAction.putValue(Action.NAME, "Plugins");
+        viewAction.putValue(Action.NAME, Res.getString("menuitem.plugins"));
         viewAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
         viewPluginsMenu.setAction(viewAction);
 
@@ -360,7 +364,7 @@ public class PluginViewer extends JPanel implements Plugin {
     }
 
 
-    public Collection getPluginList(InputStream response) {
+    public Collection<PublicPlugin> getPluginList(InputStream response) {
         final List<PublicPlugin> pluginList = new ArrayList<PublicPlugin>();
         SAXReader saxReader = new SAXReader();
         Document pluginXML = null;
