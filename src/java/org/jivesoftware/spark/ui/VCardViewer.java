@@ -10,15 +10,6 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -38,6 +29,16 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -143,7 +144,7 @@ public class VCardViewer extends JPanel {
 
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setHorizontalTextPosition(JLabel.LEFT);
-        usernameLabel.setFont(new Font("Dialog", Font.BOLD, 15));
+        usernameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
 
         usernameLabel.setForeground(Color.GRAY);
         if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
@@ -166,7 +167,7 @@ public class VCardViewer extends JPanel {
         String title = vcard.getField("TITLE");
         if (ModelUtil.hasLength(title)) {
             final JLabel titleLabel = new JLabel(title);
-            titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+            titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
             add(titleLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
         }
 
@@ -223,31 +224,31 @@ public class VCardViewer extends JPanel {
         // Add Home Phone
         String homeNumber = vcard.getPhoneHome("VOICE");
         if (!ModelUtil.hasLength(homeNumber)) {
-            homeNumber = "n/a";
+            homeNumber = Res.getString("label.na");
         }
-        final JLabel homePhoneLabel = new JLabel("Home: " + homeNumber);
+        final JLabel homePhoneLabel = new JLabel(Res.getString("label.home") + ": " + homeNumber);
         add(homePhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Work Phone
         String workNumber = vcard.getPhoneWork("VOICE");
         if (!ModelUtil.hasLength(workNumber)) {
-            workNumber = "n/a";
+            workNumber = Res.getString("label.na");
         }
-        final JLabel workPhoneLabel = new JLabel("Work: " + workNumber);
+        final JLabel workPhoneLabel = new JLabel(Res.getString("label.work") + ": " + workNumber);
         add(workPhoneLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Cell Phone
         String cellNumber = vcard.getPhoneWork("CELL");
         if (!ModelUtil.hasLength(cellNumber)) {
-            cellNumber = "n/a";
+            cellNumber = Res.getString("label.na");
         }
 
-        final JLabel cellPhoneLabel = new JLabel("Cell: " + cellNumber);
+        final JLabel cellPhoneLabel = new JLabel(Res.getString("label.cell") + ": " + cellNumber);
         add(cellPhoneLabel, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Company
         String company = vcard.getOrganization();
-        final JLabel orgLabel = new JLabel("Company: " + company);
+        final JLabel orgLabel = new JLabel(Res.getString("label.company") + ": " + company);
         add(orgLabel, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
     }
