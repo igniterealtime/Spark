@@ -547,6 +547,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			// Handle invites
 			if (groupJIDNickname == null) {
 				Action inviteAgainAction = new AbstractAction() {
+					private static final long serialVersionUID = -1875073139356098243L;
+
 					public void actionPerformed(ActionEvent actionEvent) {
 						String message = invitees.get(selectedUser);
 						String jid = userManager
@@ -555,10 +557,12 @@ public final class GroupChatParticipantList extends JPanel implements
 					}
 				};
 
-				inviteAgainAction.putValue(Action.NAME, "Invite Again");
+				inviteAgainAction.putValue(Action.NAME, Res.getString("menuitem.inivite.again"));
 				popup.add(inviteAgainAction);
 
 				Action removeInvite = new AbstractAction() {
+					private static final long serialVersionUID = -3647279452501661970L;
+
 					public void actionPerformed(ActionEvent actionEvent) {
 						int index = getIndex(selectedUser);
 
@@ -568,7 +572,7 @@ public final class GroupChatParticipantList extends JPanel implements
 					}
 				};
 
-				removeInvite.putValue(Action.NAME, "Remove");
+				removeInvite.putValue(Action.NAME, Res.getString("menuitem.remove"));
 				popup.add(removeInvite);
 
 				popup.show(participantsList, evt.getX(), evt.getY());
@@ -577,6 +581,8 @@ public final class GroupChatParticipantList extends JPanel implements
 
 			if (isMe) {
 				Action changeNicknameAction = new AbstractAction() {
+					private static final long serialVersionUID = -7891803180672794112L;
+
 					public void actionPerformed(ActionEvent actionEvent) {
 						String newNickname = JOptionPane.showInputDialog(
 								groupChatRoom, Res
@@ -624,6 +630,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			}
 
 			Action chatAction = new AbstractAction() {
+				private static final long serialVersionUID = -2739549054781928195L;
+
 				public void actionPerformed(ActionEvent actionEvent) {
 					String selectedUser = getSelectedUser();
 					startChat(groupChatRoom, userMap.get(selectedUser));
@@ -639,6 +647,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			}
 
 			Action blockAction = new AbstractAction() {
+				private static final long serialVersionUID = 8771362206105723776L;
+
 				public void actionPerformed(ActionEvent e) {
 					String user = getSelectedUser();
 					ImageIcon icon;
@@ -668,6 +678,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			}
 
 			Action kickAction = new AbstractAction() {
+				private static final long serialVersionUID = 5769982955040961189L;
+
 				public void actionPerformed(ActionEvent actionEvent) {
 					kickUser(selectedUser);
 				}
@@ -683,6 +695,8 @@ public final class GroupChatParticipantList extends JPanel implements
 
 			// Handle Voice Operations
 			Action voiceAction = new AbstractAction() {
+				private static final long serialVersionUID = 7628207942009369329L;
+
 				public void actionPerformed(ActionEvent actionEvent) {
 					if (userManager.hasVoice(groupChatRoom, selectedUser)) {
 						revokeVoice(selectedUser);
@@ -708,6 +722,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			}
 
 			Action banAction = new AbstractAction() {
+				private static final long serialVersionUID = 4290194898356641253L;
+
 				public void actionPerformed(ActionEvent actionEvent) {
 					banUser(selectedUser);
 				}
@@ -720,6 +736,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			}
 
 			Action moderatorAction = new AbstractAction() {
+				private static final long serialVersionUID = 8162535640460764896L;
+
 				public void actionPerformed(ActionEvent actionEvent) {
 					if (!userIsModerator) {
 						grantModerator(selectedUser);
@@ -743,6 +761,8 @@ public final class GroupChatParticipantList extends JPanel implements
 
 			// Handle Unbanning of users.
 			Action unbanAction = new AbstractAction() {
+				private static final long serialVersionUID = 3672121864443182872L;
+
 				public void actionPerformed(ActionEvent actionEvent) {
 					String jid = ((JMenuItem) actionEvent.getSource())
 							.getText();
@@ -752,7 +772,7 @@ public final class GroupChatParticipantList extends JPanel implements
 
 			if (admin) {
 				JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
-				Iterator bannedUsers = null;
+				Iterator<Affiliate> bannedUsers = null;
 				try {
 					bannedUsers = chat.getOutcasts().iterator();
 				} catch (XMPPException e) {
@@ -775,6 +795,8 @@ public final class GroupChatParticipantList extends JPanel implements
 		}
 
 		Action inviteAction = new AbstractAction() {
+			private static final long serialVersionUID = 2240864466141501086L;
+
 			public void actionPerformed(ActionEvent actionEvent) {
 				ConferenceUtils.inviteUsersToRoom(groupChatRoom
 						.getConferenceService(), groupChatRoom.getRoomname(),
@@ -879,6 +901,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	 * @author Derek DeMoro
 	 */
 	public class ParticipantRenderer extends JLabel implements ListCellRenderer {
+		private static final long serialVersionUID = -7509947975798079141L;
 
 		/**
 		 * Construct Default JLabelIconRenderer.
