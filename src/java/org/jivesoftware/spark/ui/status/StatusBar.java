@@ -10,6 +10,40 @@
 
 package org.jivesoftware.spark.ui.status;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -29,41 +63,11 @@ import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
 //TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel implements VCardListener {
-    private List<StatusItem> statusList = new ArrayList<StatusItem>();
+	private static final long serialVersionUID = -4322806442034868526L;
+
+	private List<StatusItem> statusList = new ArrayList<StatusItem>();
 
     private JLabel imageLabel = new JLabel();
     private JLabel descriptiveLabel = new JLabel();
@@ -95,7 +99,7 @@ public class StatusBar extends JPanel implements VCardListener {
         add(statusPanel, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
 
         nicknameLabel.setToolTipText(SparkManager.getConnection().getUser());
-        nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        nicknameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
 
 
         buildStatusItemList();
@@ -167,15 +171,26 @@ public class StatusBar extends JPanel implements VCardListener {
     public void showPopup(MouseEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
-        List custom = CustomMessages.load();
+        List<CustomStatusItem> custom = CustomMessages.load();
         if (custom == null) {
-            custom = new ArrayList();
+            custom = new ArrayList<CustomStatusItem>();
         }
+        
+        // Sort Custom Messages
+        Collections.sort( custom, new Comparator<CustomStatusItem>()
+        {
+        	public int compare( final CustomStatusItem a, final CustomStatusItem b )
+        	{        		
+        		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
+        	}
+        } );
 
         // Build menu from StatusList
         for (final StatusItem statusItem : statusList) {
             final Action statusAction = new AbstractAction() {
-                public void actionPerformed(ActionEvent actionEvent) {
+				private static final long serialVersionUID = -192865863435381702L;
+
+				public void actionPerformed(ActionEvent actionEvent) {
                     final String text = statusItem.getText();
                     final StatusItem si = getStatusItem(text);
                     if (si == null) {
@@ -228,8 +243,10 @@ public class StatusBar extends JPanel implements VCardListener {
                     String type = customItem.getType();
                     if (type.equals(statusItem.getText())) {
                         // Add Child Menu
-                        Action action = new AbstractAction() {
-                            public void actionPerformed(ActionEvent actionEvent) {
+                        Action action = new AbstractAction() {                            
+							private static final long serialVersionUID = -1264239704492879742L;
+
+							public void actionPerformed(ActionEvent actionEvent) {
                                 final String text = mainStatusItem.getText();
                                 final StatusItem si = getStatusItem(text);
                                 if (si == null) {
@@ -286,7 +303,9 @@ public class StatusBar extends JPanel implements VCardListener {
 
 
         Action editMessagesAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = 7148051050075679995L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 CustomMessages.editCustomMessages();
             }
         };
@@ -344,15 +363,24 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
 
-    public Collection getStatusList() {
+    public Collection<StatusItem> getStatusList() {
         return statusList;
     }
     
-    public Collection getCustomStatusList()
+    public Collection<CustomStatusItem> getCustomStatusList()
     {
-    	List custom = CustomMessages.load();;;
+    	List<CustomStatusItem> custom = CustomMessages.load();
     	if (custom == null)
-    		custom = new ArrayList();
+    		custom = new ArrayList<CustomStatusItem>();
+    	
+    	// Sort Custom Messages
+        Collections.sort( custom, new Comparator<CustomStatusItem>()
+        {
+        	public int compare( final CustomStatusItem a, final CustomStatusItem b )
+        	{        		
+        		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
+        	}
+        } );
     	
     	return custom;
     }
@@ -466,7 +494,8 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     private class StatusPanel extends JPanel {
-        private JLabel iconLabel;
+		private static final long serialVersionUID = -5086334443225239032L;
+		private JLabel iconLabel;
         private JLabel statusLabel;
 
         public StatusPanel() {
@@ -485,7 +514,7 @@ public class StatusBar extends JPanel implements VCardListener {
             add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             add(statusLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
 
-            statusLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+            statusLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
             statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
             statusLabel.setHorizontalTextPosition(JLabel.LEFT);
 
