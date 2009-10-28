@@ -101,6 +101,9 @@
 	<!-- Inno Setup -->
 	<property name="innosetup.dir" location="C:\\Programme\\Inno Setup 5\\" />
 	
+	<!-- Pack200 Config -->
+	<property name="pack200.enabled" value="false"/>
+	
 	<!-- User Defined Properties -->
 	<property file="build.properties"/>
 	
@@ -299,34 +302,39 @@
     </target>
 
     <target name="release" depends="jar">
-        <!-- Pack200 on all jars -->
-        <for param="jar">
-            <path>
-                <fileset dir="${targetlib}" includes="*.jar" excludes="${pack200.excludes}"/>
-            </path>
-            <sequential>
-                <delete file="@{jar}.pack"/>
-                <pack200 src="@{jar}"
-                         destfile="@{jar}.pack"
-                         gzipoutput="false"
-                        />
-                <delete file="@{jar}"/>
-            </sequential>
-        </for>
-        <!-- Pack200 all plugins -->
-        <for param="jar">
-            <path>
-                <fileset dir="${plugins}" includes="*.jar" excludes="${pack200.excludes}"/>
-            </path>
-            <sequential>
-                <delete file="@{jar}.pack"/>
-                <pack200 src="@{jar}"
-                         destfile="@{jar}.pack"
-                         gzipoutput="false"
-                        />
-                <delete file="@{jar}"/>
-            </sequential>
-        </for>
+		<if>
+			<equals arg1="${pack200.enabled}" arg2="true"/>
+			<then>
+		        <!-- Pack200 on all jars -->
+		        <for param="jar">
+		            <path>
+		                <fileset dir="${targetlib}" includes="*.jar" excludes="${pack200.excludes}"/>
+		            </path>
+		            <sequential>
+		                <delete file="@{jar}.pack"/>
+		                <pack200 src="@{jar}"
+		                         destfile="@{jar}.pack"
+		                         gzipoutput="false"
+		                        />
+		                <delete file="@{jar}"/>
+		            </sequential>
+		        </for>
+		        <!-- Pack200 all plugins -->
+		        <for param="jar">
+		            <path>
+		                <fileset dir="${plugins}" includes="*.jar" excludes="${pack200.excludes}"/>
+		            </path>
+		            <sequential>
+		                <delete file="@{jar}.pack"/>
+		                <pack200 src="@{jar}"
+		                         destfile="@{jar}.pack"
+		                         gzipoutput="false"
+		                        />
+		                <delete file="@{jar}"/>
+		            </sequential>
+		        </for>
+			</then>
+		</if>
     </target>
 
     <!-- javadocs =================================================================================== -->

@@ -10,9 +10,7 @@ dist/activation.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technolo
 dist/asterisk-im-client.jar			| 1.2.0			 		| GPL				| http://igniterealtime.org/
 dist/dom4j.jar						| ? 			 		| BSD				| http://www.dom4j.org/
 dist/linux/jdic.jar					| ? 			 		| LGPL				| https://jdic.dev.java.net/
-dist/linux/jmf.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/media/jmf/
 dist/mac/javaSoundStream.fix.jar	| ? 			 		| ?					| ?
-dist/mac/jmf.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/media/jmf/
 dist/smack.jar						| SVN 10961	+ SMACK-266	| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
 dist/smackx-debug.jar				| SVN 10961	+ SMACK-266 | Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
 dist/smackx.jar						| SVN 10961	+ SMACK-266 | Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
@@ -22,9 +20,10 @@ dist/synthetica.jar					| ? 			 		| Commercial		| http://www.javasoft.de/jsf/pub
 dist/systeminfo.jar					| ? 			 		| LGPL				| https://jdic.dev.java.net/incubator/systeminfo/index.html
 dist/windows/jacob.jar				| 1.14.1 		 		| LGPL				| http://jacob-project.sourceforge.net/
 dist/windows/jdic.jar				| ? 			 		| LGPL				| https://jdic.dev.java.net/
-dist/windows/jmf.jar				| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/media/jmf/
 dist/xpp.jar						| 1.1.3.4d_b4	 		| ?					| http://www.extreme.indiana.edu/xgws/xsoap/xpp/
 dist/xstream.jar					| ? 			 		| ?					| http://xstream.codehaus.org/
+dist/fmj.jar						| 09-10-26 SVN			| LGPL				| http://sf.net/projects/fmj
+dist/jdom.jar						| 1.0					| BSD				| http://www.jdom.org
 merge/commons-codec.jar				| 1.3			 		| Apache			| http://commons.apache.org/codec/
 merge/commons-httpclient.jar		| ? 			 		| Apache			| http://hc.apache.org/
 merge/commons-logging.jar			| ? 			 		| Apache			| http://commons.apache.org/logging/

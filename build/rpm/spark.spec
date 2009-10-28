@@ -44,7 +44,7 @@ gzip -cd %{SOURCE1} | tar xvf -
 
 echo "#!/bin/bash" > $RPM_BUILD_ROOT/usr/bin/spark
 echo "SPARKDIR=/usr/share/spark/" >> $RPM_BUILD_ROOT/usr/bin/spark
-echo "/usr/share/spark/jre/bin/java -Dappdir=\$SPARKDIR -cp \$SPARKDIR/lib/log4j.jar:\$SPARKDIR/lib/fmj.jar:\$SPARKDIR/lib/startup.jar:\$SPARKDIR/lib/linux/jdic.jar:\$SPARKDIR/resources org.jivesoftware.launcher.Startup" >> $RPM_BUILD_ROOT/usr/bin/spark
+echo "/usr/share/spark/jre/bin/java -Dappdir=\$SPARKDIR -cp \$SPARKDIR/lib/log4j.jar:\$SPARKDIR/lib/jdom.jar:\$SPARKDIR/lib/fmj.jar:\$SPARKDIR/lib/startup.jar:\$SPARKDIR/lib/linux/jdic.jar:\$SPARKDIR/resources org.jivesoftware.launcher.Startup" >> $RPM_BUILD_ROOT/usr/bin/spark
 
 chmod -R 755 $RPM_BUILD_ROOT/usr/bin/spark
 
@@ -70,6 +70,7 @@ exit 0
 /usr/share/spark/lib/base.jar
 /usr/share/spark/lib/dom4j.jar
 /usr/share/spark/lib/fmj.jar
+/usr/share/spark/lib/jdom.jar
 /usr/share/spark/lib/i4jruntime.jar
 %dir /usr/share/spark/lib/linux/
 /usr/share/spark/lib/linux/jdic.jar
