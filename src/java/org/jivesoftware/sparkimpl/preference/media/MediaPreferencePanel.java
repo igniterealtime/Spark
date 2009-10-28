@@ -102,7 +102,7 @@ public class MediaPreferencePanel  extends JPanel {
 	}
 	
 	public String getAudioDevice() {
-		if (videoDevice.getSelectedIndex() >= 0) {
+		if (audioDevice.getSelectedIndex() >= 0) {
 			return vectorAudioDevices.get(audioDevice.getSelectedIndex()).getLocator().toExternalForm();
 		}
 		return "";
