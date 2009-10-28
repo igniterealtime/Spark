@@ -18,6 +18,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -68,10 +70,30 @@ public class BookmarkPlugin implements Plugin {
 
                         public void bookmarkAdded(String roomJID) {
                             rescan(bookmarkMenu);
-            }
+                        }
 
                         public void bookmarkRemoved(String roomJID) {
                             rescan(bookmarkMenu);
+                        }
+                    });
+                } else {
+                    /**
+                     * IF our plugin loaded earlier than BookmarkUI we have to reskan bookmarks every time we open this menu
+                     * And BookmarksListener event wouldn't work
+                     */
+                    Log.error("Bookmark plugin loaded earlier then BookmarkUI. BookmarksListener Events wouldn't work!");
+                    bookmarkMenu.addMenuListener(new MenuListener() {
+
+                        public void menuSelected(MenuEvent menuEvent) {
+                            rescan(bookmarkMenu);
+                        }
+
+                        public void menuDeselected(MenuEvent arg0) {
+                            //ignore
+                        }
+
+                        public void menuCanceled(MenuEvent arg0) {
+                            //ignore
                         }
                     });
                 }
