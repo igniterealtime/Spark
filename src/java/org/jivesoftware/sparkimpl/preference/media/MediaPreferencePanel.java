@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Vector;
 
 import javax.media.CaptureDeviceInfo;
@@ -23,6 +25,7 @@ import net.sf.fmj.media.cdp.GlobalCaptureDevicePlugger;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.log.Log;
 
 public class MediaPreferencePanel  extends JPanel {
 	private static final long serialVersionUID = 8297469864676223072L;
@@ -65,6 +68,17 @@ public class MediaPreferencePanel  extends JPanel {
         scanDevices();
 	}
 	
+	private String convertSysString(String src)
+	{
+		String res = src;  
+		try {
+			res = new String(src.getBytes("ISO-8859-1"),Charset.defaultCharset());
+		} catch (UnsupportedEncodingException e) {
+			Log.error("convertSysString" , e);
+		}
+		return res;
+    }
+	
 	public void scanDevices()
 	{
 		// Remove all Items
@@ -81,23 +95,23 @@ public class MediaPreferencePanel  extends JPanel {
 		final Vector<CaptureDeviceInfo> vectorDevices = CaptureDeviceManager.getDeviceList(null);
 		for ( CaptureDeviceInfo infoCaptureDevice : vectorDevices )
 		{
-			System.err.println(infoCaptureDevice.getName());
+			System.err.println(convertSysString(infoCaptureDevice.getName()));
 			for (Format format : infoCaptureDevice.getFormats())
 			{
-				System.err.println(format);
+				System.err.println("   " + format);
 			}		
 		}
 		
 		vectorAudioDevices = CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR));	
 		for ( CaptureDeviceInfo infoCaptureDevice : vectorAudioDevices)
 		{			     
-			audioDevice.addItem(infoCaptureDevice.getName());
+			audioDevice.addItem(convertSysString(infoCaptureDevice.getName()));
 		}
 		
 		vectorVideoDevices = CaptureDeviceManager.getDeviceList(new VideoFormat(VideoFormat.RGB));
 		for (  CaptureDeviceInfo infoCaptureDevice : vectorVideoDevices )
 		{
-            videoDevice.addItem(infoCaptureDevice.getName());		
+            videoDevice.addItem(convertSysString(infoCaptureDevice.getName()));		
 		}
 	}
 	
