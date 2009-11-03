@@ -412,11 +412,10 @@ public final class Spark {
     private void loadLanguage() {
         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
         final String setLanguage = preferences.getLanguage();
-
         if (ModelUtil.hasLength(setLanguage)) {
             Locale[] locales = Locale.getAvailableLocales();
             for (Locale locale : locales) {
-                if (locale.getLanguage().equals(setLanguage)) {
+                if (locale.toString().equals(setLanguage)) {
                     Locale.setDefault(locale);
                     break;
                 }
