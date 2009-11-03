@@ -136,7 +136,7 @@ public class BroadcastDialog extends JPanel {
         group.add(alertMessageButton);
 
         final JScrollPane pane = new JScrollPane(messageBox);
-        pane.setBorder(BorderFactory.createTitledBorder(Res.getString("message")));
+        pane.setBorder(BorderFactory.createTitledBorder(Res.getString("label.message")));
 
         final JScrollPane treePane = new JScrollPane(checkTree);
         treePane.setBorder(BorderFactory.createTitledBorder(Res.getString("message.send.to.these.people")));
