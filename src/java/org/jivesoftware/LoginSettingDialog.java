@@ -1032,7 +1032,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                                                 new Insets(5, 5, 5, 5), 0, 0));
 
             filePanel.setLayout(new GridBagLayout());
-            filePanel.setBorder(BorderFactory.createTitledBorder("Keystore Location"));
+            filePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.keystore.location")));
             filePanel.add(fileField,
                         new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
                                                 GridBagConstraints.NORTHWEST, 
@@ -1050,7 +1050,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                                                 new Insets(5, 5, 5, 5), 150, 0));
 
             trustStorePanel.setLayout(new GridBagLayout());
-            trustStorePanel.setBorder(BorderFactory.createTitledBorder("Truststore Location"));
+            trustStorePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.truststore.location")));
             trustStorePanel.add(trustStoreField,
                         new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
                                                 GridBagConstraints.NORTHWEST, 
@@ -1094,7 +1094,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
             }
             else if(e.getSource() == pkiStore) {
                 if((pkiStore.getSelectedItem()).equals("PKCS#11")) {
-                    filePanel.setBorder(BorderFactory.createTitledBorder("PKCS#11 Library File"));
+                    filePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.pkcs.library.file")));
                     if(ModelUtil.hasLength(localPreferences.getPKCS11Library())) {
                         fileField.setText(localPreferences.getPKCS11Library());
                     } else {
@@ -1102,7 +1102,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     }
                 }
                 else if((pkiStore.getSelectedItem()).equals("X.509 PEM File")) {
-                    filePanel.setBorder(BorderFactory.createTitledBorder("X.509 Certificate"));
+                    filePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.x509.certificate")));
                     //if(ModelUtil.hasLength(localPreferences.getPEMFile())) {
                     //    fileField.setText(localPreferences.getPEMFile());
                     //} else {
@@ -1110,10 +1110,10 @@ public class LoginSettingDialog implements PropertyChangeListener {
                     //}
                 }
                 else if((pkiStore.getSelectedItem()).equals("Apple KeyChain")) {
-                    filePanel.setBorder(BorderFactory.createTitledBorder("Apple KeyChain"));
+                    filePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.apple.keychain")));
                 }
                 else {
-                    filePanel.setBorder(BorderFactory.createTitledBorder("Keystore Location"));
+                    filePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.keystore.location")));
                     if(ModelUtil.hasLength(localPreferences.getJKSPath())) {
                         fileField.setText(localPreferences.getJKSPath());
                     } else {
