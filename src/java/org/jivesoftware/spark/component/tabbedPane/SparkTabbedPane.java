@@ -5,8 +5,27 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +34,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -26,13 +46,14 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class SparkTabbedPane extends JPanel {
 	private static final long serialVersionUID = -9007068462231539973L;
+	private static final String NAME = "SparkTabbedPane";
 	private List<SparkTabbedPaneListener> listeners = new ArrayList<SparkTabbedPaneListener>();
 	private JTabbedPane pane = null;
 	private Icon closeInactiveButtonIcon;
 	private Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;
-	private int draggedTabIndex;
 	private boolean drag = false;
+	private int dragTabIndex = -1;
 
 	/**
 	 * The default Hand cursor.
@@ -48,9 +69,11 @@ public class SparkTabbedPane extends JPanel {
 	public SparkTabbedPane() {
 		this(JTabbedPane.TOP);
 	}
-	
+
 	public SparkTabbedPane(int type) {
 		pane = new JTabbedPane(type);
+		pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+		
 		setLayout(new BorderLayout());
 		add(pane);
 		ChangeListener changeListener = new ChangeListener() {
@@ -63,65 +86,11 @@ public class SparkTabbedPane extends JPanel {
 			}
 		};
 		pane.addChangeListener(changeListener);
-//		pane.addMouseMotionListener(new MouseMotionListener()
-//		{
-//
-//			@Override
-//			public void mouseDragged(MouseEvent e) {
-//				if (!drag)
-//				{
-//					int newIndex = pane.getUI().tabForCoordinate(pane, e.getX(), e.getY());
-//	
-//					if (newIndex != -1 && newIndex != draggedTabIndex)
-//					{
-//						setCursor(DragSource.DefaultMoveDrop);
-//						draggedTabIndex = newIndex;
-//						drag = true;
-//						System.out.println("DRAG" + draggedTabIndex);
-//					}
-//				}
-//			}
-//
-//			@Override
-//			public void mouseMoved(MouseEvent arg0) {}
-//			
-//		});
-//		
-//		pane.addMouseListener(new MouseListener()
-//		{
-//
-//			@Override
-//			public void mouseClicked(MouseEvent e) {}
-//
-//			@Override
-//			public void mouseEntered(MouseEvent e) {}
-//
-//			@Override
-//			public void mouseExited(MouseEvent e) {}
-//
-//			@Override
-//			public void mousePressed(MouseEvent e) {}
-//
-//			@Override
-//			public void mouseReleased(MouseEvent e) {
-//				if (drag)
-//				{
-//					int newIndex = pane.getUI().tabForCoordinate(pane, e.getX(), e.getY());
-//					if (newIndex > 0 && draggedTabIndex > 0)
-//					{
-//						moveTab(newIndex,draggedTabIndex);
-//					}
-//					drag = false;
-//				}
-//			}
-//			
-//		});
 		
-		// Initialize close button
 		closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
 		closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_DARK_X_IMAGE);
 	}
-
+	
 	public SparkTab getTabContainingComponent(Component component) {
 		for (Component comp : pane.getComponents()) {
 			if (comp instanceof SparkTab) {
@@ -132,7 +101,7 @@ public class SparkTabbedPane extends JPanel {
 		}
 		return null;
 	}
-	
+
 	public SparkTab addTab(String title, Icon icon, final Component component) {
 		return addTab(title, icon, component, null);
 	}
@@ -285,17 +254,17 @@ public class SparkTabbedPane extends JPanel {
 					index);
 		}
 	}
-	
+
 	public JPanel getMainPanel() {
 		return this;
 	}
-	  
-    public void removeComponent(Component comp) {
-        int index = indexOfComponent(comp);
-        if (index != -1) {
-            removeTabAt(index);
-        }
-    }
+
+	public void removeComponent(Component comp) {
+		int index = indexOfComponent(comp);
+		if (index != -1) {
+			removeTabAt(index);
+		}
+	}
 
 	public void fireTabRemoved(SparkTab tab, Component component, int index) {
 		final Iterator list = ModelUtil.reverseListIterator(listeners
@@ -429,6 +398,107 @@ public class SparkTabbedPane extends JPanel {
 
 	}
 
+	/**
+	 * Drag and Drop
+	 */
+	public void enableDragAndDrop() {
+		final DragSourceListener dsl = new DragSourceListener() {
+
+			@Override
+			public void dragDropEnd(DragSourceDropEvent event) {
+				dragTabIndex = -1;
+				System.out.println("dragDropEnd");
+			}
+
+			@Override
+			public void dragEnter(DragSourceDragEvent event) {
+				event.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);				
+				System.out.println("dragEnter");
+			}
+
+			@Override
+			public void dragExit(DragSourceEvent event) {
+				System.out.println("dragExit");
+			}
+
+			@Override
+			public void dragOver(DragSourceDragEvent event) {}
+
+			@Override
+			public void dropActionChanged(DragSourceDragEvent event) {
+				System.out.println("dropActionChanged");
+			}
+			
+		};
+
+	    final Transferable t = new Transferable() {
+	    	private final DataFlavor FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, NAME);
+			@Override
+			public Object getTransferData(DataFlavor flavor)
+					throws UnsupportedFlavorException, IOException {
+				return pane;
+			}
+
+			@Override
+			public DataFlavor[] getTransferDataFlavors() {
+				DataFlavor[] f = new DataFlavor[1];
+				f[0] = this.FLAVOR;
+				return f;
+			}
+
+			@Override
+			public boolean isDataFlavorSupported(DataFlavor flavor) {
+				return flavor.getHumanPresentableName().equals(NAME);
+			}
+	    	
+	    };
+	    
+	    final DragGestureListener dgl = new DragGestureListener() {
+
+			@Override
+			public void dragGestureRecognized(DragGestureEvent event) {
+                dragTabIndex = pane.indexAtLocation(event.getDragOrigin().x, event.getDragOrigin().y);
+                System.out.println("DRAGTAB" + dragTabIndex);
+                try {
+                    event.startDrag(DragSource.DefaultMoveDrop, t, dsl);
+                } catch(Exception idoe) {}
+			}
+
+	    };
+	    
+	    final DropTargetListener dtl = new DropTargetListener() {
+
+			@Override
+			public void dragEnter(DropTargetDragEvent event) {
+				System.out.println("1-DRAGENTER");
+			}
+
+			@Override
+			public void dragExit(DropTargetEvent event) {
+				System.out.println("1-DRAGEXIT");
+			}
+
+			@Override
+			public void dragOver(DropTargetDragEvent event) {}
+
+			@Override
+			public void drop(DropTargetDropEvent event) {
+				System.out.println("1-DRAGEXIT");
+				int dropTabIndex = getTargetTabIndex(event.getLocation());
+	            System.out.println("DROP" + dropTabIndex);
+	            moveTab(dragTabIndex,dropTabIndex);
+			}
+
+			@Override
+			public void dropActionChanged(DropTargetDragEvent event) {}
+	    	
+	    };
+		
+	    new DropTarget(pane, DnDConstants.ACTION_COPY_OR_MOVE, dtl, true);
+	    new DragSource().createDefaultDragGestureRecognizer(pane, DnDConstants.ACTION_COPY_OR_MOVE, dgl);
+	}
+	
+	
 	private void moveTab(int prev, int next) {
 		if (next < 0 || prev == next) {
 			return;
@@ -447,8 +517,23 @@ public class SparkTabbedPane extends JPanel {
 		if (flg)
 			pane.setSelectedIndex(tgtindex);
 
-
 		pane.setTabComponentAt(tgtindex, tab);
 	}
+	
+	private int getTargetTabIndex(Point point) {
+		Point tabPt = SwingUtilities.convertPoint(pane, point, pane);
+		boolean isTB = pane.getTabPlacement()==JTabbedPane.TOP || pane.getTabPlacement()==JTabbedPane.BOTTOM;
+		for(int i=0;i < getTabCount();i++) {
+			Rectangle r = pane.getBoundsAt(i);
+			if(isTB) r.setRect(r.x-r.width/2, r.y,  r.width, r.height);
+			else   r.setRect(r.x, r.y-r.height/2, r.width, r.height);
+				if(r.contains(tabPt)) return i;
+		}
+		Rectangle r = pane.getBoundsAt(getTabCount()-1);
+		if(isTB) r.setRect(r.x+r.width/2, r.y,  r.width, r.height);
+		else   r.setRect(r.x, r.y+r.height/2, r.width, r.height);
+		return   r.contains(tabPt)?getTabCount():-1;
+	}
+
 
 }

@@ -106,6 +106,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         setMinimumSize(new Dimension(400, 200));
         // Don't allow tabs to shrink and allow scrolling.
 
+        enableDragAndDrop();
+        
         addSparkTabbedPaneListener(new SparkTabbedPaneListener() {
             public void tabRemoved(SparkTab tab, Component component, int index) {
                 stateChanged(null);
