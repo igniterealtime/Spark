@@ -80,7 +80,7 @@ public class SparkTabbedPane extends JPanel {
 			public void stateChanged(ChangeEvent changeEvent) {
 				JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
 				int index = sourceTabbedPane.getSelectedIndex();
-				if (index > 0) {
+				if (index >= 0) {
 					fireTabSelected(getTabAt(index), getTabAt(index).getComponent(), index);
 				}
 			}
@@ -221,7 +221,7 @@ public class SparkTabbedPane extends JPanel {
 	public Component getSelectedComponent() {
 		if (pane.getSelectedComponent() instanceof SparkTab) {
 			SparkTab tab = (SparkTab) pane.getSelectedComponent();
-			tab.getComponent();
+			return tab.getComponent();
 		}
 		return null;
 	}
