@@ -35,8 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -54,7 +52,6 @@ public class SparkTabbedPane extends JPanel {
 	private Icon closeInactiveButtonIcon;
 	private Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;
-	private boolean drag = false;
 	private int dragTabIndex = -1;
 
 	/**
@@ -306,7 +303,6 @@ public class SparkTabbedPane extends JPanel {
 	private class TabPanel extends JPanel {
 		private static final long serialVersionUID = -8249981130816404360L;
 		private final BorderLayout layout = new BorderLayout();
-		private final EmptyBorder border = new EmptyBorder(2,2,2,2);
 		private final Font defaultFont = new Font("Dialog", Font.PLAIN, 11);
 		private JLabel iconLabel;
 		private JLabel titleLabel;
@@ -314,7 +310,6 @@ public class SparkTabbedPane extends JPanel {
 		public TabPanel(final SparkTab sparktab, String title, Icon icon) {
 			setOpaque(false);		
 			this.setLayout(layout);
-			this.setBorder(border);
 			titleLabel = new JLabel(title);
 			titleLabel.setFont(defaultFont);
 			if (icon != null)
