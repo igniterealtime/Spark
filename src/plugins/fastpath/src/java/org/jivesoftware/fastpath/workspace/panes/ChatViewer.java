@@ -163,7 +163,7 @@ public class ChatViewer extends JPanel {
         notesPanel.add(notesScroller, BorderLayout.CENTER);
         pane.setCaretPosition(0);
 
-        final SparkTabbedPane tabbedPane = new SparkTabbedPane();
+        final JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.getMainPanel().setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
         tabbedPane.addTab(FpRes.getString("tab.transcript"), null, mainPanel);
         tabbedPane.addTab(FpRes.getString("tab.notes"), null, notesPanel);

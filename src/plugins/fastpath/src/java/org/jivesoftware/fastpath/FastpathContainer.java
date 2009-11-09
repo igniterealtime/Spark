@@ -10,8 +10,6 @@
 
 package org.jivesoftware.fastpath;
 
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
-
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
@@ -27,13 +25,13 @@ import java.awt.Insets;
  */
 public class FastpathContainer extends JPanel {
     private JPanel topPanel;
-    private SparkTabbedPane mainPanel;
+    private JTabbedPane mainPanel;
 
     public FastpathContainer() {
         setLayout(new GridBagLayout());
 
         topPanel = new JPanel();
-        mainPanel = new SparkTabbedPane();
+        mainPanel = new JTabbedPane();
 
         add(topPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
         add(mainPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 0, 2), 0, 0));
@@ -53,7 +51,7 @@ public class FastpathContainer extends JPanel {
         return topPanel;
     }
 
-    public SparkTabbedPane getMainPanel() {
+    public JTabbedPane getMainPanel() {
         return mainPanel;
     }
 

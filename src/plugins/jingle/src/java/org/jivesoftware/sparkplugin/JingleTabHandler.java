@@ -90,7 +90,7 @@ public class JingleTabHandler extends SparkTabHandler {
                 appendedMessage = " (" + unreadMessageCount + ")";
             }
 
-            tab.getTitleLabel().setText(room.getTabTitle() + appendedMessage);
+            tab.setTabTitle(room.getTabTitle() + appendedMessage);
 
         }
 
@@ -99,7 +99,7 @@ public class JingleTabHandler extends SparkTabHandler {
         if (isSelectedTab && chatFrameFocused) {
             tab.setTitleColor(Color.black);
             tab.setTabFont(tab.getDefaultFont());
-            tab.getTitleLabel().setText(room.getTabTitle());
+            tab.setTabTitle(room.getTabTitle());
 
             // Clear unread message count.
             room.clearUnreadMessageCount();

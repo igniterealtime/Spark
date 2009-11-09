@@ -112,7 +112,7 @@ public class SoftPhoneTabHandler extends SparkTabHandler {
                 appendedMessage = " (" + unreadMessageCount + ")";
             }
 
-            tab.getTitleLabel().setText(chatRoom.getTabTitle() + appendedMessage);
+            tab.setTabTitle(chatRoom.getTabTitle() + appendedMessage);
 
         }
 
@@ -121,7 +121,7 @@ public class SoftPhoneTabHandler extends SparkTabHandler {
         if (isSelectedTab && chatFrameFocused) {
             tab.setTitleColor(Color.black);
             tab.setTabFont(tab.getDefaultFont());
-            tab.getTitleLabel().setText(chatRoom.getTabTitle());
+            tab.setTabTitle(chatRoom.getTabTitle());
 
             // Clear unread message count.
             chatRoom.clearUnreadMessageCount();

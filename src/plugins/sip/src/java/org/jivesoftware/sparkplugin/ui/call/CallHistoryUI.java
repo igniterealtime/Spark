@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -101,7 +102,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             model.addElement(callEntry);
         }        
 
-        tabs = new SparkTabbedPane();
+        tabs = new SparkTabbedPane(JTabbedPane.BOTTOM);
 
         add(tabs, BorderLayout.CENTER);
 

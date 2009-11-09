@@ -10,6 +10,21 @@
 
 package org.jivesoftware.spark;
 
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.util.TimerTask;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
@@ -24,7 +39,6 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatContainer;
@@ -44,21 +58,6 @@ import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
 
 /**
  * The inner Container for Spark. The Workspace is the container for all plugins into the Spark
@@ -76,7 +75,9 @@ import javax.swing.SwingUtilities;
  * <li>Retrieve the ContactList.
  */
 public class Workspace extends JPanel implements PacketListener {
-    private SparkTabbedPane workspacePane;
+
+	private static final long serialVersionUID = 7076407890063933765L;
+	private JTabbedPane workspacePane;
     private StatusBar statusBox;
     private CommandPanel commandPanel;
     private ContactList contactList;
@@ -148,8 +149,7 @@ public class Workspace extends JPanel implements PacketListener {
         });
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
-        workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
-        workspacePane.setActiveButtonBold(true);
+        workspacePane = new JTabbedPane(JTabbedPane.BOTTOM);
 
         // Add Panels.
         cardLayout = new CardLayout();
@@ -169,7 +169,9 @@ public class Workspace extends JPanel implements PacketListener {
 
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
         this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 4066886679016416923L;
+
+			public void actionPerformed(ActionEvent evt) {
                 EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
                 window.setVisible(true);
             }
@@ -432,7 +434,7 @@ public class Workspace extends JPanel implements PacketListener {
      *
      * @return the workspace JideTabbedPane
      */
-    public SparkTabbedPane getWorkspacePane() {
+    public JTabbedPane getWorkspacePane() {
         return workspacePane;
     }
 
