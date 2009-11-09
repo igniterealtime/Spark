@@ -407,27 +407,21 @@ public class SparkTabbedPane extends JPanel {
 			@Override
 			public void dragDropEnd(DragSourceDropEvent event) {
 				dragTabIndex = -1;
-				System.out.println("dragDropEnd");
 			}
 
 			@Override
 			public void dragEnter(DragSourceDragEvent event) {
 				event.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);				
-				System.out.println("dragEnter");
 			}
 
 			@Override
-			public void dragExit(DragSourceEvent event) {
-				System.out.println("dragExit");
-			}
+			public void dragExit(DragSourceEvent event) {}
 
 			@Override
 			public void dragOver(DragSourceDragEvent event) {}
 
 			@Override
-			public void dropActionChanged(DragSourceDragEvent event) {
-				System.out.println("dropActionChanged");
-			}
+			public void dropActionChanged(DragSourceDragEvent event) {}
 			
 		};
 
@@ -458,7 +452,6 @@ public class SparkTabbedPane extends JPanel {
 			@Override
 			public void dragGestureRecognized(DragGestureEvent event) {
                 dragTabIndex = pane.indexAtLocation(event.getDragOrigin().x, event.getDragOrigin().y);
-                System.out.println("DRAGTAB" + dragTabIndex);
                 try {
                     event.startDrag(DragSource.DefaultMoveDrop, t, dsl);
                 } catch(Exception idoe) {}
@@ -469,23 +462,17 @@ public class SparkTabbedPane extends JPanel {
 	    final DropTargetListener dtl = new DropTargetListener() {
 
 			@Override
-			public void dragEnter(DropTargetDragEvent event) {
-				System.out.println("1-DRAGENTER");
-			}
+			public void dragEnter(DropTargetDragEvent event) {}
 
 			@Override
-			public void dragExit(DropTargetEvent event) {
-				System.out.println("1-DRAGEXIT");
-			}
+			public void dragExit(DropTargetEvent event) {}
 
 			@Override
 			public void dragOver(DropTargetDragEvent event) {}
 
 			@Override
 			public void drop(DropTargetDropEvent event) {
-				System.out.println("1-DRAGEXIT");
 				int dropTabIndex = getTargetTabIndex(event.getLocation());
-	            System.out.println("DROP" + dropTabIndex);
 	            moveTab(dragTabIndex,dropTabIndex);
 			}
 
