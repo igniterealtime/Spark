@@ -35,6 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -111,7 +113,6 @@ public class SparkTabbedPane extends JPanel {
 		final SparkTab sparktab = new SparkTab(this, component);
 
 		TabPanel tabpanel = new TabPanel(sparktab, title, icon);
-
 		pane.addTab(null, null, sparktab, tip);
 		pane.setTabComponentAt(pane.getTabCount() - 1, tabpanel);
 		fireTabAdded(sparktab, component, getTabPosition(sparktab));
@@ -304,17 +305,23 @@ public class SparkTabbedPane extends JPanel {
 
 	private class TabPanel extends JPanel {
 		private static final long serialVersionUID = -8249981130816404360L;
-		private Font defaultFont = new Font("Dialog", Font.PLAIN, 11);
+		private final BorderLayout layout = new BorderLayout();
+		private final EmptyBorder border = new EmptyBorder(2,2,2,2);
+		private final Font defaultFont = new Font("Dialog", Font.PLAIN, 11);
 		private JLabel iconLabel;
 		private JLabel titleLabel;
 
 		public TabPanel(final SparkTab sparktab, String title, Icon icon) {
-
-			setOpaque(false);
+			setOpaque(false);		
+			this.setLayout(layout);
+			this.setBorder(border);
 			titleLabel = new JLabel(title);
 			titleLabel.setFont(defaultFont);
-			iconLabel = new JLabel(icon);
-			add(iconLabel, BorderLayout.WEST);
+			if (icon != null)
+			{
+				iconLabel = new JLabel(icon);
+				add(iconLabel, BorderLayout.WEST);
+			}
 			add(titleLabel, BorderLayout.CENTER);
 			if (closeEnabled) {
 				final JLabel tabCloseButton = new JLabel(
@@ -353,7 +360,7 @@ public class SparkTabbedPane extends JPanel {
 					}
 				});
 				add(tabCloseButton, BorderLayout.EAST);
-			}
+			}	
 		}
 
 		public Font getDefaultFont() {
