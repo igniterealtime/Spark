@@ -24,7 +24,7 @@
     <property name="version.major" value="2"/>
     <property name="version.minor" value="6"/>
     <property name="version.revision" value="0"/>
-    <property name="version.extra" value="11093"/>
+    <property name="version.extra" value="11392"/>
     <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
@@ -84,13 +84,13 @@
     <property name="installer.file_prefix" value="${installer.app_short_name}"/>
     <property name="installer.release_root_path" value="${target.build}"/>
 
-    <property name="advinst.path" value="C:\Programme\Caphyon\Advanced Installer 7.0.1"/>
+    <property name="advinst.path" value="C:\Programme\Caphyon\Advanced Installer 7.2.1"/>
     <property name="mac.build.dir" value="${target}/spark_${version.filename}"/>
     <property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
     <property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
     <property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
-    <property name="win.msi.withjre" value="${target}\installer\spark_${version.filename}.msi"/>
-    <property name="win.msi.nojre" value="${target}\installer\spark_${version.filename}_online.msi"/>
+    <property name="win.msi.withjre" value="${basedir}\installer\spark_${version.filename}.msi"/>
+    <property name="win.msi.nojre" value="${basedir}\installer\spark_${version.filename}_online.msi"/>
     <property name="pack200.excludes"
               value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
 
@@ -740,8 +740,8 @@
 		<replace file="${basedir}/build/installer/izpack/launch4j.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
 		<replace file="${basedir}/build/installer/izpack/launch4j-starter.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
 				
-		<launch4j configFile="${basedir}/build/installer/izpack/launch4j.xml" tmpdir="${basedir}" />
-		<launch4j configFile="${basedir}/build/installer/izpack/launch4j-starter.xml" tmpdir="${basedir}" />	
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j.xml" tmpdir="${temp.dir}" />
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j-starter.xml" tmpdir="${temp.dir}" />	
 
 		<exec executable="${innosetup.dir}/ISCC.exe" failonerror="true">
 			<arg line="/Oinstaller"/>
