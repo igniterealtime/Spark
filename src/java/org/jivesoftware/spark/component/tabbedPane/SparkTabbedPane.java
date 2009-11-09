@@ -45,6 +45,10 @@ public class SparkTabbedPane extends JPanel {
 	public static final Cursor DEFAULT_CURSOR = new Cursor(
 			Cursor.DEFAULT_CURSOR);
 
+	public SparkTabbedPane() {
+		this(JTabbedPane.TOP);
+	}
+	
 	public SparkTabbedPane(int type) {
 		pane = new JTabbedPane(type);
 		setLayout(new BorderLayout());
@@ -127,6 +131,10 @@ public class SparkTabbedPane extends JPanel {
 			}
 		}
 		return null;
+	}
+	
+	public SparkTab addTab(String title, Icon icon, final Component component) {
+		return addTab(title, icon, component, null);
 	}
 
 	public SparkTab addTab(String title, Icon icon, final Component component,
@@ -277,6 +285,17 @@ public class SparkTabbedPane extends JPanel {
 					index);
 		}
 	}
+	
+	public JPanel getMainPanel() {
+		return this;
+	}
+	  
+    public void removeComponent(Component comp) {
+        int index = indexOfComponent(comp);
+        if (index != -1) {
+            removeTabAt(index);
+        }
+    }
 
 	public void fireTabRemoved(SparkTab tab, Component component, int index) {
 		final Iterator list = ModelUtil.reverseListIterator(listeners
