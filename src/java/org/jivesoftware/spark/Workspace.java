@@ -39,6 +39,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatContainer;
@@ -77,7 +78,7 @@ import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 public class Workspace extends JPanel implements PacketListener {
 
 	private static final long serialVersionUID = 7076407890063933765L;
-	private JTabbedPane workspacePane;
+	private SparkTabbedPane workspacePane;
     private StatusBar statusBox;
     private CommandPanel commandPanel;
     private ContactList contactList;
@@ -149,7 +150,7 @@ public class Workspace extends JPanel implements PacketListener {
         });
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
-        workspacePane = new JTabbedPane(JTabbedPane.BOTTOM);
+        workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
 
         // Add Panels.
         cardLayout = new CardLayout();
@@ -434,7 +435,7 @@ public class Workspace extends JPanel implements PacketListener {
      *
      * @return the workspace JideTabbedPane
      */
-    public JTabbedPane getWorkspacePane() {
+    public SparkTabbedPane getWorkspacePane() {
         return workspacePane;
     }
 
