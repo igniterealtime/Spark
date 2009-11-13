@@ -10,25 +10,8 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
-import org.jivesoftware.sparkplugin.ui.TopLabel;
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import net.java.sipmack.sip.InterlocutorUI;
-import org.jdesktop.jdic.desktop.Desktop;
-import org.jdesktop.jdic.desktop.DesktopException;
-import org.jdesktop.jdic.desktop.Message;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.LinkLabel;
-import org.jivesoftware.spark.component.TimeTrackingLabel;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -37,8 +20,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import net.java.sipmack.sip.InterlocutorUI;
+
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.LinkLabel;
+import org.jivesoftware.spark.component.TimeTrackingLabel;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+import org.jivesoftware.sparkplugin.ui.TopLabel;
 
 /**
  * ContactDetailsPanel handles does a mapping of the phone number with a VCard search on the server. If a JID is found
@@ -46,7 +44,8 @@ import java.util.List;
  */
 public class ContactDetailsPanel extends JPanel implements ActionListener, MouseListener {
 
-    private String phoneNumber;
+	private static final long serialVersionUID = 7323351117571880259L;
+	private String phoneNumber;
     // private JLabel avatarLabel;
     private LinkLabel emailLabel;
     private JLabel contactNameLabel;
@@ -141,15 +140,13 @@ public class ContactDetailsPanel extends JPanel implements ActionListener, Mouse
 
 
     public void mouseClicked(MouseEvent e) {
+    	URI uriMailTo = null;
         if (e.getSource() == emailLabel) {
-            Message message = new Message();
-            List list = new ArrayList();
-            list.add(emailLabel.getText());
-            message.setToAddrs(list);
             try {
-                Desktop.mail(message);
+            	uriMailTo = new URI("mailto", emailLabel.getText(),null);
+                Desktop.getDesktop().mail(uriMailTo);
             }
-            catch (DesktopException e1) {
+            catch (Exception e1) {
                 Log.error(e1);
             }
         }
