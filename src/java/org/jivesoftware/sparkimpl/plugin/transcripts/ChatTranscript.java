@@ -59,5 +59,24 @@ public class ChatTranscript {
         }
     }
 
-
+    /**
+     * Returns messages that included search keywords.
+     * 
+     * @param text search keywords.If the search keywords is null, return all message.
+     * @return the messages that included search keywords.
+     */
+    public List<HistoryMessage> getMessage(String text) {
+    	if(text == null || "".equals(text)) {
+    		return messages;
+    	} else {
+	    	List<HistoryMessage> searchResult = new ArrayList<HistoryMessage>();
+	    	for(HistoryMessage message : messages) {
+	    		// ignore keywords' case
+	    		if(message.getBody().toLowerCase().indexOf(text.toLowerCase()) != -1) {
+	    			searchResult.add(message);
+	    		}
+	    	}
+	    	return searchResult;
+    	}
+    }
 }

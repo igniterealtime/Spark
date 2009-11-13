@@ -12,8 +12,15 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -35,6 +42,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jdesktop.swingx.calendar.DateUtils;
@@ -85,7 +94,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         messageDateFormatter = new SimpleDateFormat(timeFormat);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
 
         final Action viewHistoryAction = new AbstractAction() {
 			private static final long serialVersionUID = -6498776252446416099L;
@@ -275,8 +283,19 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final JPanel mainPanel = new BackgroundPanel();
 
                 mainPanel.setLayout(new BorderLayout());
-
-                final VCardPanel topPanel = new VCardPanel(jid);
+                // add search text input
+                final JPanel topPanel = new BackgroundPanel();
+                topPanel.setLayout(new GridBagLayout());
+                
+                final VCardPanel vacardPanel = new VCardPanel(jid);
+                final JTextField searchField = new JTextField(25);
+                searchField.setText(Res.getString("message.search.for.history"));
+                searchField.setToolTipText(Res.getString("message.search.for.history"));
+                searchField.setForeground((Color) UIManager.get("TextField.lightforeground"));
+                
+                topPanel.add(vacardPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(1, 5, 1, 1), 0, 0));
+                topPanel.add(searchField, new GridBagConstraints(1, 0, GridBagConstraints.REMAINDER, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(1, 1, 6, 1), 0, 0));
+                
                 mainPanel.add(topPanel, BorderLayout.NORTH);
 
                 final JEditorPane window = new JEditorPane();
@@ -288,12 +307,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                 mainPanel.add(pane, BorderLayout.CENTER);
 
-
-                final ChatTranscript transcript = (ChatTranscript)get();
-                final List<HistoryMessage> list = transcript.getMessages();
-                final String personalNickname = SparkManager.getUserManager().getNickname();
-
-
                 final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
                 frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16).getImage());
                 frame.getContentPane().setLayout(new BorderLayout());
@@ -302,6 +315,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 frame.pack();
                 frame.setSize(600, 400);
                 window.setCaretPosition(0);
+                window.requestFocus();
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
 
@@ -316,9 +330,13 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final StringBuilder builder = new StringBuilder();
                 builder.append("<html><body><table cellpadding=0 cellspacing=0>");
 
-
                 final TimerTask transcriptTask = new TimerTask() {
                     public void run() {
+                        final ChatTranscript transcript = (ChatTranscript)get();
+                        final List<HistoryMessage> list = transcript.getMessage(
+							                        		Res.getString("message.search.for.history").equals(searchField.getText())
+							                        			? null : searchField.getText());
+                        final String personalNickname = SparkManager.getUserManager().getNickname();
                         Date lastPost = null;
                         String lastPerson = null;
                         boolean initialized = false;
@@ -390,6 +408,34 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     }
                 };
 
+                searchField.addKeyListener(new KeyListener() {			
+        			@Override
+        			public void keyTyped(KeyEvent e) {				
+        			}
+        			@Override
+        			public void keyReleased(KeyEvent e) {
+        				if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+        	                TaskEngine.getInstance().schedule(transcriptTask, 10);
+        	                searchField.requestFocus();
+        				}
+        			}
+        			@Override
+        			public void keyPressed(KeyEvent e) {
+        				
+        			}
+        		});
+                searchField.addFocusListener(new FocusListener() {
+                    public void focusGained(FocusEvent e) {
+                    	searchField.setText("");
+                    	searchField.setForeground((Color) UIManager.get("TextField.foreground"));
+                    }
+
+                    public void focusLost(FocusEvent e) {
+                    	searchField.setForeground((Color) UIManager.get("TextField.lightforeground"));
+                    	searchField.setText(Res.getString("message.search.for.history"));
+                    }
+                });
+                
                 TaskEngine.getInstance().schedule(transcriptTask, 10);
             }
         };
@@ -491,3 +537,4 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
 }
+
