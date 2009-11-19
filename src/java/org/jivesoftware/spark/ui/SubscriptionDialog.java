@@ -89,7 +89,7 @@ public class SubscriptionDialog {
         ResourceUtils.resLabel(groupLabel, groupBox, Res.getString("label.group") + ":");
 
 
-        rosterBox.setText("Add user to your roster");
+        rosterBox.setText(Res.getString("label.add.to.roster"));
         groupBox.setEditable(true);
 
         rosterBox.addActionListener(new ActionListener() {
@@ -217,9 +217,11 @@ public class SubscriptionDialog {
                 SparkManager.getVCardManager().viewProfile(jid, mainPanel);
             }
         });
+        
+        dialog = new JFrame(Res.getString("title.subscription.request")){
+			private static final long serialVersionUID = 5713933518069623228L;
 
-        dialog = new JFrame("Subscription Request"){
-            public Dimension getPreferredSize() {
+			public Dimension getPreferredSize() {
                 final Dimension dim = super.getPreferredSize();
                 dim.width = 400;
                 return dim;
