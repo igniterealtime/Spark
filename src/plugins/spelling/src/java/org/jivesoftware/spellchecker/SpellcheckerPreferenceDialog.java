@@ -59,7 +59,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		spellPanel.add(spellLanguages, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		
 		setLayout(new VerticalFlowLayout());
-		spellPanel.setBorder(BorderFactory.createTitledBorder("Spellchecking"));
+		spellPanel.setBorder(BorderFactory.createTitledBorder(SpellcheckerResource.getString("title.spellchecker")));
         add(spellPanel);
 	}
 	
