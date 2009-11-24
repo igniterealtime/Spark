@@ -10,9 +10,6 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,6 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.WinRegistry;
+import org.jivesoftware.spark.util.log.Log;
 
 
 /**
@@ -74,6 +75,49 @@ public class SettingsManager {
         }
         catch (Exception e) {
             Log.error("Error saving settings.", e);
+        }
+        
+        if (localPreferences.getStartOnStartup())
+        {
+        	try	{
+        		if (Spark.isWindows())
+        		{
+        			String PROGDIR = Spark.getBinDirectory().getParent();
+        			File file = new File(PROGDIR + "\\" + "Spark.exe");
+        			System.out.println(file.getAbsolutePath());
+        			System.out.println(file.exists());
+        			System.out.println(file.getAbsolutePath());
+        			if (file.exists())
+        			{
+		        		WinRegistry.createKey(
+		        				WinRegistry.HKEY_CURRENT_USER, 
+		        				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+        				WinRegistry.writeStringValue(
+        					WinRegistry.HKEY_CURRENT_USER, 
+        					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
+        					"Spark", 
+        					file.getAbsolutePath());
+        			}
+        		}        	
+        	} 
+        	catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+        else
+        {
+
+    		if (Spark.isWindows())
+    		{
+            	try	{
+            		WinRegistry.deleteValue(
+            	          WinRegistry.HKEY_CURRENT_USER, 
+            	          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark");
+            	}
+            	catch (Exception e) {
+            		e.printStackTrace();
+            	}
+    		}
         }
     }
 
