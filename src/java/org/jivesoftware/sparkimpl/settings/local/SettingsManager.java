@@ -84,9 +84,6 @@ public class SettingsManager {
         		{
         			String PROGDIR = Spark.getBinDirectory().getParent();
         			File file = new File(PROGDIR + "\\" + "Spark.exe");
-        			System.out.println(file.getAbsolutePath());
-        			System.out.println(file.exists());
-        			System.out.println(file.getAbsolutePath());
         			if (file.exists())
         			{
 		        		WinRegistry.createKey(
