@@ -120,8 +120,8 @@ public class MacrosEditor extends JPanel {
             initialResponseField.setText(initialResponse);
         }
 
-        List macros = personalGroup.getMacros();
-        Iterator iter = macros.iterator();
+        List<Macro> macros = personalGroup.getMacros();
+        Iterator<Macro> iter = macros.iterator();
         while (iter.hasNext()) {
             Macro macro = (Macro)iter.next();
             String title = macro.getTitle();
@@ -182,7 +182,7 @@ public class MacrosEditor extends JPanel {
             FastpathPlugin.getAgentSession().saveMacros(macroGroup);
         }
         catch (Exception ex) {
-            JOptionPane.showMessageDialog(dialog, FpRes.getString("message.macros.not.saved"), FpRes.getString("error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, FpRes.getString("message.macros.not.saved"), FpRes.getString("title.error"), JOptionPane.ERROR_MESSAGE);
         }
 
         String initialResponse = initialResponseField.getText();
