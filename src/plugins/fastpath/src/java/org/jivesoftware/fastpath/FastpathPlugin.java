@@ -71,7 +71,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     private FastpathTabHandler fastpathTabHandler;
 
     public void initialize() {
-        Macros.setClassLoader(PluginManager.getInstance().getPluginClassLoader());
 
         // Initialize tab handler for Fastpath chats.
         fastpathTabHandler = new FastpathTabHandler();
