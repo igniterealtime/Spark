@@ -43,9 +43,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
-import org.jivesoftware.smackx.workgroup.ext.macros.Macros;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
-import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -98,7 +96,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                         }
 
                         public void finished() {
-                            Collection agents = (Collection)get();
+                            Collection<String> agents = (Collection<String>)get();
                             if (agents.size() == 0) {
                                 return;
                             }
@@ -119,7 +117,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         SparkManager.getConnection().addConnectionListener(this);
     }
 
-    private void showSelection(Collection col) {
+    private void showSelection(Collection<String> col) {
         if (col.size() == 0) {
             return;
         }
@@ -133,7 +131,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         logoutButton.setVisible(false);
 
         // Add workgroups to combobox
-        Iterator workgroups = col.iterator();
+        Iterator<String> workgroups = col.iterator();
         while (workgroups.hasNext()) {
             String workgroup = (String)workgroups.next();
             String componentAddress = StringUtils.parseServer(workgroup);
@@ -154,13 +152,17 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         workspace.getWorkspacePane().addTab(FpRes.getString("tab.fastpath"), FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16), container);
 
         Action joinAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = 4476966137732930493L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 joinWorkgroup();
             }
         };
 
         Action leaveAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+			private static final long serialVersionUID = -264964340889335732L;
+
+			public void actionPerformed(ActionEvent actionEvent) {
                 leaveWorkgroup();
             }
         };
@@ -350,11 +352,11 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         String jid = SparkManager.getSessionManager().getJID();
 
         try {
-            Collection col = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
+            Collection<String> col = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
             // Add workgroups to combobox
-            Iterator workgroups = col.iterator();
+            Iterator<String> workgroups = col.iterator();
             while (workgroups.hasNext()) {
-                String workgroup = (String)workgroups.next();
+                String workgroup = workgroups.next();
                 String componentAddress = StringUtils.parseServer(workgroup);
                 setComponentAddress(componentAddress);
                 comboBox.addItem(StringUtils.parseName(workgroup));
