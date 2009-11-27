@@ -83,7 +83,9 @@ public final class CurrentActivity extends JPanel {
 
 
         final BackgroundPane titlePane = new BackgroundPane() {
-            public Dimension getPreferredSize() {
+			private static final long serialVersionUID = 3127229816651522537L;
+
+			public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 0;
                 return size;
@@ -216,7 +218,9 @@ public final class CurrentActivity extends JPanel {
 
 
                     Action joinAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
+						private static final long serialVersionUID = -3198414924157880065L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
                                 Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
@@ -244,7 +248,7 @@ public final class CurrentActivity extends JPanel {
                                     }
                                     Iterator iter = owners.iterator();
 
-                                    List list = new ArrayList();
+                                    List<String> list = new ArrayList<String>();
                                     while (iter.hasNext()) {
                                         Affiliate affilitate = (Affiliate)iter.next();
                                         String jid = affilitate.getJid();
@@ -271,13 +275,15 @@ public final class CurrentActivity extends JPanel {
                     menu.add(joinAction);
 
                     Action monitorAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
+						private static final long serialVersionUID = 7292337790553806820L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
 
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
-                                Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
                                 if (col.size() == 0) {
                                     return;
                                 }

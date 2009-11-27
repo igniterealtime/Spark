@@ -46,7 +46,8 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 public class Notes extends JPanel {
-    private JFrame notesFrame;
+	private static final long serialVersionUID = -7789684145607565950L;
+	private JFrame notesFrame;
     private JScrollPane scrollPane;
     private JTextPane textPane;
 

@@ -27,7 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HistoryItem extends JPanel {
-    private JLabel fullNameLabel = new JLabel();
+	private static final long serialVersionUID = -3410684714855388210L;
+	private JLabel fullNameLabel = new JLabel();
     private JLabel emailLabel = new JLabel();
     private JLabel dateLabel = new JLabel();
     private JLabel questionLabel = new JLabel();

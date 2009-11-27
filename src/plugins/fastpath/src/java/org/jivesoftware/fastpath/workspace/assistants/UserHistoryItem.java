@@ -33,13 +33,14 @@ import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
 
 public class UserHistoryItem extends JPanel {
-    private WrappedLabel agentsLabel = new WrappedLabel();
+	private static final long serialVersionUID = -2251709231519173523L;
+	private WrappedLabel agentsLabel = new WrappedLabel();
     private JLabel startTimeLabel = new JLabel();
     private JLabel durationLabel = new JLabel();
 
     private String sessionID;
 
-    public UserHistoryItem(Collection agentDetails, Date joinTime, Date endTime) {
+    public UserHistoryItem(Collection<Transcripts.AgentDetail> agentDetails, Date joinTime, Date endTime) {
         setBackground(Color.white);
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         setLayout(new GridBagLayout());
@@ -71,9 +72,9 @@ public class UserHistoryItem extends JPanel {
         startTimeLabel.setText(theDate);
 
         StringBuffer buf = new StringBuffer();
-        Iterator agents = agentDetails.iterator();
+        Iterator<Transcripts.AgentDetail> agents = agentDetails.iterator();
         while (agents.hasNext()) {
-            Transcripts.AgentDetail agentDetail = (Transcripts.AgentDetail)agents.next();
+            Transcripts.AgentDetail agentDetail = agents.next();
             String agentJID = agentDetail.getAgentJID();
             agentJID = UserManager.unescapeJID(agentJID);
             buf.append(agentJID);

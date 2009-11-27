@@ -281,9 +281,9 @@ public class FastpathRes {
         frame.getContentPane().add(new JScrollPane(pane));
 
         StringBuffer buf = new StringBuffer();
-        Enumeration enumeration = prb.getKeys();
+        Enumeration<String> enumeration = prb.getKeys();
         while (enumeration.hasMoreElements()) {
-            String token = (String)enumeration.nextElement();
+            String token = enumeration.nextElement();
             String value = prb.getString(token).toLowerCase();
             if (value.endsWith(".gif") || value.endsWith(".png") || value.endsWith(".jpg") || value.endsWith("jpeg")) {
                 FastpathRes.getImageIcon(token);
@@ -307,9 +307,9 @@ public class FastpathRes {
 
             // Check to see if the name of the file exists
             boolean exists = false;
-            Enumeration enumeration = prb.getKeys();
+            Enumeration<String> enumeration = prb.getKeys();
             while (enumeration.hasMoreElements()) {
-                String token = (String)enumeration.nextElement();
+                String token = enumeration.nextElement();
                 String value = prb.getString(token);
                 if (value.endsWith(name)) {
                     exists = true;

@@ -34,12 +34,14 @@ import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
 import org.jivesoftware.smackx.workgroup.packet.Transcripts;
+import org.jivesoftware.smackx.workgroup.packet.Transcripts.TranscriptSummary;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 public class UserHistory extends JPanel {
-    private DefaultListModel model = new DefaultListModel();
+	private static final long serialVersionUID = -1067239194964815379L;
+	private DefaultListModel model = new DefaultListModel();
     private JFrame userFrame;
     private JList list;
     private String userID;
@@ -75,12 +77,12 @@ public class UserHistory extends JPanel {
     public void loadHistory() {
 
         SwingWorker transcriptThread = new SwingWorker() {
-            final List transcriptList = new ArrayList();
+            final List<TranscriptSummary> transcriptList = new ArrayList<TranscriptSummary>();
 
             public Object construct() {
                 try {
                     Transcripts transcripts = FastpathPlugin.getAgentSession().getTranscripts(userID);
-                    Iterator iter = transcripts.getSummaries().iterator();
+                    Iterator<TranscriptSummary> iter = transcripts.getSummaries().iterator();
                     while (iter.hasNext()) {
                         Transcripts.TranscriptSummary summary = (Transcripts.TranscriptSummary)iter.next();
                         transcriptList.add(summary);
@@ -102,11 +104,11 @@ public class UserHistory extends JPanel {
         transcriptThread.start();
     }
 
-    public void init(Collection transcriptList) {
+    public void init(Collection<Transcripts.TranscriptSummary> transcriptList) {
         model.removeAllElements();
-        Iterator iter = transcriptList.iterator();
+        Iterator<Transcripts.TranscriptSummary> iter = transcriptList.iterator();
         while (iter.hasNext()) {
-            Transcripts.TranscriptSummary summary = (Transcripts.TranscriptSummary)iter.next();
+            Transcripts.TranscriptSummary summary = iter.next();
 
 
             UserHistoryItem item = new UserHistoryItem(summary.getAgentDetails(), summary.getJoinTime(), summary.getLeftTime());

@@ -133,10 +133,10 @@ public class ChatMacroMenu {
 
     }
 
-    private void addSubMenus(JMenu menu, List macroGroups) {
-        Iterator subFolders = macroGroups.iterator();
+    private void addSubMenus(JMenu menu, List<MacroGroup> macroGroups) {
+        Iterator<MacroGroup> subFolders = macroGroups.iterator();
         while (subFolders.hasNext()) {
-            MacroGroup folder = (MacroGroup)subFolders.next();
+            MacroGroup folder = subFolders.next();
             JMenu subMenu = new JMenu(folder.getTitle());
             menu.add(subMenu);
 
@@ -148,10 +148,10 @@ public class ChatMacroMenu {
         }
     }
 
-    private void addMenuItems(JMenu menu, List macros) {
-        Iterator items = macros.iterator();
+    private void addMenuItems(JMenu menu, List<Macro> macros) {
+        Iterator<Macro> items = macros.iterator();
         while (items.hasNext()) {
-            final Macro newItem = (Macro)items.next();
+            final Macro newItem = items.next();
             final JMenuItem item = new JMenuItem(newItem.getTitle());
             menu.add(item);
             item.addActionListener(new ActionListener() {

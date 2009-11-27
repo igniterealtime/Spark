@@ -58,7 +58,8 @@ import org.jivesoftware.spark.util.log.Log;
  * by directing them to the appropriate site.
  */
 public class CoBrowser extends JPanel implements ActionListener, BrowserListener {
-    private boolean isShowing;
+	private static final long serialVersionUID = 1115198448380589259L;
+	private boolean isShowing;
     private ChatRoom chatRoom;
     private final JTextField pushField = new JTextField();
     private JCheckBox followMeButton;

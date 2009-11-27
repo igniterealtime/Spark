@@ -69,8 +69,8 @@ public class WorkgroupManager {
      * Stores the ChatSettings of each workgroup, and will be updated
      * when packet date of workgroup changes.
      */
-    private Map chatSettings = new HashMap();
-    private Set invites = new HashSet();
+    private Map<String, ChatSettings> chatSettings = new HashMap<String, ChatSettings>();
+    private Set<String> invites = new HashSet<String>();
 
 
     private static WorkgroupManager singleton;
@@ -162,7 +162,7 @@ public class WorkgroupManager {
     private void showWorkgroup(final ContactItem contactItem) throws Exception {
         VCard vcard = SparkManager.getVCardManager().getVCard();
 
-        final Map variables = new HashMap();
+        final Map<String, String> variables = new HashMap<String, String>();
         String firstName = vcard.getFirstName();
         String lastName = vcard.getLastName();
 
@@ -201,7 +201,9 @@ public class WorkgroupManager {
         formUI.setBackground(Color.white);
 
         final JPanel titlePane = new LiveTitlePane("Contact Workgroup", FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_24x24)) {
-            public Dimension getPreferredSize() {
+			private static final long serialVersionUID = -4484940286068835770L;
+
+			public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 400;
                 return size;
@@ -292,7 +294,9 @@ public class WorkgroupManager {
         }
 
         final JPanel titlePane = new LiveTitlePane("Waiting in Queue", FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_24x24)) {
-            public Dimension getPreferredSize() {
+			private static final long serialVersionUID = -7370226759188539384L;
+
+			public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 400;
                 return size;

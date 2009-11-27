@@ -26,7 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ConversationItem extends JPanel {
-    private JLabel agentLabel = new JLabel();
+	private static final long serialVersionUID = 3596381734502962203L;
+	private JLabel agentLabel = new JLabel();
     private JLabel visitorLabel = new JLabel();
     private JLabel emailLabel = new JLabel();
     private JLabel dateLabel = new JLabel();

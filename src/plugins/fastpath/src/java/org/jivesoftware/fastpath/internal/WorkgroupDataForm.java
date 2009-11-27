@@ -44,11 +44,12 @@ import javax.swing.JTextField;
  * of an answer form to send back the the server.
  */
 public class WorkgroupDataForm extends JPanel {
-    private final Map valueMap = new HashMap();
+	private static final long serialVersionUID = -2368907321868842234L;
+	private final Map valueMap = new HashMap<String, JComponent>();
     private int row = 5;
     private Form searchForm;
     private Map presetVariables = new HashMap();
-    private List requiredList = new ArrayList();
+    private List<String> requiredList = new ArrayList<String>();
     private EnterListener listener;
 
 
@@ -70,9 +71,9 @@ public class WorkgroupDataForm extends JPanel {
 
     private void buildUI(Form form) {
         // Add default answers to the form to submit
-        Iterator fields = form.getFields();
+        Iterator<FormField> fields = form.getFields();
         while (fields.hasNext()) {
-            FormField field = (FormField)fields.next();
+            FormField field = fields.next();
             String variable = field.getVariable();
             if(field.isRequired()){
                 requiredList.add(variable);
@@ -151,7 +152,7 @@ public class WorkgroupDataForm extends JPanel {
      */
     public Form getFilledForm() {
         // Now submit all information
-        Iterator valueIter = valueMap.keySet().iterator();
+        Iterator<String> valueIter = valueMap.keySet().iterator();
         Form answerForm = searchForm.createAnswerForm();
         while (valueIter.hasNext()) {
             String answer = (String)valueIter.next();
@@ -161,7 +162,7 @@ public class WorkgroupDataForm extends JPanel {
                 answerForm.setAnswer(answer, isSelected);
             }
             else if (o instanceof JTextArea) {
-                List list = new ArrayList();
+                List<String> list = new ArrayList<String>();
                 String value = ((JTextArea)o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -186,7 +187,7 @@ public class WorkgroupDataForm extends JPanel {
                 else {
                     value = (String)v;
                 }
-                List list = new ArrayList();
+                List<String> list = new ArrayList<String>();
                 list.add(value);
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);

@@ -62,15 +62,15 @@ public class ChatViewer extends JPanel {
      * @param transcript the <code>Transcript</code>
      */
     public ChatViewer(final Transcript transcript) {
-        List packets = transcript.getPackets();
+        List<Packet> packets = transcript.getPackets();
 
         final TranscriptWindow chatWindow = new TranscriptWindow();
         chatWindow.setBackground(Color.white);
-        final List chatTranscript = new ArrayList();
+        final List<Message> chatTranscript = new ArrayList<Message>();
 
-        Iterator iter = packets.iterator();
+        Iterator<Packet> iter = packets.iterator();
         while (iter.hasNext()) {
-            Packet packet = (Packet)iter.next();
+            Packet packet = iter.next();
             if (packet instanceof Message) {
                 Message message = (Message)packet;
                 String from = StringUtils.parseResource(message.getFrom());

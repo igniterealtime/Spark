@@ -43,9 +43,10 @@ import java.util.Map;
 
 
 public final class WorkgroupRosterTree extends JPanel {
-    private final JiveTreeNode rootNode = new JiveTreeNode(FpRes.getString("title.contact.list"));
+	private static final long serialVersionUID = -1159008318665938338L;
+	private final JiveTreeNode rootNode = new JiveTreeNode(FpRes.getString("title.contact.list"));
     private final Tree rosterTree;
-    private final Map addressMap = new HashMap();
+    private final Map<JiveTreeNode, String> addressMap = new HashMap<JiveTreeNode, String>();
     private boolean showUnavailableAgents = true;
     private final List workgroupList;
     private Collection exclusionList;
@@ -83,7 +84,7 @@ public final class WorkgroupRosterTree extends JPanel {
     }
 
     private void changePresence(String user, Presence presence) {
-        final Iterator iter = addressMap.keySet().iterator();
+        final Iterator<JiveTreeNode> iter = addressMap.keySet().iterator();
         while (iter.hasNext()) {
             final JiveTreeNode node = (JiveTreeNode)iter.next();
             final String nodeUser = (String)addressMap.get(node);

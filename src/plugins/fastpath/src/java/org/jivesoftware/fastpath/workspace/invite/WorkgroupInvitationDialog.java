@@ -200,9 +200,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         if (workgroupAgents.size() > 0) {
             // Add workgroups to combobox
-            Iterator workgroups = workgroupAgents.iterator();
+            Iterator<String> workgroups = workgroupAgents.iterator();
             while (workgroups.hasNext()) {
-                String workgroup = (String)workgroups.next();
+                String workgroup = workgroups.next();
 
                 String workgroupName = StringUtils.parseName(workgroup);
                 final JiveTreeNode wgNode = new JiveTreeNode(workgroupName, false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
@@ -381,12 +381,12 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
      * @param roomName the name of the room to check.
      * @return collection of available agents.
      */
-    private Collection getAvailableAgents(AgentRoster roster, String roomName) {
-        final Set availableAgents = new HashSet();
+    private Collection<String> getAvailableAgents(AgentRoster roster, String roomName) {
+        final Set<String> availableAgents = new HashSet<String>();
 
-        final Iterator agents = roster.getAgents().iterator();
+        final Iterator<String> agents = roster.getAgents().iterator();
         while (agents.hasNext()) {
-            String agent = (String)agents.next();
+            String agent = agents.next();
             if (PresenceManager.isAvailable(agent)) {
                 final Iterator agentsInRoom = SparkManager.getUserManager().getUserJidsInRoom(roomName, false).iterator();
                 boolean alreadyExists = false;

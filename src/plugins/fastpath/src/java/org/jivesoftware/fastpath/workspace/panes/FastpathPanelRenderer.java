@@ -20,8 +20,9 @@ import java.awt.Component;
 import java.awt.Color;
 
 public class FastpathPanelRenderer extends JPanel implements ListCellRenderer {
+	private static final long serialVersionUID = 1964407022568150717L;
 
-    /**
+	/**
      * Construct Default JPanelRenderer.
      */
     public FastpathPanelRenderer() {

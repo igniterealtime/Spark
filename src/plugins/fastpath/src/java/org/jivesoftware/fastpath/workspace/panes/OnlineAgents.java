@@ -11,14 +11,31 @@
 
 package org.jivesoftware.fastpath.workspace.panes;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagLayout;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
 import org.jivesoftware.smackx.workgroup.agent.AgentRosterListener;
 import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.workgroup.packet.AgentStatus.ChatInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -34,22 +51,6 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.BorderFactory;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagLayout;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -159,7 +160,9 @@ public final class OnlineAgents extends JPanel {
                     }
 
                     ContactItem item = new ContactItem("",nickname, agent) {
-                        public String getToolTipText() {
+						private static final long serialVersionUID = -8888899031363239813L;
+
+						public String getToolTipText() {
                             Presence agentPresence = agentRoster.getPresence(agent);
                             return buildTooltip(agentPresence);
                         }
@@ -187,17 +190,17 @@ public final class OnlineAgents extends JPanel {
         }
 
         AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
-        List list = agentStatus.getCurrentChats();
+        List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
 
         // Add new ones.
-        Iterator iter = list.iterator();
+        Iterator<AgentStatus.ChatInfo> iter = list.iterator();
         StringBuffer buf = new StringBuffer();
         buf.append("<html>");
         buf.append("<body>");
         buf.append("<table>");
 
         while (iter.hasNext()) {
-            AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo)iter.next();
+            AgentStatus.ChatInfo chatInfo = iter.next();
             Date startDate = chatInfo.getDate();
             String username = chatInfo.getUserID();
 
@@ -292,7 +295,9 @@ public final class OnlineAgents extends JPanel {
             Presence agentPresence = agentRoster.getPresence(agent);
             if (agentPresence.isAvailable()) {
                 ContactItem item = new ContactItem("",nickname, agent) {
-                    public String getToolTipText() {
+					private static final long serialVersionUID = 8080304058990862045L;
+
+					public String getToolTipText() {
                         Presence agentPresence = agentRoster.getPresence(agent);
                         return buildTooltip(agentPresence);
                     }

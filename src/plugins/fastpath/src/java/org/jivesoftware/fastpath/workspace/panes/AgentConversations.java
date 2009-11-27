@@ -268,7 +268,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
 
                     Action joinAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
+						private static final long serialVersionUID = 8239167390330425891L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
                                 Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
@@ -297,7 +299,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     }
                                     Iterator iter = owners.iterator();
 
-                                    List list = new ArrayList();
+                                    List<String> list = new ArrayList<String>();
                                     while (iter.hasNext()) {
                                         Affiliate affilitate = (Affiliate)iter.next();
                                         String jid = affilitate.getJid();
@@ -324,13 +326,15 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     menu.add(joinAction);
 
                     Action monitorAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
+						private static final long serialVersionUID = -2072254190661466657L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
 
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
-                                Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
                                 if (col.size() == 0) {
                                     return;
                                 }

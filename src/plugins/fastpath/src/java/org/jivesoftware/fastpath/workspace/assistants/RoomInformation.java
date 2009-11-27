@@ -40,7 +40,10 @@ import javax.swing.JScrollPane;
 
 public class RoomInformation extends JPanel {
 
-    public RoomInformation() {
+	private static final long serialVersionUID = 7298969616727251504L;
+
+
+	public RoomInformation() {
 
     }
 
@@ -60,10 +63,10 @@ public class RoomInformation extends JPanel {
         //  add(titlePanel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
 
-        Iterator iter = map.keySet().iterator();
+        Iterator<String> iter = map.keySet().iterator();
         int row = 1;
         while (iter.hasNext()) {
-            String key = (String)iter.next();
+            String key = iter.next();
             String value = utils.getValue(key);
 
             JLabel nameLabel = new JLabel(key);
@@ -88,9 +91,9 @@ public class RoomInformation extends JPanel {
         setBackground(Color.white);
 
         int count = 1;
-        Iterator fields = form.getFields();
+        Iterator<FormField> fields = form.getFields();
         while (fields.hasNext()) {
-            FormField field = (FormField)fields.next();
+            FormField field = fields.next();
             String variable = field.getVariable();
             String label = field.getLabel();
             if (label != null) {

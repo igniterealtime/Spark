@@ -85,9 +85,9 @@ public class ChatSearch implements Searchable {
             ReportedData reportedData = null;
             try {
                 reportedData = agentSession.searchTranscripts(filledForm);
-                final Iterator rows = reportedData.getRows();
+                final Iterator<ReportedData.Row> rows = reportedData.getRows();
                 while (rows.hasNext()) {
-                    ReportedData.Row row = (ReportedData.Row)rows.next();
+                    ReportedData.Row row = rows.next();
                     ChatSearchResult result = new ChatSearchResult(row, query);
                     results.add(result);
                 }
@@ -102,9 +102,9 @@ public class ChatSearch implements Searchable {
             final JList list = new JList(model);
             list.setCellRenderer(new HistoryItemRenderer());
 
-            Iterator iter = results.iterator();
+            Iterator<ChatSearchResult> iter = results.iterator();
             while (iter.hasNext()) {
-                ChatSearchResult result = (ChatSearchResult)iter.next();
+                ChatSearchResult result = iter.next();
                 String person = result.getUsername();
                 String question = result.getQuestion();
                 String sessionID = result.getSessionID();
@@ -157,7 +157,9 @@ public class ChatSearch implements Searchable {
             frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
             final BackgroundPane titlePane = new BackgroundPane() {
-                public Dimension getPreferredSize() {
+				private static final long serialVersionUID = -5603280927139789177L;
+
+				public Dimension getPreferredSize() {
                     final Dimension size = super.getPreferredSize();
                     size.width = 0;
                     return size;

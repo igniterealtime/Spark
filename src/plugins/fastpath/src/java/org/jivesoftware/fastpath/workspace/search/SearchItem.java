@@ -28,7 +28,8 @@ import javax.swing.BorderFactory;
 
 
 public class SearchItem extends JPanel {
-    private JLabel fullNameLabel = new JLabel();
+	private static final long serialVersionUID = -6319272932605736970L;
+	private JLabel fullNameLabel = new JLabel();
     private JLabel dateLabel = new JLabel();
     private JLabel questionLabel = new JLabel();
 
