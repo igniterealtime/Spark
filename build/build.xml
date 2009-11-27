@@ -336,7 +336,24 @@
 			</then>
 		</if>
     </target>
-
+	
+	
+	<!-- exe =================================================================================== -->
+	<target name="exe" depends="jar">
+		<taskdef name="launch4j" 
+				 classname="net.sf.launch4j.ant.Launch4jTask"
+				 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		
+		<copy file="${basedir}/build/installer/izpack/launch4j.tmpl" tofile="${basedir}/build/installer/izpack/launch4j.xml" />
+		<copy file="${basedir}/build/installer/izpack/launch4j-starter.tmpl" tofile="${basedir}/build/installer/izpack/launch4j-starter.xml" />
+		
+    	<replace file="${basedir}/build/installer/izpack/launch4j.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
+    	<replace file="${basedir}/build/installer/izpack/launch4j-starter.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
+		
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j.xml" tmpdir="${basedir}" />
+		<launch4j configFile="${basedir}/build/installer/izpack/launch4j-starter.xml" tmpdir="${basedir}" />
+	</target>
+	
     <!-- javadocs =================================================================================== -->
     <target name="release.javadocs" depends="jar, javadocs"
             description="creates javadocs version for developer source builds">
@@ -475,7 +492,7 @@
 
     </target>
 
-    <target name="installer.advinst" depends="jar">
+    <target name="installer.advinst" depends="exe">
         <condition property="advinst.not.ok" value="true">
             <not>
                 <available file="${advinst.path}\AdvancedInstaller.com"/>
@@ -693,25 +710,12 @@
     </target>
 	
     <!-- IzPack package ========================================================================= -->  
-	<target name="installer.izpack" depends="jar" description="build release a izpack installer">
+	<target name="installer.izpack" depends="exe" description="build release a izpack installer">
 		<mkdir dir="${basedir}/installer/" />
 	    <taskdef name="IzPack" 
 	             classpath="${installer.izpack.dir}/lib/standalone-compiler.jar"
 				 classname="com.izforge.izpack.ant.IzPackTask"/>
-			
-		<taskdef name="launch4j" 
-				 classname="net.sf.launch4j.ant.Launch4jTask"
-				 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
-		
-		<copy file="${basedir}/build/installer/izpack/launch4j.tmpl" tofile="${basedir}/build/installer/izpack/launch4j.xml" />
-		<copy file="${basedir}/build/installer/izpack/launch4j-starter.tmpl" tofile="${basedir}/build/installer/izpack/launch4j-starter.xml" />
-		
-    	<replace file="${basedir}/build/installer/izpack/launch4j.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
-    	<replace file="${basedir}/build/installer/izpack/launch4j-starter.xml" token="@SPARKDIR@" value="${basedir}/target/build/" />
-		
-		<launch4j configFile="${basedir}/build/installer/izpack/launch4j.xml" tmpdir="${basedir}" />
-		<launch4j configFile="${basedir}/build/installer/izpack/launch4j-starter.xml" tmpdir="${basedir}" />
-			 
+				 
 		<IzPack input="${basedir}/build/installer/spark-izpack.xml" output="${basedir}/installer/spark-installer.jar" 
 				installerType="standard" izPackDir="${installer.izpack.dir}" basedir="${basedir}"/>
 	</target>
@@ -728,7 +732,7 @@
 	
 	
 	<!-- installer.innosetup ========================================================================= -->
-	<target name="installer.innosetup" depends="jar" description="build release a izpack installer">
+	<target name="installer.innosetup" depends="exe" description="build release a izpack installer">
 
 		<taskdef name="launch4j" 
 				 classname="net.sf.launch4j.ant.Launch4jTask"
@@ -848,8 +852,8 @@
 		</taskdef>
 		<pmd shortFilenames="true">
 			<ruleset>migrating</ruleset>
-			<ruleset>finalizer</ruleset>
-			<formatter type="html" toFile="target/pmd_report.html" />
+			<ruleset>imports</ruleset>
+			<formatter type="xml" toFile="target/pmd_report.xml" />
 			<fileset dir="src/">
 				<include name="**/*.java" />
 			</fileset>
