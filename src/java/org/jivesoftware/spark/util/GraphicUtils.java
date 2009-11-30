@@ -10,9 +10,6 @@
 
 package org.jivesoftware.spark.util;
 
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -39,7 +36,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
@@ -49,6 +47,9 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * <code>GraphicsUtils</code> class defines common user-interface related utility
@@ -60,10 +61,11 @@ public final class GraphicUtils {
     public static final Color TOOLTIP_COLOR = new java.awt.Color(166, 202, 240);
 
     protected final static Component component = new Component() {
+		private static final long serialVersionUID = -7556405112141454291L;
     };
     protected final static MediaTracker tracker = new MediaTracker(component);
 
-    private static Hashtable<String,Image> imageCache = new Hashtable<String,Image>();
+    private static Map<String,Image> imageCache = new HashMap<String,Image>();
 
     /**
      * The default Hand cursor.
