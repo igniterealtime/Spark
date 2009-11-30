@@ -28,7 +28,8 @@ import javax.swing.JPanel;
  */
 public class TopLabel extends JPanel {
 
-    private JLabel label;
+	private static final long serialVersionUID = -820396327537797012L;
+	private JLabel label;
     private Image backgroundImage;
 
     public TopLabel(String text) {

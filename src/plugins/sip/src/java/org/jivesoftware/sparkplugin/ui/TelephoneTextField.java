@@ -41,7 +41,8 @@ import java.awt.event.KeyEvent;
  * could be used to build out your own search objects.
  */
 public class TelephoneTextField extends JPanel implements FocusListener, MouseListener, KeyListener {
-    private JTextField textField;
+	private static final long serialVersionUID = 1091481535990834763L;
+	private JTextField textField;
     private JLabel imageComponent;
 
     private PhonePad pad;

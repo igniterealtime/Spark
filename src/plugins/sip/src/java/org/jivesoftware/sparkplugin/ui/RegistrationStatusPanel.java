@@ -10,15 +10,6 @@
 
 package org.jivesoftware.sparkplugin.ui;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import org.jivesoftware.sparkplugin.components.CloseButton;
-import org.jivesoftware.sparkplugin.ui.components.RectangleButton;
-import net.java.sipmack.softphone.listeners.RegisterEvent;
-import net.java.sipmack.sip.NetworkAddressManager;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.component.BackgroundPanel;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -30,12 +21,21 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
+import net.java.sipmack.sip.NetworkAddressManager;
+import net.java.sipmack.softphone.SoftPhoneManager;
+import net.java.sipmack.softphone.listeners.RegisterEvent;
+
+import org.jivesoftware.spark.component.BackgroundPanel;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.sparkplugin.components.CloseButton;
+import org.jivesoftware.sparkplugin.ui.components.RectangleButton;
+
 /**
  * Used for notifying users of registration and failure to register.
  */
 public class RegistrationStatusPanel extends BackgroundPanel implements ActionListener {
-
-    private JLabel loadingLabel;
+	private static final long serialVersionUID = -7289401216186994399L;
+	private JLabel loadingLabel;
     private CloseButton closeButton;
     private RectangleButton retryButton;
 

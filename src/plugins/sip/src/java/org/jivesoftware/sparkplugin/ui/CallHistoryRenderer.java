@@ -26,8 +26,9 @@ import java.awt.Component;
  * @author Derek DeMoro
  */
 public class CallHistoryRenderer extends JPanel implements ListCellRenderer {
+	private static final long serialVersionUID = 3217094193017887282L;
 
-    /**
+	/**
      * Construct Default CallHistoryRenderer.
      */
     public CallHistoryRenderer() {

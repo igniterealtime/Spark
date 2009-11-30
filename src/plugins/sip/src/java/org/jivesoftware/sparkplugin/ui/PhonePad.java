@@ -34,8 +34,9 @@ import javax.swing.JPopupMenu;
  *
  */
 public class PhonePad extends BackgroundPanel {
+	private static final long serialVersionUID = 1059979750263197335L;
 
-    private TelephoneTextField callField;
+	private TelephoneTextField callField;
 
     final List<DialButton> list = new ArrayList<DialButton>();
 
@@ -138,7 +139,9 @@ public class PhonePad extends BackgroundPanel {
      * Private Class that handles the Digit Button actions
      */
     private class DigitAction extends AbstractAction {
-        public DigitAction(String name) {
+		private static final long serialVersionUID = -6295794038544034901L;
+
+		public DigitAction(String name) {
             super(name);
         }
 

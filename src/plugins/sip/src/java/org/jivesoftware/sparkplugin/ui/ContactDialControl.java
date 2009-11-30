@@ -10,40 +10,6 @@
 
 package org.jivesoftware.sparkplugin.ui;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
-import org.jivesoftware.sparkplugin.ui.call.CallHistoryUI;
-import org.jivesoftware.sparkplugin.ui.call.CallManager;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import net.java.sipmack.softphone.listeners.InterlocutorListener;
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.phone.Phone;
-import org.jivesoftware.spark.phone.PhoneManager;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ContactInfoHandler;
-import org.jivesoftware.spark.ui.ContactInfoWindow;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.util.ModelUtil;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -57,21 +23,47 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Collections;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.softphone.SoftPhoneManager;
+import net.java.sipmack.softphone.listeners.InterlocutorListener;
+
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.phone.Phone;
+import org.jivesoftware.spark.phone.PhoneManager;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.ui.ContactInfoWindow;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
+import org.jivesoftware.sparkplugin.ui.call.CallHistoryUI;
+import org.jivesoftware.sparkplugin.ui.call.CallManager;
 
 /**
  *
  */
 public class ContactDialControl extends JPanel implements InterlocutorListener, Phone {
+	private static final long serialVersionUID = 8848248512306073866L;
 
-    private TelephoneTextField callField;
+	private TelephoneTextField callField;
 
     private RolloverButton callButton;
     private RolloverButton callHistoryButton;
@@ -276,11 +268,8 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
      * Used as the action to place Calls.
      */
     private class CallAction extends AbstractAction {
-        private String number;
-
-        public CallAction(String number) {
-            this.number = number;
-        }
+		private static final long serialVersionUID = -6558494299123278779L;
+		private String number;
 
         public CallAction(String label, String number, Icon icon) {
             this.number = number;

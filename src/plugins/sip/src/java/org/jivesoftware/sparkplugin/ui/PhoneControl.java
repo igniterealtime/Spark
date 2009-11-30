@@ -10,30 +10,40 @@
 
 package org.jivesoftware.sparkplugin.ui;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.softphone.gui.DefaultGuiManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+import javax.swing.UIManager;
+
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.softphone.gui.DefaultGuiManager;
+
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
 
 /**
  *
  */
 public class PhoneControl extends JPanel {
 
-    private JLabel stateLabel = new JLabel(PhoneRes.getIString("phone.connected")+":");
+	private static final long serialVersionUID = 5275596365479885608L;
+	private JLabel stateLabel = new JLabel(PhoneRes.getIString("phone.connected")+":");
     private JLabel callerIDLabel = new JLabel();
     private JLabel phoneNumberLabel = new JLabel();
 
@@ -51,7 +61,7 @@ public class PhoneControl extends JPanel {
 
     private JavaMixer javaMixer = new JavaMixer(); 
 
-    private PhonePad phonePad = new PhonePad();
+    //private PhonePad phonePad = new PhonePad();
 
     public PhoneControl(final InterlocutorUI interlocutorUI, final DefaultGuiManager defaultGuiManager) {
         setLayout(new GridBagLayout());
