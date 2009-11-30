@@ -19,6 +19,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.spark.NativeHandler;
@@ -44,6 +45,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 	private ImageIcon availableIcon;
 	private ImageIcon dndIcon;
 	private ImageIcon awayIcon;
+    private ImageIcon offlineIcon;
+    private ImageIcon connectingIcon;
 	private ImageIcon newMessageIcon;
 	private ImageIcon typingIcon;
 	private TrayIcon trayIcon;
@@ -58,17 +61,33 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 		SparkManager.getNativeManager().addNativeHandler(this);
 		SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
 		
+        if ( Spark.isLinux() ) {
+            newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
+            typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
+        } else {
 		newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
-		
 		typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
+        }
 		
 		if (SystemTray.isSupported()) {		
 			availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);
+            if ( Spark.isLinux() ) {
 			if (availableIcon == null) {
+                    availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE_LINUX);
+                }
+                awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY_LINUX);
+                dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND_LINUX);
+                offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE_LINUX);
+                connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING_LINUX);
+            } else {
+                if (availableIcon == null) {
 				availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
 			}
 			awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
 			dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
+                offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE);
+                connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING);
+            }
 			
 			popupMenu.add(openMenu);
 			openMenu.addActionListener(new AbstractAction() {
@@ -120,12 +139,38 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			});
 			popupMenu.add(exitMenu);
 
+            /**
+             * If connection closed set offline tray image
+             */
+            SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+
+                public void connectionClosed() {
+                    trayIcon.setImage(offlineIcon.getImage());
+                }
+
+                public void connectionClosedOnError(Exception arg0) {
+                    trayIcon.setImage(offlineIcon.getImage());
+                }
+
+                public void reconnectingIn(int arg0) {
+                    trayIcon.setImage(connectingIcon.getImage());
+                }
+
+                public void reconnectionSuccessful() {
+                    trayIcon.setImage(availableIcon.getImage());
+                }
+
+                public void reconnectionFailed(Exception arg0) {
+                    trayIcon.setImage(offlineIcon.getImage());
+                }
+            });
+
 			SparkManager.getSessionManager().addPresenceListener(new
 			PresenceListener() {
 				public void presenceChanged(Presence presence) { 
 					if (presence.getMode() == Presence.Mode.available) {
 						trayIcon.setImage(availableIcon.getImage());
-					} else if (presence.getMode() == Presence.Mode.away) {
+					} else if (presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa) {
 						trayIcon.setImage(awayIcon.getImage());
 					} else if (presence.getMode() == Presence.Mode.dnd) {
 						trayIcon.setImage(dndIcon.getImage());

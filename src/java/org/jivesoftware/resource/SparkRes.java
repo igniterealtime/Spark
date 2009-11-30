@@ -112,7 +112,9 @@ public class SparkRes {
     public static final String MESSAGE_AWAY = "MESSAGE_AWAY";
     public static final String IM_DND = "IM_DND";
     public static final String MESSAGE_NEW_TRAY = "MESSAGE_NEW_TRAY";
+    public static final String MESSAGE_NEW_TRAY_LINUX = "MESSAGE_NEW_TRAY_LINUX";
     public static final String TYPING_TRAY = "TYPING_TRAY";
+    public static final String TYPING_TRAY_LINUX = "TYPING_TRAY_LINUX";
     public static final String SMALL_DELETE = "SMALL_DELETE";
     public static final String LINK_16x16 = "LINK_16x16";
     public static final String CALL_ICON = "CALL_ICON";
@@ -287,6 +289,13 @@ public class SparkRes {
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
     public static final String TRAY_DND = "TRAY_DND";
     public static final String TRAY_AWAY = "TRAY_AWAY";
+    public static final String TRAY_OFFLINE = "TRAY_OFFLINE";
+    public static final String TRAY_CONNECTING = "TRAY_CONNECTING";
+    public static final String TRAY_IMAGE_LINUX = "TRAY_IMAGE_LINUX";
+    public static final String TRAY_DND_LINUX = "TRAY_DND_LINUX";
+    public static final String TRAY_AWAY_LINUX = "TRAY_AWAY_LINUX";
+    public static final String TRAY_OFFLINE_LINUX = "TRAY_OFFLINE_LINUX";
+    public static final String TRAY_CONNECTING_LINUX = "TRAY_CONNECTING_LINUX";    
     public static final String BUZZ_IMAGE = "BUZZ_IMAGE";
     public static final String CONFERENCE_IMAGE_48x48 = "CONFERENCE_IMAGE_48x48";
     public static final String ACCEPT_INVITE_IMAGE = "ACCEPT_INVITE_IMAGE";
