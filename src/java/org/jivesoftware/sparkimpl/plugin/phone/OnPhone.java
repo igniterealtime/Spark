@@ -26,7 +26,8 @@ import java.awt.Insets;
 import java.util.Date;
 
 public class OnPhone extends JPanel {
-    private JLabel iconLabel;
+	private static final long serialVersionUID = -7344123390643812061L;
+	private JLabel iconLabel;
     private TimeTrackingLabel timeLabel;
 
     public OnPhone() {

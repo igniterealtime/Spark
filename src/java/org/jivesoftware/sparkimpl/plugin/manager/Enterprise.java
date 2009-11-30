@@ -67,9 +67,9 @@ public class Enterprise {
     private void populateFeatureSet() {
         final ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-        Iterator iter = items.getItems();
+        Iterator<DiscoverItems.Item> iter = items.getItems();
         while (iter.hasNext()) {
-            DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+            DiscoverItems.Item item = iter.next();
             String entity = item.getEntityID();
             if (entity != null) {
                 if (entity.startsWith("manager.")) {

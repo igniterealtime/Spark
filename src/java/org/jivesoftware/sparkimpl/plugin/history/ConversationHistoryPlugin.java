@@ -144,7 +144,9 @@ public class ConversationHistoryPlugin implements Plugin {
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "historyPeople");
 
         SparkManager.getMainWindow().getRootPane().getActionMap().put("historyPeople", new AbstractAction("historyPeople") {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 2465628887318732082L;
+
+			public void actionPerformed(ActionEvent e) {
                 // Show History Popup
                 showHistoryPopup();
             }
@@ -295,8 +297,9 @@ public class ConversationHistoryPlugin implements Plugin {
      * Internal handling of a Jlabel Renderer.
      */
     public class InternalRenderer extends JLabel implements ListCellRenderer {
+		private static final long serialVersionUID = 1812281106979897477L;
 
-        /**
+		/**
          * Construct Default Renderer.
          */
         public InternalRenderer() {

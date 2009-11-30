@@ -191,7 +191,9 @@ public class PhonePlugin implements Plugin {
 
                     if (phoneEnabled) {
                         Action callAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent e) {
+							private static final long serialVersionUID = 7221741748743018431L;
+
+							public void actionPerformed(ActionEvent e) {
                                 callJID(item.getJID());
                             }
                         };

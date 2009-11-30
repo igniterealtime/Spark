@@ -135,9 +135,9 @@ public class JabberBrowser implements Plugin {
         addAddress(serviceName);
 
 
-        Iterator discoverItems = result.getItems();
+        Iterator<DiscoverItems.Item> discoverItems = result.getItems();
         while (discoverItems.hasNext()) {
-            DiscoverItems.Item item = (DiscoverItems.Item)discoverItems.next();
+            DiscoverItems.Item item = discoverItems.next();
             Entity entity = new Entity(item);
             browsePanel.add(entity);
         }
@@ -162,11 +162,11 @@ public class JabberBrowser implements Plugin {
             return;
         }
 
-        Iterator discoverItems = result.getItems();
+        Iterator<DiscoverItems.Item> discoverItems = result.getItems();
         List<Entity> list = new ArrayList<Entity>();
 
         while (discoverItems.hasNext()) {
-            DiscoverItems.Item item = (DiscoverItems.Item)discoverItems.next();
+            DiscoverItems.Item item = discoverItems.next();
             Entity entity = new Entity(item);
             browsePanel.add(entity);
             list.add(entity);
@@ -180,7 +180,8 @@ public class JabberBrowser implements Plugin {
     }
 
     public class Entity extends RolloverButton {
-        private DiscoverItems.Item item;
+		private static final long serialVersionUID = 2084728014635239794L;
+		private DiscoverItems.Item item;
 
         public Entity(final DiscoverItems.Item item) {
             this.item = item;
@@ -210,7 +211,9 @@ public class JabberBrowser implements Plugin {
     public void initialize() {
         SparkManager.getWorkspace().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F8"), "showBrowser");
         SparkManager.getWorkspace().getActionMap().put("showBrowser", new AbstractAction("showBrowser") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 341826581565007606L;
+
+			public void actionPerformed(ActionEvent evt) {
                 display();
             }
         });

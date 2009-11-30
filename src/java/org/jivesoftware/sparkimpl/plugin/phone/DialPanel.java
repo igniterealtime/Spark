@@ -27,7 +27,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 public class DialPanel extends JPanel {
-    private JButton dialButton;
+	private static final long serialVersionUID = 2460254947711336776L;
+	private JButton dialButton;
     private JTextField dialField;
     final JLabel iconLabel;
     final JPanel dialPanel = new JPanel();

@@ -93,7 +93,9 @@ public class JabberVersion implements Plugin {
                 }
 
                 Action versionRequest = new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
+					private static final long serialVersionUID = -5619737417315441711L;
+
+					public void actionPerformed(ActionEvent e) {
                         viewClient();
                     }
                 };
@@ -113,7 +115,9 @@ public class JabberVersion implements Plugin {
 
 
         contactList.getActionMap().put("viewClient", new AbstractAction("viewClient") {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 8282301357403753561L;
+
+			public void actionPerformed(ActionEvent evt) {
                 viewClient();
             }
         });
@@ -123,7 +127,7 @@ public class JabberVersion implements Plugin {
 
     private void viewClient() {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        Collection selectedUsers = contactList.getSelectedUsers();
+        Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
         if (selectedUsers.size() == 1) {
             ContactItem item = (ContactItem)selectedUsers.toArray()[0];
             Presence presence = item.getPresence();

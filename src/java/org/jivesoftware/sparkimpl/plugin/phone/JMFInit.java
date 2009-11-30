@@ -21,8 +21,9 @@ import java.awt.Frame;
 import java.util.Vector;
 
 public class JMFInit extends Frame implements Runnable {
+	private static final long serialVersionUID = 6591937615313371376L;
 
-    public JMFInit(String[] args, boolean visible) {
+	public JMFInit(String[] args, boolean visible) {
         super("Initializing JMF...");
 
         Registry.set("secure.allowCaptureFromApplets", true);
@@ -81,7 +82,7 @@ public class JMFInit extends Frame implements Runnable {
     private void detectCaptureDevices() {
         // check if JavaSound capture is available
         message("Looking for Audio capturer");
-        Class dsauto;
+        Class<?> dsauto;
         try {
             dsauto = Class.forName("DirectSoundAuto");
             dsauto.newInstance();
@@ -94,7 +95,7 @@ public class JMFInit extends Frame implements Runnable {
             // Nothing to do
         }
 
-        Class jsauto;
+        Class<?> jsauto;
         try {
             jsauto = Class.forName("JavaSoundAuto");
             jsauto.newInstance();
@@ -158,7 +159,7 @@ public class JMFInit extends Frame implements Runnable {
     }
 
     private void detectDirectAudio() {
-        Class cls;
+        Class<?> cls;
         int plType = PlugInManager.RENDERER;
         String dar = "com.sun.media.renderer.audio.DirectAudioRenderer";
         try {

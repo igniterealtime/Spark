@@ -126,7 +126,9 @@ public class FrequentContactsPlugin implements Plugin {
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "favoritePeople");
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "favoritePeople");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("favoritePeople", new AbstractAction("favoritePeople") {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 6836584242669218932L;
+
+			public void actionPerformed(ActionEvent e) {
                 // Show History Popup
                 showPopup();
             }
@@ -236,8 +238,9 @@ public class FrequentContactsPlugin implements Plugin {
      * Internal handling of a JLabel Renderer.
      */
     public class InternalRenderer extends JLabel implements ListCellRenderer {
+		private static final long serialVersionUID = -2925096995694392323L;
 
-        /**
+		/**
          * Construct Default Renderer.
          */
         public InternalRenderer() {
