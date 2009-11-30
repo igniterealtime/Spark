@@ -274,7 +274,9 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
 
         JPanel mainPanel = new JPanel() {
-            public Dimension getPreferredSize() {
+			private static final long serialVersionUID = -7489967438182277375L;
+
+			public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 350;
                 return size;
@@ -521,8 +523,8 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     }
 
     class AccountItem extends JPanel {
-
-        private Transport transport;
+		private static final long serialVersionUID = -7657731912529801653L;
+		private Transport transport;
 
         public AccountItem(Icon icon, String name, Transport transport) {
             setLayout(new GridBagLayout());

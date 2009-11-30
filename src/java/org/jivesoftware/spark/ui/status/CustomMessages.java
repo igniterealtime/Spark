@@ -10,17 +10,24 @@
 
 package org.jivesoftware.spark.ui.status;
 
-import com.thoughtworks.xstream.XStream;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.JiveTreeCellRenderer;
-import org.jivesoftware.spark.component.JiveTreeNode;
-import org.jivesoftware.spark.component.Tree;
-import org.jivesoftware.spark.component.renderer.ListIconRenderer;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.log.Log;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -37,22 +44,18 @@ import javax.swing.JTextField;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.JiveTreeCellRenderer;
+import org.jivesoftware.spark.component.JiveTreeNode;
+import org.jivesoftware.spark.component.Tree;
+import org.jivesoftware.spark.component.renderer.ListIconRenderer;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
+
+import com.thoughtworks.xstream.XStream;
 
 public class CustomMessages {
     private static File customMessages = new File(SparkManager.getUserDirectory(), "custom_messages.xml");
@@ -69,18 +72,18 @@ public class CustomMessages {
 
 
     // Handle Custom Messages
-    public static List load() {
-        List list = null;
+    public static List<CustomStatusItem> load() {
+        List<CustomStatusItem> list = null;
 
         if (customMessages.exists()) {
             try {
-                list = (List)xstream.fromXML(new FileReader(customMessages));
+                list = (List<CustomStatusItem>)xstream.fromXML(new FileReader(customMessages));
             }
             catch (Exception e) {
                 xstream.alias("list", List.class);
                 xstream.alias("com.jivesoftware.workspaces.CustomStatusItem", CustomStatusItem.class);
                 try {
-                    list = (List)xstream.fromXML(new FileReader(customMessages));
+                    list = (List<CustomStatusItem>)xstream.fromXML(new FileReader(customMessages));
                 }
                 catch (Exception e1) {
                     Log.error(e1);
@@ -89,12 +92,22 @@ public class CustomMessages {
         }
 
         if (list == null) {
-            list = new ArrayList();
+            list = new ArrayList<CustomStatusItem>();
         }
+        
+        // Sort Custom Messages
+        Collections.sort( list, new Comparator<CustomStatusItem>()
+        {
+        	public int compare( final CustomStatusItem a, final CustomStatusItem b )
+        	{        		
+        		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
+        	}
+        } );
+        
         return list;
     }
 
-    public static void save(List list) {
+    public static void save(List<CustomStatusItem> list) {
         xstream.alias("custom-items", List.class);
         xstream.alias("custom-status", CustomStatusItem.class);
 
@@ -116,14 +129,14 @@ public class CustomMessages {
         final Tree tree = new Tree(rootNode);
         tree.setCellRenderer(new JiveTreeCellRenderer());
 
-        final List customItems = load();
+        final List<CustomStatusItem> customItems = load();
 
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        Iterator statusItems = statusBar.getStatusList().iterator();
+        Iterator<StatusItem> statusItems = statusBar.getStatusList().iterator();
         while (statusItems.hasNext()) {
-            StatusItem item = (StatusItem)statusItems.next();
+            StatusItem item = statusItems.next();
             JiveTreeNode node = new JiveTreeNode(item.getText(), false, item.getIcon());
-            Iterator cMessages = customItems.iterator();
+            Iterator<CustomStatusItem> cMessages = customItems.iterator();
 
             node.setAllowsChildren(true);
 
@@ -196,7 +209,9 @@ public class CustomMessages {
                 else if (selectedNode.getParent() == rootNode) {
                     JPopupMenu popup = new JPopupMenu();
                     Action addAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
+						private static final long serialVersionUID = 2187174931315380754L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
                             CustomStatus status = new CustomStatus();
                             String type = (String)selectedNode.getUserObject();
                             status.invoke(type);
@@ -218,9 +233,11 @@ public class CustomMessages {
                 if (event.isPopupTrigger()) {
                     JPopupMenu popup = new JPopupMenu();
                     Action deleteAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
-                            List list = new ArrayList();
-                            Iterator iter = customItems.iterator();
+						private static final long serialVersionUID = -4421868467918912876L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
+                            List<CustomStatusItem> list = new ArrayList<CustomStatusItem>();
+                            Iterator<CustomStatusItem> iter = customItems.iterator();
                             while (iter.hasNext()) {
                                 CustomStatusItem item = (CustomStatusItem)iter.next();
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
@@ -242,11 +259,13 @@ public class CustomMessages {
 
 
                     Action editAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
-                            List newItems = load();
-                            Iterator iter = newItems.iterator();
+						private static final long serialVersionUID = 39916149252596354L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
+                            List<CustomStatusItem> newItems = load();
+                            Iterator<CustomStatusItem> iter = newItems.iterator();
                             while (iter.hasNext()) {
-                                CustomStatusItem item = (CustomStatusItem)iter.next();
+                                CustomStatusItem item = iter.next();
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
                                     CustomStatus customStatus = new CustomStatus();
                                     customStatus.showEditDialog(item);
@@ -276,18 +295,18 @@ public class CustomMessages {
     private static void reloadTree(JiveTreeNode rootNode, Tree tree) {
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         rootNode.removeAllChildren();
-        Iterator statusItems = statusBar.getStatusList().iterator();
+        Iterator<StatusItem> statusItems = statusBar.getStatusList().iterator();
         while (statusItems.hasNext()) {
-            StatusItem statusItem = (StatusItem)statusItems.next();
+            StatusItem statusItem = statusItems.next();
             JiveTreeNode node = new JiveTreeNode(statusItem.getText(), false, statusItem.getIcon());
 
-            List newItems = load();
-            Iterator cMessages = newItems.iterator();
+            List<CustomStatusItem> newItems = load();
+            Iterator<CustomStatusItem> cMessages = newItems.iterator();
 
             node.setAllowsChildren(true);
 
             while (cMessages.hasNext()) {
-                CustomStatusItem csi = (CustomStatusItem)cMessages.next();
+                CustomStatusItem csi = cMessages.next();
                 if (csi.getType().equals(statusItem.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
@@ -305,7 +324,8 @@ public class CustomMessages {
     }
 
     private static class CustomStatus extends JPanel {
-        private JLabel typeLabel = new JLabel();
+		private static final long serialVersionUID = 1117350001209641469L;
+		private JLabel typeLabel = new JLabel();
         private JComboBox typeBox = new JComboBox();
 
         private JLabel statusLabel = new JLabel();
@@ -341,9 +361,9 @@ public class CustomMessages {
 
             typeBox.setRenderer(new ListIconRenderer());
             // Add Types
-            Iterator statusIterator = statusBar.getStatusList().iterator();
+            Iterator<StatusItem> statusIterator = statusBar.getStatusList().iterator();
             while (statusIterator.hasNext()) {
-                final StatusItem statusItem = (StatusItem)statusIterator.next();
+                final StatusItem statusItem = statusIterator.next();
                 ImageIcon icon = (ImageIcon)statusItem.getIcon();
 
                 ImageIcon newIcon = new ImageIcon(icon.getImage());
@@ -414,12 +434,12 @@ public class CustomMessages {
                         optionsDialog.setVisible(false);
                     }
                     else if (Res.getString("ok").equals(value)) {
-                        List list = load();
-                        Iterator iter = list.iterator();
+                        List<CustomStatusItem> list = load();
+                        Iterator<CustomStatusItem> iter = list.iterator();
 
                         CustomStatusItem changeItem = null;
                         while (iter.hasNext()) {
-                            CustomStatusItem customItem = (CustomStatusItem)iter.next();
+                            CustomStatusItem customItem = iter.next();
                             if (customItem.getType().equals(item.getType()) &&
                                     customItem.getStatus().equals(item.getStatus())) {
 
@@ -429,10 +449,10 @@ public class CustomMessages {
                         }
 
 
-                        Iterator customListIterator = list.iterator();
+                        Iterator<CustomStatusItem> customListIterator = list.iterator();
                         boolean exists = false;
                         while (customListIterator.hasNext()) {
-                            CustomStatusItem customItem = (CustomStatusItem)customListIterator.next();
+                            CustomStatusItem customItem = customListIterator.next();
                             String type = customItem.getType();
                             String status = customItem.getStatus();
 
@@ -526,7 +546,7 @@ public class CustomMessages {
                             return;
                         }
 
-                        List list = load();
+                        List<CustomStatusItem> list = load();
 
                         CustomStatusItem customStatusItem = new CustomStatusItem();
                         customStatusItem.setPriority(getPriority());
@@ -534,10 +554,10 @@ public class CustomMessages {
                         customStatusItem.setType(getType());
 
 
-                        Iterator customListIterator = list.iterator();
+                        Iterator<CustomStatusItem> customListIterator = list.iterator();
                         boolean exists = false;
                         while (customListIterator.hasNext()) {
-                            CustomStatusItem customItem = (CustomStatusItem)customListIterator.next();
+                            CustomStatusItem customItem = customListIterator.next();
                             String type = customItem.getType();
                             String status = customItem.getStatus();
 

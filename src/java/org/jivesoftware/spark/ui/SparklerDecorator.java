@@ -29,11 +29,11 @@ public class SparklerDecorator {
         popups.put(matchedText, gui);
     }
 
-    public Map getURLS() {
+    public Map<String, String> getURLS() {
         return urls;
     }
 
-    public Map getPopups() {
+    public Map<String, JComponent> getPopups() {
         return popups;
     }
 

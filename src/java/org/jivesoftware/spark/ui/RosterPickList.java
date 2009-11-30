@@ -33,7 +33,8 @@ import java.util.List;
  * The <code>RosterPickList</code> is used as a pick list of users within ones Roster.
  */
 public class RosterPickList extends JPanel {
-    private DefaultListModel model = new DefaultListModel();
+	private static final long serialVersionUID = -7725304880236329893L;
+	private DefaultListModel model = new DefaultListModel();
     private JList rosterList = new JList(model);
 
     /**
@@ -57,7 +58,7 @@ public class RosterPickList extends JPanel {
      * @param parent the parent container.
      * @return all items choosen in the pick list.
      */
-    public Collection showRoster(JDialog parent) {
+    public Collection<String> showRoster(JDialog parent) {
         final List<ContactItem> userList = new ArrayList<ContactItem>();
 
         // Populate Invite Panel with Available users.

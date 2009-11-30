@@ -20,7 +20,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  */
 public class RosterNode extends DefaultMutableTreeNode {
-    private String name;
+	private static final long serialVersionUID = -3043224462615651820L;
+	private String name;
     private boolean isGroup;
 
     private Icon openIcon;

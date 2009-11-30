@@ -23,8 +23,9 @@ import java.io.IOException;
  * Used for String Drag and Drop functionality.
  */
 public abstract class StringTransferHandler extends TransferHandler {
+	private static final long serialVersionUID = 4783002180033288533L;
 
-    protected abstract String exportString(JComponent c);
+	protected abstract String exportString(JComponent c);
 
     protected abstract void importString(JComponent c, String str);
 

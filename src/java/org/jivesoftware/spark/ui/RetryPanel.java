@@ -10,20 +10,6 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.ReconnectionManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
-
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.text.html.HTMLEditorKit;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,6 +18,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.text.html.HTMLEditorKit;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
+
 /**
  * RetryPanel is the UI/Function class to handle reconnection logic. This allows for a simple card layout to replace the current
  * roster when the connection has been lost.
@@ -39,7 +38,8 @@ import java.util.TimerTask;
  * @author Derek DeMoro
  */
 public class RetryPanel extends JPanel implements ConnectionListener {
-    private JEditorPane pane;
+	private static final long serialVersionUID = -7099075581561760774L;
+	private JEditorPane pane;
     private RolloverButton retryButton;
     private boolean closedOnError;
 

@@ -25,7 +25,8 @@ import java.awt.Font;
  *
  */
 public class RosterTreeCellRenderer extends DefaultTreeCellRenderer {
-    private Object value;
+	private static final long serialVersionUID = 4645070076041138834L;
+	private Object value;
     private boolean isExpanded;
 
     /**
