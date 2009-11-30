@@ -10,15 +10,12 @@
 
 package org.jivesoftware.spark;
 
-import org.jivesoftware.spark.util.ModelUtil;
-
 import java.awt.Window;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
+import org.jivesoftware.spark.util.ModelUtil;
 
 /**
  * The AlertManager handles the delegation of Alerting based.

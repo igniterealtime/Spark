@@ -366,7 +366,7 @@ public class ChatManager implements MessageEventNotificationListener {
      *
      * @return the Collection of MessageFilters.
      */
-    public Collection getMessageFilters() {
+    public Collection<MessageFilter> getMessageFilters() {
         return messageFilters;
     }
 
@@ -421,7 +421,7 @@ public class ChatManager implements MessageEventNotificationListener {
     public void filterIncomingMessage(ChatRoom room, Message message) {
         // Fire Message Filters
         final ChatManager chatManager = SparkManager.getChatManager();
-        Iterator filters = chatManager.getMessageFilters().iterator();
+        Iterator<MessageFilter> filters = chatManager.getMessageFilters().iterator();
         try {
             cancelledNotification(message.getFrom(), "");
         }
@@ -484,9 +484,9 @@ public class ChatManager implements MessageEventNotificationListener {
     public String getDefaultConferenceService() {
         if (conferenceService == null) {
             try {
-                Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
                 if (col.size() > 0) {
-                    conferenceService = (String)col.iterator().next();
+                    conferenceService = col.iterator().next();
                 }
             }
             catch (XMPPException e) {

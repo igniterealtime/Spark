@@ -10,9 +10,10 @@
 
 package org.jivesoftware.spark;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.ui.ChatInputEditor;
-import org.jivesoftware.spark.util.ResourceUtils;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,18 +21,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.KeyListener;
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.ui.ChatInputEditor;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 /**
  * Creates a Firefox Search type box that allows for icons inside of a textfield. This
  * could be used to build out your own search objects.
  */
 public class ChatAreaSendField extends JPanel {
-	 private ChatInputEditor textField;
+	private static final long serialVersionUID = 6226413259528399476L;
+	private ChatInputEditor textField;
     private JButton button;
 
     /**
