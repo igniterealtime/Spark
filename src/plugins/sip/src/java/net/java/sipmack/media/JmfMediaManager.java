@@ -157,7 +157,7 @@ public class JmfMediaManager {
         }
         int mediaPort = -1;
         boolean atLeastOneTransmitterStarted = false;
-        ArrayList mediaTypes = new ArrayList();
+        //ArrayList mediaTypes = new ArrayList();
         ArrayList<String> remoteAddresses = new ArrayList<String>();
         // A hashtable that indicates what addresses are different media
         // types
@@ -171,7 +171,7 @@ public class JmfMediaManager {
             remoteTransmisionDetails.put("video", sessionRemoteAddress);
         }
         ArrayList<Integer> ports = new ArrayList<Integer>();
-        ArrayList formatSets = new ArrayList();
+        ArrayList<ArrayList<String>> formatSets = new ArrayList<ArrayList<String>>();
         ArrayList<String> contents = new ArrayList<String>();
         ArrayList<Integer> localPorts = new ArrayList<Integer>();
         for (int i = 0; i < mediaDescriptions.size(); i++) {
@@ -320,7 +320,7 @@ public class JmfMediaManager {
         }
         int mediaPort = -1;
         boolean atLeastOneTransmitterStarted = false;
-        ArrayList mediaTypes = new ArrayList();
+        //ArrayList mediaTypes = new ArrayList();
         ArrayList<String> remoteAddresses = new ArrayList<String>();
         // A hashtable that indicates what addresses are different media
         // types
@@ -334,7 +334,7 @@ public class JmfMediaManager {
             remoteTransmisionDetails.put("video", sessionRemoteAddress);
         }
         ArrayList<Integer> ports = new ArrayList<Integer>();
-        ArrayList formatSets = new ArrayList();
+        ArrayList<ArrayList<String>> formatSets = new ArrayList<ArrayList<String>>();
         ArrayList<String> contents = new ArrayList<String>();
         ArrayList<Integer> localPorts = new ArrayList<Integer>();
         for (int i = 0; i < mediaDescriptions.size(); i++) {
@@ -428,7 +428,7 @@ public class JmfMediaManager {
             TransportCandidate.Fixed remote = new TransportCandidate.Fixed(remoteAddresses.get(0).toString(), (Integer) ports.get(0));
             TransportCandidate.Fixed local = new TransportCandidate.Fixed(NetworkAddressManager.getLocalHost().getHostAddress(), localPort);
 
-            AudioFormat audioFormat = new AudioFormat((String) (((ArrayList) formatSets.get(0)).get(0)));
+            AudioFormat audioFormat = new AudioFormat(((formatSets.get(0)).get(0)));
 
             AudioMediaSession audioMediaSession = new AudioMediaSession(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
 
@@ -595,7 +595,7 @@ public class JmfMediaManager {
             Connection c = sdpFactory.createConnection("IN", addrType,
                     publicIpAddress.getHostAddress());
             TimeDescription t = sdpFactory.createTimeDescription();
-            Vector timeDescs = new Vector();
+            Vector<TimeDescription> timeDescs = new Vector<TimeDescription>();
             timeDescs.add(t);
             String[] formats = new String[getAudioFormats().size()];
 
@@ -613,7 +613,7 @@ public class JmfMediaManager {
             am.setAttribute("rtmap:101", "telephone-event/"
                     + publicAudioAddress.getPort());
 
-            Vector mediaDescs = new Vector();
+            Vector<MediaDescription> mediaDescs = new Vector<MediaDescription>();
 
             mediaDescs.add(am);
 
