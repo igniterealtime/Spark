@@ -107,12 +107,20 @@ public class SettingsManager {
     		if (Spark.isWindows())
     		{
             	try	{
-            		WinRegistry.deleteValue(
-            	          WinRegistry.HKEY_CURRENT_USER, 
-            	          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark");
+            		String run = WinRegistry.readString(
+            				WinRegistry.HKEY_CURRENT_USER, 
+            				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
+            				"Spark");
+            		if (run != null)
+            		{
+	            		WinRegistry.deleteValue(
+	            	          WinRegistry.HKEY_CURRENT_USER, 
+	            	          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
+	            	          "Spark");
+            		}
             	}
             	catch (Exception e) {
-            		e.printStackTrace();
+            		Log.error("Can not delete registry entry",e);
             	}
     		}
         }
