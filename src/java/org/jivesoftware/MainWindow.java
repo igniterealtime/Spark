@@ -287,18 +287,21 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
                 SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
         }
-
-        // Notify all MainWindowListeners
-        try {
-            // Set auto-login to false;
-            SettingsManager.getLocalPreferences().setAutoLogin(false);
-            SettingsManager.saveSettings();
-
-            fireWindowShutdown();
-            setVisible(false);
-        }
-        finally {
-            closeConnectionAndInvoke(status);
+        
+        if (status != null)
+        {
+	        // Notify all MainWindowListeners
+	        try {
+	            // Set auto-login to false;
+	            SettingsManager.getLocalPreferences().setAutoLogin(false);
+	            SettingsManager.saveSettings();
+	
+	            fireWindowShutdown();
+	            setVisible(false);
+	        }
+	        finally {
+	            closeConnectionAndInvoke(status);
+	        }
         }
     }
 

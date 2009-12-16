@@ -159,7 +159,7 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
         else if (Res.getString("ok").equals(value)) {
             stringValue = textArea.getText();
             if (stringValue.trim().length() == 0) {
-                stringValue = null;
+                stringValue = "";
             }
             else {
                 stringValue = stringValue.trim();
