@@ -151,8 +151,11 @@ public class ThemePanel extends JPanel {
         // messageStyleBox.setSelectedItem(theme);
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
-        for (String pack : emoticonManager.getEmoticonPacks()) {
-            emoticonBox.addItem(pack);
+        if (emoticonManager.getEmoticonPacks() != null)
+        {
+	        for (String pack : emoticonManager.getEmoticonPacks()) {
+	            emoticonBox.addItem(pack);
+	        }
         }
 
         final String activePack = pref.getEmoticonPack();
@@ -225,12 +228,15 @@ public class ThemePanel extends JPanel {
         }
 
         StringBuilder builder = new StringBuilder();
-        for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
-            String eq = emoticon.getEquivalants().get(0);
-            builder.append(eq);
-            builder.append(" ");
+        if (emoticonManager.getActiveEmoticonSet() != null)
+        {
+	        for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
+	            String eq = emoticon.getEquivalants().get(0);
+	            builder.append(eq);
+	            builder.append(" ");
+	        }
         }
-
+        
         try {
             transcript.insert(builder.toString());
         }
