@@ -28,8 +28,9 @@ import java.awt.image.BufferedImage;
  * Allows for selection of panel images.
  */
 public class ImageSelectionPanel extends JPanel {
-    BufferedImage image;
-    Rectangle clip;
+	private static final long serialVersionUID = -2832575315956252059L;
+	private BufferedImage image;
+	private Rectangle clip;
 
     public ImageSelectionPanel() {
     }

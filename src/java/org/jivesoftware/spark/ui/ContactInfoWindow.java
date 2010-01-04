@@ -10,12 +10,30 @@
 
 package org.jivesoftware.spark.ui;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JWindow;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -23,19 +41,14 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
  *
  * @author Derek DeMoro
  */
 public class ContactInfoWindow extends JPanel {
-    private final JLabel nicknameLabel = new JLabel();
+	private static final long serialVersionUID = 8409694344721276453L;
+	private final JLabel nicknameLabel = new JLabel();
     private final JTextArea statusLabel = new JTextArea();
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel avatarLabel = new JLabel();
@@ -73,8 +86,6 @@ public class ContactInfoWindow extends JPanel {
    	 
         setLayout(new GridBagLayout());
        
-        ChatManager chatManager = SparkManager.getChatManager();
-
         setBackground(Color.white);
 
         add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));

@@ -10,23 +10,24 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.spark.util.log.Log;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
 
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.Collection;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Handler for drag and dropping of files unto a ChatWindow.
  */
 public class ChatRoomTransferHandler extends TransferHandler {
-
-    private ChatRoom chatRoom;
+	private static final long serialVersionUID = 6941570710627039031L;
+	private ChatRoom chatRoom;
 
     private static final DataFlavor flavors[] = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
 
@@ -67,8 +68,8 @@ public class ChatRoomTransferHandler extends TransferHandler {
         if (t.isDataFlavorSupported(flavors[0])) {
             try {
                 Object o = t.getTransferData(flavors[0]);
-                if (o instanceof java.util.Collection) {
-                    Collection files = (Collection)o;
+                if (o instanceof Collection) {
+                    Collection<File> files = (Collection<File>)o;
 
                     // Otherwise fire files dropped event.
                     chatRoom.fireFileDropListeners(files);

@@ -27,13 +27,13 @@ import javax.swing.TransferHandler;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
 public class ContactGroupTransferHandler extends TransferHandler {
-
-
-    private static final DataFlavor flavors[] = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
+	private static final long serialVersionUID = -1229773343301542259L;
+	private static final DataFlavor flavors[] = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
 
 
     public int getSourceActions(JComponent c) {
@@ -109,7 +109,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                 try {
                     Object o = t.getTransferData(flavors[1]);
                     if (o instanceof java.util.Collection) {
-                        Collection files = (Collection)o;
+                        Collection<File> files = (Collection<File>)o;
                         ContactItem source = (ContactItem)list.getSelectedValue();
                         if (source == null || source.getJID() == null) {
                             return false;

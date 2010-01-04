@@ -23,9 +23,8 @@ import javax.swing.TransferHandler;
  * Handler for drag and dropping of files unto a ChatWindow.
  */
 public class GroupChatRoomTransferHandler extends TransferHandler {
-
-    private GroupChatRoom groupChatRoom;
-
+	private static final long serialVersionUID = -192689038331188379L;
+	private GroupChatRoom groupChatRoom;
     private static final DataFlavor flavors[] = {DataFlavor.imageFlavor};
 
     /**

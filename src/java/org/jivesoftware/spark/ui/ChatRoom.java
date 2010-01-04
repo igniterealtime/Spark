@@ -10,21 +10,26 @@
 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.spark.ChatAreaSendField;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.BackgroundPanel;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -46,25 +51,21 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.spark.ChatAreaSendField;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.BackgroundPanel;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -417,8 +418,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         else {
             chatAreaButton.getButton().setEnabled(false);
         }
-
-        verticalSplit.setDividerLocation(-1);
     }
 
     /**
@@ -891,7 +890,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param files the files dropped.
      */
-    public void fireFileDropListeners(Collection files) {
+    public void fireFileDropListeners(Collection<File> files) {
         for (FileDropListener fileDropListener : fileDropListeners) {
             fileDropListener.filesDropped(files, this);
         }
@@ -967,8 +966,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         validate();
         invalidate();
         repaint();
-
-        verticalSplit.setDividerLocation(-1);
     }
 
     public void poppingUp(Object component, JPopupMenu popup) {

@@ -41,7 +41,8 @@ import java.util.StringTokenizer;
  * of an answer form to send back the the server.
  */
 public class DataFormUI extends JPanel {
-    private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
+	private static final long serialVersionUID = -6313707846021436765L;
+	private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
     private int row = 5;
     private Form searchForm;
 
@@ -62,9 +63,9 @@ public class DataFormUI extends JPanel {
 
     private void buildUI(Form form) {
         // Add default answers to the form to submit
-        Iterator fields = form.getFields();
+        Iterator<FormField> fields = form.getFields();
         while (fields.hasNext()) {
-            FormField field = (FormField)fields.next();
+            FormField field = fields.next();
             String variable = field.getVariable();
             String label = field.getLabel();
             String type = field.getType();
@@ -134,7 +135,7 @@ public class DataFormUI extends JPanel {
      */
     public Form getFilledForm() {
         // Now submit all information
-        Iterator valueIter = valueMap.keySet().iterator();
+        Iterator<String> valueIter = valueMap.keySet().iterator();
         Form answerForm = searchForm.createAnswerForm();
         while (valueIter.hasNext()) {
             String answer = (String)valueIter.next();
@@ -176,7 +177,7 @@ public class DataFormUI extends JPanel {
                 }
             }
             else if (o instanceof CheckBoxList) {
-                List list = ((CheckBoxList)o).getSelectedValues();
+                List<String> list = ((CheckBoxList)o).getSelectedValues();
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
                 }

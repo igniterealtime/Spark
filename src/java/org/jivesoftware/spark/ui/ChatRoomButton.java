@@ -18,8 +18,9 @@ import javax.swing.Icon;
  * Button to use with ChatRooms to allow for conformity in the Chat Room look and feel.
  */
 public class ChatRoomButton extends RolloverButton {
+	private static final long serialVersionUID = -2292789979004158240L;
 
-    /**
+	/**
      * Create a new ChatRoomButton.
      */
     public ChatRoomButton() {

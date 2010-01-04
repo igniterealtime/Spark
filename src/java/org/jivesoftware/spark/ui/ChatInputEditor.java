@@ -28,8 +28,8 @@ import javax.swing.undo.UndoManager;
  * in any chat room implementation.
  */
 public class ChatInputEditor extends ChatArea implements DocumentListener {
-
-    private final UndoManager undoManager;
+	private static final long serialVersionUID = -3085035737908538581L;
+	private final UndoManager undoManager;
     private KeyStroke keyStroke;
 
     /**
@@ -41,7 +41,8 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         this.setDragEnabled(true);
         this.getDocument().addUndoableEditListener(undoManager);
         Action undo = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -8897769620508545403L;
+			public void actionPerformed(ActionEvent e) {
                 undoManager.undo();
             }
         };

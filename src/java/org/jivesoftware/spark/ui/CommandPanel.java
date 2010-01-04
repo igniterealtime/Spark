@@ -28,7 +28,8 @@ import javax.swing.JPanel;
  */
 public class CommandPanel extends JPanel {
 
-    private final Image backgroundImage;
+	private static final long serialVersionUID = -720715661649067658L;
+	private final Image backgroundImage;
 
     public CommandPanel() {
         if (Spark.isWindows()) {
