@@ -73,7 +73,7 @@ public class WindowsFileSystemView extends FileSystemView {
      * isRoot
      *
      * @param value0 TODO
-     * @returns boolean
+     * @return boolean
      */
     public boolean isRoot(File value0) {
         return false; // TODO
@@ -84,7 +84,7 @@ public class WindowsFileSystemView extends FileSystemView {
      *
      * @param value0 TODO
      * @throws IOException TODO
-     * @returns File
+     * @return File
      */
     public File createNewFolder(File value0) throws IOException {
         return null; // TODO
@@ -94,7 +94,7 @@ public class WindowsFileSystemView extends FileSystemView {
      * isHiddenFile
      *
      * @param value0 TODO
-     * @returns boolean
+     * @return boolean
      */
     public boolean isHiddenFile(File value0) {
         return false; // TODO
@@ -103,7 +103,7 @@ public class WindowsFileSystemView extends FileSystemView {
     /**
      * getRoots
      *
-     * @returns File[]
+     * @return File[]
      */
     public File[] getRoots() {
         return null; // TODO

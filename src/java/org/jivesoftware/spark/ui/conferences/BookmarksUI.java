@@ -615,7 +615,7 @@ public class BookmarksUI extends JPanel {
     /**
      * Adds a new BookmarksListener.
      *
-     * @param listener the bookmarkListener.
+     * @param bookmarkListener the bookmarkListener.
      */
     public void addBookmarksListener(BookmarksListener bookmarkListener) {
         bookmarkListeners.add(bookmarkListener);
@@ -624,7 +624,7 @@ public class BookmarksUI extends JPanel {
     /**
      * Removes a BookmarksListener.
      *
-     * @param listener the bookmarkListener.
+     * @param bookmarkListener the bookmarkListener.
      */
     public void removeBookmarksListener(BookmarksListener bookmarkListener) {
         bookmarkListeners.remove(bookmarkListener);

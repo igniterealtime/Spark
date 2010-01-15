@@ -359,7 +359,7 @@ public class ScratchPadPlugin implements Plugin {
     /**
      * Updates the GUI of Tasks
      * 
-     * @param Tasks : all Tasks
+     * @param tasks Tasks
      */
     public static void updateTaskUI(Tasks tasks) {
     	panel_events.removeAll();

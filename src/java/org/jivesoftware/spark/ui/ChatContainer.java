@@ -683,8 +683,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Used for Tray Notifications.
      *
      * @param chatRoom the ChatRoom where the message was received.
-     * @param fileTransfer whether the notification is a file transfer
-     * @param fileTName the filename of the transfering files (if true)
+     * @param customMsg
+     * @param customMsgText
+     * @param customMsgTitle
      */    
     public void fireNotifyOnMessage(final ChatRoom chatRoom, final boolean customMsg, final String customMsgText, final String customMsgTitle) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -694,7 +695,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
     }
 
-
+    /***
+     *
+     * @param room
+     * @param message
+     */
     public void messageSent(ChatRoom room, Message message) {
         fireChatRoomStateUpdated(room);
     }
