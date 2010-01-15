@@ -62,6 +62,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import org.jivesoftware.spark.util.ModelUtil;
 
 /**
  * Class to show tosters in multiplatform
@@ -376,6 +377,10 @@ public class SparkToaster {
 
         if (icon != null) {
             titleLabel.setIcon(icon);
+        }
+        if (ModelUtil.hasLength(msg) && msg.startsWith("/me ")) {
+            msg = msg.replaceFirst("/me", getTitle());
+            singleToaster.message.setForeground(Color.MAGENTA);
         }
         singleToaster.message.setText(msg);
         singleToaster.message.setCaretPosition(0);
