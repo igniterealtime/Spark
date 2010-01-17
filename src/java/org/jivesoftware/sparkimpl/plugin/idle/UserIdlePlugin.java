@@ -14,6 +14,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -36,36 +37,36 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	public void initialize() {
 	    Timer timer = new Timer();
 	    // Check all 5 secounds
-	    timer.schedule  ( this, (1000 * 10), (1000 * CHECKTIME)  );
+        timer.schedule(this, (1000 * 10), (1000 * CHECKTIME));
 		 
 	    addGlobalListener();	 
 	}
 
 	@Override
 	public void shutdown() {
-		
 	}
 
 	@Override
 	public void uninstall() {
-		
 	}
 	
-	private void setIdle()
-	{
+    private void setIdle() {
 		latestPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-		Presence presence = new Presence(Presence.Type.available, Res.getString("status.away"), 1, Presence.Mode.away);			
-		SparkManager.getSessionManager().changePresence(presence);
+		if ((latestPresence.getMode() ==  Presence.Mode.available ) ||
+				latestPresence.getMode() == Presence.Mode.chat)
+		{
+			Presence presence = new Presence(Presence.Type.available, Res.getString("status.away"), 1, Presence.Mode.away);
+			SparkManager.getSessionManager().changePresence(presence);
+		}
 	}
 	
-	private void setOnline()
-	{
+    private void setOnline() {
 		SparkManager.getSessionManager().changePresence(latestPresence);
 	}
 	
 	@Override
 	public void run() {
-		if(pref.isIdleOn()){
+        if (pref.isIdleOn()) {
 			PointerInfo info = MouseInfo.getPointerInfo();
 			//DecimalFormat format = new DecimalFormat("0.00");
 			//System.out.println(format.format(info.getLocation().getY()).toString() + "-" + 7.24288464E8 + "-" + (info.getLocation().getY() == 7.24288464E8));
@@ -76,23 +77,20 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			if (Spark.isWindows()) {
 				
 				
-				if (info != null)
-				{
-					if (info.getLocation().getX() > 50000000 || 
-					    info.getLocation().getY() > 50000000) {
+                if (info != null) {
+                    if (info.getLocation().getX() > 50000000
+                            || info.getLocation().getY() > 50000000) {
 						if (!hasChanged) {
-							System.out.println("Desktop Locked .. ");
+                            Log.debug("Desktop Locked .. ");
 							hasChanged = true;
 							setIdle();
 							y = info.getLocation().getY();
 							x = info.getLocation().getX();
 						}
 					}
-				}
-				else
-				{
+                } else {
 					if (!hasChanged) {
-						System.out.println("Desktop Locked .. ");
+                        Log.debug("Desktop Locked .. ");
 						hasChanged = true;
 						setIdle();
 						y = -1;
@@ -102,10 +100,9 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			}
 		
 			// Default Idle
-			if (info != null)
-			{
-				if (x == info.getLocation().getX() && 
-					y == info.getLocation().getY()) {
+            if (info != null) {
+                if (x == info.getLocation().getX()
+                        && y == info.getLocation().getY()) {
 					if (counter > automaticIdleTime) {
 						if (!hasChanged) {
 							setIdle();
@@ -127,15 +124,13 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		}
 	}
 
-	private void addGlobalListener()
-	{
+    private void addGlobalListener() {
 	    EventQueue e = Toolkit.getDefaultToolkit().getSystemEventQueue();
-	    e.push(new EventQueue()
-	    {
-		protected void dispatchEvent(AWTEvent event)
-		{
-		    if(event instanceof KeyEvent)
-		    {
+        e.push(new EventQueue() {
+
+            @Override
+            protected void dispatchEvent(AWTEvent event) {
+                if (event instanceof KeyEvent) {
 			counter = 0;
 			if (hasChanged) {
 				setOnline();
