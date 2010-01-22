@@ -66,7 +66,7 @@ public class GatewayButton extends JPanel {
                 handlePopup(mouseEvent);
             }
         });
-
+        commandPanel.updateUI();
         final Runnable registerThread = new Runnable() {
             public void run() {
                 // Send directed presence if registered with this transport.
