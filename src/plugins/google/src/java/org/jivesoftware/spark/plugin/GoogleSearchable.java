@@ -42,7 +42,7 @@ public class GoogleSearchable implements Searchable {
 
     public void search(String query) {
         GoogleSearch search = new GoogleSearch();
-        Collection list = search.searchDocuments(query);
+        Collection<GoogleSearchResult> list = search.searchDocuments(query);
 
         GoogleFileViewer viewer = new GoogleFileViewer();
         viewer.viewFiles(list, true);

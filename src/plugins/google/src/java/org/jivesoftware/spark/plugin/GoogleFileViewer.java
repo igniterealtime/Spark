@@ -42,7 +42,7 @@ import javax.swing.table.TableCellRenderer;
 public class GoogleFileViewer {
     DocumentTable table = new DocumentTable();
 
-    public void viewFiles(Collection col, boolean showFiles) {
+    public void viewFiles(Collection<GoogleSearchResult> col, boolean showFiles) {
 
         TitlePanel titlePanel = new TitlePanel("Google Search", "Results from your search.", null, true);
 
@@ -56,8 +56,8 @@ public class GoogleFileViewer {
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
-        for (Object aCol : col) {
-            GoogleSearchResult result = (GoogleSearchResult) aCol;
+        for (GoogleSearchResult aCol : col) {
+            GoogleSearchResult result = aCol;
             Icon icon = result.getIcon();
             if (icon.getIconWidth() == -1) {
                 icon = SparkRes.getImageIcon(SparkRes.SMALL_DOCUMENT_VIEW);
@@ -93,8 +93,9 @@ public class GoogleFileViewer {
 
 
     private final class DocumentTable extends Table {
+		private static final long serialVersionUID = 2740929154486852378L;
 
-        public DocumentTable() {
+		public DocumentTable() {
             super(new String[]{" ", "Document Title", "Location"});
             getColumnModel().setColumnMargin(0);
             getColumnModel().getColumn(0).setMaxWidth(30);
@@ -160,7 +161,9 @@ public class GoogleFileViewer {
                 final JPopupMenu popupMenu = new JPopupMenu();
 
                 Action action = new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
+					private static final long serialVersionUID = 5747717080614743622L;
+
+					public void actionPerformed(ActionEvent e) {
                         int selectedRow = table.getSelectedRow();
                         if (selectedRow != -1) {
                             String location = (String)table.getValueAt(selectedRow, 2);

@@ -11,15 +11,6 @@
 
 package org.jivesoftware.spark.plugin;
 
-import com.jniwrapper.win32.registry.RegistryKey;
-import com.jniwrapper.win32.registry.RegistryKeyValues;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.URLFileSystem;
-import org.jivesoftware.spark.util.log.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,16 +20,22 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.WinRegistry;
+import org.jivesoftware.spark.util.log.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class GoogleSearch {
     final ImageIcon icon;
@@ -51,25 +48,20 @@ public class GoogleSearch {
         // Initialize icon to use.
         icon = SparkRes.getImageIcon(SparkRes.SEARCH_IMAGE_32x32);
 
-        // Google Desktop API to search
+        // Google Desktop API tosearch
         try {
-            boolean exists = RegistryKey.CURRENT_USER.exists("Software\\Google\\Google Desktop\\API");
-            if (!exists) {
-                return;
-            }
-            RegistryKeyValues values = RegistryKey.CURRENT_USER.openSubKey("Software").openSubKey("Google").openSubKey("Google Desktop").openSubKey("API").values();
-            for (Iterator iterator = values.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry)iterator.next();
-                String key = (String)entry.getKey();
+        	List<String> values = WinRegistry.readStringSubKeys(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API");
+
+            for (String key : values) {
                 if ("search_url".equals(key)) {
-                    searchUrl = (String)entry.getValue();
+                    searchUrl = (String) WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API", key);
                 }
             }
             searchBase = searchUrl.substring(0, searchUrl.indexOf('/', 8));
 
             db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         }
-        catch (ParserConfigurationException e) {
+        catch (Exception e) {
             // Nothing to do
         }
     }

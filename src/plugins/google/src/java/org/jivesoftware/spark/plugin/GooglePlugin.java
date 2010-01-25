@@ -50,7 +50,9 @@ public class GooglePlugin implements Plugin {
                 if (object instanceof ContactItem) {
                     final ContactItem item = (ContactItem)object;
                     final Action findReferenceAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent actionEvent) {
+						private static final long serialVersionUID = 6791538529104540239L;
+
+						public void actionPerformed(ActionEvent actionEvent) {
                             findReferences(item);
                         }
                     };
@@ -93,7 +95,7 @@ public class GooglePlugin implements Plugin {
                         }
                         if (ModelUtil.hasLength(text)) {
                             GoogleSearch search = new GoogleSearch();
-                            List list = search.searchText(text, 4);
+                            List<GoogleSearchResult> list = search.searchText(text, 4);
                             if(list.size() == 0){
                                 return;
                             }
@@ -105,8 +107,8 @@ public class GooglePlugin implements Plugin {
                             panel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
 
 
-                            for (Object aList : list) {
-                                GoogleSearchResult result = (GoogleSearchResult) aList;
+                            for (GoogleSearchResult aList : list) {
+                                GoogleSearchResult result = aList;
                                 GoogleDocument document = new GoogleDocument(room, result);
                                 panel.add(document);
                             }
@@ -127,13 +129,17 @@ public class GooglePlugin implements Plugin {
                 room.getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
                     public void poppingUp(Object object, JPopupMenu popup) {
                         final Action searchConversationAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent actionEvent) {
+							private static final long serialVersionUID = -5696144571481817379L;
+
+							public void actionPerformed(ActionEvent actionEvent) {
                                 searchConversation(room);
                             }
                         };
 
                         final Action searchAction = new AbstractAction() {
-                            public void actionPerformed(ActionEvent actionEvent) {
+							private static final long serialVersionUID = 5437636852619141730L;
+
+							public void actionPerformed(ActionEvent actionEvent) {
                                 searchText(room.getTranscriptWindow().getSelectedText());
                             }
                         };
@@ -198,12 +204,12 @@ public class GooglePlugin implements Plugin {
 
     private void searchConversation(ChatRoom room) {
         GoogleSearch search = new GoogleSearch();
-        List transcripts = room.getTranscripts();
-        Iterator iter = transcripts.iterator();
+        List<Message> transcripts = room.getTranscripts();
+        Iterator<Message> iter = transcripts.iterator();
 
         StringBuffer buf = new StringBuffer();
         while (iter.hasNext()) {
-            Message message = (Message)iter.next();
+            Message message = iter.next();
             buf.append(message.getBody());
         }
 

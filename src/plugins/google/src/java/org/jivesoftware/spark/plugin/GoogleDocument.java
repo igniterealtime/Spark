@@ -10,19 +10,8 @@
  */
 package org.jivesoftware.spark.plugin;
 
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.component.LinkLabel;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.filetransfer.SparkTransferManager;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.util.BrowserLauncher;
-
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,7 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.Icon;
@@ -39,9 +28,21 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.component.LinkLabel;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.filetransfer.SparkTransferManager;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+
 public class GoogleDocument extends JPanel {
 
-    private GoogleSearchResult result;
+	private static final long serialVersionUID = -2460486842621050765L;
+	private GoogleSearchResult result;
 
     public GoogleDocument(final ChatRoom room, final GoogleSearchResult result) {
         setLayout(new GridBagLayout());
@@ -76,10 +77,10 @@ public class GoogleDocument extends JPanel {
                     }
                     else {
                         // Assume it's .html
-                        BrowserLauncher.openURL(result.getURL());
+                    	Desktop.getDesktop().browse(new URI(result.getURL()));
                     }
                 }
-                catch (IOException e1) {
+                catch (Exception e1) {
                     // Nothing to do
                 }
             }
