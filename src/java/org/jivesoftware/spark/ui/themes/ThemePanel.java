@@ -102,7 +102,7 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resButton(systemLookAndFeelBox, Res.getString("checkbox.use.system.look.and.feel"));
 
         ResourceUtils.resButton(addThemeButton, Res.getString("button.add"));
-        ResourceUtils.resButton(addEmoticonButton, Res.getString("button.add2"));
+        ResourceUtils.resButton(addEmoticonButton, Res.getString("button.add"));
 
         ResourceUtils.resLabel(contactListFontLabel, contactListFontField, Res.getString("label.contactlist.fontsize"));
         ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, Res.getString("label.chatroom.fontsize"));
