@@ -646,14 +646,14 @@ public class BookmarksUI extends JPanel {
      * Returns a list of bookmarks.
      * @return a Collection of bookmarks.
      */
-    public Collection getBookmarks() {
+    public Collection<BookmarkedConference> getBookmarks() {
         try {
             return manager.getBookmarkedConferences();
         }
         catch (XMPPException e) {
             Log.error(e);
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
 }

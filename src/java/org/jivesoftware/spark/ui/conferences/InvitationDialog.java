@@ -116,10 +116,10 @@ final class InvitationDialog extends JPanel {
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 RosterPickList browser = new RosterPickList();
-                Collection col = browser.showRoster(dlg);
+                Collection<String> col = browser.showRoster(dlg);
 
-                for (Object aCol : col) {
-                    String jid = (String) aCol;
+                for (String aCol : col) {
+                    String jid = aCol;
                     if (!invitedUsers.contains(jid)) {
                         invitedUsers.addElement(jid);
                     }
@@ -176,7 +176,7 @@ final class InvitationDialog extends JPanel {
 
     }
 
-    public void inviteUsersToRoom(final String serviceName, String roomName, Collection jids) {
+    public void inviteUsersToRoom(final String serviceName, String roomName, Collection<String> jids) {
         roomsField.setText(roomName);
 
 

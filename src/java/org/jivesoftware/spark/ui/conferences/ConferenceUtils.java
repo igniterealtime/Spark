@@ -313,7 +313,7 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(String serviceName, String roomName, Collection jids) {
+    public static void inviteUsersToRoom(String serviceName, String roomName, Collection<String> jids) {
         InvitationDialog inviteDialog = new InvitationDialog();
         inviteDialog.inviteUsersToRoom(serviceName, roomName, jids);
     }
