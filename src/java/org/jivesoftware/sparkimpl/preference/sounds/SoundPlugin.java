@@ -10,8 +10,10 @@
 
 package org.jivesoftware.sparkimpl.preference.sounds;
 
+import java.io.File;
+
+import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
@@ -26,8 +28,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.util.TaskEngine;
-
-import java.io.File;
 
 public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
     SoundPreference soundPreference;
@@ -64,7 +64,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         TaskEngine.getInstance().submit(soundLoader);
 
         MultiUserChat.addInvitationListener(SparkManager.getConnection(), new InvitationListener() {
-            public void invitationReceived(XMPPConnection xmppConnection, String string, String string1, String string2, String string3, Message message) {
+            public void invitationReceived(Connection xmppConnection, String string, String string1, String string2, String string3, Message message) {
                 SoundPreferences preferences = soundPreference.getPreferences();
                 if (preferences != null && preferences.playIncomingInvitationSound()) {
                     String incomingSoundFile = preferences.getIncomingInvitationSoundFile();

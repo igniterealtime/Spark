@@ -4,16 +4,16 @@ ant-contrib.jar			 			| ?			 	 		| Apache			| http://ant-contrib.sourceforge.net
 i4jruntime.jar			 			| ?			 			| Commercial		| http://www.ej-technologies.com
 jarbundler-1.4.jar		 			| ?			 	 		| GPL				| http://informagen.com/JarBundler/index.html
 pack200task.jar			 			| ?			 	 		| Sun				| https://java-pack200-ant-task.dev.java.net/
-pmd.jar					 			| 4.2.5		 	 		| BSD				| https://pmd.sf.net
-asm.jar					 			| 3.1		 	 		| BSD				| https://pmd.sf.net
+pmd.jar					 			| 4.2.5		 	 		| BSD				| http://pmd.sf.net
+asm.jar					 			| 3.1		 	 		| BSD				| http://pmd.sf.net
 dist/activation.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html
 dist/asterisk-im-client.jar			| 1.2.0			 		| GPL				| http://igniterealtime.org/
 dist/dom4j.jar						| ? 			 		| BSD				| http://www.dom4j.org/
 dist/linux/jdic.jar					| ? 			 		| LGPL				| https://jdic.dev.java.net/
 dist/mac/javaSoundStream.fix.jar	| ? 			 		| ?					| ?
-dist/smack.jar						| SVN 11351 			| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
-dist/smackx-debug.jar				| SVN 11351				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
-dist/smackx.jar						| SVN 11351				 | Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smack.jar						| SVN 11644 			| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smackx-debug.jar				| SVN 11644				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smackx.jar						| SVN 11644				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
 dist/swingx.jar						| ? 			 		| LGPL				| https://swingx.dev.java.net/
 dist/syntheticaBlueMoon.jar			| ? 			 		| Commercial		| http://www.javasoft.de/jsf/public/products/synthetica
 dist/synthetica.jar					| ? 			 		| Commercial		| http://www.javasoft.de/jsf/public/products/synthetica

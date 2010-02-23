@@ -10,9 +10,24 @@
 
 package org.jivesoftware.spark.ui.conferences;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -40,21 +55,6 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /**
  * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
@@ -120,7 +120,7 @@ public class ConferenceServices {
     private static void addInvitationListener() {
         // Add Invite Listener
         MultiUserChat.addInvitationListener(SparkManager.getConnection(), new InvitationListener() {
-            public void invitationReceived(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+            public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(SparkManager.getChatManager().getInvitationListeners());

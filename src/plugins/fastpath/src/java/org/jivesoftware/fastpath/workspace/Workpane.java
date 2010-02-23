@@ -72,7 +72,7 @@ import org.jivesoftware.fastpath.workspace.panes.UserInvitationPane;
 import org.jivesoftware.fastpath.workspace.search.ChatSearch;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.resource.SoundsRes;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -637,7 +637,8 @@ public class Workpane {
 
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
-        public boolean handleInvitation(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+    	@Override
+        public boolean handleInvitation(final Connection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
             if (offerMap.containsKey(reason)) {
                 RequestUtils utils = new RequestUtils(getMetadata(reason));
                 String roomName = utils.getUsername();
