@@ -871,8 +871,9 @@ public final class GroupChatRoom extends ChatRoom {
         public void subjectUpdated(String subject, String by) {
             subjectPanel.setSubject(subject);
             subjectPanel.setToolTipText(subject);
+            String nickname = StringUtils.parseResource(by);
 
-            String insertMessage = Res.getString("message.subject.has.been.changed.to", subject);
+            String insertMessage = Res.getString("message.subject.has.been.changed.to", subject, nickname);
             getTranscriptWindow().insertNotificationMessage(insertMessage, ChatManager.NOTIFICATION_COLOR);
 
         }
