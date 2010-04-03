@@ -288,7 +288,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
         }
         
-        if (status != null)
+        if (status != null || !sendStatus)
         {
 	        // Notify all MainWindowListeners
 	        try {
@@ -417,11 +417,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         });
 
-		if (Spark.isWindows()) {
-        	connectMenu.add(logoutMenuItem);
-	        connectMenu.add(logoutWithStatus);
-	        connectMenu.addSeparator();
-		}
+        if (Spark.isWindows() || Spark.isLinux()) {
+            connectMenu.add(logoutMenuItem);
+            connectMenu.add(logoutWithStatus);
+	    connectMenu.addSeparator();
+	}
 
         if (!Spark.isMac()) {
             connectMenu.add(exitMenuItem);
