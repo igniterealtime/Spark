@@ -1,10 +1,10 @@
 --- spark/src/resources/startup.sh.orgi	2009-10-27 09:28:27.000000000 +0100
 +++ spark/src/resources/startup.sh	2009-10-27 09:29:19.000000000 +0100
-@@ -1,5 +1,4 @@
+@@ -1,6 +1,6 @@
  #!/bin/bash
--java -Dappdir=.. -cp ../lib/jdom.jar:../lib/log4j.jar:../lib/lti-civil.jar:../lib/fmj.jar:../lib/startup.jar:../lib/linux/jdic.jar:../resources org.jivesoftware.launcher.Startup
--
--java -Ddebugger=true -Ddebug.mode=true -XX:+HeapDumpOnOutOfMemoryError -Xdebug -Xint -server -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 -Dappdir=.. -cp ../lib/log4j.jar:../lib/lti-civil.jar:../lib/fmj.jar:../lib/startup.jar:../lib/linux/jdic.jar:../resources org.jivesoftware.launcher.Startup
-+SPARKDIR=/usr/share/spark
-+/usr/lib/jvm/java-6-sun/jre/bin/java -Dappdir=$SPARKDIR -cp $SPARKDIR/lib/jdom.jar:$SPARKDIR/lib/log4j.jar:$SPARKDIR/lib/lti-civil.jar:$SPARKDIR/lib/fmj.jar:$SPARKDIR/lib/startup.jar:$SPARKDIR/lib/linux/jdic.jar:$SPARKDIR/resources org.jivesoftware.launcher.Startup
  
+-scriptdir="/usr/share/spark";
++scriptdir="`dirname ${0}`";
+ cd "${scriptdir}/..";
+ wd="`pwd`";
+ libdir="${wd}/lib";
