@@ -131,13 +131,13 @@ public class PrivacyManager {
                 contactItem.setSideIcon( SparkRes.getImageIcon( SparkRes.BLOCK_CONTACT_16x16 ) );
             }
         }
-        for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) {
+        /*for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) {
             for (ContactItem offlineItem : group.getOfflineContacts() ) {
                 if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(jid) ) {
                     offlineItem.setSideIcon( SparkRes.getImageIcon( SparkRes.BLOCK_CONTACT_16x16 ) );
                 }
             }
-        }
+        }*/
         SparkManager.getContactList().updateUI();
     }
 
@@ -146,13 +146,13 @@ public class PrivacyManager {
      * @param jid contact's jid
      */
     public void removeBlockedIconFromContact(String jid) {
-        for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) { // I have to scan all groups for offline contacts.
+        /*for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) { // I have to scan all groups for offline contacts.
             for (ContactItem offlineItem : group.getOfflineContacts() ) {
                 if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(jid) ) {
                     offlineItem.setSideIcon( null );
                 }
             }
-        }
+        }*/
         Collection<ContactItem> items = SparkManager.getWorkspace().getContactList().getContactItemsByJID(jid); //And then using this function.
         for (ContactItem item : items) {
             if (item != null) {

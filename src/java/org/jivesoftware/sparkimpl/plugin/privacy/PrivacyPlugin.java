@@ -57,7 +57,7 @@ public class PrivacyPlugin implements Plugin {
                 if (!privacyListExist) {
                     return;
                 }
-                addMenuItemToContactItem();
+                addMenuItemToContactItems();
                 scanContactList();
                 // add functional
             }
@@ -70,7 +70,7 @@ public class PrivacyPlugin implements Plugin {
 
     @Override
     public void shutdown() {
-        
+        // @todo remove Privacy List
     }
 
     @Override
@@ -100,7 +100,7 @@ public class PrivacyPlugin implements Plugin {
     /**
      * Add block menu item to contact popupmenu
      */
-    protected void addMenuItemToContactItem() {
+    protected void addMenuItemToContactItems() {
         //SparkManager.getChatManager().addContactItemHandler(this);
         SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
 

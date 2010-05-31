@@ -76,7 +76,7 @@ public class SparkPrivacyList {
                     //Yep this item is default get it rules.
                     allowByDefault = defItem.isAllow();
                 }
-                privacyItems.remove(defItem); // Removing Default Item, It will be added before save
+                privacyItems.remove(defItem); // Removing Default Item, It will be added before saving PrivacyList
             }
         } catch(XMPPException ex) {
             if ( ex.getXMPPError().getCode() == 404 ) { // List not found. Let's create it.
@@ -92,7 +92,7 @@ public class SparkPrivacyList {
      * With order of the last item into Items list + 1
      */
     protected PrivacyItem createDefaultPrivacyItem() {
-        return new PrivacyItem(null, getDefaultListAllow(), privacyItems.size());
+        return new PrivacyItem(null, isItemAllowByDefault(), privacyItems.size());
     }
 
     /**
@@ -102,7 +102,7 @@ public class SparkPrivacyList {
      * @param order order of default PrivacyItem
      */
     protected PrivacyItem createDefaultPrivacyItem(int order) {
-        return new PrivacyItem(null, getDefaultListAllow(), order);
+        return new PrivacyItem(null, isItemAllowByDefault(), order);
     }
 
     /**
@@ -115,6 +115,22 @@ public class SparkPrivacyList {
     protected int searchPrivacyItem(String value) {
         for (PrivacyItem privacyItem : getPrivacyItems()) {
             if ( privacyItem.getValue().equalsIgnoreCase(value)) {
+                return privacyItem.getOrder();
+            }
+        }
+        return -1; //error
+    }
+
+    /**
+     * Search privancyItem using Type & value
+     *
+     * @param type type of privacy item
+     * @param value value of item
+     * @return privacyItem id of item into PrivacyItems or -1 on Item not found
+     */
+    protected int searchPrivacyItem(PrivacyItem.Type type, String value) {
+        for (PrivacyItem privacyItem : getPrivacyItems()) {
+            if ( privacyItem.getValue().equalsIgnoreCase(value) && privacyItem.getType() == type ) {
                 return privacyItem.getOrder();
             }
         }
@@ -164,70 +180,16 @@ public class SparkPrivacyList {
     /**
      * Add New privacy item without saving list
      *
-     * @param type items presence type
-     */
-    public void addPrivacyItem(PrivacyItem.Type type, String value, boolean allow) throws XMPPException {
-        boolean itemsDeleted = false;
-        if (getPrivacyItems().size() < 1) {
-            itemsDeleted = false;
-        }
-        //If somewhere in list are more than one item
-        while ( !itemsDeleted ) {
-            int itemId = searchPrivacyItem(value);
-            if ( itemId >= 0 ) {
-                getPrivacyItems().remove(itemId);//Removing old item
-            } else {
-                itemsDeleted = true;
-            }
-        }
-
-        PrivacyItem item = new PrivacyItem(type.name(), allow, getPrivacyItems().size());
-        item.setValue(value);
-        getPrivacyItems().add(item);
-    }
-    
-    /**
-     * Add New privacy item without saving list
-     *
      * @param item new privacyItem
      */
     public void addPrivacyItem(PrivacyItem item) throws XMPPException {
-        boolean itemsDeleted = false;
         if ( item.getValue() == null || item.getValue().isEmpty() ) {
             throw new PrivacyException("Ietm must contain JID!");
         }
-        if (getPrivacyItems().size() < 1) {
-            itemsDeleted = false;
-        }
-        //If somewhere in list are more than one item
-        while ( !itemsDeleted ) {
-            int itemId = searchPrivacyItem(item.getValue());
-            if ( itemId >= 0 ) {
-                getPrivacyItems().remove(itemId);//Removing old item
-            } else {
-                itemsDeleted = true;
-            }
-        }
+        removePrivacyItem(item.getType(), item.getValue(), false); // Remove previosly stored item 
         getPrivacyItems().add(item);
     }
 
-    /**
-     * Removes all Items that are contained in the specified list
-     * @param list
-     */
-    public void removePrivacyItems(List<PrivacyItem> list) {
-        getPrivacyItems().removeAll(list);
-    }
-
-    /**
-     * Add List of Items into Privacy List
-     *
-     * @param list
-     */
-    public void addPrivacyItems(List<PrivacyItem> list) {
-        getPrivacyItems().addAll(list);
-    }
-    
     /**
      * Removes PrivacyItem From list without saving it
      * @param type
@@ -235,7 +197,7 @@ public class SparkPrivacyList {
      * @throws XMPPException
      */
     public void removePrivacyItem(PrivacyItem.Type type, String value) throws XMPPException {
-        removePrivacyItem(type, value, false);
+        removePrivacyItem(type, value, true);
     }
 
     /**
@@ -252,31 +214,22 @@ public class SparkPrivacyList {
         }
         //If somewhere in list are more than one item
         while ( !itemsDeleted ) {
-            int itemFound = searchPrivacyItem(value);
+            int itemFound = searchPrivacyItem(type, value);
             if ( itemFound >= 0 ) {
+                if ( getPrivacyItems().size() == 1 ) {
+                    getPrivacyItems().clear();
+                    itemsDeleted = true;
+                } else {
                 getPrivacyItems().remove(itemFound);
+                }
             } else {
                 itemsDeleted = true;
             }
         }
+        reorderItems(); // recalculate items order
         if ( save ) { // save list
             save();
         }
-    }
-
-    /**
-     * Remove item using it's order
-     * @param order
-     * @throws XMPPException
-     */
-    public void delPrivacyItem(int order) throws XMPPException {
-        if ( getPrivacyItems().size() < 1 ) {
-            return;
-        }
-        if ( order > (getPrivacyItems().size() - 1) ) {
-            throw new PrivacyException("Order is out of range.");
-        }
-        getPrivacyItems().remove(order);
     }
 
     /**
@@ -330,7 +283,7 @@ public class SparkPrivacyList {
      *
      * @return the default allow communication status.
      */
-    public boolean getDefaultListAllow() {
+    public boolean isItemAllowByDefault() {
         return allowByDefault;
     }
 
@@ -339,7 +292,7 @@ public class SparkPrivacyList {
      * the communication by default
      *
      */
-    public void setDefaultListAllow(boolean allow) {
+    public void setItemAllowByDefault(boolean allow) {
         allowByDefault = allow;
     }
 
@@ -362,10 +315,20 @@ public class SparkPrivacyList {
      * @throws XMPPException
      */
     public void save() throws XMPPException {
+        reorderItems();
         PrivacyItem defItem = createDefaultPrivacyItem();
         getPrivacyItems().add(defItem); //Add default privacy action
         PrivacyManager.getInstance().getPrivacyListManager().updatePrivacyList(getListName(), getPrivacyItems());
         getPrivacyItems().remove(defItem); // remove Default item it will be added before next save
+    }
+
+    /**
+     * Reset order to Privacy items
+     */
+    public void reorderItems() {
+        /*for( PrivacyItem item : getPrivacyItems()) { // set new order type
+            item.setOrder( getPrivacyItems().indexOf(item) );
+        }*/
     }
 
     /**
