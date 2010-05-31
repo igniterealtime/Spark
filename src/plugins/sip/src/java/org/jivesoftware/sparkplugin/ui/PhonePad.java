@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkplugin.ui;
 
 import org.jivesoftware.sparkplugin.components.DialButton;
+import net.java.sipmack.common.DialSoundManager;
 import net.java.sipmack.softphone.SoftPhoneManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 
@@ -42,6 +43,8 @@ public class PhonePad extends BackgroundPanel {
 
     private JPopupMenu menu;
 
+    private DialSoundManager dialSoundManager;
+    
     public PhonePad() {
         setLayout(new GridBagLayout());
         setOpaque(false);
@@ -111,6 +114,7 @@ public class PhonePad extends BackgroundPanel {
             }
         });
 
+        this.dialSoundManager = SoftPhoneManager.getInstance().getDTMFSounds();
     }
 
     public String getNumber() {
@@ -127,10 +131,11 @@ public class PhonePad extends BackgroundPanel {
         for (DialButton button : list) {
             String name = button.getNumber();
             if (name.equals(number)) {
-                button.setBlock(true);
-                button.doClick();
-                SoftPhoneManager.getInstance().getDTMFSounds().play(name);
-                button.setBlock(false);
+              // TH: trying to improve responsiveness of the DTMF playback.
+               button.setBlock(true);
+              dialSoundManager.enqueue(name);
+               button.doClick();
+               button.setBlock(false);
             }
         }
     }
@@ -146,13 +151,16 @@ public class PhonePad extends BackgroundPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            String number = (String)getValue(Action.NAME);
+            final String number = getValue(Action.NAME).toString();
+
+            // TH: trying to improve responsiveness of DTMF playback.
+            dialSoundManager.enqueue(number);
+
             if (callField != null) {
                 callField.appendNumber(number);
             }
 
             SoftPhoneManager.getInstance().getDefaultGuiManager().sendDTMF(number);
-            SoftPhoneManager.getInstance().getDTMFSounds().play(getValue(Action.NAME).toString());
         }
     }
 

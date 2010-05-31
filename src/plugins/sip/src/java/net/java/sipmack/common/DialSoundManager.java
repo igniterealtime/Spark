@@ -10,48 +10,172 @@
 
 package net.java.sipmack.common;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 /**
+ * This handles the playing of dial tone sounds when a user is dialing a number.
  * Title: SIPark
  * Description:JAIN-SIP Audio/Video phone application
  *
  * @author Thiago Rocha Camargo (thiago@jivesoftware.com)
  */
 
+@SuppressWarnings("restriction")
 public class DialSoundManager {
+  
+  AudioPlayer audioPlayer = AudioPlayer.player;
+  AudioStream[] audioStreams;
+  
+  private Vector<String> playQueue = new Vector<String>();
+  private boolean running = true;
+  Thread playerThread;
+  
 
-    private AudioClip clips[];
+  public DialSoundManager() {
+      
+    audioStreams = new AudioStream[12];
+    for (int i = 0; i < 12; i++) {
+      initializeAudioStream(i);
+    }
+    
+    playerThread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        while (running) {
+          try {
+            if (playQueue.size() == 0) {
+              synchronized(playQueue) {
+                playQueue.wait();
+              }
+              continue;
+            }
+            play(playQueue.remove(0));
+            Thread.sleep(40);
+          }
+          catch (InterruptedException ex) {
+            if (running == false) {
+              break;
+            }
+          }
+        } // while
+      }
+    });
+    
+    playerThread.start();
+  }
 
+  private void initializeAudioStream(int i) {
+    try {
+      if (audioStreams[i] != null) {
+        audioStreams[i].close();
+        audioStreams[i] = null;
+      }
+      InputStreamEventSource is = new InputStreamEventSource(i, 
+          PhoneRes.getURL("DTMF" + i + "_SOUND").openStream());
+      is.addListener(new InputStreamListener() {
 
-    public DialSoundManager() {
-        clips = new AudioClip[12];
-        for (int i = 0; i < 12; i++) {
-            clips[i] = Applet.newAudioClip(PhoneRes.getURL("DTMF" + i + "_SOUND"));
-        }
+        @Override
+        public void handleEndOfStream(int n) {
+         initializeAudioStream(n);
+        }        
+      });
+      audioStreams[i] = new AudioStream(is);
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+    
+    @Override
+    protected void finalize() throws Throwable {
+      if (playerThread != null) {
+        running = false;
+        playerThread.interrupt();
+        playerThread = null;
+      }
+      super.finalize();
+    }
+    
+    /**
+     * A mechanism to allow DTMF sounds to be played by the internal worker thread.
+     * @param s
+     */
+    public void enqueue(String s) {
+      playQueue.add(s);
+      synchronized(playQueue) {
+        playQueue.notify();
+      }
     }
 
-    public void play(int n) {
-        clips[n].play();
+    protected void play(int n) {
+      
+      audioPlayer.start(audioStreams[n]);
     }
 
-    public void play(String s) {
+    protected void play(String s) {
         int n = -1;
-        if (s.equals("*"))
+        if (s.equals("*")) {
             n = 10;
-        else if (s.equals("#"))
+        }
+        else if (s.equals("#")) {
             n = 11;
-        else
+        }
+        else {
             try {
                 n = Integer.parseInt(s);
             }
             catch (Exception e) {
             }
-
-        if (n >= 0 && n <= 11)
-            clips[n].play();
+        }
+        if (n >= 0 && n <= 11) {          
+          play(n);
+        }
     }
+}
+
+class InputStreamEventSource extends InputStream {
+ 
+  private InputStream is;
+  int i;
+  public InputStreamEventSource(int i, InputStream is) {
+    this.i = i;
+    this.is = is;
+  }
+  @Override
+  public int read() throws IOException {
+   int result = is.read();
+   
+   if (result == -1) {
+     handleEndOfStream();
+   }
+   return result;
+  }
+  
+  @Override
+  public void close() throws IOException {
+    is.close();
+  }
+  public void handleEndOfStream() {
+    for (InputStreamListener item : listeners) {
+      item.handleEndOfStream(i);
+    }
+  }
+  
+  public void addListener(InputStreamListener item) {
+    listeners.add(item);
+  }
+  List<InputStreamListener> listeners = new ArrayList<InputStreamListener>();
+}
+
+interface InputStreamListener {
+  void handleEndOfStream(int i);
 }
