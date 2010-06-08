@@ -66,6 +66,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
@@ -263,7 +264,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
-        commandPanel.add(addContactButton);
+        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+        	commandPanel.add(addContactButton);
+        }
         addContactButton.setToolTipText(Res.getString("message.add.a.contact"));
         addContactButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -1237,7 +1240,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
         final JPopupMenu popup = new JPopupMenu();
-        popup.add(addContactMenu);
+        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+        	popup.add(addContactMenu);
+        }
+
         popup.add(addContactGroupMenu);
         popup.addSeparator();
 
@@ -1736,7 +1742,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
         ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 
-        contactsMenu.add(addContactsMenu);
+        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+        	contactsMenu.add(addContactsMenu);
+        }
         contactsMenu.add(addContactGroupMenu);
         addContactsMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

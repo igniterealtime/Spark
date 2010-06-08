@@ -19,6 +19,22 @@
  */ 
 package org.jivesoftware.spark.ui.rooms;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.TimerTask;
+
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
@@ -55,19 +71,6 @@ import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -160,8 +163,9 @@ public class ChatRoomImpl extends ChatRoom {
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
         if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
-            getToolBar().addChatRoomButton(addToRosterButton);
-
+            if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+            	getToolBar().addChatRoomButton(addToRosterButton);
+            }
             addToRosterButton.addActionListener(this);
         }
 

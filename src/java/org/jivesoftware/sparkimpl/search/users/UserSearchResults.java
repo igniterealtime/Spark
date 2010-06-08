@@ -20,6 +20,7 @@
 
 package org.jivesoftware.sparkimpl.search.users;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.util.StringUtils;
@@ -187,10 +188,12 @@ public class UserSearchResults extends JPanel {
             }
         };
 
-        final JMenuItem addAsContact = new JMenuItem(addContactAction);
-        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
-        addContactAction.putValue(Action.NAME, Res.getString("menuitem.add.as.contact"));
-        menu.add(addAsContact);
+        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+	        final JMenuItem addAsContact = new JMenuItem(addContactAction);
+	        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+	        addContactAction.putValue(Action.NAME, Res.getString("menuitem.add.as.contact"));
+	        menu.add(addAsContact);
+        }
 
         final JMenuItem chatMenu = new JMenuItem(chatAction);
         chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
