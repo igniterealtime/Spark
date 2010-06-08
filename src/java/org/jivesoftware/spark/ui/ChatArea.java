@@ -37,6 +37,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -345,6 +346,19 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     /**
+     * Inserts horizontal line
+     */
+    public void insertHorizontalLine() {
+        try {
+            insertComponent( new JSeparator() );
+            insertText("\n");
+        }
+        catch (BadLocationException e) {
+            Log.error("Error message.", e);
+        }
+    }
+
+    /**     
      * Sets the current element to be either bold or not depending
      * on the current state. If the element is currently set as bold,
      * it will be set to false, and vice-versa.

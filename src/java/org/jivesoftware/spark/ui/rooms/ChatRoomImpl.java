@@ -670,7 +670,9 @@ public class ChatRoomImpl extends ChatRoom {
             final Date messageDate = message.getDate();
             getTranscriptWindow().insertHistoryMessage(nickname, messageBody, messageDate);
         }
-
+        if ( 0 < chatTranscript.getMessages().size() ) { // Check if we have history mesages
+            getTranscriptWindow().insertHorizontalLine();
+    }
     }
 
     private boolean isOnline() {
