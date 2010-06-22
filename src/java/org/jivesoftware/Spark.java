@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -170,6 +171,10 @@ public final class Spark {
                    	 EventQueue.invokeLater(new Runnable() {
                   		 public void run() {
                   			try {
+	                   				if (Spark.isWindows()) {
+	    	            				JFrame.setDefaultLookAndFeelDecorated(true);
+	    	            				JDialog.setDefaultLookAndFeelDecorated(true);
+	                   				}
    									UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
    								}
    								catch (UnsupportedLookAndFeelException e) {
@@ -194,11 +199,11 @@ public final class Spark {
                	 EventQueue.invokeLater(new Runnable() {
                		 public void run() {
                			try {
-									UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-								}
-								catch (UnsupportedLookAndFeelException e) {
-									e.printStackTrace();
-								}
+							UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+						}
+						catch (UnsupportedLookAndFeelException e) {
+							e.printStackTrace();
+						}
                		 }
                	 });
                
