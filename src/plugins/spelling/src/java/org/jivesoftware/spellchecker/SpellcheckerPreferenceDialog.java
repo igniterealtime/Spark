@@ -42,7 +42,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 	private JCheckBox autospellcheckingEnabled = new JCheckBox();
 	private JComboBox spellLanguages = new JComboBox();
 	
-	private JPanel spellPanel = new JPanel();
+	private JPanel spellPanel;
 
 	private Locale[] locales;
 	ArrayList<String> languages;
@@ -51,7 +51,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 	{
 		this.languages = languages;
 		locales = Locale.getAvailableLocales();
-		
+		spellPanel = new JPanel();
 		spellPanel.setLayout(new GridBagLayout());
 		
 		spellcheckingEnabled.setText(SpellcheckerResource.getString("preference.spellcheckingEnabled"));
