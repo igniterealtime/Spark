@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.preference.media;
 
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -108,8 +109,18 @@ public class MediaPreferencePanel  extends JPanel {
 		// FMJ
 		RegistryDefaults.registerAll(RegistryDefaults.FMJ | RegistryDefaults.FMJ_NATIVE);
 
-		// Add Device
-		GlobalCaptureDevicePlugger.addCaptureDevices(); 
+		try {
+			// Add Device
+	 		EventQueue.invokeLater(new Runnable() {
+				public void run() {
+						GlobalCaptureDevicePlugger.addCaptureDevices();
+				}
+	 		});
+		}
+		catch(Exception e) {
+			Log.error("Can't load capture device",e);
+		}
+		
 
 		// LOG ALL Devices
 		final Vector<CaptureDeviceInfo> vectorDevices = CaptureDeviceManager.getDeviceList(null);

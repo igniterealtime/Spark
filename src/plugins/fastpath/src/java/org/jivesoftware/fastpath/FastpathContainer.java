@@ -22,9 +22,11 @@ package org.jivesoftware.fastpath;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -40,23 +42,25 @@ public class FastpathContainer extends JPanel {
     private SparkTabbedPane mainPanel;
 
     public FastpathContainer() {
-        setLayout(new GridBagLayout());
 
-        topPanel = new JPanel();
-        mainPanel = new SparkTabbedPane();
+		  setLayout(new GridBagLayout());
+		
+		  topPanel = new JPanel();
+		  mainPanel = new SparkTabbedPane();
+		
+		  add(topPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
+		  add(mainPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 0, 2), 0, 0));
+		
+		  topPanel.setLayout(new BorderLayout());
+		
+		  mainPanel.setBackground(Color.white);
+		  topPanel.setBackground(Color.white);
+		
+		  setBackground(Color.white);
+		
+		  mainPanel.getMainPanel().setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+		  mainPanel.getMainPanel().setBackground(Color.white);
 
-        add(topPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
-        add(mainPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 0, 2), 0, 0));
-
-        topPanel.setLayout(new BorderLayout());
-
-        mainPanel.setBackground(Color.white);
-        topPanel.setBackground(Color.white);
-
-        setBackground(Color.white);
-
-        mainPanel.getMainPanel().setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-        mainPanel.getMainPanel().setBackground(Color.white);
     }
 
     public JPanel getTopPanel() {

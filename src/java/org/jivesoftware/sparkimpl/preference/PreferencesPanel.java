@@ -45,7 +45,9 @@ import java.awt.Insets;
 import java.util.Iterator;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
-    private final JLabel titleLabel = new JLabel();
+
+	private static final long	serialVersionUID	= 1520420979038154046L;
+	private final JLabel titleLabel = new JLabel();
     private final JPanel flowPanel = new JPanel(new BorderLayout());
     private DefaultListModel listModel = new DefaultListModel();
     private JList list = new JList(listModel);

@@ -25,6 +25,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 public class SpellcheckerPlugin implements Plugin
 {
 	private SpellcheckChatRoomListener listener;
+	private SpellcheckerPreference preference;
 	
 	public boolean canShutDown() {
 		return true;
@@ -33,11 +34,12 @@ public class SpellcheckerPlugin implements Plugin
 	public void initialize() {
 		
 		try
-		{	            
-            SpellcheckerPreference preference = SpellcheckManager.getInstance().getSpellcheckerPreference();
-            SparkManager.getPreferenceManager().addPreference(preference);	      
-			listener = new SpellcheckChatRoomListener();			
-			SparkManager.getChatManager().addChatRoomListener(listener);		
+		{	           
+				preference = SpellcheckManager.getInstance().getSpellcheckerPreference();
+				SparkManager.getPreferenceManager().addPreference(preference);	
+
+				listener = new SpellcheckChatRoomListener();			
+				SparkManager.getChatManager().addChatRoomListener(listener);		
 		}
 		catch (Exception e)
 		{

@@ -226,6 +226,7 @@ public final class SparkManager {
      * @return Workspace the spark manager is associated with.
      */
     public static Workspace getWorkspace() {
+   	 
         return Workspace.getInstance();
     }
 

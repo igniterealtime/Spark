@@ -20,6 +20,7 @@
 package org.jivesoftware.spark.util;
 
 
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -137,7 +138,7 @@ public abstract class SwingWorker {
         Runnable doConstruct = new Runnable() {
             public void run() {
                 try {
-                    setValue(construct());
+							setValue(construct());
                 }
                 finally {
                     threadVar.clear();

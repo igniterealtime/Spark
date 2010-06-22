@@ -19,6 +19,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.SwingWorker;
 
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -48,8 +49,19 @@ public class SipPreference implements Preference {
     private SipPreferences preferences;
 
     public SipPreference() {
-        loadFromFile();
-        panel = new SipPreferencePanel();
+   	 try {
+				EventQueue.invokeAndWait(new Runnable() {
+		 				@Override
+		 				public void run() {
+		 					loadFromFile();
+		 		         panel = new SipPreferencePanel();
+		 				}
+		 			});
+ 	    }
+ 	    catch(Exception e){
+ 	   	 e.printStackTrace();
+ 	    }
+        
     }
 
     public void setData(SipPreferences sipPreferences) {

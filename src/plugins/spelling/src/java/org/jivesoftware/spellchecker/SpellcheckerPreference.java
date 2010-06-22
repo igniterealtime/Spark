@@ -33,9 +33,23 @@ public class SpellcheckerPreference implements Preference
 	private SpellcheckerPreferenceDialog dialog;
 	private SpellcheckerPreferences preferences;
 
-	public SpellcheckerPreference(ArrayList<String> languages) {
-		dialog = new SpellcheckerPreferenceDialog(languages);
-		preferences = new SpellcheckerPreferences();
+	public SpellcheckerPreference(final ArrayList<String> languages) {
+		try
+		{
+//			EventQueue.invokeAndWait(new Runnable() {
+//
+//				@Override
+//				public void run() {
+					dialog = new SpellcheckerPreferenceDialog(languages);
+					preferences = new SpellcheckerPreferences();
+//				}
+//			});
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
 	}
 	
 	public SpellcheckerPreferences getPreferences()

@@ -88,7 +88,8 @@ public class SparkTabbedPane extends JPanel {
 		this(JTabbedPane.TOP);
 	}
 
-	public SparkTabbedPane(int type) {
+	public SparkTabbedPane(final int type) {
+	   	
 		pane = new JTabbedPane(type);
 		pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 		
@@ -107,6 +108,7 @@ public class SparkTabbedPane extends JPanel {
 		
 		closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
 		closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_DARK_X_IMAGE);
+
 	}
 	
 	public SparkTab getTabContainingComponent(Component component) {
@@ -129,7 +131,9 @@ public class SparkTabbedPane extends JPanel {
 		final SparkTab sparktab = new SparkTab(this, component);
 
 		TabPanel tabpanel = new TabPanel(sparktab, title, icon);
+		System.out.println(title + icon + component + tip);
 		pane.addTab(null, null, sparktab, tip);
+		
 		pane.setTabComponentAt(pane.getTabCount() - 1, tabpanel);
 		fireTabAdded(sparktab, component, getTabPosition(sparktab));
 

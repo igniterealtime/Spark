@@ -668,4 +668,11 @@ public final class GraphicUtils {
 
         return bi;
     }
+
+
+	public static void centerWindowOnScreen(Runnable runnable)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

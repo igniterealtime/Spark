@@ -60,6 +60,7 @@ import javax.swing.event.ChangeListener;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -82,7 +83,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
 	private static final long serialVersionUID = -4249017716988031394L;
 
-	private JTabbedPane tabbedPane = new JTabbedPane();
+	private JTabbedPane tabbedPane;
 
     private boolean loaded = false;
 
@@ -90,36 +91,45 @@ public class PluginViewer extends JPanel implements Plugin {
 
     private JProgressBar progressBar;
 
-    private final JPanel installedPanel = new JPanel();
-    private final JPanel availablePanel = new JPanel();
+    private JPanel installedPanel;
+    private JPanel availablePanel;
 
     public PluginViewer() {
-        setLayout(new GridBagLayout());
 
-        installedPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-        installedPanel.setBackground(Color.white);
-
-        availablePanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-        availablePanel.setBackground(Color.white);
-
-        // Add TabbedPane
-        add(tabbedPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
-        // Add Tabs
-        tabbedPane.addTab(Res.getString("tab.installed.plugins"), new JScrollPane(installedPanel));
-        tabbedPane.addTab(Res.getString("tab.available.plugins"), new JScrollPane(availablePanel));
-
-
-        loadInstalledPlugins();
-
-        tabbedPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent changeEvent) {
-                if (tabbedPane.getSelectedIndex() == 1) {
-                    loadAvailablePlugins();
-                    loaded = true;
-                }
-            }
-        });
+   		EventQueue.invokeLater(new Runnable() {
+   			public void run() {
+   				
+						tabbedPane = new JTabbedPane();
+						installedPanel = new JPanel();
+						availablePanel = new JPanel();
+					   setLayout(new GridBagLayout());
+					
+					   installedPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
+					   installedPanel.setBackground(Color.white);
+					
+					   availablePanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
+					   availablePanel.setBackground(Color.white);
+					
+					   // Add TabbedPane
+					   add(tabbedPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+					
+					   // Add Tabs
+					   tabbedPane.addTab(Res.getString("tab.installed.plugins"), new JScrollPane(installedPanel));
+					   tabbedPane.addTab(Res.getString("tab.available.plugins"), new JScrollPane(availablePanel));
+					
+					
+					   loadInstalledPlugins();
+					
+					   tabbedPane.addChangeListener(new ChangeListener() {
+			            public void stateChanged(ChangeEvent changeEvent) {
+			                if (tabbedPane.getSelectedIndex() == 1) {
+			                    loadAvailablePlugins();
+			                    loaded = true;
+			                }
+			            }
+			        });
+   			}
+   		});
     }
 
     private void loadInstalledPlugins() {

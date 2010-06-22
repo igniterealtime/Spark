@@ -10,33 +10,8 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
-import org.jivesoftware.sparkplugin.components.CallPanelButton;
-import org.jivesoftware.sparkplugin.components.EndCallButton;
-import org.jivesoftware.sparkplugin.components.RedialButton;
-import org.jivesoftware.sparkplugin.ui.PhonePad;
-import org.jivesoftware.sparkplugin.ui.components.ControlPanel;
-import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
-import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
-import net.java.sipmack.sip.Call;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import net.java.sipmack.softphone.SoftPhoneManager.CallRoomState;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -52,6 +27,33 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import net.java.sipmack.sip.Call;
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.softphone.SoftPhoneManager;
+import net.java.sipmack.softphone.SoftPhoneManager.CallRoomState;
+
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+import org.jivesoftware.sparkplugin.components.CallPanelButton;
+import org.jivesoftware.sparkplugin.components.EndCallButton;
+import org.jivesoftware.sparkplugin.components.RedialButton;
+import org.jivesoftware.sparkplugin.ui.PhonePad;
+import org.jivesoftware.sparkplugin.ui.components.ControlPanel;
+import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
+import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
 
 
 /**
@@ -140,7 +142,9 @@ public class NonRosterPanel extends PhonePanel {
         // Add Control Panel
         final JPanel mainPanel = new JPanel(new GridBagLayout()) {
 
-            public Dimension getPreferredSize() {
+			private static final long	serialVersionUID	= 1571929852761037052L;
+
+				public Dimension getPreferredSize() {
                 final Dimension dim = super.getPreferredSize();
                 dim.height = 100;
                 return dim;
@@ -168,7 +172,9 @@ public class NonRosterPanel extends PhonePanel {
             final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
 
             final JLabel outputIcon = new JLabel(PhoneRes.getImageIcon("SPEAKER_IMAGE"));
-            outputPanel.add(mixer.getPrefferedMasterVolume(), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
+            Component component = mixer.getPrefferedMasterVolume();
+            if (component != null)
+            	outputPanel.add(component, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
             outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
             mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 5), 0, 0));
         }

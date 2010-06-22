@@ -26,6 +26,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -36,12 +37,14 @@ import org.jivesoftware.spark.util.log.Log;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -58,16 +61,28 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 public class JabberBrowser implements Plugin {
-    private JLabel addressLabel = new JLabel();
-    private JComboBox addressField = new JComboBox();
+    private JLabel addressLabel;
+    private JComboBox addressField;
     private XMPPConnection con;
     private JPanel browsePanel;
 
     public JabberBrowser() {
-        this.con = SparkManager.getConnection();
+   	 
+   	 this.con = SparkManager.getConnection();
+   	 EventQueue.invokeLater(new Runnable() {
 
-        addressField.setEditable(true);
-        addressField.addItem(con.getHost());
+   		 @Override
+   		 public void run() {
+   			 addressLabel = new JLabel();
+   			 addressField = new JComboBox();
+				
+
+   			 addressField.setEditable(true);
+   			 addressField.addItem(con.getHost());
+   		 }
+			 
+   	 });
+
     }
 
     public void display() {

@@ -49,6 +49,7 @@ import javax.swing.KeyStroke;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -78,11 +79,19 @@ public class ScratchPadPlugin implements Plugin {
     private static final String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
     private SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
     private static List<TaskUI> taskList = new ArrayList<TaskUI>();
-    private static JPanel panel_events = new JPanel();
-    private static JPanel mainPanel = new JPanel();
+    private static JPanel panel_events;
+    private static JPanel mainPanel;
     private static JFrame frame;
 
     public void initialize() {
+   	 
+ 		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				panel_events = new JPanel();
+				mainPanel = new JPanel();
+			}
+ 		});
+   	 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
 

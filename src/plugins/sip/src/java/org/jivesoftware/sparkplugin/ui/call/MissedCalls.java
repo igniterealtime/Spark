@@ -12,6 +12,8 @@ package org.jivesoftware.sparkplugin.ui.call;
 
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+
+import net.java.sipmack.common.Log;
 import net.java.sipmack.softphone.SoftPhoneManager;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
@@ -21,6 +23,7 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -57,6 +60,7 @@ public class MissedCalls implements ActionListener {
     private JPanel gui;
     private RolloverButton callBackButton;
     private RolloverButton deleteButton;
+    private String callID;
 
     public MissedCalls() {
         model = new DefaultListModel();
@@ -125,28 +129,39 @@ public class MissedCalls implements ActionListener {
      * @param callerID the callerID
      * @param number   the number the user dialed from.
      */
-    public void addMissedCall(String callerID, String number) {
+    public void addMissedCall(String callerID, final String number) {
+   	  callID = callerID;
         VCard vcard = SparkManager.getVCardManager().searchPhoneNumber(number);
         if (vcard != null) {
             String firstName = vcard.getFirstName();
             String lastName = vcard.getLastName();
             if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                callerID = firstName + " " + lastName;
+            	callID = firstName + " " + lastName;
             }
             else if (ModelUtil.hasLength(firstName)) {
-                callerID = firstName;
+            	callID = firstName;
             }
         }
 
-        final MissedCall missedCall = new MissedCall(callerID, new Date(), number);
-        model.insertElementAt(missedCall, 0);
-
-        if (toaster == null || !list.isShowing()) {
-            toaster = new SparkToaster();
-            toaster.setToasterHeight(230);
-            toaster.setToasterWidth(300);
-            toaster.setDisplayTime(500000000);
-            toaster.showToaster(PhoneRes.getIString("phone.missedcalls"), gui);
+        try {
+      	  EventQueue.invokeAndWait(new Runnable(){
+      		  public void run()
+      		  {
+      			  final MissedCall missedCall = new MissedCall(callID, new Date(), number);
+      	        model.insertElementAt(missedCall, 0);
+      	        
+      	        if (toaster == null || !list.isShowing()) {
+      	      	  toaster = new SparkToaster();
+      	      	  toaster.setToasterHeight(230);
+      	      	  toaster.setToasterWidth(300);
+      	      	  toaster.setDisplayTime(500000000);
+      	      	  toaster.showToaster(PhoneRes.getIString("phone.missedcalls"), gui);
+      	        }
+      		  }
+      	  });
+        }
+        catch(Exception e) {
+      	  Log.error(e);
         }
     }
 
@@ -155,7 +170,9 @@ public class MissedCalls implements ActionListener {
      * Represents a single entry into the phone history list.
      */
     private class MissedCall extends JPanel {
-        private String number;
+
+		private static final long	serialVersionUID	= -6155295091292349158L;
+		private String number;
 
         public MissedCall(String title, Date time, String number) {
             setLayout(new GridBagLayout());
@@ -215,8 +232,9 @@ public class MissedCalls implements ActionListener {
      */
     private static class MissedCallRenderer extends JPanel implements ListCellRenderer {
 
+		private static final long	serialVersionUID	= -3128542669141396537L;
 
-        public Component getListCellRendererComponent(JList list,
+		public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
                                                       boolean isSelected,

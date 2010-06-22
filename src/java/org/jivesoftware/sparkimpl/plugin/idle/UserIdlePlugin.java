@@ -150,14 +150,14 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
             @Override
             protected void dispatchEvent(AWTEvent event) {
                 if (event instanceof KeyEvent) {
-			counter = 0;
-			if (hasChanged) {
-				setOnline();
-				hasChanged = false;
-			}
-		    }
-		    super.dispatchEvent(event);
-		}
+						counter = 0;
+						if (hasChanged) {
+							setOnline();
+							hasChanged = false;
+						}
+             }
+             super.dispatchEvent(event);
+         }
 	    });
 	}
 }

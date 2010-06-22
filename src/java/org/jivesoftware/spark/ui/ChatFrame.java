@@ -56,13 +56,12 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private JMenuBar chatWindowBar;
     private JMenu optionMenu; 
     private JCheckBoxMenuItem alwaysOnTopItem;
-    private ChatFrame chatFrame;
+    private ChatFrame chatFrame = this;
     /**
      * Creates default ChatFrame.
      */
     public ChatFrame() {
 	
-	chatFrame = this;
 	chatWindowBar = new JMenuBar();
 	optionMenu = new JMenu();
 	ResourceUtils.resButton(optionMenu, Res.getString("menuitem.chatframe.option"));
@@ -107,6 +106,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         else {
             setBounds(settings.getChatFrameX(), settings.getChatFrameY(), settings.getChatFrameWidth(), settings.getChatFrameHeight());
         }
+
 
         addWindowFocusListener(this);
 
@@ -161,6 +161,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
             }
         });
     }
+   	
 
     public void windowGainedFocus(WindowEvent e) {
         focused = true;

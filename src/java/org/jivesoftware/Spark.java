@@ -22,6 +22,7 @@
 package org.jivesoftware;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
@@ -32,15 +33,15 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFeel;
 
-import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
@@ -166,8 +167,16 @@ public final class Spark {
                         UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
                     }
                     else {
-                        UIManager.setLookAndFeel(new SyntheticaBlueMoonLookAndFeel());
-                        SyntheticaLookAndFeel.setFont("Dialog", 11);
+                   	 EventQueue.invokeLater(new Runnable() {
+                  		 public void run() {
+                  			try {
+   									UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+   								}
+   								catch (UnsupportedLookAndFeelException e) {
+   									e.printStackTrace();
+   								}
+                  		 }
+                  	 });
                     }
                 }
                 catch (Exception e) {
@@ -182,7 +191,17 @@ public final class Spark {
                     UIManager.setLookAndFeel(classname);
                 }
                 else {
-                    UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+               	 EventQueue.invokeLater(new Runnable() {
+               		 public void run() {
+               			try {
+									UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+								}
+								catch (UnsupportedLookAndFeelException e) {
+									e.printStackTrace();
+								}
+               		 }
+               	 });
+               
                 }
             }
 

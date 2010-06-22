@@ -116,14 +116,15 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     public static MainWindow getInstance() {
         // Synchronize on LOCK to ensure that we don't end up creating
         // two singletons.
+
+   	 
         synchronized (LOCK) {
             if (null == singleton) {
-                MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
-                singleton = controller;
-                return controller;
+            	MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
+            	singleton = controller;         		
             }
         }
-        return singleton;
+        return singleton;   	 
     }
 
 
@@ -135,9 +136,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @param icon  the icon used in the frame.
      */
     private MainWindow(String title, ImageIcon icon) {
-
+   	 
+ 	   
         // Initialize and dock the menus
         buildMenu();
+        
+        
 
         // Add Workspace Container
         getContentPane().setLayout(new BorderLayout());
@@ -158,6 +162,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         setTitle(title + " - " + SparkManager.getSessionManager().getUsername());
         setIconImage(icon.getImage());
+        
+	   	
 
         // Setup WindowListener to be the proxy to the actual window listener
         // which cannot normally be used outside of the Window component because
@@ -359,8 +365,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Setup the Main Toolbar with File, Tools and Help.
      */
     private void buildMenu() {
+   	 
         // setup file menu
-        JMenuItem exitMenuItem = new JMenuItem();
+        final JMenuItem exitMenuItem = new JMenuItem();
 
         // Setup ResourceUtils
         ResourceUtils.resButton(connectMenu, "&" + Default.getString(Default.APPLICATION_NAME));
@@ -410,13 +417,16 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         
         
         connectMenu.addSeparator();
+        
+        //EventQueue.invokeLater(new Runnable() {
+   	   //	public void run() {
 
         JMenuItem logoutMenuItem = new JMenuItem();
         ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
         logoutMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logout(false);
-            }
+           }
         });
 
         JMenuItem logoutWithStatus = new JMenuItem();
@@ -438,7 +448,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
 
 
-        Action updateAction = new AbstractAction() {
+        final Action updateAction = new AbstractAction() {
 			private static final long serialVersionUID = -2159350387773310325L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -450,7 +460,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         updateAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
 
         // Add Error Dialog Viewer
-        Action viewErrors = new AbstractAction() {
+        final Action viewErrors = new AbstractAction() {
 			private static final long serialVersionUID = -420926784631340112L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -479,17 +489,22 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         };
 
+        //EventQueue.invokeLater(new Runnable() {
+    	  // 	public void run() {
+        
         if (!Spark.isCustomBuild()) {
             viewHelpGuideAction.putValue(Action.NAME, Res.getString("menuitem.user.guide"));
             viewHelpGuideAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
             helpMenu.add(viewHelpGuideAction);
             helpMenu.add(helpMenuItem);
         }
-
+        
         // Build Help Menu
         helpMenu.add(updateAction);
         helpMenu.addSeparator();
         helpMenu.add(viewErrors);
+  	   	
+        
 
 
         helpMenu.add(menuAbout);
@@ -499,6 +514,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
         ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
         ResourceUtils.resButton(helpMenuItem, Res.getString("menuitem.online.help"));
+        
+  	   //	}
+       // });
 
         // Register shutdown with the exit menu.
         exitMenuItem.addActionListener(new AbstractAction() {

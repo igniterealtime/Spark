@@ -21,11 +21,13 @@ package org.jivesoftware.fastpath;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -66,21 +68,40 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     private static AgentSession agentSession;
     private static Workpane litWorkspace;
     private String componentAddress;
-    private static final BackgroundPane mainPanel = new BackgroundPane();
-    private static FastpathContainer container = new FastpathContainer();
-    private final JLabel workgroupLabel = new JLabel(FpRes.getString("workgroup"));
-    private final JComboBox comboBox = new JComboBox();
-    private final JButton joinButton = new JButton(FpRes.getString("join"), null);
-    private final RolloverButton logoutButton = new RolloverButton(FpRes.getString("logout"), null);
+    private static BackgroundPane mainPanel;
+    private static FastpathContainer container;
+    private JLabel workgroupLabel;
+    private JComboBox comboBox;
+    private JButton joinButton;
+    private RolloverButton logoutButton;
     private static boolean wasConnected;
 
     private FastpathTabHandler fastpathTabHandler;
 
     public void initialize() {
 
-        // Initialize tab handler for Fastpath chats.
-        fastpathTabHandler = new FastpathTabHandler();
+   	 EventQueue.invokeLater(new Runnable() {
 
+			@Override
+			public void run() {
+				  container = new FastpathContainer();
+				  workgroupLabel = new JLabel(FpRes.getString("workgroup"));
+				  comboBox = new JComboBox();
+				  joinButton = new JButton(FpRes.getString("join"), null);
+				  logoutButton = new RolloverButton(FpRes.getString("logout"), null);
+		        // Initialize tab handler for Fastpath chats.
+		        fastpathTabHandler = new FastpathTabHandler();
+		        mainPanel = new BackgroundPane();
+			}
+   		 
+   	 });
+   	 
+
+
+
+
+			
+			
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
             Iterator<DiscoverItems.Item> iter = items.getItems();

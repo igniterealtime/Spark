@@ -26,11 +26,13 @@ import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 import javax.swing.JOptionPane;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -140,33 +142,44 @@ public class CallManager implements InterlocutorListener {
     }
 
     private void showIncomingCall(final InterlocutorUI ic) {
-        final SparkToaster toasterManager = new SparkToaster();
-        toasters.put(ic, toasterManager);
-        final IncomingCallUI incomingCall = new IncomingCallUI(ic);
-        toasterManager.setToasterHeight(230);
-        toasterManager.setToasterWidth(300);
-        toasterManager.setDisplayTime(500000000);
+   	 
+   	 try {
+	   	 EventQueue.invokeAndWait(new Runnable(){
+	   		 public void run()
+	   		 {
+	   			 final SparkToaster toasterManager = new SparkToaster();
+	   			 toasters.put(ic, toasterManager);
+	   			 final IncomingCallUI incomingCall = new IncomingCallUI(ic);
+	   			 toasterManager.setToasterHeight(230);
+	   			 toasterManager.setToasterWidth(300);
+	   			 toasterManager.setDisplayTime(500000000);
+	   			 
+	   			 toasterManager.showToaster(PhoneRes.getIString("phone.incomingcall"), incomingCall);
+	   			 toasterManager.hideTitle();
+	   			 
+	   			 toasterManager.setHidable(false);
+	   			 incomingCall.getAcceptButton().addActionListener(new ActionListener() {
+	   				 public void actionPerformed(ActionEvent e) {
+	   					 SparkManager.getMainWindow().toFront();
+	   					 closeToaster(ic);
+	   					 SoftPhoneManager.getInstance().getDefaultGuiManager().answer();
+	   					 
+	   				 }
+	   			 });
+	   			 incomingCall.getRejectButton().addActionListener(new ActionListener() {
+	   				 public void actionPerformed(ActionEvent e) {
+	   					 closeToaster(ic);
+	   					 SoftPhoneManager.getInstance().getDefaultGuiManager().hangup(ic);
+	   				 }
+	   			 });
+	   		 }
+	   	 });
+   	 }
+   	 catch(Exception e) {
+   		 Log.error(e);
+   	 }
 
-        toasterManager.showToaster(PhoneRes.getIString("phone.incomingcall"), incomingCall);
-        toasterManager.hideTitle();
 
-        toasterManager.setHidable(false);
-
-        incomingCall.getAcceptButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.getMainWindow().toFront();
-                closeToaster(ic);
-                SoftPhoneManager.getInstance().getDefaultGuiManager().answer();
-
-            }
-        });
-
-        incomingCall.getRejectButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                closeToaster(ic);
-                SoftPhoneManager.getInstance().getDefaultGuiManager().hangup(ic);
-            }
-        });
     }
 
     private void showOutgoingCall(final InterlocutorUI ic) {
@@ -239,48 +252,58 @@ public class CallManager implements InterlocutorListener {
         }
     }
 
-    private void showCallAnswered(InterlocutorUI interlocutorUI) {
+    private void showCallAnswered(final InterlocutorUI interlocutorUI) {
         final ChatManager chatManager = SparkManager.getChatManager();
-
-        String phoneNumber = interlocutorUI.getCall().getNumber();
-        phoneNumber = SoftPhoneManager.getNumbersFromPhone(phoneNumber);
-
-        PhonePanel panel = calls.get(phoneNumber);
-        ChatRoom chatRoom = null;
-        if (panel == null) {
-
-            // Let's check to see if the Contact Exists
-            final VCard vcard = SparkManager.getVCardManager().searchPhoneNumber(phoneNumber);
-            if (vcard != null) {
-                panel = new RosterMemberPanel();
-                panel.setInterlocutorUI(interlocutorUI);
-
-                String jid = vcard.getJabberId();
-                String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-                chatRoom.getSplitPane().setRightComponent(panel);
-                chatRoom.getSplitPane().setResizeWeight(.80);
-                chatRoom.getSplitPane().setDividerSize(5);
-
-                chatManager.getChatContainer().activateChatRoom(chatRoom);
-            } else {
-                panel = new NonRosterPanel();
-                panel.setInterlocutorUI(interlocutorUI);
-                chatManager.getChatContainer().addContainerComponent(panel);
-                chatManager.getChatContainer().activateComponent(panel);
-            }
-
-            calls.put(phoneNumber, panel);
-        } else {
-            panel.setInterlocutorUI(interlocutorUI);
+        try {
+        
+	        EventQueue.invokeAndWait(new Runnable(){
+	      	  public void run()
+	      	  {
+			        String phoneNumber = interlocutorUI.getCall().getNumber();
+			        phoneNumber = SoftPhoneManager.getNumbersFromPhone(phoneNumber);
+			
+			        PhonePanel panel = calls.get(phoneNumber);
+			        ChatRoom chatRoom = null;
+			        if (panel == null) {
+			
+			            // Let's check to see if the Contact Exists
+			            final VCard vcard = SparkManager.getVCardManager().searchPhoneNumber(phoneNumber);
+			            if (vcard != null) {
+			                panel = new RosterMemberPanel();
+			                panel.setInterlocutorUI(interlocutorUI);
+			
+			                String jid = vcard.getJabberId();
+			                String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+			                chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
+			                chatRoom.getSplitPane().setRightComponent(panel);
+			                chatRoom.getSplitPane().setResizeWeight(.80);
+			                chatRoom.getSplitPane().setDividerSize(5);
+			
+			                chatManager.getChatContainer().activateChatRoom(chatRoom);
+			            } else {
+			                panel = new NonRosterPanel();
+			                panel.setInterlocutorUI(interlocutorUI);
+			                chatManager.getChatContainer().addContainerComponent(panel);
+			                chatManager.getChatContainer().activateComponent(panel);
+			            }
+			
+			            calls.put(phoneNumber, panel);
+			        } else {
+			            panel.setInterlocutorUI(interlocutorUI);
+			        }
+			
+			        if (chatRoom != null) {
+			            SoftPhoneManager.getInstance().addCallSession(chatRoom, SoftPhoneManager.CallRoomState.inCall);
+			            SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+			        } else {
+			            SoftPhoneManager.getInstance().addCallSession(panel, SoftPhoneManager.CallRoomState.inCall);
+			            SparkManager.getChatManager().notifySparkTabHandlers(panel);
+			        }
+	      	  }
+	        });
         }
-
-        if (chatRoom != null) {
-            SoftPhoneManager.getInstance().addCallSession(chatRoom, SoftPhoneManager.CallRoomState.inCall);
-            SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
-        } else {
-            SoftPhoneManager.getInstance().addCallSession(panel, SoftPhoneManager.CallRoomState.inCall);
-            SparkManager.getChatManager().notifySparkTabHandlers(panel);
+        catch(Exception e){
+      	  Log.error(e);
         }
     }
 

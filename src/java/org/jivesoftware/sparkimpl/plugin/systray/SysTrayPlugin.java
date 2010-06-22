@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.systray;
 
+import java.awt.EventQueue;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.Window;
@@ -26,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -53,19 +55,19 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotificationListener {
 	private JPopupMenu popupMenu = new JPopupMenu();
-
-	private final JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
-	private final JMenuItem minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
-	private final JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
-	private final JMenu statusMenu = new JMenu(Res.getString("menuitem.status"));
-	private final JMenuItem logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
+	
+	private JMenuItem openMenu;
+	private JMenuItem minimizeMenu;
+	private JMenuItem exitMenu;
+	private JMenu statusMenu;
+	private JMenuItem logoutMenu;
 
 	private LocalPreferences pref = SettingsManager.getLocalPreferences();
 	private ImageIcon availableIcon;
 	private ImageIcon dndIcon;
 	private ImageIcon awayIcon;
-    private ImageIcon offlineIcon;
-    private ImageIcon connectingIcon;
+   private ImageIcon offlineIcon;
+   private ImageIcon connectingIcon;
 	private ImageIcon newMessageIcon;
 	private ImageIcon typingIcon;
 	private TrayIcon trayIcon;
@@ -75,6 +77,15 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 	}
 
 	public void initialize() {
+
+			openMenu = new JMenuItem(Res.getString("menuitem.open"));
+			minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
+			exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+			statusMenu = new JMenu(Res.getString("menuitem.status"));
+			logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));				  
+
+
+		
 		SystemTray tray = SystemTray.getSystemTray();
 
 		SparkManager.getNativeManager().addNativeHandler(this);

@@ -37,25 +37,10 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
  */
 
 
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.Border;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -71,7 +56,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.Border;
+
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Class to show tosters in multiplatform
@@ -323,7 +324,17 @@ public class SparkToaster {
                 int posx = screenRect.width - toasterWidth - 1;
 
                 toaster.setLocation(posx, screenHeight);
-                toaster.setVisible(true);
+                try {
+               	 EventQueue.invokeAndWait(new Runnable(){
+               		 public void run() {
+               			 toaster.setVisible(true);
+               		 }
+               	 });
+                }
+                catch(Exception e)
+                {
+               	 Log.error(e);
+                }
                 if (useAlwaysOnTop) {
                     toaster.setAlwaysOnTop(true);
                 }
@@ -403,13 +414,13 @@ public class SparkToaster {
      * @param title Title to use in toaster popup
      * @param comp Component to add to toaster popup
      */
-    public void showToaster(String title, Component comp) {
-        SingleToaster singleToaster = new SingleToaster();
-        mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 0, 0, 0), 0, 0));
-
-        titleLabel.setTitle(title);
-        singleToaster.animate();
-        window = singleToaster;
+    public void showToaster(final String title, final Component comp) {
+			SingleToaster singleToaster = new SingleToaster();
+			mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 0, 0, 0), 0, 0));
+			
+			titleLabel.setTitle(title);
+			singleToaster.animate();
+			window = singleToaster;
     }
 
     public void showToaster(Icon icon) {
@@ -640,7 +651,7 @@ public class SparkToaster {
 		private JLabel label;
         private RolloverButton closeButton;
 
-        public TitleLabel(String text, boolean showCloseIcon) {
+        public TitleLabel(String text, final boolean showCloseIcon) {
             setLayout(new GridBagLayout());
             label = new JLabel(text);
             label.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -649,10 +660,10 @@ public class SparkToaster {
 
             add(label, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-            closeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
-            if (showCloseIcon) {
-                add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            }
+      		closeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
+      		if (showCloseIcon) {
+      			add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+      		}
 
             setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
         }

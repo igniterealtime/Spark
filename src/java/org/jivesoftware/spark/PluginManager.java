@@ -34,12 +34,14 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 
 import javax.swing.SwingUtilities;
 
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -63,12 +65,12 @@ public class PluginManager implements MainWindowListener {
     private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<PublicPlugin>();
     private static PluginManager singleton;
     private static final Object LOCK = new Object();
-
     /**
      * The root Plugins Directory.
      */
     public static File PLUGINS_DIRECTORY = new File(Spark.getBinDirectory().getParent(), "plugins").getAbsoluteFile();
 
+    private Plugin pluginClass;
     private PluginClassLoader classLoader;
 
 
@@ -308,24 +310,29 @@ public class PluginManager implements MainWindowListener {
             Log.error(e);
         }
         List plugins = pluginXML.selectNodes("/plugins/plugin");
-        for (Object plugin1 : plugins) {
-            String clazz = null;
-            String name;
-            try {
-                Element plugin = (Element) plugin1;
+        for (final Object plugin1 : plugins) {
 
+          		EventQueue.invokeLater(new Runnable() {
+         			public void run() {
+                     String clazz = null;
+                     String name;
+                     try {
+                         Element plugin = (Element) plugin1;
 
-                name = plugin.selectSingleNode("name").getText();
-                clazz = plugin.selectSingleNode("class").getText();
+                         name = plugin.selectSingleNode("name").getText();
+                         clazz = plugin.selectSingleNode("class").getText();
+                         Plugin pluginClass = (Plugin) Class.forName(clazz).newInstance();
+                         Log.debug(name + " has been loaded. Internal plugin.");
 
-                Plugin pluginClass = (Plugin) Class.forName(clazz).newInstance();
-                Log.debug(name + " has been loaded. Internal plugin.");
+                         registerPlugin(pluginClass);
+                     }
+                     catch (Throwable ex) {
+                         Log.error("Unable to load plugin " + clazz + ".", ex);
+                     }
+         			}
+          		});
 
-                registerPlugin(pluginClass);
-            }
-            catch (Throwable ex) {
-                Log.error("Unable to load plugin " + clazz + ".", ex);
-            }
+               
         }
     }
 
@@ -397,23 +404,30 @@ public class PluginManager implements MainWindowListener {
      * @see Plugin
      */
     public void initializePlugins() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                for (Plugin plugin1 : plugins) {
-                    long start = System.currentTimeMillis();
-                    Log.debug("Trying to initialize " + plugin1);
-                    try {
-                        plugin1.initialize();
-                    }
-                    catch (Throwable e) {
-                        Log.error(e);
-                    }
+      try
+		{
+			SwingUtilities.invokeAndWait(new Runnable() {
+			      public void run() {
+			          for (Plugin plugin1 : plugins) {
+			              long start = System.currentTimeMillis();
+			              Log.debug("Trying to initialize " + plugin1);
+			              try {
+			                  plugin1.initialize();
+			              }
+			              catch (Throwable e) {
+			                  Log.error(e);
+			              }
 
-                    long end = System.currentTimeMillis();
-                    Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
-                }
-            }
-        });
+			              long end = System.currentTimeMillis();
+			              Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
+			          }
+			      }
+			  });
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
     }
 
@@ -541,18 +555,30 @@ public class PluginManager implements MainWindowListener {
      * @throws Exception thrown if there was a problem loading the plugin.
      */
     public void addPlugin(PublicPlugin plugin) throws Exception {
-        expandNewPlugins();
+			expandNewPlugins();
 
-        URL url = new URL(plugin.getDownloadURL());
-        String name = URLFileSystem.getName(url);
-        File pluginDownload = new File(PluginManager.PLUGINS_DIRECTORY, name);
+			URL url = new URL(plugin.getDownloadURL());
+	      String name = URLFileSystem.getName(url);
+	      File pluginDownload = new File(PluginManager.PLUGINS_DIRECTORY, name);
 
-        ((PluginClassLoader)getParentClassLoader()).addPlugin(pluginDownload);
+	      ((PluginClassLoader)getParentClassLoader()).addPlugin(pluginDownload);
+	        
+			pluginClass = loadPublicPlugin(pluginDownload);
+				
+     		try {
+				EventQueue.invokeAndWait(new Runnable() {
+		 				@Override
+		 				public void run() {
 
-        Plugin pluginClass = loadPublicPlugin(pluginDownload);
-
-        Log.debug("Trying to initialize " + pluginClass);
-        pluginClass.initialize();
+		 					Log.debug("Trying to initialize " + pluginClass);
+		 					pluginClass.initialize();
+		 				}
+		 			});
+	  	   }
+	  	   catch(Exception e){
+	  	   	 Log.error(e);
+	  	   }
+        
     }
 
     /**

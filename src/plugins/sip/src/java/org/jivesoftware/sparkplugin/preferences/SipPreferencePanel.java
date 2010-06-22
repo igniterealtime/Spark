@@ -12,7 +12,9 @@ package org.jivesoftware.sparkplugin.preferences;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,7 +38,9 @@ import javax.swing.JTextField;
 
 public class SipPreferencePanel extends JPanel {
 
-    private JPanel generalPanel = new JPanel();
+	private static final long	serialVersionUID	= 3514377990815313963L;
+
+	private JPanel generalPanel = new JPanel();
 
     private JPanel networkPanel = new JPanel();
 
@@ -73,8 +77,8 @@ public class SipPreferencePanel extends JPanel {
      * Constructor invokes UI setup.
      */
     public SipPreferencePanel() {
-        // Build the UI
-        createUI();
+			// Build the UI
+		   createUI();
     }
 
     private void createUI() {

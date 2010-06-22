@@ -190,7 +190,7 @@ public class SparkTransferManager {
                 try {
 					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					Log.error("Could not find file-browser");
 				}
             }
         });
@@ -248,7 +248,7 @@ public class SparkTransferManager {
                 try {
 					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					Log.error("Could not find file-browser");
 				}
             }
         });

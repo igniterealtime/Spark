@@ -10,11 +10,14 @@
 
 package org.jivesoftware.sparkplugin;
 
-import org.jivesoftware.sparkplugin.ui.ContactDialControl;
-import org.jivesoftware.sparkplugin.ui.RegistrationStatusPanel;
-import org.jivesoftware.sparkplugin.ui.TelephoneTextField;
-import org.jivesoftware.sparkplugin.ui.call.SoftPhoneTabHandler;
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.util.TimerTask;
+
+import javax.sip.message.Request;
+import javax.swing.UIManager;
+
 import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.SipRegisterStatus;
 import net.java.sipmack.sip.event.CallRejectedEvent;
@@ -25,22 +28,20 @@ import net.java.sipmack.softphone.SoftPhoneManager;
 import net.java.sipmack.softphone.VoiceMail;
 import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
+
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
-
-import javax.sip.message.Request;
-import javax.swing.UIManager;
-
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.util.TimerTask;
+import org.jivesoftware.sparkplugin.ui.ContactDialControl;
+import org.jivesoftware.sparkplugin.ui.RegistrationStatusPanel;
+import org.jivesoftware.sparkplugin.ui.TelephoneTextField;
+import org.jivesoftware.sparkplugin.ui.call.SoftPhoneTabHandler;
 
 /**
  * Title: Spark Phone
@@ -68,10 +69,11 @@ public class SoftPhonePlugin implements Plugin, SoftPhoneListener {
      * Configuration from VCard and Instantiate a SoftPhoneManager
      */
     public void initialize() {
-        final SwingWorker initializeThread = new SwingWorker() {
+   	 final SwingWorker initializeThread = new SwingWorker() {
             public Object construct() {
-                PhoneManager.getInstance();
+  					 PhoneManager.getInstance();
                 softPhone = SoftPhoneManager.getInstance();
+                
                 return true;
             }
 
@@ -83,7 +85,7 @@ public class SoftPhonePlugin implements Plugin, SoftPhoneListener {
                 }
             }
         };
-
+  		 
         initializeThread.start();
     }
 

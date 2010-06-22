@@ -79,7 +79,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		
 		setLayout(new VerticalFlowLayout());
 		spellPanel.setBorder(BorderFactory.createTitledBorder(SpellcheckerResource.getString("title.spellchecker")));
-        add(spellPanel);
+      add(spellPanel);
 	}
 	
 	public void updateUI(boolean enable)
@@ -103,7 +103,10 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 	}
 	
 	public String getSelectedLanguage() {
-		return languages.get(spellLanguages.getSelectedIndex());
+		if(spellLanguages.getSelectedIndex()>-1)
+			return languages.get(spellLanguages.getSelectedIndex());
+		else
+			return "";
 	}
 	
 	public void setSelectedLanguage(String language) {

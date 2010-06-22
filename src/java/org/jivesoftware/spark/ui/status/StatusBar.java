@@ -82,12 +82,14 @@ public class StatusBar extends JPanel implements VCardListener {
     private JLabel descriptiveLabel = new JLabel();
     private JLabel nicknameLabel = new JLabel();
     private StatusPanel statusPanel = new StatusPanel();
+    
 
     private Image backgroundImage;
 
     private Presence currentPresence;
 
     public StatusBar() {
+
         setLayout(new GridBagLayout());
 
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
@@ -112,7 +114,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 
         buildStatusItemList();
-
+ 
 
         setStatus(Res.getString("status.online"));
         currentPresence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
@@ -408,10 +410,11 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public void paintComponent(Graphics g) {
-        double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-        double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
-        AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+	      double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
+	      double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+	      AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+	      ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+		     
     }
 
 

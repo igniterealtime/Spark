@@ -52,15 +52,24 @@ public class SpellcheckManager
 	private SpellcheckManager() {
 		
 		loadSupportedLanguages();
-        preferences =  new SpellcheckerPreference(languages);
-        
-		String language = SparkManager.getMainWindow().getLocale().getLanguage();        
-        if (preferences.getPreferences().getSpellLanguage() != null)
-        {
-        	language = preferences.getPreferences().getSpellLanguage();
-        }
 		
-		checker = new SpellChecker(getDictionary(language));
+		try
+		{
+			preferences =  new SpellcheckerPreference(languages);
+			
+			String language = SparkManager.getMainWindow().getLocale().getLanguage();        
+			if (preferences.getPreferences().getSpellLanguage() != null)
+			{
+				language = preferences.getPreferences().getSpellLanguage();
+			}
+			
+			checker = new SpellChecker(getDictionary(language));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+        
 	}
 	
 	public void loadDictionary(String language) {
@@ -104,13 +113,14 @@ public class SpellcheckManager
 			String qualifiedClassName = getClass().getName();
 			Class<?> qc = Class.forName( qualifiedClassName );
 			CodeSource source = qc.getProtectionDomain().getCodeSource();
-			System.out.println(source.getLocation());
+			
 			File jarFile = new File(source.getLocation().getFile());
+			System.out.println(jarFile);
 			if (jarFile.exists() && jarFile.isFile()) {
 		        ZipFile zipFile = new JarFile(jarFile);
 		        for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
 		        	JarEntry entry = (JarEntry)e.nextElement();            
-		        	
+
 		        	if (entry.getName().startsWith("dictionary/") && 
 		        		entry.getName().endsWith(".zip"))
 		        	{     

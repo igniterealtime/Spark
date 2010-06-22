@@ -133,30 +133,31 @@ public class Workspace extends JPanel implements PacketListener {
     private Workspace() {
         final MainWindow mainWindow = SparkManager.getMainWindow();
 
-        // Add MainWindow listener
-        mainWindow.addMainWindowListener(new MainWindowListener() {
-            public void shutdown() {
-                final ChatContainer container = SparkManager.getChatManager().getChatContainer();
-                // Close all Chats.
-                for (ChatRoom chatRoom : container.getChatRooms()) {
-                    // Leave ChatRoom
-                    container.leaveChatRoom(chatRoom);
-                }
-
-                conferences.shutdown();
-                gatewayPlugin.shutdown();
-                bookmarkPlugin.shutdown();
-                broadcastPlugin.shutdown();
-            }
-
-            public void mainWindowActivated() {
-
-            }
-
-            public void mainWindowDeactivated() {
-
-            }
-        });
+	        // Add MainWindow listener
+	        mainWindow.addMainWindowListener(new MainWindowListener() {
+	            public void shutdown() {
+	                final ChatContainer container = SparkManager.getChatManager().getChatContainer();
+	                // Close all Chats.
+	                for (ChatRoom chatRoom : container.getChatRooms()) {
+	                    // Leave ChatRoom
+	                    container.leaveChatRoom(chatRoom);
+	                }
+	
+	                conferences.shutdown();
+	                gatewayPlugin.shutdown();
+	                bookmarkPlugin.shutdown();
+	                broadcastPlugin.shutdown();
+	            }
+	
+	            public void mainWindowActivated() {
+	
+	            }
+	
+	            public void mainWindowDeactivated() {
+	
+	            }
+	        });
+	   
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
         workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);

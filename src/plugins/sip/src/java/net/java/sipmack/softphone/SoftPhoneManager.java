@@ -11,6 +11,7 @@
 package net.java.sipmack.softphone;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -127,7 +128,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 
     private SipPreference preference;
 
-    private int lines = 1;
+//    private int lines = 1;
 
     private DialSoundManager dtmfSounds;
 
@@ -162,7 +163,18 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 
         this.getLogManager().setRemoteLogging(true);
 
-        registerMenu = new JCheckBoxMenuItem(PhoneRes.getIString("phone.enabled"));
+    	 try {
+				EventQueue.invokeAndWait(new Runnable() {
+		 				@Override
+		 				public void run() {
+		 					registerMenu = new JCheckBoxMenuItem(PhoneRes.getIString("phone.enabled"));
+		 				}
+		 			});
+	    }
+	    catch(Exception e){
+	   	 Log.error(e);
+	    }
+        
         registerMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (getStatus() == SipRegisterStatus.Unregistered ||
@@ -179,8 +191,19 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
         SIPConfig.setPreferredNetworkAddress(preferences.getPreferredAddress());
         NetworkAddressManager.start();
 
-        // Initialize Missed calls
-        missedCalls = new MissedCalls();
+     	 try {
+				EventQueue.invokeAndWait(new Runnable() {
+		 				@Override
+		 				public void run() {
+		 					 // Initialize Missed calls
+		 					 missedCalls = new MissedCalls();
+		 				}
+		 			});
+	    }
+	    catch(Exception e){
+	   	 Log.error(e);
+	    }
+       
 
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
         actionsMenu.add(registerMenu);
@@ -224,10 +247,12 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
         // two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
-                SoftPhoneManager controller = new SoftPhoneManager();
-                singleton = controller;
-                controller.initializePhone();
-                return controller;
+                
+	 				 SoftPhoneManager controller = new SoftPhoneManager();
+	             singleton = controller;
+	 				 controller.initializePhone();
+                
+	        	    return controller;
             }
         }
         return singleton;
