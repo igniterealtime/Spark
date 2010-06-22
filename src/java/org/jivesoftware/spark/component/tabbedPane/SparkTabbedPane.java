@@ -131,7 +131,6 @@ public class SparkTabbedPane extends JPanel {
 		final SparkTab sparktab = new SparkTab(this, component);
 
 		TabPanel tabpanel = new TabPanel(sparktab, title, icon);
-		System.out.println(title + icon + component + tip);
 		pane.addTab(null, null, sparktab, tip);
 		
 		pane.setTabComponentAt(pane.getTabCount() - 1, tabpanel);

@@ -337,7 +337,7 @@ public class SparkRes {
             return new ImageIcon(imageURL);
         }
         catch (Exception ex) {
-            System.out.println(imageName + " not found.");
+            Log.error(imageName + " not found.");
         }
         return null;
     }
