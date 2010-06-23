@@ -478,7 +478,9 @@ public class SparkTabbedPane extends JPanel {
                 dragTabIndex = pane.indexAtLocation(event.getDragOrigin().x, event.getDragOrigin().y);
                 try {
                     event.startDrag(DragSource.DefaultMoveDrop, t, dsl);
-                } catch(Exception idoe) {}
+                } catch(Exception idoe) {
+                	Log.error(idoe);
+                }
 			}
 
 	    };
