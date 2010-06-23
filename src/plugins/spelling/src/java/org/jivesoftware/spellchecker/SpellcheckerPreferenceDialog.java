@@ -38,9 +38,9 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 {
 	private static final long serialVersionUID = -1836601903928057855L;
 
-	private JCheckBox spellcheckingEnabled = new JCheckBox();
-	private JCheckBox autospellcheckingEnabled = new JCheckBox();
-	private JComboBox spellLanguages = new JComboBox();
+	private JCheckBox spellcheckingEnabled;
+	private JCheckBox autospellcheckingEnabled;
+	private JComboBox spellLanguages;
 	
 	private JPanel spellPanel;
 
@@ -52,6 +52,9 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		this.languages = languages;
 		locales = Locale.getAvailableLocales();
 		spellPanel = new JPanel();
+		spellcheckingEnabled = new JCheckBox();
+		autospellcheckingEnabled = new JCheckBox();
+		spellLanguages = new JComboBox();
 		spellPanel.setLayout(new GridBagLayout());
 		
 		spellcheckingEnabled.setText(SpellcheckerResource.getString("preference.spellcheckingEnabled"));
@@ -79,7 +82,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		
 		setLayout(new VerticalFlowLayout());
 		spellPanel.setBorder(BorderFactory.createTitledBorder(SpellcheckerResource.getString("title.spellchecker")));
-      add(spellPanel);
+		add(spellPanel);
 	}
 	
 	public void updateUI(boolean enable)

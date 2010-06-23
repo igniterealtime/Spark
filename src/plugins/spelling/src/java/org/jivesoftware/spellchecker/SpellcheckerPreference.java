@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spellchecker;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
@@ -34,16 +35,17 @@ public class SpellcheckerPreference implements Preference
 	private SpellcheckerPreferences preferences;
 
 	public SpellcheckerPreference(final ArrayList<String> languages) {
+		preferences = new SpellcheckerPreferences();
 		try
 		{
-//			EventQueue.invokeAndWait(new Runnable() {
-//
-//				@Override
-//				public void run() {
+			EventQueue.invokeAndWait(new Runnable() {
+
+				@Override
+				public void run() {
 					dialog = new SpellcheckerPreferenceDialog(languages);
-					preferences = new SpellcheckerPreferences();
-//				}
-//			});
+
+				}
+			});
 		}
 		catch (Exception e)
 		{
