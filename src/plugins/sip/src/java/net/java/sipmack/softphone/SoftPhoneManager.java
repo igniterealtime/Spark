@@ -94,13 +94,13 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 
     private final List<SoftPhoneListener> softPhoneListeners = new CopyOnWriteArrayList<SoftPhoneListener>();
 
-    SoftPhoneMedia softPhoneMedia = null;
+    private SoftPhoneMedia softPhoneMedia = null;
 
-    SoftPhoneSecurity softPhoneSecurity = null;
+    private SoftPhoneSecurity softPhoneSecurity = null;
 
-    SipManager sipManager = null;
+    private SipManager sipManager = null;
 
-    JmfMediaManager mediaManager = null;
+    private JmfMediaManager mediaManager = null;
 
     private GuiManager guiManager = null;
 
@@ -116,9 +116,9 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 
     protected Integer unregistrationLock = Integer.valueOf(0);
 
-    private static SipRegisterStatus status = SipRegisterStatus.Unregistered;
+    private SipRegisterStatus status = SipRegisterStatus.Unregistered;
 
-    public static final String userAgent = "SIPark";
+    public static final String userAgent = "SIPSpark";
 
     public String callTo = "";
 
