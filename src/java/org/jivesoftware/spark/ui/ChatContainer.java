@@ -605,11 +605,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     public ChatRoom getChatRoom(int location) throws ChatRoomNotFoundException {
         if (getTabCount() < location) {
-            return null;
+        	throw new ChatRoomNotFoundException();
         }
         try {
             Component comp = getComponentAt(location);
-            if (comp != null && comp instanceof ChatRoom) {
+            if (comp instanceof ChatRoom) {
                 return (ChatRoom)comp;
             }
         }
