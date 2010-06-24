@@ -348,10 +348,10 @@ public final class ModelUtil {
 /**
  * An Iterator that is the reverse of a ListIterator.
  */
-class ReverseListIterator implements Iterator {
-    private ListIterator _i;
+class ReverseListIterator<T> implements Iterator<T> {
+    private ListIterator<T> _i;
 
-    ReverseListIterator(ListIterator i) {
+    ReverseListIterator(ListIterator<T> i) {
         _i = i;
         while (_i.hasNext()) _i.next();
     }
@@ -360,7 +360,7 @@ class ReverseListIterator implements Iterator {
         return _i.hasPrevious();
     }
 
-    public Object next() {
+    public T next() {
         return _i.previous();
     }
 

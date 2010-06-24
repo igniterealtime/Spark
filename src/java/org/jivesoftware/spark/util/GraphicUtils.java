@@ -404,7 +404,7 @@ public final class GraphicUtils {
      * @param cls Class to pull resource from.
      * @return Image loaded from resource.
      */
-    public static Image loadFromResource(String imageName, Class cls) {
+    public static Image loadFromResource(String imageName, Class<?> cls) {
         try {
             final URL url = cls.getResource(imageName);
 
