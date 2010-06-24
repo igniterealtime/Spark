@@ -1151,13 +1151,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame = new ChatFrame();
         }
 
-        // The ultimate workground for 1.6
-        chatFrame.dispose();
-        chatFrame.setFocusableWindowState(false);
-        chatFrame.setFocusableWindowState(true);
-        chatFrame.dispose();
-
-
         chatFrame.addWindowListener(new WindowAdapter() {
             public void windowActivated(WindowEvent windowEvent) {
                 stopFlashing();

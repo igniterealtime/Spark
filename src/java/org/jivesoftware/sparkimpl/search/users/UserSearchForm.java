@@ -20,6 +20,7 @@
 
 package org.jivesoftware.sparkimpl.search.users;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -61,10 +62,11 @@ import java.io.IOException;
  * UserSearchForm is used to do explicit searching of users using the JEP 55 Search Service.
  */
 public class UserSearchForm extends JPanel {
+    private static final long	serialVersionUID	= -9192188543673595941L;
     private JComboBox servicesBox;
     private UserSearchManager searchManager;
 
-    private Collection searchServices;
+    private Collection<String> searchServices;
 
     private CardLayout cardLayout = new CardLayout();
     private JPanel cardPanel = new JPanel();
@@ -74,14 +76,14 @@ public class UserSearchForm extends JPanel {
     private Map<String,SearchForm> serviceMap = new HashMap<String,SearchForm>();
 
     
-    private static File pluginsettings = new File(System.getProperty("user.home") + "\\Spark\\search.properties"); //new
+    private static File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
     
     /**
      * Initializes the UserSearchForm with all available search services.
      *
      * @param searchServices a Collection of all search services found.
      */
-    public UserSearchForm(Collection searchServices) {
+    public UserSearchForm(Collection<String> searchServices) {
         setLayout(new GridBagLayout());
 
         cardPanel.setLayout(cardLayout);
@@ -104,9 +106,9 @@ public class UserSearchForm extends JPanel {
         // Populate with Search Services
         servicesBox = new JComboBox();
     
-        for (Object searchService : searchServices) {
-            String service = (String) searchService;
-        	servicesBox.addItem(service);
+        for (String searchService : searchServices) {
+            String service = searchService;
+            servicesBox.addItem(service);
         }
 
         
@@ -122,12 +124,10 @@ public class UserSearchForm extends JPanel {
                 props.load(new FileInputStream(pluginsettings)); 
                	String testsearch; 
                	numbprop_bool=true;
-               	while (numbprop_bool)
-               		{
+               	while (numbprop_bool) {
                		nextprop = "search"+numbprop;
                		testsearch = props.getProperty(nextprop);
-               		if (null != testsearch)
-               			{
+               		if (null != testsearch) {
                			Log.warning("Search-Info: SearchService-" + numbprop + " from properties-file is " + nextprop + " : " + testsearch); 
                			servicesBox.addItem(testsearch); 
                    		numbprop++;

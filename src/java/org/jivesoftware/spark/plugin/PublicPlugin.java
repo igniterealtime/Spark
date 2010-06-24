@@ -20,6 +20,8 @@
 package org.jivesoftware.spark.plugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PublicPlugin {
     private String name;
@@ -35,9 +37,9 @@ public class PublicPlugin {
     private boolean smallIconAvailable;
     private boolean largeIconAvailable;
     private String minVersion;
-
     private File pluginDir;
-
+    private List<PluginDependency> dependencies = new ArrayList<PluginDependency>(); 
+    
     public String getName() {
         return name;
     }
@@ -148,5 +150,13 @@ public class PublicPlugin {
 
     public void setMinVersion(String minVersion) {
         this.minVersion = minVersion;
+    }
+    
+    public void addDependency(PluginDependency dependency) {
+   	 dependencies.add(dependency);
+    }
+    
+    public List<PluginDependency> getDependency() {
+   	 return dependencies;
     }
 }

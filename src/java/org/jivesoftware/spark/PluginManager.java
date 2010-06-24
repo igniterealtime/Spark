@@ -19,21 +19,6 @@
  */
 package org.jivesoftware.spark;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.jivesoftware.MainWindowListener;
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.plugin.PluginClassLoader;
-import org.jivesoftware.spark.plugin.PublicPlugin;
-import org.jivesoftware.spark.util.URLFileSystem;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-
-import javax.swing.SwingUtilities;
-
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +26,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,6 +37,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
+
+import javax.swing.SwingUtilities;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.jivesoftware.MainWindowListener;
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.plugin.PluginClassLoader;
+import org.jivesoftware.spark.plugin.PluginDependency;
+import org.jivesoftware.spark.plugin.PublicPlugin;
+import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 
 /**
  * This manager is responsible for the loading of all Plugins and Workspaces within Spark environment.
@@ -241,6 +241,22 @@ public class PluginManager implements MainWindowListener {
                     Log.error("Unable to load plugin " + name + " due to no minSparkVersion.");
                     return null;
                 }
+                
+                // set dependencies 
+                try {
+                   List dependencies = plugin.selectNodes("depends/plugin");
+                   for (Object depend1 : dependencies) {
+                      Element depend = (Element) depend1;
+                  	 PluginDependency dependency = new PluginDependency();
+                  	 dependency.setVersion(depend.selectSingleNode("version").getText());
+                  	 dependency.setName(depend.selectSingleNode("name").getText());
+                  	 publicPlugin.addDependency(dependency);
+                   }
+                }
+                catch (Exception e) {
+               	 e.printStackTrace();
+                }
+                
 
                 // Do operating system check.
                 boolean operatingSystemOK = isOperatingSystemOK(plugin);
@@ -406,6 +422,63 @@ public class PluginManager implements MainWindowListener {
     public void initializePlugins() {
       try
 		{
+      	int j = 0;
+			boolean dependsfound = false;
+			
+      	// Dependency check
+      	for (int i = 0; i< publicPlugins.size(); i++) {
+      		// if dependencies are available, check these
+      		if(((PublicPlugin)publicPlugins.get(i)).getDependency().size()>0) {
+      			List<PluginDependency> dependencies = ((PublicPlugin)publicPlugins.get(i)).getDependency();
+      			
+      			// go trough all dependencies
+      			for( PluginDependency dependency : dependencies) {
+      				j = 0;
+      				dependsfound = false;
+      				// look for the specific plugin
+      				for(PublicPlugin plugin1 :publicPlugins) {
+      					
+      					if(plugin1.getName()!= null 
+      						&& plugin1.getName().equals(dependency.getName()))	{
+      						
+      						// if the version is compatible then reorder
+      						if(dependency.compareVersion(plugin1.getVersion())){
+      							dependsfound = true;
+      							// when depended Plugin hadn't been installed yet
+      							if(j>i){
+      								
+      								// change the order
+      								publicPlugins.add(i, publicPlugins.get(j));
+      								publicPlugins.remove(j+1);
+      								
+      								plugins.add(i, plugins.get(j));
+      								plugins.remove(j+1);
+      							
+      								// start again, to check the other dependencies
+      								i--;
+      							}
+      						}
+      						// else don't load the plugin and show an error
+      						else {
+      							Log.error("Depended Plugin " + dependency.getName() + " hasn't the right version (" + dependency.getVersion() + "<>" + ((PublicPlugin)publicPlugins.get(i)).getVersion());
+      						}
+      						break;
+      					}
+      					j++;
+      				}
+      				// if the depended Plugin wasn't found, then show error
+      				if(!dependsfound) {
+      					Log.error("Depended Plugin " + dependency.getName() + " is missing for the Plugin " + ((PublicPlugin)publicPlugins.get(i)).getName());
+      					// delete the Plugin, because the depended Plugin is missing
+							publicPlugins.remove(i);
+							plugins.remove(i);
+							i--;
+							break;
+      				}
+      			}
+      		}
+      	}
+      	
 			SwingUtilities.invokeAndWait(new Runnable() {
 			      public void run() {
 			          for (Plugin plugin1 : plugins) {
