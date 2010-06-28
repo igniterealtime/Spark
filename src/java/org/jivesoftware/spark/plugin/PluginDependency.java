@@ -1,6 +1,6 @@
 package org.jivesoftware.spark.plugin;
 
-import net.java.sipmack.common.Log;
+import org.jivesoftware.spark.util.log.Log;
 
 public class PluginDependency
 {
