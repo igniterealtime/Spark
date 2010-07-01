@@ -65,7 +65,8 @@ import org.jivesoftware.sparkplugin.calllog.LogManager;
  */
 public class CallHistoryUI extends JPanel implements ActionListener, ListSelectionListener {
 
-    private SparkTabbedPane tabs;
+	private static final long	serialVersionUID	= -7282770946967440964L;
+	private SparkTabbedPane tabs;
     private final LogManager logManager;
 
     private final JFrame callHistoryFrame;
@@ -95,7 +96,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
 
         List<HistoryCall> calls = new ArrayList<HistoryCall>(logManager.getCallHistory());
         Collections.sort(calls, itemComparator);
-        
+   
         model = new DefaultListModel();
         for (HistoryCall call : calls) {
             final CallEntry callEntry = new CallEntry(call);
@@ -289,7 +290,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
             else if (call.getGroupName().equals(CallLog.Type.received.toString())) {
                 setBackground(Color.blue);
-                sb.append(PhoneRes.getIString("phone.placecallto")+" ");
+                sb.append(PhoneRes.getIString("phone.receivedcallfrom")+" ");
             }
             else if (call.getGroupName().equals(CallLog.Type.missed.toString())) {
                 setBackground(Color.red);
@@ -353,10 +354,9 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
         }
         else if (actionEvent.getSource() == deleteButton) {
         	int[] selected = activeList.getSelectedIndices();
-        	for (int i = selected.length - 1; i >= 0 ; i--)
-        	{
+        	for (int i = selected.length - 1; i >= 0 ; i--) {
         		int modelindex = activeList.convertIndexToModel(selected[i]);
-                logManager.getCallHistory().remove( ( (CallEntry)model.elementAt(modelindex)).getCall() );
+            logManager.deleteCall(((CallEntry)model.elementAt(modelindex)).getCall());
         		model.remove(modelindex);	        		
         	}        
         }

@@ -63,7 +63,8 @@ import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
  */
 public class NonRosterPanel extends PhonePanel {
 
-    private JLabel connectedLabel;
+	private static final long	serialVersionUID	= -1826003278845440442L;
+	private JLabel connectedLabel;
     private String phoneNumber;
 
     private PreviousConversationPanel historyPanel;
@@ -109,9 +110,6 @@ public class NonRosterPanel extends PhonePanel {
         nameLabel.setFont(new Font("Arial", Font.BOLD, 19));
         nameLabel.setForeground(new Color(64, 103, 162));
         String remoteName = getActiveCall().getCall().getRemoteName();
-        if (remoteName.equals(phoneNumber)) {
-            remoteName = TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern"));
-        }
         nameLabel.setText(remoteName);
 
         final JPanel topPanel = new JPanel();
@@ -218,7 +216,7 @@ public class NonRosterPanel extends PhonePanel {
         muted = false;
         onHold = false;
 
-        this.phoneNumber = TelephoneUtils.formatPattern(interlocutorUI.getCall().getNumber(),PhoneRes.getIString("phone.numpattern"));
+        this.phoneNumber = interlocutorUI.getCall().getNumber();
 
         if (!uiBuilt) {
             buildDefaultUI();
@@ -448,15 +446,15 @@ public class NonRosterPanel extends PhonePanel {
     }
 
     public String getTabTitle() {
-        return TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern"));
+        return phoneNumber;
     }
 
     public String getFrameTitle() {
         if (activeCall.getCallState() == Call.CONNECTED) {
-            return PhoneRes.getIString("phone.onphonewith")+" " + TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern"));
+            return PhoneRes.getIString("phone.onphonewith")+" " + phoneNumber;
         }
         else {
-            return PhoneRes.getIString("phone.callendedwith")+" " + TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern"));
+            return PhoneRes.getIString("phone.callendedwith")+" " + phoneNumber;
         }
 
     }

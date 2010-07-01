@@ -177,7 +177,7 @@ public class MissedCalls implements ActionListener {
         public MissedCall(String title, Date time, String number) {
             setLayout(new GridBagLayout());
 
-            this.number =  TelephoneUtils.formatPattern(number,PhoneRes.getIString("phone.numpattern"));
+            this.number =  number;
 
             final JLabel titleLabel = new JLabel(title);
             titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));

@@ -68,6 +68,7 @@ import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkplugin.calllog.LogManager;
+import org.jivesoftware.sparkplugin.calllog.LogManagerImpl;
 import org.jivesoftware.sparkplugin.calllog.LogPacket;
 import org.jivesoftware.sparkplugin.preferences.SipPreference;
 import org.jivesoftware.sparkplugin.preferences.SipPreferences;
@@ -149,19 +150,19 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      * Initializes the core phone objects.
      */
     private void initializePhone() {
-        // Load Preferences
-        loadPreferences();
+       // Load Preferences
+       loadPreferences();
 
-        if (preferences == null) {
-            return;
-        }
+       if (preferences == null) {
+           return;
+       }
 
 
-        guiManager = new GuiManager();
-        guiManager.addUserActionListener(this);
-        logManager = new LogManager(this);
+       guiManager = new GuiManager();
+       guiManager.addUserActionListener(this);
+       logManager = new LogManagerImpl(this);
 
-        this.getLogManager().setRemoteLogging(true);
+       this.getLogManager().setRemoteLogging(true);
 
     	 try {
 				EventQueue.invokeAndWait(new Runnable() {
@@ -988,6 +989,15 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      */
     public LogManager getLogManager() {
         return logManager;
+    }
+    
+    /**
+     * Set the LogManager associated with this SoftPhone.
+     */
+    public void setLogManager(LogManager logmanager) {
+   	  // removes the existing listener 
+   	  softPhoneListeners.remove(this.logManager);
+        logManager = logmanager;
     }
 
     /**

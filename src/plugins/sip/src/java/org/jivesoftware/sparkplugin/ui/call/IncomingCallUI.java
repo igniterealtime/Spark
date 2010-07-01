@@ -10,18 +10,6 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.CallList;
-import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -39,11 +27,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- *
- */
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.softphone.SoftPhoneManager;
+
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
+import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+
+
 public class IncomingCallUI extends JPanel {
-    private JLabel avatarLabel = new JLabel();
+
+	private static final long	serialVersionUID	= -7451049865930942296L;
+	private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel professionLabel = new JLabel();
     private JLabel phoneLabel = new JLabel();
@@ -55,11 +55,9 @@ public class IncomingCallUI extends JPanel {
 
     private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
-    private InterlocutorUI ic;
 
     public IncomingCallUI(InterlocutorUI ic) {
         setLayout(new GridBagLayout());
-        this.ic = ic;
 
         final JLabel topLabel = new JLabel();
         topLabel.setIcon(PhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));
@@ -69,7 +67,7 @@ public class IncomingCallUI extends JPanel {
         topLabel.setForeground(Color.gray);
 
 
-        final String phoneNumber = TelephoneUtils.formatPattern(ic.getCall().getNumber(),PhoneRes.getIString("phone.numpattern"));
+        final String phoneNumber = ic.getCall().getNumber();
 
         // Add Top Label
         add(topLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -80,7 +78,7 @@ public class IncomingCallUI extends JPanel {
             title = phoneNumber;
         }
 
-        // Add Calller Block
+        // Add Caller Block
         buildCallerBlock(title, phoneNumber);
 
         // Add Buttons
@@ -122,7 +120,7 @@ public class IncomingCallUI extends JPanel {
             phoneLabel.setVisible(true);
 
             titleLabel.setText(callerID);
-            phoneLabel.setText(TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern")));
+            phoneLabel.setText(phoneNumber);
         }
 
         // Update with previous call history.
@@ -168,7 +166,7 @@ public class IncomingCallUI extends JPanel {
         rejectButton.setFont(new Font("Dialog", Font.BOLD, 11));
         rejectButton.setForeground(new Color(153, 32, 10));
         rejectButton.setMargin(new Insets(0, 0, 0, 0));
-
+        
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
         panel.add(acceptButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));

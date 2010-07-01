@@ -11,6 +11,7 @@
 package org.jivesoftware.sparkplugin.ui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -40,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import net.java.sipmack.common.Log;
 import net.java.sipmack.sip.InterlocutorUI;
 import net.java.sipmack.softphone.SoftPhoneManager;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
@@ -54,6 +56,7 @@ import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
+import org.jivesoftware.sparkplugin.phonebook.ui.PhonebookUI;
 import org.jivesoftware.sparkplugin.ui.call.CallHistoryUI;
 import org.jivesoftware.sparkplugin.ui.call.CallManager;
 
@@ -70,9 +73,9 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
     private RolloverButton voiceMailButton;
 
     private boolean incomingCall;
-
-
-    public ContactDialControl() {
+    private static final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+    
+    public ContactDialControl() {  
         setLayout(new GridBagLayout());
 
         // Add to PhoneManager.
@@ -81,6 +84,10 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
         callField = new TelephoneTextField();
         voiceMailButton = new RolloverButton(PhoneRes.getImageIcon("VOICEMAIL_IMAGE"));
 
+        // make a button for the phonebook
+  			RolloverButton phonebookButton = new RolloverButton(PhoneRes.getImageIcon("BOOKICON"));
+  			phonebookButton.setToolTipText(PhoneRes.getIString("frame.title"));
+  		
         callButton = new RolloverButton(PhoneRes.getImageIcon("DIAL_BUTTON_IMAGE"));
         callButton.setMargin(new Insets(0, 0, 0, 0));
         callButton.setDisabledIcon(PhoneRes.getImageIcon("DIAL_BUTTON_DISABLED_IMAGE"));
@@ -96,7 +103,7 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
         add(callField, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
         add(callButton, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
-        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonPanel.add(phonebookButton);
         buttonPanel.add(new JLabel(PhoneRes.getImageIcon("DIVIDER_IMAGE")));
         buttonPanel.add(callHistoryButton);
         buttonPanel.add(voiceMailButton);
@@ -124,6 +131,22 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
             }
         });
 
+        phonebookButton.addActionListener(new ActionListener(){
+	  			public void actionPerformed(ActionEvent e) {
+	  				try {
+	  					EventQueue.invokeLater(new Runnable(){
+	  						public void run() {
+	  							// open the UI
+	  							PhonebookUI book = PhonebookUI.getInstance();
+	  							book.invoke();
+	  						}
+	  					});
+	  				}
+	  				catch(Exception ex) {
+	  					Log.error(ex);
+	  				}
+	  			}
+	  		});
 
         callHistoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -322,4 +345,9 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
     public TelephoneTextField getCallField() {
         return callField;
     }
+    
+    public static void addButton(JButton btn) {
+   	 buttonPanel.add(btn);
+    }
+    
 }

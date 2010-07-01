@@ -12,6 +12,9 @@ package org.jivesoftware.spark.plugin.phone.resource;
 
 import javax.swing.ImageIcon;
 
+import org.jivesoftware.spark.util.log.Log;
+
+import java.awt.Image;
 import java.net.URL;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -60,5 +63,15 @@ public class PhoneRes {
         return cl.getResource(getString(propertyName));
     }
 
-
+    public static final Image getImage(String imageName) {
+       try {
+           final String iconURI = getString(imageName);
+           final URL imageURL = cl.getResource(iconURI);
+           return new ImageIcon(imageURL).getImage();
+       }
+       catch (Exception ex) {
+           Log.error(imageName + " not found.");
+       }
+       return null;
+   }
 }

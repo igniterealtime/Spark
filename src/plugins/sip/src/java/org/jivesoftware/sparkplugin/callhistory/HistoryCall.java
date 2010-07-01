@@ -10,7 +10,6 @@
 
 package org.jivesoftware.sparkplugin.callhistory;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
 
 /**
@@ -51,7 +50,7 @@ public class HistoryCall {
     }
 
     public String getNumber() {
-        return TelephoneUtils.formatPattern(number, PhoneRes.getIString("phone.numpattern"));
+        return number;
     }
 
     public void setNumber(String number) {

@@ -10,11 +10,8 @@
 
 package net.java.sipmack.sip;
 
-import net.java.sipmack.common.Log;
-import net.java.sipmack.media.AudioMediaSession;
-import net.java.sipmack.media.AudioReceiverChannel;
-import net.java.sipmack.sip.event.CallListener;
-import net.java.sipmack.sip.event.CallStateEvent;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.media.rtp.ReceiveStreamListener;
 import javax.media.rtp.event.ReceiveStreamEvent;
@@ -29,8 +26,11 @@ import javax.sip.header.FromHeader;
 import javax.sip.header.ToHeader;
 import javax.sip.message.Request;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import net.java.sipmack.common.Log;
+import net.java.sipmack.media.AudioMediaSession;
+import net.java.sipmack.media.AudioReceiverChannel;
+import net.java.sipmack.sip.event.CallListener;
+import net.java.sipmack.sip.event.CallStateEvent;
 
 /**
  * Title: SIPark
@@ -92,7 +92,7 @@ public class Call implements ReceiveStreamListener {
 
     // Event Management
     List<CallListener> listeners = new CopyOnWriteArrayList<CallListener>();
-
+    
     public SessionDescription getLocalSdpDescription() {
         return localSdpDescription;
     }

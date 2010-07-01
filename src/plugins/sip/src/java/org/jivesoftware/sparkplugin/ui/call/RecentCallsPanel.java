@@ -10,22 +10,6 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.sparkplugin.callhistory.CallList;
-import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
-import org.jivesoftware.sparkplugin.calllog.LogManager;
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import net.java.sipmack.sip.InterlocutorUI;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.component.renderer.JPanelRenderer;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -34,6 +18,20 @@ import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.softphone.SoftPhoneManager;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.component.renderer.JPanelRenderer;
+import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
+import org.jivesoftware.sparkplugin.calllog.LogManager;
+
 /**
  * UI to represent all calls relating to this user.
  *
@@ -41,22 +39,15 @@ import java.util.Date;
  */
 public class RecentCallsPanel extends JPanel {
 
-    private InterlocutorUI ic;
 
-    private DefaultListModel model = new DefaultListModel();
+	private static final long	serialVersionUID	= 7759582394286918370L;
+	private DefaultListModel model = new DefaultListModel();
     private JList list = new JList(model);
 
     public RecentCallsPanel(InterlocutorUI ic) {
         setLayout(new GridBagLayout());
 
-        this.ic = ic;
         setBackground(Color.white);
-
-        String name = ic.getName();
-        String nu = ic.getCall().getNumber();
-        if (name.equals(nu)) {
-            name = TelephoneUtils.formatPattern(name, PhoneRes.getIString("phone.numpattern"));
-        }
 
         add(new JScrollPane(list), new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         list.setCellRenderer(new JPanelRenderer());
@@ -79,8 +70,9 @@ public class RecentCallsPanel extends JPanel {
      * Represents a single entry into the phone history list.
      */
     private class CallEntry extends JPanel {
+		private static final long	serialVersionUID	= 5650351009200951861L;
 
-        public CallEntry(String title, Date time) {
+		public CallEntry(String title, Date time) {
             setLayout(new GridBagLayout());
 
             final JLabel titleLabel = new JLabel(title);

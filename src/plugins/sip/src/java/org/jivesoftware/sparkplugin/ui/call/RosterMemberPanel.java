@@ -10,31 +10,6 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
-import org.jivesoftware.sparkplugin.components.RosterMemberCallButton;
-import org.jivesoftware.sparkplugin.ui.PhonePad;
-import org.jivesoftware.sparkplugin.ui.components.ControlPanel;
-import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
-import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import net.java.sipmack.softphone.SoftPhoneManager.CallRoomState;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -52,14 +27,39 @@ import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+
+import net.java.sipmack.sip.InterlocutorUI;
+import net.java.sipmack.softphone.SoftPhoneManager;
+import net.java.sipmack.softphone.SoftPhoneManager.CallRoomState;
+
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkplugin.components.RosterMemberCallButton;
+import org.jivesoftware.sparkplugin.ui.PhonePad;
+import org.jivesoftware.sparkplugin.ui.components.ControlPanel;
+import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
+import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
+
 /**
  * The UI for calls with Roster members.
  *
  * @author Derek DeMoro
  */
 public class RosterMemberPanel extends PhonePanel {
-
-    private JLabel connectedLabel;
+	private static final long	serialVersionUID	= -327742794852188962L;
+	private JLabel connectedLabel;
     private String phoneNumber;
     private JLabel phoneLabel;
     private PreviousConversationPanel historyPanel;
@@ -74,8 +74,6 @@ public class RosterMemberPanel extends PhonePanel {
     private RolloverButton hangUpButton;
 
     private SoftPhoneManager softPhone;
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
 
     private static String CONNECTED = PhoneRes.getIString("phone.connected");
 
@@ -236,7 +234,7 @@ public class RosterMemberPanel extends PhonePanel {
         muted = false;
         onHold = false;
 
-        this.phoneNumber = TelephoneUtils.formatPattern(interlocutorUI.getCall().getNumber(),PhoneRes.getIString("phone.numpattern"));
+        this.phoneNumber = interlocutorUI.getCall().getNumber();
 
         phoneLabel.setText(phoneNumber);
 
@@ -443,11 +441,11 @@ public class RosterMemberPanel extends PhonePanel {
     }
 
     public String getTabTitle() {
-        return TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern"));
+        return phoneNumber;
     }
 
     public String getFrameTitle() {
-        return PhoneRes.getIString("phone.onphonewith")+" " + TelephoneUtils.formatPattern(phoneNumber,PhoneRes.getIString("phone.numpattern"));
+        return PhoneRes.getIString("phone.onphonewith")+" " + phoneNumber;
     }
 
     public ImageIcon getTabIcon() {
