@@ -159,30 +159,30 @@ public class PhonebookUI extends JPanel
 		sorter.addRowSorterListener(new RowSorterListener(){
 			public void sorterChanged(RowSorterEvent arg0)
 			{
-				TableRowSorter<?> rs = (TableRowSorter<?>) arg0.getSource();
-				String temp = tfsearch.getText();
-
-				if (rs.getViewRowCount() < 1)
-				{
-					// nur wenn auch was drin steht, erkennen
-					if (temp.length() > 0)
-					{
-						tfsearch.setText(temp.substring(0, temp.length() - 1));
+					TableRowSorter<?> rs = (TableRowSorter<?>) arg0.getSource();
+					String temp = tfsearch.getText();
+	
+					if (model.getRowCount()> 0 
+						&& rs.getViewRowCount() < 1) {
+						// nur wenn auch was drin steht, erkennen
+						if (temp.length() > 0) {
+							tfsearch.setText(temp.substring(0, temp.length() - 1));
+						}
+						filterTable(tfsearch.getText());
 					}
-					filterTable(tfsearch.getText());
-				}
-				else
-				{
-					table.setRowSelectionInterval(0, 0);
-				}
+					else if(table.getRowCount() > 0){
+						table.setRowSelectionInterval(0, 0);
+					}
 			}
 		});
 		
 		tfsearch.addKeyListener(new KeyAdapter(){
 			public void keyReleased(KeyEvent evt)
 			{
-					keyReleasedSuchFeld(evt);
+				keyReleasedSuchFeld(evt);
+				if(table.getRowCount() > 0) {
 					table.setRowSelectionInterval(0, 0);
+				}
 			}
 		});
 		
@@ -252,7 +252,7 @@ public class PhonebookUI extends JPanel
 		if(selRow != -1 
 			&& selRow < table.getRowCount())
 			table.setRowSelectionInterval(selRow, selRow);
-		else
+		else if(table.getRowCount()>0)
 			table.setRowSelectionInterval(0, 0);
 	}
 	
@@ -335,7 +335,9 @@ public class PhonebookUI extends JPanel
 	
 	private void keyReleasedSuchFeld(KeyEvent evt)
 	{
-		filterTable(DEFAULT_FILTER.replace("#", tfsearch.getText()));
-		table.updateUI();
+		if(table.getRowCount() > 0) {
+			filterTable(DEFAULT_FILTER.replace("#", tfsearch.getText()));
+			table.updateUI();
+		}
 	}
 }

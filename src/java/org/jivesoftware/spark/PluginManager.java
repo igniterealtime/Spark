@@ -440,19 +440,31 @@ public class PluginManager implements MainWindowListener {
       					
       					if(plugin1.getName()!= null 
       						&& plugin1.getName().equals(dependency.getName()))	{
-      						
       						// if the version is compatible then reorder
       						if(dependency.compareVersion(plugin1.getVersion())){
       							dependsfound = true;
       							// when depended Plugin hadn't been installed yet
       							if(j>i){
       								
+      								// find the position of plugins-List because it has more entries
+      								int counter = 0, x = 0, z = 0;
+      								for(Plugin plug : plugins) {
+      									// find the position of the aim-object
+      									if(plug.getClass().toString().substring(6).equals(publicPlugins.get(j).getPluginClass())) {
+      										x = counter;
+      									}
+      									// find the change-position
+      									else if(plug.getClass().toString().substring(6).equals(publicPlugins.get(i).getPluginClass())) {
+      										z = counter;
+      									}
+      									counter ++;
+      								}
       								// change the order
       								publicPlugins.add(i, publicPlugins.get(j));
       								publicPlugins.remove(j+1);
       								
-      								plugins.add(i, plugins.get(j));
-      								plugins.remove(j+1);
+      								plugins.add(z, plugins.get(x));
+      								plugins.remove(x+1);
       							
       								// start again, to check the other dependencies
       								i--;
@@ -460,7 +472,7 @@ public class PluginManager implements MainWindowListener {
       						}
       						// else don't load the plugin and show an error
       						else {
-      							Log.error("Depended Plugin " + dependency.getName() + " hasn't the right version (" + dependency.getVersion() + "<>" + ((PublicPlugin)publicPlugins.get(i)).getVersion());
+      							Log.error("Depended Plugin " + dependency.getName() + " hasn't the right version (" + dependency.getVersion() + "<>" + plugin1.getVersion());
       						}
       						break;
       					}
@@ -469,9 +481,19 @@ public class PluginManager implements MainWindowListener {
       				// if the depended Plugin wasn't found, then show error
       				if(!dependsfound) {
       					Log.error("Depended Plugin " + dependency.getName() + " is missing for the Plugin " + ((PublicPlugin)publicPlugins.get(i)).getName());
+      					
+      					// find the posiion of plugins-List because it has more entries
+      					int counter = 0;
+							for(Plugin plug : plugins) {
+								// find the delete-position
+								if(plug.getClass().toString().substring(6).equals(publicPlugins.get(i).getPluginClass())) {
+									break;
+								}
+								counter ++;
+							}
       					// delete the Plugin, because the depended Plugin is missing
 							publicPlugins.remove(i);
-							plugins.remove(i);
+							plugins.remove(counter);
 							i--;
 							break;
       				}
