@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.preference.media;
 
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -44,7 +43,6 @@ import net.sf.fmj.media.RegistryDefaults;
 import net.sf.fmj.media.cdp.GlobalCaptureDevicePlugger;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -100,6 +98,7 @@ public class MediaPreferencePanel  extends JPanel {
 		return res;
     }
 	
+	@SuppressWarnings("unchecked")
 	public void scanDevices()
 	{
 		// Remove all Items
@@ -108,18 +107,7 @@ public class MediaPreferencePanel  extends JPanel {
 		
 		// FMJ
 		RegistryDefaults.registerAll(RegistryDefaults.FMJ | RegistryDefaults.FMJ_NATIVE);
-
-		try {
-			// Add Device
-	 		EventQueue.invokeLater(new Runnable() {
-				public void run() {
-						GlobalCaptureDevicePlugger.addCaptureDevices();
-				}
-	 		});
-		}
-		catch(Exception e) {
-			Log.error("Can't load capture device",e);
-		}
+		GlobalCaptureDevicePlugger.addCaptureDevices();
 		
 
 		// LOG ALL Devices
