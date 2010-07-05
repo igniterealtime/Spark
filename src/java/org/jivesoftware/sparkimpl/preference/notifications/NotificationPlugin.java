@@ -32,6 +32,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -39,6 +40,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -140,24 +142,33 @@ public class NotificationPlugin implements Plugin, PacketListener {
      * @param jid the jid of the user that has come online.
      * @param presence Presence of the online user.
      */
-    private void notifyUserOnline(String jid, Presence presence) {
-        SparkToaster toaster = new SparkToaster();
-        toaster.setDisplayTime(5000);
-        toaster.setBorder(BorderFactory.createBevelBorder(0));
-        toaster.setCustomAction(new ChatAction(jid));
-        NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
-
-        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
-
-        int width = (int)alertUI.getPreferredSize().getWidth() + 40;
-        if (width < 300) {
-            width = 300;
-        }
-
-        toaster.setToasterWidth(width);
-
-        toaster.showToaster("", alertUI);
-        toaster.hideTitle();
+    private void notifyUserOnline(final String jid, final Presence presence) {
+   	 try {
+   		 EventQueue.invokeAndWait(new Runnable(){
+   			 public void run() {
+   				 SparkToaster toaster = new SparkToaster();
+   				 toaster.setDisplayTime(5000);
+   				 toaster.setBorder(BorderFactory.createBevelBorder(0));
+   				 toaster.setCustomAction(new ChatAction(jid));
+   				 NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
+   				 
+   				 toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
+   				 
+   				 int width = (int)alertUI.getPreferredSize().getWidth() + 40;
+   				 if (width < 300) {
+   					 width = 300;
+   				 }
+   				 
+   				 toaster.setToasterWidth(width);
+   				 
+   				 toaster.showToaster("", alertUI);
+   				 toaster.hideTitle();
+   			 }
+   		 });
+   	 }
+   	 catch(Exception ex) {
+   		Log.error(ex); 
+   	 }
     }
 
     /**
@@ -166,26 +177,35 @@ public class NotificationPlugin implements Plugin, PacketListener {
      * @param jid the jid of the user who has gone offline.
      * @param presence of the offline user.
      */
-    private void notifyUserOffline(String jid, Presence presence) {
-        SparkToaster toaster = new SparkToaster();
-        toaster.setCustomAction(new ChatAction(jid));
-        toaster.setDisplayTime(5000);
-        toaster.setBorder(BorderFactory.createBevelBorder(0));
-
-        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
-
-
-        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
-
-        int width = (int)alertUI.getPreferredSize().getWidth() + 40;
-        if (width < 300) {
-            width = 300;
-        }
-
-        toaster.setToasterWidth(width);
-
-        toaster.showToaster("", alertUI);
-        toaster.hideTitle();
+    private void notifyUserOffline(final String jid, final Presence presence) {
+   	 try {
+   		 EventQueue.invokeAndWait(new Runnable(){
+   			 public void run() {   	 
+			        SparkToaster toaster = new SparkToaster();
+			        toaster.setCustomAction(new ChatAction(jid));
+			        toaster.setDisplayTime(5000);
+			        toaster.setBorder(BorderFactory.createBevelBorder(0));
+			
+			        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
+			
+			
+			        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
+			
+			        int width = (int)alertUI.getPreferredSize().getWidth() + 40;
+			        if (width < 300) {
+			            width = 300;
+			        }
+			
+			        toaster.setToasterWidth(width);
+			
+			        toaster.showToaster("", alertUI);
+			        toaster.hideTitle();
+   			 }
+   		 });
+   	 }
+   	 catch(Exception ex) {
+   		Log.error(ex); 
+   	 }
     }
 
     private class ChatAction extends AbstractAction {
