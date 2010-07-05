@@ -34,10 +34,12 @@ import javax.sdp.SessionName;
 import javax.sdp.TimeDescription;
 import javax.sdp.Version;
 
+import net.java.sip.communicator.impl.media.codec.Constants;
 import net.java.sipmack.common.Log;
 import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.NetworkAddressManager;
 import net.java.sipmack.sip.SIPConfig;
+import net.sf.fmj.media.BonusAudioFormatEncodings;
 
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -83,6 +85,8 @@ public class JmfMediaManager {
         audioFormats.add(new AudioFormat(AudioFormat.G723_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.ALAW));
+        audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
+        audioFormats.add(new AudioFormat(BonusAudioFormatEncodings.ILBC_RTP));
     }
 
     /**
@@ -282,6 +286,7 @@ public class JmfMediaManager {
      * @throws MediaException
      */
     public AudioMediaSession createAudioMediaSession(String sdpData, int localPort) throws MediaException {
+   	 
         SessionDescription sessionDescription = null;
         if (sdpData == null) {
             throw new MediaException("The SDP data was null! Cannot open "
@@ -349,6 +354,7 @@ public class JmfMediaManager {
             catch (SdpParseException ex) {
                 continue;
             }
+
             // Find ports
             try {
                 mediaPort = media.getMediaPort();
@@ -359,6 +365,7 @@ public class JmfMediaManager {
                                 + mediaType + "]. Ignoring description!",
                         ex));
             }
+            
             // Find formats
             Vector sdpFormats = null;
             try {
@@ -429,7 +436,7 @@ public class JmfMediaManager {
             TransportCandidate.Fixed local = new TransportCandidate.Fixed(NetworkAddressManager.getLocalHost().getHostAddress(), localPort);
 
             AudioFormat audioFormat = new AudioFormat(((formatSets.get(0)).get(0)));
-
+				
             AudioMediaSession audioMediaSession = new AudioMediaSession(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
 
             return audioMediaSession;

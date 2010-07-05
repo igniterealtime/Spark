@@ -14,6 +14,10 @@ import javax.media.format.AudioFormat;
 import javax.media.format.VideoFormat;
 import javax.sdp.SdpConstants;
 
+import net.java.sip.communicator.impl.media.codec.Constants;
+import net.sf.fmj.media.BonusAudioFormatEncodings;
+import net.sf.fmj.media.datasink.rtp.RTPBonusFormatsMgr;
+
 /**
  * Audio Format Utils.
  *
@@ -47,6 +51,10 @@ public class AudioFormatUtils {
                 return AudioFormat.G728_RTP;
             case SdpConstants.G729:
                 return AudioFormat.G729_RTP;
+            case RTPBonusFormatsMgr.SPEEX_RTP_INDEX: // 110
+            	return Constants.SPEEX_RTP;
+            case RTPBonusFormatsMgr.ILBC_RTP_INDEX:
+            	return BonusAudioFormatEncodings.ILBC_RTP;
             case SdpConstants.H263:
                 return VideoFormat.H263_RTP;
             case SdpConstants.JPEG:
@@ -77,6 +85,10 @@ public class AudioFormatUtils {
             return Integer.toString(SdpConstants.G728);
         } else if (jmfFormat.equals(AudioFormat.G729_RTP)) {
             return Integer.toString(SdpConstants.G729);
+        } else if (jmfFormat.equals(Constants.SPEEX_RTP)) {
+      	   return Integer.toString(RTPBonusFormatsMgr.SPEEX_RTP_INDEX);
+        } else if (jmfFormat.equals(BonusAudioFormatEncodings.ILBC_RTP)) {
+      	  	return Integer.toString(RTPBonusFormatsMgr.ILBC_RTP_INDEX);
         } else if (jmfFormat.equals(VideoFormat.H263_RTP)) {
             return Integer.toString(SdpConstants.H263);
         } else if (jmfFormat.equals(VideoFormat.JPEG_RTP)) {

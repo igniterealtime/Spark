@@ -35,8 +35,8 @@ import javax.media.rtp.RTPManager;
 import javax.media.rtp.ReceiveStreamListener;
 import javax.media.rtp.SendStream;
 import javax.media.rtp.SessionAddress;
-
 import net.java.sipmack.sip.SIPConfig;
+import net.sf.fmj.media.datasink.rtp.RTPBonusFormatsMgr;
 
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
@@ -336,6 +336,7 @@ public class AudioChannel {
         PushBufferStream pbss[] = pbds.getStreams();
 
         rtpMgrs = new RTPManager[pbss.length];
+        
         SessionAddress localAddr, destAddr;
         InetAddress ipAddr;
         SendStream sendStream;
@@ -345,6 +346,7 @@ public class AudioChannel {
         for (int i = 0; i < pbss.length; i++) {
             try {
                 rtpMgrs[i] = RTPManager.newInstance();
+                RTPBonusFormatsMgr.addBonusFormats(rtpMgrs[i]);
 
                 port = portBase + 2 * i;
                 ipAddr = InetAddress.getByName(ipAddress);
