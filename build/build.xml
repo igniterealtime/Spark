@@ -56,6 +56,8 @@
     <property name="libs.mac.dir" location="${dist.libs.dir}/mac"/>
     <property name="target" location="${basedir}/target"/>
     <property name="classes" location="${target}/classes"/>
+	<property name="test.classes" location="${target}/classestest"/>
+	<property name="test.src" location="${basedir}/src/test"/>
     <property name="target.build" location="${target}/build"/>
     <property name="sparkplugs.build" location="${target}/sparkplugs"/>
     <property name="target.resources" location="${target.build}/resources"/>
@@ -395,12 +397,40 @@
 
 
     <!-- tests =================================================================================== -->
-    <target name="build_tests" depends="init">
-
+    <target name="build_tests" depends="build">
+    	  <mkdir dir="${test.classes}" />
+    	  <javac destdir="${test.classes}"
+    	               debug="true"
+    	               source="1.6"
+    	               target="1.6"
+    	       	>
+    	        	<compilerarg value="-Xlint:deprecation" />
+    	            <classpath>
+    	                <path refid="agent.dependencies"/>
+    	            	<pathelement location="${classes}" />
+    	            </classpath>
+    	            <src path="${test.src}"/>
+    	        </javac>
     </target>
 
     <target name="run_tests" depends="build, build_tests">
-
+        <junit printsummary="on"
+            fork="true"
+            haltonfailure="false"
+            showoutput="true">
+        	
+            <classpath>
+                <path refid="agent.dependencies"/>
+            	<pathelement location="${classes}" />
+            	<pathelement location="${test.classes}" />
+            </classpath>
+        	
+            <batchtest>
+                <fileset dir="${basedir}/src/test">
+                	 <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>       	
     </target>
 
     <target name="report" depends="run_tests">
