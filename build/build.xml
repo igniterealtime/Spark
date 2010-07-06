@@ -71,7 +71,13 @@
     <property name="commercial.plugin.dir" location="${basedir}/src/commercial"/>
     <property name="xtra.dir" location="${basedir}/src/xtra"/>
     <property name="target.xtra" location="${target.build}/xtra"/>
-	<property name="release.dir" value="${basedir}/installer"/>
+    <property name="release.dir" value="${basedir}/installer"/>
+    <property name="proxy.host"     value=""/>
+    <property name="proxy.port"     value=""/>
+    <property name="proxy.user"     value=""/>
+    <property name="proxy.pass"     value=""/>
+    <property name="proxy.enabled"  value=""/>
+
 	
     <!-- Installer Ant Script -->
 
@@ -882,14 +888,78 @@
         	</classpath>
 		</taskdef>
 		<pmd shortFilenames="true">
-			<ruleset>migrating</ruleset>
-			<ruleset>imports</ruleset>
+                        <ruleset>migrating</ruleset>
+                        <ruleset>sunsecure</ruleset>
+                        <ruleset>imports</ruleset>
+                        <ruleset>strings</ruleset>
 			<formatter type="xml" toFile="target/pmd_report.xml" />
+			<formatter type="html" toFile="target/pmd_report.html" />
 			<fileset dir="src/">
 				<include name="**/*.java" />
 			</fileset>
 		</pmd>
     </target>
+
+    <!-- docbook ========================================================================= -->
+    <target name="docbook" depends="proxy" description="Docbook">
+        <mkdir dir="${target}/docbook"/>
+	<exec executable="xmllint">
+		<arg value="--xinclude" />
+		<arg value="--output" />
+		<arg value="${target}/docbook/BOOK-MULTILANGUAGE.sgml" />
+		<arg value="src/docbook/book.sgml" />
+	</exec>
+
+        <xslt
+            in="${target}/docbook/BOOK-MULTILANGUAGE.sgml"
+            out="${target}/docbook/BOOK-DE.sgml"
+            style="build/docbook/filter_language.xsl"
+            force="yes" 
+                >
+            <param name="language" expression="de"/>
+            <outputproperty name="encoding" value="iso8859_1"/>
+        </xslt>
+
+        <xslt
+            in="${target}/docbook/BOOK-MULTILANGUAGE.sgml"
+            out="${target}/docbook/BOOK-EN.sgml"
+            style="build/docbook/filter_language.xsl"
+            force="yes"
+            >
+            <param name="language" expression="en"/>
+        </xslt>
+
+	<exec executable="docbook2pdf">
+        	<arg value="${target}/docbook/BOOK-DE.sgml" />
+                <arg value="--output" />
+                <arg value="${release.dir}" />
+	</exec>
+
+	<exec executable="docbook2pdf">
+       		<arg value="${target}/docbook/BOOK-EN.sgml" />
+                <arg value="--output" />
+                <arg value="${release.dir}" />
+	</exec>
+
+    </target>
+
+    <target name="proxy" depends="probe-proxy" if="proxy.enabled">
+	<echo>${proxy.host} ${proxy.port} ${proxy.user} ${proxy.pass} </echo>
+	<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"
+		proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+    </target>
+
+
+    <target name="probe-proxy">
+	<condition property="proxy.enabled">
+		<and>
+			<isset property="proxy.host"/>
+		</and>
+	</condition>
+    </target>
+
+    <!-- END docbook ===================================================================== -->
+
 
 </project>
 
