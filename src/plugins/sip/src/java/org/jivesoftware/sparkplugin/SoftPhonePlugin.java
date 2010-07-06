@@ -38,6 +38,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.sparkplugin.preferences.SipCodecsPreference;
 import org.jivesoftware.sparkplugin.ui.ContactDialControl;
 import org.jivesoftware.sparkplugin.ui.RegistrationStatusPanel;
 import org.jivesoftware.sparkplugin.ui.TelephoneTextField;
@@ -83,9 +84,11 @@ public class SoftPhonePlugin implements Plugin, SoftPhoneListener {
                     SparkManager.getChatManager().addSparkTabHandler(new SoftPhoneTabHandler());
                     initializeUI();
                 }
+                SipCodecsPreference preference = new SipCodecsPreference();
+                SparkManager.getPreferenceManager().addPreference(preference);
+                preference.load();
             }
         };
-  		 
         initializeThread.start();
     }
 

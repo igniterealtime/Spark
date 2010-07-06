@@ -46,7 +46,7 @@ public class AudioFormatUtils {
             case SdpConstants.DVI4_16000:
                 return AudioFormat.DVI_RTP;
             case SdpConstants.PCMA:
-                return AudioFormat.ALAW;
+        	return BonusAudioFormatEncodings.ALAW_RTP; 
             case SdpConstants.G728:
                 return AudioFormat.G728_RTP;
             case SdpConstants.G729:
@@ -79,7 +79,7 @@ public class AudioFormatUtils {
             return Integer.toString(SdpConstants.DVI4_8000);
         } else if (jmfFormat.equals(AudioFormat.DVI_RTP)) {
             return Integer.toString(SdpConstants.DVI4_16000);
-        } else if (jmfFormat.equals(AudioFormat.ALAW)) {
+        } else if (jmfFormat.equals(BonusAudioFormatEncodings.ALAW_RTP)) {
             return Integer.toString(SdpConstants.PCMA);
         } else if (jmfFormat.equals(AudioFormat.G728_RTP)) {
             return Integer.toString(SdpConstants.G728);

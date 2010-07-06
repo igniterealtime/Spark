@@ -89,6 +89,7 @@ import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
 
 public class SoftPhoneManager implements CommunicationsListener, CallListener, UserActionListener, SoftPhone {
 
+	
     private static SoftPhoneManager singleton;
     private static final Object LOCK = new Object();
     private SipAccount saccount;
@@ -661,7 +662,6 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                 int localAudioPort = -1;
                 int localVideoPort = -1;
                 
-               
                 Vector<MediaDescription> mediaDescriptions = call.getLocalSdpDescription().getMediaDescriptions(true);
                 for (MediaDescription mediaDescription : mediaDescriptions)
                 {
@@ -682,8 +682,6 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                 // If remote client have video
                 if (localVideoPort > 0)
                 {
-                	System.out.println("Port:" + localVideoPort);
-                	System.out.println("Device: "+ SettingsManager.getLocalPreferences().getVideoDevice());
                 	if (SettingsManager.getLocalPreferences().getVideoDevice() != null && !"".equals(SettingsManager.getLocalPreferences().getVideoDevice()))
                 	{
 		                VideoMediaSession videoMediaSession = mediaManager.createVideoMediaSession(call.getRemoteSdpDescription().toString(), localVideoPort);
@@ -917,7 +915,6 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
             call.setLocalSdpDescription(sdpData);
 
             call.addStateChangeListener(this);
-
             Interlocutor interlocutor = new Interlocutor();
             interlocutor.setCall(call);
 
@@ -1188,5 +1185,9 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      */
     public boolean isPhoneEnabled() {
         return getPreference() != null;
+    }
+    
+    public JmfMediaManager getJmfMediaManager() {
+   	 return mediaManager;
     }
 }

@@ -42,6 +42,7 @@ import net.java.sipmack.sip.SIPConfig;
 import net.sf.fmj.media.BonusAudioFormatEncodings;
 
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
@@ -81,12 +82,12 @@ public class JmfMediaManager {
      * Setup API supported AudioFormats
      */
     private void setupAudioFormats() {
-        audioFormats.add(new AudioFormat(AudioFormat.GSM_RTP));
-        audioFormats.add(new AudioFormat(AudioFormat.G723_RTP));
-        audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
-        audioFormats.add(new AudioFormat(AudioFormat.ALAW));
         audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
+        audioFormats.add(new AudioFormat(Constants.ALAW_RTP));
+        audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
+        audioFormats.add(new AudioFormat(AudioFormat.GSM_RTP));       
         audioFormats.add(new AudioFormat(BonusAudioFormatEncodings.ILBC_RTP));
+        audioFormats.add(new AudioFormat(AudioFormat.G723_RTP));        
     }
 
     /**
@@ -190,6 +191,7 @@ public class JmfMediaManager {
             catch (SdpParseException ex) {
                 continue;
             }
+
             // Find ports
             try {
                 mediaPort = media.getMediaPort();
@@ -200,6 +202,7 @@ public class JmfMediaManager {
                                 + mediaType + "]. Ignoring description!",
                         ex));
             }
+            
             // Find formats
             Vector sdpFormats = null;
             try {
@@ -526,10 +529,10 @@ public class JmfMediaManager {
             timeDescs.add(t);
             // --------Audio media description
             // make sure preferred formats come first
-            String[] aformats = new String[getAudioFormats().size()];
+            String[] aformats = new String[getSelectedFormats().size()];
 
             int i = 0;
-            for (AudioFormat audioFormat : getAudioFormats()) {
+            for (AudioFormat audioFormat : getSelectedFormats()) {
                 aformats[i++] = AudioFormatUtils.findCorrespondingSdpFormat(audioFormat.getEncoding());
             }
 
@@ -684,5 +687,43 @@ public class JmfMediaManager {
 
     private static void runLinuxPreInstall() {
         // @TODO Implement Linux Pre-Install
+    }
+    
+    /**
+     * reads the codec-order from the user-preferences
+     * 
+     * @return
+     */
+    private AudioFormat getPreferredFormat(ArrayList<String> formate){
+   	 LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+   	 // gets the selected order from preferences
+   	 String[] codecs = localPreferences.getSelectedCodecs().split("\\^");
+   	 
+   	 for(String codec: codecs) {
+   		 for(String format : formate) {
+   			 if(format != null 
+   				 && format.toLowerCase().equals(codec.toLowerCase()))
+   				 return new AudioFormat(format);
+   		 }
+   	 }
+   	 // this return shouldn't be executed, but if no codec was found, then use the first
+   	 return new AudioFormat(formate.get(0));
+    }
+    
+    private List<AudioFormat> getSelectedFormats(){
+   	 List<AudioFormat> format = new ArrayList<AudioFormat>();
+   	 List<AudioFormat> all = getAudioFormats();
+   	 LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+   	 // gets the selected order from preferences
+   	 String[] codecs = localPreferences.getSelectedCodecs().split("\\^");
+   	 for(AudioFormat form : all) {
+   		 for(String codec: codecs) {
+	   		 if(form.getEncoding().toLowerCase().equals(codec.toLowerCase())){
+	   			 format.add(form);
+	   		 }
+   		 }
+   	 }
+ System.out.println("FORMATE NEU: " + format);
+   	 return format;
     }
 }

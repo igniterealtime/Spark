@@ -851,6 +851,22 @@ public class LocalPreferences {
 		setBoolean("ChatWindowAlwaysOnTop", onTop);
 	}
 		
+	public String getSelectedCodecs() {
+		return getString("SelectedCodecs", null);
+	}
+	
+	public String getAvailableCodecs() {
+		return getString("AvailableCodecs", null);
+	}
+	
+	public void setSelectedCodecs(String value) {
+		setString("SelectedCodecs", value);
+	}
+	
+	public void setAvailableCodecs(String value) {
+		setString("AvailableCodecs", value);
+	}
+	
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean
 				.toString(defaultValue)));
@@ -867,6 +883,14 @@ public class LocalPreferences {
 
 	private void setInt(String property, int value) {
 		props.setProperty(property, Integer.toString(value));
+	}
+	
+	private String getString(String property, String defaultValue) {
+		return props.getProperty(property, defaultValue);
+	}
+	
+	private void setString(String property, String value) {
+		props.setProperty(property, value);
 	}
 
 }
