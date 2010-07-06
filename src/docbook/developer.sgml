@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="developer" revision="1">
+        <title>Developer</title>
+
+        <xi:include  href="developer-source.sgml"  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+        <xi:include  href="developer-plugin.sgml"  xmlns:xi="http://www.w3.org/2001/XInclude"/>     
+        <xi:include  href="developer-branding.sgml"  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+        <xi:include  href="developer-patch.sgml"  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</chapter>
+

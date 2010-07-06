@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<section id="developer-patch" revision="1">
+    <title>
+		<phrase lang="en">Create Patch</phrase>
+    </title>
+    
+    <para>
+		<phrase lang="en">This documents explain how to create a patch for Spark.</phrase>
+    </para>
+    
+    
+    <section id="developer-patch-svn" revision="1">
+    	<title>
+			<phrase lang="en">Create Patch via SVN</phrase>
+    	</title>
+		<programlisting>
+			svn diff > SPARK.patch
+			or 
+			svn diff > SPARK-917.patch 								# SPARK-[ISSUE-ID].patch
+		</programlisting>
+	</section>
+	
+    <section id="developer-patch-cli" revision="1">
+    	<title>
+			<phrase lang="en">Create Patch via CommandLine</phrase>
+    	</title>
+    
+		<programlisting>
+			diff -Nurwb sparkdir sparkdir_mod > SPARK.patch 
+			or 
+			diff -Nurwb sparkdir sparkdir_mod > SPARK-917.patch 	# SPARK-[ISSUE-ID].patch 
+		</programlisting>
+	</section>	
+</section>

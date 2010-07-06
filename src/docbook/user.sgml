@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="user" revision="1">
+        <title>
+			<phrase lang="en">User</phrase>
+       		<phrase lang="en">Benutzer</phrase>
+		</title>
+        
+		<section id="user-starting" revision="1">
+		    <title>
+				<phrase lang="en">Get Started</phrase>
+	
+		    </title>
+			<para>
+				<phrase lang="en">
+					After you install Spark, you'll get going by logging in and adding contacts. Try out a chat with one of your contacts!
+				</phrase>
+			</para>
+		</section>
+</chapter>
+

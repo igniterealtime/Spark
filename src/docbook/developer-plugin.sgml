@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<section id="developer-plugin" revision="1">
+    <title>
+		<phrase lang="en">Spark Plugin</phrase>
+    </title>
+    
+    
+    <section>
+		<title>
+			<phrase lang="en">What Are Sparkplugs?</phrase>
+    		
+    	</title>
+		<para>
+			<phrase lang="en">Sparkplugs dynamically extend the features of the Spark instant messaging client. Use Sparkplugs to customize Spark for your business or organization or to add an innovative twist to instant messaging. The extensive plugin API allows for complete client flexibility but is still simple and (we hope!) fun to use.</phrase>
+		</para>
+	</section>
+	    
+	<section>
+		<title>
+			<phrase lang="en">Structure of a Plugin</phrase>
+		</title>
+		<programlisting>
+			<![CDATA[
+			myplugin.jar!/
+			 |- plugin.xml     <- Plugin definition file
+			 |- libs/          <- Contains all the class archives needed to run this plugin.
+			]]>				
+		</programlisting>
+				
+		<para>
+			<phrase lang="en">The plugin.xml file specifies the main Plugin class. A sample file might look like the following: </phrase>
+		</para>
+		<programlisting>
+			<![CDATA[			
+				<?xml version="1.0" encoding="UTF-8"?>
+			    <plugin>
+					<name>MyPlugin Plugin</name>
+					<class>com.examples.plugins.MyPlugin</class>
+					<author>The Author</author>
+					<version>1.0</version>
+					<description>description from the plugin.</description>
+					<email>developer@mail.org</email>
+					<minSparkVersion>2.0.6</minSparkVersion>
+				</plugin>
+			]]>					
+		</programlisting>
+		
+		
+		<para>
+			<phrase lang="en">The plugin.xml with dependencies on other plugins: </phrase>
+		</para>
+		<programlisting>
+			<![CDATA[			
+				<?xml version="1.0" encoding="UTF-8"?>
+			    <plugin>
+					<name>MyPlugin Plugin</name>
+					<class>com.examples.plugins.MyPlugin</class>
+					<author>The Author</author>
+					<version>1.0</version>
+					<description>description from the plugin.</description>
+					<email>developer@mail.org</email>
+					<minSparkVersion>2.0.6</minSparkVersion>
+					<os>Windows,Mac,Linux</os>
+				    <depends>
+						<plugin>
+							<name>Phone Client</name>
+							<version>1.0.1</version>
+						</plugin>
+				    </depends>			
+				</plugin>
+			]]>					
+		</programlisting>				
+	</section>
+</section>
