@@ -427,6 +427,7 @@ public class CallProcessing {
     }
 
     void processBye(ServerTransaction serverTransaction, Request byeRequest) {
+   	 
         try {
             // find the call
             Call call = callDispatcher.findCall(serverTransaction.getDialog());
@@ -435,8 +436,6 @@ public class CallProcessing {
                 sipManCallback.fireUnknownMessageReceived(byeRequest);
                 return;
             }
-            // change status
-            call.setState(Call.DISCONNECTED);
 
             // Send OK
             Response ok = null;
