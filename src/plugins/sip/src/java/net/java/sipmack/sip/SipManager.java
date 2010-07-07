@@ -398,6 +398,8 @@ public class SipManager implements SipListener {
             if (sipStack == null)
                 return;
 
+            sleep(500);
+            
             sipProvider.removeSipListener(this);
 
             // Delete SipProvider
@@ -1256,15 +1258,6 @@ public class SipManager implements SipListener {
     // ------------ registerred
     void fireRegistered(String address) {
     	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
-    	// TODO : Anpassen
         //SIPTransaction.setRegisterTimeout(64);
         try {
             registerProcessing.subscribe(registrarAddress, registrarPort, registrarTransport);
@@ -1360,7 +1353,7 @@ public class SipManager implements SipListener {
                 .getServerTransaction();
 
         Request request = requestReceivedEvent.getRequest();
-
+        
         if (serverTransaction == null) {
             try {
                 serverTransaction = sipProvider
@@ -1526,7 +1519,7 @@ public class SipManager implements SipListener {
         	
             // REGISTER
             if (method.equals(Request.REGISTER)) {
-                registerProcessing.processOK(clientTransaction, response);
+                registerProcessing.processOK(clientTransaction, response);                
             }// INVITE
             else if (method.equals(Request.INVITE)) {
                 callProcessing.processInviteOK(clientTransaction, response);
@@ -1634,9 +1627,11 @@ public class SipManager implements SipListener {
             } else if (method.equals(Request.REGISTER)) {
 
                 CSeqHeader cseq = (CSeqHeader) response.getHeader(CSeqHeader.NAME);
-                if (cseq.getSeqNumber() < 2)
+
                     registerProcessing.processAuthenticationChallenge(
                             clientTransaction, response);
+                if (cseq.getSeqNumber() < 2)
+               	 Log.debug("Removed");
                 else
                     fireRegistrationFailed("Invalid password.", RegistrationEvent.Type.WrongPass);
 

@@ -110,7 +110,7 @@ public class SoftPhonePlugin implements Plugin, SoftPhoneListener {
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
 
             public void connectionClosed() {
-                softPhone.handleUnregisterRequest();
+                //softPhone.handleUnregisterRequest();
             }
 
             public void connectionClosedOnError(Exception exception) {

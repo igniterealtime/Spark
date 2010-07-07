@@ -365,8 +365,13 @@ class RegisterProcessing {
                 throw new CommunicationsException(
                         "Couldn't find the initial register request");
             }
+            
+            
             Request unregisterRequest = (Request) registerRequest.clone();
             try {
+            	 CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId(); 
+            	 ((CallIdHeader)unregisterRequest.getHeader(CallIdHeader.NAME)).setCallId(callIdHeader.getCallId());
+            	 
                 unregisterRequest.getExpires().setExpires(0);
                 CSeqHeader cSeqHeader = (CSeqHeader) unregisterRequest
                         .getHeader(CSeqHeader.NAME);
@@ -537,7 +542,6 @@ class RegisterProcessing {
             throw new CommunicationsException(
                     "Could not send out the register request!", ex);
         }
-        this.registerRequest = request;
     }
 
     public void cancelSchedules() {
