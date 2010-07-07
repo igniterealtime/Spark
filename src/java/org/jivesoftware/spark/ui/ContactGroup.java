@@ -36,6 +36,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -181,26 +182,35 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param jid      the jid of the offline contact.
      * @param status   the current status of the offline contact.
      */
-    public void addOfflineContactItem(String alias, String nickname, String jid, String status) {
-        // Build new ContactItem
-        final ContactItem offlineItem = new ContactItem(alias, nickname, jid);
-        offlineItem.setGroupName(getGroupName());
-
-        final Presence offlinePresence = PresenceManager.getPresence(jid);
-        offlineItem.setPresence(offlinePresence);
-
-        // set offline icon
-        offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
-
-        // Set status if applicable.
-        if (ModelUtil.hasLength(status)) {
-            offlineItem.setStatusText(status);
-        }
-
-        // Add to offline contacts.
-        offlineContacts.add(offlineItem);
-
-        insertOfflineContactItem(offlineItem);
+    public void addOfflineContactItem(final String alias, final String nickname, final String jid, final String status) {
+       try {
+      	 EventQueue.invokeLater(new Runnable(){
+      		 public void run() {
+      			 // Build new ContactItem
+      			 final ContactItem offlineItem = new ContactItem(alias, nickname, jid);
+      			 offlineItem.setGroupName(getGroupName());
+      			 
+      			 final Presence offlinePresence = PresenceManager.getPresence(jid);
+      			 offlineItem.setPresence(offlinePresence);
+      			 
+      			 // set offline icon
+      			 offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
+      			 
+      			 // Set status if applicable.
+      			 if (ModelUtil.hasLength(status)) {
+      				 offlineItem.setStatusText(status);
+      			 }
+      			 
+      			 // Add to offline contacts.
+      			 offlineContacts.add(offlineItem);
+      			 
+      			 insertOfflineContactItem(offlineItem);
+      		 }
+      	 });
+       }
+       catch(Exception ex) {
+      	 Log.error(ex);
+       }
     }
 
     /**
