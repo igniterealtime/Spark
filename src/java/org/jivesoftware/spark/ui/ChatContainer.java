@@ -143,7 +143,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             public void allTabsRemoved() {
                 chatFrame.setTitle("");
-                chatFrame.dispose();
+                chatFrame.setVisible(false);
             }
 
 
@@ -410,7 +410,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             int tabLocation = indexOfComponent(component);
             setSelectedIndex(tabLocation);
 
-            chatFrame.dispose();
             if (Spark.isWindows()) {
                 chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
@@ -477,14 +476,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // Set to new tab.
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
-
+    
             if (Spark.isWindows()) {
-                chatFrame.setFocusableWindowState(false);
-                chatFrame.setState(Frame.ICONIFIED);
+            	chatFrame.setExtendedState(Frame.ICONIFIED);
             }
             chatFrame.setVisible(true);
-            chatFrame.setFocusableWindowState(true);
-
+            
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
@@ -773,7 +770,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         if (getTabCount() == 0) {
             chatFrame.setTitle("");
-            chatFrame.dispose();
         }
 
         this.removeTabAt(location);
@@ -1009,6 +1005,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     private void checkNotificationPreferences(final ChatRoom room, boolean customMsg, String customMsgText, String customMsgTitle) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
+
         if (pref.getWindowTakesFocus()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
@@ -1144,6 +1141,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
         LocalPreferences pref = SettingsManager.getLocalPreferences();
+
         if (pref.isDockingEnabled()) {
             chatFrame = MainWindow.getInstance();
         }
@@ -1179,8 +1177,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             public void windowClosing(WindowEvent windowEvent) {
                 // Save layout
                 chatFrame.saveLayout();
-
                 SparkManager.getChatManager().getChatContainer().closeAllChatRooms();
+                chatFrame.setVisible(false);
             }
         });
 
@@ -1217,7 +1215,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // Set to new tab.
             if (Spark.isWindows()) {
                 frame.setState(Frame.ICONIFIED);
-                chatFrame.setFocusableWindowState(true);
                 SparkManager.getNativeManager().flashWindow(frame);
 
                 frame.setVisible(true);

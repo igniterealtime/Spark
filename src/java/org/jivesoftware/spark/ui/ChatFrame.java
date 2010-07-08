@@ -61,7 +61,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
      * Creates default ChatFrame.
      */
     public ChatFrame() {
-	
+    	this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    	
 	chatWindowBar = new JMenuBar();
 	optionMenu = new JMenu();
 	ResourceUtils.resButton(optionMenu, Res.getString("menuitem.chatframe.option"));
@@ -91,7 +92,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         
         optionMenu.add(alwaysOnTopItem);
         chatWindowBar.add(optionMenu);
-	setJMenuBar(chatWindowBar);
+        setJMenuBar(chatWindowBar);
+        
         setIconImage(SparkManager.getApplicationImage().getImage());
 
         getContentPane().setLayout(new BorderLayout());
@@ -235,5 +237,4 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         ShakeWindow d = new ShakeWindow(this);
         d.startShake();
     }
-
 }
