@@ -30,6 +30,11 @@ public class LayoutSettings {
     private int chatFrameY;
     private int chatFrameWidth;
     private int chatFrameHeight;
+    
+    private int preferencesFrameX;
+    private int preferencesFrameY;
+    private int preferencesFrameWidth;
+    private int preferencesFrameHeight;
     private int dividerLocation = -1;
 
     public int getMainWindowX() {
@@ -107,9 +112,41 @@ public class LayoutSettings {
 
     }
 
-    public int getSplitPaneDividerLocation() {
+    public int getPreferencesFrameX() {
+		return preferencesFrameX;
+	}
+
+	public void setPreferencesFrameX(int preferencesFrameX) {
+		this.preferencesFrameX = preferencesFrameX;
+	}
+
+	public int getPreferencesFrameY() {
+		return preferencesFrameY;
+	}
+
+	public void setPreferencesFrameY(int preferencesFrameY) {
+		this.preferencesFrameY = preferencesFrameY;
+	}
+
+	public int getPreferencesFrameWidth() {
+		return preferencesFrameWidth;
+	}
+
+	public void setPreferencesFrameWidth(int preferencesFrameWidth)	{
+		this.preferencesFrameWidth = preferencesFrameWidth;
+	}
+
+	public int getPreferencesFrameHeight() {
+		return preferencesFrameHeight;
+	}
+
+	public void setPreferencesFrameHeight(int preferencesFrameHeight) {
+		this.preferencesFrameHeight = preferencesFrameHeight;
+	}
+
+	public int getSplitPaneDividerLocation() {
         return dividerLocation;
-    }
+   }
 
 
 }

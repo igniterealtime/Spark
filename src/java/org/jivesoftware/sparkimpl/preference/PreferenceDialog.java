@@ -20,8 +20,13 @@
 
 package org.jivesoftware.sparkimpl.preference;
 
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.resource.Res;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -29,11 +34,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 
 public class PreferenceDialog implements PropertyChangeListener {
     private JDialog preferenceDialog;
@@ -59,6 +63,7 @@ public class PreferenceDialog implements PropertyChangeListener {
         
         btn_close.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e) {
+				saveLayout();
 				preferenceDialog.setVisible(false);
 				preferenceDialog.dispose();
 			}
@@ -67,6 +72,7 @@ public class PreferenceDialog implements PropertyChangeListener {
 			public void actionPerformed(ActionEvent e) {
 				boolean okToClose = prefPanel.closing();
 	            if (okToClose) {
+	            	 saveLayout();
 	                preferenceDialog.setVisible(false);
 	                preferenceDialog.dispose();
 	            }
@@ -88,19 +94,36 @@ public class PreferenceDialog implements PropertyChangeListener {
         pane = new JOptionPane(contentPane, JOptionPane.PLAIN_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
-        preferenceDialog.pack();
-        preferenceDialog.setSize(750, 550);
         preferenceDialog.setContentPane(mainPanel);
-        preferenceDialog.setLocationRelativeTo(SparkManager.getMainWindow());
+        preferenceDialog.pack();
+        
+        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+        if ((settings.getPreferencesFrameX() == 0 && settings.getPreferencesFrameY() == 0)
+      	  || settings.getPreferencesFrameHeight() < 100
+      	  || settings.getPreferencesFrameWidth() < 100) {
+            // Use default settings.
+      	   preferenceDialog.setSize(750, 550);
+      	   preferenceDialog.setLocationRelativeTo(SparkManager.getMainWindow());
+        }
+        else {
+      	  preferenceDialog.setBounds(settings.getPreferencesFrameX(), settings.getPreferencesFrameY(), settings.getPreferencesFrameWidth(), settings.getPreferencesFrameHeight());
+        }
 
         pane.addPropertyChangeListener(this);
 
         preferenceDialog.setVisible(true);
         preferenceDialog.toFront();
+        
+        preferenceDialog.addWindowListener(new WindowAdapter() {
+      	  public void windowClosing(WindowEvent e) {
+      		  saveLayout();
+      	  }
+        });
     }
 
     public void propertyChange(PropertyChangeEvent e) {
     	if (pane.getValue() instanceof Integer) {
+    			saveLayout();
             pane.removePropertyChangeListener(this);
             preferenceDialog.dispose();
             return;
@@ -109,5 +132,22 @@ public class PreferenceDialog implements PropertyChangeListener {
 
     public JDialog getDialog() {
         return preferenceDialog;
+    }
+    
+    /**
+     * Saves the layout on closing of the main window.
+     */
+    private void saveLayout() {
+        try {
+            LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+            settings.setPreferencesFrameHeight(preferenceDialog.getHeight());
+            settings.setPreferencesFrameWidth(preferenceDialog.getWidth());
+            settings.setPreferencesFrameX(preferenceDialog.getX());
+            settings.setPreferencesFrameY(preferenceDialog.getY());
+            LayoutSettingsManager.saveLayoutSettings();
+        }
+        catch (Exception e) {
+            // Don't let this cause a real problem shutting down.
+        }
     }
 }

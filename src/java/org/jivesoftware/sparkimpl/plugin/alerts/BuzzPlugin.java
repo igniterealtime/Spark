@@ -128,7 +128,7 @@ public class BuzzPlugin implements Plugin {
         }
 
         ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-        if (chatFrame != null && chatFrame.isVisible()) {
+        if (chatFrame != null ) {
             chatFrame.buzz();
             SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
         }

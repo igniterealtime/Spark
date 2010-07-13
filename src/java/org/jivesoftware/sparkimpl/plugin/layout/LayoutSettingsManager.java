@@ -73,7 +73,11 @@ public class LayoutSettingsManager {
         String chatFrameWidth = Integer.toString(layoutSettings.getChatFrameWidth());
         String chatFrameHeight = Integer.toString(layoutSettings.getChatFrameHeight());
         String splitDividerLocation = Integer.toString(layoutSettings.getSplitPaneDividerLocation());
-
+        String preferencesFrameX = Integer.toString(layoutSettings.getPreferencesFrameX());
+        String preferencesFrameY = Integer.toString(layoutSettings.getPreferencesFrameY());
+        String preferencesFrameWidth = Integer.toString(layoutSettings.getPreferencesFrameWidth());
+        String preferencesFrameHeight = Integer.toString(layoutSettings.getPreferencesFrameHeight());
+        
         props.setProperty("mainWindowX", mainWindowX);
         props.setProperty("mainWindowY", mainWindowY);
         props.setProperty("mainWindowHeight", mainWindowHeight);
@@ -84,6 +88,11 @@ public class LayoutSettingsManager {
         props.setProperty("chatFrameWidth", chatFrameWidth);
         props.setProperty("chatFrameHeight", chatFrameHeight);
 
+        props.setProperty("preferencesFrameX", preferencesFrameX);
+        props.setProperty("preferencesFrameY", preferencesFrameY);
+        props.setProperty("preferencesFrameWidth", preferencesFrameWidth);
+        props.setProperty("preferencesFrameHeight", preferencesFrameHeight);
+        
         props.setProperty("splitDividerLocation", splitDividerLocation);
 
         try {
@@ -132,7 +141,11 @@ public class LayoutSettingsManager {
             String chatFrameWidth = props.getProperty("chatFrameWidth");
             String chatFrameHeight = props.getProperty("chatFrameHeight");
             String splitDividerLocation = props.getProperty("splitDividerLocation");
-
+            String preferencesFrameX = props.getProperty("preferencesFrameX");
+            String preferencesFrameY = props.getProperty("preferencesFrameY");
+            String preferencesFrameWidth = props.getProperty("preferencesFrameWidth");
+            String preferencesFrameHeight = props.getProperty("preferencesFrameHeight");
+            
             settings = new LayoutSettings();
 
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -161,10 +174,30 @@ public class LayoutSettingsManager {
             	chatFrameYInt = (height - chatFrameHeightInt) / 2;
             }
             
+            int preferencesFrameXInt = Integer.parseInt(preferencesFrameX);
+            int preferencesFrameYInt = Integer.parseInt(preferencesFrameY);
+            int preferencesFrameWidthInt = Integer.parseInt(preferencesFrameWidth);
+            int preferencesFrameHeightInt = Integer.parseInt(preferencesFrameHeight);
+            
+            if (!isValidWindowPosition(preferencesFrameXInt, preferencesFrameYInt,
+            	preferencesFrameWidthInt, preferencesFrameHeightInt)) {
+            	preferencesFrameXInt = (width - preferencesFrameWidthInt) / 2;
+            	preferencesFrameYInt = (height - preferencesFrameHeightInt) / 2;
+            }
+            
             int splitDividerLocationInt = splitDividerLocation == null ? -1 : Integer.parseInt(splitDividerLocation);
 
             if (chatFrameHeightInt < 100) {
                 chatFrameHeightInt = 100;
+            }
+            if (chatFrameWidthInt < 100) {
+            	chatFrameWidthInt = 100;
+            }
+            if (preferencesFrameWidthInt < 100) {
+            	preferencesFrameWidthInt = 100;
+            }
+            if (preferencesFrameHeightInt < 100) {
+            	preferencesFrameHeightInt = 100;
             }
 
             settings.setMainWindowX(mainWindowXInt);
@@ -177,6 +210,12 @@ public class LayoutSettingsManager {
             settings.setChatFrameWidth(chatFrameWidthInt);
             settings.setChatFrameHeight(chatFrameHeightInt);
             settings.setSplitPaneDividerLocation(splitDividerLocationInt);
+            
+            settings.setPreferencesFrameX(preferencesFrameXInt);
+            settings.setPreferencesFrameY(preferencesFrameYInt);
+            settings.setPreferencesFrameWidth(preferencesFrameWidthInt);
+            settings.setPreferencesFrameHeight(preferencesFrameHeightInt);
+            
             return settings;
         }
         catch (Exception e) {
