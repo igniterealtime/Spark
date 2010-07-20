@@ -20,16 +20,7 @@
 
 package org.jivesoftware.sparkimpl.preference.sounds;
 
-import com.thoughtworks.xstream.XStream;
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.WindowsFileSystemView;
-import org.jivesoftware.spark.util.log.Log;
-
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -48,6 +39,17 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.WindowsFileSystemView;
+import org.jivesoftware.spark.util.log.Log;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Preferences to handle Sounds played within Spark.
@@ -89,7 +91,17 @@ public class SoundPreference implements Preference {
 
     public JComponent getGUI() {
         if (soundPanel == null) {
-            soundPanel = new SoundPanel();
+            try {
+		EventQueue.invokeAndWait(new Runnable() {
+		public void run()
+		{
+		    soundPanel = new SoundPanel();
+		}
+		});
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+            
         }
         return soundPanel;
     }
@@ -176,22 +188,22 @@ public class SoundPreference implements Preference {
 
 
     private class SoundPanel extends JPanel {
-		private static final long serialVersionUID = 4332294589601051699L;
-		final JCheckBox incomingMessageBox = new JCheckBox();
-        final JTextField incomingMessageSound = new JTextField();
-        final JButton incomingBrowseButton = new JButton("..");
+	private static final long serialVersionUID = 4332294589601051699L;
+	private final JCheckBox incomingMessageBox = new JCheckBox();
+	private final JTextField incomingMessageSound = new JTextField();
+	private final JButton incomingBrowseButton = new JButton("..");
 
-        final JCheckBox outgoingMessageBox = new JCheckBox();
-        final JTextField outgoingMessageSound = new JTextField();
-        final JButton outgoingBrowseButton = new JButton("..");
+	private final JCheckBox outgoingMessageBox = new JCheckBox();
+	private final JTextField outgoingMessageSound = new JTextField();
+	private final JButton outgoingBrowseButton = new JButton("..");
 
-        final JCheckBox userOfflineCheckbox = new JCheckBox();
-        final JTextField userOfflineField = new JTextField();
-        final JButton offlineBrowseButton = new JButton("..");
+	private final JCheckBox userOfflineCheckbox = new JCheckBox();
+	private final JTextField userOfflineField = new JTextField();
+	private final JButton offlineBrowseButton = new JButton("..");
 
-        final JCheckBox incomingInvitationBox = new JCheckBox();
-        final JTextField incomingInvitationField = new JTextField();
-        final JButton incomingInvitationBrowseButton = new JButton("..");
+	private final JCheckBox incomingInvitationBox = new JCheckBox();
+	private final JTextField incomingInvitationField = new JTextField();
+	private final JButton incomingInvitationBrowseButton = new JButton("..");
         private JFileChooser fc;
 
 
