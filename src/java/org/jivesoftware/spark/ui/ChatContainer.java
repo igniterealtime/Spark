@@ -940,7 +940,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     final int index = indexOfComponent(comp);
                     if (index != -1) {
                         // Check notifications.
-                	System.out.println("HUHU:" + SettingsManager.getLocalPreferences().isChatRoomNotificationsOn());
                         if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom)) {
                             if (comp instanceof ChatRoom) {
                         	if(comp instanceof GroupChatRoom) {
