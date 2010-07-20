@@ -108,6 +108,7 @@ public final class GroupChatRoom extends ChatRoom {
     private GroupChatParticipantList roomInfo;
 
     private long lastActivity;
+    private Message lastMessage;
     
     LocalPreferences pref = SettingsManager.getLocalPreferences();
     private boolean showPresenceMessages = pref.isShowJoinLeaveMessagesEnabled();
@@ -279,6 +280,10 @@ public final class GroupChatRoom extends ChatRoom {
      */
     public void hideParticipantList() {
         getSplitPane().setRightComponent(null);
+    }
+    
+    public Message getLastMessage() {
+	return lastMessage;
     }
 
     /**
@@ -585,6 +590,7 @@ public final class GroupChatRoom extends ChatRoom {
     private void handleMessagePacket(Packet packet) {
         // Do something with the incoming packet here.
         final Message message = (Message)packet;
+        lastMessage = message;
         if (message.getType() == Message.Type.groupchat) {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
             Date sentDate;
