@@ -19,6 +19,8 @@
  */
 package org.jivesoftware.spark.plugin.flashing;
 
+import java.awt.EventQueue;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -31,8 +33,18 @@ public class FlashingPreference implements Preference {
 	private FlashingPreferences preferences;
 
 	public FlashingPreference() {
-		dialog = new FlashingPreferenceDialog();
 		preferences = new FlashingPreferences();
+		try {
+			EventQueue.invokeAndWait(new Runnable() 
+			{
+				public void run()
+				{
+					dialog = new FlashingPreferenceDialog();
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 
 	public FlashingPreferences getPreferences() {
