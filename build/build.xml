@@ -142,7 +142,7 @@
                 <or>
                     <contains string="${ant.version}" substring="1.6"/>
                     <contains string="${ant.version}" substring="1.7"/>
-                	<contains string="${ant.version}" substring="1.8"/>
+                    <contains string="${ant.version}" substring="1.8"/>
                 </or>
             </not>
         </condition>
@@ -154,8 +154,8 @@
                 </or>
             </not>
         </condition>
-        <fail if="ant.not.ok" message="Must use Ant 1.6.x or 1.7.x to build Spark"/>
-        <fail if="java.not.ok" message="Must use JDK 1.5.x or higher to build Spark"/>
+        <fail if="ant.not.ok" message="Must use Ant 1.6.x or higher to build Spark"/>
+        <fail if="java.not.ok" message="Must use JDK 1.6.x or higher to build Spark"/>
 
         <!-- Platform-specific initializations -->
         <condition property="windows">
