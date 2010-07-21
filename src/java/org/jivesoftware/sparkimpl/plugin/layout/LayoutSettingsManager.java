@@ -174,10 +174,10 @@ public class LayoutSettingsManager {
             	chatFrameYInt = (height - chatFrameHeightInt) / 2;
             }
             
-            int preferencesFrameXInt = Integer.parseInt(preferencesFrameX);
-            int preferencesFrameYInt = Integer.parseInt(preferencesFrameY);
-            int preferencesFrameWidthInt = Integer.parseInt(preferencesFrameWidth);
-            int preferencesFrameHeightInt = Integer.parseInt(preferencesFrameHeight);
+            int preferencesFrameXInt = preferencesFrameX == null ? -1 : Integer.parseInt(preferencesFrameX);
+            int preferencesFrameYInt = preferencesFrameY == null ? -1 : Integer.parseInt(preferencesFrameY);
+            int preferencesFrameWidthInt = preferencesFrameWidth == null ? -1 : Integer.parseInt(preferencesFrameWidth);
+            int preferencesFrameHeightInt = preferencesFrameHeight == null ? -1 : Integer.parseInt(preferencesFrameHeight);
             
             if (!isValidWindowPosition(preferencesFrameXInt, preferencesFrameYInt,
             	preferencesFrameWidthInt, preferencesFrameHeightInt)) {
