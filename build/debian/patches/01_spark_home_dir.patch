@@ -3,8 +3,8 @@
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
--scriptdir="/usr/share/spark";
-+scriptdir="`dirname ${0}`";
+-scriptdir="`dirname ${0}`";
++scriptdir="/usr/share/spark";
  cd "${scriptdir}/..";
  wd="`pwd`";
  libdir="${wd}/lib";
