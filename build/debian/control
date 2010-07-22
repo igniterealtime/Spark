@@ -2,7 +2,7 @@ Source: spark
 Section: net
 Priority: optional
 Maintainer: Jive Software <webmaster@jivesoftware.com>
-Build-Depends: dephelper, cdbs, patchutils, sun-java6-jdk, ant
+Build-Depends: debhelper, cdbs, patchutils, sun-java6-jdk, ant, fakeroot
 Standards-Version: 3.7.2
 
 Package: spark
