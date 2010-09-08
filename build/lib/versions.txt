@@ -12,9 +12,9 @@ dist/asterisk-im-client.jar			| 1.2.0			 		| GPL				| http://igniterealtime.org/
 dist/dom4j.jar						| ? 			 		| BSD				| http://www.dom4j.org/
 dist/linux/jdic.jar					| ? 			 		| LGPL				| https://jdic.dev.java.net/
 dist/mac/javaSoundStream.fix.jar	| ? 			 		| ?					| ?
-dist/smack.jar						| SVN 11652 			| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
-dist/smackx-debug.jar				| SVN 11652				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
-dist/smackx.jar						| SVN 11652				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smack.jar						| SVN 11827 			| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smackx-debug.jar				| SVN 11827				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smackx.jar						| SVN 11827				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
 dist/swingx.jar						| ? 			 		| LGPL				| https://swingx.dev.java.net/
 dist/syntheticaBlueMoon.jar			| (not needed)			| Commercial		| http://www.javasoft.de/jsf/public/products/synthetica
 dist/synthetica.jar					| (not needed)	 		| Commercial		| http://www.javasoft.de/jsf/public/products/synthetica
