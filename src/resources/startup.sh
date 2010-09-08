@@ -40,17 +40,17 @@ java -Ddebugger=true \
 -server \
 -Xnoagent \
 -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 \
-"-Dappdir=${wd}" \
-"${javalibrarypath}" \
--cp "${classpath}" \
+-Dappdir=${wd} \
+${javalibrarypath} \
+-cp ${classpath} \
 ${mainclass}
 
 else
 
   java \
-"-Dappdir=${wd}" \
-"${javalibrarypath}" \
--cp "${classpath}" \
+-Dappdir=${wd} \
+${javalibrarypath} \
+-cp ${classpath} \
 ${mainclass}
 
 fi;
