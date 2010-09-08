@@ -913,6 +913,10 @@ public final class GroupChatRoom extends ChatRoom {
     }
 
     public void sendMessage(String text) {
+        // IF there is no body, just return and do nothing
+        if (!ModelUtil.hasLength(text)) {
+            return;
+        }
         // Create message object
         Message message = new Message();
         message.setBody(text);
