@@ -22,39 +22,90 @@ package org.jivesoftware.spark.component.browser;
 import java.awt.BorderLayout;
 import java.net.MalformedURLException;
 
-import org.lobobrowser.html.gui.HtmlPanel;
-import org.lobobrowser.html.test.SimpleHtmlRendererContext;
-import org.lobobrowser.html.test.SimpleUserAgentContext;
+import javax.swing.JFrame;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
-public class EmbeddedBrowserViewer extends BrowserViewer {
+import org.lobobrowser.gui.ContentEvent;
+import org.lobobrowser.gui.ContentListener;
+import org.lobobrowser.gui.FramePanel;
+import org.lobobrowser.main.PlatformInit;
 
-	private static final long serialVersionUID = 465853124210602603L;
-	private SimpleHtmlRendererContext context;
-	private HtmlPanel panel;
+public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListener {
+
+	private static final long serialVersionUID = -8055149462713514766L;
+	private FramePanel browser;
 	
+	/**
+	 * Constructs a new LobobrowserViewer
+	 */
 	public EmbeddedBrowserViewer() {
-		panel = new HtmlPanel();
-		context = new SimpleHtmlRendererContext(panel, new SimpleUserAgentContext());
-	}
+		LookAndFeel laf = UIManager.getLookAndFeel();
+		try {
+			PlatformInit.getInstance().init(false, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	
-	@Override
+		browser = new FramePanel();
+		//substance look and feel 
+		try {
+				UIManager.setLookAndFeel(laf);
+			}
+			catch (UnsupportedLookAndFeelException e) {
+				e.printStackTrace();
+			}
+		browser.addContentListener(this);
+	 }
+	
+	/**
+	 * Implementation of "Back"-button
+	 */
 	public void goBack() {
-		context.back();
+		browser.back();
 	}
 
-	@Override
+	/**
+	 * Initialization of the BrowserViewer
+	 */
 	public void initializeBrowser() {
-		setLayout(new BorderLayout());
-		add(panel, BorderLayout.CENTER);
+		this.setLayout(new BorderLayout());
+		this.add(browser, BorderLayout.CENTER);
 	}
 
-	@Override
+	/**
+	 * Load the given URL
+	 */
 	public void loadURL(String url) {
 		try {
-			context.navigate(url);
+			browser.navigate(url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * React to an event by updating the address bar 
+	 */
+	public void contentSet(ContentEvent event) {
+		if (browser == null || browser.getCurrentNavigationEntry() == null) {
+            return;
+        }
+        String url = browser.getCurrentNavigationEntry().getUrl().toExternalForm();
+        documentLoaded(url);
+	}
+	
+	public static void main(String[] args) {
+		EmbeddedBrowserViewer  viewer = new EmbeddedBrowserViewer();
+		viewer.initializeBrowser();
+		JFrame frame = new JFrame("Test");
+
+        frame.getContentPane().setLayout(new BorderLayout());
+        frame.getContentPane().add(viewer, BorderLayout.CENTER);
+		frame.setVisible(true);
+	    frame.pack();
+        frame.setSize(600, 400);
+		viewer.loadURL("http://igniterealtime.org");
+	}
 }

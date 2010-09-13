@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.spark.component.browser;
 
-import org.jivesoftware.Spark;
 import org.jivesoftware.spark.component.HTMLViewer;
 
 /**
@@ -29,11 +28,16 @@ import org.jivesoftware.spark.component.HTMLViewer;
  */
 public class BrowserFactory {
 
+	private static BrowserViewer browserViewer;
     /**
      * Empty Constructor.
      */
     private BrowserFactory() {
 
+    }
+    
+    public static void setBrowserViewer(BrowserViewer viewer) {
+    	browserViewer = viewer;
     }
 
     /**
@@ -44,13 +48,9 @@ public class BrowserFactory {
      * @see HTMLViewer
      */
     public static BrowserViewer getBrowser() {
-        BrowserViewer browserViewer = new NativeBrowserViewer();
-        if (Spark.isWindows()) {
-
-        }
-        else {
-
-        }
+    	if (browserViewer != null)
+    		browserViewer = new EmbeddedBrowserViewer();
+    	
         browserViewer.initializeBrowser();
         return browserViewer;
     }

@@ -31,7 +31,8 @@ import java.util.List;
  * @see NativeBrowserViewer
  */
 public abstract class BrowserViewer extends JPanel {
-    private List<BrowserListener> listeners = new ArrayList<BrowserListener>();
+	private static final long serialVersionUID = -5389246902135069702L;
+	private List<BrowserListener> listeners = new ArrayList<BrowserListener>();
 
     /**
      * Add a BrowserListener.
