@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="installation-debian" revision="1">	
+    <title>
+    		<phrase lang="en">Install Spark on Debian/Ubuntu</phrase>	
+	</title>
+	
+	<para>
+		<phrase lang="en">
+			For Ubuntu/Debian System use the Spark Debian Package. 
+			To install Spark execute the follow commands as root:
+		</phrase>
+		<command>
+				apt-get install java-6-sun
+				dpkg -i spark_X.X.X_all.deb
+		</command>		
+	</para>
+</section>
