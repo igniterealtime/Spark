@@ -555,7 +555,7 @@ public final class GraphicUtils {
 
     public static BufferedImage convert(Image im) throws InterruptedException, IOException {
         load(im);
-        BufferedImage bi = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bi = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_ARGB_PRE);        
         Graphics bg = bi.getGraphics();
         bg.drawImage(im, 0, 0, null);
         bg.dispose();
