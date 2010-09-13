@@ -216,6 +216,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
             contactGroup.addContactItem(newContact);
         }
         contactGroup.clearSelection();
+        contactGroup.fireContactGroupUpdated(); //Updating group title
 
         final ContactGroup oldGroup = getContactGroup(item.getGroupName());
 
@@ -300,6 +301,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
         if (!rosterGroup.contains(entry)) {
             contactGroup.removeContactItem(item);
+            contactGroup.fireContactGroupUpdated(); //Updating group title
             return true;
         }
 
