@@ -28,16 +28,12 @@ import org.jivesoftware.spark.component.HTMLViewer;
  */
 public class BrowserFactory {
 
-	private static BrowserViewer browserViewer;
+	
     /**
      * Empty Constructor.
      */
     private BrowserFactory() {
 
-    }
-    
-    public static void setBrowserViewer(BrowserViewer viewer) {
-    	browserViewer = viewer;
     }
 
     /**
@@ -48,8 +44,7 @@ public class BrowserFactory {
      * @see HTMLViewer
      */
     public static BrowserViewer getBrowser() {
-    	if (browserViewer != null)
-    		browserViewer = new EmbeddedBrowserViewer();
+    	BrowserViewer browserViewer = new EmbeddedBrowserViewer();
     	
         browserViewer.initializeBrowser();
         return browserViewer;
