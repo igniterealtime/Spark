@@ -774,6 +774,19 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 list.add(item);
             }
         }
+        /**
+         * We have to search ContactItems into offline contacts.
+         * Standart getContactItemByJID() method search ContactItems only in OfflineGroup or into inline cantacts
+         */
+        for( ContactGroup group : getContactGroups() ) {
+            for (ContactItem offlineItem : group.getOfflineContacts() ) {
+                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(StringUtils.parseBareAddress(jid)) ) {
+                    if ( !list.contains(offlineItem) ) {
+                        list.add(offlineItem);
+                    }
+                }
+            }
+        }
 
         return list;
     }
@@ -2080,8 +2093,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     public void clientReconnected() {
         workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
-
-        buildContactList();
+        offlineGroup.fireContactGroupUpdated();        buildContactList();
 
         final TimerTask updatePresence = new TimerTask() {
             public void run() {
