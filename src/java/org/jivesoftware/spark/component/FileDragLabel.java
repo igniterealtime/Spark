@@ -48,7 +48,8 @@ import javax.swing.JLabel;
  * Allows for dragging of a file from the label to the desktop.
  */
 public class FileDragLabel extends JLabel implements DropTargetListener, DragSourceListener, DragGestureListener {
-    final DragSource dragSource = DragSource.getDefaultDragSource();
+	private static final long serialVersionUID = -4814392353136597318L;
+	private final DragSource dragSource = DragSource.getDefaultDragSource();
 
     private File file;
 
@@ -117,12 +118,13 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
     }
 
     private class FileSelection extends Vector<File> implements Transferable {
-        final static int FILE = 0;
-        final static int STRING = 1;
-        final static int PLAIN = 2;
+		private static final long serialVersionUID = -6310629361140258792L;
+		private final static int FILE = 0;
+		private final static int STRING = 1;
+		private final static int PLAIN = 2;
         DataFlavor flavors[] = {DataFlavor.javaFileListFlavor,
             DataFlavor.stringFlavor,
-            DataFlavor.plainTextFlavor};
+            DataFlavor.getTextPlainUnicodeFlavor()};
 
         public FileSelection(File file) {
             addElement(file);
