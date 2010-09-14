@@ -58,13 +58,7 @@ public class GoogleSearch {
 
         // Google Desktop API tosearch
         try {
-        	List<String> values = WinRegistry.readStringSubKeys(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API");
-
-            for (String key : values) {
-                if ("search_url".equals(key)) {
-                    searchUrl = (String) WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API", key);
-                }
-            }
+            searchUrl = (String) WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API", "search_url");
             searchBase = searchUrl.substring(0, searchUrl.indexOf('/', 8));
 
             db = DocumentBuilderFactory.newInstance().newDocumentBuilder();

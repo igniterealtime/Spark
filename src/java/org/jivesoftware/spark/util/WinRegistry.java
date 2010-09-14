@@ -303,7 +303,7 @@ public class WinRegistry {
 		byte[] valb = (byte[]) regQueryValueEx.invoke(root, new Object[] {
 				Integer.valueOf(handles[0]), toCstr(value) });
 		regCloseKey.invoke(root, new Object[] { Integer.valueOf(handles[0]) });
-		return (valb != null ? String.valueOf(valb).trim() : null);
+		return (valb != null ? new String(valb).trim() : null);
 	}
 
 	private static Map<String, String> readStringValues(Preferences root,

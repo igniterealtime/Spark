@@ -26,15 +26,18 @@ import org.jivesoftware.spark.component.browser.BrowserViewer;
 import org.jivesoftware.spark.component.browser.BrowserFactory;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spellchecker.SpellcheckerPreferenceDialog;
 import org.jivesoftware.resource.SparkRes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
@@ -49,55 +52,68 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 public class GoogleFileViewer {
-    DocumentTable table = new DocumentTable();
+	DocumentTable table;
 
-    public void viewFiles(Collection<GoogleSearchResult> col, boolean showFiles) {
+    public void viewFiles(final Collection<GoogleSearchResult> col, final boolean showFiles) {
+    	
+    	EventQueue.invokeLater(new Runnable() {
 
-        TitlePanel titlePanel = new TitlePanel("Google Search", "Results from your search.", null, true);
+			@Override
+			public void run() {
+				table = new DocumentTable();
+				TitlePanel titlePanel = new TitlePanel("Google Search", "Results from your search.", null, true);
+				
+				final JPanel mainPanel = new JPanel();
+		        mainPanel.setLayout(new BorderLayout());
+		        mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-        // Build Viewer
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
+		        JScrollPane pane = new JScrollPane(table);
+		        pane.getViewport().setBackground(Color.white);
 
-        JScrollPane pane = new JScrollPane(table);
-        pane.getViewport().setBackground(Color.white);
+		        mainPanel.add(pane, BorderLayout.CENTER);
+		        
+		     // Build Viewer
+		        
 
-        mainPanel.add(pane, BorderLayout.CENTER);
+		        for (GoogleSearchResult aCol : col) {
+		            GoogleSearchResult result = aCol;
+		            Icon icon = result.getIcon();
+		            if (icon.getIconWidth() == -1) {
+		                icon = SparkRes.getImageIcon(SparkRes.SMALL_DOCUMENT_VIEW);
+		            }
+		            JLabel label = new JLabel(icon);
+		            label.setName(result.getCachedURL());
+		            String url = result.getURL();
 
-        for (GoogleSearchResult aCol : col) {
-            GoogleSearchResult result = aCol;
-            Icon icon = result.getIcon();
-            if (icon.getIconWidth() == -1) {
-                icon = SparkRes.getImageIcon(SparkRes.SMALL_DOCUMENT_VIEW);
-            }
-            JLabel label = new JLabel(icon);
-            label.setName(result.getCachedURL());
-            String url = result.getURL();
+		            boolean isFile = new File(url).exists();
 
-            boolean isFile = new File(url).exists();
+		            if (isFile && showFiles) {
+		                Object[] obj = {label, result.getSubject(), result.getURL()};
+		                table.getTableModel().addRow(obj);
+		            } else if (!isFile) {
+		                Object[] obj = {label, result.getSubject(), result.getURL()};
+		                table.getTableModel().addRow(obj);
+		            }
 
-            if (isFile && showFiles) {
-                Object[] obj = {label, result.getSubject(), result.getURL()};
-                table.getTableModel().addRow(obj);
-            } else if (!isFile) {
-                Object[] obj = {label, result.getSubject(), result.getURL()};
-                table.getTableModel().addRow(obj);
-            }
+		        }
 
-        }
-
-        // Create Frame
-        JFrame frame = new JFrame("Google Search");
+		        // Create Frame
+		        JFrame frame = new JFrame("Google Search");
 
 
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_DOCUMENT_VIEW).getImage());
-        frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-        frame.pack();
-        frame.setSize(600, 400);
-        GraphicUtils.centerWindowOnScreen(frame);
-        frame.setVisible(true);
+		        frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_DOCUMENT_VIEW).getImage());
+		        frame.getContentPane().setLayout(new BorderLayout());
+		        frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
+		        frame.pack();
+		        frame.setSize(600, 400);
+		        GraphicUtils.centerWindowOnScreen(frame);
+		        frame.setVisible(true);
+			}
+		});
+    	
+        
+
+        
     }
 
 

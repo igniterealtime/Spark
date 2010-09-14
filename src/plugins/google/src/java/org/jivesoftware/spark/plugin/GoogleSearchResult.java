@@ -19,7 +19,8 @@
  */
 package org.jivesoftware.spark.plugin;
 
-import org.jdesktop.jdic.browser.WebBrowser;
+import org.jivesoftware.spark.component.browser.BrowserFactory;
+import org.jivesoftware.spark.component.browser.BrowserViewer;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.w3c.dom.Element;
@@ -142,12 +143,11 @@ public class GoogleSearchResult {
      * @return the component to use to display this document.
      */
     public JComponent getDocumentViewer() {
-        WebBrowser viewer = new WebBrowser();
+        BrowserViewer viewer = BrowserFactory.getBrowser();
         File file = new File(url);
         if (file.exists()) {
             try {
-                URL curl = new URL(cacheUrl);
-                viewer.setURL(curl);
+                viewer.loadURL(cacheUrl);
             }
             catch (Exception e) {
                 Log.error(e);
@@ -155,14 +155,13 @@ public class GoogleSearchResult {
         }
         else {
             try {
-                viewer.setURL(new URL(url));
+                viewer.loadURL(url);
             }
-            catch (MalformedURLException e) {
+            catch (Exception e) {
                 try {
-                    URL curl = new URL(cacheUrl);
-                    viewer.setURL(curl);
+                    viewer.loadURL(cacheUrl);
                 }
-                catch (MalformedURLException e1) {
+                catch (Exception e1) {
                     Log.error(e1);
                 }
             }
