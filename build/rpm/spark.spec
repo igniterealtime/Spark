@@ -2,7 +2,7 @@ Name: Spark
 Summary: Spark RPM-Paket
 Version: %{SPARK_VERSION}
 Release: 1
-License: GPL
+License: Apache license v2.0
 Group: misc/Spark
 Source: %{SPARK_SOURCE}
 Source1: jre-dist.tar.gz
@@ -23,7 +23,7 @@ Instant Messenger
 
 %build
 cd build
-ant jar
+/opt/apache-ant-1.8.1/bin/ant jar
 cd ..
 
 
