@@ -20,15 +20,6 @@
 package org.jivesoftware.spark.plugin;
 
 
-import org.jivesoftware.spark.component.Table;
-import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.browser.BrowserViewer;
-import org.jivesoftware.spark.component.browser.BrowserFactory;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spellchecker.SpellcheckerPreferenceDialog;
-import org.jivesoftware.resource.SparkRes;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -37,7 +28,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
@@ -50,6 +40,14 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.component.Table;
+import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.browser.BrowserFactory;
+import org.jivesoftware.spark.component.browser.BrowserViewer;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 public class GoogleFileViewer {
 	DocumentTable table;

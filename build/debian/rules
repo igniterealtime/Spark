@@ -16,7 +16,6 @@ DEB_ANT_CLEAN_TARGET := clean
 install/spark::
 	cp $(TARGET)/bin/startup.sh $(SPARK)/bin/spark
 	cp $(TARGET)/lib/*.jar $(SPARK)/lib/
-	cp $(TARGET)/lib/linux/*.jar $(SPARK)/lib/linux/
 	cp -r $(TARGET)/resources $(SPARK)/
 	cp -r $(TARGET)/plugins $(SPARK)/
 	cp -r $(TARGET)/xtra $(SPARK)/
