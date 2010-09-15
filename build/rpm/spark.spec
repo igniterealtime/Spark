@@ -73,13 +73,9 @@ exit 0
 /usr/share/spark/lib/jdom.jar
 /usr/share/spark/lib/i4jruntime.jar
 %dir /usr/share/spark/lib/linux/
-/usr/share/spark/lib/linux/jdic.jar
-/usr/share/spark/lib/linux/libjdic.so
-/usr/share/spark/lib/linux/libmozembed-linux-gtk1.2.so
-/usr/share/spark/lib/linux/libmozembed-linux-gtk2.so
-/usr/share/spark/lib/linux/libtray.so
 /usr/share/spark/lib/linux/libcivil.so
-/usr/share/spark/lib/linux/mozembed-linux-gtk1.2
+%dir /usr/share/spark/lib/linux64/
+/usr/share/spark/lib/linux64/libcivil.so
 %dir /usr/share/spark/lib/mac/
 /usr/share/spark/lib/mac/JavaSoundStream.fix.jar
 /usr/share/spark/lib/mac/libSystemUtilities.jnilib
@@ -96,6 +92,15 @@ exit 0
 /usr/share/spark/lib/xstream.jar
 /usr/share/spark/lib/lti-civil.jar
 /usr/share/spark/lib/log4j.jar
+/usr/share/spark/lib/js.jar
+/usr/share/spark/lib/cobra.jar
+/usr/share/spark/lib/lobo-pub.jar
+/usr/share/spark/lib/lobo.jar
+/usr/share/spark/lib/substance.jar
+/usr/share/spark/lib/trident.jar
+%dir /usr/share/spark/lib/ext/
+/usr/share/spark/lib/ext/jweb-ext.jar
+/usr/share/spark/lib/ext/primary.jar
 %dir /usr/share/spark/logs/
 %doc /usr/share/spark/logs/error.log
 %dir /usr/share/spark/plugins/
