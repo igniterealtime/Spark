@@ -14,6 +14,7 @@ Url: http://www.igniterealtime.org/downloads/source.jsp
 
 %define prefix /usr/share
 %define homedir %{prefix}/spark
+%define debug_package %{nil}
 
 %description
 Instant Messenger
