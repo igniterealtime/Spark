@@ -2093,7 +2093,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     public void clientReconnected() {
         workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
-        offlineGroup.fireContactGroupUpdated();        buildContactList();
+        offlineGroup.fireContactGroupUpdated();
+        buildContactList();
 
         final TimerTask updatePresence = new TimerTask() {
             public void run() {
