@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="installation-izpack" revision="1">	
+    <title>
+    		<phrase lang="en">Install Spark with IzPack</phrase>	
+	</title>
+	
+	
+	<section id="installation-izpack-automated" revision="1">	
+    	<title>
+    		<phrase lang="en">Install Spark with IzPack Automated Installer</phrase>	
+		</title>	
+		
+		<para>
+			<phrase lang="en">
+				At the ende of the installation, 
+				the user can save the data for an automatic installation.
+				With this data, he will be able to run the same installation on another similar machine. 
+				In an environment where many computers need to be supported this can save a lot of time.
+			</phrase>
+		</para>
+		<para>
+			<phrase lang="en">
+                So run once the installation on a machine and save your automatic installation data in auto-install.xml. 
+                Then put this file in the same directory as the installer on another machine. Run it with:			
+			</phrase>
+		</para>
+		
+		<para>
+			<command>
+				java -jar spark-installer.jar auto-install.xml
+			</command>		
+		</para>Y
+	</section>
+</section>
