@@ -901,7 +901,7 @@
     </target>
 
     <!-- docbook ========================================================================= -->
-    <target name="docbook" depends="proxy" description="Docbook">
+    <target name="docbook" description="Docbook">
         <mkdir dir="${target}/docbook"/>
 	<exec executable="xmllint">
 		<arg value="--xinclude" />
@@ -954,6 +954,7 @@
 	<condition property="proxy.enabled">
 		<and>
 			<isset property="proxy.host"/>
+			<isreachable host="${proxy.host}"/>
 		</and>
 	</condition>
     </target>
