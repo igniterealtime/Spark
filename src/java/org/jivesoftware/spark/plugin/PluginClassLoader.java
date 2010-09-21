@@ -90,7 +90,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         for (File jar : jars) {
             if (jar.isFile()) {
-                final URL url = jar.toURL();
+                final URL url = jar.toURI().toURL();
                 addURL(url);
                 try {
                     checkForSmackProviders(url);
