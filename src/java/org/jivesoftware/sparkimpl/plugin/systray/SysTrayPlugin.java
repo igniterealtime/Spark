@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.systray;
 
-import java.awt.EventQueue;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.Window;
@@ -27,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -50,6 +48,7 @@ import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -66,44 +65,45 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 	private ImageIcon availableIcon;
 	private ImageIcon dndIcon;
 	private ImageIcon awayIcon;
-   private ImageIcon offlineIcon;
-   private ImageIcon connectingIcon;
+    private ImageIcon offlineIcon;
+    private ImageIcon connectingIcon;
 	private ImageIcon newMessageIcon;
 	private ImageIcon typingIcon;
 	private TrayIcon trayIcon;
 
+    @Override
 	public boolean canShutDown() {
 		return true;
 	}
 
+    @Override
 	public void initialize() {
 
-			openMenu = new JMenuItem(Res.getString("menuitem.open"));
-			minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
-			exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
-			statusMenu = new JMenu(Res.getString("menuitem.status"));
-			logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));				  
+        if (SystemTray.isSupported()) {
 
+            openMenu = new JMenuItem(Res.getString("menuitem.open"));
+            minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
+            exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+            statusMenu = new JMenu(Res.getString("menuitem.status"));
+            logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
 
-		
-		SystemTray tray = SystemTray.getSystemTray();
+            SystemTray tray = SystemTray.getSystemTray();
+            SparkManager.getNativeManager().addNativeHandler(this);
+            SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
 
-		SparkManager.getNativeManager().addNativeHandler(this);
-		SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
+            if ( Spark.isLinux() ) {
+                newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
+                typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
+            } else {
+                newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
+                typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
+            }
 		
-        if ( Spark.isLinux() ) {
-            newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
-            typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
-        } else {
-		newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
-		typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
-        }
-		
-		if (SystemTray.isSupported()) {		
 			availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);
             if ( Spark.isLinux() ) {
-			if (availableIcon == null) {
+                if (availableIcon == null) {
                     availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE_LINUX);
+                    Log.error(availableIcon.toString());
                 }
                 awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY_LINUX);
                 dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND_LINUX);
@@ -111,10 +111,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
                 connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING_LINUX);
             } else {
                 if (availableIcon == null) {
-				availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
-			}
-			awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
-			dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
+                    availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
+                }
+                awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
+                dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
                 offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE);
                 connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING);
             }
@@ -124,6 +124,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 
 				private static final long serialVersionUID = 1L;
 
+                @Override
 				public void actionPerformed(ActionEvent event) {
 					SparkManager.getMainWindow().setVisible(true);
 					SparkManager.getMainWindow().toFront();
@@ -134,6 +135,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			minimizeMenu.addActionListener(new AbstractAction() {
 				private static final long serialVersionUID = 1L;
 
+                @Override
 				public void actionPerformed(ActionEvent event) {
 					SparkManager.getMainWindow().setVisible(false);
 				}
@@ -144,6 +146,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			statusMenu.addActionListener(new AbstractAction() {
 				private static final long serialVersionUID = 1L;
 
+                @Override
 				public void actionPerformed(ActionEvent event) {
 
 				}
@@ -154,6 +157,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 				logoutMenu.addActionListener(new AbstractAction() {
 					private static final long serialVersionUID = 1L;
 
+                    @Override
 					public void actionPerformed(ActionEvent e) {
 						SparkManager.getMainWindow().logout(false);
 					}
@@ -163,6 +167,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			exitMenu.addActionListener(new AbstractAction() {
 				private static final long serialVersionUID = 1L;
 
+                @Override
 				public void actionPerformed(ActionEvent e) {
 					SparkManager.getMainWindow().shutdown();
 				}
@@ -174,29 +179,34 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
              */
             SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
 
+                @Override
                 public void connectionClosed() {
                     trayIcon.setImage(offlineIcon.getImage());
                 }
 
+                @Override
                 public void connectionClosedOnError(Exception arg0) {
                     trayIcon.setImage(offlineIcon.getImage());
                 }
 
+                @Override
                 public void reconnectingIn(int arg0) {
                     trayIcon.setImage(connectingIcon.getImage());
                 }
 
+                @Override
                 public void reconnectionSuccessful() {
                     trayIcon.setImage(availableIcon.getImage());
                 }
 
+                @Override
                 public void reconnectionFailed(Exception arg0) {
                     trayIcon.setImage(offlineIcon.getImage());
                 }
             });
 
-			SparkManager.getSessionManager().addPresenceListener(new
-			PresenceListener() {
+			SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
+                @Override
 				public void presenceChanged(Presence presence) { 
 					if (presence.getMode() == Presence.Mode.available) {
 						trayIcon.setImage(availableIcon.getImage());
@@ -217,6 +227,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 
 				trayIcon.addMouseListener(new MouseListener() {
 
+                    @Override
 					public void mouseClicked(MouseEvent event) {
 						if (event.getButton() == MouseEvent.BUTTON1
 								&& event.getClickCount() == 1) {
@@ -237,18 +248,22 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 						}
 					}
 
+                    @Override
 					public void mouseEntered(MouseEvent event) {
 
 					}
 
+                    @Override
 					public void mouseExited(MouseEvent event) {
 
 					}
 
+                    @Override
 					public void mousePressed(MouseEvent event) {
 
 					}
 
+                    @Override
 					public void mouseReleased(MouseEvent event) {
 
 					}
@@ -259,7 +274,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			} catch (Exception e) {
 				// Not Supported
 			}
-		}
+		} else {
+            Log.error("Tray don't supports on this platform.");
+        }
 	}
 
 	public void addStatusMessages() {
@@ -270,6 +287,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 			final AbstractAction action = new AbstractAction() {
 				private static final long serialVersionUID = 1L;
 
+                @Override
 				public void actionPerformed(ActionEvent e) {
 
 					StatusBar statusBar = SparkManager.getWorkspace()
@@ -301,6 +319,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 				statusMenu.add(status);
 
 				status.addMouseListener(new MouseAdapter() {
+                    @Override
 					public void mouseClicked(MouseEvent mouseEvent) {
 						action.actionPerformed(null);
 						popupMenu.setVisible(false);
@@ -315,6 +334,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 						AbstractAction customAction = new AbstractAction() {
 							private static final long serialVersionUID = 1L;
 
+                            @Override
 							public void actionPerformed(ActionEvent e) {
 								StatusBar statusBar = SparkManager
 										.getWorkspace().getStatusBar();
@@ -342,6 +362,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 		}
 	}
 
+    @Override
 	public void shutdown() {
 		if (SystemTray.isSupported()) {
 			SystemTray tray = SystemTray.getSystemTray();
@@ -349,6 +370,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 		}
 	}
 
+    @Override
 	public void uninstall() {
 
 	}
