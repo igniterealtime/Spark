@@ -133,7 +133,7 @@ public class VCardManager {
 
         // Intercept all presence packets being sent and append vcard information.
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        SparkManager.getConnection().addPacketWriterInterceptor(new PacketInterceptor() {
+        SparkManager.getConnection().addPacketInterceptor(new PacketInterceptor() {
             public void interceptPacket(Packet packet) {
                 Presence newPresence = (Presence)packet;
                 VCardUpdateExtension update = new VCardUpdateExtension();
