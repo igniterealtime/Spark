@@ -382,7 +382,7 @@ public class CustomMessages {
             }
 
             priorityField.setText("1");
-            statusField.setText(Res.getString("status.available"));
+            statusField.setText(Res.getString("status.online"));
 
         }
 

@@ -412,7 +412,7 @@ public class ContactItem extends JPanel {
         if (status == null && presence.isAvailable()) {
             Presence.Mode mode = presence.getMode();
             if (mode == Presence.Mode.available) {
-                status = Res.getString("status.available");
+                status = Res.getString("status.online");
                 isAvailable = true;
             }
             else if (mode == Presence.Mode.away) {
