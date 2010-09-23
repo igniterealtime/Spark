@@ -450,7 +450,8 @@ public class CustomMessages {
                         while (iter.hasNext()) {
                             CustomStatusItem customItem = iter.next();
                             if (customItem.getType().equals(item.getType()) &&
-                                    customItem.getStatus().equals(item.getStatus())) {
+                                    customItem.getStatus().equals(item.getStatus()) &&
+                                    customItem.getPriority() == item.getPriority() ) {
 
                                 changeItem = customItem;
                                 break;
@@ -464,8 +465,9 @@ public class CustomMessages {
                             CustomStatusItem customItem = customListIterator.next();
                             String type = customItem.getType();
                             String status = customItem.getStatus();
+                            int priority = customItem.getPriority();
 
-                            if (type.equals(getType()) && status.equals(getStatus())) {
+                            if (type.equals(getType()) && status.equals(getStatus()) && priority == getPriority()) {
                                 exists = true;
                             }
                         }
