@@ -227,7 +227,7 @@ public final class ModelUtil {
      * @return True if string is null or empty
      */
     public static boolean hasLength(String s) {
-        return (s != null && s.length() > 0);
+        return (s != null && !s.trim().isEmpty());
     }
 
 
