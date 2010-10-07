@@ -610,6 +610,10 @@ public final class GroupChatParticipantList extends JPanel implements
 									chat.changeNickname(newNickname);
 									break;
 								} catch (XMPPException e1) {
+                                    if (e1.getXMPPError().getCode() == 406) { //handle deny changing nick
+                                        JOptionPane.showMessageDialog(groupChatRoom, Res.getString("message.nickname.not.acceptable"), Res.getString("title.change.nickname"), JOptionPane.ERROR_MESSAGE);
+                                        break;
+                                    }
 									newNickname = JOptionPane
 											.showInputDialog(
 													groupChatRoom,
