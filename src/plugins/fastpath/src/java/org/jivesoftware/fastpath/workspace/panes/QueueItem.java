@@ -34,17 +34,6 @@ import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * $Revision$
- * $Date$
- * <p/>
- * Copyright (C) 1999-2008 Jive Software. All rights reserved.
- *
- * This software is published under the terms of the GNU Lesser Public License (LGPL),
- * a copy of which is included in this distribution.
- */
-
-
 public class QueueItem extends JPanel {
 
 	private static final long serialVersionUID = 1L;

@@ -40,17 +40,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-/*
- * $RCSfile$
- * $Revision: 19484 $
- * $Date: 2005-08-11 08:34:10 -0700 (Thu, 11 Aug 2005) $
- *
- * Copyright (C) 1999-2008 Jive Software. All rights reserved.
- *
- * This software is published under the terms of the GNU Lesser Public License (LGPL),
- * a copy of which is included in this distribution.
- */
-
 /**
  * Creates a drop down menu list of all macros, both personal and global.
  */
