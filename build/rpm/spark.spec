@@ -50,6 +50,7 @@ echo "/usr/share/spark/jre/bin/java -Dappdir=\$SPARKDIR -cp \$SPARKDIR/lib/log4j
 chmod -R 755 $RPM_BUILD_ROOT/usr/bin/spark
 
 rm -r $RPM_BUILD_ROOT/usr/share/spark/lib/windows
+rm -r $RPM_BUILD_ROOT/usr/share/spark/lib/windows64
 
 # Force a happy exit even if openfire condrestart script didn't exit cleanly.
 exit 0
