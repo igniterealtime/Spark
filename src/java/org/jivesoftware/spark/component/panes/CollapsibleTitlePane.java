@@ -49,8 +49,8 @@ import javax.swing.UIManager;
  * @author Derek DeMoro
  */
 public class CollapsibleTitlePane extends JPanel {
-
-    private JLabel titleLabel;
+	private static final long serialVersionUID = 2528585101535037612L;
+	private JLabel titleLabel;
     private JLabel iconLabel;
 
     private JLabel preIconLabel;

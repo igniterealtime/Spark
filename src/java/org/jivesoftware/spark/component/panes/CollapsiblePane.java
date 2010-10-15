@@ -41,7 +41,8 @@ import javax.swing.JPanel;
  */
 public class CollapsiblePane extends JPanel {
 
-    private CollapsibleTitlePane titlePane;
+	private static final long serialVersionUID = -6770924580102536726L;
+	private CollapsibleTitlePane titlePane;
     private JPanel mainPanel;
 
     private List<CollapsiblePaneListener> listeners = new ArrayList<CollapsiblePaneListener>();
@@ -117,14 +118,14 @@ public class CollapsiblePane extends JPanel {
     }
 
     private void firePaneExpanded() {
-        final Iterator iter = ModelUtil.reverseListIterator(listeners.listIterator());
+        final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator(listeners.listIterator());
         while (iter.hasNext()) {
             ((CollapsiblePaneListener)iter.next()).paneExpanded();
         }
     }
 
     private void firePaneCollapsed() {
-        final Iterator iter = ModelUtil.reverseListIterator(listeners.listIterator());
+        final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator(listeners.listIterator());
         while (iter.hasNext()) {
             ((CollapsiblePaneListener)iter.next()).paneCollapsed();
         }
