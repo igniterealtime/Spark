@@ -456,16 +456,7 @@ public class StringUtils {
 
     /**
      * Turns an array of bytes into a String representing each byte as an
-     * <p/>
      * unsigned hex number.
-     * <p/>
-     * <p/>
-     * <p/>
-     * Method by Santeri Paavolainen, Helsinki Finland 1996<br>
-     * <p/>
-     * (c) Santeri Paavolainen, Helsinki Finland 1996<br>
-     * <p/>
-     * Distributed under LGPL.
      *
      * @param bytes an array of bytes to convert to a hex-string
      * @return generated hex string
