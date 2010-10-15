@@ -326,8 +326,8 @@ public final class ModelUtil {
      * @param i Iterator to return as a list.
      * @return List converted from iterator.
      */
-    public static List<Object> iteratorAsList(Iterator i) {
-        ArrayList<Object> list = new ArrayList<Object>(10);
+    public static <T> List<T> iteratorAsList(Iterator<T> i) {
+        ArrayList<T> list = new ArrayList<T>(10);
         while (i.hasNext()) {
             list.add(i.next());
         }
@@ -340,8 +340,8 @@ public final class ModelUtil {
      * @param i Iterator of a list.
      * @return Reversed iterator.
      */
-    public static Iterator reverseListIterator(ListIterator i) {
-        return new ReverseListIterator(i);
+    public static <T> Iterator<T> reverseListIterator(ListIterator<T> i) {
+        return new ReverseListIterator<T>(i);
     }
 }
 
@@ -351,7 +351,7 @@ public final class ModelUtil {
 class ReverseListIterator<T> implements Iterator<T> {
     private ListIterator<T> _i;
 
-    ReverseListIterator(ListIterator<T> i) {
+    public ReverseListIterator(ListIterator<T> i) {
         _i = i;
         while (_i.hasNext()) _i.next();
     }
