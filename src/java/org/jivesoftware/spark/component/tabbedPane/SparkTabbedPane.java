@@ -267,7 +267,7 @@ public class SparkTabbedPane extends JPanel {
 	}
 
 	public void fireTabAdded(SparkTab tab, Component component, int index) {
-		final Iterator list = ModelUtil.reverseListIterator(listeners
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
 			((SparkTabbedPaneListener) list.next()).tabAdded(tab, component,
@@ -287,7 +287,7 @@ public class SparkTabbedPane extends JPanel {
 	}
 
 	public void fireTabRemoved(SparkTab tab, Component component, int index) {
-		final Iterator list = ModelUtil.reverseListIterator(listeners
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
 			((SparkTabbedPaneListener) list.next()).tabRemoved(tab, component,
@@ -296,7 +296,7 @@ public class SparkTabbedPane extends JPanel {
 	}
 
 	public void fireTabSelected(SparkTab tab, Component component, int index) {
-		final Iterator list = ModelUtil.reverseListIterator(listeners
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
 			((SparkTabbedPaneListener) list.next()).tabSelected(tab, component,
@@ -305,7 +305,7 @@ public class SparkTabbedPane extends JPanel {
 	}
 
 	public void allTabsClosed() {
-		final Iterator list = ModelUtil.reverseListIterator(listeners
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
 			((SparkTabbedPaneListener) list.next()).allTabsRemoved();

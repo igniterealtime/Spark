@@ -64,9 +64,9 @@ public class NativeManager {
      * @param window the window to flash.
      */
     public void flashWindow(Window window) {
-        final Iterator alertNotifier = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
+        final Iterator<NativeHandler> alertNotifier = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifier.hasNext()) {
-            final NativeHandler alert = (NativeHandler)alertNotifier.next();
+            final NativeHandler alert = alertNotifier.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindow(window);
@@ -81,9 +81,9 @@ public class NativeManager {
      * @param window the window to start flashing.
      */
     public void flashWindowStopOnFocus(Window window) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
+        final Iterator<NativeHandler> alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
+            final NativeHandler alert = alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindowStopWhenFocused(window);
@@ -98,9 +98,9 @@ public class NativeManager {
      * @param window the window to stop flashing.
      */
     public void stopFlashing(Window window) {
-        final Iterator alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
+        final Iterator<NativeHandler> alertNotifiers = ModelUtil.reverseListIterator(nativeHandlers.listIterator());
         while (alertNotifiers.hasNext()) {
-            final NativeHandler alert = (NativeHandler)alertNotifiers.next();
+            final NativeHandler alert = alertNotifiers.next();
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.stopFlashing(window);
