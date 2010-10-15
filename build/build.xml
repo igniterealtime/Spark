@@ -81,7 +81,7 @@
 	
     <!-- Installer Ant Script -->
 
-    <property name="installer.install4j.home" value="c:\\Program Files\\install4j"/>
+    <property name="installer.install4j.home" value="/home/j2ee-bamboo/install4j.4.0.5"/>
     <property name="installer.dest.dir" value="${target}/installer"/>
     <property name="installer.install4j.srcfile" value="${basedir}/build/installer/spark.install4j"/>
     <property name="installer.app_name" value="Spark"/>
