@@ -126,6 +126,8 @@ public class SipManager implements SipListener {
      * The Message Factory used to create SIP messages.
      */
     public MessageFactory messageFactory;
+    
+    private int loginfailed = 0;
 
     /**
      * The sipStack instance that handles SIP communications.
@@ -1362,7 +1364,7 @@ public class SipManager implements SipListener {
                 .getServerTransaction();
 
         Request request = requestReceivedEvent.getRequest();
-        
+
         if (serverTransaction == null) {
             try {
                 serverTransaction = sipProvider
@@ -1518,6 +1520,7 @@ public class SipManager implements SipListener {
             return;
         }
         Response response = responseReceivedEvent.getResponse();
+
         Dialog dialog = clientTransaction.getDialog();
         String method = ((CSeqHeader) response.getHeader(CSeqHeader.NAME))
                 .getMethod();
@@ -1637,12 +1640,15 @@ public class SipManager implements SipListener {
 
                 CSeqHeader cseq = (CSeqHeader) response.getHeader(CSeqHeader.NAME);
 
-                    registerProcessing.processAuthenticationChallenge(
+                registerProcessing.processAuthenticationChallenge(
                             clientTransaction, response);
-                if (cseq.getSeqNumber() < 2)
-               	 Log.debug("Removed");
-                else
-                    fireRegistrationFailed("Invalid password.", RegistrationEvent.Type.WrongPass);
+                    
+                loginfailed++ ;
+                    
+                if (loginfailed < 3)
+                  	 Log.debug("Removed");
+                else 
+                   fireRegistrationFailed("Invalid password.", RegistrationEvent.Type.WrongPass);
 
             } else if (method.equals(Request.SUBSCRIBE)) {
             } else
