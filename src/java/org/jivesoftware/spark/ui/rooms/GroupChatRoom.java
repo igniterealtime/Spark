@@ -646,9 +646,10 @@ public final class GroupChatRoom extends ChatRoom {
             try {
                 chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(message.getFrom());
                 // TODO: Why was this not here before?  Is it supposed to be ignored??
-                if (message.getBody() != null) {
-                    chatRoom.insertMessage(message);
-                }
+                // --> because the messages otherwise comes twice [bug SPARK-1099]
+//                if (message.getBody() != null) {
+//                    chatRoom.insertMessage(message);
+//                }
             }
             catch (ChatRoomNotFoundException e) {
                 String userNickname = StringUtils.parseResource(message.getFrom());
