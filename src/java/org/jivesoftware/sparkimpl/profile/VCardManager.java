@@ -559,9 +559,9 @@ public class VCardManager {
             String cellPhone = getNumbersFromPhone(vcard.getPhoneWork("CELL"));
 
             String query = getNumbersFromPhone(phoneNumber);
-            if ((homePhone != null && homePhone.contains(query)) ||
-                (workPhone != null && workPhone.contains(query)) ||
-                (cellPhone != null && cellPhone.contains(query))) {
+            if ((homePhone != null && homePhone.endsWith(query)) ||
+                (workPhone != null && workPhone.endsWith(query)) ||
+                (cellPhone != null && cellPhone.endsWith(query))) {
                 return vcard;
             }
         }
