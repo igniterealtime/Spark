@@ -22,6 +22,7 @@ package org.jivesoftware.spark.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1958,10 +1960,21 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         return list;
     }
 
-    private void checkGroup(ContactGroup group) {
-        if (!group.hasAvailableContacts() && group != offlineGroup && group != getUnfiledGroup() && !showHideMenu.isSelected()) {
-            group.setVisible(false);
-        }
+    private void checkGroup(final ContactGroup group) {
+    	try {
+			EventQueue.invokeAndWait(new Runnable() {
+				public void run() {
+			        if (!group.hasAvailableContacts() && group != offlineGroup && group != getUnfiledGroup() && !showHideMenu.isSelected()) {
+			            group.setVisible(false);
+			        }	
+				}
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
     }
 
     public void addFileDropListener(FileDropListener listener) {
@@ -2214,17 +2227,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private ContactGroup getUnfiledGroup() {
         if (unfiledGroup == null) {
-        	 try {
-             	SwingUtilities.invokeAndWait(new Runnable() {
-             		public void run() {
-             		// Add Unfiled Group
-                        unfiledGroup = new ContactGroup(Res.getString("unfiled"));
-             		}
-             	});
-             }
-             catch (Exception e) {
-                 Log.error(e);
-             }
+            // Add Unfiled Group
+            unfiledGroup = new ContactGroup(Res.getString("unfiled"));
             addContactGroup(unfiledGroup);
         }
         return unfiledGroup;
