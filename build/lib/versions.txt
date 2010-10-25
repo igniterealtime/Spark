@@ -31,8 +31,8 @@ dist/cobra.jar						| 0.98.4				| LGPL				| http://lobobrowser.org
 dist/js.jar							| 0.98.4				| LGPL				| http://lobobrowser.org
 dist/lobo-pub.jar					| 0.98.4				| LGPL				| http://lobobrowser.org
 dist/lobo.jar						| 0.98.4				| LGPL				| http://lobobrowser.org
-dist/substance.jar					| 6.0					| BSD				| https://substance.dev.java.net/
-dist/trident.jar					| 6.0					| BSD				| https://substance.dev.java.net/
+dist/substance.jar					| 6.1					| BSD				| https://substance.dev.java.net/
+dist/trident.jar					| 6.1					| BSD				| https://substance.dev.java.net/
 merge/commons-codec.jar				| 1.3			 		| Apache			| http://commons.apache.org/codec/
 merge/commons-httpclient.jar		| ? 			 		| Apache			| http://hc.apache.org/
 merge/commons-logging.jar			| ? 			 		| Apache			| http://commons.apache.org/logging/
