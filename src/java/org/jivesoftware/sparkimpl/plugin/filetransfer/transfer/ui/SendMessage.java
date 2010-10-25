@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -267,7 +268,17 @@ public class SendMessage extends JPanel {
             if (!progressBar.isVisible()) {
                 progressBar.setVisible(true);
             }
-            progressBar.setValue((int)transfer.getBytesSent());
+            
+            try {
+            	SwingUtilities.invokeAndWait(new Runnable() {
+            		public void run() {
+            			progressBar.setValue((int)transfer.getBytesSent());
+            		}
+            	});
+            }
+            catch (Exception e) {
+                Log.error(e);
+            }
 
             ByteFormat format = new ByteFormat();
             String bytesSent = format.format(transfer.getBytesSent());

@@ -69,6 +69,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 public class ReceiveMessage extends JPanel {
 
@@ -82,7 +83,7 @@ public class ReceiveMessage extends JPanel {
     private JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
     private TransferButton cancelButton = new TransferButton();
-
+    private long bytesRead;
 
     public ReceiveMessage() {
         setLayout(new GridBagLayout());
@@ -252,7 +253,7 @@ public class ReceiveMessage extends JPanel {
                             Log.error(e);
                         }
 
-                        long bytesRead = transfer.getAmountWritten();
+                        bytesRead = transfer.getAmountWritten();
                         if (bytesRead == -1) {
                             bytesRead = 0;
                         }
@@ -260,7 +261,17 @@ public class ReceiveMessage extends JPanel {
                         String text = format.format(bytesRead);
                         progressBar.setString(text + " received");
 
-                        progressBar.setValue((int)bytesRead);
+                        try {
+                        	SwingUtilities.invokeAndWait(new Runnable() {
+                        		public void run() {
+                        			progressBar.setValue((int)bytesRead);
+                        		}
+                        	});
+                        }
+                        catch (Exception e) {
+                            Log.error(e);
+                        }
+                        	
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == FileTransfer.Status.error ||
                             status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||

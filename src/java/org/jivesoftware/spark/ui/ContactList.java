@@ -2214,8 +2214,17 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
     private ContactGroup getUnfiledGroup() {
         if (unfiledGroup == null) {
-            // Add Unfiled Group
-            unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+        	 try {
+             	SwingUtilities.invokeAndWait(new Runnable() {
+             		public void run() {
+             		// Add Unfiled Group
+                        unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+             		}
+             	});
+             }
+             catch (Exception e) {
+                 Log.error(e);
+             }
             addContactGroup(unfiledGroup);
         }
         return unfiledGroup;
