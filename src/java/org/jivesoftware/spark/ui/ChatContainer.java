@@ -1120,13 +1120,19 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         } else {
             // normal personal chat
-            Message lastChatMessage = chatRoom.getTranscripts().get(size - 1);
+        	Message lastChatMessage = null;
+        	if(size > 0)
+        		lastChatMessage = chatRoom.getTranscripts().get(size - 1);
             String finalRoomName = chatRoom.getRoomTitle();
             
+            String customMsgTextS = "";
             boolean customMsgS = true;
-            String customMsgTextS = lastChatMessage.getBody();
             String customMsgTitleS = finalRoomName;
             
+            if(lastChatMessage != null) {
+            	customMsgTextS = lastChatMessage.getBody();
+            }
+
             startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
             return;
         }

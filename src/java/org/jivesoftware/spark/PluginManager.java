@@ -38,8 +38,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
-import javax.swing.SwingUtilities;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -501,7 +499,7 @@ public class PluginManager implements MainWindowListener {
       		}
       	}
       	
-			SwingUtilities.invokeAndWait(new Runnable() {
+			EventQueue.invokeAndWait(new Runnable() {
 			      public void run() {
 			          for (Plugin plugin1 : plugins) {
 			              long start = System.currentTimeMillis();

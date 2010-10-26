@@ -235,9 +235,17 @@ public final class Spark {
             }
         });
 
-
-        final LoginDialog dialog = new LoginDialog();
-        dialog.invoke(new JFrame());
+        try {
+	        EventQueue.invokeAndWait(new Runnable(){
+	        	public void run() {
+	        		final LoginDialog dialog = new LoginDialog();
+	        		dialog.invoke(new JFrame());
+	        	}
+	        });
+        }
+        catch(Exception ex) {
+        	ex.printStackTrace();
+        }
     }
 
 

@@ -35,6 +35,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.Date;
@@ -109,33 +110,41 @@ public class PresenceChangePlugin implements Plugin {
 
         // Check presence changes
         SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                if (!presence.isAvailable() || presence.isAway()) {
-                    return;
-                }
-                String from = presence.getFrom();
+            public void processPacket(final Packet packet) {
+            	try	{
+            		EventQueue.invokeAndWait(new Runnable(){
+            			public void run() {
+            				Presence presence = (Presence)packet;
+                            if (!presence.isAvailable() || presence.isAway()) {
+                                return;
+                            }
+                            String from = presence.getFrom();
 
-                for (String jid : sparkContacts) {
-                    if (jid.equals(StringUtils.parseBareAddress(from))) {
-                        sparkContacts.remove(jid);
+                            for (String jid : sparkContacts) {
+                                if (jid.equals(StringUtils.parseBareAddress(from))) {
+                                    sparkContacts.remove(jid);
 
-                        ChatManager chatManager = SparkManager.getChatManager();
-                        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                        ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
+                                    ChatManager chatManager = SparkManager.getChatManager();
+                                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+                                    ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
 
 
-                        String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
+                                    String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
 
-                        String infoText = Res.getString("message.user.now.available.to.chat", nickname, time);
-                        chatRoom.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
-                        Message message = new Message();
-                        message.setFrom(jid);
-                        message.setBody(infoText);
-                        chatManager.getChatContainer().messageReceived(chatRoom, message);
-                    }
-                }
-
+                                    String infoText = Res.getString("message.user.now.available.to.chat", nickname, time);
+                                    chatRoom.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
+                                    Message message = new Message();
+                                    message.setFrom(jid);
+                                    message.setBody(infoText);
+                                    chatManager.getChatContainer().messageReceived(chatRoom, message);
+                                }
+                            }
+            			}
+            		});
+            	}
+            	catch (Exception ex) {
+            		ex.printStackTrace();
+            	}
             }
         }, new PacketTypeFilter(Presence.class));
     }
