@@ -88,6 +88,21 @@ public class NotificationsPreference implements Preference {
 				panel.setCheckForBeta(betaChecking);
 				panel.setTypingNotification(typingNotification);
 				panel.setSystemTrayNotification(systemTrayNotification);
+				
+				// when windowFocus is selected the systemtraynotification doesn't work --> disable it
+				if(windowFocus) {
+					panel.setSystemTrayNotification(false);
+					panel.setSystemTrayNotificationEnabled(false);
+				}
+				else
+					panel.setSystemTrayNotificationEnabled(true);
+				
+				if(systemTrayNotification) {
+					panel.setShowWindowPopup(false);
+					panel.setShowWindowPopupEnabled(false);
+				}
+				else
+					panel.setShowWindowPopupEnabled(true);
 			}
 		};
 

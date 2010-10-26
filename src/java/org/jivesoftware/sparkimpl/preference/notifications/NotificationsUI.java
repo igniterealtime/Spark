@@ -27,6 +27,8 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Represents the UI for handling notification preferences within Spark.
@@ -71,6 +73,28 @@ public class NotificationsUI extends JPanel {
         
         betaCheckBox = new JCheckBox( Res.getString("menuitem.check.for.updates"));
         add(betaCheckBox);
+        
+        windowFocusBox.addChangeListener(new ChangeListener(){
+        	public void stateChanged(ChangeEvent ce){
+        		if(shouldWindowPopup()) {
+        			setSystemTrayNotification(false);
+        			setSystemTrayNotificationEnabled(false);
+        		}
+        		else
+        			setSystemTrayNotificationEnabled(true);
+        	}
+        });
+        
+        SystemTrayNotificationBox.addChangeListener(new ChangeListener(){
+        	public void stateChanged(ChangeEvent ce){
+        		if(isSystemTrayNotificationEnabled()) {
+        			setShowWindowPopup(false);
+        			setShowWindowPopupEnabled(false);
+        		}
+        		else
+        			setShowWindowPopupEnabled(true);
+        	}
+        });
     }
 
     public void setShowToaster(boolean show) {
@@ -83,6 +107,10 @@ public class NotificationsUI extends JPanel {
 
     public void setShowWindowPopup(boolean popup) {
         windowFocusBox.setSelected(popup);
+    }
+    
+    public void setShowWindowPopupEnabled(boolean popup) {
+        windowFocusBox.setEnabled(popup);
     }
 
     public boolean shouldWindowPopup() {
@@ -115,6 +143,10 @@ public class NotificationsUI extends JPanel {
     
     public void setSystemTrayNotification(boolean notify) {
     	SystemTrayNotificationBox.setSelected(notify);
+    }
+    
+    public void setSystemTrayNotificationEnabled(boolean enable) {
+    	SystemTrayNotificationBox.setEnabled(enable);
     }
     
     public boolean isSystemTrayNotificationEnabled() {
