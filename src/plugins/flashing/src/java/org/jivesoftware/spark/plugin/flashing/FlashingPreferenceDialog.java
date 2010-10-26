@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 public class FlashingPreferenceDialog extends JPanel {
 
@@ -46,9 +47,9 @@ public class FlashingPreferenceDialog extends JPanel {
 		flashingPanel = new JPanel();
 		flashingEnabled = new JCheckBox();
 		flashingType = new JComboBox();
+		JLabel lTyps = new JLabel();
 		flashingPanel.setLayout(new GridBagLayout());
 		
-		flashingEnabled.setText(FlashingResources.getString("flashing.enable"));
 		flashingEnabled.addActionListener(new ActionListener() {
 
 			@Override
@@ -61,12 +62,16 @@ public class FlashingPreferenceDialog extends JPanel {
 		flashingType.addItem(FlashingResources.getString("flashing.type.continuous"));
 		flashingType.addItem(FlashingResources.getString("flashing.type.temporary"));
 		
+		
 		flashingPanel.add(flashingEnabled, new GridBagConstraints(0, 0, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		flashingPanel.add(new JLabel(FlashingResources.getString("flashing.type")), new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		flashingPanel.add(lTyps, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		flashingPanel.add(flashingType, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		
-		
 		flashingPanel.setBorder(BorderFactory.createTitledBorder(FlashingResources.getString("title.flashing")));
+		
+		// Setup MNEMORICS
+		ResourceUtils.resButton(flashingEnabled, FlashingResources.getString("flashing.enable"));
+		ResourceUtils.resLabel(lTyps, flashingType, FlashingResources.getString("flashing.type"));
 		
 		setLayout(new VerticalFlowLayout());
 		add(flashingPanel);

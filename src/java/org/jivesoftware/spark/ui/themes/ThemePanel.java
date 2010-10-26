@@ -102,7 +102,7 @@ public class ThemePanel extends JPanel {
         chatRoomFontField = new JTextField();
         chatRoomFontLabel = new JLabel();
         
-        showVCards = new JCheckBox(Res.getString("title.appearance.showVCards"));
+        showVCards = new JCheckBox();
 
         // Set ResourceUtils
         ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
@@ -117,6 +117,7 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, Res.getString("label.chatroom.fontsize"));
         ResourceUtils.resButton(showAvatarsBox, Res.getString("checkbox.show.avatars.in.contactlist"));
         ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
+        ResourceUtils.resButton(showVCards, Res.getString("title.appearance.showVCards"));
 
         // Build UI
         buildUI();

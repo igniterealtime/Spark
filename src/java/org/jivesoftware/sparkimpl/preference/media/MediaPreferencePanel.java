@@ -44,6 +44,7 @@ import net.sf.fmj.media.cdp.GlobalCaptureDevicePlugger;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 public class MediaPreferencePanel  extends JPanel {
@@ -63,16 +64,16 @@ public class MediaPreferencePanel  extends JPanel {
 			
 		panel.setLayout(new GridBagLayout());
 		
-		
-		panel.add(new JLabel( Res.getString("label.audio.device") ), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		JLabel lAudio = new JLabel(); // Res.getString("label.audio.device"));
+		panel.add( lAudio, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 		panel.add(audioDevice, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 		
 		
-		
-		panel.add(new JLabel( Res.getString("label.video.device") ), new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		JLabel lVideo = new JLabel(); // Res.getString("label.video.device"));
+		panel.add( lVideo, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
         panel.add(videoDevice, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 	
-        JButton redetect = new JButton( Res.getString("button.re.detect") );
+        JButton redetect = new JButton(); // Res.getString("button.re.detect") );
         redetect.addActionListener(new ActionListener() {
 
 			@Override
@@ -83,6 +84,11 @@ public class MediaPreferencePanel  extends JPanel {
         });
         
         panel.add(redetect,new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+    
+        // Setup Mnemonics
+        ResourceUtils.resButton(redetect, Res.getString("button.re.detect"));
+        ResourceUtils.resLabel(lVideo, videoDevice, Res.getString("label.video.device") + ":");
+        ResourceUtils.resLabel(lAudio, audioDevice, Res.getString("label.audio.device") + ":");
         
         scanDevices();
 	}

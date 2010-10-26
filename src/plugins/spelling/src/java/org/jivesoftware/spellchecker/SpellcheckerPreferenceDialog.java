@@ -30,9 +30,11 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 public class SpellcheckerPreferenceDialog extends JPanel implements ActionListener
 {
@@ -56,12 +58,12 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		autospellcheckingEnabled = new JCheckBox();
 		spellLanguages = new JComboBox();
 		spellPanel.setLayout(new GridBagLayout());
-		
-		spellcheckingEnabled.setText(SpellcheckerResource.getString("preference.spellcheckingEnabled"));
+		JLabel lLanguage = new JLabel();
+//		spellcheckingEnabled.setText(SpellcheckerResource.getString("preference.spellcheckingEnabled"));
 		
 		spellcheckingEnabled.addActionListener(this);
 		
-		autospellcheckingEnabled.setText(SpellcheckerResource.getString("preference.autoSpellcheckingEnabled"));
+//		autospellcheckingEnabled.setText(SpellcheckerResource.getString("preference.autoSpellcheckingEnabled"));
 
 		for (int i = 0; i < languages.size(); i++) {
 			for (final Locale locale : locales) {
@@ -78,7 +80,13 @@ public class SpellcheckerPreferenceDialog extends JPanel implements ActionListen
 		
 		spellPanel.add(spellcheckingEnabled, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		spellPanel.add(autospellcheckingEnabled, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		spellPanel.add(spellLanguages, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		spellPanel.add(lLanguage, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		spellPanel.add(spellLanguages, new GridBagConstraints(1, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		
+		// Setup MNEMORICS
+		ResourceUtils.resButton(spellcheckingEnabled, SpellcheckerResource.getString("preference.spellcheckingEnabled"));
+		ResourceUtils.resButton(autospellcheckingEnabled, SpellcheckerResource.getString("preference.autoSpellcheckingEnabled"));
+		ResourceUtils.resLabel(lLanguage, spellLanguages, SpellcheckerResource.getString("preference.language"));
 		
 		setLayout(new VerticalFlowLayout());
 		spellPanel.setBorder(BorderFactory.createTitledBorder(SpellcheckerResource.getString("title.spellchecker")));
