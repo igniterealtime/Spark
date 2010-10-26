@@ -59,19 +59,24 @@ public class NotificationsUI extends JPanel {
         ResourceUtils.resButton(windowFocusBox, Res.getString("checkbox.window.to.front"));
         add(windowFocusBox);
 
-        offlineNotificationBox = new JCheckBox(Res.getString("checkbox.notify.user.goes.offline"));
+        offlineNotificationBox = new JCheckBox();
+        ResourceUtils.resButton(offlineNotificationBox, Res.getString("checkbox.notify.user.goes.offline"));
         add(offlineNotificationBox);
 
-        onlineNotificationBox = new JCheckBox(Res.getString("checkbox.notify.user.comes.online"));
+        onlineNotificationBox = new JCheckBox();
+        ResourceUtils.resButton(onlineNotificationBox, Res.getString("checkbox.notify.user.comes.online"));
         add(onlineNotificationBox);
 
-        SystemTrayNotificationBox = new JCheckBox(Res.getString("checkbox.notify.systemtray"));
+        SystemTrayNotificationBox = new JCheckBox();
+        ResourceUtils.resButton(SystemTrayNotificationBox, Res.getString("checkbox.notify.systemtray"));
         add(SystemTrayNotificationBox);
         
-        showTypingNotificationBox = new JCheckBox(Res.getString("checkbox.notify.typing.systemtray"));
+        showTypingNotificationBox = new JCheckBox();
+        ResourceUtils.resButton(showTypingNotificationBox, Res.getString("checkbox.notify.typing.systemtray"));
         add(showTypingNotificationBox);
         
-        betaCheckBox = new JCheckBox( Res.getString("menuitem.check.for.updates"));
+        betaCheckBox = new JCheckBox();
+        ResourceUtils.resButton(betaCheckBox, Res.getString("menuitem.check.for.updates"));
         add(betaCheckBox);
         
         windowFocusBox.addChangeListener(new ChangeListener(){
