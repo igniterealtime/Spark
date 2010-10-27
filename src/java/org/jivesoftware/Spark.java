@@ -33,6 +33,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -405,12 +406,22 @@ public final class Spark {
     public static boolean isCustomBuild() {
         return "true".equals(Default.getString("CUSTOM"));
     }
+    
+	public static void setApplicationFont(Font f) {
+		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+		for (Object ui_property: defaults.keySet()) {
+			if (ui_property.toString().endsWith(".font")) {
+				UIManager.put(ui_property, f);
+			}
+		}
+	}
 
     public static void installBaseUIProperties() {
+    	setApplicationFont(new Font("Dialog", Font.PLAIN, 11));
         UIManager.put("TextField.lightforeground", Color.gray);
         UIManager.put("TextField.foreground", Color.BLACK);
         UIManager.put("TextField.caretForeground", Color.black);
-        UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
+        //UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
 
         UIManager.put("List.selectionBackground", new Color(217, 232, 250));
         UIManager.put("List.selectionForeground", Color.black);
@@ -433,7 +444,7 @@ public final class Spark {
         UIManager.put("Table.foreground", Color.black);
         UIManager.put("Table.background", Color.white);
 
-        UIManager.put("Label.font", new Font("Dialog", Font.PLAIN, 11));
+        //UIManager.put("Label.font", new Font("Dialog", Font.PLAIN, 11));
 
         // Chat Area Text Settings
         UIManager.put("Link.foreground", Color.blue);
