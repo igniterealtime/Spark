@@ -580,12 +580,16 @@
 
     <target name="mac.build.plugin" depends="jar">
         <!-- build the apple jar and place it in the plugins -->
+	<!--
         <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="clean"/>
         <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="jar"/>
+	-->
 
         <!-- build the growl jar and place it in the plugins -->
+	<!--
         <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="clean"/>
         <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
+	-->
     </target>
 
     <target name="mac.app" depends="mac.clean,mac.build.plugin">
