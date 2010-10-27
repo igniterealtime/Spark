@@ -493,7 +493,7 @@ public final class LoginDialog {
                 createAccountPanel.invoke(loginDialog);
 
                 if (createAccountPanel.isRegistered()) {
-                    usernameField.setText(createAccountPanel.getUsername());
+                    usernameField.setText(createAccountPanel.getUsernameWithoutEscape());
                     passwordField.setText(createAccountPanel.getPassword());
                     serverField.setText(createAccountPanel.getServer());
                     loginButton.setEnabled(true);

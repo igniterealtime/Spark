@@ -58,7 +58,8 @@ import javax.swing.JTextField;
  * Allows the creation of accounts on an XMPP server.
  */
 public class AccountCreationWizard extends JPanel {
-    private JLabel usernameLabel = new JLabel();
+	private static final long serialVersionUID = -7808507939643878212L;
+	private JLabel usernameLabel = new JLabel();
     private JTextField usernameField = new JTextField();
 
     private JLabel passwordLabel = new JLabel();
@@ -139,6 +140,15 @@ public class AccountCreationWizard extends JPanel {
         return StringUtils.escapeNode(usernameField.getText().toLowerCase());
     }
 
+    /**
+     * Returns the username to use for the new account.
+     *
+     * @return the username.
+     */
+    public String getUsernameWithoutEscape() {
+        return usernameField.getText();
+    }
+    
     /**
      * Returns the password to use for the new account.
      *
