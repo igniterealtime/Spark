@@ -70,7 +70,6 @@ public class NativeManager {
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindow(window);
-                break;
             }
         }
     }
@@ -87,7 +86,6 @@ public class NativeManager {
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.flashWindowStopWhenFocused(window);
-                break;
             }
         }
     }
@@ -104,7 +102,6 @@ public class NativeManager {
             boolean handle = alert.handleNotification();
             if (handle) {
                 alert.stopFlashing(window);
-                break;
             }
         }
     }
