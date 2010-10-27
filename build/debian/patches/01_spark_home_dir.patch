@@ -4,7 +4,8 @@
  #!/bin/bash
  
 -scriptdir="`dirname ${0}`";
-+scriptdir="/usr/share/spark";
++scriptdir="/usr/share/spark/bin";
  cd "${scriptdir}/..";
  wd="`pwd`";
  libdir="${wd}/lib";
+
