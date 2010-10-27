@@ -8,6 +8,6 @@ Standards-Version: 3.7.2
 Package: spark
 Section: net
 Priority: optional
-Pre-Depends:  libstdc++5, sun-java6-jre, libgtk2.0-0 
+Pre-Depends:  sun-java6-jre
 Architecture: all
 Description: Cross-platform real-time collaboration client optimized for business and organizations.
