@@ -38,14 +38,19 @@ public class SpellcheckerPreference implements Preference
 		preferences = new SpellcheckerPreferences();
 		try
 		{
-			EventQueue.invokeAndWait(new Runnable() {
-
-				@Override
-				public void run() {
-					dialog = new SpellcheckerPreferenceDialog(languages);
-
-				}
-			});
+			if (EventQueue.isDispatchThread()) {
+				dialog = new SpellcheckerPreferenceDialog(languages);
+			}
+			else {
+				EventQueue.invokeAndWait(new Runnable() {
+	
+					@Override
+					public void run() {
+						dialog = new SpellcheckerPreferenceDialog(languages);
+	
+					}
+				});
+			}
 		}
 		catch (Exception e)
 		{
