@@ -655,7 +655,8 @@
         <fileset file="*.dmg"/>
 
         <mkdir dir="${installer.dest.dir}"/>
-
+		<mkdir dir="${basedir}/installer"/>
+    	
         <!--
       <mkdir dir="${mac.build.dir}/.background"/>
 
