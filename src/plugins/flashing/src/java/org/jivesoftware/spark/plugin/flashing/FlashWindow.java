@@ -51,7 +51,7 @@ public class FlashWindow {
 	 * @param count The number of times to flash the window
 	 */
 	public void flash(final Window window, final int intratime,
-			final int intertime, final int count) {
+			final int count) {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
@@ -59,11 +59,8 @@ public class FlashWindow {
 					{
 						// flash on and off each time
 						for (int i = 0; i < count; i++) {
-							
 							flash(((JFrame) window).getTitle(), true);
 							Thread.sleep(intratime);
-							flash(((JFrame) window).getTitle(), true);
-							Thread.sleep(intertime);
 						}
 						// turn the flash off
 						flash(((JFrame) window).getTitle(), false);
@@ -81,7 +78,7 @@ public class FlashWindow {
 				public void run() {
 					try {
 						while (true) {
-							Thread.sleep(1000);
+							Thread.sleep(1500);
 							// System.out.println("Flash Window");
 							if (window instanceof JFrame)
 								flash(((JFrame) window).getTitle(), true);
@@ -114,7 +111,7 @@ public class FlashWindow {
 		final FlashWindow winutil = new FlashWindow();
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				winutil.flash(frame, 750, 1500, 5);
+				winutil.flash(frame, 750, 5);
 			}
 		});
 
