@@ -665,12 +665,11 @@
       </copy>
 
      <symlink link="${mac.build.dir}/Applications" resource="/Applications"/> -->
-
         <exec executable="hdiutil" failonerror="true">
             <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${target}/tmp.dmg'"/>
         </exec>
         <exec executable="hdiutil" failonerror="true">
-            <arg line="attach '${target}/tmp.dmg' -readwrite -noverify -noautoopen -mountpoint '${target}/tmp'"/>
+            <arg line="attach '${target}/tmp.dmg' -readwrite -noverify -noautoopen -noidme -mountpoint '${target}/tmp'"/>
         </exec>
         <!--
           <exec executable="cp">
