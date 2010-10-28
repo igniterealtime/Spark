@@ -665,9 +665,11 @@
       </copy>
 
      <symlink link="${mac.build.dir}/Applications" resource="/Applications"/> -->
+    	<echo message="Create tmp.dmg"/>
         <exec executable="hdiutil" failonerror="true">
             <arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${target}/tmp.dmg'"/>
         </exec>
+		<echo message="Attach tmp.dmg"/>
         <exec executable="hdiutil" failonerror="true">
             <arg line="attach '${target}/tmp.dmg' -readwrite -noverify -noautoopen -noidme -mountpoint '${target}/tmp'"/>
         </exec>
@@ -689,15 +691,19 @@
               <arg value="80"/>
           </exec> -->
 
+		<echo message="detach tmp"/>
         <exec executable="hdiutil" failonerror="true">
             <arg line="detach ${target}/tmp -quiet -force"/>
         </exec>
+		<echo message="convert tmp"/>
         <exec executable="hdiutil" failonerror="true">
             <arg line="convert ${target}/tmp.dmg -format UDZO -imagekey zlib-level=9 -o ${mac.dmg.file}"/>
         </exec>
+    	<echo message="internet-enable tmp"/>
         <exec executable="hdiutil" failonerror="true">
             <arg line="internet-enable -yes ${mac.dmg.file}"/>
         </exec>
+		<echo message="delete tmp"/>
         <delete file="${target}/tmp.dmg"/>
         <!-- <symlink action="delete" failonerror="true" link="${mac.build.dir}/Applications"/> -->
     </target>
