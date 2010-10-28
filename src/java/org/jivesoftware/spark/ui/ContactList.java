@@ -144,6 +144,10 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private File propertiesFile;
 
     private LocalPreferences localPreferences;
+    
+    private ContactItem contactItem;
+    
+    private String name, user;
 
 
     public static final String RETRY_PANEL = "RETRY_PANEL";
@@ -504,7 +508,29 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 	            }
 
 	            for (RosterEntry entry : group.getEntries()) {
-	                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+	            	contactItem = null;
+	            	name = entry.getName();
+	            	user = entry.getUser();
+	            	// in case of connection lost, the creation must be done in eventqueue
+	            	if(EventQueue.isDispatchThread()) {
+	            		contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+	            	}
+	            	else {
+	            		try {
+	            			EventQueue.invokeAndWait(new Runnable(){
+	            				public void run() {
+	            					contactItem = new ContactItem(name, null, user);
+	            				}
+	            			});
+	            		} catch(Exception ex) {
+	            			ex.printStackTrace();
+	            		}
+	            	}
+	            		
+	            	// if there was something wrong, try an other
+	            	if(contactItem == null)
+	            		continue;
+	            	
 	                contactItem.setPresence(new Presence(Presence.Type.unavailable));
 	                if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
 	                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
@@ -2228,8 +2254,22 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private ContactGroup getUnfiledGroup() {
         if (unfiledGroup == null) {
             // Add Unfiled Group
-            unfiledGroup = new ContactGroup(Res.getString("unfiled"));
-            addContactGroup(unfiledGroup);
+        	if(EventQueue.isDispatchThread()) {
+        		unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+                addContactGroup(unfiledGroup);
+        	}
+        	else {
+        		try {
+	        		EventQueue.invokeAndWait(new Runnable(){
+	        			public void run() {
+	        				unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+	        	            addContactGroup(unfiledGroup);
+	        			}
+	        		});
+        		}catch(Exception ex) {
+        			ex.printStackTrace();
+        		}
+        	}
         }
         return unfiledGroup;
     }
