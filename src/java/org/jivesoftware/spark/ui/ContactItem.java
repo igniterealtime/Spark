@@ -479,9 +479,9 @@ public class ContactItem extends JPanel {
             setStatus(status);
         }
 
-        if (status != null && status.toLowerCase().indexOf("phone") != -1) {
+        if (status != null && status.toLowerCase().indexOf("phone") != -1 && presence.getMode() == Presence.Mode.away) {
             statusIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
-            setIcon(statusIcon);
+            setIcon(statusIcon);  
         }
 
         // Always change nickname label to black.
