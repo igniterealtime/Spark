@@ -479,7 +479,7 @@ public class ContactItem extends JPanel {
             setStatus(status);
         }
 
-        if (status != null && status.toLowerCase().indexOf("phone") != -1 && presence.getMode() == Presence.Mode.away) {
+        if (PresenceManager.isOnPhone(presence)) {
             statusIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
             setIcon(statusIcon);  
         }
