@@ -145,7 +145,7 @@ public class PresenceManager {
         else if (presenceMode.equals(Presence.Mode.chat)) {
             icon = SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE);
         }
-        else if (presence.getStatus() != null && presence.getStatus().toLowerCase().contains("phone") && presenceMode.equals(Presence.Mode.away)) {
+        else if (isOnPhone(presence)) {
             icon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
         }
         else if (presenceMode.equals(Presence.Mode.away)) {
@@ -175,5 +175,18 @@ public class PresenceManager {
      */
     public static List<Presence> getPresences() {
         return PRESENCES;
+    }
+    
+    public static boolean isOnPhone(Presence presence) {
+    	Presence.Mode presenceMode = presence.getMode();
+    	 if (presenceMode == null) {
+        	 presenceMode = Presence.Mode.available;
+        }
+    	if (presence.getStatus() != null && 
+    		presence.getStatus().contains(Res.getString("status.on.phone")) && 
+    		presenceMode.equals(Presence.Mode.away)) {
+    		return true;
+    	}
+    	return false;
     }
 }
