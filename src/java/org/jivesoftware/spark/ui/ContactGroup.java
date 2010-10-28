@@ -183,33 +183,55 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param status   the current status of the offline contact.
      */
     public void addOfflineContactItem(final String alias, final String nickname, final String jid, final String status) {
-       try {
-      	 EventQueue.invokeLater(new Runnable(){
-      		 public void run() {
-      			 // Build new ContactItem
-      			 final ContactItem offlineItem = new ContactItem(alias, nickname, jid);
-      			 offlineItem.setGroupName(getGroupName());
-      			 
-      			 final Presence offlinePresence = PresenceManager.getPresence(jid);
-      			 offlineItem.setPresence(offlinePresence);
-      			 
-      			 // set offline icon
-      			 offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
-      			 
-      			 // Set status if applicable.
-      			 if (ModelUtil.hasLength(status)) {
-      				 offlineItem.setStatusText(status);
-      			 }
-      			 
-      			 // Add to offline contacts.
-      			 offlineContacts.add(offlineItem);
-      			 
-      			 insertOfflineContactItem(offlineItem);
-      		 }
-      	 });
+    	if(EventQueue.isDispatchThread()) {
+    	   // Build new ContactItem
+    	   final ContactItem offlineItem = new ContactItem(alias, nickname, jid);
+    	   offlineItem.setGroupName(getGroupName());
+			 
+    	   final Presence offlinePresence = PresenceManager.getPresence(jid);
+    	   offlineItem.setPresence(offlinePresence);
+			 
+    	   // set offline icon
+    	   offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
+			 
+    	   // Set status if applicable.
+    	   if (ModelUtil.hasLength(status)) {
+    		   offlineItem.setStatusText(status);
+    	   }
+    	   // Add to offline contacts.
+    	   offlineContacts.add(offlineItem);
+			 
+    	   insertOfflineContactItem(offlineItem);
        }
-       catch(Exception ex) {
-      	 Log.error(ex);
+       else {
+	    	try {
+	    		// invokeAndWait, because the contacts must be added before they can moved to offline group
+		      	 EventQueue.invokeAndWait(new Runnable(){
+		      		 public void run() {
+		      			 // Build new ContactItem
+		      			 final ContactItem offlineItem = new ContactItem(alias, nickname, jid);
+		      			 offlineItem.setGroupName(getGroupName());
+		      			 
+		      			 final Presence offlinePresence = PresenceManager.getPresence(jid);
+		      			 offlineItem.setPresence(offlinePresence);
+		      			 
+		      			 // set offline icon
+		      			 offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
+		      			 
+		      			 // Set status if applicable.
+		      			 if (ModelUtil.hasLength(status)) {
+		      				 offlineItem.setStatusText(status);
+		      			 }
+		      			 // Add to offline contacts.
+		      			 offlineContacts.add(offlineItem);
+		      			 
+		      			 insertOfflineContactItem(offlineItem);
+		      		 }
+		      	 });
+		    }
+		    catch(Exception ex) {
+		      	 Log.error(ex);
+		    }
        }
     }
 
@@ -285,8 +307,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (model.getSize() == 0) {
             model.addElement(noContacts);
         }
-
-
     }
 
 
