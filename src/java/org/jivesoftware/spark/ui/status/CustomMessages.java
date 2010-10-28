@@ -55,6 +55,7 @@ import javax.swing.tree.TreePath;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -373,12 +374,14 @@ public class CustomMessages {
             Iterator<StatusItem> statusIterator = statusBar.getStatusList().iterator();
             while (statusIterator.hasNext()) {
                 final StatusItem statusItem = statusIterator.next();
-                ImageIcon icon = (ImageIcon)statusItem.getIcon();
-
-                ImageIcon newIcon = new ImageIcon(icon.getImage());
-                newIcon.setDescription(statusItem.getText());
-
-                typeBox.addItem(newIcon);
+                if (!PresenceManager.isOnPhone(statusItem.getPresence())) {
+	                ImageIcon icon = (ImageIcon)statusItem.getIcon();
+	
+	                ImageIcon newIcon = new ImageIcon(icon.getImage());
+	                newIcon.setDescription(statusItem.getText());
+	
+	                typeBox.addItem(newIcon);
+                }
             }
 
             priorityField.setText("1");
