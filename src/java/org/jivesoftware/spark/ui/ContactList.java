@@ -547,11 +547,32 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         }
 
-        // Add Unfiled Group
-        for (RosterEntry entry : roster.getUnfiledEntries()) {
-            ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-            moveToOffline(contactItem);
+        if (EventQueue.isDispatchThread()) {
+            // Add Unfiled Group
+            for (RosterEntry entry : roster.getUnfiledEntries()) {
+                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                moveToOffline(contactItem);
+            }
         }
+        else
+        {
+        	try {
+        	EventQueue.invokeAndWait(new Runnable() {
+
+				@Override
+				public void run() {
+		            for (RosterEntry entry : roster.getUnfiledEntries()) {
+		                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+		                moveToOffline(contactItem);
+		            }
+				}
+        		
+        	});
+        	} catch (Exception e) {
+        		Log.error("moveToOffilne",e);
+        	}
+        }
+
     }
 
     /**
