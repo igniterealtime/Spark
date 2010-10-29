@@ -19,22 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.chat;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -44,7 +28,22 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JPopupMenu;
+
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 /**
  * Allows users to place activity listeners on individual users. This class notifies users when other users
@@ -124,19 +123,19 @@ public class PresenceChangePlugin implements Plugin {
                                 if (jid.equals(StringUtils.parseBareAddress(from))) {
                                     sparkContacts.remove(jid);
 
-                                    ChatManager chatManager = SparkManager.getChatManager();
                                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                                    ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-
-
                                     String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
-
                                     String infoText = Res.getString("message.user.now.available.to.chat", nickname, time);
-                                    chatRoom.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
-                                    Message message = new Message();
-                                    message.setFrom(jid);
-                                    message.setBody(infoText);
-                                    chatManager.getChatContainer().messageReceived(chatRoom, message);
+                                    
+                                    SparkToaster toaster = new SparkToaster();
+                                    toaster.setDisplayTime(5000);
+                                    toaster.setBorder(BorderFactory.createBevelBorder(0));
+                                    
+                                    toaster.setToasterHeight(150);
+                                    toaster.setToasterWidth(200);
+                                    
+                                    toaster.setTitle(nickname);
+                                    toaster.showToaster(null, infoText);
                                 }
                             }
             			}
