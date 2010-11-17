@@ -107,6 +107,7 @@ exit 0
 %doc /usr/share/spark/logs/error.log
 %dir /usr/share/spark/plugins/
 /usr/share/spark/plugins/idlelinux.jar
+/usr/share/spark/plugins/sparkphone.jar
 /usr/share/spark/plugins/jingle.jar
 /usr/share/spark/plugins/jniwrapper.jar
 /usr/share/spark/plugins/spelling-plugin.jar
