@@ -73,9 +73,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
 	private static final long serialVersionUID = -2168845249388070573L;
 	private final SimpleDateFormat notificationDateFormatter;
-    private final SimpleDateFormat messageDateFormatter;
     private final String notificationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
-    private final String messageDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)).toPattern();
 
     private Date lastUpdated;
 
@@ -116,7 +114,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         });
 
         notificationDateFormatter = new SimpleDateFormat(notificationDateFormat);
-        messageDateFormatter = new SimpleDateFormat(messageDateFormat);
     }
 
     /**
@@ -368,7 +365,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                 insertCustomText(notificationDateFormatter.format(date), true, true, Color.BLACK);
             }
 
-            value = "(" + messageDateFormatter.format(date) + ") ";
+            value = getDate(date);
             value = value + userid + ": ";
 
 
