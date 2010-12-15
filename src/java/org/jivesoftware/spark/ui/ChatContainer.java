@@ -414,7 +414,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 chatFrame.setFocusableWindowState(false);
                 chatFrame.setState(Frame.ICONIFIED);
             }
-            chatFrame.setVisible(true);
             chatFrame.setFocusableWindowState(true);
 
             // If the ContactList is in the tray, we need better notification by flashing
