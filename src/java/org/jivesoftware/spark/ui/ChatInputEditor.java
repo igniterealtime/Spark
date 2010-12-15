@@ -25,12 +25,18 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.StyleConstants;
 import javax.swing.undo.UndoManager;
+
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * This is implementation of ChatArea that should be used as the sendField
@@ -116,4 +122,97 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         this.setBackground(Color.white);
     }
 
+    /**
+     * Inserts text into the current document.
+     *
+     * @param text the text to insert
+     * @throws BadLocationException if the location is not available for insertion.
+     */
+    @Override
+    public void insertText(String text) throws BadLocationException {
+        final Document doc = getDocument();
+        styles.removeAttribute("link");
+        doc.insertString(this.getCaret().getDot(), text, styles);
+    }
+
+    /**
+     * Inserts text into the current document.
+     *
+     * @param text  the text to insert
+     * @param color the color of the text
+     * @throws BadLocationException if the location is not available for insertion.
+     */
+    @Override
+    public void insertText(String text, Color color) throws BadLocationException {
+        final Document doc = getDocument();
+        StyleConstants.setForeground(styles, color);
+        doc.insertString(this.getCaret().getDot(), text, styles);
+    }
+
+    /**
+     * Inserts a link into the current document.
+     *
+     * @param link - the link to insert( ex. http://www.javasoft.com )
+     * @throws BadLocationException if the location is not available for insertion.
+     */
+    @Override
+    public void insertLink(String link) throws BadLocationException {
+        final Document doc = getDocument();
+        styles.addAttribute("link", link);
+
+        StyleConstants.setForeground(styles, (Color)UIManager.get("Link.foreground"));
+        StyleConstants.setUnderline(styles, true);
+        doc.insertString(this.getCaret().getDot(), link, styles);
+        StyleConstants.setUnderline(styles, false);
+        StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
+        styles.removeAttribute("link");
+        setCharacterAttributes(styles, false);
+
+    }
+    
+     /**
+     * Inserts a network address into the current document. 
+     *
+     * @param address - the address to insert( ex. \superpc\etc\file\ OR http://localhost/ )
+     * @throws BadLocationException if the location is not available for insertion.
+     */
+    @Override
+    public void insertAddress(String address) throws BadLocationException {
+        final Document doc = getDocument();
+        styles.addAttribute("link", address);
+
+        StyleConstants.setForeground(styles, (Color)UIManager.get("Address.foreground"));
+        StyleConstants.setUnderline(styles, true);
+        doc.insertString(this.getCaret().getDot(), address, styles);
+        StyleConstants.setUnderline(styles, false);
+        StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
+        styles.removeAttribute("link");
+        setCharacterAttributes(styles, false);
+
+    }
+
+    /**
+     * Inserts an emotion icon into the current document.
+     *
+     * @param imageKey - the smiley representation of the image.( ex. :) )
+     * @return true if the image was found, otherwise false.
+     */
+    @Override
+    public boolean insertImage(String imageKey) {
+    	
+        if(!forceEmoticons && !SettingsManager.getLocalPreferences().areEmoticonsEnabled() || !emoticonsAvailable){
+            return false;
+        }
+        final Document doc = getDocument();
+        Icon emotion = emoticonManager.getEmoticonImage(imageKey.toLowerCase());
+        if (emotion == null) {
+            return false;
+        }
+
+        select(doc.getLength(), doc.getLength());
+        insertIcon(emotion);
+
+        return true;
+    }
+    
 }

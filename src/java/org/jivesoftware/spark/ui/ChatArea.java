@@ -103,11 +103,11 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     private List<LinkInterceptor> interceptors = new ArrayList<LinkInterceptor>();
 
-    private EmoticonManager emoticonManager;
+    protected EmoticonManager emoticonManager;
 
     protected Boolean forceEmoticons = false;
     
-    private Boolean emoticonsAvailable = true;
+    protected Boolean emoticonsAvailable = true;
 
     /**
      * ChatArea Constructor.
@@ -267,6 +267,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         final Document doc = getDocument();
         styles.removeAttribute("link");
         doc.insertString(doc.getLength(), text, styles);
+        setCaretPosition(doc.getLength());
     }
 
     /**
@@ -280,6 +281,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         final Document doc = getDocument();
         StyleConstants.setForeground(styles, color);
         doc.insertString(doc.getLength(), text, styles);
+        setCaretPosition(doc.getLength());
     }
 
     /**
@@ -299,6 +301,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
         styles.removeAttribute("link");
         setCharacterAttributes(styles, false);
+        setCaretPosition(doc.getLength());
 
     }
     
@@ -319,6 +322,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
         styles.removeAttribute("link");
         setCharacterAttributes(styles, false);
+        setCaretPosition(doc.getLength());
 
     }
 
@@ -341,6 +345,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
         select(doc.getLength(), doc.getLength());
         insertIcon(emotion);
+        setCaretPosition(doc.getLength());
 
         return true;
     }
