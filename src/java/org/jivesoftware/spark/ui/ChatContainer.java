@@ -772,7 +772,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setTitle("");
         }
 
-        this.removeTabAt(location);
+        this.close(this.getTabAt(location));
     }
 
     public void closeActiveRoom() {
