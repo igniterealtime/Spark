@@ -433,7 +433,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public void removeContactItem(ContactItem item) {
         contactItems.remove(item);
-        if (contactItems.size() == 0) {
+        if (contactItems.isEmpty()) {
             removeContactGroup(this);
         } 
 
@@ -459,6 +459,39 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     /**
+     * Returns a <code>ContactItem</code> from offlineContacts by the displayed name the user has been assigned.
+     *
+     * @param displayName the displayed name of the user.
+     * @return the ContactItem.
+     */
+    public ContactItem getOfflineContactItemByDisplayName(String displayName) {
+        for (ContactItem item : new ArrayList<ContactItem>(offlineContacts)) {
+            if (item.getDisplayName().equals(displayName)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a <code>ContactItem</code> by the displayed name the user has been assigned.
+     *
+     * @param displayName the displayed name of the user.
+     * @param searchInOffline should we search <code>ContactItem</code> in offline contacts
+     * @return the ContactItem.
+     */
+    public ContactItem getContactItemByDisplayName(String displayName, boolean searchInOffline) {
+        if (searchInOffline) {
+            ContactItem item = getContactItemByDisplayName(displayName);
+            if (item == null) {
+                item = getOfflineContactItemByDisplayName(displayName);
+            }
+            return item;
+        }
+        return getContactItemByDisplayName(displayName);
+    }
+
+    /**
      * Returns a <code>ContactItem</code> by the users bare bareJID.
      *
      * @param bareJID the bareJID of the user.
@@ -471,6 +504,39 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a <code>ContactItem</code> from offlineContacts by the users bare bareJID.
+     *
+     * @param bareJID the bareJID of the user.
+     * @return the ContactItem.
+     */
+    public ContactItem getOfflineContactItemByJID(String bareJID) {
+        for (ContactItem item : new ArrayList<ContactItem>(offlineContacts)) {
+            if (item.getJID().equals(bareJID)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a <code>ContactItem</code> by the users bare bareJID.
+     *
+     * @param bareJID the bareJID of the user.
+     * @param searchInOffline should we search <code>ContactItem</code> in offline contacts
+     * @return the ContactItem.
+     */
+    public ContactItem getContactItemByJID(String bareJID, boolean searchInOffline) {
+        if (searchInOffline) {
+            ContactItem item = getContactItemByJID(bareJID);
+            if (item == null) {
+                item = getOfflineContactItemByJID(bareJID);
+            }
+            return item;
+        }
+        return getContactItemByJID(bareJID);
     }
 
     /**

@@ -59,6 +59,7 @@ public class ContactListAssistantPlugin implements Plugin {
     private JMenu moveToMenu;
     private JMenu copyToMenu;
 
+    @Override
     public void initialize() {
 
         moveToMenu = new JMenu(Res.getString("menuitem.move.to"));
@@ -66,6 +67,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
         final ContactList contactList = SparkManager.getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
+            @Override
             public void poppingUp(Object object, final JPopupMenu popup) {
                 final Collection<ContactItem> contactItems = Collections.unmodifiableCollection(contactList.getSelectedUsers());
                 if (!contactItems.isEmpty()) {
@@ -77,12 +79,14 @@ public class ContactListAssistantPlugin implements Plugin {
                             continue;
                         }
                         final Action moveAction = new AbstractAction() {
+                            @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 moveItems(contactItems, group.getGroupName());
                             }
                         };
 
                         final Action copyAction = new AbstractAction() {
+                            @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 copyItems(contactItems, group.getGroupName());
                             }
@@ -96,15 +100,18 @@ public class ContactListAssistantPlugin implements Plugin {
                     }
 
                     popup.addPopupMenuListener(new PopupMenuListener() {
+                        @Override
                         public void popupMenuWillBecomeVisible(PopupMenuEvent popupMenuEvent) {
                         }
 
+                        @Override
                         public void popupMenuWillBecomeInvisible(PopupMenuEvent popupMenuEvent) {
                             moveToMenu.removeAll();
                             copyToMenu.removeAll();
                             popup.removePopupMenuListener(this);
                         }
 
+                        @Override
                         public void popupMenuCanceled(PopupMenuEvent popupMenuEvent) {
                             moveToMenu.removeAll();
                             copyToMenu.removeAll();
@@ -138,10 +145,12 @@ public class ContactListAssistantPlugin implements Plugin {
                 }
             }
 
+            @Override
             public void poppingDown(JPopupMenu popup) {
 
             }
 
+            @Override
             public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
@@ -150,6 +159,7 @@ public class ContactListAssistantPlugin implements Plugin {
         updateAvatarsInContactList();
 
         SettingsManager.addPreferenceListener(new PreferenceListener() {
+            @Override
             public void preferencesChanged(LocalPreferences preference) {
                 updateAvatarsInContactList();
             }
@@ -182,13 +192,16 @@ public class ContactListAssistantPlugin implements Plugin {
         }
     }
 
+    @Override
     public void shutdown() {
     }
 
+    @Override
     public boolean canShutDown() {
         return false;
     }
 
+    @Override
     public void uninstall() {
     }
 
@@ -223,7 +236,7 @@ public class ContactListAssistantPlugin implements Plugin {
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
 
         // Do not copy/move a contact item only if it is not already in the Group.
-        if (contactGroup.getContactItemByJID(item.getJID()) != null) {
+        if (contactGroup.getContactItemByJID(item.getJID(), true) != null) {
             return;
         }
 
@@ -239,6 +252,7 @@ public class ContactListAssistantPlugin implements Plugin {
         final ContactGroup oldGroup = getContactGroup(item.getGroupName());
 
         SwingWorker worker = new SwingWorker() {
+            @Override
             public Object construct() {
                 Roster roster = SparkManager.getConnection().getRoster();
                 RosterEntry entry = roster.getEntry(item.getJID());
@@ -271,6 +285,7 @@ public class ContactListAssistantPlugin implements Plugin {
                 return true;
             }
 
+            @Override
             public void finished() {
                 if ((Boolean)get()) {
                     // Now try and remove the group from the old one.
