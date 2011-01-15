@@ -70,7 +70,7 @@ public class BookmarkPlugin implements Plugin {
 
                 if (bookmarkMenu.getMenuComponentCount() > 0) {
                     int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
-                    SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 1);
+                    SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 2);
                 }
 
                 BookmarksUI bookmarksUi = ConferenceServices.getBookmarkedConferences();
