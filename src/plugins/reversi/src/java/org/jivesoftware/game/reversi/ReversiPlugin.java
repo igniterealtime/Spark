@@ -19,28 +19,36 @@
  */
 package org.jivesoftware.game.reversi;
 
-import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.component.BackgroundPanel;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.filter.PacketIDFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.BackgroundPanel;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 /**
  * Reversi plugin. Reversi is a two-player, turn-based game. See {@link ReversiModel} for more details
@@ -93,11 +101,11 @@ public class ReversiPlugin implements Plugin {
         SparkManager.getConnection().removePacketListener(gameOfferListener);
 
         // See if there are any pending offers or invitations. If so, cancel them.
-        for (Iterator i=gameOffers.keySet().iterator(); i.hasNext(); ) {
+        for (Iterator<String> i=gameOffers.keySet().iterator(); i.hasNext(); ) {
             //String opponentJID = (String)i.next();
             // TODO: cancel game offer.
         }
-        for (Iterator i=gameInvitations.keySet().iterator(); i.hasNext(); ) {
+        for (Iterator<String> i=gameInvitations.keySet().iterator(); i.hasNext(); ) {
             //String opponentJID = (String)i.next();
             // TODO: reject game invitation.
         }
@@ -133,7 +141,9 @@ public class ReversiPlugin implements Plugin {
         inviteAlert.setLayout(new BorderLayout());
 
         JPanel invitePanel = new JPanel() {
-            protected void paintComponent(Graphics g) {
+			private static final long serialVersionUID = 5942001917654498678L;
+
+			protected void paintComponent(Graphics g) {
                 ImageIcon imageIcon = new ImageIcon(getClass().getResource("images/reversi-icon.png"));
                 Image image = imageIcon.getImage();
                 g.drawImage(image, 0, 0, null);
@@ -204,7 +214,8 @@ public class ReversiPlugin implements Plugin {
         ChatManager manager = SparkManager.getChatManager();
         chatRoomListener = new ChatRoomListenerAdapter() {
 
-            ImageIcon icon = new ImageIcon(getClass().getResource("images/reversi-icon.png"));
+        	
+            ImageIcon icon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
 
             public void chatRoomOpened(final ChatRoom room) {
                 ChatRoomButton button = new ChatRoomButton("Reversi", icon);
@@ -217,7 +228,9 @@ public class ReversiPlugin implements Plugin {
                         final JPanel request = new JPanel();
                         request.setLayout(new BorderLayout());
                         JPanel requestPanel = new JPanel() {
-                            protected void paintComponent(Graphics g) {
+							private static final long serialVersionUID = 4490592207923738251L;
+
+							protected void paintComponent(Graphics g) {
                                 g.drawImage(icon.getImage(), 0, 0, null);
                             }
                         };

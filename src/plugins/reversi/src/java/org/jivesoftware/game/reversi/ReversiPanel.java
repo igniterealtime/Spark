@@ -40,7 +40,8 @@ import org.jivesoftware.smack.packet.DefaultPacketExtension;
  */
 public class ReversiPanel extends JPanel {
 
-    private static final int BOARD_SIZE = 320;
+	private static final long serialVersionUID = 3591458286918924065L;
+	private static final int BOARD_SIZE = 320;
     private static final int INFO_PANEL_HEIGHT = 50;
     private static final int BORDER_SIZE = 5;
     public static final int TOTAL_WIDTH = BOARD_SIZE + (BORDER_SIZE*2);
@@ -201,7 +202,8 @@ public class ReversiPanel extends JPanel {
      */
     public class ReversiBlock extends JPanel {
 
-        private ReversiPanel ui;
+		private static final long serialVersionUID = -8504469339731900770L;
+		private ReversiPanel ui;
         private int index;
 
         public ReversiBlock(ReversiPanel ui, int index) {
