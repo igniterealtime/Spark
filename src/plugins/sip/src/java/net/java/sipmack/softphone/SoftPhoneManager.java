@@ -154,6 +154,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      * Private constructor of the class.
      */
     private SoftPhoneManager() {
+    	mediaManager = new JmfMediaManager();
     }
 
     /**
@@ -318,7 +319,6 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
         sipManager = new SipManager();
         softPhoneMedia = new SoftPhoneMedia();
         softPhoneSecurity = new SoftPhoneSecurity();
-        mediaManager = new JmfMediaManager();
 
         sipManager.addCommunicationsListener(this);
         sipManager.setSecurityAuthority(softPhoneSecurity);
