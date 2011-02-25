@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.java.sipmack.common.Log;
+import org.jivesoftware.spark.util.log.Log;
 
 
 public class SparkCompatibility {
