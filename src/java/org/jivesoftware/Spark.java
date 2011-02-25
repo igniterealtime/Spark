@@ -26,6 +26,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -87,7 +89,18 @@ public final class Spark {
         StringBuffer buf = new StringBuffer();
         buf.append(current);
         buf.append(";");
-        
+
+    	SparkCompatibility sparkCompat = new SparkCompatibility();
+    	try { 
+    		// Absolute paths to a collection of files or directories to skip
+			Collection<String> skipFiles = new HashSet<String>();
+			skipFiles.add(new File(USER_SPARK_HOME, "/plugins").getAbsolutePath());  
+			
+    		sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);
+    	} catch (IOException e) {
+    		// Do nothing 
+    	}
+        	
         RESOURCE_DIRECTORY = new File(USER_SPARK_HOME, "/resources").getAbsoluteFile();
         if(!RESOURCE_DIRECTORY.exists()){
         	
