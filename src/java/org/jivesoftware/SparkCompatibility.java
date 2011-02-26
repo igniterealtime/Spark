@@ -1,3 +1,23 @@
+/**
+ * $RCSfile: ,v $
+ * $Revision: $
+ * $Date: $
+ *
+ * Copyright (C) 2004-2010 Jive Software. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jivesoftware;
 
 import java.io.File;
@@ -10,11 +30,14 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.jivesoftware.spark.util.log.Log;
 
 
 public class SparkCompatibility {
-    private final String USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
+
+    /**
+     * Old Spark settings directory
+     */
+    private final String OLD_USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
     
     public SparkCompatibility() {
     }
@@ -29,10 +52,8 @@ public class SparkCompatibility {
      * @throws IOException
      */
     public void transferConfig(String userSparkHome, Collection<String> skipFiles) throws IOException {
-    	Log.debug("Transferring settings from: " + USER_SPARK_HOME);
-    	Log.debug("To: " + userSparkHome);
     	File newSparkHomeDir = new File(userSparkHome);
-    	File oldSparkHomeDir = new File(USER_SPARK_HOME);
+    	File oldSparkHomeDir = new File(OLD_USER_SPARK_HOME);
     	if (!newSparkHomeDir.exists() && oldSparkHomeDir.exists()) {
 			copyDirectory(oldSparkHomeDir, newSparkHomeDir, skipFiles);
 		}
@@ -107,11 +128,10 @@ public class SparkCompatibility {
      *
      * @return Directory name depending on Operating System.
      */
-    private String getUserConf() {
+    private static String getUserConf() {
         if (Spark.isLinux()) {
             return ".Spark";
         }
-
         return "Spark";
     }
 }
