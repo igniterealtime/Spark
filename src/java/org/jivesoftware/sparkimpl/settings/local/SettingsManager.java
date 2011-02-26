@@ -139,7 +139,7 @@ public class SettingsManager {
     /**
      * Return true if the settings file exists.
      *
-     * @return true if the settings file exists.('settings.xml')
+     * @return true if the settings file exists.('spark.properties')
      */
     public static boolean exists() {
         return getSettingsFile().exists();
