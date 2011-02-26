@@ -276,7 +276,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 chatRoom = (ChatRoomImpl)container.getChatRoom(from);
             }
             catch (ChatRoomNotFoundException e) {
-                chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("broadcast"));
+            	chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("administrator"));
                 chatRoom.getBottomPanel().setVisible(false);
                 chatRoom.getToolBar().setVisible(false);
                 SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
