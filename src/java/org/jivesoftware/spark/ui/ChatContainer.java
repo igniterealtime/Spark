@@ -1074,8 +1074,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             Message lastChatMessage = chatRoom.getTranscripts().get(size - 1);
             String mucNickNameT = lastChatMessage.getFrom();
             String[] mucNickName = mucNickNameT.split("/");
+            String fromNickName;
             String finalRoomName = chatRoom.getRoomTitle();
-            
+            if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
+                fromNickName = finalRoomName; //Res.getString("label.message");
+            } else {
+                fromNickName = mucNickName[1];
+            }
             if (localPref.isMucHighToastEnabled()) {
                 // allowed to check for new messages containing name
                 String myNickName = chatRoom.getNickname();
@@ -1086,7 +1091,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
                     // match, send new message
                     boolean customMsgS = true;
-                    String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + mucNickName[1] + " (" + lastChatMessage.getBody() + ")";
+                    String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + fromNickName + " (" + lastChatMessage.getBody() + ")";
                     String customMsgTitleS = Res.getString("group.chat.name.notification");
                        
                     startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
@@ -1094,7 +1099,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 } else {
                     // regular group message
                     boolean customMsgS = true;
-                    String customMsgTextS = mucNickName[1] + " says: " + lastChatMessage.getBody();
+                    String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
                     String customMsgTitleS = finalRoomName;
                     
                     startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
@@ -1103,7 +1108,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             } else {
                 // regular group message
                 boolean customMsgS = true;
-                String customMsgTextS = mucNickName[1] + " says: " + lastChatMessage.getBody();
+                String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
                 String customMsgTitleS = finalRoomName;
                 
                 startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
