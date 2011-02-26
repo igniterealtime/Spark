@@ -19,11 +19,13 @@
  */
 package org.jivesoftware.spark.plugin.flashing;
 
+import java.awt.EventQueue;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.util.log.Log;
 
 public class FlashingPreference implements Preference {
 	public static String NAMESPACE = "flashing";
@@ -32,7 +34,22 @@ public class FlashingPreference implements Preference {
 
 	public FlashingPreference() {
 		preferences = new FlashingPreferences();
-			
+		try {
+            if (EventQueue.isDispatchThread()) {
+                dialog = new FlashingPreferenceDialog();
+            } else {
+                EventQueue.invokeAndWait(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        dialog = new FlashingPreferenceDialog();
+                    }
+                });
+            }
+		} catch (Exception e) {
+            Log.error(e);
+		}		
 	}
 
 	public FlashingPreferences getPreferences() {
