@@ -25,11 +25,14 @@ import java.net.URI;
 public class BrowserLauncher {
 
 	public static void openURL(String url) throws Exception {
-		if (url.startsWith("http") || 
-			url.startsWith("ftp")) {
+		if (url.startsWith("http") || url.startsWith("ftp") || url.startsWith("file")) {
+
+			if (url.startsWith("file") && url.contains(" ")) {
+				url = url.replace(" ", "%20");
+			}
 			Desktop.getDesktop().browse(new URI(url));
-		}
-		else {
+
+		} else {
 			Desktop.getDesktop().browse(new URI("http://" + url));
 		}
 	}
