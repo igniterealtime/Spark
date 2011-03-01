@@ -531,10 +531,11 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 				
                 int ok = JOptionPane.showConfirmDialog((TranscriptWindow)object,
                     Res.getString("delete.permanently"), Res.getString("delete.log.permanently"),
-                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.YES_OPTION) {
                 	if(user != null){
+                        // This actions must be move into Transcript Plugin!
 	                    File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
 	                    File transcriptFile = new File(transcriptDir ,user + ".xml");
 	                    transcriptFile.delete();
@@ -542,9 +543,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 	                    transcriptFile.delete();
 	                    clear();
                     }
-                }
-                else if (ok == JOptionPane.NO_OPTION) {
-                	clear();
                 }
             }
         };
