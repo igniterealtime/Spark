@@ -379,6 +379,10 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Create the room if it does not exist.
         ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
+        if(!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible())
+        {
+            SparkManager.getChatManager().getChatContainer().getChatFrame().setVisible(true);
+        }
 
         // Insert offline message
         room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR, Color.white);
