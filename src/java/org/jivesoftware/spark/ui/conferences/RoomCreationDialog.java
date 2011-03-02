@@ -244,8 +244,20 @@ public class RoomCreationDialog extends JPanel {
         return new String(confirmPasswordField.getPassword());
     }
 
+    /**
+     * Returns the Room name of the RoomCreationDialog
+     *
+     * @return The Room name
+     */
     public String getRoomName() {
         return nameField.getText();
+    }
+    /**
+     * Returns the Topic of the RoomCreationDialog
+     * @return The Rooms Topic
+     */
+    public String getRoomTopic() {
+        return topicField.getText();
     }
 
 }

@@ -676,7 +676,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
 
                 groupChat.create(pref.getNickname());
-                chatManager.getChatContainer().addChatRoom(room);
+                chatManager.getChatContainer().addChatRoom(room);                
                 chatManager.getChatContainer().activateChatRoom(room);
 
                 // Send Form
@@ -687,6 +687,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     form.setAnswer("muc#roomconfig_roomsecret", password);
                 }
                 form.setAnswer("muc#roomconfig_roomname", mucRoomDialog.getRoomName());
+                form.setAnswer("muc#roomconfig_roomdesc", mucRoomDialog.getRoomTopic());
 
                 if (mucRoomDialog.isPermanent()) {
                     form.setAnswer("muc#roomconfig_persistentroom", true);
