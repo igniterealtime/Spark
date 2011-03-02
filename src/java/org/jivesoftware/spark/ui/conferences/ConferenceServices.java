@@ -70,7 +70,7 @@ import org.jivesoftware.spark.util.log.Log;
  * you can remove from the plugins.xml file located in the classpath of Communicator.
  */
 public class ConferenceServices {
-    private static BookmarksUI bookmarksUI;
+    private static BookmarksUI bookmarksUI = new BookmarksUI(); //This variable shouldn't be null.
 
     public ConferenceServices() {
         ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
@@ -224,7 +224,7 @@ public class ConferenceServices {
             }
 
             public void finished() {
-                bookmarksUI = new BookmarksUI();
+                bookmarksUI.loadUI();
                 workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookmarksUI);
             }
         };

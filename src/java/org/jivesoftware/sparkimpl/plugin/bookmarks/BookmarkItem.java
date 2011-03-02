@@ -81,6 +81,7 @@ public class BookmarkItem extends JPanel {
         action = new AbstractAction() {
 			private static final long serialVersionUID = 6986851628853679682L;
 
+            @Override
 			public void actionPerformed(ActionEvent e) {
                 try {
                     BrowserLauncher.openURL(bookmark.getURL());
@@ -99,8 +100,10 @@ public class BookmarkItem extends JPanel {
         action = new AbstractAction() {
 			private static final long serialVersionUID = 4324785627112595384L;
 
+            @Override
 			public void actionPerformed(ActionEvent e) {
                 SwingWorker worker = new SwingWorker() {
+                    @Override
                     public Object construct() {
                         try {
                             Thread.sleep(10);
@@ -111,6 +114,7 @@ public class BookmarkItem extends JPanel {
                         return "ok";
                     }
 
+                    @Override
                     public void finished() {
                         ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
                     }

@@ -27,8 +27,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -52,18 +50,32 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class BookmarkPlugin implements Plugin {
 
+    @Override
     public void initialize() {
+
         final SwingWorker bookmarkThreadWorker = new SwingWorker() {
+
+            @Override
             public Object construct() {
-                return this; 
-                }
+                return this;
+            }
 
             /**
              * Installing menu into spark menu and adding events to bookmarks
              */
             @Override
             public void finished() {
-                
+                try {
+                    initialize();
+                } catch (Exception e) {
+                    Log.error(e);
+                }
+            }
+
+            /**
+             *
+             */
+            public void initialize() {
                 final JMenu bookmarkMenu = new JMenu(Res.getString("menuitem.bookmarks"));
 
                 createMenu(bookmarkMenu);
@@ -74,38 +86,18 @@ public class BookmarkPlugin implements Plugin {
                 }
 
                 BookmarksUI bookmarksUi = ConferenceServices.getBookmarkedConferences();
-                if ( bookmarksUi != null ) {
-                    bookmarksUi.addBookmarksListener(new BookmarksListener() {
+                bookmarksUi.addBookmarksListener(new BookmarksListener() {
 
+                        @Override
                         public void bookmarkAdded(String roomJID) {
                             rescan(bookmarkMenu);
                         }
 
+                        @Override
                         public void bookmarkRemoved(String roomJID) {
                             rescan(bookmarkMenu);
                         }
                     });
-                } else {
-                    /**
-                     * IF our plugin loaded earlier than BookmarkUI we have to reskan bookmarks every time we open this menu
-                     * And BookmarksListener event wouldn't work
-                     */
-                    Log.error("Bookmark plugin loaded earlier then BookmarkUI. BookmarksListener Events wouldn't work!");
-                    bookmarkMenu.addMenuListener(new MenuListener() {
-
-                        public void menuSelected(MenuEvent menuEvent) {
-                            rescan(bookmarkMenu);
-                        }
-
-                        public void menuDeselected(MenuEvent arg0) {
-                            //ignore
-                        }
-
-                        public void menuCanceled(MenuEvent arg0) {
-                            //ignore
-                        }
-                    });
-                }
             }
 
             /**
@@ -113,8 +105,7 @@ public class BookmarkPlugin implements Plugin {
              *
              * @param Bookmark menu Jmenu
              */
-            public void rescan(JMenu bookmarkMenu)
-            {
+            public void rescan(JMenu bookmarkMenu) {
                 bookmarkMenu.removeAll(); // removing old menus
                 try {
                     setBookmarks(bookmarkMenu); // making new 
@@ -126,16 +117,15 @@ public class BookmarkPlugin implements Plugin {
                             SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 2);
                         }
                     }
-                    
+
                     if (onPanel >= 0) {
                         if (bookmarkMenu.getMenuComponentCount() <= 0) {
                             SparkManager.getMainWindow().getMenu().remove(bookmarkMenu);
                         }
                     }
-                    // Refreshing menu panel
-                    SparkManager.getWorkspace().getStatusBar().invalidate();
-                    SparkManager.getWorkspace().getStatusBar().validate();
-                    SparkManager.getWorkspace().getStatusBar().repaint();
+                    SparkManager.getMainWindow().getMenu().invalidate();
+                    SparkManager.getMainWindow().getMenu().validate();
+                    SparkManager.getMainWindow().getMenu().repaint();
                 } catch (XMPPException ex) {
                     Log.error(ex);
                 }
@@ -146,11 +136,7 @@ public class BookmarkPlugin implements Plugin {
              *
              * @param Bookmark menu Jmenu
              */
-            public void createMenu(JMenu bookmarkMenu)
-            {
-                SparkManager.getWorkspace().getStatusBar().invalidate();
-                SparkManager.getWorkspace().getStatusBar().validate();
-                SparkManager.getWorkspace().getStatusBar().repaint();
+            public void createMenu(JMenu bookmarkMenu) {
                 try {
                     setBookmarks(bookmarkMenu);
                 } catch (XMPPException ex) {
@@ -164,8 +150,7 @@ public class BookmarkPlugin implements Plugin {
              *
              * @param Bookmark menu Jmenu
              */
-            public void setBookmarks(JMenu bookmarkMenu ) throws XMPPException
-            {
+            public void setBookmarks(JMenu bookmarkMenu) throws XMPPException {
                 BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
 
                 if (manager != null) {
@@ -177,13 +162,14 @@ public class BookmarkPlugin implements Plugin {
                         final BookmarkedURL link = (BookmarkedURL) bookmarkedLink;
 
                         Action urlAction = new AbstractAction() {
-							private static final long serialVersionUID = 4246574779205966917L;
 
-							public void actionPerformed(ActionEvent actionEvent) {
+                            private static final long serialVersionUID = 4246574779205966917L;
+
+                            @Override
+                            public void actionPerformed(ActionEvent actionEvent) {
                                 try {
                                     BrowserLauncher.openURL(link.getURL());
-                                }
-                                catch (Exception e) {
+                                } catch (Exception e) {
                                     Log.error(e);
                                 }
                             }
@@ -199,10 +185,14 @@ public class BookmarkPlugin implements Plugin {
                         final BookmarkedConference conferences = (BookmarkedConference) bookmarkedConference;
 
                         Action conferenceAction = new AbstractAction() {
-							private static final long serialVersionUID = 5964584172262968704L;
 
-							public void actionPerformed(ActionEvent actionEvent) {
+                            private static final long serialVersionUID = 5964584172262968704L;
+
+                            @Override
+                            public void actionPerformed(ActionEvent actionEvent) {
                                 final TimerTask task = new SwingTimerTask() {
+
+                                    @Override
                                     public void doRun() {
                                         ConferenceUtils.joinConferenceOnSeperateThread(conferences.getName(), conferences.getJid(), conferences.getPassword());
                                     }
@@ -217,20 +207,23 @@ public class BookmarkPlugin implements Plugin {
                         bookmarkMenu.add(conferenceAction);
                     }
                 }
-                }
+            }
         };
 
         bookmarkThreadWorker.start();
 
     }
 
+    @Override
     public void shutdown() {
     }
 
+    @Override
     public boolean canShutDown() {
         return false;
     }
 
+    @Override
     public void uninstall() {
     }
 }

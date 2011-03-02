@@ -56,6 +56,7 @@ public class BookmarkUI extends JPanel {
         list.setCellRenderer(new JPanelRenderer());
 
         list.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2) {
                     BookmarkItem item = (BookmarkItem)list.getSelectedValue();
@@ -66,10 +67,12 @@ public class BookmarkUI extends JPanel {
 
 
         pane.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseEntered(MouseEvent e) {
                 list.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
+            @Override
             public void mouseExited(MouseEvent e) {
                 list.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }

@@ -99,9 +99,16 @@ public class BookmarksUI extends JPanel {
     private BookmarkManager manager;
 
     /**
-     * Initialize Conference UI.
+     * 
      */
     public BookmarksUI() {
+        
+    }
+
+    /**
+     * Initialize Conference UI.
+     */
+    public void loadUI() {
         setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         setLayout(new GridBagLayout());
 
@@ -111,6 +118,7 @@ public class BookmarksUI extends JPanel {
         tree = new Tree(rootNode) {
 			private static final long serialVersionUID = -8445572224948613446L;
 
+            @Override
 			protected void setExpandedState(TreePath path, boolean state) {
                 // Ignore all collapse requests; collapse events will not be fired
                 if (state) {
@@ -120,10 +128,12 @@ public class BookmarksUI extends JPanel {
         };
 
         tree.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseEntered(MouseEvent mouseEvent) {
                 tree.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
+            @Override
             public void mouseExited(MouseEvent mouseEvent) {
                 tree.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
@@ -142,6 +152,7 @@ public class BookmarksUI extends JPanel {
         tree.setRootVisible(false);
 
         tree.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2) {
                     TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
@@ -160,10 +171,12 @@ public class BookmarksUI extends JPanel {
                 }
             }
 
+            @Override
             public void mouseReleased(MouseEvent mouseEvent) {
                 checkPopup(mouseEvent);
             }
 
+            @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 checkPopup(mouseEvent);
             }
@@ -179,6 +192,7 @@ public class BookmarksUI extends JPanel {
         }
 
         final TimerTask bookmarkTask = new SwingTimerTask() {
+            @Override
             public void doRun() {
                 try {
                     setBookmarks(manager.getBookmarkedConferences());
@@ -207,6 +221,7 @@ public class BookmarksUI extends JPanel {
             Action browseAction = new AbstractAction() {
 				private static final long serialVersionUID = -8866708581713789939L;
 
+                @Override
 				public void actionPerformed(ActionEvent actionEvent) {
                     browseRooms(node.toString());
                 }
@@ -217,6 +232,7 @@ public class BookmarksUI extends JPanel {
             Action removeServiceAction = new AbstractAction() {
 				private static final long serialVersionUID = -5276754429117462223L;
 
+                @Override
 				public void actionPerformed(ActionEvent actionEvent) {
                     DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
                     treeModel.removeNodeFromParent(node);
@@ -232,6 +248,7 @@ public class BookmarksUI extends JPanel {
             Action joinRoomAction = new AbstractAction() {
 				private static final long serialVersionUID = -356016505214728244L;
 
+                @Override
 				public void actionPerformed(ActionEvent actionEvent) {
                     String roomName = node.getUserObject().toString();
                     String roomJID = node.getAssociatedObject().toString();
@@ -245,6 +262,7 @@ public class BookmarksUI extends JPanel {
             Action removeRoomAction = new AbstractAction() {
 				private static final long serialVersionUID = -7560090091884746914L;
 
+                @Override
 				public void actionPerformed(ActionEvent actionEvent) {
                     DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
                     treeModel.removeNodeFromParent(node);
@@ -273,6 +291,7 @@ public class BookmarksUI extends JPanel {
                 Action autoJoin = new AbstractAction() {
 					private static final long serialVersionUID = 7857469398581933449L;
 
+                    @Override
 					public void actionPerformed(ActionEvent e) {
                         String roomJID = node.getAssociatedObject().toString();
                         if (autoJoinRooms.contains(roomJID)) {
@@ -298,6 +317,7 @@ public class BookmarksUI extends JPanel {
                 Action roomInfoAction = new AbstractAction() {
 					private static final long serialVersionUID = -8336773839944003744L;
 
+                    @Override
 					public void actionPerformed(ActionEvent actionEvent) {
                         String roomJID = node.getAssociatedObject().toString();
                         RoomBrowser roomBrowser = new RoomBrowser();
@@ -326,6 +346,7 @@ public class BookmarksUI extends JPanel {
     private void addRegisteredServices() {
         SwingWorker worker = new SwingWorker() {
 
+            @Override
             public Object construct() {
                 try {
                     if (SparkManager.getConnection().isConnected()) {
@@ -338,6 +359,7 @@ public class BookmarksUI extends JPanel {
                 return mucServices;
             }
 
+            @Override
             public void finished() {
                 if (mucServices == null) {
                     return;
@@ -431,6 +453,7 @@ public class BookmarksUI extends JPanel {
         final Action conferenceAction = new AbstractAction() {
 			private static final long serialVersionUID = 7973928300442518496L;
 
+            @Override
 			public void actionPerformed(ActionEvent e) {
                 final String conferenceService = serviceField.getText();
                 if (hasService(conferenceService)) {
@@ -445,6 +468,7 @@ public class BookmarksUI extends JPanel {
                     SwingWorker worker = new SwingWorker() {
                         DiscoverInfo discoInfo;
 
+                        @Override
                         public Object construct() {
                             ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
@@ -477,6 +501,7 @@ public class BookmarksUI extends JPanel {
                             return true;
                         }
 
+                        @Override
                         public void finished() {
                             if (discoInfo != null) {
                                 for (String aServiceList : serviceList) {
@@ -505,6 +530,7 @@ public class BookmarksUI extends JPanel {
 
 
         serviceField.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     conferenceAction.actionPerformed(null);
