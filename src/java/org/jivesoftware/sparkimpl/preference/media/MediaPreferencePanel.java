@@ -115,18 +115,6 @@ public class MediaPreferencePanel  extends JPanel {
 		RegistryDefaults.registerAll(RegistryDefaults.FMJ | RegistryDefaults.FMJ_NATIVE);
 		GlobalCaptureDevicePlugger.addCaptureDevices();
 		
-
-		// LOG ALL Devices
-		final Vector<CaptureDeviceInfo> vectorDevices = CaptureDeviceManager.getDeviceList(null);
-		for ( CaptureDeviceInfo infoCaptureDevice : vectorDevices )
-		{
-			System.err.println(convertSysString(infoCaptureDevice.getName()));
-			for (Format format : infoCaptureDevice.getFormats())
-			{
-				System.err.println("   " + format);
-			}		
-		}
-		
 		vectorAudioDevices = CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR));	
 		for ( CaptureDeviceInfo infoCaptureDevice : vectorAudioDevices)
 		{			     
@@ -169,4 +157,19 @@ public class MediaPreferencePanel  extends JPanel {
 		}
 		return "";
 	}
+	
+	/**
+	 * Logs the audio devices
+	 */
+    public void logAudioDevices() {
+        @SuppressWarnings("unchecked")
+        final Vector<CaptureDeviceInfo> vectorDevices = CaptureDeviceManager.getDeviceList(null);
+
+        for (CaptureDeviceInfo infoCaptureDevice : vectorDevices) {
+            System.err.println(convertSysString(infoCaptureDevice.getName()));
+            for (Format format : infoCaptureDevice.getFormats()) {
+                System.err.println("   " + format);
+            }
+        }
+    }
 }
