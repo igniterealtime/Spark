@@ -22,14 +22,10 @@ package org.jivesoftware.spark.filetransfer.preferences;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import java.io.File;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
@@ -77,16 +73,8 @@ public class FileTransferPreference implements Preference {
     }
 
     public void load() {
-        File downloadedDir = new File(SparkManager.getUserDirectory(), "downloads");
-
-        String downloadDirectory = localPreferences.getDownloadDir();
-        if (downloadDirectory == null) {
-            downloadDirectory = downloadedDir.getAbsolutePath();
-        }
-
         int timeout = localPreferences.getFileTransferTimeout();
-
-        ui.setDownloadDirectory(downloadDirectory);
+        ui.setDownloadDirectory(localPreferences.getDownloadDir());
         ui.setTimeout(Integer.toString(timeout));
     }
 
@@ -103,8 +91,7 @@ public class FileTransferPreference implements Preference {
             int tout = 1;
             try {
                 tout = Integer.parseInt(timeout);
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 // Nothing to do
             }
 
@@ -115,7 +102,6 @@ public class FileTransferPreference implements Preference {
         }
 
         SettingsManager.saveSettings();
-
 
     }
 

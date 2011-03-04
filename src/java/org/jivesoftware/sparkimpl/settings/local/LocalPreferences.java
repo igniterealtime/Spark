@@ -20,11 +20,12 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
-
 import java.io.File;
 import java.util.Date;
 import java.util.Properties;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Represents the LocalPreference Model for this system.
@@ -262,13 +263,34 @@ public class LocalPreferences {
 	public void setSSL(boolean ssl) {
 		props.setProperty("sslEnabled", Boolean.toString(ssl));
 	}
-
+	
+	/**
+	 * Returns the Download Directory, doesnt return <code>null</code>
+	 * @return {@link String}
+	 */
 	public String getDownloadDir() {
-		File downloadedDir = new File(SparkManager.getUserDirectory(),
-				"downloads");
 
-		return props.getProperty("downloadDirectory", downloadedDir
-				.getAbsolutePath());
+		File downloadedDir = null;
+		if (Spark.isLinux() || Spark.isMac()) {
+			downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
+            Log.error(downloadedDir.getAbsolutePath());
+		} else if (Spark.isWindows()) {
+
+			String regpath = WinRegistryReader.getMyDocumentsFromWinRegistry();
+			if (regpath != null) {
+				downloadedDir = new File(regpath + "\\Downloads");
+				if (!downloadedDir.exists()) {
+					downloadedDir.mkdir();
+				}
+			}
+			else
+			{
+			    // if for some Reason there is no "My Documents" Folder we should select the Desktop
+				downloadedDir = new File(System.getProperty("user.home") + "\\Desktop\\");
+			}
+		}
+
+		return props.getProperty("downloadDirectory", downloadedDir.getAbsolutePath());
 	}
 
 	public void setDownloadDir(String downloadDir) {
@@ -891,6 +913,6 @@ public class LocalPreferences {
 	
 	private void setString(String property, String value) {
 		props.setProperty(property, value);
-	}
+    }
 
 }
