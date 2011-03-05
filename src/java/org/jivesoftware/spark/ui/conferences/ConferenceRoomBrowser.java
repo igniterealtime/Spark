@@ -242,17 +242,18 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     }
 
     private void refreshRoomList(final String serviceName) {
-        roomsTable.clearTable();
+        
         SwingWorker worker = new SwingWorker() {
             Collection result;
 
-            public Object construct() {
+            public synchronized  Object construct() {
                 result = getRoomsAndInfo(serviceName);
                 return result;
             }
 
-            public void finished() {
+            public synchronized void finished() {
                 try {
+                    roomsTable.clearTable();
                     for (Object aResult : result) {
                         RoomObject obj = (RoomObject) aResult;
                         addRoomToTable(obj.getRoomJID(), obj.getRoomName(), obj.getNumberOfOccupants());
