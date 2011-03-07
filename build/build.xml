@@ -236,7 +236,7 @@
     </target>
 
     <!-- build =================================================================================== -->
-    <target name="build" depends="init, resources, base">
+    <target name="build" depends="init, resources, base, checkcode.checkstyle">
         <!--Compiles the java code from ${src} directory into ${classes} directory-->
         <javac destdir="${classes}"
                debug="true"
@@ -892,9 +892,9 @@
     <target name="checkcode.pmd" description="Checkcode with pmd.">
 		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
         	<classpath>
-				<pathelement location="${basedir}/build/lib/pmd.jar" />
-				<pathelement location="${basedir}/build/lib/asm.jar" />
-            	<pathelement location="${basedir}/build/lib/merge/jaxen.jar" />
+			<pathelement location="${basedir}/build/lib/pmd.jar" />
+			<pathelement location="${basedir}/build/lib/asm.jar" />
+            		<pathelement location="${basedir}/build/lib/merge/jaxen.jar" />
         	</classpath>
 		</taskdef>
 		<pmd shortFilenames="true">
@@ -909,6 +909,18 @@
 			</fileset>
 		</pmd>
     </target>
+
+    <!-- checkcode.checkstyle ============================================================ -->
+    <target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
+		<taskdef resource="checkstyletask.properties" classpath="build/lib/checkstyle.jar" />
+
+		<checkstyle maxErrors="21331" config="build/checkstyle.xml">
+			<fileset dir="src/java" includes="**/*.java" />
+			<!-- <formatter type="plain"/> -->
+			<formatter type="xml" toFile="target/checkstyle.xml"/>
+		</checkstyle>
+    </target>
+
 
     <!-- docbook ========================================================================= -->
     <target name="docbook" description="Docbook">
