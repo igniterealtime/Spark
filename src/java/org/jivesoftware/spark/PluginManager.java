@@ -499,7 +499,7 @@ public class PluginManager implements MainWindowListener {
       		}
       	}
       	
-			EventQueue.invokeAndWait(new Runnable() {
+			EventQueue.invokeLater(new Runnable() {
 			      public void run() {
 			          for (Plugin plugin1 : plugins) {
 			              long start = System.currentTimeMillis();
