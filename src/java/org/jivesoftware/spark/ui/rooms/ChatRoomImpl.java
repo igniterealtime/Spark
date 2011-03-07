@@ -644,8 +644,7 @@ public class ChatRoomImpl extends ChatRoom {
         	return;
         }
         
-        final String bareJID = StringUtils.parseBareAddress(getParticipantJID());
-        final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(bareJID);
+        final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getParticipantJID());
         final String personalNickname = SparkManager.getUserManager().getNickname();
 
         for (HistoryMessage message : chatTranscript.getMessages()) {
@@ -654,12 +653,19 @@ public class ChatRoomImpl extends ChatRoom {
             if (nickname.equals(message.getFrom())) {
                 String otherJID = StringUtils.parseBareAddress(message.getFrom());
                 String myJID = SparkManager.getSessionManager().getBareAddress();
-
+                
                 if (otherJID.equals(myJID)) {
                     nickname = personalNickname;
                 }
                 else {
-                    nickname = StringUtils.parseName(nickname);
+                    try
+                    {
+                        nickname = message.getFrom().substring(message.getFrom().indexOf("/")+1);
+                    }
+                    catch(Exception e)
+                    {
+                        nickname = StringUtils.parseName(nickname);
+                    }
                 }
             }
 
