@@ -53,8 +53,10 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -103,6 +105,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -407,14 +410,15 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private void changeOfflineToOnline(String bareJID, final RosterEntry entry, Presence presence) {
         // Move out of offline group. Add to all groups.
         ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
+
         if (offlineItem == null) {
             return;
         }
-
         offlineGroup.removeContactItem(offlineItem);
 
         // Add To all groups it belongs to.
         boolean isFiled = false;
+
         for (RosterGroup rosterGroup : entry.getGroups()) {
             isFiled = true;
             ContactGroup contactGroup = getContactGroup(rosterGroup.getName());
@@ -424,58 +428,110 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
 
             if (contactGroup != null) {
-                 ContactItem contactItem = null;
+                ContactItem contactItem = null;
                 if (contactGroup.getContactItemByJID(entry.getUser()) == null) {
-                    contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-                    contactGroup.addContactItem(contactItem);
-                }
-                else if (contactGroup.getContactItemByJID(entry.getUser()) != null) {
-                    // If the user is in their, but without a nice presence.
-                    contactItem = contactGroup.getContactItemByJID(entry.getUser());
-                }
 
-                try {
-                    contactItem.setPresence(presence);
-                }
-                catch (NullPointerException e) {
-                    // TODO: Hrm, what should we do in this scenario?
-                }
-                contactItem.setAvailable(true);
-                toggleGroupVisibility(contactGroup.getGroupName(), true);
+                    // If we are reconnecting we have to check if we are on the
+                    // dispatch thread
+                    if (EventQueue.isDispatchThread()) {
+                        contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                        contactGroup.addContactItem(contactItem);
+                        contactItem.setAvailable(true);
+                        contactItem.setPresence(presence);                        
+                        contactItem.updateAvatarInSideIcon();
+                        contactItem.showUserComingOnline();                       
+                        //contactItem.updatePresenceIcon(contactItem.getPresence());
+                        toggleGroupVisibility(contactGroup.getGroupName(), true);
+                        //contactGroup.fireContactGroupUpdated();
+                        
+                        int numberOfMillisecondsInTheFuture = 5000;
+                        Date timeToRun = new Date(System.currentTimeMillis()
+                                + numberOfMillisecondsInTheFuture);
+                        Timer timer = new Timer();
 
-                contactItem.updateAvatarInSideIcon();
-                contactItem.showUserComingOnline();
-                contactGroup.fireContactGroupUpdated();
+                        final ContactItem staticItem = contactItem;
+                        final ContactGroup staticGroup = contactGroup;
+                        timer.schedule(new TimerTask() {
+                            public void run() {
+                                staticItem.updatePresenceIcon(staticItem.getPresence());
+                                staticGroup.fireContactGroupUpdated();
+                            }
+                        }, timeToRun);
 
+                    } else {
 
-                int numberOfMillisecondsInTheFuture = 5000;
-                Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
-                Timer timer = new Timer();
+                        final ContactGroup staticContactGroup = contactGroup;
+                        final Presence staticItemPrecense = presence;
+                        
+                        //Reconnection and not in dispatch Thread -> Add to EVentQueue
+                        EventQueue.invokeLater(new Runnable() {
 
-                final ContactItem staticItem = contactItem;
-                final ContactGroup staticGroup = contactGroup;
-                timer.schedule(new TimerTask() {
-                    public void run() {
-                        staticItem.updatePresenceIcon(staticItem.getPresence());
-                        staticGroup.fireContactGroupUpdated();
+                            @Override
+                            public void run() {
+
+                                ContactItem contactItem = new ContactItem(entry.getName(), null,entry.getUser());
+                                staticContactGroup.addContactItem(contactItem);
+                                contactItem.setPresence(staticItemPrecense);
+                                contactItem.setAvailable(true);
+                                contactItem.updateAvatarInSideIcon();
+                                contactItem.showUserComingOnline();
+                                contactItem.updatePresenceIcon(contactItem.getPresence());
+                                toggleGroupVisibility(staticContactGroup.getGroupName(), true);
+                                staticContactGroup.fireContactGroupUpdated();
+                                
+                            }
+
+                      });
                     }
-                }, timeToRun);
-            }
+                }
+           }
         }
 
         if (!isFiled) {
-            ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-            
-            ContactGroup unfiledGrp = getUnfiledGroup();
-            unfiledGrp.addContactItem(contactItem);
-            contactItem.setPresence(presence);
-            contactItem.setAvailable(true);
 
-            unfiledGrp.setVisible(true);
-            unfiledGrp.fireContactGroupUpdated();
+            
+            if (unfiledGroup.getContactItemByJID(entry.getUser()) == null) {
+                // If we are reconnecting we have to check if we are on the
+                // dispatch thread
+                if (EventQueue.isDispatchThread()) {
+
+                    contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                    ContactGroup unfiledGrp = getUnfiledGroup();
+                    unfiledGrp.addContactItem(contactItem);
+                    contactItem.setPresence(presence);
+                    contactItem.setAvailable(true);
+                    unfiledGrp.setVisible(true);
+                    unfiledGrp.fireContactGroupUpdated();
+
+
+
+                    
+
+                } else {
+                    final Presence staticItemPrecense = presence;
+                    EventQueue.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                            ContactGroup unfiledGrp = getUnfiledGroup();
+                            
+
+                            contactItem.setPresence(staticItemPrecense);
+                            contactItem.setAvailable(true);
+                            unfiledGrp.addContactItem(contactItem);
+                            contactItem.updatePresenceIcon(contactItem.getPresence());
+                            unfiledGrp.fireContactGroupUpdated();
+
+
+                        }
+                    });
+
+                }
+
+            }
         }
     }
-
 
     /**
      * Called to build the initial ContactList.
@@ -1030,6 +1086,13 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             Log.error(e);
         }
 
+        //Check if i should show groups with no users online
+        if (!getContactGroup(groupName).hasAvailableContacts())
+        {
+            showEmptyGroups(showHideMenu.isSelected());
+        }
+
+        
         return getContactGroup(groupName);
 
     }
@@ -2148,42 +2211,45 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         retryPanel.setDisconnectReason(message);
 
-        removeAllUsers();
+       removeAllUsers();
     }
 
     public void clientReconnected() {
         workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
         offlineGroup.fireContactGroupUpdated();
         buildContactList();
+        
+        final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+        SparkManager.getSessionManager().changePresence(myPresence);
 
-        final TimerTask updatePresence = new TimerTask() {
-            public void run() {
-                final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-                SparkManager.getSessionManager().changePresence(myPresence);
-
-                XMPPConnection con = SparkManager.getConnection();
-                final Roster roster = con.getRoster();
-                for (RosterEntry entry : roster.getEntries()) {
-                    String user = entry.getUser();
-                    Presence presence = roster.getPresence(user);
-                    try {
-                        updateUserPresence(presence);
-                    }
-                    catch (Exception e) {
-                        Log.error(e);
-                    }
-                }
-            }
-        };
-
-        TaskEngine.getInstance().schedule(updatePresence, 5000);
+//        final TimerTask updatePresence = new TimerTask() {
+//            public void run() {
+//                final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+//                SparkManager.getSessionManager().changePresence(myPresence);
+//
+//                XMPPConnection con = SparkManager.getConnection();
+//                final Roster roster = con.getRoster();
+//                for (RosterEntry entry : roster.getEntries()) {
+//                    String user = entry.getUser();
+//                    Presence presence = roster.getPresence(user);
+//                    try {
+//                        updateUserPresence(presence);
+//                    }
+//                    catch (Exception e) {
+//                        Log.error(e);
+//                    }
+//                }
+//            }
+//        };
+//
+//        TaskEngine.getInstance().schedule(updatePresence, 5000);
 
 
     }
 
     public void connectionClosedOnError(final Exception ex) {
         String errorMessage = Res.getString("message.disconnected.error");
-
+              
         if (ex != null && ex instanceof XMPPException) {
             XMPPException xmppEx = (XMPPException)ex;
             StreamError error = xmppEx.getStreamError();
