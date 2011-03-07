@@ -132,14 +132,6 @@ public class VCardViewer extends JPanel {
 
     private void buildUI(final VCard vcard) {
 
-        avatarImage.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 2) {
-                    SparkManager.getVCardManager().viewProfile(vcard.getJabberId(), avatarImage);
-                }
-            }
-        });
-
         String firstName = vcard.getFirstName();
         if (firstName == null) {
             firstName = "";
@@ -235,7 +227,7 @@ public class VCardViewer extends JPanel {
         if (!ModelUtil.hasLength(homeNumber)) {
             homeNumber = Res.getString("label.na");
         }
-        final JLabel homePhoneLabel = new JLabel(Res.getString("label.home") + ": " + homeNumber);
+        final JLabel homePhoneLabel = new JLabel(Res.getString("label.home").replace("&", "") + ": " + homeNumber);
         add(homePhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Work Phone
@@ -243,7 +235,7 @@ public class VCardViewer extends JPanel {
         if (!ModelUtil.hasLength(workNumber)) {
             workNumber = Res.getString("label.na");
         }
-        final JLabel workPhoneLabel = new JLabel(Res.getString("label.work") + ": " + workNumber);
+        final JLabel workPhoneLabel = new JLabel(Res.getString("label.work").replace("&", "") + ": " + workNumber);
         add(workPhoneLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Cell Phone
@@ -252,12 +244,12 @@ public class VCardViewer extends JPanel {
             cellNumber = Res.getString("label.na");
         }
 
-        final JLabel cellPhoneLabel = new JLabel(Res.getString("label.cell") + ": " + cellNumber);
+        final JLabel cellPhoneLabel = new JLabel(Res.getString("label.cell").replace("&", "") + ": " + cellNumber);
         add(cellPhoneLabel, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Company
         String company = vcard.getOrganization();
-        final JLabel orgLabel = new JLabel(Res.getString("label.company") + ": " + company);
+        final JLabel orgLabel = new JLabel(Res.getString("label.company").replace("&", "") + ": " + company);
         add(orgLabel, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
     }
