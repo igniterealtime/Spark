@@ -269,7 +269,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
         // Get command panel and add View Online/Offline, Add Contact
 //        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel(); 
 
 
         final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
@@ -1089,7 +1089,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         //Check if i should show groups with no users online
         if (!getContactGroup(groupName).hasAvailableContacts())
         {
-            showEmptyGroups(showHideMenu.isSelected());
+            showEmptyGroups(localPreferences.isEmptyGroupsShown());
         }
 
         
