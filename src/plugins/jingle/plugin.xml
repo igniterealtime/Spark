@@ -4,7 +4,7 @@
     <author>Jive Software</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>derek@jivesoftware.com</email>
-    <description>Allows for Pc to Pc calling.</description>
+    <description>Allows for PC to PC calling.</description>
     <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
     <minSparkVersion>2.5.0</minSparkVersion>
     <os>Windows,mac,linux</os>
