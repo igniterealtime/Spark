@@ -24,7 +24,15 @@
     <property name="version.major" value="2"/>
     <property name="version.minor" value="6"/>
     <property name="version.revision" value="0"/>
-    <property name="version.extra" value="12062"/>
+	
+	<!-- <property name="version.extra" value="12062"/> -->
+	<loadfile property="version.extra" srcFile="./.svn/entries">
+	<filterchain>
+		<headfilter lines="1" skip="3"/>
+		<deletecharacters chars="\n"/>
+		</filterchain>
+		</loadfile>
+
     <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
