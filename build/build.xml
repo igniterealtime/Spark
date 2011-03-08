@@ -558,7 +558,7 @@
 
 	<!-- installers ============================================================================= -->
 
-	<target name="installer.install4j" depends="jar"
+	<target name="installer.install4j" depends="jar, windows-plugins"
             description="build Install4J release executable and docs dirs for Windows">
 
 		<condition property="install4j.not.ok" value="true">
