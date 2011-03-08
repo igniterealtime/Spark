@@ -24,7 +24,7 @@
     <property name="version.major" value="2"/>
     <property name="version.minor" value="6"/>
     <property name="version.revision" value="0"/>
-    <property name="version.extra" value="11392"/>
+    <property name="version.extra" value="12062"/>
     <!-- For 'beta' or 'alpha' -->
 
     <!-- Setup the full version property correctly -->
@@ -914,7 +914,7 @@
     <target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
 		<taskdef resource="checkstyletask.properties" classpath="build/lib/checkstyle.jar" />
 
-		<checkstyle maxErrors="100000" config="build/checkstyle.xml">
+		<checkstyle maxErrors="16000" config="build/checkstyle.xml">
 			<fileset dir="src/java" includes="**/*.java" />
 			<!-- <formatter type="plain"/> -->
 			<formatter type="xml" toFile="target/checkstyle.xml"/>
