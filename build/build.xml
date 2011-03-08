@@ -325,7 +325,7 @@
 
 
 
-	<target name="release" depends="jar, windows-plugins">
+	<target name="release" depends="windows-plugins, jar">
 		<if>
 			<equals arg1="${pack200.enabled}" arg2="true"/>
 			<then>
@@ -363,57 +363,30 @@
 
 	<target name="windows-plugins">
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/fastpath/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/flashing/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/google/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/jingle/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/reversi/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/sip/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/spelling/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/transferguard/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
-			<propertyset>
-				<propertyref prefix="toplevel" />
-			</propertyset>
 			<fileset dir="./src/plugins/translator/" includes="*/build.xml" />
 		</subant>
 	</target>
@@ -558,7 +531,7 @@
 
 	<!-- installers ============================================================================= -->
 
-	<target name="installer.install4j" depends="jar, windows-plugins"
+	<target name="installer.install4j" depends="windows-plugins, jar"
             description="build Install4J release executable and docs dirs for Windows">
 
 		<condition property="install4j.not.ok" value="true">
