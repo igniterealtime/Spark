@@ -29,11 +29,11 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class FlashingPreference implements Preference {
 	public static String NAMESPACE = "flashing";
-	private FlashingPreferenceDialog dialog = new FlashingPreferenceDialog();
+	private FlashingPreferenceDialog dialog;
 	private FlashingPreferences preferences;
 
 	public FlashingPreference() {
-		preferences = new FlashingPreferences();
+	   	preferences = new FlashingPreferences();
 		try {
             if (EventQueue.isDispatchThread()) {
                 dialog = new FlashingPreferenceDialog();
@@ -43,7 +43,7 @@ public class FlashingPreference implements Preference {
                     @Override
                     public void run()
                     {
-                        dialog = new FlashingPreferenceDialog();
+                	dialog = new FlashingPreferenceDialog();
                     }
                 });
             }
