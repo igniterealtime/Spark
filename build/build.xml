@@ -325,7 +325,7 @@
 
 
 
-	<target name="release" depends="windows-plugins, jar">
+	<target name="release" depends="jar">
 		<if>
 			<equals arg1="${pack200.enabled}" arg2="true"/>
 			<then>
