@@ -1428,7 +1428,8 @@ public final class ContactList extends JPanel implements ActionListener, Contact
                 Roster roster = SparkManager.getConnection().getRoster();
 
                 RosterGroup rosterGroup = roster.getGroup(groupName);
-                if (rosterGroup != null) {
+                //Do not remove ContactGroup if the name entered was the same 
+                if (rosterGroup != null && !groupName.equals(newName)) {
                     removeContactGroup(group);
                     rosterGroup.setName(newName);
                 }
