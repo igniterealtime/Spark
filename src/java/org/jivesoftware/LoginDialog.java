@@ -871,7 +871,29 @@ public final class LoginDialog {
                         }
                     }
                     
-                    connection.connect();
+                    //If we want to use the debug version of smack, we have to check if 
+                    //we are on the dispatch thread because smack will create an UI
+		    if (localPref.isDebuggerEnabled()) {
+			if (EventQueue.isDispatchThread()) {
+			    connection.connect();
+			} else {
+			    EventQueue.invokeAndWait(new Runnable() {
+
+				@Override
+				public void run() {
+				    try {
+					connection.connect();
+				    } catch (XMPPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				    }
+
+				}
+			    });
+			}
+		    } else {
+			connection.connect();
+		    }
 
                     String resource = localPref.getResource();
                     if (!ModelUtil.hasLength(resource)) {
