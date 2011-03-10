@@ -351,7 +351,14 @@ public final class GroupChatParticipantList extends JPanel implements
 	}
 
 	String nickname = StringUtils.parseResource(participantJID);
-	String userRole = chat.getOccupant(participantJID).getRole();
+	String userRole = "";
+	try {
+	    userRole = chat.getOccupant(participantJID).getRole();
+	} catch (Exception e) {
+	    // sometimes this happens when there is no such Occupant, dunno why
+	    userRole = "participant";
+	}
+	
 	
 	Icon icon = null;
 	if (_localPreferences.isShowingRoleIcons()) {
@@ -957,13 +964,16 @@ public final class GroupChatParticipantList extends JPanel implements
 
 	    char user1 = 'p';
 	    char user2 = 'p';
+	    try {
+		// append Room-JID to UserLabel
+		String jid1 = chat.getRoom() + "/" + item1.getText();
+		String jid2 = chat.getRoom() + "/" + item2.getText();
 
-	    // append Room-JID to UserLabel
-	    String jid1 = chat.getRoom() + "/" + item1.getText();
-	    String jid2 = chat.getRoom() + "/" + item2.getText();
-	    
-	    user1 = chat.getOccupant(jid1).getRole().charAt(0);
-	    user2 = chat.getOccupant(jid2).getRole().charAt(0);
+		user1 = chat.getOccupant(jid1).getRole().charAt(0);
+		user2 = chat.getOccupant(jid2).getRole().charAt(0);
+	    } catch (Exception e) {
+		// Sometimes theres no Occupant with that jid, dunno why
+	    }
 
 	    int result = 0;
 	    if (user1 == user2) {
