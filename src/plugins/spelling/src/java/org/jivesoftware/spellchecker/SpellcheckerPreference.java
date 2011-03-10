@@ -28,95 +28,106 @@ import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
 
-public class SpellcheckerPreference implements Preference
-{
-	public static String NAMESPACE = "spellchecking";
-	private SpellcheckerPreferenceDialog dialog;
-	private SpellcheckerPreferences preferences;
+/**
+ * Class used to acquire the Preferences set for this plugin by the User
+ */
+public class SpellcheckerPreference implements Preference {
+    public static String NAMESPACE = "spellchecking";
+    private SpellcheckerPreferenceDialog dialog;
+    private SpellcheckerPreferences preferences;
 
-	public SpellcheckerPreference(final ArrayList<String> languages) {
-		preferences = new SpellcheckerPreferences();
-		try
-		{
-			if (EventQueue.isDispatchThread()) {
-				dialog = new SpellcheckerPreferenceDialog(languages);
-			}
-			else {
-				EventQueue.invokeAndWait(new Runnable() {
-	
-					@Override
-					public void run() {
-						dialog = new SpellcheckerPreferenceDialog(languages);
-	
-					}
-				});
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+    /**
+     * Intializes the SpellcheckerPreference
+     * 
+     * @param languages
+     *            , an {@link ArrayList} of {@link String} containing the supported languages
+     */
+    public SpellcheckerPreference(final ArrayList<String> languages) {
+	preferences = new SpellcheckerPreferences();
+	try {
+	    if (EventQueue.isDispatchThread()) {
+		dialog = new SpellcheckerPreferenceDialog(languages);
+	    } else {
+		EventQueue.invokeAndWait(new Runnable() {
 
-	}
-	
-	public SpellcheckerPreferences getPreferences()
-	{
-		return preferences;
-	}
-	
-	public void commit() {
-		preferences.setAutoSpellCheckerEnabled(dialog.isAutoSpellCheckingEnabled());
-		preferences.setSpellCheckerEnabled(dialog.isSpellCheckingEnabled());
-		preferences.setSpellLanguage(dialog.getSelectedLanguage());
-		SpellcheckManager.getInstance().loadDictionary(dialog.getSelectedLanguage());
-		preferences.save();
+		    @Override
+		    public void run() {
+			dialog = new SpellcheckerPreferenceDialog(languages);
+
+		    }
+		});
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
 
-	public Object getData() {
-		return preferences;
-	}
+    }
 
-	public String getErrorMessage() {
-		return null;
-	}
+    /**
+     * Returns the Preferences
+     * 
+     * @return {@link SpellcheckerPreference}
+     */
+    public SpellcheckerPreferences getPreferences() {
+	return preferences;
+    }
 
-	public JComponent getGUI() {
-		return dialog;
-	}
+    public void commit() {
+	preferences.setAutoSpellCheckerEnabled(dialog
+		.isAutoSpellCheckingEnabled());
+	preferences.setSpellCheckerEnabled(dialog.isSpellCheckingEnabled());
+	preferences.setSpellLanguage(dialog.getSelectedLanguage());
+	SpellcheckManager.getInstance().loadDictionary(
+		dialog.getSelectedLanguage());
+	preferences.save();
+    }
 
-	public Icon getIcon() {
-		ClassLoader cl = getClass().getClassLoader();
-		return new ImageIcon(cl.getResource("text_ok.png"));
-	}
+    public Object getData() {
+	return preferences;
+    }
 
-	public String getListName() {
-		return SpellcheckerResource.getString("title.spellchecker");
-	}
+    public String getErrorMessage() {
+	return null;
+    }
 
-	public String getNamespace() {
-		return NAMESPACE;
-	}
+    public JComponent getGUI() {
+	return dialog;
+    }
 
-	public String getTitle() {
-		return SpellcheckerResource.getString("title.spellchecker");
-	}
+    public Icon getIcon() {
+	ClassLoader cl = getClass().getClassLoader();
+	return new ImageIcon(cl.getResource("text_ok.png"));
+    }
 
-	public String getTooltip() {
-		return SpellcheckerResource.getString("title.spellchecker");
-	}
+    public String getListName() {
+	return SpellcheckerResource.getString("title.spellchecker");
+    }
 
-	public boolean isDataValid() {
-		return true;
-	}
+    public String getNamespace() {
+	return NAMESPACE;
+    }
 
-	public void load() {	
-		dialog.setAutoSpellCheckingEnabled(preferences.isAutoSpellCheckerEnabled());
-		dialog.setSelectedLanguage(preferences.getSpellLanguage());
-		dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
-	}
+    public String getTitle() {
+	return SpellcheckerResource.getString("title.spellchecker");
+    }
 
-	public void shutdown() {
+    public String getTooltip() {
+	return SpellcheckerResource.getString("title.spellchecker");
+    }
 
-	}
-	
+    public boolean isDataValid() {
+	return true;
+    }
+
+    public void load() {
+	dialog.setAutoSpellCheckingEnabled(preferences
+		.isAutoSpellCheckerEnabled());
+	dialog.setSelectedLanguage(preferences.getSpellLanguage());
+	dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
+    }
+
+    public void shutdown() {
+
+    }
+
 }

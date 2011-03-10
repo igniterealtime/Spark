@@ -22,36 +22,40 @@ package org.jivesoftware.spellchecker;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 
+/**
+ * SpellcheckChatRoomListener</p> Class used to activate Spellchecking on
+ * RoomOpen
+ */
+public class SpellcheckChatRoomListener implements ChatRoomListener {
 
-public class SpellcheckChatRoomListener implements ChatRoomListener 
-{
-	
-	public SpellcheckChatRoomListener()
-	{
-	}
-	
-	public void chatRoomActivated(ChatRoom room) {
-		
-	}
+    /**
+     * Creates {@link SpellcheckChatRoomListener}
+     */
+    public SpellcheckChatRoomListener() {
+    }
 
-	public void chatRoomClosed(ChatRoom room) {
-		
-	}
+    public void chatRoomActivated(ChatRoom room) {
 
-	public void chatRoomLeft(ChatRoom room) {
-		
-	}
+    }
 
-	public void chatRoomOpened(ChatRoom room) {
-		new SpellcheckChatRoomDecorator(room);
-	}
+    public void chatRoomClosed(ChatRoom room) {
 
-	public void userHasJoined(ChatRoom room, String userid) {
-		
-	}
+    }
 
-	public void userHasLeft(ChatRoom room, String userid) {
-		
-	}
+    public void chatRoomLeft(ChatRoom room) {
+
+    }
+
+    public void chatRoomOpened(ChatRoom room) {
+	new SpellcheckChatRoomDecorator(room);
+    }
+
+    public void userHasJoined(ChatRoom room, String userid) {
+
+    }
+
+    public void userHasLeft(ChatRoom room, String userid) {
+
+    }
 
 }

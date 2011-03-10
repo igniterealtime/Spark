@@ -21,10 +21,9 @@ package org.jivesoftware.spellchecker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-
+import org.jivesoftware.spark.util.SwingWorker;
 import org.dts.spell.swing.JTextComponentSpellChecker;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -32,48 +31,70 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 
-public class SpellcheckChatRoomDecorator  implements ActionListener, ChatRoomClosingListener
-{
-	private JTextComponentSpellChecker sc;
-	private RolloverButton spellingButton;
-	private ChatRoom room;	
+/**
+ * This Class adds the SpellCheckButton to the ChatWindow and implements the
+ * ActionListener to react on buttonclicks
+ */
+public class SpellcheckChatRoomDecorator implements ActionListener,
+	ChatRoomClosingListener {
+    private JTextComponentSpellChecker _sc;
+    private RolloverButton _spellingButton;
+    private ChatRoom _room;
 
-	public SpellcheckChatRoomDecorator(ChatRoom room)
-	{
-		this.room = room;
-		
-		SpellcheckerPreference preference = (SpellcheckerPreference) SparkManager.getPreferenceManager().getPreference(SpellcheckerPreference.NAMESPACE);
+    public SpellcheckChatRoomDecorator(ChatRoom room) {
+	_room = room;
+
+	SwingWorker worker = new SwingWorker() {
+	    public Object construct() {
+
+		return true;
+	    }
+
+	    public void finished() {
+
+		SpellcheckerPreference preference = (SpellcheckerPreference) SparkManager
+			.getPreferenceManager().getPreference(
+				SpellcheckerPreference.NAMESPACE);
 		if (preference.getPreferences().isSpellCheckerEnabled()) {
-			sc = new JTextComponentSpellChecker(SpellcheckManager.getInstance().getSpellChecker());
-			
-			if (preference.getPreferences().isAutoSpellCheckerEnabled()) {
-				sc.startRealtimeMarkErrors(room.getChatInputEditor());
-			}
-			
-	        ClassLoader cl = getClass().getClassLoader();
-	        ImageIcon spellingIcon = new ImageIcon(cl.getResource("text_ok.png"));
-	        spellingButton = new RolloverButton(spellingIcon);
-	        spellingButton.setToolTipText(GraphicUtils.createToolTip("Check Spelling"));
-	        spellingButton.addActionListener(this);
-	        room.getEditorBar().add(spellingButton);
+		    _sc = new JTextComponentSpellChecker(SpellcheckManager
+			    .getInstance().getSpellChecker());
+
+		    ClassLoader cl = getClass().getClassLoader();
+
+		    ImageIcon spellingIcon = new ImageIcon(
+			    cl.getResource("text_ok.png"));
+		    _spellingButton = new RolloverButton(spellingIcon);
+		    _spellingButton.setToolTipText(GraphicUtils
+			    .createToolTip("Check Spelling"));
+		    _spellingButton
+			    .addActionListener(SpellcheckChatRoomDecorator.this);
+		    _room.getEditorBar().add(_spellingButton);
+
+		    if (preference.getPreferences().isAutoSpellCheckerEnabled()) {
+			_sc.startRealtimeMarkErrors(_room.getChatInputEditor());
+		    }
 		}
+	    }
+
+	};
+
+	worker.start();
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+	if (_sc.spellCheck(_room.getChatInputEditor())) {
+	    JOptionPane.showMessageDialog(_room.getChatInputEditor(),
+		    "Text is OK");
+	    _room.getChatInputEditor().requestFocusInWindow();
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent event) {	
-		if (sc.spellCheck(room.getChatInputEditor())) {
-			JOptionPane.showMessageDialog(room.getChatInputEditor(), "Text is OK") ;
-			room.getChatInputEditor().requestFocusInWindow();
-		}
-	}
-	
-	@Override
-	public void closing() {
+    }
 
-	}
+    @Override
+    public void closing() {
 
-
-	
-
+    }
 
 }

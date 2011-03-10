@@ -22,37 +22,37 @@ package org.jivesoftware.spellchecker;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
-public class SpellcheckerPlugin implements Plugin
-{
-	private SpellcheckChatRoomListener listener;
-	private SpellcheckerPreference preference;
-	
-	public boolean canShutDown() {
-		return true;
-	}
+/**
+ * This Plugin provides realtime typo detection and suggestions
+ */
+public class SpellcheckerPlugin implements Plugin {
+    private SpellcheckChatRoomListener listener;
+    private SpellcheckerPreference preference;
 
-	public void initialize() {
-		
-		try
-		{	           
-				preference = SpellcheckManager.getInstance().getSpellcheckerPreference();
-				SparkManager.getPreferenceManager().addPreference(preference);	
+    public boolean canShutDown() {
+	return true;
+    }
 
-				listener = new SpellcheckChatRoomListener();			
-				SparkManager.getChatManager().addChatRoomListener(listener);		
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+    public void initialize() {
 
-	public void shutdown() {
-	
-	}
+	try {
+	    preference = SpellcheckManager.getInstance()
+		    .getSpellcheckerPreference();
+	    SparkManager.getPreferenceManager().addPreference(preference);
 
-	public void uninstall() {
-		SparkManager.getChatManager().removeChatRoomListener(listener);
+	    listener = new SpellcheckChatRoomListener();
+	    SparkManager.getChatManager().addChatRoomListener(listener);
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
+    }
+
+    public void shutdown() {
+
+    }
+
+    public void uninstall() {
+	SparkManager.getChatManager().removeChatRoomListener(listener);
+    }
 
 }
