@@ -47,6 +47,8 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -95,6 +97,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	private final ImageTitlePanel agentInfoPanel;
 	private ChatManager chatManager;
 	private MultiUserChat chat;
+	private LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
 
 	private final Map<String, String> userMap = new HashMap<String, String>();
 
@@ -332,45 +335,77 @@ public final class GroupChatParticipantList extends JPanel implements
 		return icon;
 	}
 
-	private void addParticipant(String participantJID, Presence presence) {
-		// Remove reference to invitees
-		for (String displayName : invitees.keySet()) {
-			String jid = SparkManager.getUserManager().getJIDFromDisplayName(
-					displayName);
+    private void addParticipant(String participantJID, Presence presence) {
+	// Remove reference to invitees
+	for (String displayName : invitees.keySet()) {
+	    String jid = SparkManager.getUserManager().getJIDFromDisplayName(
+		    displayName);
 
-			Occupant occ = chat.getOccupant(participantJID);
-			if (occ != null) {
-				String actualJID = occ.getJid();
-				if (actualJID.equals(jid)) {
-					removeUser(displayName);
-				}
-			}
+	    Occupant occ = chat.getOccupant(participantJID);
+	    if (occ != null) {
+		String actualJID = occ.getJid();
+		if (actualJID.equals(jid)) {
+		    removeUser(displayName);
 		}
+	    }
+	}
 
-		String nickname = StringUtils.parseResource(participantJID);
+	String nickname = StringUtils.parseResource(participantJID);
+	String userRole = chat.getOccupant(participantJID).getRole();
+	
+	Icon icon = null;
+	if (_localPreferences.isShowingRoleIcons()) {
+	    icon = getIconForRole(userRole);
+	} else {
+	    icon = PresenceManager.getIconFromPresence(presence);
+	    if (icon == null) {
+		icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+	    }
+	}
 
-		if (!exists(nickname)) {
-			Icon icon;
+	if (!exists(nickname)) {
+	    addUser(icon, nickname);
+	} else {
+	    int index = getIndex(nickname);
+	    if (index != -1) {
+		final JLabel userLabel = new JLabel(nickname, icon,
+			JLabel.HORIZONTAL);
+		model.setElementAt(userLabel, index);
+	    }
+	}
+    }
+	
+	/**
+	 * Returns corresponding Icons for each MUC-Role
+	 * icons are: </p>
+	 * Moderator=Yellow</p>
+	 * Participant=Green</p>
+	 * Visitor=Blue</p>
+	 * N/A=Grey</p>
+	 * @param role
+	 * @return {@link Icon}
+	 */
+	private Icon getIconForRole(String role)
+	{
+	    Icon icon =null;
 
-			icon = PresenceManager.getIconFromPresence(presence);
-			if (icon == null) {
-				icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-			}
-
-			addUser(icon, nickname);
-		} else {
-			Icon icon = PresenceManager.getIconFromPresence(presence);
-			if (icon == null) {
-				icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-			}
-
-			int index = getIndex(nickname);
-			if (index != -1) {
-				final JLabel userLabel = new JLabel(nickname, icon,
-						JLabel.HORIZONTAL);
-				model.setElementAt(userLabel, index);
-			}
+		if (role.equalsIgnoreCase("participant"))
+		{
+		    icon = SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
 		}
+		else if(role.equalsIgnoreCase("moderator"))
+		{
+		    icon = SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE);
+		}
+		else if(role.equalsIgnoreCase("visitor"))
+		{
+		    icon = SparkRes.getImageIcon(SparkRes.STAR_BLUE_IMAGE);
+		}
+		else
+		{
+		    icon = SparkRes.getImageIcon(SparkRes.STAR_GREY_IMAGE);
+		}
+		return icon;
 	}
 
 	public void userHasLeft(ChatRoom room, String userid) {
@@ -716,6 +751,7 @@ public final class GroupChatParticipantList extends JPanel implements
 					} else {
 						grantVoice(selectedUser);
 					}
+					Collections.sort(users, labelComp);
 
 				}
 			};
@@ -757,6 +793,8 @@ public final class GroupChatParticipantList extends JPanel implements
 					} else {
 						revokeModerator(selectedUser);
 					}
+					Collections.sort(users, labelComp);
+					
 				}
 			};
 
@@ -897,15 +935,51 @@ public final class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-	/**
-	 * Sorts ContactItems.
-	 */
-	final Comparator<JLabel> labelComp = new Comparator<JLabel>() {
-		public int compare(JLabel item1, JLabel item2) {
-			return item1.getText().toLowerCase().compareTo(
-					item2.getText().toLowerCase());
-		}
-	};
+    /**
+     * Sorts ContactItems.
+     */
+    final Comparator<JLabel> labelComp = new Comparator<JLabel>() {
+
+	public int compare(JLabel item1, JLabel item2) {
+	    if (_localPreferences.isShowingRoleIcons()) {
+		return compareWithRole(item1, item2);
+	    } else {
+		return compareWithoutRole(item1.getText(), item2.getText());
+	    }
+
+	}
+
+	private int compareWithoutRole(String s1, String s2) {
+	    return (s1.toLowerCase().compareTo(s2.toLowerCase()) * -1);
+	}
+
+	private int compareWithRole(JLabel item1, JLabel item2) {
+
+	    char user1 = 'p';
+	    char user2 = 'p';
+
+	    // append Room-JID to UserLabel
+	    String jid1 = chat.getRoom() + "/" + item1.getText();
+	    String jid2 = chat.getRoom() + "/" + item2.getText();
+	    
+	    user1 = chat.getOccupant(jid1).getRole().charAt(0);
+	    user2 = chat.getOccupant(jid2).getRole().charAt(0);
+
+	    int result = 0;
+	    if (user1 == user2) {
+
+		result = compareWithoutRole(item1.getText(), item2.getText());
+
+	    } else {
+		// m < p < v
+		if (user1 < user2)
+		    result = -1;
+		if (user1 > user2)
+		    result = 1;
+	    }
+	    return result;
+	}
+    };
 
 	/**
 	 * The <code>JLabelIconRenderer</code> is the an implementation of

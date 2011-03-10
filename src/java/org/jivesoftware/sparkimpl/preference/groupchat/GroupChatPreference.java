@@ -73,11 +73,13 @@ public class GroupChatPreference implements Preference {
                 boolean highlightMyText 	= localPreferences.isMucHighTextEnabled();
                 boolean highlightPopName	= localPreferences.isMucHighToastEnabled();
                 boolean showjoinleavemessage 	= localPreferences.isShowJoinLeaveMessagesEnabled();
+                boolean showroleicons 		= localPreferences.isShowingRoleIcons();
                 
                 panel.setMucHighNameEnabled(highlightMyName);
                 panel.setMucHighTextEnabled(highlightMyText);
                 panel.setMuchHighToastEnabled(highlightPopName);
                 panel.setShowJoinLeaveMessagesEnabled(showjoinleavemessage);
+                panel.setShowRoleIconInsteadStatusIcon(showroleicons);
             }
         };
 
@@ -92,6 +94,7 @@ public class GroupChatPreference implements Preference {
         pref.setMucHighTextEnabled(panel.isMucHighTextEnabled());
         pref.setMuchHighToastEnabled(panel.isMucHighToastEnabled());
         pref.setShowJoinLeaveMessagesEnabled(panel.isShowJoinLeaveMessagesEnabled());
+        pref.setShowRoleIconInsteadStatusIcon(panel.isShowingRoleIcons());
         SettingsManager.saveSettings();
     }
 

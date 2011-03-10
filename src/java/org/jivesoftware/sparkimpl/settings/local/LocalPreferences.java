@@ -661,6 +661,10 @@ public class LocalPreferences {
 		return getBoolean("isMucHighToastOn", false);
 	}
 	
+	public boolean isShowingRoleIcons() {
+	    return getBoolean("isShowingRoleIcons",false);
+	}
+	
 	public boolean isShowJoinLeaveMessagesEnabled() {
 	    return getBoolean("isShowJoinLeaveMessagesOn", true);
 	}
@@ -679,6 +683,10 @@ public class LocalPreferences {
 
 	public void setMuchHighToastEnabled(boolean setMucPHigh) {
 	    setBoolean("isMucHighToastOn", setMucPHigh);
+	}
+	
+	public void setShowRoleIconInsteadStatusIcon(boolean roleicons){
+		setBoolean("isShowingRoleIcons",roleicons);
 	}
 
 	public void setSSOEnabled(boolean enabled) {

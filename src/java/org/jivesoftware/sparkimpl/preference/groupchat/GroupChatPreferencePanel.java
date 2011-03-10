@@ -42,6 +42,7 @@ public class GroupChatPreferencePanel extends JPanel {
     private JCheckBox highlightMyText 		= new JCheckBox();
     private JCheckBox highlightPopName		= new JCheckBox();
     private JCheckBox showjoinleavemessage 	= new JCheckBox();
+    private JCheckBox showroleicons 	= new JCheckBox();
 
     private JPanel gCPanel = new JPanel();
     /**
@@ -59,7 +60,8 @@ public class GroupChatPreferencePanel extends JPanel {
         ResourceUtils.resButton(highlightMyText		, Res.getString("menuitem.add.groupchat.mytext"));
         ResourceUtils.resButton(highlightPopName	, Res.getString("menuitem.add.groupchat.popname"));
         ResourceUtils.resButton(showjoinleavemessage	, Res.getString("menuitem.add.groupchat.showjoinleavemessage"));
-
+        ResourceUtils.resButton(showroleicons		, Res.getString("menuitem.add.groupchat.showrolesinsteadofstatus"));
+        
         gCPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("title.group.chat.settings")));
 
         add(gCPanel);
@@ -70,6 +72,7 @@ public class GroupChatPreferencePanel extends JPanel {
         gCPanel.add(highlightMyText	, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(highlightPopName	, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(showjoinleavemessage, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(showroleicons	, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     public void setMucHighNameEnabled(boolean mucNHigh) {
@@ -88,6 +91,10 @@ public class GroupChatPreferencePanel extends JPanel {
 	showjoinleavemessage.setSelected(mucPHigh);
     }
     
+    public void setShowRoleIconInsteadStatusIcon(boolean roleicons){
+	showroleicons.setSelected(roleicons);
+    }
+    
     public boolean isShowJoinLeaveMessagesEnabled() {
         return showjoinleavemessage.isSelected();
     }
@@ -103,5 +110,10 @@ public class GroupChatPreferencePanel extends JPanel {
     public boolean isMucHighToastEnabled() {
         return highlightPopName.isSelected();
     }
+    
+    public boolean isShowingRoleIcons() {
+	return showroleicons.isSelected();
+    }
+
 
 }
