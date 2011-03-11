@@ -94,6 +94,7 @@ exit 0
 /usr/share/spark/lib/xstream.jar
 /usr/share/spark/lib/lti-civil.jar
 /usr/share/spark/lib/log4j.jar
+/usr/share/spark/lib/log4j.properties
 /usr/share/spark/lib/js.jar
 /usr/share/spark/lib/cobra.jar
 /usr/share/spark/lib/lobo-pub.jar
