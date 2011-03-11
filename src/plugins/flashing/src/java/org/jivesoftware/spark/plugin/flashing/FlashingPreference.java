@@ -38,7 +38,6 @@ public class FlashingPreference implements Preference {
 		try {
             if (EventQueue.isDispatchThread()) {
                 dialog = new FlashingPreferenceDialog();
-                System.out.println("Loading FlashingPreferences. Currently in DispatchThread.");
             } else {
                 EventQueue.invokeAndWait(new Runnable()
                 {
@@ -46,7 +45,6 @@ public class FlashingPreference implements Preference {
                     public void run()
                     {
                 	dialog = new FlashingPreferenceDialog();
-                	System.out.println("Loading FlashingPreferences. I'am invoked in EventQueue.");
                     }
                 });
             }
