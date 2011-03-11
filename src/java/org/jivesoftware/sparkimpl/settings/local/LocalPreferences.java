@@ -885,6 +885,16 @@ public class LocalPreferences {
 		return getString("SelectedCodecs", null);
 	}
 	
+	public String getStunFallbackHost()
+	{
+	    return getString("stunFallbackHost", "none");
+	}
+	
+	public int getStunFallbackPort()
+	{
+	    return getInt("stunFallbackPort", 3478);
+	}
+	
 	public String getAvailableCodecs() {
 		return getString("AvailableCodecs", null);
 	}
