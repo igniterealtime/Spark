@@ -33,6 +33,7 @@ import org.dts.spell.SpellChecker;
 import org.dts.spell.dictionary.OpenOfficeSpellDictionary;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
 
 public class SpellcheckManager {
     private static SpellcheckManager instance = null;
@@ -78,10 +79,8 @@ public class SpellcheckManager {
 	    InputStream dictionary = getClass().getClassLoader()
 		    .getResourceAsStream("dictionary/" + language + ".zip");
 
-	    if (dictionary != null)
-		System.out.println("Dictionary: " + language + ".zip");
-	    else
-		System.out.println("Dictionary not found");
+	    if (dictionary == null)
+		Log.error("Dictionary not found");
 
 	    File personalDictionary = new File(SparkManager.getUserDirectory(),
 		    "personalDictionary.dict");
@@ -113,7 +112,6 @@ public class SpellcheckManager {
 	    CodeSource source = qc.getProtectionDomain().getCodeSource();
 
 	    File jarFile = new File(source.getLocation().getFile());
-	    System.out.println(jarFile);
 	    if (jarFile.exists() && jarFile.isFile()) {
 		ZipFile zipFile = new JarFile(jarFile);
 		for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
