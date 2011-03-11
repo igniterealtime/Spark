@@ -38,16 +38,16 @@ public class CompareLocales {
 	readFile(mylocale, _mylocalelist);
 
 	
-	// check if all standard items are in the german file
+	// check if all standard items are in the locale file
 	for (String s : _standardlist) {
 	    if (!_mylocalelist.contains(s)) {
 		System.out.println(_mainlist.get(_standardlist.indexOf(s)));
 	    }
 	}
-	// Check if all german-items are in the standard file
+	// Check if all locale-items are in the standard file
 	for (String s : _mylocalelist) {
 	    if (!_standardlist.contains(s)) {
-		System.out.println(s);
+		System.out.println("Delete this->"+s+ "  @"+_mylocalelist.indexOf(s));
 	    }
 	}
 
@@ -55,7 +55,6 @@ public class CompareLocales {
 
 	
 	// Check if we have doubles
-	checkdoubles(standard);
 	checkdoubles(mylocale);
 
     }
@@ -79,11 +78,13 @@ public class CompareLocales {
 		// like comments and empty lines
 		if (zeile != null && zeile.contains("=")) {
 
-		    String s = zeile.substring(0, zeile.indexOf("=") - 1);
-		    s = s.replace(" ", "");
+		    String s = zeile;
+		    s = zeile.replace(" ", "");
+		    s = s.substring(0, zeile.indexOf("="));
+		   
 		    liste.add(s);
 		    if (!hashliste.add(s))
-			System.out.println(zeile);
+			System.out.println("Double-> "+zeile);
 
 		}
 
@@ -92,7 +93,7 @@ public class CompareLocales {
 
 	    }
 
-	    System.out.println(file.getName()+">>>\n containing " + liste.size() + " entries, with " + (liste.size()-hashliste.size())+ " doubles");
+	    System.out.println("\n     "+file.getName()+"\n            >>>containing " + liste.size() + " entries, with " + (liste.size()-hashliste.size())+ " doubles");
 	    reader.close();
 	} catch (FileNotFoundException e) {
 
@@ -121,8 +122,10 @@ public class CompareLocales {
 		if (zeile != null && zeile.contains("=")) {
 		    if (destination.equals(_standardlist))
 			_mainlist.add(zeile);
-		    String s = zeile.substring(0, zeile.indexOf("=") - 1);
-		    s = s.replace(" ", "");
+		    String s = zeile;
+		    s = zeile.replace(" ", "");
+		    s = s.substring(0, zeile.indexOf("="));
+		   
 		    destination.add(s);
 
 		}
