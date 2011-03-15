@@ -158,6 +158,7 @@ public class ConferenceUtils {
         if (isPasswordRequired(roomJID) && password == null) {
             final PasswordDialog passwordDialog = new PasswordDialog();
             password = passwordDialog.getPassword(Res.getString("title.password.required"), Res.getString("message.groupchat.require.password"), SparkRes.getImageIcon(SparkRes.LOCK_16x16), SparkManager.getFocusedComponent());
+            room.setPassword(password);
             if (!ModelUtil.hasLength(password)) {
                 return;
             }

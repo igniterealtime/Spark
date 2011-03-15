@@ -20,12 +20,14 @@
 package org.jivesoftware.spark.ui.rooms;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -65,9 +67,11 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.MUCUser;
+import org.jivesoftware.smackx.packet.Nick;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.PasswordDialog;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
@@ -77,10 +81,12 @@ import org.jivesoftware.spark.ui.GroupChatRoomTransferHandler;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
+import org.jivesoftware.spark.ui.conferences.RoomCreationDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.spark.util.SwingWorker;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -88,9 +94,10 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public final class GroupChatRoom extends ChatRoom {
     private static final long serialVersionUID = 4469579438292227006L;
 
-    private final MultiUserChat chat;
+    private MultiUserChat chat;
 
-    private final String roomname;
+    private String password;
+    private String roomname;
     private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     private String tabTitle;
     private boolean isActive = true;
@@ -132,7 +139,7 @@ public final class GroupChatRoom extends ChatRoom {
         // Add packet Listener.
         SparkManager.getConnection().addPacketListener(this, andFilter);
 
-        // Thie Room Name is the same as the ChatRoom name
+        // The Room Name is the same as the ChatRoom name
         roomname = chat.getRoom();
 
         // We are just using a generic Group Chat.
@@ -1129,7 +1136,109 @@ public final class GroupChatRoom extends ChatRoom {
 
         getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
+    
+    
+    /**
+     * Sets the Password for this GroupChat if available, to rejoin the chat after a reconnection without prompting the user
+     * @param password 
+     */
+    public void setPassword(String password)
+    {
+	this.password = password;
+    }
+    
+    
+    /**
+     * Part of Connectionlistener. Gets triggered when successfully reconnected. 
+     */
+    public void reconnectionSuccessful() {
 
+	String roomJID = chat.getRoom();
+	getTranscriptWindow().clear();
+	//If we rejoin the channel we have to check if it was password protected
+	if (!ConferenceUtils.isPasswordRequired(roomJID)) {
+
+	    try {
+		chat.join(this.getNickname());
+		getTranscriptWindow().insertNotificationMessage(
+			    Res.getString("message.user.joined.room",
+				    this.getNickname()),
+			    ChatManager.NOTIFICATION_COLOR);
+	    } catch (XMPPException e) {
+		e.printStackTrace();
+	    }
+	} else {
+	  	try {
+		    chat.join(this.getNickname(), this.password);
+		    getTranscriptWindow().insertNotificationMessage(
+			    Res.getString("message.user.joined.room", this.getNickname()),
+			    ChatManager.NOTIFICATION_COLOR);
+		} catch (XMPPException ex) {
+		    //Failed to enter Conference with old password. Maybe we r banned, or password changed?!
+		    int code = ex.getXMPPError().getCode();
+		    String error = "unkown";
+
+		    if (code == 0) {
+			error = "No response from server.";
+		    } else if (code == 401) {
+			error = "The password did not match the rooms password.";
+		    } else if (code == 403) {
+			error = "You have been banned from this room.";
+		    } else if (code == 404) {
+			error = "The room you are trying to enter does not exist.";
+		    } else if (code == 407) {
+			error = "You are not a member of this room.\nThis room requires you to be a member to join.";
+		    }
+		    JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
+			    error, "Unable to join the room at this time.",
+			    JOptionPane.ERROR_MESSAGE);
+		    //Join Failed, Close the chat, rejoin manually using conference browser
+		    closeChatRoom();
+		}
+
+	    }
+
+
+	getChatInputEditor().setEnabled(true);
+	getSendButton().setEnabled(true);
+
+	// Create the filter and register with the current connection
+        // making sure to filter by room
+        PacketFilter fromFilter = new FromContainsFilter(chat.getRoom());
+        PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
+        PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
+
+        // Add packet Listener.
+        SparkManager.getConnection().addPacketListener(this, andFilter);
+
+        // Thie Room Name is the same as the ChatRoom name
+        roomname = chat.getRoom();
+
+        // We are just using a generic Group Chat.
+        tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
+
+        // Room Information
+      
+        EventQueue.invokeLater(new Runnable() {
+	    
+	    @Override
+	    public void run() {
+		roomInfo = new GroupChatParticipantList();
+		
+	    }
+	});
+        
+        getSplitPane().setRightComponent(roomInfo.getGUI());
+        roomInfo.setChatRoom(this);
+        
+        getSplitPane().setResizeWeight(.60);
+        getSplitPane().setDividerLocation(.60);
+
+        setupListeners();
+
+    }
+    
+    
     /**
      * Is called whenever Spark was unexpectadly disconnected.
      */

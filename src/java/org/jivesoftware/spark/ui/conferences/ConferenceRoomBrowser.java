@@ -674,7 +674,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             // Join Room
             try {
                 GroupChatRoom room = new GroupChatRoom(groupChat);
-
+                
 
                 groupChat.create(pref.getNickname());
                 chatManager.getChatContainer().addChatRoom(room);                
@@ -684,6 +684,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 Form form = groupChat.getConfigurationForm().createAnswerForm();
                 if (mucRoomDialog.isPasswordProtected()) {
                     String password = mucRoomDialog.getPassword();
+                    room.setPassword(password);
                     form.setAnswer("muc#roomconfig_passwordprotectedroom", true);
                     form.setAnswer("muc#roomconfig_roomsecret", password);
                 }
