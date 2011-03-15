@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package java.org.jivesoftware.sparkimpl.plugin.privacy.ui;
+package org.jivesoftware.sparkimpl.plugin.privacy.ui;
 
 import javax.swing.JPanel;
 
