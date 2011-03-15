@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy.list;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
@@ -35,11 +34,6 @@ import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 public class PrivacyListBlackList extends SparkPrivacyList {
 
     /**
-     * Listeners
-     */
-    private final List<PrivacyListBlackListListener> blockListeners = new ArrayList<PrivacyListBlackListListener>();
-
-    /**
      * Create name of list
      */
     public PrivacyListBlackList() {
@@ -49,17 +43,17 @@ public class PrivacyListBlackList extends SparkPrivacyList {
             try {
                 setListAsDefault();
             } catch (XMPPException ex) {
-                if ( ex.getXMPPError().getCode() == 409 ) { 
-                    try { // Couldn't set default PrivacyList, trying to set it as Active
-                        setListAsActive();
-                    } catch (XMPPException ex1) {
-                        Log.error(ex1);
-                    }
-                }
                 Log.error(ex);
             }
         }
-        
+        // Check is Active list set
+        if (PrivacyManager.getInstance().hasActiveList() && !isActive()) {
+            try { // Couldn't set default PrivacyList, trying to set it as Active
+                setListAsActive();
+            } catch (XMPPException ex1) {
+                Log.error(ex1);
+            }
+        }
     }
 
     /**
@@ -71,35 +65,19 @@ public class PrivacyListBlackList extends SparkPrivacyList {
     }
 
     /**
-     * Block user by his jid.
-     * @param jid user to block
-     * @throws XMPPException
+     * Prepare privacy item for this list
+     * 
+     * @param jid prepared users jid
+     * @return newly created Privacy item
      */
-    public void addBlockedItem(String jid) throws XMPPException {
-        String bareJid = StringUtils.parseBareAddress(jid);
+    @Override
+    public PrivacyItem prepareItem(String jid) {
         // Creating new Privacy Item
-        PrivacyItem newItem = new PrivacyItem(PrivacyItem.Type.jid.name(), false, getBlockedItems().size());
-        newItem.setValue(bareJid);
+        PrivacyItem newItem = new PrivacyItem(PrivacyItem.Type.jid.name(), false, getNewItemOrder());
+        newItem.setValue(jid);
         newItem.setFilterMessage(true); // Locking only messages from contact
-        newItem.setFilterPresence_out(true); // And hiding from him
-
-        addPrivacyItem(newItem);
-        save(); // Store list
-        PrivacyManager.getInstance().sendUnavailableTo(bareJid); //Send unavaliable presens for user
-        PrivacyManager.getInstance().setBlockedIconToContact(bareJid); //Add Blocked icon
-    }
-
-    /**
-     * Unblock user
-     * @param jid user to unblock
-     * @throws XMPPException
-     */
-    public void removeBlockedItem(String jid) throws XMPPException {
-        String bareJid = StringUtils.parseBareAddress(jid);
-        removePrivacyItem(PrivacyItem.Type.jid, bareJid, true);
-        PrivacyManager.getInstance().sendRealPresenceTo(bareJid); // @todo update users presence
-        PrivacyManager.getInstance().removeBlockedIconFromContact(bareJid);
-        //ContactItem item = SparkManager.getContactList().getContactItemByJID(jid);
+        newItem.setFilterPresence_out(true); // And hiding from blocked contact
+        return newItem;
     }
 
     /**
@@ -108,48 +86,10 @@ public class PrivacyListBlackList extends SparkPrivacyList {
      * @return is user blocked
      */
     public boolean isBlockedItem(String jid) {
-        if ( searchPrivacyItem(jid) >= 0 ) {
+        if ( searchPrivacyItem(jid) != null ) {
              return true;
         }
         return false;
-    }
-
-    /**
-     * Add BlockListener
-     * @param listener blockListener
-     */
-    public void addBlockListener(PrivacyListBlackListListener listener) {
-        blockListeners.add(listener);
-    }
-
-    /**
-     * remove BlockListener
-     * @param listener blockListener
-     */
-    public void removeBlockListener(PrivacyListBlackListListener listener) {
-        if ( blockListeners.contains(listener) ) {
-            blockListeners.remove(listener);
-        }
-    }
-
-    /**
-     *
-     * @param jid user was added into blockList
-     */
-    protected void fireAddBlockedItem(String jid) {
-        for (PrivacyListBlackListListener blockListener : new ArrayList<PrivacyListBlackListListener>(blockListeners)) {
-            blockListener.addedBlockedItem(jid);
-        }
-    }
-
-    /**
-     * 
-     * @param jid user removed from blackList
-     */
-    protected void fireRemoveBlockedItem(String jid) {
-        for (PrivacyListBlackListListener blockListener : new ArrayList<PrivacyListBlackListListener>(blockListeners)) {
-            blockListener.removedBlockedItem(jid);
-        }
     }
 
 }

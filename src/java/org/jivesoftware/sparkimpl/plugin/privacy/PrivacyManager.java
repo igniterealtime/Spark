@@ -19,25 +19,25 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
+
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyListBlackList;
-import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
  *
  * @author Zolotarev Konstantin
  */
-public class PrivacyManager {
+public class PrivacyManager implements SparkPrivacyListListener {
 
     private static PrivacyManager singleton;
 	private static final Object LOCK = new Object();
@@ -48,12 +48,7 @@ public class PrivacyManager {
     /**
      * PrivacyLists will be used in spark
      */
-    private HashMap<String, SparkPrivacyList> sparkPrivacyLists = new HashMap<String, SparkPrivacyList>();
-
-    /**
-     * PrivacyList selected to use
-     */
-    private String selectedPrivacyList = null;
+    //private HashMap<String, SparkPrivacyList> sparkPrivacyLists = new HashMap<String, SparkPrivacyList>();
 
     /**
      * Creating PrivacyListManager instance
@@ -61,24 +56,23 @@ public class PrivacyManager {
     private PrivacyManager() {
         XMPPConnection conn = SparkManager.getConnection();
         if ( conn == null ) {
-            Log.error("Connection not initialized.");
+            Log.error("Privacy plugin: Connection not initialized.");
         }
-        privacyManager = PrivacyListManager.getInstanceFor(conn);
-        //@todo Add PrivacyListener
+        privacyManager = PrivacyListManager.getInstanceFor(conn);        
     }
 
     /**
-	 * Returns the singleton instance of <CODE>PrivacyManager</CODE>, creating
-	 * it if necessary.
-	 * <p/>
+	 * Get Class instance
 	 *
-	 * @return the singleton instance of <Code>PrivacyManager</CODE>
+	 * @return instance of {@link PrivacyManager}
 	 */
 	public static PrivacyManager getInstance() {
 		// Synchronize on LOCK to ensure that we don't end up creating
 		// two singletons.
-		if (null == singleton) {
-            singleton = new PrivacyManager();
+        synchronized (LOCK) {
+            if (null == singleton) {
+                singleton = new PrivacyManager();
+            }
         }
 		return singleton;
 	}
@@ -89,12 +83,46 @@ public class PrivacyManager {
     }
 
     /**
+     * Check for active list existence
+     * 
+     * @return boolean
+     */
+    public boolean hasActiveList() {
+        try {
+            getPrivacyListManager().getActiveList();
+        } catch(XMPPException e) {
+            if ( e.getXMPPError().getCode() == 404 ) { // No active list found
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if active list exist
+     *
+     * @return boolean
+     */
+    public boolean hasDefaultList() {
+        try {
+            getPrivacyListManager().getDefaultList();
+        } catch(XMPPException e) {
+            if ( e.getXMPPError().getCode() == 404 ) { // No default list found
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Get Black List
+     * 
      * @return blackList containing item that always must be blocked
      */
-    public PrivacyListBlackList getBlackList() {
+    public final PrivacyListBlackList getBlackList() {
         if ( blackList == null ) {
             blackList = new PrivacyListBlackList();
+            blackList.addBlockListener(this);
         }
         return blackList;
     }
@@ -108,7 +136,8 @@ public class PrivacyManager {
     }
 
     /**
-     * Send Unavailable Type to jid we have added into block list.
+     * Send Unavailable (offline status) to jid .
+     *
      * @param jid JID to send offline status
      */
     public void sendUnavailableTo(String jid) {
@@ -118,7 +147,8 @@ public class PrivacyManager {
     }
 
     /**
-     * Send User real presence (For users was unblocked)
+     * Send my presence for user
+     *
      * @param jid JID to send presence
      */
     public void sendRealPresenceTo(String jid) {
@@ -130,7 +160,7 @@ public class PrivacyManager {
 
     /**
      * Set blocked Icon for contact
-     * @param jid contact's jid
+     * @param jid contact's jid to ad locked icon
      */
     public void setBlockedIconToContact(String jid) {
         Collection<ContactItem> items = SparkManager.getWorkspace().getContactList().getContactItemsByJID(jid);
@@ -140,28 +170,30 @@ public class PrivacyManager {
                 contactItem.setSideIcon( SparkRes.getImageIcon( SparkRes.BLOCK_CONTACT_16x16 ) );
             }
         }
-        /*for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) {
-            for (ContactItem offlineItem : group.getOfflineContacts() ) {
-                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(jid) ) {
-                    offlineItem.setSideIcon( SparkRes.getImageIcon( SparkRes.BLOCK_CONTACT_16x16 ) );
-                }
-            }
-        }*/
+        //Set icon to offline contacts into all groups.
+//        for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) {
+//            for (ContactItem offlineItem : group.getOfflineContacts() ) {
+//                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(jid) ) {
+//                    offlineItem.setSideIcon( SparkRes.getImageIcon( SparkRes.BLOCK_CONTACT_16x16 ) );
+//                }
+//            }
+//        }
         SparkManager.getContactList().updateUI();
     }
 
     /**
-     * Set blocked Icon for contact
-     * @param jid contact's jid
+     * Remove blocked Icon from contact
+     * 
+     * @param jid contact's jid to remove blocked icon
      */
     public void removeBlockedIconFromContact(String jid) {
-        /*for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) { // I have to scan all groups for offline contacts.
-            for (ContactItem offlineItem : group.getOfflineContacts() ) {
-                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(jid) ) {
-                    offlineItem.setSideIcon( null );
-                }
-            }
-        }*/
+        // We have to remove icon from all offline contacts into all groups
+//        for( ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups() ) {
+//            ContactItem offlineItem = group.getOfflineContactItemByJID(jid);
+//            if (offlineItem != null) {
+//                offlineItem.setSideIcon( null );
+//            }
+//        }
         Collection<ContactItem> items = SparkManager.getWorkspace().getContactList().getContactItemsByJID(jid); //And then using this function.
         for (ContactItem item : items) {
             if (item != null) {
@@ -169,5 +201,17 @@ public class PrivacyManager {
             }
         }
         SparkManager.getContactList().updateUI();
+    }
+
+    @Override
+    public void itemAdded(String jid) {
+        sendUnavailableTo(jid); //Send unavaliable presens for user
+        setBlockedIconToContact(jid); //Add Blocked icon
+    }
+
+    @Override
+    public void itemRemoved(String jid) {
+        sendRealPresenceTo(jid); // @todo update users presence
+        removeBlockedIconFromContact(jid);
     }
 }

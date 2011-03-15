@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -37,6 +38,10 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
+ * This is Privacy plugin for Spark.
+ *
+ * This plugin built using specification: XEP-0016: Privacy Lists
+ * {@link http://xmpp.org/extensions/xep-0016.html}
  *
  * @author Zolotarev Konstantin
  */
@@ -44,7 +49,7 @@ public class PrivacyPlugin implements Plugin {
 
     @Override
     public void initialize() {
-        PrivacyManager.getInstance(); // Call for Init PrivacyLists
+        PrivacyManager.getInstance(); // Initiating PrivacyLists
         SwingWorker thread = new SwingWorker() {
             @Override
             public Object construct() {
@@ -56,7 +61,6 @@ public class PrivacyPlugin implements Plugin {
                     Log.error(e);
                     return false;
                 }
-
                 return true;
             }
 
@@ -66,14 +70,26 @@ public class PrivacyPlugin implements Plugin {
                 if (!privacyListExist) {
                     return;
                 }
-                addMenuItemToContactItems();
-                scanContactList();
-                // add functional
+                if (!EventQueue.isDispatchThread() ) {
+                    try {
+                        EventQueue.invokeAndWait(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                addMenuItemToContactItems();
+                                scanContactList();
+                            }
+                        });
+                    } catch(Exception ex) {
+                        Log.error(ex);
+                    }
+                } else {
+                    addMenuItemToContactItems();
+                    scanContactList();
+                }
             }
         };
-
-        thread.start();
-        
+        thread.start();        
         
     }
 
@@ -84,7 +100,7 @@ public class PrivacyPlugin implements Plugin {
 
     @Override
     public boolean canShutDown() {
-        return true;
+        return false;
     }
 
     @Override
@@ -93,24 +109,24 @@ public class PrivacyPlugin implements Plugin {
     }
 
     /**
-     * Set images to all blocked items 
+     * Search blocked items and append icons for them
      */
     protected void scanContactList() {
         PrivacyManager manager = PrivacyManager.getInstance();
         ArrayList<PrivacyItem> items = (ArrayList<PrivacyItem>) manager.getBlackList().getBlockedItems();
         for (PrivacyItem privacyItem : items ) {
             if ( privacyItem.getValue() != null && !privacyItem.getValue().isEmpty() ) {
-                    PrivacyManager.getInstance().setBlockedIconToContact(privacyItem.getValue());
+                PrivacyManager.getInstance().setBlockedIconToContact(privacyItem.getValue());
             }
         }
         
     }
 
     /**
-     * Add block menu item to contact popupmenu
+     * Adding block menu item to contact popupmenu
      */
     protected void addMenuItemToContactItems() {
-        //SparkManager.getChatManager().addContactItemHandler(this);
+        
         SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
 
             @Override
@@ -126,7 +142,7 @@ public class PrivacyPlugin implements Plugin {
                         public void actionPerformed(ActionEvent ae) {
                             if ( item != null ) {
                                 try {
-                                    PrivacyManager.getInstance().getBlackList().removeBlockedItem(((ContactItem) item).getJID()); //Add to block list}
+                                    PrivacyManager.getInstance().getBlackList().removeItem(((ContactItem) item).getJID()); //Add to block list}
                                 } catch (XMPPException ex) {
                                     Log.error(ex); // @todo handle error
                                 }
@@ -141,7 +157,7 @@ public class PrivacyPlugin implements Plugin {
                         public void actionPerformed(ActionEvent ae) {
                             if ( item != null ) {
                                 try {
-                                    PrivacyManager.getInstance().getBlackList().addBlockedItem(item.getJID()); //Add to block list
+                                    PrivacyManager.getInstance().getBlackList().addItem(item.getJID()); //Add to block list
                                 } catch (XMPPException ex) {
                                     Log.error(ex); // @todo handle error
                                 }
@@ -155,7 +171,7 @@ public class PrivacyPlugin implements Plugin {
 
             @Override
             public void poppingDown(JPopupMenu popup) {
-                
+                //ignore
             }
 
             @Override
@@ -166,26 +182,5 @@ public class PrivacyPlugin implements Plugin {
 
 
     }
-//
-//    @Override
-//    public boolean handlePresence(ContactItem item, Presence presence) {
-//        scanContactList();
-//        return true;
-//    }
-//
-//    @Override
-//    public Icon getIcon(String jid) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Icon getTabIcon(Presence presence) {
-//        return null;
-//    }
-//
-//    @Override
-//    public boolean handleDoubleClick(ContactItem item) {
-//        return false;
-//    }
 
 }
