@@ -140,9 +140,11 @@ public class ConferenceUtils {
         try {
             GroupChatRoom chatRoom = (GroupChatRoom)chatManager.getChatContainer().getChatRoom(roomJID);
             MultiUserChat muc = chatRoom.getMultiUserChat();
+            chatRoom.setPassword(password);
             if (!muc.isJoined()) {
                 joinRoom(muc, nickname, password);
             }
+            
             chatManager.getChatContainer().activateChatRoom(chatRoom);
             return;
         }
@@ -153,7 +155,7 @@ public class ConferenceUtils {
 
         final GroupChatRoom room = new GroupChatRoom(groupChat);
         room.setTabTitle(roomName);
-
+        room.setPassword(password);
 
         if (isPasswordRequired(roomJID) && password == null) {
             final PasswordDialog passwordDialog = new PasswordDialog();
