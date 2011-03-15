@@ -46,7 +46,7 @@ import org.jivesoftware.spark.util.TaskEngine;
  *
  * @author Derek DeMoro
  */
-public class RetryPanel extends JPanel implements ConnectionListener {
+public class ReconnectPanel extends JPanel implements ConnectionListener {
 	private static final long serialVersionUID = -7099075581561760774L;
 	private JEditorPane pane;
     private RolloverButton retryButton;
@@ -55,7 +55,7 @@ public class RetryPanel extends JPanel implements ConnectionListener {
     /**
      * Construct the RetryPanel.
      */
-    public RetryPanel() {
+    public ReconnectPanel() {
         setLayout(new GridBagLayout());
 
         // Init Components
@@ -94,7 +94,7 @@ public class RetryPanel extends JPanel implements ConnectionListener {
 
         TaskEngine.getInstance().schedule(task, 100);
     }
-
+    
     private void reconnect() {
         try {
             if (closedOnError) {

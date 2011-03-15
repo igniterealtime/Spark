@@ -78,6 +78,7 @@ public class LocalPreference implements Preference {
         preferences.setIdleTime(Integer.parseInt(panel.getIdleTime()));
         preferences.setStartedHidden(panel.startInSystemTray());
         preferences.setStartOnStartup(panel.startOnStartup());
+        preferences.setReconnectPanelType(panel.getReconnectPanelType());
 
         return preferences;
     }

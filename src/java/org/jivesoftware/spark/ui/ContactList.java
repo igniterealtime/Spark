@@ -53,10 +53,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -103,17 +102,19 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-public final class ContactList extends JPanel implements ActionListener, ContactGroupListener, Plugin, RosterListener, ConnectionListener {
 
-	private static final long serialVersionUID = -4391111935248627078L;
-	private JPanel mainPanel = new JPanel();
+public final class ContactList extends JPanel implements ActionListener,
+	ContactGroupListener, Plugin, RosterListener, ConnectionListener {
+
+    private static final long serialVersionUID = -4391111935248627078L;
+    private JPanel mainPanel = new JPanel();
     private JScrollPane contactListScrollPane;
     private final List<ContactGroup> groupList = new ArrayList<ContactGroup>();
     private final RolloverButton addingGroupButton;
@@ -122,7 +123,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     private ContactGroup activeGroup;
     private ContactGroup unfiledGroup;
 
-
+    
     // Create Menus
     private JMenuItem addContactMenu;
     private JMenuItem addContactGroupMenu;
@@ -156,7 +157,9 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     public static final String RETRY_PANEL = "RETRY_PANEL";
 
 
-    private RetryPanel retryPanel;
+    private ReconnectPanel _reconnectPanel;
+    private ReconnectPanelSmall _reconnectpanelsmall;
+    private ReconnectPanelIcon _reconnectpanelicon;
 
     private Workspace workspace;
 
@@ -183,7 +186,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         removeContactFromGroupMenu.addActionListener(this);
         chatMenu.addActionListener(this);
         renameMenu.addActionListener(this);
-
+        
 
         setLayout(new BorderLayout());
 
@@ -204,14 +207,19 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         contactListScrollPane.getVerticalScrollBar().setBlockIncrement(50);
         contactListScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
-        retryPanel = new RetryPanel();
+        _reconnectPanel = new ReconnectPanel();
+        
+        _reconnectpanelsmall = new ReconnectPanelSmall(Res.getString("button.reconnect2"));
+        
+        _reconnectpanelicon = new ReconnectPanelIcon();
 
         workspace = SparkManager.getWorkspace();
 
-        workspace.getCardPanel().add(RETRY_PANEL, retryPanel);
+        workspace.getCardPanel().add(RETRY_PANEL, _reconnectPanel);
 
 
         add(contactListScrollPane, BorderLayout.CENTER);
+              
 
         // Load Properties file
         props = new Properties();
@@ -283,6 +291,51 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             }
         });
         
+    }
+    
+    /**
+     * Switches all users to Offline and Creates a Reconnection Group
+     */
+    private synchronized void switchAllUserOffline()
+    {
+	SwingWorker worker = new SwingWorker() {
+	    
+	    @Override
+	    public Object construct() { 
+		mainPanel.add(_reconnectpanelsmall,0);	
+		final Collection<RosterEntry> roster = SparkManager.getConnection().getRoster().getEntries();
+		
+		for(RosterEntry r : roster)
+		{
+		    Presence p = new Presence(Presence.Type.unavailable);
+		    moveToOfflineGroup(p, r.getUser());
+		}
+		return true;
+	    }
+	};	
+	worker.start();
+    }
+
+    /**
+     * Switches all Users to Offline and Creates an Icon in the CommandBar
+     */
+    private synchronized void switchAllUserOfflineNoGroupEntry() {
+	SwingWorker worker = new SwingWorker() {
+	    @Override
+	    public Object construct() {
+		_reconnectpanelicon.getPanel().add(_reconnectpanelicon.getButton(), 0);
+		_reconnectpanelicon.getPanel().revalidate();
+		final Collection<RosterEntry> roster = SparkManager
+			.getConnection().getRoster().getEntries();
+
+		for (RosterEntry r : roster) {
+		    Presence p = new Presence(Presence.Type.unavailable);
+		    moveToOfflineGroup(p, r.getUser());
+		}
+		return true;
+	    }
+	};
+	worker.start();
     }
 
     /**
@@ -973,7 +1026,6 @@ public final class ContactList extends JPanel implements ActionListener, Contact
         }
     }
 
-
     /**
      * Creates and adds a new ContactGroup to the ContactList.
      *
@@ -1643,7 +1695,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             popup.show(group.getList(), e.getX(), e.getY());
         }
         catch (NullPointerException ee) {
-            // TODO: Should we do something here?
+            // Nothing we can do here
         }
     }
 
@@ -2182,98 +2234,142 @@ public final class ContactList extends JPanel implements ActionListener, Contact
 
 
     public void connectionClosed() {
-        // No reason to reconnect.
-        retryPanel.setClosedOnError(false);
+	// No reason to reconnect.
+	_reconnectPanel.setClosedOnError(false);
 
-        // Show MainWindow
-        SparkManager.getMainWindow().setVisible(true);
+	// Show MainWindow
+	SparkManager.getMainWindow().setVisible(true);
 
-        // Flash That Window.
-        SparkManager.getNativeManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
+	// Flash That Window.
+	SparkManager.getNativeManager().flashWindowStopOnFocus(
+		SparkManager.getMainWindow());
 
-        workspace.changeCardLayout(RETRY_PANEL);
+	switch (localPreferences.getReconnectPanelType()) {
+	case 0:
+	    workspace.changeCardLayout(RETRY_PANEL);
+	    break;
+	case 1:
+	    switchAllUserOffline();
+	    _reconnectpanelsmall.startReconnecting();
+	    break;
 
-        String errorMessage = Res.getString("message.disconnected.error");
+	case 2:
+	    switchAllUserOfflineNoGroupEntry();
+	    _reconnectpanelicon.startReconnecting();
+	    break;
+	default:
+	    workspace.changeCardLayout(RETRY_PANEL);
+	}
+	
 
-        retryPanel.setDisconnectReason(errorMessage);
 
-        removeAllUsers();
+	String errorMessage = Res.getString("message.disconnected.error");
+
+	_reconnectPanel.setDisconnectReason(errorMessage);
+
+	removeAllUsers();
 
     }
+    
 
+
+    /**
+     * Reconnect using the Panel with Message
+     * @param message
+     */
     private void reconnect(final String message) {
-        // Show MainWindow
-        SparkManager.getMainWindow().setVisible(true);
+	// Show MainWindow
+	SparkManager.getMainWindow().setVisible(true);
 
-        // Flash That Window.
-        SparkManager.getNativeManager().flashWindowStopOnFocus(SparkManager.getMainWindow());
+	// Flash That Window.
+	SparkManager.getNativeManager().flashWindowStopOnFocus(
+		SparkManager.getMainWindow());
+	
+	switch (localPreferences.getReconnectPanelType()) {
+	case 0:
+	    workspace.changeCardLayout(RETRY_PANEL);
+	    break;
+	case 1:
+	    switchAllUserOffline();
+	    _reconnectpanelsmall.startReconnecting();
+	    break;
 
-        workspace.changeCardLayout(RETRY_PANEL);
+	case 2:
+	    switchAllUserOfflineNoGroupEntry();
+	    _reconnectpanelicon.startReconnecting();
+	    break;
+	default:
+	    workspace.changeCardLayout(RETRY_PANEL);
+	}
+	_reconnectPanel.setDisconnectReason(message);
 
-        retryPanel.setDisconnectReason(message);
-
-       removeAllUsers();
+	removeAllUsers();
     }
-
+   
     public void clientReconnected() {
-        workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
-        offlineGroup.fireContactGroupUpdated();
-        buildContactList();
+	
+	switch(localPreferences.getReconnectPanelType()) {
+	case 0:
+	    workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
+	    break;
+	case 1:
+	    mainPanel.remove(_reconnectpanelsmall);
+	    break;
+
+	case 2:	
+	    _reconnectpanelicon.remove();
+	    break;
+	default:
+	    workspace.changeCardLayout(RETRY_PANEL);
+	}
+	
+
+	
+	offlineGroup.fireContactGroupUpdated();
+	buildContactList();
         
         final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
         SparkManager.getSessionManager().changePresence(myPresence);
-
-//        final TimerTask updatePresence = new TimerTask() {
-//            public void run() {
-//                final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-//                SparkManager.getSessionManager().changePresence(myPresence);
-//
-//                XMPPConnection con = SparkManager.getConnection();
-//                final Roster roster = con.getRoster();
-//                for (RosterEntry entry : roster.getEntries()) {
-//                    String user = entry.getUser();
-//                    Presence presence = roster.getPresence(user);
-//                    try {
-//                        updateUserPresence(presence);
-//                    }
-//                    catch (Exception e) {
-//                        Log.error(e);
-//                    }
-//                }
-//            }
-//        };
-//
-//        TaskEngine.getInstance().schedule(updatePresence, 5000);
-
-
+        
     }
 
     public void connectionClosedOnError(final Exception ex) {
-        String errorMessage = Res.getString("message.disconnected.error");
-              
-        if (ex != null && ex instanceof XMPPException) {
-            XMPPException xmppEx = (XMPPException)ex;
-            StreamError error = xmppEx.getStreamError();
-            String reason = error.getCode();
+	String errorMessage = Res.getString("message.disconnected.error");
 
-            if ("conflict".equals(reason)) {
-                errorMessage = Res.getString("message.disconnected.conflict.error");
-            }
-            else if ("system-shutdown".equals(reason)) {
-                errorMessage = Res.getString("message.disconnected.shutdown");
-            }
-            else {
-                errorMessage = Res.getString("message.general.error", reason);
-            }
-        }
+	if (ex != null && ex instanceof XMPPException) {
+	    XMPPException xmppEx = (XMPPException) ex;
+	    StreamError error = xmppEx.getStreamError();
+	    String reason = error.getCode();
 
-        final String message = errorMessage;
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                retryPanel.setClosedOnError(true);
-                reconnect(message);
-            }
-        });
+	    if ("conflict".equals(reason)) {
+		errorMessage = Res
+			.getString("message.disconnected.conflict.error");
+	    } else if ("system-shutdown".equals(reason)) {
+		errorMessage = Res.getString("message.disconnected.shutdown");
+	    } else {
+		errorMessage = Res.getString("message.general.error", reason);
+	    }
+	}
+
+	switch (localPreferences.getReconnectPanelType()) {
+	case 0:
+	    final String message = errorMessage;
+	    SwingUtilities.invokeLater(new Runnable() {
+		public void run() {
+		    _reconnectPanel.setClosedOnError(true);
+		    reconnect(message);
+		}
+	    });
+	    break;
+	case 1:
+	    switchAllUserOffline();
+	    break;
+
+	case 2:
+	    switchAllUserOfflineNoGroupEntry();
+	    break;
+
+	}
     }
 
     private void removeAllUsers() {
@@ -2285,12 +2381,39 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void reconnectingIn(int i) {
-        if (i == 0) {
-            retryPanel.setReconnectText(Res.getString("message.reconnect.attempting"));
-        }
-        else {
-            retryPanel.setReconnectText(Res.getString("message.reconnect.wait",i));
-        }
+	
+	switch (localPreferences.getReconnectPanelType()) {
+	case 0:
+	    if (i == 0) {
+		_reconnectPanel.setReconnectText(Res
+			.getString("message.reconnect.attempting"));
+	    } else {
+		_reconnectPanel.setReconnectText(Res.getString(
+			"message.reconnect.wait", i));
+	    }
+	    break;
+
+	case 1:
+	    if (i == 0) {
+		_reconnectpanelsmall.setReconnectText(Res
+			.getString("message.reconnect.attempting"));
+	    } else {
+		_reconnectpanelsmall.setReconnectText(Res.getString(
+			"message.reconnect.wait", i));
+	    }
+	    break;
+
+	case 2:
+	    if (i == 0) {
+		_reconnectpanelicon.setReconnectText(Res
+			.getString("message.reconnect.attempting"));
+	    } else {
+		_reconnectpanelicon.setReconnectText(Res.getString(
+			"message.reconnect.wait", i));
+	    }
+	    break;
+	}
+
     }
 
     public void reconnectionSuccessful() {
@@ -2298,7 +2421,7 @@ public final class ContactList extends JPanel implements ActionListener, Contact
     }
 
     public void reconnectionFailed(Exception exception) {
-        retryPanel.setReconnectText(Res.getString("message.reconnect.failed"));
+        _reconnectPanel.setReconnectText(Res.getString("message.reconnect.failed"));
     }
 
     /**
@@ -2370,5 +2493,5 @@ public final class ContactList extends JPanel implements ActionListener, Contact
             return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
         }
     };
-
+    
 }

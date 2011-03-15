@@ -32,7 +32,7 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class LocalPreferences {
 
-	private Properties props;
+    	private Properties props;
 
 	public LocalPreferences(Properties props) {
 		this.props = props;
@@ -543,6 +543,28 @@ public class LocalPreferences {
 
 	public boolean getStartOnStartup() {
 		return getBoolean("startOnStartup", false);
+	}
+	
+	/**
+	 * Sets the Reconnection display type</p>
+	 * 0 = ReconnectPanel </p>
+	 * 1 = Reconnect as Group</p>
+	 * 2 = Reconnect as Icon</p>
+	 * @param reconnect
+	 */
+	public void setReconnectPanelType(int reconnect) {
+	    setInt("ReconnectPanelType", reconnect);
+	}
+
+        /**
+         * Sets the Reconnection display type</p> 
+         * 0 = ReconnectPanel </p> 
+         * 1 = Reconnect as Group </p> 
+         * 2 = Reconnect as Icon</p>
+         * @return
+         */
+	public int getReconnectPanelType() {
+	    return getInt("ReconnectPanelType", 0);
 	}
 
 	public void setCompressionEnabled(boolean on) {
