@@ -1662,6 +1662,10 @@ public final class ContactList extends JPanel implements ActionListener,
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
+        }       
+        if( entry!=null && entry.getStatus().SUBSCRIPTION_PENDING == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
+        {
+            popup.add(subscribeAction);
         }
 
         // Fire Context Menu Listener
