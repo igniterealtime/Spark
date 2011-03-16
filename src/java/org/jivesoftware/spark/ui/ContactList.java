@@ -296,13 +296,14 @@ public final class ContactList extends JPanel implements ActionListener,
     /**
      * Switches all users to Offline and Creates a Reconnection Group
      */
-    private synchronized void switchAllUserOffline()
+    private synchronized void switchAllUserOffline(final boolean onError)
     {
 	SwingWorker worker = new SwingWorker() {
 	    
 	    @Override
 	    public Object construct() { 
 		mainPanel.add(_reconnectpanelsmall,0);	
+		_reconnectpanelsmall.setClosedOnError(onError);
 		final Collection<RosterEntry> roster = SparkManager.getConnection().getRoster().getEntries();
 		
 		for(RosterEntry r : roster)
@@ -319,12 +320,13 @@ public final class ContactList extends JPanel implements ActionListener,
     /**
      * Switches all Users to Offline and Creates an Icon in the CommandBar
      */
-    private synchronized void switchAllUserOfflineNoGroupEntry() {
+    private synchronized void switchAllUserOfflineNoGroupEntry(final boolean onError) {
 	SwingWorker worker = new SwingWorker() {
 	    @Override
 	    public Object construct() {
 		_reconnectpanelicon.getPanel().add(_reconnectpanelicon.getButton(), 0);
 		_reconnectpanelicon.getPanel().revalidate();
+		_reconnectpanelicon.setClosedOnError(onError);
 		final Collection<RosterEntry> roster = SparkManager
 			.getConnection().getRoster().getEntries();
 
@@ -1560,7 +1562,7 @@ public final class ContactList extends JPanel implements ActionListener,
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
 
-                //TODO: It should be possible to remove a user from the only group they're in
+                //todo: It should be possible to remove a user from the only group they're in
                 // which would put them into the unfiled group.
                 if (groupCount > 1) {
                     popup.add(removeContactFromGroupMenu);
@@ -1755,7 +1757,7 @@ public final class ContactList extends JPanel implements ActionListener,
         SparkManager.getMainWindow().getTopToolBar().setVisible(false);
 
         final Runnable sharedGroupLoader = new Runnable() {
-            public void run() {
+	    public void run() {
                 // Retrieve shared group list.
                 try {
                     sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
@@ -2125,16 +2127,14 @@ public final class ContactList extends JPanel implements ActionListener,
 
     private void checkGroup(final ContactGroup group) {
     	try {
-			EventQueue.invokeAndWait(new Runnable() {
+			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 			        if (!group.hasAvailableContacts() && group != offlineGroup && group != getUnfiledGroup() && !showHideMenu.isSelected()) {
 			            group.setVisible(false);
 			        }	
 				}
 			});
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -2235,7 +2235,6 @@ public final class ContactList extends JPanel implements ActionListener,
 
     public void connectionClosed() {
 	// No reason to reconnect.
-	_reconnectPanel.setClosedOnError(false);
 
 	// Show MainWindow
 	SparkManager.getMainWindow().setVisible(true);
@@ -2244,30 +2243,25 @@ public final class ContactList extends JPanel implements ActionListener,
 	SparkManager.getNativeManager().flashWindowStopOnFocus(
 		SparkManager.getMainWindow());
 
+	String errorMessage = Res.getString("message.disconnected.error");
+
 	switch (localPreferences.getReconnectPanelType()) {
 	case 0:
+	    _reconnectPanel.setClosedOnError(false);
+	    _reconnectPanel.setDisconnectReason(errorMessage);
+	    removeAllUsers();
 	    workspace.changeCardLayout(RETRY_PANEL);
 	    break;
 	case 1:
-	    switchAllUserOffline();
-	    _reconnectpanelsmall.startReconnecting();
+	    switchAllUserOffline(false);
+	    _reconnectpanelsmall.setReconnectText(errorMessage);
 	    break;
 
 	case 2:
-	    switchAllUserOfflineNoGroupEntry();
-	    _reconnectpanelicon.startReconnecting();
+	    switchAllUserOfflineNoGroupEntry(false);
+	    _reconnectpanelicon.setReconnectText(errorMessage);
 	    break;
-	default:
-	    workspace.changeCardLayout(RETRY_PANEL);
 	}
-	
-
-
-	String errorMessage = Res.getString("message.disconnected.error");
-
-	_reconnectPanel.setDisconnectReason(errorMessage);
-
-	removeAllUsers();
 
     }
     
@@ -2284,31 +2278,31 @@ public final class ContactList extends JPanel implements ActionListener,
 	// Flash That Window.
 	SparkManager.getNativeManager().flashWindowStopOnFocus(
 		SparkManager.getMainWindow());
-	
+
 	switch (localPreferences.getReconnectPanelType()) {
 	case 0:
 	    workspace.changeCardLayout(RETRY_PANEL);
+	    _reconnectPanel.setDisconnectReason(message);
 	    break;
 	case 1:
-	    switchAllUserOffline();
+	    switchAllUserOffline(true);
 	    _reconnectpanelsmall.startReconnecting();
 	    break;
 
 	case 2:
-	    switchAllUserOfflineNoGroupEntry();
+	    switchAllUserOfflineNoGroupEntry(true);
 	    _reconnectpanelicon.startReconnecting();
 	    break;
 	default:
 	    workspace.changeCardLayout(RETRY_PANEL);
 	}
-	_reconnectPanel.setDisconnectReason(message);
 
 	removeAllUsers();
     }
    
     public void clientReconnected() {
-	
-	switch(localPreferences.getReconnectPanelType()) {
+
+	switch (localPreferences.getReconnectPanelType()) {
 	case 0:
 	    workspace.changeCardLayout(Workspace.WORKSPACE_PANE);
 	    break;
@@ -2316,21 +2310,26 @@ public final class ContactList extends JPanel implements ActionListener,
 	    mainPanel.remove(_reconnectpanelsmall);
 	    break;
 
-	case 2:	
-	    _reconnectpanelicon.remove();
+	case 2:
+	    SwingWorker sw = new SwingWorker() {
+		@Override
+		public Object construct() {
+		    _reconnectpanelicon.remove();
+		    _reconnectpanelicon.getPanel().revalidate();
+		    return 42;
+		}
+	    };
+	    sw.start();
 	    break;
-	default:
-	    workspace.changeCardLayout(RETRY_PANEL);
 	}
-	
 
-	
 	offlineGroup.fireContactGroupUpdated();
 	buildContactList();
-        
-        final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-        SparkManager.getSessionManager().changePresence(myPresence);
-        
+
+	final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
+		.getPresence();
+	SparkManager.getSessionManager().changePresence(myPresence);
+
     }
 
     public void connectionClosedOnError(final Exception ex) {
@@ -2362,11 +2361,13 @@ public final class ContactList extends JPanel implements ActionListener,
 	    });
 	    break;
 	case 1:
-	    switchAllUserOffline();
+	    switchAllUserOffline(true);
+	    _reconnectpanelsmall.setReconnectText(errorMessage);
 	    break;
 
 	case 2:
-	    switchAllUserOfflineNoGroupEntry();
+	    switchAllUserOfflineNoGroupEntry(true);
+	    _reconnectpanelicon.setReconnectText(errorMessage);
 	    break;
 
 	}
@@ -2421,7 +2422,23 @@ public final class ContactList extends JPanel implements ActionListener,
     }
 
     public void reconnectionFailed(Exception exception) {
-        _reconnectPanel.setReconnectText(Res.getString("message.reconnect.failed"));
+
+	switch (localPreferences.getReconnectPanelType()) {
+
+	case 0:
+	    _reconnectPanel.setReconnectText(Res
+		    .getString("message.reconnect.failed"));
+	    break;
+	case 1:
+	    _reconnectpanelsmall.setReconnectText(Res
+		    .getString("message.reconnect.failed"));
+	    break;
+	case 2:
+	    _reconnectpanelicon.setReconnectText(Res
+		    .getString("message.reconnect.failed"));
+	    break;
+	}
+
     }
 
     /**

@@ -1,36 +1,41 @@
+/**
+ * $RCSfile: ,v $
+ * $Revision: $
+ * $Date: $
+ * 
+ * Copyright (C) 2004-2010 Jive Software. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jivesoftware.spark.ui;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.TimerTask;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.ui.status.StatusBar;
-import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 
 /**
- * Used for silent reconnecting, no slap in the face with connection loss
- * Displays a little Icon at first position
+ * Used for silent reconnecting<br>
+ * Displays a little Icon at first position in commandpanel
  * 
  * @author wolf.posdorfer
  * 
@@ -40,7 +45,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
     private static final long serialVersionUID = 437696141257704105L;
     private JButton _button;
     private JPanel _commandpanel;
-
+    private boolean _closedOnError;
 
     /**
      * creates a new Panel
@@ -52,9 +57,6 @@ public class ReconnectPanelIcon implements ConnectionListener {
 	_commandpanel = SparkManager.getWorkspace().getCommandPanel();
 
 	_button = new JButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
-	_button.setBorder(BorderFactory.createBevelBorder(0, new Color(255, 0,
-		0), new Color(255, 0, 0)));
-	_button.setBorderPainted(true);
 
 	_button.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -88,15 +90,22 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
     }
 
+    public void setClosedOnError(boolean onError) {
+	_closedOnError = onError;
+    }
+
     /**
      * Reconnect Thread
      */
     private void reconnect() {
 	try {
-	    SparkManager.getConnection().connect();
+	    if (_closedOnError) {
+		SparkManager.getConnection().connect();
+	    } else {
+		SparkManager.getMainWindow().logout(false);
+	    }
 	} catch (Exception ex) {
-	    // ex.printStackTrace();
-	    // ...dont need to flood the errorlog with this
+	    ex.printStackTrace();
 	}
     }
 
@@ -108,14 +117,16 @@ public class ReconnectPanelIcon implements ConnectionListener {
 	SwingWorker worker = new SwingWorker() {
 	    @Override
 	    public Object construct() {
+		return 42;
+	    }
 
+	    @Override
+	    public void finished() {
 		_commandpanel.remove(_button);
-		_commandpanel.revalidate();
-		return 42; // this solves everything
 	    }
 	};
 	worker.start();
-	
+
     }
 
     @Override

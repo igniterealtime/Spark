@@ -1,3 +1,22 @@
+/**
+ * $RCSfile: ,v $
+ * $Revision: $
+ * $Date: $
+ * 
+ * Copyright (C) 2004-2010 Jive Software. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jivesoftware.spark.ui;
 
 import java.awt.Component;
@@ -6,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -19,7 +39,8 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 
 /**
- * Used for silent reconnecting, no slap in the face with connection loss
+ * Used for silent reconnecting <br>
+ * Displays a reconnection dialog as a ContactGroup at the Top
  * 
  * @author wolf.posdorfer
  * 
@@ -28,9 +49,11 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private JLabel _reconnectionlabel = new JLabel(Res.getString("message.reconnect.attempting"),
+    private JLabel _reconnectionlabel = new JLabel(
+	    Res.getString("message.reconnect.attempting"),
 	    SparkRes.getImageIcon(SparkRes.BUSY_IMAGE), 0);
     private Component thiscomp;
+    private boolean _closedOnError;
 
     /**
      * creates a new Panel
@@ -69,9 +92,12 @@ public class ReconnectPanelSmall extends ContactGroup implements
 		    int x = e.getX();
 		    int y = e.getY();
 
-		    final JPopupMenu popup = new JPopupMenu();
-		    final JMenuItem reconnect = new JMenuItem("Reconnect");
-		    popup.add(reconnect);
+		    final JPopupMenu popupmenu = new JPopupMenu();
+		    final JMenuItem reconnect = new JMenuItem(Res.getString(
+			    "button.reconnect").replace("&", ""));
+		    reconnect.setIcon(SparkRes
+			    .getImageIcon(SparkRes.SMALL_CHECK));
+		    popupmenu.add(reconnect);
 
 		    reconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -79,7 +105,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
 			}
 		    });
 
-		    popup.show(thiscomp, x, y);
+		    popupmenu.show(thiscomp, x, y);
 		}
 	    }
 	});
@@ -100,21 +126,28 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	}
     }
 
+    public void setClosedOnError(boolean onError) {
+	_closedOnError = onError;
+    }
+
     /**
      * Reconnect Thread
      */
     private void reconnect() {
 	try {
-	    SparkManager.getConnection().connect();
+	    if (_closedOnError) {
+		SparkManager.getConnection().connect();
+	    } else {
+		SparkManager.getMainWindow().logout(false);
+	    }
 	} catch (Exception ex) {
-	    // ex.printStackTrace();
-	    // ...dont need to flood the errorlog with this
+	    ex.printStackTrace();
 	}
     }
-    
-    public void setReconnectText(String text)
-    {
-	_reconnectionlabel.setText(text);
+
+    public void setReconnectText(String text) {
+	String s = "<HTML><BODY>" + text + "</BODY></HTML>";
+	_reconnectionlabel.setText(s);
     }
 
     @Override

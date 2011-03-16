@@ -118,7 +118,7 @@ public class UserSearchForm extends JPanel {
         boolean numbprop_bool=true;
         int numbprop;
         if (pluginsettings.exists()) { 
-        	Log.warning("Search-service Properties-file does exist= " + pluginsettings.getPath()); 
+	    // Log.warning("Search-service Properties-file does exist= " + pluginsettings.getPath()); 
             try { 
                 numbprop=0;
                 props.load(new FileInputStream(pluginsettings)); 
@@ -142,7 +142,7 @@ public class UserSearchForm extends JPanel {
                } 
            } 
            else { 
-        	   Log.error("Search-Searvice-Error: Properties-file does not exist= " + pluginsettings.getPath()); 
+	    // Log.error("Search-Searvice-Error: Properties-file does not exist= " + pluginsettings.getPath()); 
            }        
 
 
