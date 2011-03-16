@@ -328,6 +328,9 @@ public abstract class SparkPrivacyList {
         try {
             return PrivacyManager.getInstance().getPrivacyListManager().getActiveList().toString().equals(getListName());
         } catch (XMPPException ex) {
+            if (ex.getXMPPError().getCode() == 404) {
+                return false;
+            }
             Log.error(ex);
         }
         return false;
@@ -342,6 +345,9 @@ public abstract class SparkPrivacyList {
         try {
             return PrivacyManager.getInstance().getPrivacyListManager().getDefaultList().toString().equals(getListName());
         } catch (XMPPException ex) {
+            if (ex.getXMPPError().getCode() == 404) {
+                return false;
+            }
             Log.error(ex);
         }
         return false;
