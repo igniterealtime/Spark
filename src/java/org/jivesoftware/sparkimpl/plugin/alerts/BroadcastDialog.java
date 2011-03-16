@@ -149,7 +149,8 @@ public class BroadcastDialog extends JPanel {
 
         final JScrollPane treePane = new JScrollPane(checkTree);
         treePane.setBorder(BorderFactory.createTitledBorder(Res.getString("message.send.to.these.people")));
-
+        treePane.getVerticalScrollBar().setBlockIncrement(200);
+        treePane.getVerticalScrollBar().setUnitIncrement(20);
         // Add to UI
         add(pane, new GridBagConstraints(0, 0, 1, 1, 0.5, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
         add(normalMessageButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -217,7 +218,7 @@ public class BroadcastDialog extends JPanel {
 
         dlg.pack();
         dlg.setSize(800, 600);
-        dlg.setResizable(true);
+        dlg.setResizable(false);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
