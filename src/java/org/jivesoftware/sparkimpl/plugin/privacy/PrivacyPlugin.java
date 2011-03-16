@@ -128,45 +128,48 @@ public class PrivacyPlugin implements Plugin {
     protected void addMenuItemToContactItems() {
         
         SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
-
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {
-                final ContactItem item = (ContactItem) object;
-                JMenuItem blockMenu;
-                
-                if ( PrivacyManager.getInstance().getBlackList().isBlockedItem(item.getJID()) ) {
-                    blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
-                    blockMenu.addActionListener(new ActionListener() { //unblock contact
-
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-                            if ( item != null ) {
-                                try {
-                                    PrivacyManager.getInstance().getBlackList().removeItem(((ContactItem) item).getJID()); //Add to block list}
-                                } catch (XMPPException ex) {
-                                    Log.error(ex); // @todo handle error
+        	
+        	if(object instanceof ContactItem)
+        	{
+                    final ContactItem item = (ContactItem) object;
+                    JMenuItem blockMenu;
+                    
+                    if ( PrivacyManager.getInstance().getBlackList().isBlockedItem(item.getJID()) ) {
+                        blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
+                        blockMenu.addActionListener(new ActionListener() { //unblock contact
+    
+                            @Override
+                            public void actionPerformed(ActionEvent ae) {
+                                if ( item != null ) {
+                                    try {
+                                        PrivacyManager.getInstance().getBlackList().removeItem(((ContactItem) item).getJID()); //Add to block list}
+                                    } catch (XMPPException ex) {
+                                        Log.error(ex); // @todo handle error
+                                    }
                                 }
                             }
-                        }
-                    });
-                } else {
-                    blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
-                    blockMenu.addActionListener(new ActionListener() { //Block contact
-
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-                            if ( item != null ) {
-                                try {
-                                    PrivacyManager.getInstance().getBlackList().addItem(item.getJID()); //Add to block list
-                                } catch (XMPPException ex) {
-                                    Log.error(ex); // @todo handle error
+                        });
+                    } else {
+                        blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
+                        blockMenu.addActionListener(new ActionListener() { //Block contact
+    
+                            @Override
+                            public void actionPerformed(ActionEvent ae) {
+                                if ( item != null ) {
+                                    try {
+                                        PrivacyManager.getInstance().getBlackList().addItem(item.getJID()); //Add to block list
+                                    } catch (XMPPException ex) {
+                                        Log.error(ex); // @todo handle error
+                                    }
                                 }
                             }
-                        }
-                    });
-                }              
-                
-                popup.add(blockMenu);
+                        });
+                    }              
+                    
+                    popup.add(blockMenu);
+                }
             }
 
             @Override
@@ -177,7 +180,7 @@ public class PrivacyPlugin implements Plugin {
             @Override
             public boolean handleDefaultAction(MouseEvent e) {
                 return false;
-            }
+            }      
         });
 
 
