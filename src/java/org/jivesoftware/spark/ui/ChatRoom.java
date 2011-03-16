@@ -219,7 +219,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         textScroller.setAutoscrolls(true);
 
         // Speed up scrolling. It was way too slow.
-        textScroller.getVerticalScrollBar().setBlockIncrement(50);
+        textScroller.getVerticalScrollBar().setBlockIncrement(200);
         textScroller.getVerticalScrollBar().setUnitIncrement(20);
 
         chatWindowPanel = new JPanel();

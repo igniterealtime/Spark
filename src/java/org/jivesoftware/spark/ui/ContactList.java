@@ -204,7 +204,7 @@ public final class ContactList extends JPanel implements ActionListener,
         contactListScrollPane.setAutoscrolls(true);
 
         contactListScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        contactListScrollPane.getVerticalScrollBar().setBlockIncrement(50);
+        contactListScrollPane.getVerticalScrollBar().setBlockIncrement(200);
         contactListScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         _reconnectPanel = new ReconnectPanel();

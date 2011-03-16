@@ -311,7 +311,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 window.setEditorKit(new HTMLEditorKit());
                 window.setBackground(Color.white);
                 final JScrollPane pane = new JScrollPane(window);
-                pane.getVerticalScrollBar().setBlockIncrement(50);
+                pane.getVerticalScrollBar().setBlockIncrement(200);
                 pane.getVerticalScrollBar().setUnitIncrement(20);
 
                 mainPanel.add(pane, BorderLayout.CENTER);
