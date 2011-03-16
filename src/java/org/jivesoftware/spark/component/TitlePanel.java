@@ -47,7 +47,7 @@ import javax.swing.JPanel;
  */
 public final class TitlePanel extends JPanel {
     private final JLabel titleLabel = new JLabel();
-    private final WrappedLabel descriptionLabel = new WrappedLabel();
+    private final JLabel descriptionLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
     private final GridBagLayout gridBagLayout = new GridBagLayout();
 
@@ -125,6 +125,7 @@ public final class TitlePanel extends JPanel {
      * @param desc - brief description
      */
     public final void setDescription(String desc) {
+	desc = "<HTML><BODY>"+desc+"</HTML></BODY>";
         descriptionLabel.setText(desc);
     }
 
