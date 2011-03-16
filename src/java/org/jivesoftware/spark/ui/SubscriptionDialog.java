@@ -238,6 +238,7 @@ public class SubscriptionDialog {
                 return dim;
             }
         };
+        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 
         dialog.setIconImage(SparkManager.getApplicationImage().getImage());
