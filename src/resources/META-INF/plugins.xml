@@ -183,4 +183,13 @@
         <description>SystemTray.</description>
         <class>org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin</class>
     </plugin>
+    <plugin>
+        <name>Privacy Lists</name>
+        <version>1.0</version>
+        <author>Zolotarev Konstantin</author>
+        <homePage>http://www.igniterealtime.org</homePage>
+        <email>konstantin.zolotarev@gmail.com</email>
+        <description>Privacy lists.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin</class>
+    </plugin>
 </plugins>
