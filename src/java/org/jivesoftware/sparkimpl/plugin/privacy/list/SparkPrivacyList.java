@@ -109,7 +109,10 @@ public abstract class SparkPrivacyList {
      * @return
      */
     protected int getMaxItemOrder() {
-        return getLastItem().getOrder();
+        if(getLastItem() != null) {
+            return getLastItem().getOrder();
+        }
+        return 1;
     }
 
     /**
