@@ -1663,7 +1663,7 @@ public final class ContactList extends JPanel implements ActionListener,
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
         }       
-        if( entry!=null && entry.getStatus().SUBSCRIPTION_PENDING == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
+        else if( entry!=null && entry.getType() != RosterPacket.ItemType.both && entry.getStatus().SUBSCRIPTION_PENDING == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
         {
             popup.add(subscribeAction);
         }
