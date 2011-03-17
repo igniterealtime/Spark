@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -380,6 +381,17 @@ public class SparkTabbedPane extends JPanel {
 			}	
 		}
 
+		@Override
+		public Dimension getPreferredSize() {
+		    Dimension dim = super.getPreferredSize();
+		    if (closeEnabled && titleLabel.getText().length() < 6) {
+			return new Dimension(80, dim.height);
+
+		    } else
+			return super.getPreferredSize();
+
+		}
+		
 		public Font getDefaultFont() {
 			return defaultFont;
 		}
