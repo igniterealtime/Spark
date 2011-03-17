@@ -109,41 +109,61 @@ public class PresenceChangePlugin implements Plugin {
 
         // Check presence changes
         SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(final Packet packet) {
-            	try	{
-            		EventQueue.invokeAndWait(new Runnable(){
-            			public void run() {
-            				Presence presence = (Presence)packet;
-                            if (!presence.isAvailable() || presence.isAway()) {
-                                return;
-                            }
-                            String from = presence.getFrom();
+	    public void processPacket(final Packet packet) {
+		try {
+		    EventQueue.invokeAndWait(new Runnable() {
+			public void run() {
+			    Presence presence = (Presence) packet;
+			    if (!presence.isAvailable() || presence.isAway()) {
+				return;
+			    }
+			    String from = presence.getFrom();
 
-                            for (String jid : sparkContacts) {
-                                if (jid.equals(StringUtils.parseBareAddress(from))) {
-                                    sparkContacts.remove(jid);
+			    for (final String jid : sparkContacts) {
+				if (jid.equals(StringUtils
+					.parseBareAddress(from))) {
+				    sparkContacts.remove(jid);
 
-                                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                                    String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
-                                    String infoText = Res.getString("message.user.now.available.to.chat", nickname, time);
-                                    
-                                    SparkToaster toaster = new SparkToaster();
-                                    toaster.setDisplayTime(5000);
-                                    toaster.setBorder(BorderFactory.createBevelBorder(0));
-                                    
-                                    toaster.setToasterHeight(150);
-                                    toaster.setToasterWidth(200);
-                                    
-                                    toaster.setTitle(nickname);
-                                    toaster.showToaster(null, infoText);
-                                }
-                            }
-            			}
-            		});
-            	}
-            	catch (Exception ex) {
-            		ex.printStackTrace();
-            	}
+				    String nickname = SparkManager
+					    .getUserManager()
+					    .getUserNicknameFromJID(jid);
+				    String time = SparkManager.DATE_SECOND_FORMATTER
+					    .format(new Date());
+				    String infoText = Res
+					    .getString(
+						    "message.user.now.available.to.chat",
+						    nickname, time);
+
+				    SparkToaster toaster = new SparkToaster();
+				    toaster.setDisplayTime(5000);
+				    toaster.setBorder(BorderFactory
+					    .createBevelBorder(0));
+
+				    toaster.setToasterHeight(150);
+				    toaster.setToasterWidth(200);
+
+				    toaster.setTitle(nickname);
+				    toaster.showToaster(null, infoText);
+				    SparkManager.getChatManager().getChatRoom(
+					    jid);
+
+				    toaster.setCustomAction(new AbstractAction() {
+					private static final long serialVersionUID = 4827542713848133369L;
+
+					@Override
+					public void actionPerformed(
+						ActionEvent e) {
+					    SparkManager.getChatManager()
+						    .getChatRoom(jid);
+					}
+				    });
+				}
+			    }
+			}
+		    });
+		} catch (Exception ex) {
+		    ex.printStackTrace();
+		}
             }
         }, new PacketTypeFilter(Presence.class));
     }
