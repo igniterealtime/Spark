@@ -126,7 +126,7 @@ public class VerticalFlowLayout extends FlowLayout {
 
         for (int i = 0; i < target.getComponentCount(); i++) {
             Component m = target.getComponent(i);
-            if (m.isVisible()) {
+            if (m != null && m.isVisible()) {
                 Dimension d = m.getPreferredSize();
                 tarsiz.width = Math.max(tarsiz.width, d.width);
                 if (i > 0) {
@@ -247,9 +247,10 @@ public class VerticalFlowLayout extends FlowLayout {
         int x = insets.left + hgap, y = 0;
         int colw = 0, start = 0;
 
+        
         for (int i = 0; i < numcomp; i++) {
             Component m = target.getComponent(i);
-            if (m.isVisible()) {
+            if (m != null && m.isVisible()) {
                 Dimension d = m.getPreferredSize();
                 // fit last component to remaining height
                 if ((this.vfill) && (i == (numcomp - 1))) {
