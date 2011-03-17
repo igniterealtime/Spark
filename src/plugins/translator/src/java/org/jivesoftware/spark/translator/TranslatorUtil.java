@@ -24,6 +24,9 @@ import com.meterware.httpunit.HttpUnitOptions;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
+import com.sun.org.apache.xpath.internal.XPathAPI;
+
 import org.jivesoftware.spark.util.log.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +35,8 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+
+import javax.xml.transform.TransformerException;
 
 /**
  * A utility class that uses google's translation service to translate text to various languages.
@@ -50,9 +55,10 @@ public class TranslatorUtil {
     }
 
     private static String useGoogleTranslator(String text, TranslationType type) {
-        String response = null;
+    	
+        String response = "";
         String urlString = "http://translate.google.com/translate_t?text=" + text + "&langpair=" + type.getID();
-
+        System.out.println(urlString);
         // disable scripting to avoid requiring js.jar
         HttpUnitOptions.setScriptingEnabled(false);
 
@@ -66,17 +72,31 @@ public class TranslatorUtil {
 
         try {
             WebResponse webResponse = wc.getResponse(webRequest);
-            NodeList list = webResponse.getDOM().getDocumentElement().getElementsByTagName("div");
-            int length = list.getLength();
-            for (int i = 0; i < length; i++) {
-                Element element = (Element)list.item(i);
-                if ("result_box".equals(element.getAttribute("id"))) {
-                    Node translation = element.getFirstChild();
-                    if (translation != null) {
-                        response = translation.getNodeValue();
-                    }
-                }
-            }
+            //NodeList list = webResponse.getDOM().getDocumentElement().getElementsByTagName("div");
+            try {
+				NodeList list2 = XPathAPI.selectNodeList(webResponse.getDOM(), "//span[@id='result_box']/span/text()");
+			
+				for (int i = 0; i < list2.getLength(); ++i)
+				{
+					response = response + list2.item(i).getNodeValue()+" ";
+				}
+				
+				
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
+//            int length = list.getLength();
+//            for (int i = 0; i < length; i++) {
+//                Element element = (Element)list.item(i);
+//                if ("result_box".equals(element.getAttribute("id"))) {
+//                    Node translation = element.getFirstChild();
+//                    if (translation != null) {
+//                        response = translation.getNodeValue();
+//                    }
+//                }
+//            }
         }
         catch (MalformedURLException e) {
             Log.error("Could not for url: " + e);

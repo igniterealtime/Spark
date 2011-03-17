@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spark.translator;
 
+import org.jdesktop.swingx.util.StringUtils;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -28,8 +29,13 @@ import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
-import javax.swing.JComboBox;
+import com.install4j.runtime.util.StringUtil;
 
+import javax.management.Notification;
+import javax.swing.JComboBox;
+import javax.swing.text.BadLocationException;
+
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -45,7 +51,7 @@ public class TranslatorPlugin implements Plugin {
      */
     public void initialize() {
         // Retrieve ChatManager from the SparkManager
-        ChatManager chatManager = SparkManager.getChatManager();
+        final ChatManager chatManager = SparkManager.getChatManager();
 
         // Add to a new ChatRoom when the ChatRoom opens.
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
@@ -70,13 +76,22 @@ public class TranslatorPlugin implements Plugin {
                     final MessageEventListener messageListener = new MessageEventListener() {
                         public void sendingMessage(Message message) {
                             String currentBody = message.getBody();
+                            String oldBody = message.getBody();
                             TranslatorUtil.TranslationType type =
                                     (TranslatorUtil.TranslationType)translatorBox.getSelectedItem();
                             if (type != null && type != TranslatorUtil.TranslationType.None) {
-                                currentBody = TranslatorUtil.translate(currentBody, type);
-                                message.setBody(currentBody);
+                            	message.setBody(null);
+                            	currentBody = TranslatorUtil.translate(currentBody, type);
+                                if(oldBody.equals(currentBody.substring(0,currentBody.length()-1)))
+                                {
+                                	chatManager.getChatRoom(org.jivesoftware.smack.util.StringUtils.parseBareAddress(message.getTo())).getTranscriptWindow().insertNotificationMessage("Could not Translate: "+currentBody, ChatManager.NOTIFICATION_COLOR);
+								
+                                } else  {
+                                	message.setBody(currentBody); 
+                                }
                             }
                         }
+                        
 
                         public void receivingMessage(Message message) {
                             // do nothing
