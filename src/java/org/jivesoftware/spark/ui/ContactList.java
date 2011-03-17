@@ -1268,7 +1268,7 @@ public final class ContactList extends JPanel implements ActionListener,
 
         ContactGroup group = getContactGroup(groupName);
         if (group != null) {
-            group.setVisible(true);
+            group.setVisible(visible);
         }
     }
 

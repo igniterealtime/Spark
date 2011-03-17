@@ -58,13 +58,15 @@ public class ContactListAssistantPlugin implements Plugin {
 
     private JMenu moveToMenu;
     private JMenu copyToMenu;
-
+    private LocalPreferences localPreferences;
+    
     @Override
     public void initialize() {
 
         moveToMenu = new JMenu(Res.getString("menuitem.move.to"));
         copyToMenu = new JMenu(Res.getString("menuitem.copy.to"));
-
+        localPreferences = new LocalPreferences();
+        
         final ContactList contactList = SparkManager.getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
@@ -234,7 +236,8 @@ public class ContactListAssistantPlugin implements Plugin {
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
-
+        boolean groupHadAvailableContacts = false;
+        
         // Do not copy/move a contact item only if it is not already in the Group.
         if (contactGroup.getContactItemByJID(item.getJID(), true) != null) {
             return;
@@ -244,6 +247,7 @@ public class ContactListAssistantPlugin implements Plugin {
             contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJID(), null);
         }
         else {
+            groupHadAvailableContacts = contactGroup.hasAvailableContacts();
             contactGroup.addContactItem(newContact);
         }
         contactGroup.clearSelection();
@@ -251,6 +255,8 @@ public class ContactListAssistantPlugin implements Plugin {
 
         final ContactGroup oldGroup = getContactGroup(item.getGroupName());
 
+        
+        final boolean groupAvailableContacts = groupHadAvailableContacts;
         SwingWorker worker = new SwingWorker() {
             @Override
             public Object construct() {
@@ -263,6 +269,10 @@ public class ContactListAssistantPlugin implements Plugin {
                     if (group.getName().equals(contactGroup.getGroupName())) {
                         try {
                             groupFound = group;
+                            if (!groupAvailableContacts)
+                            {
+                        	SparkManager.getContactList().toggleGroupVisibility(groupFound.getName(), true);
+                            }
                             group.addEntry(entry);
                         }
                         catch (XMPPException e1) {
@@ -276,7 +286,11 @@ public class ContactListAssistantPlugin implements Plugin {
                 if (groupFound == null) {
                     groupFound = roster.createGroup(contactGroup.getGroupName());
                     try {
-                        groupFound.addEntry(entry);
+                	groupFound.addEntry(entry);
+                        if (!groupAvailableContacts)
+                        {
+                    	SparkManager.getContactList().toggleGroupVisibility(groupFound.getName(), true);
+                        }  
                     }
                     catch (XMPPException e) {
                         Log.error(e);
@@ -291,6 +305,10 @@ public class ContactListAssistantPlugin implements Plugin {
                     // Now try and remove the group from the old one.
                     if (move) {
                         removeContactItem(oldGroup, item);
+                       if (!localPreferences.isEmptyGroupsShown() && !oldGroup.hasAvailableContacts())
+                        {
+                          SparkManager.getContactList().toggleGroupVisibility(oldGroup.getGroupName(),false);
+                        }
                     }
                 }
             }
