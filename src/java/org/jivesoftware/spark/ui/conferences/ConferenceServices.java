@@ -19,6 +19,7 @@
  */ 
 package org.jivesoftware.spark.ui.conferences;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,6 +52,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomClosingListener;
@@ -64,6 +67,9 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
@@ -127,75 +133,143 @@ public class ConferenceServices {
      * Adds an invitation listener to check for any MUC invites.
      */
     private static void addInvitationListener() {
-        // Add Invite Listener
-        MultiUserChat.addInvitationListener(SparkManager.getConnection(), new InvitationListener() {
-            public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(SparkManager.getChatManager().getInvitationListeners());
-                        for (RoomInvitationListener listener : listeners) {
-                            boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
-                            if (handle) {
-                                return;
-                            }
-                        }
+	// Add Invite Listener
+	MultiUserChat.addInvitationListener(SparkManager.getConnection(),
+		new InvitationListener() {
+		    public void invitationReceived(final Connection conn,
+			    final String room, final String inviter,
+			    final String reason, final String password,
+			    final Message message) {
+			SwingUtilities.invokeLater(new Runnable() {
+			    public void run() {
+				Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(
+					SparkManager.getChatManager()
+						.getInvitationListeners());
+				for (RoomInvitationListener listener : listeners) {
+				    boolean handle = listener.handleInvitation(
+					    conn, room, inviter, reason,
+					    password, message);
+				    if (handle) {
+					return;
+				    }
+				}
 
-                        // Make sure the user is not already in the room.
-                        try {
-                            SparkManager.getChatManager().getChatContainer().getChatRoom(room);
-                            return;
-                        }
-                        catch (ChatRoomNotFoundException e) {
-                            // Ignore :)
-                        }
+				// Make sure the user is not already in the
+				// room.
+				try {
+				    SparkManager.getChatManager()
+					    .getChatContainer()
+					    .getChatRoom(room);
+				    return;
+				} catch (ChatRoomNotFoundException e) {
+				    // Ignore :)
+				}
 
-                        final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room, inviter, password, reason);
+				final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(
+					room, inviter, password, reason);
+				String message = Res.getString(
+					"message.invite.to.groupchat", inviter);
+				String title = Res
+					.getString("title.group.chat");
+				String bareJID = StringUtils
+					.parseBareAddress(inviter);
+				try {
+				    ChatRoom chatRoom = SparkManager
+					    .getChatManager()
+					    .getChatContainer()
+					    .getChatRoom(bareJID);
 
-                        String bareJID = StringUtils.parseBareAddress(inviter);
-                        try {
-                            ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
+				    // If the ChatRoom exists, add an invitation
+				    // UI.
+				    chatRoom.getTranscriptWindow()
+					    .addComponent(invitationUI);
 
-                            // If the ChatRoom exists, add an invitation UI.
-                            chatRoom.getTranscriptWindow().addComponent(invitationUI);
+				    // Notify user of incoming invitation.
+				    chatRoom.increaseUnreadMessageCount();
 
-                            // Notify user of incoming invitation.
-                            chatRoom.increaseUnreadMessageCount();
+				    chatRoom.scrollToBottom();
 
-                            chatRoom.scrollToBottom();
+				    SparkManager
+					    .getChatManager()
+					    .getChatContainer()
+					    .fireNotifyOnMessage(chatRoom,
+						    true, message, title);
+				} catch (ChatRoomNotFoundException e) {
+				    // If it doesn't exists. Create a new Group
+				    // Chat Room
+				    // Create the Group Chat Room
+				    final MultiUserChat chat = new MultiUserChat(
+					    SparkManager.getConnection(), room);
 
-                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, false, null, null);
-                        }
-                        catch (ChatRoomNotFoundException e) {
-                            // If it doesn't exists. Create a new Group Chat Room
-                            // Create the Group Chat Room
-                            final MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), room);
+				    GroupChatRoom groupChatRoom = new GroupChatRoom(
+					    chat);
 
-                            GroupChatRoom groupChatRoom = new GroupChatRoom(chat);
-                            groupChatRoom.getSplitPane().setDividerSize(5);
-                            groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
-                            groupChatRoom.getSplitPane().setDividerLocation(0.6);
+				    LocalPreferences pref = SettingsManager
+					    .getLocalPreferences();
+				    if (pref.getShowToasterPopup()) {
+					SparkToaster toaster = new SparkToaster();
 
-                            String roomName = StringUtils.parseName(room);
-                            groupChatRoom.setTabTitle(roomName);
-                            groupChatRoom.getToolBar().setVisible(true);
+					toaster.setCustomAction(new AbstractAction() {
+					    private static final long serialVersionUID = -4546475740161533555L;
 
-                            SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
-                            groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
+					    @Override
+					    public void actionPerformed(
+						    ActionEvent e) {
+						ChatFrame chatFrame = SparkManager
+							.getChatManager()
+							.getChatContainer()
+							.getChatFrame();
+						chatFrame
+							.setState(Frame.NORMAL);
+						chatFrame.setVisible(true);
 
-                            // Notify user of incoming invitation.
-                            groupChatRoom.increaseUnreadMessageCount();
+					    }
+					});
+					toaster.setDisplayTime(5000);
+					toaster.setBorder(BorderFactory
+						.createBevelBorder(0));
+					toaster.setToasterHeight(150);
+					toaster.setToasterWidth(200);
+					toaster.setTitle(title);
+					toaster.showToaster(
+						groupChatRoom.getTabIcon(),
+						message);
+				    }
 
-                            groupChatRoom.scrollToBottom();
+				    groupChatRoom.getSplitPane()
+					    .setDividerSize(5);
+				    groupChatRoom.getVerticalSlipPane()
+					    .setDividerLocation(0.6);
+				    groupChatRoom.getSplitPane()
+					    .setDividerLocation(0.6);
+				    String roomName = StringUtils
+					    .parseName(room);
+				    groupChatRoom.setTabTitle(roomName);
+				    groupChatRoom.getToolBar().setVisible(true);
+				    SparkManager.getChatManager()
+					    .getChatContainer()
+					    .addChatRoom(groupChatRoom);
+				    groupChatRoom.getTranscriptWindow()
+					    .addComponent(invitationUI);
+				    // Notify user of incoming invitation.
+				    groupChatRoom.increaseUnreadMessageCount();
+				    groupChatRoom.scrollToBottom();
+				    SparkManager
+					    .getChatManager()
+					    .getChatContainer()
+					    .fireNotifyOnMessage(groupChatRoom,
+						    true, message, title);
 
-                            SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom, false, null, null);
-                        }
-                        // If no listeners handled the invitation, default to generic invite.
-                        //new ConversationInvitation(conn, room, inviter, reason, password, message);
-                    }
-                });
+				}
+				// If no listeners handled the invitation,
+				// default to generic invite.
+				// new ConversationInvitation(conn, room,
+				// inviter, reason, password, message);
+			    }
+			});
 
-            }
-        });
+		    }
+		});
     }
 
     /**

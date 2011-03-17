@@ -94,7 +94,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         titleLabel.setEditable(false);
         titleLabel.setBackground(new Color(230, 239, 249));
 
-        acceptButton = new RolloverButton(Res.getString("button.accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
+        acceptButton = new RolloverButton(Res.getString("button.accept").replace("&",""), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
         acceptButton.setForeground(new Color(63, 158, 61));
 
         RolloverButton rejectButton = new RolloverButton(Res.getString("button.reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));

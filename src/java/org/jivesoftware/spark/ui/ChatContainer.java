@@ -932,39 +932,41 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param comp the Component to check if a message has been inserted
      *             but the room is not the selected room.
      */
-    public void startFlashing(final Component comp, final boolean customMsg, final String customMsgText, final String customMsgTitle) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    final int index = indexOfComponent(comp);
-                    if (index != -1) {
-                        // Check notifications.
-                        if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom)) {
-                            if (comp instanceof ChatRoom) {
-                        	if(comp instanceof GroupChatRoom) {
-                        	    if(!((GroupChatRoom) comp).isBlocked(((GroupChatRoom) comp).getLastMessage().getFrom())) 
-                        		checkNotificationPreferences((ChatRoom)comp, customMsg, customMsgText, customMsgTitle); 
-                        	} else {
-                        	    checkNotificationPreferences((ChatRoom)comp, customMsg, customMsgText, customMsgTitle);
-                        	}
-                            }
-                        }
+    public void startFlashing(final Component comp, final boolean customMsg,
+	    final String customMsgText, final String customMsgTitle) {
 
-                        // Notify decorators
-                        SparkManager.getChatManager().notifySparkTabHandlers(comp);
-                    }
+	    SwingUtilities.invokeLater(new Runnable() {
+		public void run() {
+		    try {
+			final int index = indexOfComponent(comp);
+			if (index != -1) {
+			    // Check notifications.
+			    if (SettingsManager.getLocalPreferences().isChatRoomNotificationsOn()|| !(comp instanceof GroupChatRoom)) {
+				if (comp instanceof ChatRoom) {
+				    if (comp instanceof GroupChatRoom) {
+					if (((GroupChatRoom) comp).getLastMessage() != null)
+					    if (!((GroupChatRoom) comp).isBlocked(((GroupChatRoom) comp).getLastMessage().getFrom()))
+						checkNotificationPreferences((ChatRoom) comp,customMsg,customMsgText,customMsgTitle);
+				    } else {
+					checkNotificationPreferences((ChatRoom) comp, customMsg,customMsgText, customMsgTitle);
+				    }
+				}
+			    }
+			    // Notify decorators
+			    SparkManager.getChatManager().notifySparkTabHandlers(comp);
+			}
 
-                    boolean flashAllowed = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() || !(comp instanceof GroupChatRoom);
+			boolean flashAllowed = SettingsManager.getLocalPreferences().isChatRoomNotificationsOn() 
+						|| !(comp instanceof GroupChatRoom);
 
-                    if (!chatFrame.isInFocus() && flashAllowed) {
-                        SparkManager.getNativeManager().flashWindow(chatFrame);
-                    }
-                }
-                catch (Exception ex) {
-                    Log.error("Issue in ChatRooms with tab location.", ex);
-                }
-            }
-        });
+			if (!chatFrame.isInFocus() && flashAllowed) {
+			    SparkManager.getNativeManager().flashWindow(chatFrame);
+			}
+		    } catch (Exception ex) {
+			Log.error("Issue in ChatRooms with tab location.", ex);
+		    }
+		}
+	    });
     }
 
 
@@ -1046,7 +1048,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 toaster.setTitle(nickname);
                 if (size > 0) {
                     Message message = room.getTranscripts().get(size - 1);
-
                     toaster.showToaster(room.getTabIcon(), message.getBody());
                 }
             }
@@ -1071,15 +1072,21 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // is this a group chat message and is my name in it?
         if (isGroupChat) {
             // is a group chat, perform some functions
-            Message lastChatMessage = chatRoom.getTranscripts().get(size - 1);
-            String mucNickNameT = lastChatMessage.getFrom();
-            String[] mucNickName = mucNickNameT.split("/");
-            String fromNickName;
-            String finalRoomName = chatRoom.getRoomTitle();
-            if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
-                fromNickName = finalRoomName; //Res.getString("label.message");
-            } else {
-                fromNickName = mucNickName[1];
+            String fromNickName="";
+            Message lastChatMessage= new Message();
+            String mucNickNameT="";
+            String finalRoomName ="";
+            if(size>0)
+            {
+                lastChatMessage = chatRoom.getTranscripts().get(size - 1);
+                mucNickNameT = lastChatMessage.getFrom();
+                String[] mucNickName = mucNickNameT.split("/");    
+                finalRoomName = chatRoom.getRoomTitle();
+                if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
+                    fromNickName = finalRoomName; //Res.getString("label.message");
+                } else {
+                    fromNickName = mucNickName[1];
+                }
             }
             if (localPref.isMucHighToastEnabled()) {
                 // allowed to check for new messages containing name
