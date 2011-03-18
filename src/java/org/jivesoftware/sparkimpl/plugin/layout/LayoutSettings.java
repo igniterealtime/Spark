@@ -66,7 +66,7 @@ public class LayoutSettings {
 
     public int getMainWindowHeight() {
         if (mainWindowHeight < 200) {
-            mainWindowHeight = 200;
+            mainWindowHeight = 500;
         }
         return mainWindowHeight;
     }
