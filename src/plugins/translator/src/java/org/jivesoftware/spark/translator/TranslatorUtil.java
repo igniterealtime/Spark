@@ -58,7 +58,6 @@ public class TranslatorUtil {
     	
         String response = "";
         String urlString = "http://translate.google.com/translate_t?text=" + text + "&langpair=" + type.getID();
-        System.out.println(urlString);
         // disable scripting to avoid requiring js.jar
         HttpUnitOptions.setScriptingEnabled(false);
 

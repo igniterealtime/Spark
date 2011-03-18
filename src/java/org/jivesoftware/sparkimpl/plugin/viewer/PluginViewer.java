@@ -512,7 +512,15 @@ public class PluginViewer extends JPanel implements Plugin {
                 }
                 out.write(buffer, 0, bytesRead);
                 read += bytesRead;
-                progressBar.setValue(read);
+                final int readprogr = read;
+                EventQueue.invokeLater(new Runnable() {
+		    
+		    @Override
+		    public void run() {
+			progressBar.setValue(readprogr);
+			
+		    }
+		});
             }
             catch (IOException e) {
                 Log.error(e);
