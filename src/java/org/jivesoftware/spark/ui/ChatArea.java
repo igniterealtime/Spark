@@ -471,7 +471,24 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         final String url = (String)o;
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
+                            if(e.getButton() == MouseEvent.BUTTON1)
                         	BrowserLauncher.openURL(url);
+			    else if (e.getButton() == MouseEvent.BUTTON3) {
+				JPopupMenu popupmenu = new JPopupMenu();
+				JMenuItem linkcopy = new JMenuItem(
+					Res.getString("action.copy"));
+				linkcopy.addActionListener(new ActionListener() {
+
+				    @Override
+				    public void actionPerformed(ActionEvent e) {
+					SparkManager.setClipboard(url);
+
+				    }
+				});
+				linkcopy.setEnabled(true);
+				popupmenu.add(linkcopy);
+				popupmenu.show(this, e.getX(), e.getY());
+			    }
                         }
                     }
                     catch (Exception ioe) {
