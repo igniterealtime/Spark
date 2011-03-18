@@ -144,9 +144,8 @@ public class PresenceChangePlugin implements Plugin {
 
 				    toaster.setTitle(nickname);
 				    toaster.showToaster(null, infoText);
-				    SparkManager.getChatManager().getChatRoom(
-					    jid);
-
+				    SparkManager.getChatManager().activateChat(jid,nickname);
+				    
 				    toaster.setCustomAction(new AbstractAction() {
 					private static final long serialVersionUID = 4827542713848133369L;
 
