@@ -35,10 +35,23 @@ public class FlashWindow {
 	private HashMap<Window, Thread> flashings = new HashMap<Window, Thread>();
 
 	static {
+	    
+	    // Check if we are on Windows 64bit Architecture by determining if there is a
+	    // ProgramFIles(x86) folder, which is only on win-64bit not on 32bit
+	boolean is64bit = false;
+	if (System.getProperty("os.name").contains("Windows")) {
+	    is64bit = (System.getenv("ProgramFiles(x86)") != null);
+	} else {
+	    is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
+	}
+	String s = "";
+	if (is64bit) {
+	    s = "64";
+	}
 		System.load(PluginManager.PLUGINS_DIRECTORY + File.separator
 				+ "flashing" + File.separator + "lib" + File.separator
-				+ "FlashWindow.dll");
-		// System.loadLibrary("FlashWindow");
+				+ "FlashWindow"+s+".dll");
+		// System.load("C:\\PATH\FlashWindow"+s+".dll");
 	}
 
 	public native void flash(String name, boolean bool);
@@ -105,6 +118,7 @@ public class FlashWindow {
 	public static void main(String[] args) throws Exception {
 		final JFrame frame = new JFrame();
 		frame.setTitle("Test");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new FlowLayout());
 		JButton button = new JButton("Temp Flashing");
 		frame.getContentPane().add(button);
