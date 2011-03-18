@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -43,7 +44,7 @@ import org.jivesoftware.spark.util.TaskEngine;
 public class ReconnectPanelIcon implements ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private JButton _button;
+    private RolloverButton _button;
     private JPanel _commandpanel;
     private boolean _closedOnError;
 
@@ -56,7 +57,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	_commandpanel = SparkManager.getWorkspace().getCommandPanel();
 
-	_button = new JButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+	_button = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 
 	_button.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
