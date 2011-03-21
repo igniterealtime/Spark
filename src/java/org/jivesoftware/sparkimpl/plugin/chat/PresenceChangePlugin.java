@@ -38,12 +38,18 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * Allows users to place activity listeners on individual users. This class notifies users when other users
@@ -54,6 +60,7 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 public class PresenceChangePlugin implements Plugin {
 
     private final Set<String> sparkContacts = new HashSet<String>();
+    private LocalPreferences localPref = SettingsManager.getLocalPreferences(); 
 
     public void initialize() {
         // Listen for right-clicks on ContactItem
@@ -134,28 +141,41 @@ public class PresenceChangePlugin implements Plugin {
 						    "message.user.now.available.to.chat",
 						    nickname, time);
 
-				    SparkToaster toaster = new SparkToaster();
-				    toaster.setDisplayTime(5000);
-				    toaster.setBorder(BorderFactory
-					    .createBevelBorder(0));
+				    if (localPref.getShowToasterPopup()) {
+					SparkToaster toaster = new SparkToaster();
+					toaster.setDisplayTime(5000);
+					toaster.setBorder(BorderFactory
+						.createBevelBorder(0));
 
-				    toaster.setToasterHeight(150);
-				    toaster.setToasterWidth(200);
+					toaster.setToasterHeight(150);
+					toaster.setToasterWidth(200);
 
-				    toaster.setTitle(nickname);
-				    toaster.showToaster(null, infoText);
-				    SparkManager.getChatManager().activateChat(jid,nickname);
+					toaster.setTitle(nickname);
+					toaster.showToaster(null, infoText);
+
+					toaster.setCustomAction(new AbstractAction() {
+					    private static final long serialVersionUID = 4827542713848133369L;
+
+					    @Override
+					    public void actionPerformed(
+						    ActionEvent e) {
+						SparkManager.getChatManager()
+							.getChatRoom(jid);
+					    }
+					});
+				    } 
+				    ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
 				    
-				    toaster.setCustomAction(new AbstractAction() {
-					private static final long serialVersionUID = 4827542713848133369L;
-
-					@Override
-					public void actionPerformed(
-						ActionEvent e) {
-					    SparkManager.getChatManager()
-						    .getChatRoom(jid);
-					}
-				    });
+				    if (localPref.getWindowTakesFocus())
+				    {
+					SparkManager.getChatManager().activateChat(jid, nickname);
+				    } else
+				    {
+					room.setVisible(true);
+					SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
+				    }
+				    room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
+				    
 				}
 			    }
 			}
