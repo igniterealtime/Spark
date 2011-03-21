@@ -447,17 +447,15 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             connectMenu.add(exitMenuItem);
         }
 
-
-        final Action updateAction = new AbstractAction() {
-			private static final long serialVersionUID = -2159350387773310325L;
-
-			public void actionPerformed(ActionEvent actionEvent) {
-                checkForUpdates(true);
-            }
-        };
-
-        updateAction.putValue(Action.NAME, Res.getString("menuitem.check.for.updates"));
-        updateAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
+        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));    
+        ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
+        updateMenu.addActionListener(new ActionListener() {    
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		checkForUpdates(true);
+		
+	    }
+	});         
 
         // Add Error Dialog Viewer
         final Action viewErrors = new AbstractAction() {
@@ -500,13 +498,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
         
         // Build Help Menu
-        helpMenu.add(updateAction);
+        helpMenu.add(updateMenu);
         helpMenu.addSeparator();
         helpMenu.add(viewErrors);
-  	   	
-        
-
-
         helpMenu.add(menuAbout);
 
         // ResourceUtils - Adds mnemonics
@@ -514,9 +508,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
         ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
         ResourceUtils.resButton(helpMenuItem, Res.getString("menuitem.online.help"));
-        
-  	   //	}
-       // });
 
         // Register shutdown with the exit menu.
         exitMenuItem.addActionListener(new AbstractAction() {
