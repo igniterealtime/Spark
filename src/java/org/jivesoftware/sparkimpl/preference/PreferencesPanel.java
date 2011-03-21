@@ -60,9 +60,9 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize(new Dimension(125, 0));
-        list.setFixedCellHeight(70);
+        list.setFixedCellHeight(50);
 
-        add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 50, 0));
+        add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 50, 0));
         add(flowPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
 

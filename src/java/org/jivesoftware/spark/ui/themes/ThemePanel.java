@@ -21,8 +21,10 @@ package org.jivesoftware.spark.ui.themes;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
@@ -30,12 +32,26 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Vector;
+
 
 /**
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
@@ -61,19 +77,132 @@ public class ThemePanel extends JPanel {
     private JCheckBox emoticonCheckBox;
     private JFileChooser fc;
 
-    private JCheckBox systemLookAndFeelBox;
-
     private JCheckBox showAvatarsBox;
     private JCheckBox showVCards;
     private JLabel avatarSizeLabel;
     private JComboBox avatarSizeField;
+    
+    private JLabel _lookandfeelLabel;
+    private JComboBox _lookandfeel;
+    private JButton _lookandfeelpreview;
+    private Vector<String> _lookandfeelname = new Vector<String>();
+    
+    private ThemePanel _thispanel;
 
     /**
      * Construct UI
      */
     public ThemePanel() {
+	_thispanel = this;
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(Res.getString("title.appearance.preferences")));
+        
+        LookAndFeelInfo[]  ui = UIManager.getInstalledLookAndFeels();
+        
+       
+        Vector<String> lafname = new Vector<String>();
+        
+        for(int i=0;i<ui.length;i++)
+        {
+            _lookandfeelname.add(ui[i].getClassName());
+          lafname.add(ui[i].getName());
+        }
+
+	String[] substance = {	
+		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceBusinessLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceCremeCoffeeLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceCremeLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceDustCoffeeLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceDustLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceModerateLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceNebulaBrickWallLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceNebulaLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel",
+		"org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel",
+		"org.jvnet.substance.skin.SubstanceRavenGraphiteGlassLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceRavenLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceSaharaLookAndFeel",
+		"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel",
+		"org.jvnet.substance.api.skin.SubstanceGeminiLookAndFeel",
+		"org.jvnet.substance.api.skin.SubstanceGraphiteAquaLookAndFeel",
+		"org.jvnet.substance.api.skin.SubstanceMagellanLookAndFeel"
+		};
+    	
+	for(String s : substance)
+	{
+	    _lookandfeelname.add(s);
+	     s =s.substring(s.lastIndexOf(".")+10);
+	     s = s.replace("LookAndFeel", "");
+	    lafname.add(s);
+	}
+	
+        
+        _lookandfeel = new JComboBox(lafname);
+        _lookandfeelLabel = new JLabel(Res.getString("lookandfeel.select"));
+        _lookandfeelpreview = new JButton(Res.getString("lookandfeel.change.now"));
+        
+        _lookandfeel.addActionListener(new ActionListener() {
+	    
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		if (_lookandfeel.getSelectedItem() != null 
+			&& _lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length) {
+		    _lookandfeelpreview.setEnabled(false);
+		    _lookandfeelpreview
+			    .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
+		    _lookandfeelpreview.revalidate();
+		} else {
+		    _lookandfeelpreview.setEnabled(true);
+		    _lookandfeelpreview.setToolTipText(Res.getString("lookandfeel.tooltip.restart.no"));
+		    _lookandfeelpreview.revalidate();
+		}
+
+	    }
+	});
+
+
+	_lookandfeelpreview.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		
+		SwingWorker worker = new SwingWorker() {
+		    @Override
+		    public Object construct() {
+
+			return 42;
+		    }
+		    public void finished() {
+			  try {
+			    UIManager.setLookAndFeel(_lookandfeelname.get(_lookandfeel
+			    	    .getSelectedIndex()));
+			} catch (Exception e) {
+			//WTF
+			}
+		
+			SwingUtilities.updateComponentTreeUI(_thispanel);
+			SwingUtilities.updateComponentTreeUI(_thispanel.getParent());	
+			SwingUtilities.updateComponentTreeUI(SparkManager.getMainWindow());
+			SwingUtilities.updateComponentTreeUI(SparkManager.getChatManager().getChatContainer());
+			_thispanel.invalidate();
+			_thispanel.repaint();
+			_thispanel.validate();
+
+		    }
+		};
+		worker.start();		
+	    }
+	});
+        
         
         JLabel messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
@@ -88,8 +217,6 @@ public class ThemePanel extends JPanel {
 
         transcript = new TranscriptWindow();
         transcript.setForceEmoticons(true);
-
-        systemLookAndFeelBox = new JCheckBox();
 
         showAvatarsBox = new JCheckBox();
         avatarSizeLabel = new JLabel();
@@ -108,7 +235,6 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
         ResourceUtils.resLabel(emoticonsLabel, emoticonBox, Res.getString("label.emoticons") + ":");
         ResourceUtils.resButton(emoticonCheckBox, Res.getString("checkbox.enable.emoticons"));
-        ResourceUtils.resButton(systemLookAndFeelBox, Res.getString("checkbox.use.system.look.and.feel"));
 
         ResourceUtils.resButton(addThemeButton, Res.getString("button.add"));
         ResourceUtils.resButton(addEmoticonButton, Res.getString("button.add"));
@@ -130,21 +256,16 @@ public class ThemePanel extends JPanel {
         // Add Viewer
         add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        /*
-        add(messageStyleLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(messageStyleBox, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        add(addThemeButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        */
-
         add(emoticonsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonBox, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonCheckBox, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        if (Spark.isWindows()) {
-            add(systemLookAndFeelBox, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        }
+        add(_lookandfeelLabel, new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_lookandfeel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+        add(_lookandfeelpreview, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
+        
         add(chatRoomFontLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -153,12 +274,11 @@ public class ThemePanel extends JPanel {
         add(avatarSizeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-
+    
 
         // Activate live one.
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-        // messageStyleBox.setSelectedItem(theme);
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null)
@@ -188,8 +308,8 @@ public class ThemePanel extends JPanel {
         showSelectedEmoticon();
 
         emoticonCheckBox.setSelected(pref.areEmoticonsEnabled());
-
-        systemLookAndFeelBox.setSelected(pref.useSystemLookAndFeel());
+                
+        _lookandfeel.setSelectedIndex(_lookandfeelname.indexOf(pref.getLookAndFeel()));
 
         showVCards.setSelected(pref.areVCardsVisible());
         
@@ -281,9 +401,6 @@ public class ThemePanel extends JPanel {
         return emoticonCheckBox.isSelected();
     }
 
-    public boolean useSystemLookAndFeel() {
-        return systemLookAndFeelBox.isSelected();
-    }
 
     /**
      * Adds a new Emoticon pack to Spark.
@@ -379,4 +496,18 @@ public class ThemePanel extends JPanel {
     public boolean areVCardsVisible(){
        return showVCards.isSelected();
    }
+    
+    /**
+     * Returns the LookAndFeel with package origin <br>
+     * for example:
+     * <code>com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</code>
+     * 
+     * @return {@link String}
+     */
+    public String getLookAndFeel() {
+	return _lookandfeelname.get(_lookandfeel.getSelectedIndex());
+    }
+    
+    
+    
 }

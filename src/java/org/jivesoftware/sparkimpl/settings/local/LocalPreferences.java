@@ -25,6 +25,9 @@ import org.jivesoftware.spark.SparkManager;
 import java.io.File;
 import java.util.Date;
 import java.util.Properties;
+
+import javax.swing.UIManager;
+
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -654,14 +657,16 @@ public class LocalPreferences {
 	public boolean areEmoticonsEnabled() {
 		return getBoolean("emoticonsEnabled", true);
 	}
-
-	public void setUseSystemLookAndFeel(boolean sysLAF) {
-		setBoolean("useSystemLookAndFeel", sysLAF);
+	
+	public void setLookAndFeel(String laf)
+	{
+	    setString("LookAndFeel",laf);
 	}
-
-	public boolean useSystemLookAndFeel() {
-		return getBoolean("useSystemLookAndFeel", false);
-	}
+	
+        public String getLookAndFeel() {
+    		String defaultstring = UIManager.getSystemLookAndFeelClassName();
+    		return getString("LookAndFeel", defaultstring);
+        }
 
 	public void setCheckForBeta(boolean checkForBeta) {
 		setBoolean("checkForBeta", checkForBeta);
@@ -954,5 +959,6 @@ public class LocalPreferences {
 	private void setString(String property, String value) {
 		props.setProperty(property, value);
     }
+
 
 }

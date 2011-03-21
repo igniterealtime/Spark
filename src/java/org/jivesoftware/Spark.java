@@ -37,14 +37,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFeel;
+
 
 
 /**
@@ -56,9 +55,11 @@ import org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFee
  */
 public final class Spark {
 
-    private static final String USER_SPARK_HOME = System.getenv("APPDATA") != null && !System.getenv("APPDATA").equals("") 
-    													?  System.getenv("APPDATA") + "/" + getUserConf()  
-    													:  System.getProperties().getProperty("user.home") + "/" + getUserConf();
+    private static final String USER_SPARK_HOME = System.getenv("APPDATA") != null
+	    && !System.getenv("APPDATA").equals("") ? System.getenv("APPDATA")
+	    + "/" + getUserConf() : System.getProperties().getProperty(
+	    "user.home")
+	    + "/" + getUserConf();
 
     public static String ARGUMENTS;
 
@@ -130,9 +131,7 @@ public final class Spark {
         if(!XTRA_DIRECTORY.exists()){
         	
         	XTRA_DIRECTORY.mkdirs();
-        	//TODO methode an richtige stelle setzen
-        	//copyEmoticonFiles();
-
+        	// TODO implement copyEmoticonFiles();
         }
 
         final String workingDirectory = System.getProperty("appdir");
@@ -171,65 +170,37 @@ public final class Spark {
         loadLanguage();
 
         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        boolean useSystemLookAndFeel = preferences.useSystemLookAndFeel();
+        final String laf = preferences.getLookAndFeel();
 
-        try {
-            String classname = UIManager.getSystemLookAndFeelClassName();
+	try {
+	    String classname = UIManager.getSystemLookAndFeelClassName();
+	    if (laf.toLowerCase().contains("substance")) {
+		EventQueue.invokeLater(new Runnable() {
+		    public void run() {
+			try {
+			    if (Spark.isWindows()) {
+				JFrame.setDefaultLookAndFeelDecorated(true);
+				JDialog.setDefaultLookAndFeelDecorated(true);
+			    }
+			    UIManager.setLookAndFeel(laf);
+			} catch (Exception e) {
+			    // dont care
+			    e.printStackTrace();
+			}
+		    }
+		});
+	    } else {
+		try {
+		    UIManager.setLookAndFeel(classname);
 
-            if (classname.indexOf("Windows") != -1) {
-                try {
-                    if (useSystemLookAndFeel) {
-                        UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
-                    }
-                    else {
-                   	 EventQueue.invokeLater(new Runnable() {
-                  		 public void run() {
-                  			try {
-	                   				if (Spark.isWindows()) {
-	    	            				JFrame.setDefaultLookAndFeelDecorated(true);
-	    	            				JDialog.setDefaultLookAndFeelDecorated(true);
-	                   				}
-   									UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-   								}
-   								catch (UnsupportedLookAndFeelException e) {
-   									e.printStackTrace();
-   								}
-                  		 }
-                  	 });
-                    }
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            else if (classname.indexOf("mac") != -1 || classname.indexOf("apple") != -1) {
-                UIManager.setLookAndFeel(classname);
-            }
-            else {
-                if (useSystemLookAndFeel) {
-                    UIManager.setLookAndFeel(classname);
-                }
-                else {
-               	 EventQueue.invokeLater(new Runnable() {
-               		 public void run() {
-               			try {
-							UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-						}
-						catch (UnsupportedLookAndFeelException e) {
-							e.printStackTrace();
-						}
-               		 }
-               	 });
-               
-                }
-            }
-
-            // Update install ui properties.
-            installBaseUIProperties();
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    }
+	} catch (Exception e) {
+	    Log.error(e);
+	}
+	installBaseUIProperties();
 
 
         buf.append(classPath);

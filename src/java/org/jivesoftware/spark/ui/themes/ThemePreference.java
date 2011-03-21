@@ -68,6 +68,18 @@ public class ThemePreference implements Preference {
 
         return panel;
     }
+    
+    /**
+     * Returns the LookAndFeel with package origin <br>
+     * for example:
+     * <code>com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</code>
+     * 
+     * @return {@link String}
+     */
+    public String getLookAndFeel()
+    {
+	return panel.getLookAndFeel();
+    }
 
     public void loadFromFile() {
 
@@ -97,7 +109,7 @@ public class ThemePreference implements Preference {
             pref.setEmoticonPack(pack);
         }
         pref.setEmoticonsEnabled(emotEnabled);
-        pref.setUseSystemLookAndFeel(panel.useSystemLookAndFeel());
+        pref.setLookAndFeel(panel.getLookAndFeel());
         pref.setAvatarVisible(panel.areAvatarsVisible());
         pref.setContactListIconSize(panel.getContactListIconSize());
         pref.setVCardsVisible(panel.areVCardsVisible());
