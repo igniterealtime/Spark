@@ -405,8 +405,8 @@ public final class Spark {
         return System.getProperties().getProperty("user.home");
     }
 
-    public static boolean isCustomBuild() {
-	return Default.getBoolean("CUSTOM");
+    public static boolean disableUpdatesOnCustom() {
+	return Default.getBoolean("DISABLE_UPDATES");
     }
     
 	public static void setApplicationFont(Font f) {

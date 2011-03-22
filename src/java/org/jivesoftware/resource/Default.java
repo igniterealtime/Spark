@@ -44,7 +44,7 @@ public class Default {
     public static final String SHOW_POWERED_BY = "SHOW_POWERED_BY";
     public static final String TOP_BOTTOM_BACKGROUND_IMAGE = "TOP_BOTTOM_BACKGROUND_IMAGE";
     public static final String BRANDED_IMAGE = "BRANDED_IMAGE";
-    public static final String CUSTOM = "CUSTOM";
+    public static final String DISABLE_UPDATES = "DISABLE_UPDATES";
     public static final String SECONDARY_BACKGROUND_IMAGE = "SECONDARY_BACKGROUND_IMAGE";
     public static final String HOVER_TEXT_COLOR = "HOVER_TEXT_COLOR";
     public static final String TEXT_COLOR = "TEXT_COLOR";
@@ -63,7 +63,8 @@ public class Default {
     public static final String DEFAULT_LOOK_AND_FEEL = "DEFAULT_LOOK_AND_FEEL";
     public static final String INSTALL_PLUGINS_DISABLED = "INSTALL_PLUGINS_DISABLED";
     public static final String DEINSTALL_PLUGINS_DISABLED = "DEINSTALL_PLUGINS_DISABLED";
-
+    public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
+    public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
@@ -88,7 +89,7 @@ public class Default {
     }
     
     public static boolean getBoolean(String propertyName) {
-	return prb.getString(propertyName).equals("true");
+	return getString(propertyName).equals("true");
     }
 
     public static ImageIcon getImageIcon(String imageName) {

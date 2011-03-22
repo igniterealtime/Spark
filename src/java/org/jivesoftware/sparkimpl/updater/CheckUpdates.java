@@ -98,7 +98,7 @@ public class CheckUpdates {
     }
 
     public SparkVersion newBuildAvailable() {
-        if (!sparkPluginInstalled && !Spark.isCustomBuild()) {
+        if (!sparkPluginInstalled && !Spark.disableUpdatesOnCustom()) {
             // Handle Jivesoftware.org update
             return isNewBuildAvailableFromJivesoftware();
         }

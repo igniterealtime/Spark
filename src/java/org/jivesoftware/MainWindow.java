@@ -93,7 +93,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private JCheckBoxMenuItem alwaysOnTopItem;
     
     private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-    private final JMenuItem helpMenuItem = new JMenuItem();
+    private final JMenuItem sparkforumItem = new JMenuItem();
 
     private final JMenuBar mainWindowBar = new JMenuBar();
 
@@ -475,11 +475,14 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         viewErrors.putValue(Action.NAME, Res.getString("menuitem.view.logs"));
 
         final Action viewHelpGuideAction = new AbstractAction() {
+            
+            	final String url = Default.getString(Default.HELP_USER_GUIDE);
 			private static final long serialVersionUID = 2680369963282231348L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    BrowserLauncher.openURL("http://www.igniterealtime.org/builds/spark/docs/spark_user_guide.pdf");
+                    
+                    BrowserLauncher.openURL(url);
                 }
                 catch (Exception e) {
                     Log.error("Unable to load online help.", e);
@@ -487,15 +490,17 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         };
 
-        //EventQueue.invokeLater(new Runnable() {
-    	  // 	public void run() {
-        
-        if (!Spark.isCustomBuild()) {
-            viewHelpGuideAction.putValue(Action.NAME, Res.getString("menuitem.user.guide"));
-            viewHelpGuideAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
-            helpMenu.add(viewHelpGuideAction);
-            helpMenu.add(helpMenuItem);
-        }
+
+	if (!Default.getBoolean("HELP_USER_GUIDE_DISABLED")) {
+	    viewHelpGuideAction.putValue(Action.NAME,
+		    Res.getString("menuitem.user.guide"));
+	    viewHelpGuideAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+	    helpMenu.add(viewHelpGuideAction);
+	}
+	if (!Default.getBoolean("HELP_FORUM_DISABLED")) {
+	    helpMenu.add(sparkforumItem);
+	}
         
         // Build Help Menu
         helpMenu.add(updateMenu);
@@ -507,38 +512,43 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         ResourceUtils.resButton(preferenceMenuItem, Res.getString("menuitem.preferences"));
         ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
         ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
-        ResourceUtils.resButton(helpMenuItem, Res.getString("menuitem.online.help"));
 
+	if (Default.getString("HELP_FORUM_TEXT").length() > 0) {
+	    ResourceUtils.resButton(sparkforumItem, Default.getString("HELP_FORUM_TEXT"));
+	} else {
+	    ResourceUtils.resButton(sparkforumItem, Res.getString("menuitem.online.help"));
+	}
         // Register shutdown with the exit menu.
-        exitMenuItem.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -2301236575241532698L;
+	exitMenuItem.addActionListener(new AbstractAction() {
+	    private static final long serialVersionUID = -2301236575241532698L;
 
-			public void actionPerformed(ActionEvent e) {
-                shutdown();
-            }
-        });
+	    public void actionPerformed(ActionEvent e) {
+		shutdown();
+	    }
+	});
 
-        helpMenuItem.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -1423433460333010339L;
+	sparkforumItem.addActionListener(new AbstractAction() {
+	    private static final long serialVersionUID = -1423433460333010339L;
 
-			public void actionPerformed(ActionEvent e) {
-                try {
-                    BrowserLauncher.openURL("http://www.igniterealtime.org/forum/forum.jspa?forumID=49");
-                }
-                catch (Exception browserException) {
-                    Log.error("Error launching browser:", browserException);
-                }
-            }
-        });
+	    final String url = Default.getString("HELP_FORUM");
+
+	    public void actionPerformed(ActionEvent e) {
+		try {
+		    BrowserLauncher.openURL(url);
+		} catch (Exception browserException) {
+		    Log.error("Error launching browser:", browserException);
+		}
+	    }
+	});
 
         // Show About Box
-        menuAbout.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -7173666373051354502L;
+	menuAbout.addActionListener(new AbstractAction() {
+	    private static final long serialVersionUID = -7173666373051354502L;
 
-			public void actionPerformed(ActionEvent e) {
-                showAboutBox();
-            }
-        });
+	    public void actionPerformed(ActionEvent e) {
+		showAboutBox();
+	    }
+	});
 
         // Execute spark update checker after one minute.
         final TimerTask task = new SwingTimerTask() {

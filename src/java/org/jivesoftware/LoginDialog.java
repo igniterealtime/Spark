@@ -328,15 +328,17 @@ public final class LoginDialog {
             savePasswordBox.addActionListener(this);
             autoLoginBox.addActionListener(this);
 
-
             if (!Default.getBoolean(Default.ACCOUNT_DISABLED)) {
                 buttonPanel.add(createAccountButton,
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                                GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+                                GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
             }
+            
+            if(!Default.getBoolean(Default.ADVANCED_DISABLED)){
             buttonPanel.add(advancedButton,
-                    new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+                    new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+            }
             buttonPanel.add(loginButton,
                     new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
