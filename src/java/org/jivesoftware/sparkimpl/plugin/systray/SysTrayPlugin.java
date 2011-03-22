@@ -152,8 +152,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 				}
 			});
 
-			if (Spark.isWindows()) {
-				popupMenu.add(logoutMenu);
+			if (Spark.isWindows()) {			    
+			    if(!Default.getBoolean("DISABLE_EXIT"))
+			    	popupMenu.add(logoutMenu);
+				
 				logoutMenu.addActionListener(new AbstractAction() {
 					private static final long serialVersionUID = 1L;
 
@@ -172,7 +174,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, MessageEventNotific
 					SparkManager.getMainWindow().shutdown();
 				}
 			});
-			popupMenu.add(exitMenu);
+			if(!Default.getBoolean("DISABLE_EXIT"))
+			    popupMenu.add(exitMenu);
 
             /**
              * If connection closed set offline tray image

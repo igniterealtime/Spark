@@ -285,7 +285,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Log.error(ex);
         }
         // Close application.
-        System.exit(1);
+        if(!Default.getBoolean("DISABLE_EXIT"))
+            System.exit(1);
+        
     }
 
     /**
@@ -415,8 +417,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
         connectMenu.add(alwaysOnTopItem);
         
-        
-        connectMenu.addSeparator();
+        if(!Default.getBoolean("DISABLE_EXIT"))
+            connectMenu.addSeparator();
         
         //EventQueue.invokeLater(new Runnable() {
    	   //	public void run() {
@@ -437,13 +439,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         });
 
-        if (Spark.isWindows() || Spark.isLinux()) {
+        if ((Spark.isWindows() || Spark.isLinux()) && !Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(logoutMenuItem);
             connectMenu.add(logoutWithStatus);
 	    connectMenu.addSeparator();
 	}
 
-        if (!Spark.isMac()) {
+        if (!Spark.isMac() && !Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(exitMenuItem);
         }
 

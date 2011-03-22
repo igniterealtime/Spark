@@ -37,7 +37,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -198,6 +200,8 @@ public class ThemePanel extends JPanel {
 			SwingUtilities.updateComponentTreeUI(_thispanel.getParent());	
 			SwingUtilities.updateComponentTreeUI(SparkManager.getMainWindow());
 			SwingUtilities.updateComponentTreeUI(SparkManager.getChatManager().getChatContainer());
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
 			_thispanel.invalidate();
 			_thispanel.repaint();
 			_thispanel.validate();

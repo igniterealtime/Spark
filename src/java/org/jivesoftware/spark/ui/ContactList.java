@@ -1423,7 +1423,9 @@ public final class ContactList extends JPanel implements ActionListener,
         	popup.add(addContactMenu);
         }
 
-        popup.add(addContactGroupMenu);
+        if(!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED")){
+            popup.add(addContactGroupMenu);
+        }
         popup.addSeparator();
 
         fireContextMenuListenerPopup(popup, group);
@@ -1929,7 +1931,10 @@ public final class ContactList extends JPanel implements ActionListener,
         if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
         	contactsMenu.add(addContactsMenu);
         }
-        contactsMenu.add(addContactGroupMenu);
+       if(!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED")){      
+	       contactsMenu.add(addContactGroupMenu);
+       }
+       
         addContactsMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new RosterDialog().showRosterDialog();

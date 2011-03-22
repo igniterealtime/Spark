@@ -211,17 +211,15 @@ public final class Spark {
     private void loadLookAndFeel() {
 	final LocalPreferences preferences = SettingsManager.getLocalPreferences();
 	final String laf;
-	if(Default.getString(Default.DEFAULT_LOOK_AND_FEEL).length()>0)
-	{
+	if (Default.getString(Default.DEFAULT_LOOK_AND_FEEL).length() > 0) {
 	    laf = Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
-	}
-	else
-	{
+	} else if (preferences.getLookAndFeel().length() > 0) {
 	    laf = preferences.getLookAndFeel();
+	} else {
+	    laf = UIManager.getSystemLookAndFeelClassName();
 	}
        
 	try {
-	    String classname = UIManager.getSystemLookAndFeelClassName();
 	    if (laf.toLowerCase().contains("substance")) {
 		EventQueue.invokeLater(new Runnable() {
 		    public void run() {
@@ -239,7 +237,12 @@ public final class Spark {
 		});
 	    } else {
 		try {
-		    UIManager.setLookAndFeel(classname);
+		    if(Spark.isWindows()) {
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+		    }
+		    UIManager.setLookAndFeel(laf);
+		    
 
 		} catch (Exception e) {
 		    e.printStackTrace();
