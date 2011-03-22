@@ -325,7 +325,7 @@ public class SparkTabbedPane extends JPanel {
 
 	private class TabPanel extends JPanel {
 		private static final long serialVersionUID = -8249981130816404360L;
-		private final BorderLayout layout = new BorderLayout();
+		private final BorderLayout layout = new BorderLayout(5,5);
 		private final Font defaultFont = new Font("Dialog", Font.PLAIN, 11);
 		private JLabel iconLabel;
 		private JLabel titleLabel;
@@ -333,6 +333,7 @@ public class SparkTabbedPane extends JPanel {
 		public TabPanel(final SparkTab sparktab, String title, Icon icon) {
 			setOpaque(false);		
 			this.setLayout(layout);
+			
 			titleLabel = new JLabel(title);
 			titleLabel.setFont(defaultFont);
 			if (icon != null)
@@ -340,6 +341,7 @@ public class SparkTabbedPane extends JPanel {
 				iconLabel = new JLabel(icon);
 				add(iconLabel, BorderLayout.WEST);
 			}
+			
 			add(titleLabel, BorderLayout.CENTER);
 			if (closeEnabled) {
 				final JLabel tabCloseButton = new JLabel(
