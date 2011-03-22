@@ -164,16 +164,14 @@ public class PresenceChangePlugin implements Plugin {
 					    }
 					});
 				    } 
+				   
 				    ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
 				    
 				    if (localPref.getWindowTakesFocus())
 				    {
 					SparkManager.getChatManager().activateChat(jid, nickname);
-				    } else
-				    {
-					room.setVisible(true);
-					SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
 				    }
+				   
 				    room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
 				    
 				}

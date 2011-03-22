@@ -260,7 +260,26 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     public synchronized void addChatRoom(final ChatRoom room) {
         createFrameIfNeeded();
+        LocalPreferences pref = SettingsManager.getLocalPreferences(); 
+        
+        
+        if(pref.getWindowTakesFocus() && !chatFrame.isVisible())
+        {
+           chatFrame.setState(Frame.NORMAL);
+           chatFrame.setVisible(true);
+        }
 
+        if (!pref.getWindowTakesFocus() && !chatFrame.isVisible())
+        {
+            chatFrame.setState(Frame.ICONIFIED);
+            chatFrame.setVisible(true);
+        }
+        
+      
+        
+       
+        
+        
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
         AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(room.getRoomname()));
 
@@ -1162,6 +1181,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (chatFrame != null) {
             return;
         }
+
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         if (pref.isDockingEnabled()) {
@@ -1170,7 +1190,21 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         else {
             chatFrame = new ChatFrame();
         }
+        if(pref.getWindowTakesFocus())
+        {
+           chatFrame.setState(Frame.NORMAL);
+           
+        }
 
+        if (!pref.getWindowTakesFocus())
+        {
+            chatFrame.setState(Frame.ICONIFIED);
+            
+        }
+      
+        
+        chatFrame.setVisible(true);
+        
         chatFrame.addWindowListener(new WindowAdapter() {
             public void windowActivated(WindowEvent windowEvent) {
                 stopFlashing();
