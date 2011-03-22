@@ -65,7 +65,7 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
 			    cl.getResource("text_ok.png"));
 		    _spellingButton = new RolloverButton(spellingIcon);
 		    _spellingButton.setToolTipText(GraphicUtils
-			    .createToolTip("Check Spelling"));
+			    .createToolTip(SpellcheckerResource.getString("button.check.spelling")));
 		    _spellingButton
 			    .addActionListener(SpellcheckChatRoomDecorator.this);
 		    _room.getEditorBar().add(_spellingButton);
