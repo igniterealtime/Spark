@@ -3,8 +3,8 @@
 
 JNIEXPORT void JNICALL Java_org_jivesoftware_spark_plugin_flashing_FlashWindow_flash(JNIEnv * env, jobject obj, jstring windowTitle, jboolean flash)
 {
-	const char* cWindowTitle = env->GetStringUTFChars(windowTitle, 0);
-	HWND hwnd = FindWindow(NULL, cWindowTitle);
-	env->ReleaseStringUTFChars(windowTitle, cWindowTitle);
+	const wchar_t * utf16 = (wchar_t *)env->GetStringChars(windowTitle, NULL);	
+	HWND hwnd = FindWindowW(NULL, utf16);	
+	env->ReleaseStringChars(windowTitle, (jchar*)utf16);
 	FlashWindow(hwnd, flash);
 }
