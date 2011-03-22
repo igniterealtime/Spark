@@ -36,21 +36,14 @@ public class FlashWindow {
 
 	static {
 	    
-	    // Check if we are on Windows 64bit Architecture by determining if there is a
-	    // ProgramFIles(x86) folder, which is only on win-64bit not on 32bit
-	boolean is64bit = false;
-	if (System.getProperty("os.name").contains("Windows")) {
-	    is64bit = (System.getenv("ProgramFiles(x86)") != null);
-	} else {
-	    is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
-	}
-	String s = "";
+	boolean is64bit = Integer.parseInt(System.getProperty("sun.arch.data.model")) == 64;
+	String arch = "";
 	if (is64bit) {
-	    s = "64";
+	    arch = "64";
 	}
 		System.load(PluginManager.PLUGINS_DIRECTORY + File.separator
 				+ "flashing" + File.separator + "lib" + File.separator
-				+ "FlashWindow"+s+".dll");
+				+ "FlashWindow"+arch+".dll");
 		// System.load("C:\\PATH\FlashWindow"+s+".dll");
 	}
 
