@@ -163,7 +163,7 @@ public class ChatRoomImpl extends ChatRoom {
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
         if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
-            if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+            if(!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
             	getToolBar().addChatRoomButton(addToRosterButton);
             }
             addToRosterButton.addActionListener(this);

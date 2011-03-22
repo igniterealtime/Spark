@@ -59,6 +59,11 @@ public class Default {
     public static final String CHANGE_PASSWORD_DISABLED = "CHANGE_PASSWORD_DISABLED";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
     public static final String FRAME_IMAGE = "FRAME_IMAGE";
+    public static final String LOOK_AND_FEEL_DISABLED = "LOOK_AND_FEEL_DISABLED";
+    public static final String DEFAULT_LOOK_AND_FEEL = "DEFAULT_LOOK_AND_FEEL";
+    public static final String INSTALL_PLUGINS_DISABLED = "INSTALL_PLUGINS_DISABLED";
+    public static final String DEINSTALL_PLUGINS_DISABLED = "DEINSTALL_PLUGINS_DISABLED";
+
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
@@ -80,6 +85,10 @@ public class Default {
 
     public static String getString(String propertyName) {
         return prb.getString(propertyName);
+    }
+    
+    public static boolean getBoolean(String propertyName) {
+	return prb.getString(propertyName).equals("true");
     }
 
     public static ImageIcon getImageIcon(String imageName) {

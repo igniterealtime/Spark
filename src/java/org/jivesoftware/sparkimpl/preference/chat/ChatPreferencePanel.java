@@ -103,7 +103,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         generalPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.general.information")));
         chatWindowPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.chat.window.information")));
 
-        if (!"true".equals(Default.getString(Default.CHANGE_PASSWORD_DISABLED))) {
+        if (!Default.getBoolean(Default.CHANGE_PASSWORD_DISABLED)) {
         	add(generalPanel);
         }
         add(chatWindowPanel);

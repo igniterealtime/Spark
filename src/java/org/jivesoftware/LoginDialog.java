@@ -329,7 +329,7 @@ public final class LoginDialog {
             autoLoginBox.addActionListener(this);
 
 
-            if (!"true".equals(Default.getString(Default.ACCOUNT_DISABLED))) {
+            if (!Default.getBoolean(Default.ACCOUNT_DISABLED)) {
                 buttonPanel.add(createAccountButton,
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
@@ -899,7 +899,7 @@ public final class LoginDialog {
                     if (!ModelUtil.hasLength(resource)) {
                         resource = "spark";
                     }                   
-                    connection.login(getUsername(), getPassword(), resource);
+                    connection.login(getUsername(), getPassword(), modifyWildcards(resource));
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getUsername(), getPassword());
@@ -1007,7 +1007,27 @@ public final class LoginDialog {
             return !hasErrors;
         }
 
-        public void handle(Callback[] callbacks) throws IOException  {
+        /**
+         * Modifies Wildcards such as <code>$r</code>,<code>$s</code>,<code>$v</code>
+         * into what they represent r = randomnumber , s=os.name, v=os.version
+         * @param resource
+         * @return
+         */
+	private String modifyWildcards(String resource) {
+
+	    resource = resource.replace("$r",
+		    "" + Math.round((Math.random() * 1000)));
+
+	    resource = resource.replace("$s", System.getProperty("os.name")
+		    .replace(" ", ""));
+
+	    resource = resource.replace("$v", System.getProperty("os.version")
+		    .replace(" ", ""));
+
+	    return resource;
+	}
+
+	public void handle(Callback[] callbacks) throws IOException  {
             for (Callback callback : callbacks) {
                 if (callback instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) callback;

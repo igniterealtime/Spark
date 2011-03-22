@@ -281,7 +281,7 @@ public final class ContactList extends JPanel implements ActionListener,
 
 
         final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
-        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
         	commandPanel.add(addContactButton);
         }
         addContactButton.setToolTipText(Res.getString("message.add.a.contact"));
@@ -1419,7 +1419,7 @@ public final class ContactList extends JPanel implements ActionListener,
 
 
         final JPopupMenu popup = new JPopupMenu();
-        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
         	popup.add(addContactMenu);
         }
 
@@ -1926,7 +1926,7 @@ public final class ContactList extends JPanel implements ActionListener,
         ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
         ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 
-        if (!"true".equals(Default.getString(Default.ADD_CONTACT_DISABLED))) {
+        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
         	contactsMenu.add(addContactsMenu);
         }
         contactsMenu.add(addContactGroupMenu);

@@ -27,6 +27,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.PluginManager;
@@ -115,8 +116,9 @@ public class PluginViewer extends JPanel implements Plugin {
 					
 					   // Add Tabs
 					   tabbedPane.addTab(Res.getString("tab.installed.plugins"), new JScrollPane(installedPanel));
-					   tabbedPane.addTab(Res.getString("tab.available.plugins"), new JScrollPane(availablePanel));
-					
+					   if(!Default.getBoolean(Default.INSTALL_PLUGINS_DISABLED)){
+					   tabbedPane.addTab(Res.getString("tab.available.plugins"), new JScrollPane(availablePanel));	   
+					   }
 					
 					   loadInstalledPlugins();
 					

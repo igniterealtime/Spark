@@ -40,6 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.PluginManager;
@@ -167,6 +168,9 @@ public class SparkPlugUI extends JPanel {
             setBackground(new Color(234, 230, 212));
             showOperationButton();
             setBorder(BorderFactory.createEtchedBorder());
+	    if (Default.getBoolean(Default.DEINSTALL_PLUGINS_DISABLED)) {
+		installButton.setVisible(false);
+	    }
         }
         else {
             setBackground(Color.white);

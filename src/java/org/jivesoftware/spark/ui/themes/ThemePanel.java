@@ -20,6 +20,7 @@
 package org.jivesoftware.spark.ui.themes;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.TranscriptWindow;
@@ -147,6 +148,10 @@ public class ThemePanel extends JPanel {
 	
         
         _lookandfeel = new JComboBox(lafname);
+        
+        if (Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)){
+            _lookandfeel.disable();
+        }
         _lookandfeelLabel = new JLabel(Res.getString("lookandfeel.select"));
         _lookandfeelpreview = new JButton(Res.getString("lookandfeel.change.now"));
         

@@ -169,38 +169,10 @@ public final class Spark {
         // Set default language set by the user.
         loadLanguage();
 
-        final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        final String laf = preferences.getLookAndFeel();
-
-	try {
-	    String classname = UIManager.getSystemLookAndFeelClassName();
-	    if (laf.toLowerCase().contains("substance")) {
-		EventQueue.invokeLater(new Runnable() {
-		    public void run() {
-			try {
-			    if (Spark.isWindows()) {
-				JFrame.setDefaultLookAndFeelDecorated(true);
-				JDialog.setDefaultLookAndFeelDecorated(true);
-			    }
-			    UIManager.setLookAndFeel(laf);
-			} catch (Exception e) {
-			    // dont care
-			    e.printStackTrace();
-			}
-		    }
-		});
-	    } else {
-		try {
-		    UIManager.setLookAndFeel(classname);
-
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-	    }
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-	installBaseUIProperties();
+        /**
+         * Loads the LookandFeel
+         */
+        loadLookAndFeel();
 
 
         buf.append(classPath);
@@ -231,6 +203,52 @@ public final class Spark {
         catch(Exception ex) {
         	ex.printStackTrace();
         }
+    }
+
+    /**
+     * Handles the Loading of the Look And Feel
+     */
+    private void loadLookAndFeel() {
+	final LocalPreferences preferences = SettingsManager.getLocalPreferences();
+	final String laf;
+	if(Default.getString(Default.DEFAULT_LOOK_AND_FEEL).length()>0)
+	{
+	    laf = Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
+	}
+	else
+	{
+	    laf = preferences.getLookAndFeel();
+	}
+       
+	try {
+	    String classname = UIManager.getSystemLookAndFeelClassName();
+	    if (laf.toLowerCase().contains("substance")) {
+		EventQueue.invokeLater(new Runnable() {
+		    public void run() {
+			try {
+			    if (Spark.isWindows()) {
+				JFrame.setDefaultLookAndFeelDecorated(true);
+				JDialog.setDefaultLookAndFeelDecorated(true);
+			    }
+			    UIManager.setLookAndFeel(laf);
+			} catch (Exception e) {
+			    // dont care
+			    e.printStackTrace();
+			}
+		    }
+		});
+	    } else {
+		try {
+		    UIManager.setLookAndFeel(classname);
+
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    }
+	} catch (Exception e) {
+	    Log.error(e);
+	}
+	installBaseUIProperties();
     }
 
 
@@ -388,7 +406,7 @@ public final class Spark {
     }
 
     public static boolean isCustomBuild() {
-        return "true".equals(Default.getString("CUSTOM"));
+	return Default.getBoolean("CUSTOM");
     }
     
 	public static void setApplicationFont(Font f) {
@@ -400,6 +418,9 @@ public final class Spark {
 		}
 	}
 
+    /**
+     * Sets Spark specific colors
+     */
     public static void installBaseUIProperties() {
     	setApplicationFont(new Font("Dialog", Font.PLAIN, 11));
         UIManager.put("TextField.lightforeground", Color.gray);
