@@ -30,7 +30,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
 import org.dts.spell.SpellChecker;
-import org.dts.spell.dictionary.OpenOfficeSpellDictionary;
+import org.dts.spell.dictionary.openoffice.OpenOfficeSpellDictionary;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
