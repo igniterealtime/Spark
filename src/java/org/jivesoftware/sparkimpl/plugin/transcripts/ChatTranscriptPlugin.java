@@ -86,7 +86,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  */
 public class ChatTranscriptPlugin implements ChatRoomListener {
 
-    private final String timeFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
+    private final String timeFormat = "HH:mm:ss";
     private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
@@ -342,9 +342,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final TimerTask transcriptTask = new TimerTask() {
                     public void run() {
                         final ChatTranscript transcript = (ChatTranscript)get();
-                        final List<HistoryMessage> list = transcript.getMessage(
-							                        		Res.getString("message.search.for.history").equals(searchField.getText())
-							                        			? null : searchField.getText());
+                        final List<HistoryMessage> list = transcript.getMessages();
+                        
                         final String personalNickname = SparkManager.getUserManager().getNickname();
                         Date lastPost = null;
                         String lastPerson = null;
@@ -373,12 +372,23 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
                             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
-                            int diff = DateUtils.getDaysDiff(lastPostTime, message.getDate().getTime());
+                           
+                            
+                            int diff = 0;
+			    if (DateUtils.getDaysDiff(lastPostTime, message
+				    .getDate().getTime()) != 0) {
+				diff = DateUtils.getDaysDiff(lastPostTime,
+					message.getDate().getTime());
+			    } else {
+				diff = DateUtils.getDayOfWeek(lastPostTime)
+					- DateUtils.getDayOfWeek(message
+						.getDate().getTime());
+			    }
+
                             if (diff != 0) {
                                 if (initialized) {
                                     builder.append("<tr><td><br></td></tr>");
-                                }
-
+                                }                               
                                 builder.append("<tr><td colspan=2><font size=4 color=gray><b><u>").append(notificationDateFormatter.format(message.getDate())).append("</u></b></font></td></tr>");
                                 lastPerson = null;
                                 initialized = true;
