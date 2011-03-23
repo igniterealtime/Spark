@@ -47,6 +47,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
@@ -64,6 +65,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.spark.ChatAreaSendField;
@@ -71,6 +73,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -263,7 +266,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Add Key Listener to Send Field
         chatEditorKeyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                checkForEnter(e);
+                checkForEnter(e);        
             }
         };
 
@@ -278,8 +281,112 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 closeChatRoom();
             }
         });
+        
+        getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SPACE"), "handleCompletion");
+        getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
+    			private static final long serialVersionUID = 1L;
+
+    			public void actionPerformed(ActionEvent evt) {
+                // handle name completion.
+                try {
+		    handleNickNameCompletion();
+		} catch (ChatRoomNotFoundException e) {  
+		   Log.error("ctlr-space nickname find", e);
+		}
+            }
+        });
+    
     }
 
+
+    /**
+     * Handles the Nickname Completion dialog, when Pressing CTRL + SPACE<br>
+     * it searches for matches in the current GroupchatList and also in the
+     * Roster
+     * 
+     * @throws ChatRoomNotFoundException
+     *             when for some reason the GroupChatRoom cannot be found, this
+     *             should <u>not</u> happen, since we retrieve it from the
+     *             ActiveWindowTab and thus <u>can be ignored</u>
+     * @author wolf.posdorfer
+     */
+    private void handleNickNameCompletion() throws ChatRoomNotFoundException {
+
+	String name = getChatInputEditor().getText();
+	if (name.length() < 1)
+	    return;
+	else if (name.contains(" ")) {
+	    if (name.substring(name.lastIndexOf(" ") + 1).length() > 0) {
+		name = name.substring(name.lastIndexOf(" ") + 1);
+	    }
+	}
+	
+	Collection<String> groupchatlist = new ArrayList<String>();
+	Collection<RosterEntry> rosterlist = SparkManager.getConnection().getRoster().getEntries();
+	
+	if(SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom)
+	{
+	    groupchatlist  =((GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom()).getParticipants();   
+	}
+	String newname = null;
+	ArrayList<String> namelist = new ArrayList<String>();
+
+	for (String lol : groupchatlist) {
+	    lol = lol.substring(lol.lastIndexOf("/") + 1);
+	    if (lol.toLowerCase().startsWith(name.toLowerCase())) {
+		if (newname == null) {
+		    newname = lol;
+		}
+		namelist.add(lol);
+	    }
+	}
+
+	for (RosterEntry re : rosterlist) {
+	    if (re.getName().toLowerCase().startsWith(name.toLowerCase())
+		    && !namelist.contains(re.getName())) {
+		if (newname == null) {
+		    newname = re.getName();
+		}
+		namelist.add(re.getName());
+	    }
+	}
+
+	if (newname == null) {
+	    newname = "";
+	} else {
+	    newname = newname.substring(name.length());
+	}
+
+	if (namelist.size() <= 1) {
+	    // If we only have 1 match, use newname
+	    getChatInputEditor().setText(newname);
+	} else {
+	    // create Popupmenu creating all other matches
+	    final JPopupMenu popup = new JPopupMenu();
+	    final String namefinal = name;
+	    for (final String s : namelist) {
+		    JMenuItem temp = new JMenuItem(s);
+		    popup.add(temp);
+		    temp.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = 168886428519741638L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			    getChatInputEditor().setText(
+				    s.substring(namefinal.length()));
+			    popup.setVisible(false);
+
+			}
+		    });
+
+	    }
+	    popup.show((Component) SparkManager.getChatManager()
+		    .getChatContainer(), getChatInputEditor().getCaret()
+		    .getMagicCaretPosition().x, SparkManager.getChatManager()
+		    .getChatContainer().getHeight() - 20);
+	}
+
+    }
 
     // I would normally use the command pattern, but
     // have no real use when dealing with just a couple options.

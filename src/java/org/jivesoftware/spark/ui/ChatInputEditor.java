@@ -77,8 +77,11 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         this.requestFocusInWindow();
     }
 
+    /**
+     * Only use if necessary
+     */
     public void setText(String str) {
-        // Do nothing.
+        super.setText(str);
     }
 
     public void removeUpdate(DocumentEvent e) {
