@@ -360,7 +360,7 @@ public class UserManager {
 
     public void searchContacts(String contact, final JFrame parent) {
         if (parents.get(parent) == null) {
-            parents.put(parent, parent.getGlassPane());
+        	parents.put(parent, parent.getGlassPane());
         }
 
         // Make sure we are using the default glass pane
@@ -394,7 +394,7 @@ public class UserManager {
         layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
         layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
-
+        
         contactField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -422,6 +422,22 @@ public class UserManager {
 
         contactField.getList().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+        	if(e.getButton() == MouseEvent.BUTTON3)
+        	{
+        	    contactField.setSelectetIndex(e);
+        	    ContactItem item = contactField.getSelectedContactItem();
+                    
+		    // get a new width, sometimes the popup appears under the
+		    // current panel, that suxx, so get a different location
+        	    int w1 = item.getNicknameLabel().getWidth();
+        	    int w2=5;
+        	    if(item.getIcon()!=null)
+        		w2 = item.getIcon().getIconWidth();
+                    int newWidthforStuff = w1+w2 +5;
+        	        MouseEvent exx = new MouseEvent((Component)e.getSource(),e.getID(), e.getWhen(),e.getModifiers(),newWidthforStuff, e.getY(), e.getClickCount(), false);
+        	    SparkManager.getContactList().showPopup(contactField,exx,item);
+        	}
+        	
                 if (e.getClickCount() == 2) {
                     if (ModelUtil.hasLength(contactField.getText())) {
                         ContactItem item = contactMap.get(contactField.getText());

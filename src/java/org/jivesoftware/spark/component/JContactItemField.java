@@ -303,6 +303,16 @@ public class JContactItemField extends JPanel {
     public boolean canClose() {
         return !textField.hasFocus();
     }
+    
+    /**
+     * sets the selected Index using the Point of a given {@link MouseEvent}
+     * @param mouseevent - {@link MouseEvent} to get The {@link Point} from
+     */
+    public void setSelectetIndex(MouseEvent mouseevent)
+    {	
+	Point p = mouseevent.getPoint();
+	list.setSelectedIndex(list.locationToIndex(p));
+    }
 
 
 }

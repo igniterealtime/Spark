@@ -73,6 +73,7 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
@@ -247,8 +248,19 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 			private static final long serialVersionUID = -6904085783599775675L;
 
 			public void actionPerformed(ActionEvent evt) {
-                SparkManager.getUserManager().searchContacts("", SparkManager.getChatManager().getChatContainer().getChatFrame());
-            }
+			    SwingWorker worker = new SwingWorker() {
+			        
+			        @Override
+			        public Object construct() {
+			    	return 42;
+			        }
+			        @Override
+			        public void finished() {
+			            SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
+			        }
+			    };
+			    worker.start();
+                  }
         });
     }
 

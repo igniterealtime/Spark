@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1517,13 +1516,18 @@ public final class ContactList extends JPanel implements ActionListener,
         activeGroup = group;
     }
 
+    
+    public void showPopup(MouseEvent e, final ContactItem item)
+    {
+	showPopup(null,e,item);
+    }
     /**
      * Shows popup for right-clicking of ContactItem.
      *
      * @param e    the MouseEvent
      * @param item the ContactItem
      */
-    public void showPopup(MouseEvent e, final ContactItem item) {
+    public void showPopup(Component component, MouseEvent e, final ContactItem item) {
         if (item.getJID() == null) {
             return;
         }
@@ -1674,7 +1678,12 @@ public final class ContactList extends JPanel implements ActionListener,
         fireContextMenuListenerPopup(popup, item);
 
         ContactGroup group = getContactGroup(item.getGroupName());
-        popup.show(group.getList(), e.getX(), e.getY());
+	if (component == null) {
+	    popup.show(group.getList(), e.getX(), e.getY());
+	} else {
+	    popup.show(component, e.getX(), e.getY());
+	    popup.requestFocus();
+	}
     }
 
     public void showPopup(MouseEvent e, final Collection<ContactItem> items) {
