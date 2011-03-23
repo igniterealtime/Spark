@@ -1,6 +1,5 @@
 package org.jivesoftware.sparkplugin.preferences;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,18 +7,17 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.media.format.AudioFormat;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import net.java.sipmack.softphone.SoftPhoneManager;
 
+import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
 public class SipCodecs extends JPanel
@@ -39,18 +37,21 @@ public class SipCodecs extends JPanel
 	}
 	
 	private void init() {
+	    
 		tSel = new JTable();
+		tSel.getTableHeader().setReorderingAllowed(false);
 		tAvail = new JTable();
+		tAvail.getTableHeader().setReorderingAllowed(false);
 		JScrollPane scrollSel = new JScrollPane(tSel);
 		JScrollPane scrollAvail = new JScrollPane(tAvail);
 		JButton btnLeft = new JButton(PhoneRes.getIString("codecs.select"));
 		JButton btnRight = new JButton(PhoneRes.getIString("codecs.unselect"));
 		JButton btnUp = new JButton(PhoneRes.getIString("codecs.up"));
 		JButton btnDown = new JButton(PhoneRes.getIString("codecs.down"));
-		JPanel pBtnMid = new JPanel();
-		JPanel pBtnDown = new JPanel();
-		JPanel pSel = new JPanel();
-		JPanel pAvail = new JPanel();
+
+		JPanel panelButtonUpDown = new JPanel();
+		JPanel panelSelect = new JPanel();
+		JPanel panelAvailable = new JPanel();
 		modelSel = new DefaultTableModel(){
 			private static final long	serialVersionUID	= 7489555730751416391L;
 
@@ -89,12 +90,12 @@ public class SipCodecs extends JPanel
 		tSel.setMinimumSize(new Dimension(185, 300));
 		tSel.setPreferredSize(new Dimension(185, 300));
 		scrollSel.setMinimumSize(new Dimension(185, 300));
-		scrollSel.setPreferredSize(new Dimension(185, 300));
-		
+		scrollSel.setPreferredSize(new Dimension(185, 500));
+			
 		tAvail.setMinimumSize(new Dimension(190, 300));
 		tAvail.setPreferredSize(new Dimension(190, 300));
 		scrollAvail.setMinimumSize(new Dimension(190, 300));
-		scrollAvail.setPreferredSize(new Dimension(190, 300));
+		scrollAvail.setPreferredSize(new Dimension(190, 500));
 		
 		// add actionlisteners
 		btnLeft.addActionListener(new ActionListener(){
@@ -122,32 +123,24 @@ public class SipCodecs extends JPanel
 		});
 		
 		// add Components
-		pBtnDown.setLayout(new BoxLayout(pBtnDown, BoxLayout.X_AXIS));
-		pBtnDown.add(Box.createHorizontalGlue());
-		pBtnDown.add(btnUp);
-		pBtnDown.add(Box.createHorizontalStrut(5));
-		pBtnDown.add(btnDown);
-		pBtnDown.add(Box.createHorizontalGlue());
-		pBtnDown.setBorder(new EmptyBorder(5,5,5,5));
+		panelButtonUpDown.setLayout(new VerticalFlowLayout(VerticalFlowLayout.MIDDLE));
+		panelButtonUpDown.add(btnUp);
+		panelButtonUpDown.add(btnDown);
 		
-		pSel.setLayout(new BorderLayout());
-		pSel.add(scrollSel, BorderLayout.CENTER);
-		pSel.add(pBtnDown, BorderLayout.SOUTH);
+		panelSelect.setLayout(new VerticalFlowLayout());
+		panelSelect.add(btnRight);
+		panelSelect.add(scrollSel);
 		
-		pBtnMid.setLayout(new BoxLayout(pBtnMid, BoxLayout.Y_AXIS));
-		pBtnMid.add(btnLeft);
-		pBtnMid.add(Box.createVerticalStrut(5));
-		pBtnMid.add(btnRight);
-		pBtnMid.setBorder(new EmptyBorder(5,5,5,5));
-		
-		pAvail.setLayout(new BorderLayout());
-		pAvail.add(scrollAvail);
-		pAvail.setBorder(new EmptyBorder(0,0,34,0));
-		
+			
+		panelAvailable.setLayout(new VerticalFlowLayout());
+		panelAvailable.add(btnLeft);
+		panelAvailable.add(scrollAvail);
+			
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		this.add(pSel);
-		this.add(pBtnMid);
-		this.add(pAvail);
+		this.add(panelButtonUpDown);
+		this.add(panelSelect);
+		this.add(panelAvailable);
+		
 		
 	}
 	
