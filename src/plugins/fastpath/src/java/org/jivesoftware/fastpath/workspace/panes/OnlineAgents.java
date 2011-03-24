@@ -167,7 +167,7 @@ public final class OnlineAgents extends JPanel {
                         nickname = agent;
                     }
 
-                    ContactItem item = new ContactItem("",nickname, agent) {
+                    ContactItem item = new ContactItem(nickname,nickname, agent) {
 						private static final long serialVersionUID = -8888899031363239813L;
 
 						public String getToolTipText() {
@@ -302,7 +302,7 @@ public final class OnlineAgents extends JPanel {
 
             Presence agentPresence = agentRoster.getPresence(agent);
             if (agentPresence.isAvailable()) {
-                ContactItem item = new ContactItem("",nickname, agent) {
+                ContactItem item = new ContactItem(nickname,nickname, agent) {
 					private static final long serialVersionUID = 8080304058990862045L;
 
 					public String getToolTipText() {
