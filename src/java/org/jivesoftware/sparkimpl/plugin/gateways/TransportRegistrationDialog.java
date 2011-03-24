@@ -32,6 +32,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
+
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -72,6 +73,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
      * @param serviceName the name of the transport service.
      */
     public TransportRegistrationDialog(String serviceName) {
+	
         setLayout(new GridBagLayout());
 
         this.serviceName = serviceName;
@@ -128,6 +130,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         dialog.add(this);
         dialog.pack();
         dialog.setSize(400, 200);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         GraphicUtils.centerWindowOnComponent(dialog, SparkManager.getMainWindow());
         dialog.setVisible(true);
@@ -145,6 +148,11 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         });
     }
 
+    public void addCancelActionListener(ActionListener a)
+    {
+	cancelButton.addActionListener(a);
+    }
+    
     public String getScreenName() {
         return usernameField.getText();
     }
@@ -192,6 +200,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
     }
 
 
+    
     public void keyTyped(KeyEvent keyEvent) {
     }
 
@@ -200,9 +209,6 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
             actionPerformed(null);
         }
 
-        if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            dialog.dispose();
-        }
     }
 
     public void keyReleased(KeyEvent keyEvent) {

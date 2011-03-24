@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.OrFilter;
@@ -35,13 +36,23 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.MessageDialog;
+import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import com.sun.org.apache.xerces.internal.impl.RevalidationHandler;
+import com.sun.xml.internal.ws.api.pipe.TransportTubeFactory;
 
 import javax.swing.*;
+
+import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -57,13 +68,15 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
      * Defined Static Variable for Gateways. *
      */
     public static final String GATEWAY = "gateway";
+    private boolean useTab;
 
-    private Map<Transport, GatewayButton> uiMap = new HashMap<Transport, GatewayButton>();
-
+    private Map<Transport, GatewayItem> uiMap = new HashMap<Transport, GatewayItem>();;
+    private JPanel transferTab = new JPanel();
 
     public void initialize() {
-        ProviderManager.getInstance().addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
-
+	ProviderManager.getInstance().addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
+	LocalPreferences localPref = SettingsManager.getLocalPreferences();
+	useTab = localPref.getShowTransportTab();
         SwingWorker thread = new SwingWorker() {
             public Object construct() {
                 try {
@@ -80,15 +93,26 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             }
 
             public void finished() {
-                Boolean transportExists = (Boolean)get();
+        	
+        	final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+        	transferTab.setLayout(new VerticalFlowLayout(0,0,0,true,true));
+        	Boolean transportExists = (Boolean)get();
                 if (!transportExists) {
                     return;
-                }
-
-                if (TransportUtils.getTransports().size() > 0) {
-                    final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+                } 
+                
+                
+                
+                if (TransportUtils.getTransports().size() > 0 ) {
+                    if(useTab)
+                    {
+                    SparkManager.getWorkspace().getWorkspacePane().addTab("Transports", SparkRes.getImageIcon(SparkRes.TRANSPORT_ICON), transferTab);
+                    } 
+                    else
+                    {
                     final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
                     commandPanel.add(dividerLabel);
+                    }
                 }
 
                 for (final Transport transport : TransportUtils.getTransports()) {
@@ -181,8 +205,19 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     private void addTransport(final Transport transport) {
-        final GatewayButton button = new GatewayButton(transport);
-        uiMap.put(transport, button);
+	GatewayItem item = null;
+	if (useTab)
+        {
+            item = new GatewayTabItem(transport);
+            transferTab.add((GatewayTabItem)item);
+            }
+        else
+        {
+           item = new GatewayButton(transport);
+        }
+        uiMap.put(transport, item);
+      //  transferTab.add(button);
+      //  transferTab.add(new GatewayTabItem(transport));
     }
 
     private void registerPresenceListener() {
@@ -199,8 +234,21 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                             registered = false;
                         }
 
-                        GatewayButton button = uiMap.get(transport);
+                        
+                        GatewayItem button = uiMap.get(transport);
+                     
                         button.signedIn(registered);
+                  
+                        SwingWorker worker = new SwingWorker() {
+			    
+			    @Override
+			    public Object construct() {
+				transferTab.revalidate();
+				transferTab.repaint();
+				return 41;
+			    }
+			};
+			worker.start();
                     }
                 }
                 else if (packet instanceof Message) {
@@ -244,7 +292,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
                 for (Transport transport : TransportUtils.getTransports()) {
-                    GatewayButton button = uiMap.get(transport);
+                    GatewayItem button = uiMap.get(transport);
                     if (button.isLoggedIn()) {
                         if (!presence.isAvailable()) {
                             return;

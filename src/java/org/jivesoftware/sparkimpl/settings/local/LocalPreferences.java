@@ -922,6 +922,16 @@ public class LocalPreferences {
 	    return getInt("stunFallbackPort", 3478);
 	}
 	
+	public boolean getShowTransportTab()
+	{
+	    return getBoolean("useTabForTransport", false);
+	}
+	
+	public void setShowTransportTab(boolean value)
+	{
+	    setBoolean("useTabForTransport", value);
+	}
+	
 	public String getAvailableCodecs() {
 		return getString("AvailableCodecs", null);
 	}

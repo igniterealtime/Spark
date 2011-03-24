@@ -89,6 +89,7 @@ public class ThemePanel extends JPanel {
     private JComboBox _lookandfeel;
     private JButton _lookandfeelpreview;
     private Vector<String> _lookandfeelname = new Vector<String>();
+    private JCheckBox _useTabsForTransports;
     
     private ThemePanel _thispanel;
 
@@ -213,6 +214,9 @@ public class ThemePanel extends JPanel {
 	});
         
         
+	_useTabsForTransports = new JCheckBox("deine mudder");
+	
+	
         JLabel messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
 
@@ -253,6 +257,7 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resButton(showAvatarsBox, Res.getString("checkbox.show.avatars.in.contactlist"));
         ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
         ResourceUtils.resButton(showVCards, Res.getString("title.appearance.showVCards"));
+        _useTabsForTransports.setText(Res.getString("checkbox.transport.tab.setting"));
 
         // Build UI
         buildUI();
@@ -283,12 +288,22 @@ public class ThemePanel extends JPanel {
         add(avatarSizeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-    
+        add(_useTabsForTransports, new GridBagConstraints(0, 10, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         // Activate live one.
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-
+ 
+        _useTabsForTransports.setSelected(pref.getShowTransportTab());
+        _useTabsForTransports.addActionListener(new ActionListener() {
+	    
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		SettingsManager.getLocalPreferences().setShowTransportTab(_useTabsForTransports.isSelected());
+		
+	    }
+	});
+        
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null)
         {
