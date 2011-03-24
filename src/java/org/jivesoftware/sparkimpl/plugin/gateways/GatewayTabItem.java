@@ -3,6 +3,9 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -12,8 +15,10 @@ import javax.swing.DefaultListModel;
 
 import javax.swing.JCheckBox;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.SwingConstants;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,19 +58,23 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private DefaultListModel model = new DefaultListModel();
     private JList _transportMenu = new JList(model);
     private JLabel _status = new JLabel();
-    private JPanel _listPanel = new JPanel(new VerticalFlowLayout(
-	    VerticalFlowLayout.TOP, 10, 0, true, false));
+//    private JPanel _listPanel = new JPanel(new VerticalFlowLayout(
+//	    VerticalFlowLayout.TOP, 10, 0, true, false));
+    private JPanel _listPanel = new JPanel(new GridBagLayout());
     private JLabel _statusIcon = new JLabel();
     private RolloverButton _signInOut = new RolloverButton();
     private RolloverButton _registerButton = new RolloverButton();
     private JCheckBox _autoJoin = new JCheckBox();
     private boolean _transportRegistered = false;
 
+    private RolloverButton _autoJoinButton = new RolloverButton();
+    
     public GatewayTabItem(final Transport transport) {
 	this._transport = transport;
 	_transportRegistered = TransportUtils.isRegistered(
 		SparkManager.getConnection(), _transport);
 
+	_autoJoin.setEnabled(false);
 	this.setIcon(transport.getIcon());
 	_status.setForeground(Color.gray);
 	_status.setFont(new Font(getFont().getName(), Font.ITALIC, getFont()
@@ -158,7 +167,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	    }
 	});
 
-	_autoJoin.setText(Res.getString("menuitem.sign.in.at.login"));
+	//_autoJoin.setText(Res.getString("menuitem.sign.in.at.login"));
 
 	// If transport is registered, we can check if the autojoin is enabled
 	if (_transportRegistered) {
@@ -172,10 +181,11 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	    setNotRegistered();
 	}
 
-	_autoJoin.addActionListener(new ActionListener() {
+	_autoJoinButton.addActionListener(new ActionListener() {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
+		_autoJoin.setSelected(!_autoJoin.isSelected());
 		 TransportUtils.setAutoJoin(_transport.getServiceName(), _autoJoin.isSelected());
 		
 	    }
@@ -231,15 +241,28 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
 	    }
 	});
+	
+	_autoJoinButton.setText(Res.getString("menuitem.sign.in.at.login"));
+	_autoJoinButton.setHorizontalAlignment(SwingConstants.LEFT);
+//	JPanel signPanel = new JPanel(new BorderLayout());
+//	signPanel.setBackground(Color.lightGray);
+//	signPanel.add(_statusIcon, BorderLayout.WEST);
+//	signPanel.add(_signInOut, BorderLayout.CENTER);
+	_registerButton.setHorizontalAlignment(SwingConstants.LEFT);
+	_signInOut.setHorizontalAlignment(SwingConstants.LEFT);
+	
+	_listPanel.add(new JLabel(), new GridBagConstraints(0, 0, 1, 1, 0.1, 0.0,GridBagConstraints.PAGE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+	_listPanel.add(_statusIcon, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 3, 0, 0), 0, 0));
+	_listPanel.add(_signInOut, new GridBagConstraints(2, 0, 1, 1, 0.9, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+	_listPanel.add(_autoJoin, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+	_listPanel.add(_autoJoinButton, new GridBagConstraints(2, 1, 1, 1, 0.9, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+	_listPanel.add(_registerButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+	
 
-	JPanel signPanel = new JPanel(new BorderLayout());
-	signPanel.setBackground(Color.lightGray);
-	signPanel.add(_statusIcon, BorderLayout.WEST);
-	signPanel.add(_signInOut, BorderLayout.CENTER);
-
-	_listPanel.add(signPanel);
-	_listPanel.add(_autoJoin);
-	_listPanel.add(_registerButton);
+	
+	
+	//_listPanel.add(_autoJoin);
+	//_listPanel.add(_registerButton);
 	
 
     }
@@ -252,7 +275,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 		.getString("menuitem.enter.login.information"));
 	_signInOut.setEnabled(false);
 	_signInOut.setText(Res.getString("menuitem.sign.in"));
-	_autoJoin.setEnabled(false);
+	_autoJoinButton.setEnabled(false);
 	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.BLUE_BALL));
     }
 
@@ -265,7 +288,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 		.getString("menuitem.delete.login.information"));
 	_signInOut.setEnabled(true);
 	_signInOut.setText(Res.getString("menuitem.sign.in"));
-	_autoJoin.setEnabled(true);
+	_autoJoinButton.setEnabled(true);
 	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.RED_BALL));
     }
 
@@ -284,7 +307,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	
 	_signInOut.setText(Res.getString("menuitem.sign.out"));
 	_signInOut.setEnabled(true);
-	_autoJoin.setEnabled(true);
+	_autoJoinButton.setEnabled(true);
 	_registerButton.setText(Res
 		.getString("menuitem.delete.login.information"));
     }
