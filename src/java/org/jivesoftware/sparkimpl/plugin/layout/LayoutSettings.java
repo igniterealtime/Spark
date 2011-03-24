@@ -92,7 +92,7 @@ public class LayoutSettings {
     }
 
     public int getChatFrameWidth() {
-        return chatFrameWidth;
+        return chatFrameWidth < 300 ? 300 : chatFrameWidth;
     }
 
     public void setChatFrameWidth(int chatFrameWidth) {
@@ -100,7 +100,7 @@ public class LayoutSettings {
     }
 
     public int getChatFrameHeight() {
-        return chatFrameHeight;
+        return chatFrameHeight < 300 ? 300 : chatFrameHeight;
     }
 
     public void setChatFrameHeight(int chatFrameHeight) {
@@ -113,39 +113,39 @@ public class LayoutSettings {
     }
 
     public int getPreferencesFrameX() {
-		return preferencesFrameX;
-	}
+	return preferencesFrameX;
+    }
 
-	public void setPreferencesFrameX(int preferencesFrameX) {
-		this.preferencesFrameX = preferencesFrameX;
-	}
+    public void setPreferencesFrameX(int preferencesFrameX) {
+	this.preferencesFrameX = preferencesFrameX;
+    }
 
-	public int getPreferencesFrameY() {
-		return preferencesFrameY;
-	}
+    public int getPreferencesFrameY() {
+	return preferencesFrameY;
+    }
 
-	public void setPreferencesFrameY(int preferencesFrameY) {
-		this.preferencesFrameY = preferencesFrameY;
-	}
+    public void setPreferencesFrameY(int preferencesFrameY) {
+	this.preferencesFrameY = preferencesFrameY;
+    }
 
-	public int getPreferencesFrameWidth() {
-		return preferencesFrameWidth;
-	}
+    public int getPreferencesFrameWidth() {
+	return preferencesFrameWidth < 300 ? 300 : preferencesFrameWidth;
+    }
 
-	public void setPreferencesFrameWidth(int preferencesFrameWidth)	{
-		this.preferencesFrameWidth = preferencesFrameWidth;
-	}
+    public void setPreferencesFrameWidth(int preferencesFrameWidth) {
+	this.preferencesFrameWidth = preferencesFrameWidth;
+    }
 
-	public int getPreferencesFrameHeight() {
-		return preferencesFrameHeight;
-	}
+    public int getPreferencesFrameHeight() {
+	return preferencesFrameHeight < 300 ? 300 : preferencesFrameHeight;
+    }
 
-	public void setPreferencesFrameHeight(int preferencesFrameHeight) {
-		this.preferencesFrameHeight = preferencesFrameHeight;
-	}
+    public void setPreferencesFrameHeight(int preferencesFrameHeight) {
+	this.preferencesFrameHeight = preferencesFrameHeight;
+    }
 
-	public int getSplitPaneDividerLocation() {
-        return dividerLocation;
+    public int getSplitPaneDividerLocation() {
+	return dividerLocation;
    }
 
 

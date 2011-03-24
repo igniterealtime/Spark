@@ -212,7 +212,7 @@ public class ContactItem extends JPanel {
         int nickLength = displayName.length();
         
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-        int windowWidth = (int)Math.round((settings.getMainWindowHeight() / 15.2));
+        int windowWidth = settings.getMainWindowWidth();
         
         if (nickLength > windowWidth) {
             displayNameLabel.setText(StringUtils.unescapeNode(displayName).substring(0, windowWidth) + "...");
