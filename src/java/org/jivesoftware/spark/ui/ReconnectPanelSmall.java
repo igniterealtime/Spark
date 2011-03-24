@@ -25,11 +25,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.TimerTask;
-import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -87,7 +87,9 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	    @Override
 	    public void mouseClicked(MouseEvent e) {
 
-		if (e.getButton() == MouseEvent.BUTTON3) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+		    reconnect();
+		} else if (SwingUtilities.isRightMouseButton(e)) {
 
 		    int x = e.getX();
 		    int y = e.getY();

@@ -41,6 +41,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -422,7 +423,7 @@ public class UserManager {
 
         contactField.getList().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-        	if(e.getButton() == MouseEvent.BUTTON3)
+        	if(SwingUtilities.isRightMouseButton(e))
         	{
         	    contactField.setSelectetIndex(e);
         	    ContactItem item = contactField.getSelectedContactItem();

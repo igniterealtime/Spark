@@ -1526,6 +1526,7 @@ public final class ContactList extends JPanel implements ActionListener,
      *
      * @param e    the MouseEvent
      * @param item the ContactItem
+     * @param component the owning component
      */
     public void showPopup(Component component, MouseEvent e, final ContactItem item) {
         if (item.getJID() == null) {

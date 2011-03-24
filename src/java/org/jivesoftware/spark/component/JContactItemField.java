@@ -310,8 +310,7 @@ public class JContactItemField extends JPanel {
      */
     public void setSelectetIndex(MouseEvent mouseevent)
     {	
-	Point p = mouseevent.getPoint();
-	list.setSelectedIndex(list.locationToIndex(p));
+	list.setSelectedIndex(list.locationToIndex(mouseevent.getPoint()));
     }
 
 

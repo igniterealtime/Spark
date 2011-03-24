@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.history;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -55,6 +56,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 
 /**
  * Adds a simple feature to list your most "Popular" contacts. Popular contacts is basically who
@@ -80,7 +82,7 @@ public class FrequentContactsPlugin implements Plugin {
 
 
         final JPanel mainPanel = new JPanel(new BorderLayout());
-        final JLabel titleLabel = new JLabel("Frequent Contacts");
+        final JLabel titleLabel = new JLabel(Res.getString("label.frequent.contacts"));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         mainPanel.add(titleLabel, BorderLayout.NORTH);
@@ -90,19 +92,33 @@ public class FrequentContactsPlugin implements Plugin {
         window.add(mainPanel);
 
         // Add Listeners
-        contacts.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    final JLabel label = (JLabel) contacts.getSelectedValue();
-                    String user = jidMap.get(label);
-                    if (user != null) {
-                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
-                        SparkManager.getChatManager().activateChat(user, contactUsername);
-                        window.dispose();
-                    }
-                }
-            }
-        });
+	contacts.addMouseListener(new MouseAdapter() {
+	    public void mouseClicked(MouseEvent e) {
+		if (SwingUtilities.isRightMouseButton(e)) {
+
+		    contacts.setSelectedIndex(contacts.locationToIndex(e
+			    .getPoint()));
+		    String user = jidMap.get((JLabel) contacts
+			    .getSelectedValue());
+		    ContactItem contact = SparkManager.getContactList()
+			    .getContactItemByJID(user);
+		    SparkManager.getContactList().showPopup(contacts, e,
+			    contact);
+		}
+
+		if (e.getClickCount() == 2) {
+		    final JLabel label = (JLabel) contacts.getSelectedValue();
+		    String user = jidMap.get(label);
+		    if (user != null) {
+			final String contactUsername = SparkManager
+				.getUserManager().getUserNicknameFromJID(user);
+			SparkManager.getChatManager().activateChat(user,
+				contactUsername);
+			window.dispose();
+		    }
+		}
+	    }
+	});
 
         contacts.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
