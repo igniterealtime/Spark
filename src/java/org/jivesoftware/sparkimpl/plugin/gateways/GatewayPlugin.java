@@ -37,7 +37,7 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
+
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -46,13 +46,10 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import com.sun.org.apache.xerces.internal.impl.RevalidationHandler;
-import com.sun.xml.internal.ws.api.pipe.TransportTubeFactory;
 
 import javax.swing.*;
 
-import java.awt.EventQueue;
-import java.awt.GridLayout;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
