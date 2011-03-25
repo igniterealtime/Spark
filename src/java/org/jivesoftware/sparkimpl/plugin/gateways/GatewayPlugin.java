@@ -145,8 +145,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             item = (Item)items.next();
             String entityName = item.getEntityID();
             if (entityName != null) {
-        	System.out.println(entityName);
-                if (entityName.startsWith("aim.")) {
+        	if (entityName.startsWith("aim.")) {
                     AIMTransport aim = new AIMTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), aim);
                 }
