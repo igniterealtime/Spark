@@ -145,6 +145,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             item = (Item)items.next();
             String entityName = item.getEntityID();
             if (entityName != null) {
+        	System.out.println(entityName);
                 if (entityName.startsWith("aim.")) {
                     AIMTransport aim = new AIMTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), aim);
@@ -173,7 +174,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     IRCTransport ircTransport = new IRCTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), ircTransport);
                 }
-                else if (entityName.startsWith("sip.")) {
+                else if (entityName.startsWith("sip.") || entityName.startsWith("simple.")) {
                     SimpleTransport simpleTransport = new SimpleTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), simpleTransport);
                 }
@@ -193,7 +194,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 	FacebookTransport facebookTransport = new FacebookTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), facebookTransport);
                 }
-                else if (entityName.startsWith("myspace.")) {
+                else if (entityName.startsWith("myspace.") || entityName.startsWith("myspaceim.")) {
                 	MySpaceTransport myspaceTransport = new MySpaceTransport(item.getEntityID());
                     TransportUtils.addTransport(item.getEntityID(), myspaceTransport);
                 }                
