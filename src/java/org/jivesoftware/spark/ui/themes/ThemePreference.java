@@ -34,7 +34,7 @@ import javax.swing.JComponent;
  */
 public class ThemePreference implements Preference {
 
-    private ThemePanel panel;
+    private MainThemePanel panel;
 
     public static String NAMESPACE = "themes";
 
@@ -64,8 +64,7 @@ public class ThemePreference implements Preference {
     }
 
     public JComponent getGUI() {
-        panel = new ThemePanel();
-
+        panel = new MainThemePanel();
         return panel;
     }
     
@@ -78,7 +77,7 @@ public class ThemePreference implements Preference {
      */
     public String getLookAndFeel()
     {
-	return panel.getLookAndFeel();
+	return panel.getThemePanel().getLookAndFeel();
     }
 
     public void loadFromFile() {
@@ -102,21 +101,21 @@ public class ThemePreference implements Preference {
     }
 
     public void commit() {
-        final String pack = panel.getSelectedEmoticonPack();
-        boolean emotEnabled = panel.areEmoticonsEnabled();
+        final String pack = panel.getThemePanel().getSelectedEmoticonPack();
+        boolean emotEnabled = panel.getThemePanel().areEmoticonsEnabled();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if(pack != null){
             pref.setEmoticonPack(pack);
         }
         pref.setEmoticonsEnabled(emotEnabled);
-        pref.setLookAndFeel(panel.getLookAndFeel());
-        pref.setAvatarVisible(panel.areAvatarsVisible());
-        pref.setContactListIconSize(panel.getContactListIconSize());
-        pref.setVCardsVisible(panel.areVCardsVisible());
+        pref.setLookAndFeel(panel.getThemePanel().getLookAndFeel());
+        pref.setAvatarVisible(panel.getThemePanel().areAvatarsVisible());
+        pref.setContactListIconSize(panel.getThemePanel().getContactListIconSize());
+        pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());
 
         try {
-            String chatRoomFontSize = panel.getChatRoomFontSize();
-            String contactListFontSize = panel.getContactListFontSize();
+            String chatRoomFontSize = panel.getThemePanel().getChatRoomFontSize();
+            String contactListFontSize = panel.getThemePanel().getContactListFontSize();
 
             pref.setChatRoomFontSize(Integer.parseInt(chatRoomFontSize));
             pref.setContactListFontSize(Integer.parseInt(contactListFontSize));
@@ -124,6 +123,9 @@ public class ThemePreference implements Preference {
         catch (NumberFormatException e) {
             Log.error(e);
         }
+        
+        
+        ColorSettingManager.saveColorSettings();
         SettingsManager.saveSettings();
     }
 

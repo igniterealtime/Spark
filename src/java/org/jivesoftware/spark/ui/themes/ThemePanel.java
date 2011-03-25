@@ -91,15 +91,15 @@ public class ThemePanel extends JPanel {
     private Vector<String> _lookandfeelname = new Vector<String>();
     private JCheckBox _useTabsForTransports;
     
-    private ThemePanel _thispanel;
+    private ThemePanel _themepanel;
 
     /**
      * Construct UI
      */
     public ThemePanel() {
-	_thispanel = this;
-        setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder(Res.getString("title.appearance.preferences")));
+	
+	_themepanel = this;
+        _themepanel.setLayout(new GridBagLayout());  
         
         LookAndFeelInfo[]  ui = UIManager.getInstalledLookAndFeels();
         
@@ -197,15 +197,15 @@ public class ThemePanel extends JPanel {
 			//WTF
 			}
 		
-			SwingUtilities.updateComponentTreeUI(_thispanel);
-			SwingUtilities.updateComponentTreeUI(_thispanel.getParent());	
+			SwingUtilities.updateComponentTreeUI(_themepanel);
+			SwingUtilities.updateComponentTreeUI(_themepanel.getParent());	
 			SwingUtilities.updateComponentTreeUI(SparkManager.getMainWindow());
 			SwingUtilities.updateComponentTreeUI(SparkManager.getChatManager().getChatContainer());
 			JFrame.setDefaultLookAndFeelDecorated(true);
 			JDialog.setDefaultLookAndFeelDecorated(true);
-			_thispanel.invalidate();
-			_thispanel.repaint();
-			_thispanel.validate();
+			_themepanel.invalidate();
+			_themepanel.repaint();
+			_themepanel.validate();
 
 		    }
 		};

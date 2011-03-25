@@ -448,7 +448,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (!Spark.isMac() && !Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(exitMenuItem);
         }
-
+        
         JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));    
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
         updateMenu.addActionListener(new ActionListener() {    
@@ -505,7 +505,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	}
         
         // Build Help Menu
+	if(!Default.getBoolean(Default.DISABLE_UPDATES)){
         helpMenu.add(updateMenu);
+	}
         helpMenu.addSeparator();
         helpMenu.add(viewErrors);
         helpMenu.add(menuAbout);

@@ -20,6 +20,7 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -77,7 +78,9 @@ public class NotificationsUI extends JPanel {
         
         betaCheckBox = new JCheckBox();
         ResourceUtils.resButton(betaCheckBox, Res.getString("menuitem.check.for.updates"));
+        if(!Default.getBoolean(Default.DISABLE_UPDATES)){
         add(betaCheckBox);
+        }
         
         windowFocusBox.addChangeListener(new ChangeListener(){
         	public void stateChanged(ChangeEvent ce){
