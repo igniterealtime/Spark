@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.OrFilter;
@@ -103,7 +104,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 if (TransportUtils.getTransports().size() > 0 ) {
                     if(useTab)
                     {
-                    SparkManager.getWorkspace().getWorkspacePane().addTab("Transports", SparkRes.getImageIcon(SparkRes.TRANSPORT_ICON), transferTab);
+                    SparkManager.getWorkspace().getWorkspacePane().addTab(Res.getString("title.transports"), SparkRes.getImageIcon(SparkRes.TRANSPORT_ICON), transferTab);
                     } 
                     else
                     {
