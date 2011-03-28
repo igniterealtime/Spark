@@ -213,7 +213,7 @@ public final class Spark {
     private void loadLookAndFeel() {
 	final LocalPreferences preferences = SettingsManager.getLocalPreferences();
 	final String laf;
-	if (preferences.getLookAndFeel().length() > 0 && !Default.getBoolean("LOOK_AND_FEEL_DISABLED")) {
+	if (!Default.getBoolean("LOOK_AND_FEEL_DISABLED")) {
 	    laf = preferences.getLookAndFeel();
 	} else if (Default.getString(Default.DEFAULT_LOOK_AND_FEEL).length() > 0) {
 	    laf = Default.getString(Default.DEFAULT_LOOK_AND_FEEL);

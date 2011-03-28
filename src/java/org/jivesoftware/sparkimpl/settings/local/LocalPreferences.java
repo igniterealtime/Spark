@@ -21,6 +21,7 @@
 package org.jivesoftware.sparkimpl.settings.local;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.SparkManager;
 import java.io.File;
 import java.util.Date;
@@ -663,10 +664,15 @@ public class LocalPreferences {
 	    setString("LookAndFeel",laf);
 	}
 	
-        public String getLookAndFeel() {
-    		String defaultstring = UIManager.getSystemLookAndFeelClassName();
-    		return getString("LookAndFeel", defaultstring);
-        }
+    public String getLookAndFeel() {
+	String defaultstring = "";
+	try {
+	    defaultstring = Default.getString("DEFAULT_LOOK_AND_FEEL");
+	} catch (Exception e) {
+	    defaultstring = UIManager.getSystemLookAndFeelClassName();
+	}
+	return getString("LookAndFeel", defaultstring);
+    }
 
 	public void setCheckForBeta(boolean checkForBeta) {
 		setBoolean("checkForBeta", checkForBeta);
