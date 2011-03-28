@@ -89,7 +89,7 @@ public class DefaultTabHandler extends SparkTabHandler {
             // and the tab is the selected component.
             else if (isSelectedTab && chatFrameFocused) {
                 tab.setTitleColor(Color.black);
-                tab.setTabFont(tab.getDefaultFont());
+               // tab.setTabFont(tab.getDefaultFont());
                 tab.setTabTitle(room.getTabTitle());
 
                 // Clear unread message count.
