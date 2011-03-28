@@ -342,7 +342,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final TimerTask transcriptTask = new TimerTask() {
                     public void run() {
                         final ChatTranscript transcript = (ChatTranscript)get();
-                        final List<HistoryMessage> list = transcript.getMessages();
+                        final List<HistoryMessage> list = transcript.getMessage(
+                		Res.getString("message.search.for.history").equals(searchField.getText())
+                			? null : searchField.getText());
                         
                         final String personalNickname = SparkManager.getUserManager().getNickname();
                         Date lastPost = null;
