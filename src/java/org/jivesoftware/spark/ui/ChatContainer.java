@@ -172,6 +172,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     ChatRoom chatRoom = getActiveChatRoom();
                     chatRoom.requestFocusInWindow();
                     chatRoom.getChatInputEditor().requestFocusInWindow();
+                    updateActiveTab();
+                  
                 }
                 catch (ChatRoomNotFoundException e1) {
                     // Ignore. There may legitamtly not be a chat room.

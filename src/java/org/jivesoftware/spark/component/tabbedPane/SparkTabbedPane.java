@@ -179,6 +179,26 @@ public class SparkTabbedPane extends JPanel {
 		}
 	}
 
+	public void updateActiveTab()
+	{
+	for (int i = 0; i < pane.getTabCount(); ++i) {
+	    Component com = pane.getTabComponentAt(i);
+	    TabPanel panel = (TabPanel) com;
+	    Font oldFont = panel.getFont();
+	    if (i == getSelectedIndex()) {
+		panel.setTitleFont(new Font(oldFont.getFontName(), Font.BOLD,
+			oldFont.getSize()));
+		panel.setTitleColor(Color.black);
+	    } else {
+		panel.setTitleFont(new Font(oldFont.getFontName(), Font.PLAIN,
+			oldFont.getSize()));
+		panel.setTitleColor(new Color(247, 247, 247));
+	    }
+
+	}
+	    
+	}
+	
 	public void setTitleBoldAt(int index, boolean bold) {
 		Component com = pane.getTabComponentAt(index);
 		if (com instanceof TabPanel) {
