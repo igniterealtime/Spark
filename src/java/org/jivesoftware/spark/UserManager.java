@@ -427,16 +427,8 @@ public class UserManager {
         	{
         	    contactField.setSelectetIndex(e);
         	    ContactItem item = contactField.getSelectedContactItem();
-                    
-		    // get a new width, sometimes the popup appears under the
-		    // current panel, that suxx, so get a different location
-        	    int w1 = item.getNicknameLabel().getWidth();
-        	    int w2=5;
-        	    if(item.getIcon()!=null)
-        		w2 = item.getIcon().getIconWidth();
-                    int newWidthforStuff = w1+w2 +5;
-        	        MouseEvent exx = new MouseEvent((Component)e.getSource(),e.getID(), e.getWhen(),e.getModifiers(),newWidthforStuff, e.getY(), e.getClickCount(), false);
-        	    SparkManager.getContactList().showPopup(contactField,exx,item);
+        	    MouseEvent exx = new MouseEvent((Component) e.getSource(),e.getID(), e.getWhen(),e.getModifiers(),e.getX()+20, e.getY(), e.getClickCount(), false);
+        	    SparkManager.getContactList().showPopup(contactField.getPopup(),exx,item);
         	}
         	
                 if (e.getClickCount() == 2) {
