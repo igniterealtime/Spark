@@ -62,9 +62,12 @@ public class JContactItemField extends JPanel {
         list = new JList(model) {
             public String getToolTipText(MouseEvent e) {
                 int row = locationToIndex(e.getPoint());
-                final ContactItem item = (ContactItem)getModel().getElementAt(row);
-                if (item != null) {
-                    return item.getJID();
+                if (row >= 0)
+                {
+                    final ContactItem item = (ContactItem)getModel().getElementAt(row);
+                    if (item != null) {
+                        return item.getJID();
+                }
                 }
                 return null;
             }
