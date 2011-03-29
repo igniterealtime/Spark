@@ -193,11 +193,11 @@ public class LayoutSettingsManager {
             if (chatFrameWidthInt < 100) {
             	chatFrameWidthInt = 100;
             }
-            if (preferencesFrameWidthInt < 300) {
-            	preferencesFrameWidthInt = 300;
+            if (preferencesFrameWidthInt < 600) {
+            	preferencesFrameWidthInt = 600;
             }
-            if (preferencesFrameHeightInt < 300) {
-            	preferencesFrameHeightInt = 300;
+            if (preferencesFrameHeightInt < 600) {
+            	preferencesFrameHeightInt = 600;
             }
 
             settings.setMainWindowX(mainWindowXInt);

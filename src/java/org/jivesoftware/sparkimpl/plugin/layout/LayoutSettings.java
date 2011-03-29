@@ -129,7 +129,7 @@ public class LayoutSettings {
     }
 
     public int getPreferencesFrameWidth() {
-	return preferencesFrameWidth < 300 ? 300 : preferencesFrameWidth;
+	return preferencesFrameWidth < 600 ? 600 : preferencesFrameWidth;
     }
 
     public void setPreferencesFrameWidth(int preferencesFrameWidth) {
@@ -137,7 +137,7 @@ public class LayoutSettings {
     }
 
     public int getPreferencesFrameHeight() {
-	return preferencesFrameHeight < 300 ? 300 : preferencesFrameHeight;
+	return preferencesFrameHeight < 600 ? 600 : preferencesFrameHeight;
     }
 
     public void setPreferencesFrameHeight(int preferencesFrameHeight) {
