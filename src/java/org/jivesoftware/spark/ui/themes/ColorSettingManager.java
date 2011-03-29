@@ -159,20 +159,16 @@ public class ColorSettingManager {
   * Used to set the Default values
   * @param props
   */
-    private static void initialLoad(Properties props)
-    {
+    private static void initialLoad(Properties props) {
 
-	Enumeration<String> enu =  Default.getAllKeys();
-	while(enu.hasMoreElements())
-	{
+	Enumeration<String> enu = Default.getAllKeys();
+	while (enu.hasMoreElements()) {
 	    String s = enu.nextElement();
-	    
-	    if(Default.getString(s).matches("[0-9]*,[0-9]*,[0-9]*,[0-9]*"))
-	    {	
-		System.out.println("adding"+s);
-		props.setProperty(s,Default.getString(s));
+
+	    if (Default.getString(s).matches("[0-9]*,[0-9]*,[0-9]*,[0-9]*")) {
+		props.setProperty(s, Default.getString(s));
 	    }
-   
+
 	}
 
 //	    props.setProperty("ChatInput.SelectedTextColor", Default.getString("ChatInput.SelectedTextColor"));
