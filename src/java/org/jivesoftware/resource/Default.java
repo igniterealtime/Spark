@@ -24,6 +24,7 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.ImageIcon;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
@@ -135,6 +136,15 @@ public class Default {
             Log.debug(propertyName + " not found.");
         }
         return null;
+    }
+    
+    /**
+     * Returns all Keys stored in the default.properties file
+     * @return {@link Enumeration}<{@link String}>
+     */
+    public static Enumeration<String> getAllKeys()
+    {
+	return prb.getKeys();
     }
 
 }

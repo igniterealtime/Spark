@@ -161,83 +161,56 @@ public class ColorSettingManager {
   */
     private static void initialLoad(Properties props)
     {
-	
-//	if(Default.getBoolean("USE_COLORS_FROM_BELOW"))
-//	{
-	    props.setProperty("ChatInput.SelectedTextColor", Default.getString("ChatInput.SelectedTextColor"));
-	    props.setProperty("ChatInput.SelectionColor", Default.getString("ChatInput.SelectionColor" ));
-	    props.setProperty("ContactItemNickname.foreground", Default.getString("ContactItemNickname.foreground"));
-	    props.setProperty("ContactItemDescription.foreground", Default.getString("ContactItemDescription.foreground"));
-	    props.setProperty("ContactItem.background", Default.getString("ContactItem.background"));
-	    props.setProperty("ContactItemOffline.color", Default.getString("ContactItemOffline.color"));
-	    props.setProperty("Link.foreground", Default.getString("Link.foreground"));
-	    props.setProperty("List.selectionBackground", Default.getString("List.selectionBackground"));
-	    props.setProperty("List.selectionForeground", Default.getString("List.selectionForeground"));
-	    props.setProperty("List.selectionBorder", Default.getString("List.selectionBorder"));
-	    props.setProperty("List.foreground", Default.getString("List.foreground"));
-	    props.setProperty("List.background", Default.getString("List.background"));  
-	    props.setProperty("TextField.lightforeground", Default.getString("TextField.lightforeground"));
-	    props.setProperty("TextField.foreground", Default.getString("TextField.foreground"));
-	    props.setProperty("TextField.caretForeground", Default.getString("TextField.caretForeground"));
-	    props.setProperty("TextPane.foreground", Default.getString("TextPane.foreground"));
-	    props.setProperty("TextPane.background", Default.getString("TextPane.background"));
-	    props.setProperty("TextPane.inactiveForeground", Default.getString("TextPane.inactiveForeground"));
-	    props.setProperty("TextPane.caretForeground", Default.getString("TextPane.caretForeground"));  
-	    props.setProperty("MenuItem.selectionBackground", Default.getString("MenuItem.selectionBackground"));
-	    props.setProperty("MenuItem.selectionForeground", Default.getString("MenuItem.selectionForeground"));
-	    props.setProperty("Table.foreground", Default.getString("Table.foreground"));
-	    props.setProperty("Table.background", Default.getString("Table.background"));
-	    props.setProperty("Address.foreground", Default.getString("Address.foreground"));
-	    props.setProperty("User.foreground", Default.getString("User.foreground"));
-	    props.setProperty("OtherUser.foreground", Default.getString("OtherUser.foreground"));
-	    props.setProperty("Notification.foreground", Default.getString("Notification.foreground"));
-	    props.setProperty("Error.foreground", Default.getString("Error.foreground"));
-	    props.setProperty("History.foreground", Default.getString("History.foreground"));
-	    props.setProperty("SparkTabbedPane.startColor", Default.getString("SparkTabbedPane.startColor"));
-	    props.setProperty("SparkTabbedPane.endColor", Default.getString("SparkTabbedPane.endColor"));
-	    props.setProperty("SparkTabbedPane.borderColor", Default.getString("SparkTabbedPane.borderColor"));
-	    props.setProperty("Chat.activeTabColor", Default.getString("Chat.activeTabColor"));
-	    props.setProperty("Chat.inactiveTabColor", Default.getString("Chat.inactiveTabColor"));
-	    props.setProperty("Chat.unreadMessageColor", Default.getString("Chat.unreadMessageColor"));
-//	}
-//	else{
-//	    // These are initial reference Values
-//	    // if you want your own modify the default.properties file
-//	    // and enable USE_CUSTOM_COLORS
-//        	props.setProperty("TextField.lightforeground", "128,128,128,255");
-//        	props.setProperty("TextField.foreground", "0,0,0,255");
-//        	props.setProperty("TextField.caretForeground", "0,0,0,255");
-//        	props.setProperty("List.selectionBackground", "217,232,250,255");
-//        	props.setProperty("List.selectionForeground", "0,0,0,255");
-//        	props.setProperty("List.selectionBorder", "187,195,215,255");
-//        	props.setProperty("List.foreground", "0,0,0,255");
-//        	props.setProperty("List.background", "255,255,255,255");
-//        	props.setProperty("MenuItem.selectionBackground", "217,232,250,255");
-//        	props.setProperty("MenuItem.selectionForeground", "0,0,0,255");
-//        	props.setProperty("TextPane.foreground", "0,0,0,255");
-//        	props.setProperty("TextPane.background", "255,255,255,0,255");
-//        	props.setProperty("TextPane.inactiveForeground", "255,255,255,255");
-//        	props.setProperty("TextPane.caretForeground", "0,0,0,255");
-//        	props.setProperty("ChatInput.SelectedTextColor", "255,255,255,255");
-//        	props.setProperty("ChatInput.SelectionColor", "0,0,255,255");
-//        	props.setProperty("ContactItemNickname.foreground", "0,0,0,255");
-//        	props.setProperty("ContactItemDescription.foreground", "128,128,128,255");
-//        	props.setProperty("ContactItem.background", "240,243,253,0");
-//        	props.setProperty("ContactItemOffline.color", "128,128,128,255");
-//        	props.setProperty("Table.foreground", "0,0,0,255");
-//        	props.setProperty("Table.background", "255,255,255,255");
-//        	props.setProperty("Link.foreground", "0,0,255,255");
-//        	props.setProperty("Address.foreground", "212,160,0,255");
-//        	props.setProperty("User.foreground", "0,0,255,255");
-//        	props.setProperty("OtherUser.foreground", "255,0,0,255");
-//        	props.setProperty("Notification.foreground", "0,128,0,255");
-//        	props.setProperty("Error.foreground", "255,0,0,255");
-//        	props.setProperty("Question.foreground", "255,0,0,255");
-//        	props.setProperty("History.foreground", "64,64,64,255");
-//        	props.setProperty("SparkTabbedPane.startColor", "236,236,236,255");
-//        	props.setProperty("SparkTabbedPane.endColor", "236,236,236,255");
-//        	props.setProperty("SparkTabbedPane.borderColor", "192,192,192,255");
-//	}
+
+	Enumeration<String> enu =  Default.getAllKeys();
+	while(enu.hasMoreElements())
+	{
+	    String s = enu.nextElement();
+	    
+	    if(Default.getString(s).matches("[0-9]*,[0-9]*,[0-9]*,[0-9]*"))
+	    {	
+		System.out.println("adding"+s);
+		props.setProperty(s,Default.getString(s));
+	    }
+   
+	}
+
+//	    props.setProperty("ChatInput.SelectedTextColor", Default.getString("ChatInput.SelectedTextColor"));
+//	    props.setProperty("ChatInput.SelectionColor", Default.getString("ChatInput.SelectionColor" ));
+//	    props.setProperty("ContactItemNickname.foreground", Default.getString("ContactItemNickname.foreground"));
+//	    props.setProperty("ContactItemDescription.foreground", Default.getString("ContactItemDescription.foreground"));
+//	    props.setProperty("ContactItem.background", Default.getString("ContactItem.background"));
+//	    props.setProperty("ContactItemOffline.color", Default.getString("ContactItemOffline.color"));
+//	    props.setProperty("Link.foreground", Default.getString("Link.foreground"));
+//	    props.setProperty("List.selectionBackground", Default.getString("List.selectionBackground"));
+//	    props.setProperty("List.selectionForeground", Default.getString("List.selectionForeground"));
+//	    props.setProperty("List.selectionBorder", Default.getString("List.selectionBorder"));
+//	    props.setProperty("List.foreground", Default.getString("List.foreground"));
+//	    props.setProperty("List.background", Default.getString("List.background"));  
+//	    props.setProperty("TextField.lightforeground", Default.getString("TextField.lightforeground"));
+//	    props.setProperty("TextField.foreground", Default.getString("TextField.foreground"));
+//	    props.setProperty("TextField.caretForeground", Default.getString("TextField.caretForeground"));
+//	    props.setProperty("TextPane.foreground", Default.getString("TextPane.foreground"));
+//	    props.setProperty("TextPane.background", Default.getString("TextPane.background"));
+//	    props.setProperty("TextPane.inactiveForeground", Default.getString("TextPane.inactiveForeground"));
+//	    props.setProperty("TextPane.caretForeground", Default.getString("TextPane.caretForeground"));  
+//	    props.setProperty("MenuItem.selectionBackground", Default.getString("MenuItem.selectionBackground"));
+//	    props.setProperty("MenuItem.selectionForeground", Default.getString("MenuItem.selectionForeground"));
+//	    props.setProperty("Table.foreground", Default.getString("Table.foreground"));
+//	    props.setProperty("Table.background", Default.getString("Table.background"));
+//	    props.setProperty("Address.foreground", Default.getString("Address.foreground"));
+//	    props.setProperty("User.foreground", Default.getString("User.foreground"));
+//	    props.setProperty("OtherUser.foreground", Default.getString("OtherUser.foreground"));
+//	    props.setProperty("Notification.foreground", Default.getString("Notification.foreground"));
+//	    props.setProperty("Error.foreground", Default.getString("Error.foreground"));
+//	    props.setProperty("History.foreground", Default.getString("History.foreground"));
+//	    props.setProperty("SparkTabbedPane.startColor", Default.getString("SparkTabbedPane.startColor"));
+//	    props.setProperty("SparkTabbedPane.endColor", Default.getString("SparkTabbedPane.endColor"));
+//	    props.setProperty("SparkTabbedPane.borderColor", Default.getString("SparkTabbedPane.borderColor"));
+//	    props.setProperty("Chat.activeTabColor", Default.getString("Chat.activeTabColor"));
+//	    props.setProperty("Chat.inactiveTabColor", Default.getString("Chat.inactiveTabColor"));
+//	    props.setProperty("Chat.unreadMessageColor", Default.getString("Chat.unreadMessageColor"));
+
 	try {
 	    props.store(new FileOutputStream(getSettingsFile()), "Storing Spark Color Settings");
 	} catch (FileNotFoundException e) {

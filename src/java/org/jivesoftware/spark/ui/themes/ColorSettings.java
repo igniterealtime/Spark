@@ -20,8 +20,11 @@
 package org.jivesoftware.spark.ui.themes;
 
 import java.awt.Color;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
+
+import org.jivesoftware.resource.Default;
 
 public class ColorSettings {
 
@@ -29,6 +32,8 @@ public class ColorSettings {
 
     public ColorSettings(HashMap<String, String> settingmap) {
 	_hashmap = settingmap;
+	
+	addMissingValues();
     }
     
     public void setColorForProperty(String propertyname, Color color)
@@ -66,6 +71,30 @@ public class ColorSettings {
 	
 	return _hashmap.keySet();
 	
+    }
+    /**
+     * Checks the default.properties for missing values and adds them
+     */
+    public void addMissingValues()
+    {
+	boolean save = false;
+	Enumeration<String> enu =  Default.getAllKeys();
+	while(enu.hasMoreElements())
+	{
+	    String s = enu.nextElement();
+	    
+	    if(Default.getString(s).matches("[0-9]*,[0-9]*,[0-9]*,[0-9]*"))
+	    {	
+		if (!_hashmap.containsKey(s)) {
+		    _hashmap.put(s, Default.getString(s));
+		    save = true;
+		}
+	    }
+   
+	}
+	if (save) {
+	    ColorSettingManager.saveColorSettings();
+	}		
     }
 }
 
