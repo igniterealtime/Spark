@@ -102,6 +102,7 @@ public class FrequentContactsPlugin implements Plugin {
 			    .getSelectedValue());
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
+		    SparkManager.getContactList().setSelectedUser(contact.getJID());
 		    SparkManager.getContactList().showPopup(contacts, e,
 			    contact);
 		}

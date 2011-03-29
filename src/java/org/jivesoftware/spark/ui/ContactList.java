@@ -2143,6 +2143,21 @@ public final class ContactList extends JPanel implements ActionListener,
         }
         return list;
     }
+    
+  /**
+   * Selects the first user found with specified jid
+   * @param jid, the Users JID
+   */
+    public void setSelectedUser(String jid) {
+	for (ContactGroup group : getContactGroups()) {
+	    if (group.getContactItemByJID(jid) != null) {
+
+		ContactItem item = group.getContactItemByJID(jid);
+		group.getList().setSelectedValue(item, false);
+		return;
+	    }
+	}
+    }
 
     private void checkGroup(final ContactGroup group) {
     	try {
