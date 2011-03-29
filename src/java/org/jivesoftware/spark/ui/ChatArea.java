@@ -185,7 +185,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public void setText(String message) {
         // By default, use the hand cursor for link selection
         // and scrolling.
-        setCursor(HAND_CURSOR);
+      //  setCursor(HAND_CURSOR);
 
         // Make sure the message is not null.
         //  message = message.trim();
