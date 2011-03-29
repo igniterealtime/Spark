@@ -112,8 +112,9 @@ public class ThemePanel extends JPanel {
           lafname.add(ui[i].getName());
         }
 
-	String[] substance = {	
+	String[] substance = {		
 		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
+		"de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessLookAndFeel",
@@ -123,7 +124,10 @@ public class ThemePanel extends JPanel {
 		"org.jvnet.substance.skin.SubstanceDustCoffeeLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceDustLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel",
+		"org.jvnet.substance.api.skin.SubstanceGeminiLookAndFeel",
+		"org.jvnet.substance.api.skin.SubstanceGraphiteAquaLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel",
+		"org.jvnet.substance.api.skin.SubstanceMagellanLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceModerateLookAndFeel",
@@ -135,17 +139,16 @@ public class ThemePanel extends JPanel {
 		"org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceRavenLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceSaharaLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel",
-		"org.jvnet.substance.api.skin.SubstanceGeminiLookAndFeel",
-		"org.jvnet.substance.api.skin.SubstanceGraphiteAquaLookAndFeel",
-		"org.jvnet.substance.api.skin.SubstanceMagellanLookAndFeel"
+		"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
 		};
     	
 	for(String s : substance)
 	{
 	    _lookandfeelname.add(s);
-	     s =s.substring(s.lastIndexOf(".")+10);
-	     s = s.replace("LookAndFeel", "");
+	    s = s.replace("Substance","");
+	    s = s.replace("Synthetica","");
+	    s = s.replace("LookAndFeel", "");
+	    s = s.substring(s.lastIndexOf(".")+1);
 	    lafname.add(s);
 	}
 	
@@ -162,8 +165,11 @@ public class ThemePanel extends JPanel {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
+		// Disable button for java.LaF's and for BlueMoon
 		if (_lookandfeel.getSelectedItem() != null 
-			&& _lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length) {
+			&& ( _lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length 
+				|| _lookandfeelname.elementAt(_lookandfeel.getSelectedIndex()).contains("BlueMoon") 
+				|| UIManager.getLookAndFeel().getName().contains("BlueMoon"))) {
 		    _lookandfeelpreview.setEnabled(false);
 		    _lookandfeelpreview
 			    .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
@@ -214,7 +220,7 @@ public class ThemePanel extends JPanel {
 	});
         
         
-	_useTabsForTransports = new JCheckBox("deine mudder");
+	_useTabsForTransports = new JCheckBox("");
 	
 	
         JLabel messageStyleLabel = new JLabel();
