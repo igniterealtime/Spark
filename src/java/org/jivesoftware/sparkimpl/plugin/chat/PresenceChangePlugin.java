@@ -22,6 +22,7 @@ package org.jivesoftware.sparkimpl.plugin.chat;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -126,10 +127,13 @@ public class PresenceChangePlugin implements Plugin {
 			    }
 			    String from = presence.getFrom();
 
+			    ArrayList<String> removelater = new ArrayList<String>();
+			    
 			    for (final String jid : sparkContacts) {
 				if (jid.equals(StringUtils
 					.parseBareAddress(from))) {
-				    sparkContacts.remove(jid);
+				    removelater.add(jid);
+				    // sparkContacts.remove(jid);
 
 				    String nickname = SparkManager
 					    .getUserManager()
@@ -175,6 +179,9 @@ public class PresenceChangePlugin implements Plugin {
 				    room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
 				    
 				}
+			    }
+			    for(String s : removelater){
+				sparkContacts.remove(s);
 			    }
 			}
 		    });

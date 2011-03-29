@@ -258,7 +258,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 			        }
 			        @Override
 			        public void finished() {
-			            SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
+			            SparkManager.getUserManager()
+			            .searchContacts("", SparkManager.getChatManager()
+			        	    .getChatContainer().getChatFrame());
 			        }
 			    };
 			    worker.start();
