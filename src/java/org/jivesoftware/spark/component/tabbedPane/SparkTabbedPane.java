@@ -55,11 +55,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -179,23 +182,37 @@ public class SparkTabbedPane extends JPanel {
 		}
 	}
 
+	/*
+	 * Updates the tab colors for unread,active and inactive tabs
+	 */
 	public void updateActiveTab()
 	{
 	for (int i = 0; i < pane.getTabCount(); ++i) {
 	    Component com = pane.getTabComponentAt(i);
 	    TabPanel panel = (TabPanel) com;
 	    Font oldFont = panel.getFont();
-	    if (i == getSelectedIndex()) {
-		panel.setTitleFont(new Font(oldFont.getFontName(), Font.BOLD,
-			oldFont.getSize()));
-		panel.setTitleColor(Color.black);
-	    } else {
-		panel.setTitleFont(new Font(oldFont.getFontName(), Font.PLAIN,
-			oldFont.getSize()));
-		panel.setTitleColor(new Color(247, 247, 247));
+	    try {
+		if (SparkManager.getChatManager().getChatContainer().getChatRoom(i).getUnreadMessageCount() == 0)
+		{
+		    if (i == getSelectedIndex()) {
+			panel.setTitleFont(new Font(oldFont.getFontName(), Font.BOLD,
+				oldFont.getSize()));
+			panel.setTitleColor((Color) UIManager.get("Chat.activeTabColor"));
+		    } else {
+			panel.setTitleFont(new Font(oldFont.getFontName(), Font.PLAIN,
+				oldFont.getSize()));
+			panel.setTitleColor((Color) UIManager.get("Chat.inactiveTabColor"));
+		    }
+		}
+		    
+	    } catch (ChatRoomNotFoundException e) {
+		//Do nothing
 	    }
-
+	   
 	}
+	
+	
+	
 	    
 	}
 	

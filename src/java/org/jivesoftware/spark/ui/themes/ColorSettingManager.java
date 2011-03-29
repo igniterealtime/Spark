@@ -196,8 +196,9 @@ public class ColorSettingManager {
 	    props.setProperty("SparkTabbedPane.startColor", Default.getString("SparkTabbedPane.startColor"));
 	    props.setProperty("SparkTabbedPane.endColor", Default.getString("SparkTabbedPane.endColor"));
 	    props.setProperty("SparkTabbedPane.borderColor", Default.getString("SparkTabbedPane.borderColor"));
-	    
-	    
+	    props.setProperty("Chat.activeTabColor", Default.getString("Chat.activeTabColor"));
+	    props.setProperty("Chat.inactiveTabColor", Default.getString("Chat.inactiveTabColor"));
+	    props.setProperty("Chat.unreadMessageColor", Default.getString("Chat.unreadMessageColor"));
 //	}
 //	else{
 //	    // These are initial reference Values

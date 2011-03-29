@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
+import javax.swing.UIManager;
 
 /**
  *
@@ -67,7 +68,7 @@ public class DefaultTabHandler extends SparkTabHandler {
             if (!chatFrameFocused || !isSelectedTab) {
                 if (room.getUnreadMessageCount() > 0) {
                     // Make tab red.
-                    tab.setTitleColor(Color.red);
+                    tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
                     tab.setTabBold(true);
                 }
 
@@ -99,7 +100,7 @@ public class DefaultTabHandler extends SparkTabHandler {
         else {
             if (!chatFrameFocused || !isSelectedTab) {
                 // Make tab red.
-                tab.setTitleColor(Color.red);
+                tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
                 tab.setTabBold(true);
             }
             if (isSelectedTab && chatFrameFocused) {

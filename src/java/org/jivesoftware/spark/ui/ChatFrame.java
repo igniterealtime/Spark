@@ -90,6 +90,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         	chatFrame.setAlwaysOnTop(true);
         }
         
+        
+        
         optionMenu.add(alwaysOnTopItem);
         chatWindowBar.add(optionMenu);
         setJMenuBar(chatWindowBar);
@@ -165,6 +167,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
    	
 
+    
+    
     public void windowGainedFocus(WindowEvent e) {
         focused = true;
 
