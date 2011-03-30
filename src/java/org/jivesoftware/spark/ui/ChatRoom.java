@@ -342,12 +342,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 	}
 
 	for (RosterEntry re : rosterlist) {
-	    if (re.getName().toLowerCase().startsWith(name.toLowerCase())
-		    && !namelist.contains(re.getName())) {
-		if (newname == null) {
-		    newname = re.getName();
+	    try {
+		if (re.getName().toLowerCase().startsWith(name.toLowerCase()) && !namelist.contains(re.getName())) {
+		    if (newname == null) {
+			newname = re.getName();
+		    }
+		    namelist.add(re.getName());
 		}
-		namelist.add(re.getName());
+	    } catch (NullPointerException npe) {
+		// AWESOME!!!
+		// happens on shared rosters
+		// or when no vcard is set
 	    }
 	}
 
