@@ -1944,7 +1944,9 @@ public class StringUtils {
      * @author wolf.posdorfer
      */
     public static String modifyWildcards(String resource) {
-
+	if(resource==null)
+	    return "";
+	
 	resource = resource.replace("%random%",
 		"" + Math.round((Math.random() * 1000)));
 

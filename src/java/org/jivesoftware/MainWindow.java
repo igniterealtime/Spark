@@ -349,7 +349,23 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 command = starterExe + " \"" + sparkExe + "\"";
             }
             else if (Spark.isLinux()) {
+        	File f =  Spark.getBinDirectory().getParentFile() ;
+        	String[] list = f.list();
+        	boolean contains =false;
+        	for(String s : list)
+        	{
+        	    if (s.equals("spark"))
+        	    {
+        		contains=true;
+        		return;
+        	    }
+        	}
+        	if(contains){
             	command = Spark.getBinDirectory().getParentFile().getCanonicalPath() + File.separator + "spark";
+        	}
+        	else{
+        	    command = Spark.getBinDirectory().getCanonicalPath() + File.separator + "spark";  
+        	}
             }
             else if (Spark.isMac()) {
                 command = "open -a Spark";
