@@ -46,10 +46,12 @@ public class LocalPreferencePanel extends JPanel {
     private JLabel _portLabel = new JLabel();
     private JLabel _idleLabel = new JLabel();
     private JLabel _timeOutLabel = new JLabel();
+    private JLabel _idleStatusLabel = new JLabel();
 
     private JTextField _portField = new JTextField();
     private JTextField _timeOutField = new JTextField();
     private JTextField _idleField = new JTextField();
+    private JTextField _idleStatusText;
 
     private JCheckBox _autoLoginBox = new JCheckBox();
     private JCheckBox _savePasswordBox = new JCheckBox();
@@ -77,6 +79,8 @@ public class LocalPreferencePanel extends JPanel {
 	_autoLoginBox.setSelected(preferences.isAutoLogin());
 	_savePasswordBox.setSelected(preferences.isSavePassword());
 	_startMinimizedBox.setSelected(preferences.isStartedHidden());
+	
+	_idleStatusText = new JTextField(preferences.getIdleMessage());
 
 	_showReconnectBox.setSelectedIndex(preferences.getReconnectPanelType());
 
@@ -118,10 +122,13 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.setBorder(BorderFactory.createTitledBorder(Res
 		.getString("group.login.information")));
 
-	ResourceUtils.resLabel(_portLabel, _portField,
-		Res.getString("label.xmpp.port") + ":");
+	ResourceUtils.resLabel(_portLabel, _portField,Res.getString("label.xmpp.port") + ":");
 	ResourceUtils.resLabel(_timeOutLabel, _timeOutField,
 		Res.getString("label.response.timeout") + ":");
+	
+	ResourceUtils.resLabel(_idleStatusLabel, _idleStatusText,
+		Res.getString("label.time.till.idlemessage") + ":");
+	
 	ResourceUtils.resButton(_autoLoginBox,
 		Res.getString("checkbox.auto.login"));
 	ResourceUtils.resButton(_savePasswordBox,
@@ -130,44 +137,28 @@ public class LocalPreferencePanel extends JPanel {
 		Res.getString("label.time.till.idle") + ":");
 	ResourceUtils.resButton(_idleBox,
 		Res.getString("checkbox.idle.enabled"));
+	
 	ResourceUtils.resButton(_launchOnStartupBox,
 		Res.getString("checkbox.launch.on.startup"));
 	ResourceUtils.resButton(_startMinimizedBox,
 		Res.getString("checkbox.start.in.tray"));
-	inputPanel.add(_portLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-		GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		new Insets(5, 5, 5, 5), 0, 0));
-	inputPanel.add(_portField, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-		GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-		new Insets(5, 5, 5, 5), 0, 0));
-	inputPanel.add(_timeOutLabel, new GridBagConstraints(0, 1, 1, 1, 0.0,
-		0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_timeOutField, new GridBagConstraints(1, 1, 1, 1, 1.0,
-		0.0, GridBagConstraints.NORTHWEST,
-		GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-		GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0,
-		GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-		new Insets(5, 5, 5, 5), 50, 0));
+	
+	inputPanel.add(_portLabel,    new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	inputPanel.add(_portField,    new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 0, 0));
+	inputPanel.add(_timeOutLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_timeOutField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleField,    new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleStatusLabel,new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));	
+	inputPanel.add(_idleBox,        new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
 
-	inputPanel.add(_idleBox, new GridBagConstraints(0, 3, 2, 1, 1.0, 0.0,
-		GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-		new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 4, 2, 1,
-		0.0, 0.0, GridBagConstraints.NORTHWEST,
-		GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_autoLoginBox, new GridBagConstraints(0, 5, 2, 1, 0.0,
-		0.0, GridBagConstraints.NORTHWEST,
-		GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	
+	inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_autoLoginBox,    new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 
 	if (Spark.isWindows()) {
-	    inputPanel.add(_launchOnStartupBox, new GridBagConstraints(0, 6, 2,
-		    1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-		    GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50,
-		    0));
+	    inputPanel.add(_launchOnStartupBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50,0));
 	    _launchOnStartupBox.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    setStartOnStartup(_launchOnStartupBox.isSelected());
@@ -177,16 +168,12 @@ public class LocalPreferencePanel extends JPanel {
 	    _launchOnStartupBox.setSelected(preferences.getStartOnStartup());
 	}
 
-	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 7, 2, 1,
-		0.0, 0.0, GridBagConstraints.NORTHWEST,
-		GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(new JLabel(), new GridBagConstraints(0, 8, 2, 1, 1.0,
-		1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-		new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 8, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(new JLabel(), new GridBagConstraints(0, 9, 2, 1, 1.0,1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,new Insets(5, 5, 5, 5), 50, 0));
 	
 	JLabel reconnectionlabel= new JLabel(Res.getString("checkbox.reconnet.info"));
-	inputPanel.add(reconnectionlabel, new GridBagConstraints(0, 9, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_showReconnectBox, new GridBagConstraints(1, 9, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(reconnectionlabel, new GridBagConstraints(0, 10, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_showReconnectBox, new GridBagConstraints(1, 10, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	
 	add(inputPanel);
     }
@@ -338,6 +325,13 @@ public class LocalPreferencePanel extends JPanel {
      */
     public void setShowReconnectPanel(int reconnect) {
 	_showReconnectBox.setSelectedIndex(reconnect);
+    }
+    
+    public String getIdleMessage(){
+	return _idleStatusText.getText();
+    }
+    public void setIdleMessage(String text){
+	_idleStatusText.setText(text);
     }
 
 }

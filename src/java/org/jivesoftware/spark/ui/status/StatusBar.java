@@ -64,6 +64,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -124,6 +125,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
+        	presence.setStatus(StringUtils.modifyWildcards(presence.getStatus()));      	
                 changeAvailability(presence);
             }
         });

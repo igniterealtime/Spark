@@ -27,8 +27,10 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.BreakIterator;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
@@ -1913,6 +1915,12 @@ public class StringUtils {
 	return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
     }
 
+    /**
+     * Converts the first Character of a String to its Uppercase Instance<br>
+     * test -> Test
+     * @param word 
+     * @return String, with first char uppercased
+     */
     public static String makeFirstWordCaptial(String word) {
 	if (word.length() < 2) {
 	    return word;
@@ -1922,5 +1930,49 @@ public class StringUtils {
 	String restOfWord = word.substring(1);
 
 	return firstWord.toUpperCase() + restOfWord;
+    }
+
+    /**
+     * Modifies Wildcards such as <b>%random%</b>,<b>%system%</b>,
+     * <b>%version%</b>,<b>%time%</b> into what they represent
+     * <p>
+     * for properties see System.getProperties()
+     * 
+     * @param resource
+     *            String to modify
+     * @return modified String
+     * @author wolf.posdorfer
+     */
+    public static String modifyWildcards(String resource) {
+
+	resource = resource.replace("%random%",
+		"" + Math.round((Math.random() * 1000)));
+
+	resource = resource.replace("%system%", System.getProperty("os.name")
+		.replace(" ", ""));
+
+	resource = resource.replace("%version%",
+		System.getProperty("os.version").replace(" ", ""));
+
+	final String DATE_FORMAT_NOW = "HH:mm";
+	Calendar cal = Calendar.getInstance();
+	SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+
+	resource = resource.replace("%time%", sdf.format(cal.getTime()));
+
+	while (resource.contains("%property{")) {
+	    if (resource.contains("%property{") && resource.contains("}/%")) {
+		int indexofbeginning = resource.indexOf("%property{");
+		int indexofending = resource.indexOf("}/%");
+
+		String begin = resource.substring(0, indexofbeginning);
+		String middle = System.getProperty(resource.substring(
+			indexofbeginning+10, indexofending));
+		String end = resource.substring(indexofending + 3);
+		resource = begin + middle + end;
+	    }
+	}
+
+	return resource;
     }
 }

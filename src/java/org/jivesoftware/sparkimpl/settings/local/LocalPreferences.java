@@ -22,6 +22,7 @@ package org.jivesoftware.sparkimpl.settings.local;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import java.io.File;
 import java.util.Date;
@@ -127,6 +128,21 @@ public class LocalPreferences {
 	 */
 	public void setIdleOn(boolean idleOn) {
 		props.setProperty("idleOn", Boolean.toString(idleOn));
+	}
+	/**
+	 * Returns the Idle Message to Display when going automatically away
+	 * @return
+	 */
+	public String getIdleMessage(){
+	    return props.getProperty("idleOnMessage",Res.getString("status.away"));
+	}
+	
+	/**
+	 * Sets the idle Message when going automatically away
+	 * @param message
+	 */
+	public void setIdleMessage(String message){
+	    props.setProperty("idleOnMessage",message);
 	}
 
 	/**

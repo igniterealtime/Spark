@@ -28,10 +28,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -94,7 +94,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	if ((latestPresence.getMode() == Presence.Mode.available)
 		|| latestPresence.getMode() == Presence.Mode.chat) {
 	    Presence presence = new Presence(Presence.Type.available,
-		    Res.getString("status.away"), 1, Presence.Mode.away);
+		    StringUtils.modifyWildcards(pref.getIdleMessage()), 1, Presence.Mode.away);
 	    SparkManager.getSessionManager().changePresence(presence);
 	}
     }
