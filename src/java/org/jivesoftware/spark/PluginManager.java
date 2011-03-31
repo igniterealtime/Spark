@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PluginClassLoader;
 import org.jivesoftware.spark.plugin.PluginDependency;
 import org.jivesoftware.spark.plugin.PublicPlugin;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -117,6 +119,7 @@ public class PluginManager implements MainWindowListener {
         // Current Plugin directory
         File newPlugins = new File(Spark.getLogDirectory().getParentFile(), "plugins").getAbsoluteFile();
         newPlugins.mkdirs();
+        deleteOldPlugins(newPlugins);
 
         File[] files = PLUGINS_DIRECTORY.listFiles();
         if (files != null) {
@@ -143,6 +146,61 @@ public class PluginManager implements MainWindowListener {
         }
 
         PLUGINS_DIRECTORY = newPlugins;
+    }
+    
+    /**
+     * Deletes Plugins in pathtosearch that have a different md5-hash than
+     * its correspondant in install\spark\plugins\
+     * @param pathtosearch 
+     */
+    public void deleteOldPlugins(File pathtosearch) {
+	
+	String installPath = Spark.getBinDirectory().getParentFile()
+		+ File.separator + "plugins" + File.separator;
+	
+	List<File> installerFiles = Arrays.asList(new File(installPath)
+		.listFiles());
+
+	File[] oldFiles = pathtosearch.listFiles();
+	if (oldFiles != null) {
+	    for (File file : oldFiles) {
+
+		if (file.isDirectory()) {
+		    File jarFile = new File(pathtosearch, file.getName()
+			    + ".jar");
+		    if (!jarFile.exists()) {
+			uninstall(file);
+		    } else {
+			try {
+			    File f = new File(installPath + jarFile.getName());
+			    if (installerFiles.contains(f)) {
+				String oldfile = StringUtils
+					.getMD5Checksum(jarFile
+						.getAbsolutePath());
+				String newfile = StringUtils.getMD5Checksum(f
+					.getAbsolutePath());
+				Log.debug(f.getAbsolutePath() + "   "
+					+ jarFile.getAbsolutePath());
+				Log.debug(newfile + " " + oldfile + " equal:"
+					+ oldfile.equals(newfile));
+				if (!oldfile.equals(newfile)) {
+				    Log.debug("deleting: "
+					    + file.getAbsolutePath() + ","
+					    + jarFile.getAbsolutePath());
+				    uninstall(file);
+				    jarFile.delete();
+				}
+			    }
+
+			} catch (Exception e) {
+			    Log.error("No such file", e);
+			}
+		    }
+
+		}
+	    }
+	}
+
     }
 
     /**
