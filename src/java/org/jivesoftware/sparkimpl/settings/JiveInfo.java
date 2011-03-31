@@ -27,7 +27,7 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "2.6.0 RC 1";
+        return "2.6.0 RC 2";
     }
 
     /*
