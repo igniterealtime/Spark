@@ -42,6 +42,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.awt.MenuItem;
 import java.awt.Window;
 import java.awt.event.*;
 import java.util.Timer;
@@ -49,20 +50,21 @@ import java.util.TimerTask;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
-
+import javax.swing.UIManager;
 
 /**
- * Plugins for handling Mac OS X specific functionality
- *
- * @author Andrew Wright
+ * Plugins for handling Mac OS X specific functionality supports 10.6+
+ * 
+ * @author Wolf Posdorfer
  */
 public class ApplePlugin implements Plugin, NativeHandler {
 
-    private AppleStatusMenu statusMenu;
-    private AppleUtils appleUtils;
+    private AppleDock _appledock;
+    private AppleUtils _appleUtils;
     private boolean unavailable;
     private int previousPriority;
     private boolean addedFrameListener;
@@ -70,297 +72,308 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
     private ChatFrame chatFrame;
 
+    private Application _application;
+
+    @SuppressWarnings("deprecation")
     public void initialize() {
-        if (Spark.isMac()) {
-            appleUtils = new AppleUtils();
-            SparkManager.getNativeManager().addNativeHandler(this);
+	if (Spark.isMac()) {
+	    
+	    
+	    _appleUtils = new AppleUtils();
+	    _appledock = new AppleDock();
 
-            handleIdle();
+	    SparkManager.getNativeManager().addNativeHandler(this);
 
-            // Remove the About Menu Item from the help menu
-            MainWindow mainWindow = SparkManager.getMainWindow();
+	    handleIdle();
 
-            JMenu helpMenu = mainWindow.getMenuByName("Help");
-            Component[] menuComponents = helpMenu.getMenuComponents();
-            Component prev = null;
-            for (Component current : menuComponents) {
-                if (current instanceof JMenuItem) {
-                    JMenuItem item = (JMenuItem) current;
-                    if ("About".equals(item.getText())) {
-                        helpMenu.remove(item);
+	    // // register an application listener to show the about box
+	    _application = Application.getApplication();
 
-                        // We want to remove the seperator
-                        if (prev != null && (prev instanceof JSeparator)) {
-                            helpMenu.remove(prev);
-                        }
-                    }
-                }
-                prev = current;
-            }
+	    _application.setEnabledPreferencesMenu(true);
+	    _application.addPreferencesMenuItem();
+	    _application.addApplicationListener(new ApplicationAdapter() {
 
-            JMenu connectMenu = mainWindow.getMenuByName("Spark");
-            connectMenu.setText("Connect");
-            menuComponents = connectMenu.getMenuComponents();
-            JSeparator lastSeperator = null;
-            for (Component current : menuComponents) {
-                if (current instanceof JMenuItem) {
-                    JMenuItem item = (JMenuItem) current;
+		public void handlePreferences(ApplicationEvent applicationEvent) {
+		    SparkManager.getPreferenceManager().showPreferences();
+		}
 
-                    if ("Preferences".equals(item.getText())) {
-                        connectMenu.remove(item);
-                    } else if ("Log Out".equals(item.getText())) {
-                        connectMenu.remove(item);
-                    }
+		public void handleReOpenApplication(ApplicationEvent event) {
+		    MainWindow mainWindow = SparkManager.getMainWindow();
+		    if (!mainWindow.isVisible()) {
+			mainWindow.setState(Frame.NORMAL);
+			mainWindow.setVisible(true);
+		    }
 
+		    if (SparkManager.getChatManager().getChatContainer()
+			    .getTotalNumberOfUnreadMessages() > 0) {
+			final ChatFrame frame = SparkManager.getChatManager().getChatContainer()
+				.getChatFrame();
+			frame.setState(Frame.NORMAL);
+			frame.setVisible(true);
+			frame.toFront();
+		    }
+		}
 
-                } else if (current instanceof JSeparator) {
-                    lastSeperator = (JSeparator) current;
-                }
-            }
-            if (lastSeperator != null) {
-                connectMenu.remove(lastSeperator);
-            }
+		public void handleQuit(ApplicationEvent applicationEvent) {
+		    SparkManager.getMainWindow().shutdown();
+		}
 
-            // register an application listener to show the about box
-            Application application = Application.getApplication();
+	    });
 
-            application.setEnabledPreferencesMenu(true);
-            application.addPreferencesMenuItem();
-            application.addApplicationListener(new ApplicationAdapter() {
+	    // Create Mac MenuBar when not in system.laf
+	    createMenuBarEntries();
 
-                public void handlePreferences(ApplicationEvent applicationEvent) {
-                    SparkManager.getPreferenceManager().showPreferences();
-                }
-
-                public void handleReOpenApplication(ApplicationEvent event) {
-                    MainWindow mainWindow = SparkManager.getMainWindow();
-                    if (!mainWindow.isVisible()) {
-                        mainWindow.setState(Frame.NORMAL);
-                        mainWindow.setVisible(true);
-                    }
-
-                    if(SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() > 0){
-                        final ChatFrame frame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                        frame.setState(Frame.NORMAL);
-                        frame.setVisible(true);
-                        frame.toFront();
-                    }
-                }
-
-
-                public void handleQuit(ApplicationEvent applicationEvent) {
-                    SparkManager.getMainWindow().shutdown();
-                }
-
-            });
-            statusMenu = new AppleStatusMenu();
-            statusMenu.display();
-        }
+	}
     }
 
     public void shutdown() {
-        if (Spark.isMac()) {
-            SparkManager.getNativeManager().removeNativeHandler(this);
-        }
+	if (Spark.isMac()) {
+	    SparkManager.getNativeManager().removeNativeHandler(this);
+	}
     }
 
     public boolean canShutDown() {
-        return false;
+	return false;
     }
 
     public void uninstall() {
-        // No need, since this is internal
+	// No need, since this is internal
     }
 
     public void flashWindow(Window window) {
-        appleUtils.bounceDockIcon(true);
-        statusMenu.showActiveIcon();
+	_appleUtils.bounceDockIcon(true);
+	// statusMenu.showActiveIcon();
     }
 
     public void flashWindowStopWhenFocused(Window window) {
-        appleUtils.bounceDockIcon(true);
-        try {
-            statusMenu.showActiveIcon();
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
+	_appleUtils.bounceDockIcon(true);
+	// statusMenu.showActiveIcon();
+
     }
 
     public void stopFlashing(Window window) {
-        appleUtils.resetDock();
-        try {
-            statusMenu.showBlackIcon();
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
+	_appleUtils.resetDock();
+	// try {
+	// statusMenu.showBlackIcon();
+	// } catch (Exception e) {
+	// Log.error(e);
+	// }
 
     }
 
     public boolean handleNotification() {
-        return Spark.isMac();
+	return Spark.isMac();
     }
 
     private void handleIdle() {
-        SparkManager.getMainWindow().addComponentListener(new ComponentListener() {
-            public void componentResized(ComponentEvent componentEvent) {
-                setActivity();
-            }
+	SparkManager.getMainWindow().addComponentListener(new ComponentListener() {
+	    public void componentResized(ComponentEvent componentEvent) {
+		setActivity();
+	    }
 
-            public void componentMoved(ComponentEvent componentEvent) {
-                setActivity();
-            }
+	    public void componentMoved(ComponentEvent componentEvent) {
+		setActivity();
+	    }
 
-            public void componentShown(ComponentEvent componentEvent) {
-                setActivity();
-            }
+	    public void componentShown(ComponentEvent componentEvent) {
+		setActivity();
+	    }
 
-            public void componentHidden(ComponentEvent componentEvent) {
-                setActivity();
-            }
-        });
+	    public void componentHidden(ComponentEvent componentEvent) {
+		setActivity();
+	    }
+	});
 
-        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
-            public void chatRoomOpened(ChatRoom room) {
-                if (!addedFrameListener) {
-                    chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                    chatFrame.addComponentListener(new ComponentListener() {
-                        public void componentResized(ComponentEvent componentEvent) {
-                            setActivity();
-                        }
+	SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
+	    public void chatRoomOpened(ChatRoom room) {
+		if (!addedFrameListener) {
+		    chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+		    chatFrame.addComponentListener(new ComponentListener() {
+			public void componentResized(ComponentEvent componentEvent) {
+			    setActivity();
+			}
 
-                        public void componentMoved(ComponentEvent componentEvent) {
-                            setActivity();
-                        }
+			public void componentMoved(ComponentEvent componentEvent) {
+			    setActivity();
+			}
 
-                        public void componentShown(ComponentEvent componentEvent) {
-                            setActivity();
-                        }
+			public void componentShown(ComponentEvent componentEvent) {
+			    setActivity();
+			}
 
-                        public void componentHidden(ComponentEvent componentEvent) {
-                            setActivity();
-                        }
-                    });
+			public void componentHidden(ComponentEvent componentEvent) {
+			    setActivity();
+			}
+		    });
 
-                    addedFrameListener = true;
+		    addedFrameListener = true;
 
-                }
+		}
 
-                setActivity();
-            }
+		setActivity();
+	    }
 
+	    public void chatRoomClosed(ChatRoom room) {
+		setActivity();
+	    }
+	});
 
-            public void chatRoomClosed(ChatRoom room) {
-                setActivity();
-            }
-        });
+	SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
+	    public void presenceChanged(Presence presence) {
+		if (presence.isAvailable() && !presence.isAway()) {
+		    lastActive = System.currentTimeMillis();
+		}
+	    }
+	});
 
-        SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
-            public void presenceChanged(Presence presence) {
-                if(presence.isAvailable() && !presence.isAway()){
-                    lastActive = System.currentTimeMillis();
-                }
-            }
-        });
+	final Timer timer = new Timer();
+	timer.scheduleAtFixedRate(new TimerTask() {
+	    public void run() {
+		sparkIsIdle();
+	    }
+	}, 10000, 10000);
 
-
-        final Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                sparkIsIdle();
-            }
-        }, 10000, 10000);
-
-        lastActive = System.currentTimeMillis();
+	lastActive = System.currentTimeMillis();
 
     }
 
     public void setActivity() {
-        lastActive = System.currentTimeMillis();
-        setAvailableIfActive();
+	lastActive = System.currentTimeMillis();
+	setAvailableIfActive();
     }
 
-
     private void sparkIsIdle() {
-        LocalPreferences localPref = SettingsManager.getLocalPreferences();
-        if (!localPref.isIdleOn()) {
-            return;
-        }
+	LocalPreferences localPref = SettingsManager.getLocalPreferences();
+	if (!localPref.isIdleOn()) {
+	    return;
+	}
 
-        try {
-            // Handle if spark is not connected to the server.
-            if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
-                return;
-            }
+	try {
+	    // Handle if spark is not connected to the server.
+	    if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
+		return;
+	    }
 
-            // Change Status
-            Workspace workspace = SparkManager.getWorkspace();
-            if (workspace != null) {
-                Presence presence = workspace.getStatusBar().getPresence();
-                long diff = System.currentTimeMillis() - lastActive;
-                boolean idle = diff > 60000 * 60;
-                if (presence.getMode() == Presence.Mode.available && idle) {
-                    unavailable = true;
-                    StatusItem away = workspace.getStatusBar().getStatusItem("Away");
-                    Presence p = away.getPresence();
-                    p.setStatus(Res.getString("message.away.idle"));
+	    // Change Status
+	    Workspace workspace = SparkManager.getWorkspace();
+	    if (workspace != null) {
+		Presence presence = workspace.getStatusBar().getPresence();
+		long diff = System.currentTimeMillis() - lastActive;
+		boolean idle = diff > 60000 * 60;
+		if (presence.getMode() == Presence.Mode.available && idle) {
+		    unavailable = true;
+		    StatusItem away = workspace.getStatusBar().getStatusItem("Away");
+		    Presence p = away.getPresence();
+		    p.setStatus(Res.getString("message.away.idle"));
 
-                    previousPriority = presence.getPriority();
+		    previousPriority = presence.getPriority();
 
-                    p.setPriority(0);
+		    p.setPriority(0);
 
-                    SparkManager.getSessionManager().changePresence(p);
-                }
-            }
-        }
-        catch (Exception e) {
-            Log.error("Error with IDLE status.", e);
-        }
+		    SparkManager.getSessionManager().changePresence(p);
+		}
+	    }
+	} catch (Exception e) {
+	    Log.error("Error with IDLE status.", e);
+	}
     }
 
     private void setAvailableIfActive() {
-        if (!unavailable) {
-            return;
-        }
-        // Handle if spark is not connected to the server.
-        if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
-            return;
-        }
+	if (!unavailable) {
+	    return;
+	}
+	// Handle if spark is not connected to the server.
+	if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
+	    return;
+	}
 
-        // Change Status
-        Workspace workspace = SparkManager.getWorkspace();
-        if (workspace != null) {
-            Presence presence = workspace.getStatusBar().getStatusItem(Res.getString("available")).getPresence();
-            if (previousPriority != -1) {
-                presence.setPriority(previousPriority);
-            }
+	// Change Status
+	Workspace workspace = SparkManager.getWorkspace();
+	if (workspace != null) {
+	    Presence presence = workspace.getStatusBar().getStatusItem(Res.getString("available"))
+		    .getPresence();
+	    if (previousPriority != -1) {
+		presence.setPriority(previousPriority);
+	    }
 
-            SparkManager.getSessionManager().changePresence(presence);
-            unavailable = false;
-            lastActive = System.currentTimeMillis();
-        }
+	    SparkManager.getSessionManager().changePresence(presence);
+	    unavailable = false;
+	    lastActive = System.currentTimeMillis();
+	}
     }
 
-
     public boolean openFile(File file) {
-        return false;
+	return false;
     }
 
     public boolean launchEmailClient(String to, String subject) {
-        return false;
+	return false;
     }
 
     public boolean launchBrowser(String url) {
-        try {
-            BrowserLauncher.openURL(url);
-        }
-        catch (IOException e) {
-            Log.error(e);
-        }
-        return true;
+	try {
+	    BrowserLauncher.openURL(url);
+	} catch (IOException e) {
+	    Log.error(e);
+	} catch (Exception e) {
+	    Log.error(e);
+	}
+	return true;
+    }
+
+    /**
+     * Creates Mac Specific MenuBar entries When not using the system look and
+     * feel
+     */
+    private void createMenuBarEntries() {
+
+	String curlaf = UIManager.getLookAndFeel().getName();
+
+	if (!curlaf.equals("Mac OS X")) {
+	    _application.setDefaultMenuBar(SparkManager.getMainWindow().getMenu());
+	}
+
+	// MainWindow mainWindow = SparkManager.getMainWindow();
+	//
+	// JMenu helpMenu = mainWindow.getMenuByName("Help");
+	// Component[] menuComponents = helpMenu.getMenuComponents();
+	// Component prev = null;
+	// for (Component current : menuComponents) {
+	// if (current instanceof JMenuItem) {
+	// JMenuItem item = (JMenuItem) current;
+	// if ("About".equals(item.getText())) {
+	// helpMenu.remove(item);
+	//
+	// // We want to remove the seperator
+	// if (prev != null && (prev instanceof JSeparator)) {
+	// helpMenu.remove(prev);
+	// }
+	// }
+	// }
+	// prev = current;
+	// }
+	//
+	// JMenu connectMenu = mainWindow.getMenuByName("Spark");
+	// connectMenu.setText("Connect");
+	// menuComponents = connectMenu.getMenuComponents();
+	// JSeparator lastSeperator = null;
+	// for (Component current : menuComponents) {
+	// if (current instanceof JMenuItem) {
+	// JMenuItem item = (JMenuItem) current;
+	//
+	// if ("Preferences".equals(item.getText())) {
+	// connectMenu.remove(item);
+	// } else if ("Log Out".equals(item.getText())) {
+	// connectMenu.remove(item);
+	// }
+	//
+	// } else if (current instanceof JSeparator) {
+	// lastSeperator = (JSeparator) current;
+	// }
+	// }
+	// if (lastSeperator != null) {
+	// connectMenu.remove(lastSeperator);
+	// }
+
     }
 }
-
-
-

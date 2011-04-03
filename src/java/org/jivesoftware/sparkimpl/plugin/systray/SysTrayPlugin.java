@@ -19,6 +19,10 @@
  */
 package org.jivesoftware.sparkimpl.plugin.systray;
 
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.MouseInfo;
+import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.Window;
@@ -236,6 +240,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
 		    });
 
 	    try {
+	
+		
+		
 		trayIcon = new TrayIcon(availableIcon.getImage(),
 			Default.getString(Default.APPLICATION_NAME), null);
 		trayIcon.setImageAutoSize(true);
@@ -244,8 +251,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
 
 		    @Override
 		    public void mouseClicked(MouseEvent event) {
+
 			if (event.getButton() == MouseEvent.BUTTON1
 				&& event.getClickCount() == 1) {
+			    
 
 			    if (SparkManager.getMainWindow().isVisible()) {
 				SparkManager.getMainWindow().setVisible(false);
@@ -257,9 +266,23 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
 			    SparkManager.getMainWindow().toFront();
 			    // SparkManager.getMainWindow().requestFocus();
 			} else if (event.getButton() == MouseEvent.BUTTON3) {
-			    popupMenu.setLocation(event.getX(), event.getY());
-			    popupMenu.setInvoker(popupMenu);
-			    popupMenu.setVisible(true);
+			   
+			    if (popupMenu.isVisible()) {
+				popupMenu.setVisible(false);
+			    } else {
+
+				double x = MouseInfo.getPointerInfo().getLocation().getX();
+				double y = MouseInfo.getPointerInfo().getLocation().getY();
+
+				if (Spark.isMac()) {
+				    popupMenu.setLocation((int) x, (int) y);
+				} else {
+				    popupMenu.setLocation(event.getX(), event.getY());
+				}
+				
+				popupMenu.setInvoker(popupMenu);
+				popupMenu.setVisible(true);
+			    }
 			}
 		    }
 
@@ -276,6 +299,15 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
 		    @Override
 		    public void mousePressed(MouseEvent event) {
 
+			// on Mac i would want the window to show when i left-click the Icon
+			if (Spark.isMac() && event.getButton()!=MouseEvent.BUTTON3) {
+			    SparkManager.getMainWindow().setVisible(false);
+			    SparkManager.getMainWindow().setVisible(true);
+			    SparkManager.getMainWindow().requestFocusInWindow();
+			    SparkManager.getMainWindow().bringFrameIntoFocus();
+			    SparkManager.getMainWindow().toFront();
+			    SparkManager.getMainWindow().requestFocus();
+			}
 		    }
 
 		    @Override

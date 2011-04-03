@@ -455,13 +455,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             }
         });
 
-        if ((Spark.isWindows() || Spark.isLinux()) && !Default.getBoolean("DISABLE_EXIT")) {
+        if ((Spark.isWindows() || Spark.isLinux()) || Spark.isMac() && !Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(logoutMenuItem);
             connectMenu.add(logoutWithStatus);
 	    connectMenu.addSeparator();
 	}
 
-        if (!Spark.isMac() && !Default.getBoolean("DISABLE_EXIT")) {
+        if (!Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(exitMenuItem);
         }
         
