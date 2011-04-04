@@ -162,7 +162,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.setLayout(new GridBagLayout());
         panel.add(contactIDLabel, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(jidField	, new GridBagConstraints(1, 0, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(_searchForName, new GridBagConstraints(2, 0, 1, 1, 1.0D, 0.0D, 17, 0, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(_searchForName, new GridBagConstraints(2, 0, 1, 1, 0.0D, 0.0D, 17, 0, new Insets(5, 5, 5, 5), 0, 0));
 
         
         panel.add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
@@ -187,7 +187,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         panel.add(groupBox, new GridBagConstraints(1, 4, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         
         if(!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED")){
-        panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 1, new Insets(5, 5, 5, 5), 0, 0));
         }
         newGroupButton.addActionListener(this);
 
@@ -343,7 +343,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
 			public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
-                size.width = 350;
+                size.width = 450;
                 return size;
             }
         };
