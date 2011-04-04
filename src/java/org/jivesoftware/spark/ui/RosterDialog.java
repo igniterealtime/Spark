@@ -19,39 +19,6 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.borders.ComponentTitledBorder;
-import org.jivesoftware.spark.component.renderer.JPanelRenderer;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
-import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -63,11 +30,58 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.ReportedData.Column;
+import org.jivesoftware.smackx.ReportedData.Row;
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.search.UserSearchManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.borders.ComponentTitledBorder;
+import org.jivesoftware.spark.component.renderer.JPanelRenderer;
+import org.jivesoftware.spark.search.SearchManager;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
+import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 
 /**
@@ -86,12 +100,16 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     private JDialog dialog;
     private ContactList contactList;
     private JCheckBox publicBox;
+    private JButton _searchForName ;
+    private Collection<String> _usersearchservice;
 
     /**
      * Create a new instance of RosterDialog.
      */
     public RosterDialog() {
         contactList = SparkManager.getWorkspace().getContactList();
+        
+        _usersearchservice = SearchManager.getInstance().getSearchServicesAsString();
 
         panel = new JPanel();
         JLabel contactIDLabel = new JLabel();
@@ -108,12 +126,45 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         publicBox = new JCheckBox(Res.getString("label.user.on.public.network"));
 
         ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.network"));
+        
+        _searchForName = new JButton();
+        _searchForName.setIcon(SparkRes.getImageIcon(SparkRes.TRANSFER_IMAGE_24x24));
+
+	_searchForName.addMouseListener(new MouseListener() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		try {
+		    searchForContact(jidField.getText(), e);
+		} catch (XMPPException e1) {
+		    Log.error("search contact", e1);
+		}
+	    }
+
+	    @Override
+	    public void mouseReleased(MouseEvent e) {
+	    }
+
+	    @Override
+	    public void mousePressed(MouseEvent e) {
+	    }
+
+	    @Override
+	    public void mouseExited(MouseEvent e) {
+	    }
+
+	    @Override
+	    public void mouseEntered(MouseEvent e) {
+	    }
+	});
 
         pane = null;
         dialog = null;
         panel.setLayout(new GridBagLayout());
         panel.add(contactIDLabel, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(jidField, new GridBagConstraints(1, 0, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(jidField	, new GridBagConstraints(1, 0, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add(_searchForName, new GridBagConstraints(2, 0, 1, 1, 1.0D, 0.0D, 17, 0, new Insets(5, 5, 5, 5), 0, 0));
+
+        
         panel.add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -469,6 +520,87 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
         rosterEntryThread.start();
     }
+    
+    /**
+     * Creates a Popupdialog above the Search Button displaying matching Contacts
+     * @param byname, the Searchname, atleast 5 Chars long
+     * @param event, the MouseEvent which triggered it
+     * @throws XMPPException
+     */
+    public void searchForContact(String byname, MouseEvent event)
+	    throws XMPPException {
+
+	if (byname.length() <= 4) {
+	    JOptionPane.showMessageDialog(jidField, Res.getString("message.search.input.short"),
+		    Res.getString("title.notification"),
+		    JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
+
+	JPopupMenu popup = new JPopupMenu();
+	JMenuItem header = new JMenuItem(Res.getString("group.search.results")+":");
+	header.setBackground(UIManager.getColor("List.selectionBackground"));
+	header.setForeground(Color.red);
+	popup.add(header);
+	
+	for (String search : _usersearchservice) {
+
+	    ReportedData data;
+	    UserSearchManager usersearchManager = new UserSearchManager(
+		    SparkManager.getConnection());
+
+	    Form f = usersearchManager.getSearchForm(search);
+	        
+	    Form answer = f.createAnswerForm();
+	    answer.setAnswer("Name", true);
+	    answer.setAnswer("Email", true);
+	    answer.setAnswer("search", jidField.getText());
+	    answer.setAnswer("Username", true);
+
+	    data = usersearchManager.getSearchResults(answer,
+		    "search.jabber.int.kn");
+
+	    ArrayList<String> columnnames = new ArrayList<String>();
+	    Iterator<Column> columns = data.getColumns();
+	    while (columns.hasNext()) {
+		ReportedData.Column column = (ReportedData.Column) columns
+			.next();
+		String label = column.getLabel();
+		columnnames.add(label);
+	    }
+
+	    Iterator<Row> rows = data.getRows();
+	    while (rows.hasNext()) {
+		ReportedData.Row row = (ReportedData.Row) rows.next();
+		if (row.getValues(columnnames.get(0)).hasNext()) {
+		    String s = (String) row.getValues(columnnames.get(0))
+			    .next();
+		    final JMenuItem item = new JMenuItem(s);
+		    popup.add(item);
+		    item.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			    jidField.setText(item.getText());
+			}
+		    });
+		}
+
+	    }
+	}
+
+	if (popup.getComponentCount() > 2) {
+	    popup.setVisible(true);
+	    popup.show(_searchForName, event.getX(), event.getY());
+	} else if (popup.getComponentCount() == 2) {
+	    jidField.setText(((JMenuItem) popup.getComponent(1)).getText());
+	}else
+	{
+	    JOptionPane.showMessageDialog(jidField, Res.getString("message.no.results.found"),
+		    Res.getString("title.notification"),JOptionPane.ERROR_MESSAGE);
+	}
+
+    }
+    
 
     /**
      * Adds a new entry to the users Roster.

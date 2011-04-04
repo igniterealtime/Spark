@@ -57,6 +57,8 @@ import java.util.List;
  * UserSearchResults displays the UI for all users found using the JEP-055 search service.
  */
 public class UserSearchResults extends JPanel {
+
+    private static final long serialVersionUID = 4196389090818949068L;
     private UsersInfoTable resultsTable;
 
     /**

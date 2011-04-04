@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class UserSearchService implements Searchable {
-    private Collection searchServices;
+    private Collection<String> searchServices;
 
     public UserSearchService() {
         loadSearchServices();
@@ -132,7 +132,7 @@ public class UserSearchService implements Searchable {
      * @return a Collection of search services found on the server.
      * @throws XMPPException thrown if a server error has occurred.
      */
-    private Collection getServices() throws Exception {
+    private Collection<String> getServices() throws Exception {
         final Set<String> searchServices = new HashSet<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
@@ -172,7 +172,7 @@ public class UserSearchService implements Searchable {
      *
      * @return the discovered search services.
      */
-    public Collection getSearchServices() {
+    public Collection<String> getSearchServices() {
         return searchServices;
     }
 

@@ -34,6 +34,7 @@ import java.util.List;
 public class SearchManager {
     private List<Searchable> searchServices = new ArrayList<Searchable>();
     private SearchService ui;
+    private Collection<String> _searchservicesHosts;
 
     private static SearchManager singleton;
     private static final Object LOCK = new Object();
@@ -64,7 +65,6 @@ public class SearchManager {
         // By default, the user search is first.
         SwingWorker worker = new SwingWorker() {
             UserSearchService searchWizard;
-
             public Object construct() {
                 searchWizard = new UserSearchService();
                 return searchWizard;
@@ -74,6 +74,7 @@ public class SearchManager {
                 if (searchWizard.getSearchServices() != null) {
                     ui.setActiveSearchService(searchWizard);
                     addSearchService(searchWizard);
+                   _searchservicesHosts =  searchWizard.getSearchServices();
                 }
             }
         };
@@ -114,6 +115,15 @@ public class SearchManager {
      */
     public Collection<Searchable> getSearchServices() {
         return searchServices;
+    }
+    /**
+     * Returns all registered search services.
+     *
+     * @return the collection of search services.
+     */
+    public Collection<String> getSearchServicesAsString()
+    {
+	return _searchservicesHosts;
     }
 
     private void checkSearchService() {

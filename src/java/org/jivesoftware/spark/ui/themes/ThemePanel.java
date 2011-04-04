@@ -33,7 +33,6 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -49,7 +48,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.BadLocationException;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -156,7 +158,7 @@ public class ThemePanel extends JPanel {
         _lookandfeel = new JComboBox(lafname);
         
         if (Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)){
-            _lookandfeel.disable();
+            _lookandfeel.setEnabled(false);
         }
         _lookandfeelLabel = new JLabel(Res.getString("lookandfeel.select"));
         _lookandfeelpreview = new JButton(Res.getString("lookandfeel.change.now"));
