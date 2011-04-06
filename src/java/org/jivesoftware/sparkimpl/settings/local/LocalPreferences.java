@@ -866,14 +866,6 @@ public class LocalPreferences {
 		return getInt("chatRoomFontSize", 12);
 	}
 
-	public void setPerisitedChatRoomsClosable(boolean closable) {
-		setBoolean("perisitedChatRoomsClosable", closable);
-	}
-
-	public boolean arePerisitedChatRoomsClosable() {
-		return getBoolean("perisitedChatRoomsClosable", true);
-	}
-
 	public void setLanguage(String language) {
 		props.setProperty("language", language);
 	}
@@ -915,7 +907,7 @@ public class LocalPreferences {
 	}
 	
 	public boolean isMainWindowAlwaysOnTop() {
-		return getBoolean("alwaysOnTop", false);
+		return getBoolean("MainWindowAlwaysOnTop", false);
 	}
 	
 	public void setMainWindowAlwaysOnTop(boolean onTop) {
@@ -923,7 +915,7 @@ public class LocalPreferences {
 	}
 	
 	public boolean isChatWindowAlwaysOnTop() {
-		return getBoolean("ChatFrameAlwaysOnTop", false);
+		return getBoolean("ChatWindowAlwaysOnTop", false);
 	}
 	
 	public void setChatWindowAlwaysOnTop(boolean onTop) {
