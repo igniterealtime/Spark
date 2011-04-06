@@ -347,7 +347,7 @@ public final class OnlineAgents extends JPanel {
                     if (nickname == null) {
                         nickname = agent;
                     }
-                    ContactItem contactItem = new ContactItem("",nickname, StringUtils.parseBareAddress(presence.getFrom()));
+                    ContactItem contactItem = new ContactItem(nickname,nickname, StringUtils.parseBareAddress(presence.getFrom()));
                     contactItem.setPresence(presence);
                     contactGroup.addContactItem(contactItem);
                 }
