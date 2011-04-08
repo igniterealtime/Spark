@@ -19,37 +19,101 @@
  */
 package com.jivesoftware.spark.plugin.growl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
-
 /**
- * Provides support for Growl Notifications on Mac OS X. Growl can be acquired at
- * http://growl.info
- *
- *
- * @author Andrew Wright
+ * Provides support for Growl Notifications on Mac OS X. Growl can be acquired
+ * at http://growl.info
+ * 
+ * 
+ * @author Wolf.Posdorfer
  */
 public class GrowlPlugin implements Plugin {
 
     private GrowlMessageListener growlListener;
 
-
     public void initialize() {
-        growlListener = new GrowlMessageListener();
-        SparkManager.getChatManager().addGlobalMessageListener(growlListener);
+	boolean b = placeLibs();
+	try {
+	    Thread.sleep(1500);
+	} catch (InterruptedException e) {
+	}
+
+	if (!b) {
+	    placeLibs();
+	    try {
+		Thread.sleep(1500);
+	    } catch (InterruptedException e) {
+	    }
+	}
+
+	GrowlPreference preference = new GrowlPreference();
+	// SparkManager.getPreferenceManager().addPreference(preference);
+	growlListener = new GrowlMessageListener();
+	SparkManager.getChatManager().addGlobalMessageListener(growlListener);
     }
 
     public void shutdown() {
-        SparkManager.getChatManager().removeGlobalMessageListener(growlListener);
+	SparkManager.getChatManager().removeGlobalMessageListener(growlListener);
     }
 
     public boolean canShutDown() {
-        return true;
+	return true;
     }
 
     public void uninstall() {
-        SparkManager.getChatManager().removeGlobalMessageListener(growlListener);
+	SparkManager.getChatManager().removeGlobalMessageListener(growlListener);
+    }
+
+    /**
+     * Places the libgrowl.jnilib into /Library/Java/Extensions
+     * 
+     * @return
+     */
+    private boolean placeLibs() {
+
+	boolean result = false;
+
+	File f = new File("/Library/Java/Extensions/libgrowl.jnilib");
+
+	if (f.exists()) {
+	    return true;
+	}
+
+	String home = Spark.getUserHome() + "/Spark/plugins/growl/lib/";
+	File library = new File(home + "libgrowl.jnilib");
+
+	System.out.println(f.exists() + " " + library.exists());
+
+	try {
+	    InputStream in = new FileInputStream(library);
+	    OutputStream out = new FileOutputStream(f);
+
+	    // Transfer bytes from in to out
+	    byte[] buf = new byte[1024];
+	    int len;
+	    while ((len = in.read(buf)) > 0) {
+		out.write(buf, 0, len);
+	    }
+	    in.close();
+	    out.close();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+
+	result = f.exists();
+
+	return result;
+
     }
 
 }

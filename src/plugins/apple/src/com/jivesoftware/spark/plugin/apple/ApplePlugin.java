@@ -141,23 +141,17 @@ public class ApplePlugin implements Plugin, NativeHandler {
     }
 
     public void flashWindow(Window window) {
-	_appleUtils.bounceDockIcon(true);
-	// statusMenu.showActiveIcon();
+	_appleUtils.bounceDockIcon(false);
     }
 
     public void flashWindowStopWhenFocused(Window window) {
-	_appleUtils.bounceDockIcon(true);
-	// statusMenu.showActiveIcon();
+	_appleUtils.bounceDockIcon(false);
 
     }
 
     public void stopFlashing(Window window) {
 	_appleUtils.resetDock();
-	// try {
-	// statusMenu.showBlackIcon();
-	// } catch (Exception e) {
-	// Log.error(e);
-	// }
+	_appleUtils.bounceDockIcon(false);
 
     }
 

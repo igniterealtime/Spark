@@ -1,7 +1,7 @@
 <plugin>
     <name>Growl Plugin</name>
-    <version>1.0</version>
-    <author>Andrew Wright</author>
+    <version>2.0</version>
+    <author>Wolf Posdorfer</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>andrew@jivesoftware.com</email>
     <description>Provides Growl notifications on Mac OS X.(http://growl.info)</description>
