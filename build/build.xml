@@ -626,24 +626,23 @@
 
 	<target name="mac.build.plugin" depends="jar">
 		<!-- build the apple jar and place it in the plugins -->
-		<!--
+		
         <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="clean"/>
         <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="jar"/>
-	-->
 
 		<!-- build the growl jar and place it in the plugins -->
-		<!--
+		
         <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="clean"/>
         <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
-	-->
+
 	</target>
 
 	<target name="mac.app" depends="mac.clean,mac.build.plugin">
 
 		<!-- http://www.loomcom.com/jarbundler/ -->
 		<taskdef name="jarbundler"
-                 classpath="${basedir}/build/lib/jarbundler-1.4.jar"
-                 classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
+                 classpath="${basedir}/build/lib/jarbundler-2.2.0.jar"
+                 classname="net.sourceforge.jarbundler.JarBundler"/>
 
 		<mkdir dir="${mac.build.dir}"/>
 
@@ -652,11 +651,12 @@
                     mainclass="org.jivesoftware.launcher.Startup"
                     icon="${target}/classes/images/message.icns"
                     version="${version}"
-                    infostring="Spark ${version}, (c) Jive Software 2005"
+                    infostring="Spark ${version}, (c) Jive Software 2011"
                     aboutmenuname="Spark"
                     bundleid="com.jivesoftware.SparkBundle"
                     developmentregion="English"
-                    jvmversion="1.5+"
+                    jvmversion="1.6+"
+					jvmarchs="i386 x64_86 ppc"
                     smalltabs="true"
                     antialiasedgraphics="true"
                     antialiasedtext="true"
@@ -664,7 +664,7 @@
                     growbox="true"
                     growboxintrudes="true"
                     screenmenu="true"
-                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true"
+                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true -D32"
                     workingdirectory="$APP_PACKAGE/Contents/Resources"
                     extraclasspath="/System/Library/Java">
 			<jarfileset dir="${target.build}/lib">

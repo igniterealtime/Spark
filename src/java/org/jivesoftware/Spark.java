@@ -56,12 +56,12 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * @version 1.0, 11/17/2005
  */
 public final class Spark {
+    
+    
 
-    private static final String USER_SPARK_HOME = System.getenv("APPDATA") != null
-	    && !System.getenv("APPDATA").equals("") ? System.getenv("APPDATA")
-	    + "/" + getUserConf() : System.getProperties().getProperty(
-	    "user.home")
-	    + "/" + getUserConf();
+    private static String USER_SPARK_HOME;
+	    
+
 
     public static String ARGUMENTS;
 
@@ -82,6 +82,12 @@ public final class Spark {
     }
 
     public void startup() {
+	if (System.getenv("APPDATA") != null && !System.getenv("APPDATA").equals("")) {
+	    USER_SPARK_HOME = System.getenv("APPDATA") + "/" + getUserConf();
+	} else {
+	    USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
+	}
+	
         String current = System.getProperty("java.library.path");
         String classPath = System.getProperty("java.class.path");
 
@@ -383,6 +389,11 @@ public final class Spark {
         if (isLinux()) {
             return ".Spark";
         }
+        else if(isMac())
+        {
+            return "Library/Application Support/Spark";
+        }
+        else
         return "Spark";
     }
 

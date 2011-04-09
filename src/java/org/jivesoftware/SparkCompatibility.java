@@ -39,6 +39,7 @@ public class SparkCompatibility {
      */
     private final String OLD_USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
     
+    private final String OLD_USER_SPARK_HOME_MAC = System.getProperties().getProperty("user.home") + "/Spark";
     public SparkCompatibility() {
     }
     
@@ -51,12 +52,20 @@ public class SparkCompatibility {
      * 	The files to skip
      * @throws IOException
      */
-    public void transferConfig(String userSparkHome, Collection<String> skipFiles) throws IOException {
-    	File newSparkHomeDir = new File(userSparkHome);
-    	File oldSparkHomeDir = new File(OLD_USER_SPARK_HOME);
-    	if (!newSparkHomeDir.exists() && oldSparkHomeDir.exists()) {
-			copyDirectory(oldSparkHomeDir, newSparkHomeDir, skipFiles);
-		}
+    public void transferConfig(String userSparkHome, Collection<String> skipFiles)
+	    throws IOException {
+	File newSparkHomeDir = new File(userSparkHome);
+	File oldSparkHomeDir;
+	if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+	    oldSparkHomeDir = new File(OLD_USER_SPARK_HOME_MAC);
+	} else {
+	    oldSparkHomeDir = new File(OLD_USER_SPARK_HOME);
+
+	}
+
+	if (!newSparkHomeDir.exists() && oldSparkHomeDir.exists()) {
+	    copyDirectory(oldSparkHomeDir, newSparkHomeDir, skipFiles);
+	}
     }
     /**
      * Copies the directories / files recursively 
