@@ -522,83 +522,98 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
     }
     
     /**
-     * Creates a Popupdialog above the Search Button displaying matching Contacts
-     * @param byname, the Searchname, atleast 5 Chars long
-     * @param event, the MouseEvent which triggered it
+     * Creates a Popupdialog above the Search Button displaying matching
+     * Contacts
+     * 
+     * @param byname
+     *            , the Searchname, atleast 5 Chars long
+     * @param event
+     *            , the MouseEvent which triggered it
      * @throws XMPPException
      */
     public void searchForContact(String byname, MouseEvent event)
 	    throws XMPPException {
 
+	if (byname.contains("@")) {
+	    byname = byname.substring(0, byname.indexOf("@"));
+	}
+
 	if (byname.length() <= 4) {
-	    JOptionPane.showMessageDialog(jidField, Res.getString("message.search.input.short"),
+	    JOptionPane.showMessageDialog(jidField,
+		    Res.getString("message.search.input.short"),
 		    Res.getString("title.notification"),
 		    JOptionPane.ERROR_MESSAGE);
-	    return;
-	}
 
-	JPopupMenu popup = new JPopupMenu();
-	JMenuItem header = new JMenuItem(Res.getString("group.search.results")+":");
-	header.setBackground(UIManager.getColor("List.selectionBackground"));
-	header.setForeground(Color.red);
-	popup.add(header);
-	
-	for (String search : _usersearchservice) {
+	} else {
 
-	    ReportedData data;
-	    UserSearchManager usersearchManager = new UserSearchManager(
-		    SparkManager.getConnection());
+	    JPopupMenu popup = new JPopupMenu();
+	    JMenuItem header = new JMenuItem(
+		    Res.getString("group.search.results") + ":");
+	    header.setBackground(UIManager.getColor("List.selectionBackground"));
+	    header.setForeground(Color.red);
+	    popup.add(header);
 
-	    Form f = usersearchManager.getSearchForm(search);
-	        
-	    Form answer = f.createAnswerForm();
-	    answer.setAnswer("Name", true);
-	    answer.setAnswer("Email", true);
-	    answer.setAnswer("search", jidField.getText());
-	    answer.setAnswer("Username", true);
+	    for (String search : _usersearchservice) {
 
-	    data = usersearchManager.getSearchResults(answer,
-		    "search.jabber.int.kn");
+		ReportedData data;
+		UserSearchManager usersearchManager = new UserSearchManager(
+			SparkManager.getConnection());
 
-	    ArrayList<String> columnnames = new ArrayList<String>();
-	    Iterator<Column> columns = data.getColumns();
-	    while (columns.hasNext()) {
-		ReportedData.Column column = (ReportedData.Column) columns
-			.next();
-		String label = column.getLabel();
-		columnnames.add(label);
-	    }
+		Form f = usersearchManager.getSearchForm(search);
 
-	    Iterator<Row> rows = data.getRows();
-	    while (rows.hasNext()) {
-		ReportedData.Row row = (ReportedData.Row) rows.next();
-		if (row.getValues(columnnames.get(0)).hasNext()) {
-		    String s = (String) row.getValues(columnnames.get(0))
+		Form answer = f.createAnswerForm();
+		answer.setAnswer("Name", true);
+		answer.setAnswer("Email", true);
+		answer.setAnswer("Username", true);
+		answer.setAnswer("search", byname);
+
+		data = usersearchManager.getSearchResults(answer,
+			"search.jabber.int.kn");
+
+		ArrayList<String> columnnames = new ArrayList<String>();
+		Iterator<Column> columns = data.getColumns();
+		while (columns.hasNext()) {
+		    ReportedData.Column column = (ReportedData.Column) columns
 			    .next();
-		    final JMenuItem item = new JMenuItem(s);
-		    popup.add(item);
-		    item.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-			    jidField.setText(item.getText());
-			}
-		    });
+		    String label = column.getLabel();
+		    columnnames.add(label);
 		}
 
+		Iterator<Row> rows = data.getRows();
+		while (rows.hasNext()) {
+		    ReportedData.Row row = (ReportedData.Row) rows.next();
+		    if (row.getValues(columnnames.get(0)).hasNext()) {
+			String s = (String) row.getValues(columnnames.get(0))
+				.next();
+			final JMenuItem item = new JMenuItem(s);
+			popup.add(item);
+			item.addActionListener(new ActionListener() {
+			    @Override
+			    public void actionPerformed(ActionEvent e) {
+				jidField.setText(item.getText());
+				nicknameField.setText(StringUtils
+					.parseName(item.getText()));
+			    }
+			});
+		    }
+
+		}
+	    }
+
+	    if (popup.getComponentCount() > 2) {
+		popup.setVisible(true);
+		popup.show(_searchForName, event.getX(), event.getY());
+	    } else if (popup.getComponentCount() == 2) {
+		jidField.setText(((JMenuItem) popup.getComponent(1)).getText());
+		nicknameField.setText(StringUtils.parseName(((JMenuItem) popup
+			.getComponent(1)).getText()));
+	    } else {
+		JOptionPane.showMessageDialog(jidField,
+			Res.getString("message.no.results.found"),
+			Res.getString("title.notification"),
+			JOptionPane.ERROR_MESSAGE);
 	    }
 	}
-
-	if (popup.getComponentCount() > 2) {
-	    popup.setVisible(true);
-	    popup.show(_searchForName, event.getX(), event.getY());
-	} else if (popup.getComponentCount() == 2) {
-	    jidField.setText(((JMenuItem) popup.getComponent(1)).getText());
-	}else
-	{
-	    JOptionPane.showMessageDialog(jidField, Res.getString("message.no.results.found"),
-		    Res.getString("title.notification"),JOptionPane.ERROR_MESSAGE);
-	}
-
     }
     
 
