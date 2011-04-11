@@ -1,6 +1,9 @@
 package org.jivesoftware.sparkplugin.preferences;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -8,320 +11,297 @@ import java.util.Vector;
 
 import javax.media.format.AudioFormat;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 import net.java.sipmack.softphone.SoftPhoneManager;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
-public class SipCodecs extends JPanel
-{
-	private static final long	serialVersionUID	= 321651651106469534L;
-	private static final String SEPERATOR = "\\^";
-	private static final String SEP = "^";
-	private Vector<Vector<String>> dataSel;
-	private Vector<Vector<String>> dataAvail;
-	private DefaultTableModel modelSel; 
-	private DefaultTableModel modelAvail;
-	private JTable tSel;
-	private JTable tAvail;
-	
-	public SipCodecs() {
-		init();
-	}
-	
-	private void init() {
-	    
-		tSel = new JTable();
-		tSel.getTableHeader().setReorderingAllowed(false);
-		tAvail = new JTable();
-		tAvail.getTableHeader().setReorderingAllowed(false);
-		JScrollPane scrollSel = new JScrollPane(tSel);
-		JScrollPane scrollAvail = new JScrollPane(tAvail);
-		JButton btnLeft = new JButton(PhoneRes.getIString("codecs.select"));
-		JButton btnRight = new JButton(PhoneRes.getIString("codecs.unselect"));
-		JButton btnUp = new JButton(PhoneRes.getIString("codecs.up"));
-		JButton btnDown = new JButton(PhoneRes.getIString("codecs.down"));
+public class SipCodecs extends JPanel {
+    private static final long serialVersionUID = 321651651106469534L;
+    private static final String SEPERATOR = "\\^";
+    private static final String SEP = "^";
 
-		JPanel panelButtonUpDown = new JPanel();
-		JPanel panelSelect = new JPanel();
-		JPanel panelAvailable = new JPanel();
-		modelSel = new DefaultTableModel(){
-			private static final long	serialVersionUID	= 7489555730751416391L;
+    private JList _listSelected;
+    private DefaultListModel _listSelectedModel;
+    private JList _listAvailable;
+    private DefaultListModel _listAvailableModel;
 
-			public boolean isCellEditable(int row, int col) {
-				return false;
-			}
-		};
-		modelAvail = new DefaultTableModel(){
-			private static final long	serialVersionUID	= -3119910584736396606L;
+    public SipCodecs() {
+	init();
+    }
 
-			public boolean isCellEditable(int row, int col) {
-				return false;
-			}
-		};
-		
-		tSel.setModel(modelSel);
-		tAvail.setModel(modelAvail);
-		
-		// set sizes
-		btnLeft.setMinimumSize(new Dimension(100,24));
-		btnLeft.setMaximumSize(new Dimension(100,24));
-		btnLeft.setPreferredSize(new Dimension(100,24));
-		
-		btnRight.setMinimumSize(new Dimension(100,24));
-		btnRight.setMaximumSize(new Dimension(100,24));
-		btnRight.setPreferredSize(new Dimension(100,24));
-		
-		btnUp.setMinimumSize(new Dimension(90,24));
-		btnUp.setMaximumSize(new Dimension(90,24));
-		btnUp.setPreferredSize(new Dimension(90,24));
-		
-		btnDown.setMinimumSize(new Dimension(90,24));
-		btnDown.setMaximumSize(new Dimension(90,24));
-		btnDown.setPreferredSize(new Dimension(90,24));
-		
-		tSel.setMinimumSize(new Dimension(185, 300));
-		tSel.setPreferredSize(new Dimension(185, 300));
-		scrollSel.setMinimumSize(new Dimension(185, 300));
-		scrollSel.setPreferredSize(new Dimension(185, 500));
-			
-		tAvail.setMinimumSize(new Dimension(190, 300));
-		tAvail.setPreferredSize(new Dimension(190, 300));
-		scrollAvail.setMinimumSize(new Dimension(190, 300));
-		scrollAvail.setPreferredSize(new Dimension(190, 500));
-		
-		// add actionlisteners
-		btnLeft.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				left();
-			}
-		});
-		
-		btnRight.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				right();
-			}
-		});
-		
-		btnUp.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				up();
-			}
-		});
-		
-		btnDown.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				down();
-			}
-		});
-		
-		// add Components
-		panelButtonUpDown.setLayout(new VerticalFlowLayout(VerticalFlowLayout.MIDDLE));
-		panelButtonUpDown.add(btnUp);
-		panelButtonUpDown.add(btnDown);
-		
-		panelSelect.setLayout(new VerticalFlowLayout());
-		panelSelect.add(btnRight);
-		panelSelect.add(scrollSel);
-		
-			
-		panelAvailable.setLayout(new VerticalFlowLayout());
-		panelAvailable.add(btnLeft);
-		panelAvailable.add(scrollAvail);
-			
-		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		this.add(panelButtonUpDown);
-		this.add(panelSelect);
-		this.add(panelAvailable);
-		
-		
-	}
-	
-	/**
-	 * set the codecs which where selected in the correct order
-	 * @param sel
-	 */
-	public void setSelected(String sel) {
-		// if there are no codecs selected, select all
-		if(sel == null 
-			|| sel.trim().length() == 0) {
-			sel = allCodecs();
-			// clear the available-Vector
-			setAvailable("");
-		}
+    private void init() {
 
-		String[] split = sel.split(SEPERATOR);
-		Vector<String> temp;
-		dataSel = new Vector<Vector<String>>();
-		
-		for(String selsplit: split) {
-			temp = new Vector<String>();
-			temp.add(selsplit);
-			dataSel.add(temp);
-		}
-		Vector<String> heading = new Vector<String>();
-		heading.add(PhoneRes.getIString("codecs.audio.selected"));
-		
-		modelSel.setDataVector(dataSel, heading);
-	}
-	
-	/**
-	 * set the codecs which where available
-	 * @param avail
-	 */
-	public void setAvailable(String avail) {
-		if(avail == null) {
-			avail = "";
-		}
-			
-		String[] split = avail.split(SEPERATOR);
-		Vector<String> temp;
-		dataAvail = new Vector<Vector<String>>();
-		
-		if(avail.trim()!= "")
-			for(String selavail: split) {
-				temp = new Vector<String>();
-				temp.add(selavail);
-				dataAvail.add(temp);
-			}
-		
-		Vector<String> heading = new Vector<String>();
-		heading.add(PhoneRes.getIString("codecs.audio.avail"));
-		
-		modelAvail.setDataVector(dataAvail, heading);
-	}
-	
-	public String getSelected() {
-		return formatToString(dataSel);
-	}
-	
-	public String getAvailable() {
-		return formatToString(dataAvail);
-	}
-	
-	private String formatToString(Vector<Vector<String>> vec) {
-		String str = "";
-		for(Vector<String> vecString : vec) {
-			str = str + vecString.get(0) + SEP;
-		}
-		return str;
-	}
-	
-	/**
-	 * gets all the codecs from the fmjMediaManager 
-	 * and put them into a string (seperated by SEPERATOR)
-	 * 
-	 * @return
-	 */
-	private String allCodecs() {
-		String all = "";
-		List<AudioFormat> codecs = SoftPhoneManager.getInstance().getJmfMediaManager().getAudioFormats();
-		for(AudioFormat audio : codecs) {
-			all = all + audio.getEncoding() + SEP;
-		}
-		return all;
-	}
-	
-	/**
-	 * the selected Rows from the selected-codec-table will be 
-	 * moved to the available-table 
-	 */
-	private void right() {
-		int[] selRows = tSel.getSelectedRows();
-		// check if there are rows selected
-		if(selRows == null 
-			|| selRows.length == 0) {
-			JOptionPane.showMessageDialog(this, PhoneRes.getIString("book.noEntry"), 
-				PhoneRes.getIString("book.warning"), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		
-		Vector<String> temp;
-		for (int i = 0; i < selRows.length; i++)
-		{
-			// -i because the error after deleting a row
-			temp = dataSel.elementAt(selRows[i]-i);
-			modelSel.removeRow(selRows[i]-i);
-			modelAvail.addRow(temp);
-		}
-		
-		tSel.updateUI();
-		tAvail.updateUI();
-	}
-	
-	/**
-	 * the selected Rows from the available-codec-table will be 
-	 * moved to the selected-table 
-	 */
-	private void left() {
-		int[] selRows = tAvail.getSelectedRows();
-		// check if there are rows selected
-		if(selRows == null 
-			|| selRows.length == 0) {
-			JOptionPane.showMessageDialog(this, PhoneRes.getIString("book.noEntry"), 
-				PhoneRes.getIString("book.warning"), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		
-		Vector<String> temp;
-		for (int i = 0; i < selRows.length; i++)
-		{
-			// -i because the error after deleting a row
-			temp = dataAvail.elementAt(selRows[i]-i);
-			modelAvail.removeRow(selRows[i]-i);
-			modelSel.addRow(temp);
-		}
-		
-		tAvail.updateUI();
-		tSel.updateUI();
-	}
-	
-	/**
-	 * changes the order of the selected Codecs (move selected Row up)
-	 */
-	private void up() {
-		int selrow = tSel.getSelectedRow();
-		if (selrow != 0 // only move up if it isn't the first row
-			&& selrow != -1) { 
-			Vector<String> oldRow = dataSel.elementAt(selrow);
-			Vector<String> newRow = dataSel.elementAt(selrow - 1);
+	_listSelectedModel = new DefaultListModel();
+	_listSelected = new JList(_listSelectedModel);
 
-			modelSel.moveRow(tSel.getSelectedRow(), tSel.getSelectedRow(), tSel.getSelectedRow() - 1);
+	_listAvailableModel = new DefaultListModel();
+	_listAvailable = new JList(_listAvailableModel);
 
-			dataSel.setElementAt(oldRow, selrow - 1);
-			dataSel.setElementAt(newRow, selrow);
-			modelSel.fireTableDataChanged();
+	JScrollPane scrollSel = new JScrollPane(_listSelected);
+	JScrollPane scrollAvail = new JScrollPane(_listAvailable);
 
-			tSel.setRowSelectionInterval(selrow - 1, selrow - 1);
-			tSel.updateUI();
-		}
+	JButton btnLeft = new JButton(PhoneRes.getIString("codecs.select"));
+	JButton btnRight = new JButton(PhoneRes.getIString("codecs.unselect"));
+	JButton btnUp = new JButton(PhoneRes.getIString("codecs.up"));
+	JButton btnDown = new JButton(PhoneRes.getIString("codecs.down"));
+
+	btnUp.setMinimumSize(new Dimension(80, 25));
+	btnUp.setPreferredSize(new Dimension(80, 25));
+	btnUp.setMaximumSize(new Dimension(80, 25));
+	btnDown.setMaximumSize(new Dimension(80, 25));
+	btnDown.setPreferredSize(new Dimension(80, 25));
+	btnDown.setMaximumSize(new Dimension(80, 25));
+
+	JPanel panelButtonUpDown = new JPanel();
+	JPanel panelSelect = new JPanel();
+	JPanel panelAvailable = new JPanel();
+
+	// add actionlisteners
+	btnLeft.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		left();
+	    }
+	});
+
+	btnRight.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		right();
+	    }
+	});
+
+	btnUp.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		up();
+	    }
+	});
+
+	btnDown.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		down();
+	    }
+	});
+
+	// add Components
+	panelButtonUpDown.setLayout(new VerticalFlowLayout(
+		VerticalFlowLayout.MIDDLE));
+	panelButtonUpDown.add(btnUp);
+	panelButtonUpDown.add(btnDown);
+
+	panelSelect.setLayout(new BoxLayout(panelSelect, BoxLayout.Y_AXIS));
+	panelSelect.add(btnRight);
+	panelSelect.add(new JLabel(PhoneRes.getIString("codecs.audio.selected")
+		+ ":"));
+	panelSelect.add(scrollSel);
+
+	panelAvailable
+		.setLayout(new BoxLayout(panelAvailable, BoxLayout.Y_AXIS));
+	panelAvailable.add(btnLeft);
+	panelAvailable.add(new JLabel(PhoneRes.getIString("codecs.audio.avail")
+		+ ":"));
+	panelAvailable.add(scrollAvail);
+
+	this.setLayout(new GridBagLayout());
+	this.add(panelButtonUpDown, new GridBagConstraints(0, 0, 1, 1, 0.0,
+		0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+		new Insets(5, 5, 5, 5), 0, 0));
+	this.add(panelSelect, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0,
+		GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5,
+			5, 5, 5), 0, 0));
+	this.add(panelAvailable, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
+		GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5,
+			5, 5, 5), 0, 0));
+
+    }
+
+    /**
+     * set the codecs which where selected in the correct order
+     * 
+     * @param sel
+     */
+    public void setSelected(String sel) {
+	// if there are no codecs selected, select all
+	_listSelectedModel.removeAllElements();
+	if (sel == null || sel.trim().length() == 0) {
+	    sel = allCodecs();
+	    // clear the available-Vector
+	    setAvailable(null);
 	}
-	
-	/**
-	 * changes the order of the selected Codecs (move selected Row down)
-	 */
-	private void down() {
-		int selrow = tSel.getSelectedRow();
-		if (selrow < tSel.getRowCount()-1 // only move up if it isn't the last row
-			&& selrow != -1) { 
-			Vector<String> oldRow = dataSel.elementAt(selrow);
-			Vector<String> newRow = dataSel.elementAt(selrow + 1);
 
-			modelSel.moveRow(tSel.getSelectedRow(), tSel.getSelectedRow(), tSel.getSelectedRow() + 1);
+	String[] split = sel.split(SEPERATOR);
 
-			dataSel.setElementAt(oldRow, selrow + 1);
-			dataSel.setElementAt(newRow, selrow);
-			modelSel.fireTableDataChanged();
+	for (String selsplit : split) {
 
-			tSel.setRowSelectionInterval(selrow + 1, selrow + 1);
-			tSel.updateUI();
-		}
+	    _listSelectedModel.addElement(selsplit);
 	}
+
+    }
+
+    /**
+     * set the codecs which where available
+     * 
+     * @param avail
+     */
+    public void setAvailable(String avail) {
+	_listAvailableModel.removeAllElements();
+	if (avail == null || avail.equals("")) {
+	    return;
+	}
+
+	String[] split = avail.split(SEPERATOR);
+	if (avail.trim() != "")
+	    for (String selavail : split) {
+		_listAvailableModel.addElement(selavail);
+	    }
+
+    }
+
+    public String getSelected() {
+	Vector<String> selected = new Vector<String>();
+
+	for (Object s : _listSelectedModel.toArray()) {
+	    String ss = (String) s;
+	    selected.add(ss);
+	}
+
+	return formatToString(selected);
+    }
+
+    public String getAvailable() {
+	Vector<String> selected = new Vector<String>();
+	if (_listAvailableModel.toArray().length > 0) {
+	    for (Object s : _listAvailableModel.toArray()) {
+		String ss = (String) s;
+		selected.add(ss);
+	    }
+
+	    return formatToString(selected);
+	} else
+	    return "";
+    }
+
+    private String formatToString(Vector<String> vec) {
+	String str = "";
+	for (String vecString : vec) {
+	    str = str + vecString + SEP;
+	}
+	return str;
+    }
+
+    /**
+     * gets all the codecs from the fmjMediaManager and put them into a string
+     * (seperated by SEPERATOR)
+     * 
+     * @return
+     */
+    private String allCodecs() {
+	String all = "";
+	List<AudioFormat> codecs = SoftPhoneManager.getInstance()
+		.getJmfMediaManager().getAudioFormats();
+	for (AudioFormat audio : codecs) {
+	    all = all + audio.getEncoding() + SEP;
+	}
+	return all;
+    }
+
+    /**
+     * the selected Rows from the selected-codec-table will be moved to the
+     * available-table
+     */
+    private void right() {
+
+	int[] selRows = _listSelected.getSelectedIndices();// tableSelected.getSelectedRows();
+	// check if there are rows selected
+	if (selRows == null || selRows.length == 0) {
+	    JOptionPane.showMessageDialog(this,
+		    PhoneRes.getIString("book.noEntry"),
+		    PhoneRes.getIString("book.warning"),
+		    JOptionPane.WARNING_MESSAGE);
+	    return;
+	}
+	Vector<String> removelater = new Vector<String>();
+	for (int i = 0; i < selRows.length; i++) {
+	    String item = (String) _listSelectedModel.elementAt(selRows[i]);
+
+	    _listAvailableModel.addElement(item);
+	    removelater.add(item);
+	}
+
+	for (String item : removelater) {
+	    _listSelectedModel.removeElement(item);
+	}
+
+	_listSelected.updateUI();
+	_listAvailable.updateUI();
+
+    }
+
+    /**
+     * the selected Rows from the available-codec-table will be moved to the
+     * selected-table
+     */
+    private void left() {
+	int[] selRows = _listAvailable.getSelectedIndices();// tableAvailable.getSelectedRows();
+	// check if there are rows selected
+	if (selRows == null || selRows.length == 0) {
+	    JOptionPane.showMessageDialog(this,
+		    PhoneRes.getIString("book.noEntry"),
+		    PhoneRes.getIString("book.warning"),
+		    JOptionPane.WARNING_MESSAGE);
+	    return;
+	}
+
+	Vector<String> removelater = new Vector<String>();
+	for (int i = 0; i < selRows.length; i++) {
+	    String item = (String) _listAvailableModel.elementAt(selRows[i]);
+	    _listSelectedModel.addElement(item);
+	    removelater.add(item);
+
+	}
+	for (String item : removelater) {
+	    _listAvailableModel.removeElement(item);
+	}
+
+	_listAvailable.updateUI();
+	_listSelected.updateUI();
+
+    }
+
+    /**
+     * changes the order of the selected Codecs (move selected Row up)
+     */
+    private void up() {
+	int oldindex = _listSelected.getSelectedIndex();// tableSelected.getSelectedRow();
+	if (oldindex > 0) {
+
+	    Object obj = _listSelected.getSelectedValue();
+
+	    _listSelectedModel.removeElementAt(oldindex);
+	    _listSelectedModel.add(oldindex - 1, obj);
+	}
+	_listSelected.updateUI();
+    }
+
+    /**
+     * changes the order of the selected Codecs (move selected Row down)
+     */
+    private void down() {
+
+	int oldindex = _listSelected.getSelectedIndex();// tableSelected.getSelectedRow();
+
+	Object obj = _listSelected.getSelectedValue();
+
+	_listSelectedModel.removeElementAt(oldindex);
+	_listSelectedModel.add(oldindex + 1, obj);
+	_listSelected.updateUI();
+
+    }
 }

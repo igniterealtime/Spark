@@ -10,101 +10,88 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-public class SipCodecsPreference  implements Preference
-{
-	private SipCodecs panel = new SipCodecs();
-	public static final String NAMESPACE = "http://www.jivesoftware.org/spark/codecs";	
-	
-	@Override
-	public void commit()
-	{
-		LocalPreferences pref = SettingsManager.getLocalPreferences();
-		pref.setSelectedCodecs(panel.getSelected());
-		pref.setAvailableCodecs(panel.getAvailable());
+public class SipCodecsPreference implements Preference {
+    private SipCodecs panel = new SipCodecs();
+    public static final String NAMESPACE = "http://www.jivesoftware.org/spark/codecs";
 
-      SettingsManager.saveSettings();
-	}
+    @Override
+    public void commit() {
+	LocalPreferences pref = SettingsManager.getLocalPreferences();
+	pref.setSelectedCodecs(panel.getSelected());
+	pref.setAvailableCodecs(panel.getAvailable());
 
-	@Override
-	public Object getData()
-	{
-		return null;
-	}
+	SettingsManager.saveSettings();
+    }
 
-	@Override
-	public String getErrorMessage()
-	{
-		return null;
-	}
+    @Override
+    public Object getData() {
+	return null;
+    }
 
-	@Override
-	public JComponent getGUI()
-	{
-		return panel;
-	}
+    @Override
+    public String getErrorMessage() {
+	return null;
+    }
 
-	@Override
-	public Icon getIcon()
-	{
-		return SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24);
-	}
+    @Override
+    public JComponent getGUI() {
+	return panel;
+    }
 
-	@Override
-	public String getListName()
-	{
-		return PhoneRes.getIString("title.sip.codecs.title");
-	}
+    @Override
+    public Icon getIcon() {
+	return SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24);
+    }
 
-	@Override
-	public String getNamespace()
-	{
-		return NAMESPACE;
-	}
+    @Override
+    public String getListName() {
+	return PhoneRes.getIString("title.sip.codecs.title");
+    }
 
-	@Override
-	public String getTitle()
-	{
-		return PhoneRes.getIString("title.sip.codecs.title");
-	}
+    @Override
+    public String getNamespace() {
+	return NAMESPACE;
+    }
 
-	@Override
-	public String getTooltip()
-	{
-		return PhoneRes.getIString("title.sip.codecs.title");
-	}
+    @Override
+    public String getTitle() {
+	return PhoneRes.getIString("title.sip.codecs.title");
+    }
 
-	@Override
-	public boolean isDataValid()
-	{
-		return true;
-	}
+    @Override
+    public String getTooltip() {
+	return PhoneRes.getIString("title.sip.codecs.title");
+    }
 
-	@Override
-	public void load()
-	{
-		SwingWorker thread = new SwingWorker() {
-         LocalPreferences localPreferences;
+    @Override
+    public boolean isDataValid() {
+	return true;
+    }
 
-         public Object construct() {
-             localPreferences = SettingsManager.getLocalPreferences();
-             return localPreferences;
-         }
+    @Override
+    public void load() {
+	SwingWorker thread = new SwingWorker() {
+	    LocalPreferences localPreferences;
 
-         public void finished() {
-         	String sel = localPreferences.getSelectedCodecs();
-            String avail = localPreferences.getAvailableCodecs();
-            panel.setAvailable(avail);
-            panel.setSelected(sel);
-         }
-     };
+	    public Object construct() {
+		localPreferences = SettingsManager.getLocalPreferences();
+		return localPreferences;
+	    }
 
-     thread.start();		
-	}
+	    public void finished() {
+		String sel = localPreferences.getSelectedCodecs();
+		String avail = localPreferences.getAvailableCodecs();
+		panel.setAvailable(avail);
+		panel.setSelected(sel);
+	    }
+	};
 
-	@Override
-	public void shutdown()
-	{
-		commit();
-	}
+	thread.start();
+    }
+
+    @Override
+    public void shutdown() {
+	commit();
+    }
 
 }
