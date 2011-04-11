@@ -134,7 +134,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+        	
+        	if(e.getClickCount()!=2){
                 getChatInputEditor().requestFocus();
+        	}
             }
 
             public void mouseReleased(MouseEvent e) {

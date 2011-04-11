@@ -140,7 +140,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         }
     }
 
-   /*
+   /**
     * Create and insert a message from the current user.
     *
     * @param nickname   the nickname of the current user.
