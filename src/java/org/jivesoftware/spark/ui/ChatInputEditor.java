@@ -20,6 +20,7 @@
 package org.jivesoftware.spark.ui;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -34,8 +35,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.StyleConstants;
+import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
@@ -45,12 +48,16 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class ChatInputEditor extends ChatArea implements DocumentListener {
 	private static final long serialVersionUID = -3085035737908538581L;
 	private final UndoManager undoManager;
-    private KeyStroke keyStroke;
+	private KeyStroke undoKeyStroke;
+	private KeyStroke ctrlbackspaceKeyStroke;
+	private KeyStroke escapeKeyStroke;
+	private ChatInputEditor _chatinputeditor;
 
     /**
      * Creates a new Default ChatSendField.
      */
     public ChatInputEditor() {
+	_chatinputeditor = this;
         undoManager = new UndoManager();
 
         this.setDragEnabled(true);
@@ -58,18 +65,58 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         Action undo = new AbstractAction() {
 			private static final long serialVersionUID = -8897769620508545403L;
 			public void actionPerformed(ActionEvent e) {
-                undoManager.undo();
+		try {
+		    undoManager.undo();
+		} catch (CannotUndoException cue) {
+		    // no more undoing for you
+		}
             }
         };
-
-        keyStroke = KeyStroke.getKeyStroke('z', ActionEvent.CTRL_MASK);
-        this.getInputMap().put(keyStroke, "undo");
         
-        this.registerKeyboardAction(undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        Action escape = new AbstractAction() {
+	    private static final long serialVersionUID = -2973535045376312313L;
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		SparkManager.getChatManager().getChatContainer().closeActiveRoom();	
+	    }
+	};
+        
+	Action ctrlbackspace = new AbstractAction() {
+	    private static final long serialVersionUID = -2973535045376312313L;
 
-        this.getDocument().addDocumentListener(this);
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
 
-        this.addMouseListener(this);
+		String wordToRemove = "";
+
+		if (getSelectedText()!=null && getSelectedText().equals(getText())) {
+		    wordToRemove = getText();
+		} else if (getText().contains(" ")) {
+		    wordToRemove = getText().substring(
+			    getText().lastIndexOf(" "));
+		} else {
+		    wordToRemove = getText();
+		}
+		_chatinputeditor.removeWord(wordToRemove);
+	    }
+	};
+
+        undoKeyStroke = KeyStroke.getKeyStroke('z', ActionEvent.CTRL_MASK);       
+        ctrlbackspaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK);
+        escapeKeyStroke = KeyStroke.getKeyStroke("ESCAPE");
+        
+        getInputMap().put(ctrlbackspaceKeyStroke, "ctrlbackspace");
+        getInputMap().put(undoKeyStroke, "undo");
+        getInputMap().put(escapeKeyStroke, "escape");
+        getInputMap().put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
+        
+        registerKeyboardAction(undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        registerKeyboardAction(ctrlbackspace, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        registerKeyboardAction(escape, KeyStroke.getKeyStroke("ESCAPE"), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        
+        getDocument().addDocumentListener(this);
+
+        addMouseListener(this);
     }
 
     public void insertUpdate(DocumentEvent e) {
@@ -78,7 +125,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
     }
 
     /**
-     * Only use if necessary
+     * Appends the Text at the end
      */
     public void setText(String str) {
         super.setText(str);
@@ -94,10 +141,13 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
      * Remove dependices when no longer in use.
      */
     public void close() {
-        this.getDocument().removeDocumentListener(this);
-        this.getDocument().removeUndoableEditListener(undoManager);
-        this.removeMouseListener(this);
-        this.getInputMap().remove(keyStroke);
+        getDocument().removeDocumentListener(this);
+        getDocument().removeUndoableEditListener(undoManager);
+        removeMouseListener(this);
+        getInputMap().remove(undoKeyStroke);
+        getInputMap().remove(ctrlbackspaceKeyStroke);
+        getInputMap().remove(escapeKeyStroke);
+        getInputMap().remove(KeyStroke.getKeyStroke("Ctrl W"));
     }
 
     /**
