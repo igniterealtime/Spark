@@ -170,6 +170,8 @@ public class DataFormDialog extends JPanel {
         });
 
         final JScrollPane pane = new JScrollPane(this);
+        pane.getVerticalScrollBar().setBlockIncrement(200);
+        pane.getVerticalScrollBar().setUnitIncrement(20);
 
         dialog.getContentPane().setLayout(new BorderLayout());
 
