@@ -19,37 +19,6 @@
  */ 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jdesktop.swingx.JXList;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.muc.Affiliate;
-import org.jivesoftware.smackx.muc.InvitationRejectionListener;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.Occupant;
-import org.jivesoftware.smackx.muc.UserStatusListener;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.component.ImageTitlePanel;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -84,6 +53,38 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+
+import org.jdesktop.swingx.JXList;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.InvitationRejectionListener;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.Occupant;
+import org.jivesoftware.smackx.muc.UserStatusListener;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.UserManager;
+import org.jivesoftware.spark.component.ImageTitlePanel;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such
@@ -170,64 +171,66 @@ public final class GroupChatParticipantList extends JPanel implements
 						0, 0, 0, 0), 0, 0));
 	}
 
-	public void setChatRoom(final ChatRoom chatRoom) {
-		this.groupChatRoom = (GroupChatRoom) chatRoom;
+    public void setChatRoom(final ChatRoom chatRoom) {
+	this.groupChatRoom = (GroupChatRoom) chatRoom;
 
-		chatManager.addChatRoomListener(this);
+	chatManager.addChatRoomListener(this);
 
-		chat = groupChatRoom.getMultiUserChat();
+	chat = groupChatRoom.getMultiUserChat();
 
-		chat.addInvitationRejectionListener(new InvitationRejectionListener() {
-			public void invitationDeclined(String jid, String message) {
-				String nickname = userManager.getUserNicknameFromJID(jid);
+	chat.addInvitationRejectionListener(new InvitationRejectionListener() {
+	    public void invitationDeclined(String jid, String message) {
+		String nickname = userManager.getUserNicknameFromJID(jid);
 
-				userHasLeft(chatRoom, nickname);
+		userHasLeft(chatRoom, nickname);
 
-				chatRoom.getTranscriptWindow().insertNotificationMessage(
-						nickname + " has rejected the invitation.",
-						ChatManager.NOTIFICATION_COLOR);
+		chatRoom.getTranscriptWindow().insertNotificationMessage(
+			nickname + " has rejected the invitation.",
+			ChatManager.NOTIFICATION_COLOR);
+	    }
+	});
+
+	listener = new PacketListener() {
+	    public void processPacket(final Packet packet) {
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+			Presence p = (Presence) packet;
+			if (p.getError() != null) {
+			    if (p.getError()
+				    .getCondition()
+				    .equals(XMPPError.Condition.conflict
+					    .toString())) {
+				return;
+			    }
 			}
+			final String userid = p.getFrom();
+
+			String displayName = StringUtils.parseResource(userid);
+			userMap.put(displayName, userid);
+
+			if (p.getType() == Presence.Type.available) {
+			    addParticipant(userid, p);
+			    agentInfoPanel.setVisible(true);
+			} else {
+			    removeUser(displayName);
+			}
+		    }
 		});
 
-		listener = new PacketListener() {
-			public void processPacket(final Packet packet) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Presence p = (Presence) packet;
-						if (p.getError() != null) {
-							if (p.getError().getCondition().equals(
-									XMPPError.Condition.conflict.toString())) {
-								return;
-							}
-						}
-						final String userid = p.getFrom();
+	    }
+	};
 
-						String displayName = StringUtils.parseResource(userid);
-						userMap.put(displayName, userid);
+	chat.addParticipantListener(listener);
 
-						if (p.getType() == Presence.Type.available) {
-							addParticipant(userid, p);
-							agentInfoPanel.setVisible(true);
-						} else {
-							removeUser(displayName);
-						}
-					}
-				});
-
-			}
-		};
-
-		chat.addParticipantListener(listener);
-
-		ServiceDiscoveryManager disco = ServiceDiscoveryManager
-				.getInstanceFor(SparkManager.getConnection());
-		try {
-			roomInformation = disco.discoverInfo(chat.getRoom());
-		} catch (XMPPException e) {
-			Log.debug("Unable to retrieve room informatino for "
-					+ chat.getRoom());
-		}
+	ServiceDiscoveryManager disco = ServiceDiscoveryManager
+		.getInstanceFor(SparkManager.getConnection());
+	try {
+	    roomInformation = disco.discoverInfo(chat.getRoom());
+	} catch (XMPPException e) {
+	    Log.debug("Unable to retrieve room information for "
+		    + chat.getRoom());
 	}
+    }
 
 	public void chatRoomOpened(ChatRoom room) {
 		if (room != groupChatRoom) {
@@ -335,8 +338,9 @@ public final class GroupChatParticipantList extends JPanel implements
 		return icon;
 	}
 
-    private void addParticipant(String participantJID, Presence presence) {
+    private void addParticipant(final String participantJID, Presence presence) {
 	// Remove reference to invitees
+	
 	for (String displayName : invitees.keySet()) {
 	    String jid = SparkManager.getUserManager().getJIDFromDisplayName(
 		    displayName);
@@ -351,18 +355,13 @@ public final class GroupChatParticipantList extends JPanel implements
 	}
 
 	String nickname = StringUtils.parseResource(participantJID);
-	String userRole = "";
-	try {
-	    userRole = chat.getOccupant(participantJID).getRole();
-	} catch (Exception e) {
-	    // sometimes this happens when there is no such Occupant, dunno why
-	    userRole = "participant";
-	}
 	
+	String affiliation  = parseRoleFromPacket(presence)[0];
+	String userRole = parseRoleFromPacket(presence)[1];
 	
 	Icon icon = null;
 	if (_localPreferences.isShowingRoleIcons()) {
-	    icon = getIconForRole(userRole);
+	    icon = getIconForRole(userRole, affiliation);
 	} else {
 	    icon = PresenceManager.getIconFromPresence(presence);
 	    if (icon == null) {
@@ -382,38 +381,83 @@ public final class GroupChatParticipantList extends JPanel implements
 	}
     }
 	
+    /**
+     * Parses the Affiliation and Role from the Presence packet
+     * @param p
+     * @return String[] ,[0]=affiliation , [1]=role
+     */
+    private String[] parseRoleFromPacket(Presence p) {
+	String affi = "";
+	String role = "";
+
+	for (PacketExtension pack : p.getExtensions()) {
+	    String[] args = pack.toXML().split(" ");
+
+	    for (String ss : args) {
+		if (ss.contains("affiliation")) {
+		    affi = ss.substring(ss.indexOf("\"") + 1,
+			    ss.lastIndexOf("\""));
+		}
+		if (ss.contains("role")) {
+		    role = ss.substring(ss.indexOf("\"") + 1,
+			    ss.lastIndexOf("\""));
+		}
+	    }
+	}
+
+	if (affi.equals(""))
+	    affi = "none";
+	if (role.equals(""))
+	    role = "participant";
+
+	return new String[] { affi, role };
+
+    }
+
 	/**
 	 * Returns corresponding Icons for each MUC-Role
-	 * icons are: </p>
-	 * Moderator=Yellow</p>
-	 * Participant=Green</p>
-	 * Visitor=Blue</p>
-	 * N/A=Grey</p>
+	 * icons are: <br>
+	 * Owner = Gold Star <br>
+	 * Admin = Silver Star <br>
+	 * Moderator = Bronze Star <br>
+	 * Member = Yellow <br>
+	 * Participant = Green <br>
+	 * Visitor = Blue <br>
+	 * N/A = Grey <br>
 	 * @param role
 	 * @return {@link Icon}
 	 */
-	private Icon getIconForRole(String role)
-	{
-	    Icon icon =null;
+    private Icon getIconForRole(String role, String affiliation) {
+	Icon icon = null;
 
-		if (role.equalsIgnoreCase("participant"))
-		{
-		    icon = SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
-		}
-		else if(role.equalsIgnoreCase("moderator"))
-		{
-		    icon = SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE);
-		}
-		else if(role.equalsIgnoreCase("visitor"))
-		{
-		    icon = SparkRes.getImageIcon(SparkRes.STAR_BLUE_IMAGE);
-		}
-		else
-		{
-		    icon = SparkRes.getImageIcon(SparkRes.STAR_GREY_IMAGE);
-		}
-		return icon;
+	if (role.equalsIgnoreCase("participant")) {
+	    icon = SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
+
+	} else if (role.equalsIgnoreCase("moderator")) {
+	    icon = SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
+
+	} else if (role.equalsIgnoreCase("visitor")) {
+	    icon = SparkRes.getImageIcon(SparkRes.STAR_BLUE_IMAGE);
+
+	} else {
+	    icon = SparkRes.getImageIcon(SparkRes.STAR_GREY_IMAGE);
 	}
+
+	if (affiliation.equalsIgnoreCase("owner")) {
+	    icon = SparkRes.getImageIcon(SparkRes.STAR_OWNER);
+	}
+	if (affiliation.equalsIgnoreCase("admin")) {
+	    icon = SparkRes.getImageIcon(SparkRes.STAR_ADMIN);
+	}
+	if (affiliation.equalsIgnoreCase("member")) {
+	    if (role.equals("moderator")) {
+		icon = SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
+	    } else {
+		icon = SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE);
+	    }
+	}
+	return icon;
+    }
 
 	public void userHasLeft(ChatRoom room, String userid) {
 		if (room != groupChatRoom) {
@@ -514,7 +558,8 @@ public final class GroupChatParticipantList extends JPanel implements
 						.getString("message.you.have.been.banned"));
 			}
 		} catch (XMPPException e) {
-			Log.error(e);
+		    groupChatRoom.getTranscriptWindow().
+		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
 	}
 
@@ -522,7 +567,8 @@ public final class GroupChatParticipantList extends JPanel implements
 		try {
 			chat.grantMembership(jid);
 		} catch (XMPPException e) {
-			Log.error(e);
+		    groupChatRoom.getTranscriptWindow().
+		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
 	}
 
@@ -530,7 +576,8 @@ public final class GroupChatParticipantList extends JPanel implements
 		try {
 			chat.grantVoice(nickname);
 		} catch (XMPPException e) {
-			Log.error(e);
+		    groupChatRoom.getTranscriptWindow().
+		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
 	}
 
@@ -538,25 +585,93 @@ public final class GroupChatParticipantList extends JPanel implements
 		try {
 			chat.revokeVoice(nickname);
 		} catch (XMPPException e) {
-			Log.error(e);
+		    groupChatRoom.getTranscriptWindow().
+		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
 	}
 
-	private void grantModerator(String nickname) {
-		try {
-			chat.grantModerator(nickname);
-		} catch (XMPPException e) {
-			Log.error(e);
-		}
+    private void grantModerator(String nickname) {
+	try {
+	    chat.grantModerator(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
+    }
 
-	private void revokeModerator(String nickname) {
-		try {
-			chat.revokeModerator(nickname);
-		} catch (XMPPException e) {
-			Log.error(e);
-		}
+    private void revokeModerator(String nickname) {
+	try {
+	    chat.revokeModerator(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
+    }
+	
+    private void grantMember(String nickname) {
+	try {
+	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
+	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    chat.grantMembership(nickname);
+
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+	}
+    }
+    private void revokeMember(String nickname) {
+	try {
+	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
+	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    chat.revokeMembership(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+	}
+    }
+	
+    private void grantAdmin(String nickname) {
+	try {
+	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
+	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    chat.grantAdmin(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+	}
+    }
+    private void revokeAdmin(String nickname) {
+	try {
+	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
+	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    chat.revokeAdmin(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+	}
+    }
+    
+    private void grantOwner(String nickname) {
+	try {
+	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
+	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    chat.grantOwnership(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+	}
+    }
+    private void revokeOwner(String nickname) {
+	try {
+	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
+	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    chat.revokeOwnership(nickname);
+	} catch (XMPPException e) {
+	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
+		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+	}
+    }
+	
 
 	/**
 	 * Let's make sure that the panel doesn't strech past the scrollpane view
@@ -570,310 +685,420 @@ public final class GroupChatParticipantList extends JPanel implements
 		return size;
 	}
 
-	private void checkPopup(MouseEvent evt) {
-		Point p = evt.getPoint();
-		final int index = participantsList.locationToIndex(p);
+    private void checkPopup(MouseEvent evt) {
+	Point p = evt.getPoint();
+	final int index = participantsList.locationToIndex(p);
 
-		final JPopupMenu popup = new JPopupMenu();
+	final JPopupMenu popup = new JPopupMenu();
 
-		if (index != -1) {
-			participantsList.setSelectedIndex(index);
-			final JLabel userLabel = (JLabel) model.getElementAt(index);
-			final String selectedUser = userLabel.getText();
-			final String groupJID = userMap.get(selectedUser);
-			String groupJIDNickname = StringUtils.parseResource(groupJID);
+	if (index != -1) {
+	    participantsList.setSelectedIndex(index);
+	    final JLabel userLabel = (JLabel) model.getElementAt(index);
+	    final String selectedUser = userLabel.getText();
+	    final String groupJID = userMap.get(selectedUser);
+	    String groupJIDNickname = StringUtils.parseResource(groupJID);
 
-			final String nickname = groupChatRoom.getNickname();
-			final Occupant occupant = userManager.getOccupant(groupChatRoom,
-					selectedUser);
-			final boolean admin = SparkManager.getUserManager().isOwnerOrAdmin(
-					groupChatRoom, chat.getNickname());
-			final boolean moderator = SparkManager.getUserManager()
-					.isModerator(groupChatRoom, chat.getNickname());
+	    final String nickname = groupChatRoom.getNickname();
+	    final Occupant occupant = userManager.getOccupant(groupChatRoom,
+		    selectedUser);
+	    final boolean iamAdmin = SparkManager.getUserManager().isAdmin(
+		    groupChatRoom, chat.getNickname());
+	    final boolean iamOwner = SparkManager.getUserManager().isOwner(groupChatRoom, chat.getNickname());
+	    
+	    final boolean iamAdminOrOwner = iamAdmin || iamOwner;
+	    
+	    final boolean iamModerator = SparkManager.getUserManager()
+		    .isModerator(groupChatRoom, chat.getNickname());
+	    
+	    final boolean userIsMember = SparkManager.getUserManager().isMember(occupant);
 
-			final boolean userIsAdmin = userManager.isOwnerOrAdmin(occupant);
-			final boolean userIsModerator = userManager.isModerator(occupant);
-			boolean isMe = nickname.equals(groupJIDNickname);
+	    final boolean userIsAdmin = userManager.isAdmin(groupChatRoom, occupant.getNick());
+	    final boolean userIsOwner = userManager.isOwner(occupant);
+	    final boolean userIsModerator = userManager.isModerator(occupant);
+	    boolean selectedMyself = nickname.equals(groupJIDNickname);
 
-			// Handle invites
-			if (groupJIDNickname == null) {
-				Action inviteAgainAction = new AbstractAction() {
-					private static final long serialVersionUID = -1875073139356098243L;
+	    // Handle invites
+	    if (groupJIDNickname == null) {
+		Action inviteAgainAction = new AbstractAction() {
+		    private static final long serialVersionUID = -1875073139356098243L;
 
-					public void actionPerformed(ActionEvent actionEvent) {
-						String message = invitees.get(selectedUser);
-						String jid = userManager
-								.getJIDFromDisplayName(selectedUser);
-						chat.invite(jid, message);
-					}
-				};
-
-				inviteAgainAction.putValue(Action.NAME, Res.getString("menuitem.inivite.again"));
-				popup.add(inviteAgainAction);
-
-				Action removeInvite = new AbstractAction() {
-					private static final long serialVersionUID = -3647279452501661970L;
-
-					public void actionPerformed(ActionEvent actionEvent) {
-						int index = getIndex(selectedUser);
-
-						if (index != -1) {
-							model.removeElementAt(index);
-						}
-					}
-				};
-
-				removeInvite.putValue(Action.NAME, Res.getString("menuitem.remove"));
-				popup.add(removeInvite);
-
-				popup.show(participantsList, evt.getX(), evt.getY());
-				return;
-			}
-
-			if (isMe) {
-				Action changeNicknameAction = new AbstractAction() {
-					private static final long serialVersionUID = -7891803180672794112L;
-
-					public void actionPerformed(ActionEvent actionEvent) {
-						String newNickname = JOptionPane.showInputDialog(
-								groupChatRoom, Res
-										.getString("label.new.nickname")
-										+ ":", Res
-										.getString("title.change.nickname"),
-								JOptionPane.QUESTION_MESSAGE);
-						if (ModelUtil.hasLength(newNickname)) {
-							while (true) {
-								newNickname = newNickname.trim();
-								String nick = chat.getNickname();
-								if (newNickname.equals(nick)) {
-									// return;
-								}
-								try {
-									chat.changeNickname(newNickname);
-									break;
-								} catch (XMPPException e1) {
-                                    if (e1.getXMPPError().getCode() == 406) { //handle deny changing nick
-                                        JOptionPane.showMessageDialog(groupChatRoom, Res.getString("message.nickname.not.acceptable"), Res.getString("title.change.nickname"), JOptionPane.ERROR_MESSAGE);
-                                        break;
-                                    }
-									newNickname = JOptionPane
-											.showInputDialog(
-													groupChatRoom,
-													Res
-															.getString("message.nickname.in.use")
-															+ ":",
-													Res
-															.getString("title.change.nickname"),
-													JOptionPane.QUESTION_MESSAGE);
-									if (!ModelUtil.hasLength(newNickname)) {
-										break;
-									}
-								}
-							}
-						}
-					}
-				};
-
-				changeNicknameAction.putValue(Action.NAME, Res
-						.getString("menuitem.change.nickname"));
-				changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes
-						.getImageIcon(SparkRes.DESKTOP_IMAGE));
-
-				if (allowNicknameChange) {
-					popup.add(changeNicknameAction);
-				}
-			}
-
-			Action chatAction = new AbstractAction() {
-				private static final long serialVersionUID = -2739549054781928195L;
-
-				public void actionPerformed(ActionEvent actionEvent) {
-					String selectedUser = getSelectedUser();
-					startChat(groupChatRoom, userMap.get(selectedUser));
-				}
-			};
-
-			chatAction.putValue(Action.NAME, Res
-					.getString("menuitem.start.a.chat"));
-			chatAction.putValue(Action.SMALL_ICON, SparkRes
-					.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-			if (!isMe) {
-				popup.add(chatAction);
-			}
-
-			Action blockAction = new AbstractAction() {
-				private static final long serialVersionUID = 8771362206105723776L;
-
-				public void actionPerformed(ActionEvent e) {
-					String user = getSelectedUser();
-					ImageIcon icon;
-					if (groupChatRoom.isBlocked(groupJID)) {
-						groupChatRoom.removeBlockedUser(groupJID);
-						icon = getImageIcon(groupJID);
-					} else {
-						groupChatRoom.addBlockedUser(groupJID);
-						icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
-					}
-
-					JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
-					model.setElementAt(label, index);
-				}
-			};
-
-			blockAction.putValue(Action.NAME, Res
-					.getString("menuitem.block.user"));
-			blockAction.putValue(Action.SMALL_ICON, SparkRes
-					.getImageIcon(SparkRes.BRICKWALL_IMAGE));
-			if (!isMe) {
-				if (groupChatRoom.isBlocked(groupJID)) {
-					blockAction.putValue(Action.NAME, Res
-							.getString("menuitem.unblock.user"));
-				}
-				popup.add(blockAction);
-			}
-
-			Action kickAction = new AbstractAction() {
-				private static final long serialVersionUID = 5769982955040961189L;
-
-				public void actionPerformed(ActionEvent actionEvent) {
-					kickUser(selectedUser);
-				}
-			};
-
-			kickAction.putValue(Action.NAME, Res
-					.getString("menuitem.kick.user"));
-			kickAction.putValue(Action.SMALL_ICON, SparkRes
-					.getImageIcon(SparkRes.SMALL_DELETE));
-			if (moderator && !userIsAdmin && !isMe) {
-				popup.add(kickAction);
-			}
-
-			// Handle Voice Operations
-			Action voiceAction = new AbstractAction() {
-				private static final long serialVersionUID = 7628207942009369329L;
-
-				public void actionPerformed(ActionEvent actionEvent) {
-					if (userManager.hasVoice(groupChatRoom, selectedUser)) {
-						revokeVoice(selectedUser);
-					} else {
-						grantVoice(selectedUser);
-					}
-					Collections.sort(users, labelComp);
-
-				}
-			};
-
-			voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
-			voiceAction.putValue(Action.SMALL_ICON, SparkRes
-					.getImageIcon(SparkRes.MEGAPHONE_16x16));
-			if (moderator && !userIsModerator && !isMe) {
-				if (userManager.hasVoice(groupChatRoom, selectedUser)) {
-					voiceAction.putValue(Action.NAME, Res
-							.getString("menuitem.revoke.voice"));
-				} else {
-					voiceAction.putValue(Action.NAME, Res
-							.getString("menuitem.grant.voice"));
-				}
-				popup.add(voiceAction);
-			}
-
-			Action banAction = new AbstractAction() {
-				private static final long serialVersionUID = 4290194898356641253L;
-
-				public void actionPerformed(ActionEvent actionEvent) {
-					banUser(selectedUser);
-				}
-			};
-			banAction.putValue(Action.NAME, Res.getString("menuitem.ban.user"));
-			banAction.putValue(Action.SMALL_ICON, SparkRes
-					.getImageIcon(SparkRes.RED_FLAG_16x16));
-			if (admin && !userIsModerator && !isMe) {
-				popup.add(banAction);
-			}
-
-			Action moderatorAction = new AbstractAction() {
-				private static final long serialVersionUID = 8162535640460764896L;
-
-				public void actionPerformed(ActionEvent actionEvent) {
-					if (!userIsModerator) {
-						grantModerator(selectedUser);
-					} else {
-						revokeModerator(selectedUser);
-					}
-					Collections.sort(users, labelComp);
-					
-				}
-			};
-
-			moderatorAction.putValue(Action.SMALL_ICON, SparkRes
-					.getImageIcon(SparkRes.MODERATOR_IMAGE));
-			if (admin && !userIsModerator) {
-				moderatorAction.putValue(Action.NAME, Res
-						.getString("menuitem.grant.moderator"));
-				popup.add(moderatorAction);
-			} else if (admin && userIsModerator && !isMe) {
-				moderatorAction.putValue(Action.NAME, Res
-						.getString("menuitem.revoke.moderator"));
-				popup.add(moderatorAction);
-			}
-
-			// Handle Unbanning of users.
-			Action unbanAction = new AbstractAction() {
-				private static final long serialVersionUID = 3672121864443182872L;
-
-				public void actionPerformed(ActionEvent actionEvent) {
-					String jid = ((JMenuItem) actionEvent.getSource())
-							.getText();
-					unbanUser(jid);
-				}
-			};
-
-			if (admin) {
-				JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
-				Iterator<Affiliate> bannedUsers = null;
-				try {
-					bannedUsers = chat.getOutcasts().iterator();
-				} catch (XMPPException e) {
-					Log.error("Error loading all banned users", e);
-				}
-
-				while (bannedUsers != null && bannedUsers.hasNext()) {
-					Affiliate bannedUser = (Affiliate) bannedUsers.next();
-					ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
-					JMenuItem bannedItem = new JMenuItem(bannedUser.getJid(),
-							icon);
-					unbanMenu.add(bannedItem);
-					bannedItem.addActionListener(unbanAction);
-				}
-
-				if (unbanMenu.getMenuComponentCount() > 0) {
-					popup.add(unbanMenu);
-				}
-			}
-		}
-
-		Action inviteAction = new AbstractAction() {
-			private static final long serialVersionUID = 2240864466141501086L;
-
-			public void actionPerformed(ActionEvent actionEvent) {
-				ConferenceUtils.inviteUsersToRoom(groupChatRoom
-						.getConferenceService(), groupChatRoom.getRoomname(),
-						null);
-			}
+		    public void actionPerformed(ActionEvent actionEvent) {
+			String message = invitees.get(selectedUser);
+			String jid = userManager
+				.getJIDFromDisplayName(selectedUser);
+			chat.invite(jid, message);
+		    }
 		};
 
-		inviteAction.putValue(Action.NAME, Res
-				.getString("menuitem.invite.users"));
-		inviteAction.putValue(Action.SMALL_ICON, SparkRes
-				.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+		inviteAgainAction.putValue(Action.NAME,
+			Res.getString("menuitem.inivite.again"));
+		popup.add(inviteAgainAction);
 
-		if (index != -1) {
-			popup.addSeparator();
-		}
-		popup.add(inviteAction);
+		Action removeInvite = new AbstractAction() {
+		    private static final long serialVersionUID = -3647279452501661970L;
+
+		    public void actionPerformed(ActionEvent actionEvent) {
+			int index = getIndex(selectedUser);
+
+			if (index != -1) {
+			    model.removeElementAt(index);
+			}
+		    }
+		};
+
+		removeInvite.putValue(Action.NAME,
+			Res.getString("menuitem.remove"));
+		popup.add(removeInvite);
 
 		popup.show(participantsList, evt.getX(), evt.getY());
+		return;
+	    }
+
+	    if (selectedMyself) {
+		Action changeNicknameAction = new AbstractAction() {
+		    private static final long serialVersionUID = -7891803180672794112L;
+
+		    public void actionPerformed(ActionEvent actionEvent) {
+			String newNickname = JOptionPane.showInputDialog(
+				groupChatRoom,
+				Res.getString("label.new.nickname") + ":",
+				Res.getString("title.change.nickname"),
+				JOptionPane.QUESTION_MESSAGE);
+			if (ModelUtil.hasLength(newNickname)) {
+			    while (true) {
+				newNickname = newNickname.trim();
+				String nick = chat.getNickname();
+				if (newNickname.equals(nick)) {
+				    // return;
+				}
+				try {
+				    chat.changeNickname(newNickname);
+				    break;
+				} catch (XMPPException e1) {
+				    if (e1.getXMPPError().getCode() == 406) { // handle
+									      // deny
+									      // changing
+									      // nick
+					JOptionPane
+						.showMessageDialog(
+							groupChatRoom,
+							Res.getString("message.nickname.not.acceptable"),
+							Res.getString("title.change.nickname"),
+							JOptionPane.ERROR_MESSAGE);
+					break;
+				    }
+				    newNickname = JOptionPane
+					    .showInputDialog(
+						    groupChatRoom,
+						    Res.getString("message.nickname.in.use")
+							    + ":",
+						    Res.getString("title.change.nickname"),
+						    JOptionPane.QUESTION_MESSAGE);
+				    if (!ModelUtil.hasLength(newNickname)) {
+					break;
+				    }
+				}
+			    }
+			}
+		    }
+		};
+
+		changeNicknameAction.putValue(Action.NAME,
+			Res.getString("menuitem.change.nickname"));
+		changeNicknameAction.putValue(Action.SMALL_ICON,
+			SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+
+		if (allowNicknameChange) {
+		    popup.add(changeNicknameAction);
+		}
+	    }
+
+	    Action chatAction = new AbstractAction() {
+		private static final long serialVersionUID = -2739549054781928195L;
+
+		public void actionPerformed(ActionEvent actionEvent) {
+		    String selectedUser = getSelectedUser();
+		    startChat(groupChatRoom, userMap.get(selectedUser));
+		}
+	    };
+
+	    chatAction.putValue(Action.NAME,
+		    Res.getString("menuitem.start.a.chat"));
+	    chatAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+	    if (!selectedMyself) {
+		popup.add(chatAction);
+	    }
+
+	    Action blockAction = new AbstractAction() {
+		private static final long serialVersionUID = 8771362206105723776L;
+
+		public void actionPerformed(ActionEvent e) {
+		    String user = getSelectedUser();
+		    ImageIcon icon;
+		    if (groupChatRoom.isBlocked(groupJID)) {
+			groupChatRoom.removeBlockedUser(groupJID);
+			icon = getImageIcon(groupJID);
+		    } else {
+			groupChatRoom.addBlockedUser(groupJID);
+			icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
+		    }
+
+		    JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
+		    model.setElementAt(label, index);
+		}
+	    };
+
+	    blockAction.putValue(Action.NAME,
+		    Res.getString("menuitem.block.user"));
+	    blockAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
+	    if (!selectedMyself) {
+		if (groupChatRoom.isBlocked(groupJID)) {
+		    blockAction.putValue(Action.NAME,
+			    Res.getString("menuitem.unblock.user"));
+		}
+		popup.add(blockAction);
+	    }
+
+	    Action kickAction = new AbstractAction() {
+		private static final long serialVersionUID = 5769982955040961189L;
+
+		public void actionPerformed(ActionEvent actionEvent) {
+		    kickUser(selectedUser);
+		}
+	    };
+
+	    kickAction.putValue(Action.NAME,
+		    Res.getString("menuitem.kick.user"));
+	    kickAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+	    if (iamModerator && !userIsAdmin && !selectedMyself) {
+		popup.add(kickAction);
+	    }
+
+	    // Handle Voice Operations
+	    Action voiceAction = new AbstractAction() {
+		private static final long serialVersionUID = 7628207942009369329L;
+
+		public void actionPerformed(ActionEvent actionEvent) {
+		    if (userManager.hasVoice(groupChatRoom, selectedUser)) {
+			revokeVoice(selectedUser);
+		    } else {
+			grantVoice(selectedUser);
+		    }
+		    Collections.sort(users, labelComp);
+
+		}
+	    };
+
+	    voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
+	    voiceAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+	    if (iamModerator && !userIsModerator && !selectedMyself) {
+		if (userManager.hasVoice(groupChatRoom, selectedUser)) {
+		    voiceAction.putValue(Action.NAME,
+			    Res.getString("menuitem.revoke.voice"));
+		} else {
+		    voiceAction.putValue(Action.NAME,
+			    Res.getString("menuitem.grant.voice"));
+		}
+		popup.add(voiceAction);
+	    }
+
+	    Action banAction = new AbstractAction() {
+		private static final long serialVersionUID = 4290194898356641253L;
+
+		public void actionPerformed(ActionEvent actionEvent) {
+		    banUser(selectedUser);
+		}
+	    };
+	    banAction.putValue(Action.NAME, Res.getString("menuitem.ban.user"));
+	    banAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.RED_FLAG_16x16));
+	    if (iamAdminOrOwner && !userIsModerator && !selectedMyself) {
+		popup.add(banAction);
+	    }
+	    
+	    
+	    JMenu affiliationMenu = new JMenu(Res.getString("menuitem.affiliation"));
+	    affiliationMenu.setIcon(SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE));
+	    
+	    Action memberAction = new AbstractAction() {
+		private static final long serialVersionUID = -2528887841227305432L;
+
+		@Override
+	        public void actionPerformed(ActionEvent e) {
+	            if (!userIsMember) {
+			grantMember(selectedUser);
+		    } else {
+			revokeMember(selectedUser);
+		    }
+		    Collections.sort(users, labelComp);
+	        }
+	    };
+	    memberAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE));
+	    if(iamAdminOrOwner && !userIsMember)
+	    {
+		memberAction.putValue(Action.NAME,Res.getString("menuitem.grant.member"));
+		affiliationMenu.add(memberAction);
+	    }
+	    else if(iamAdminOrOwner && userIsMember && !selectedMyself)
+	    {
+		memberAction.putValue(Action.NAME,Res.getString("menuitem.revoke.member"));
+		affiliationMenu.add(memberAction);
+	    }
+	    
+
+	    Action moderatorAction = new AbstractAction() {
+		private static final long serialVersionUID = 8162535640460764896L;
+
+		public void actionPerformed(ActionEvent actionEvent) {
+		    if (!userIsModerator) {
+			grantModerator(selectedUser);
+		    } else {
+			revokeModerator(selectedUser);
+		    }
+		    Collections.sort(users, labelComp);
+
+		}
+	    };
+
+	    moderatorAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.STAR_MODERATOR));
+	        
+	    if (iamAdminOrOwner && !userIsModerator && !userIsAdmin && !userIsOwner) {
+		moderatorAction.putValue(Action.NAME,
+			Res.getString("menuitem.grant.moderator"));
+		affiliationMenu.add(moderatorAction);
+	    } else if (iamAdminOrOwner && userIsModerator && !selectedMyself) {
+		moderatorAction.putValue(Action.NAME,
+			Res.getString("menuitem.revoke.moderator"));
+		affiliationMenu.add(moderatorAction);
+	    }
+	        
+	    Action adminAction = new AbstractAction() {
+		private static final long serialVersionUID = 3672121864443182872L;
+
+		@Override
+	        public void actionPerformed(ActionEvent e) {
+		    if (!userIsAdmin) {
+			grantAdmin(selectedUser);
+		    } else {
+			revokeAdmin(selectedUser);
+		    }
+		    Collections.sort(users, labelComp);
+	    	
+	        }
+	    };
+	    adminAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.STAR_ADMIN));
+	    if(iamAdminOrOwner && !userIsAdmin && !userIsOwner)
+	    {
+		adminAction.putValue(Action.NAME,
+			Res.getString("menuitem.grant.admin"));
+		affiliationMenu.add(adminAction);
+	    }
+	    else if(iamAdminOrOwner && !selectedMyself )
+	    {
+		adminAction.putValue(Action.NAME,
+			Res.getString("menuitem.revoke.admin"));
+		affiliationMenu.add(adminAction);
+	    }
+	    
+	    
+	    Action ownerAction = new AbstractAction() {
+		private static final long serialVersionUID = 3672121864443182872L;
+
+		@Override
+	        public void actionPerformed(ActionEvent e) {
+		    if (!userIsOwner) {
+			grantOwner(selectedUser);
+		    } else {
+			revokeOwner(selectedUser);
+		    }
+		    Collections.sort(users, labelComp);
+	    	
+	        }
+	    };
+	    ownerAction.putValue(Action.SMALL_ICON,
+		    SparkRes.getImageIcon(SparkRes.STAR_OWNER));
+	    
+	    if( iamOwner && !userIsOwner)
+	    {
+		ownerAction.putValue(Action.NAME,
+			Res.getString("menuitem.grant.owner"));
+		affiliationMenu.add(ownerAction);
+	    }
+	    else if(iamOwner && !selectedMyself )
+	    {
+		ownerAction.putValue(Action.NAME,
+			Res.getString("menuitem.revoke.owner"));
+		affiliationMenu.add(ownerAction);
+	    }
+
+	    if(affiliationMenu.getItemCount()>0)
+		popup.add(affiliationMenu);
+	    
+
+	    // Handle Unbanning of users.
+	    Action unbanAction = new AbstractAction() {
+		private static final long serialVersionUID = 3672121864443182872L;
+
+		public void actionPerformed(ActionEvent actionEvent) {
+		    String jid = ((JMenuItem) actionEvent.getSource())
+			    .getText();
+		    unbanUser(jid);
+		}
+	    };
+
+	    if (iamAdmin || iamOwner) {
+		JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
+		Iterator<Affiliate> bannedUsers = null;
+		try {
+		    bannedUsers = chat.getOutcasts().iterator();
+		} catch (XMPPException e) {
+		    Log.error("Error loading all banned users", e);
+		}
+
+		while (bannedUsers != null && bannedUsers.hasNext()) {
+		    Affiliate bannedUser = (Affiliate) bannedUsers.next();
+		    ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
+		    JMenuItem bannedItem = new JMenuItem(bannedUser.getJid(),
+			    icon);
+		    unbanMenu.add(bannedItem);
+		    bannedItem.addActionListener(unbanAction);
+		}
+
+		if (unbanMenu.getMenuComponentCount() > 0) {
+		    popup.add(unbanMenu);
+		}
+	    }
 	}
+
+	Action inviteAction = new AbstractAction() {
+	    private static final long serialVersionUID = 2240864466141501086L;
+
+	    public void actionPerformed(ActionEvent actionEvent) {
+		ConferenceUtils.inviteUsersToRoom(
+			groupChatRoom.getConferenceService(),
+			groupChatRoom.getRoomname(), null);
+	    }
+	};
+
+	inviteAction.putValue(Action.NAME,
+		Res.getString("menuitem.invite.users"));
+	inviteAction.putValue(Action.SMALL_ICON,
+		SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+
+	if (index != -1) {
+	    popup.addSeparator();
+	}
+	popup.add(inviteAction);
+
+	popup.show(participantsList, evt.getX(), evt.getY());
+    }
 
 	public void setNicknameChangeAllowed(boolean allowed) {
 		allowNicknameChange = allowed;
@@ -957,31 +1182,40 @@ public final class GroupChatParticipantList extends JPanel implements
 	}
 
 	private int compareWithoutRole(String s1, String s2) {
-	    return (s1.toLowerCase().compareTo(s2.toLowerCase()) * -1);
+	    return (s1.toLowerCase().compareTo(s2.toLowerCase()));
 	}
 
+	/**
+	 * Comparaes 2 items by their Role and Affiliation<br>
+	 * affiliation > role<br>
+	 * owner > admin > moderator > member > participant > visitor
+	 * @param item1
+	 * @param item2
+	 * @return -1, 0 or 1
+	 */
 	private int compareWithRole(JLabel item1, JLabel item2) {
 
-	    char user1 = 'p';
-	    char user2 = 'p';
+	   int user1 = 100;
+	    int user2 = 100;
 	    try {
 		// append Room-JID to UserLabel
 		String jid1 = chat.getRoom() + "/" + item1.getText();
 		String jid2 = chat.getRoom() + "/" + item2.getText();
+		
+		user1 = getCompareValue(jid1);
+		user2 = getCompareValue(jid2);
 
-		user1 = chat.getOccupant(jid1).getRole().charAt(0);
-		user2 = chat.getOccupant(jid2).getRole().charAt(0);
 	    } catch (Exception e) {
 		// Sometimes theres no Occupant with that jid, dunno why
 	    }
 
 	    int result = 0;
 	    if (user1 == user2) {
-
 		result = compareWithoutRole(item1.getText(), item2.getText());
 
 	    } else {
-		// m < p < v
+		// a=owner,b=admin, m=moderator, n=member , p=participant, v=visitor
+		// a < b < m < n < p < v
 		if (user1 < user2)
 		    result = -1;
 		if (user1 > user2)
@@ -990,6 +1224,44 @@ public final class GroupChatParticipantList extends JPanel implements
 	    return result;
 	}
     };
+    
+    /**
+     * check if we have an affiliation to this room<br>
+     * and map it to an integer<br>
+     * 0=owner,1=admin.....5=visitor<br>
+     */
+    private int getCompareValue(String jid)
+    {
+	int result = 100;
+	
+	switch(chat.getOccupant(jid).getAffiliation().charAt(0))
+	{
+	case 'o': result = 0;break; //owner
+	case 'a': result = 1;break; //admin
+	// Moderator is in between with 2
+	case 'm': result = 3;break; //member
+	default : result =100;
+	}
+	
+	if (chat.getOccupant(jid).getAffiliation()
+		.equalsIgnoreCase("none")) {
+	   
+	    switch(chat.getOccupant(jid).getRole().charAt(0))
+	    {
+	    case 'm' : result = 2; break; //moderator
+	    // Member is in between with 3
+	    case 'p' : result = 4; break; //participant
+	    case 'v' : result = 5; break; //visitor
+	    default : result = 100;
+	    }
+	}
+	if(chat.getOccupant(jid).getAffiliation()
+		.equalsIgnoreCase("member") && chat.getOccupant(jid).getRole().charAt(0)=='m')
+	{
+	    result = 2;
+	}
+	return result;
+    }
 
 	/**
 	 * The <code>JLabelIconRenderer</code> is the an implementation of

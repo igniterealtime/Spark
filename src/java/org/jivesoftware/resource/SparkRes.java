@@ -95,6 +95,9 @@ public class SparkRes {
     public static final String BLOCK_CONTACT_16x16 = "BLOCK_CONTACT_16x16";
     public static final String UNBLOCK_CONTACT_16x16 = "UNBLOCK_CONTACT_16x16";
     public static final String STAR_GREY_IMAGE = "STAR_GREY_IMAGE";
+    public static final String STAR_OWNER = "STAR_OWNER";
+    public static final String STAR_ADMIN = "STAR_ADMIN";
+    public static final String STAR_MODERATOR ="STAR_MODERATOR";
     public static final String MODERATOR_IMAGE = "MODERATOR_IMAGE";
     public static final String JOIN_GROUPCHAT_IMAGE = "JOIN_GROUPCHAT_IMAGE";
     public static final String UNRECOVERABLE_ERROR = "UNRECOVERABLE_ERROR";

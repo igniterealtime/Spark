@@ -148,6 +148,22 @@ public class UserManager {
         }
         return false;
     }
+    /**
+     * Checks if the Occupant is a Member in this Room<br>
+     * <b>admins and owners are also members!!!</b>
+     * @param occupant
+     * @return true if member, else false
+     */
+    public boolean isMember(Occupant occupant) {
+	if (occupant != null) {
+	    String affiliation = occupant.getAffiliation();
+	    if ("member".equals(affiliation) || affiliation.equals("owner")
+		    || affiliation.equals("admin")) {
+		return true;
+	    }
+	}
+	return false;
+    }
 
     /**
      * Checks to see if the Occupant is a moderator.
