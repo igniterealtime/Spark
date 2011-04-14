@@ -697,7 +697,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
         else if (e.getSource() == addToRosterButton) {
             RosterDialog rosterDialog = new RosterDialog();
-            rosterDialog.setDefaultJID(participantJID);
+            rosterDialog.setDefaultJID(StringUtils.parseBareAddress(participantJID));
             rosterDialog.setDefaultNickname(getParticipantNickname());
             rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
         } else {
