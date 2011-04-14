@@ -20,11 +20,8 @@
 package org.jivesoftware.sparkimpl.plugin.privacy.list;
 
 import java.util.List;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+
 
 /**
  * PrivacyList will contain all items that allways must be blocked.
@@ -39,21 +36,7 @@ public class PrivacyListBlackList extends SparkPrivacyList {
     public PrivacyListBlackList() {
         super("spark:blackList");
         
-        if ( !isDefault() ) {
-            try {
-                setListAsDefault();
-            } catch (XMPPException ex) {
-                Log.error(ex);
-            }
-        }
-        // Check is Active list set
-        if (PrivacyManager.getInstance().hasActiveList() && !isActive()) {
-            try { // Couldn't set default PrivacyList, trying to set it as Active
-                setListAsActive();
-            } catch (XMPPException ex1) {
-                Log.error(ex1);
-            }
-        }
+
     }
 
     /**
@@ -80,16 +63,5 @@ public class PrivacyListBlackList extends SparkPrivacyList {
         return newItem;
     }
 
-    /**
-     * Cheks is jid already blocked
-     * @param jid user to check
-     * @return is user blocked
-     */
-    public boolean isBlockedItem(String jid) {
-        if ( searchPrivacyItem(jid) != null ) {
-             return true;
-        }
-        return false;
-    }
 
 }

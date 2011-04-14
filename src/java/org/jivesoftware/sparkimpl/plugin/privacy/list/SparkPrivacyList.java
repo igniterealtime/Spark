@@ -24,8 +24,12 @@ import java.util.List;
 
 import org.jivesoftware.smack.PrivacyList;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ContactGroup;
+import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyException;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
@@ -97,8 +101,11 @@ public abstract class SparkPrivacyList {
         } catch(XMPPException ex) {
             if ( ex.getXMPPError().getCode() == 404 ) { // List not found. Let's create it.
                 createList(); // Creating new PrivacyList.
+            } else
+            {
+        	Log.error(ex); // Log all errors
             }
-            Log.error(ex); // Log all errors
+            
         }
         
     }
@@ -114,7 +121,19 @@ public abstract class SparkPrivacyList {
         }
         return 1;
     }
-
+ 
+    /**
+     * Cheks is jid already blocked
+     * @param jid user to check
+     * @return is user blocked
+     */
+    public boolean isBlockedItem(String jid) {
+        if ( searchPrivacyItem(jid) != null ) {
+             return true;
+        }
+        return false;
+    }
+    
     /**
      * Load default privecy item
      * 
@@ -152,7 +171,7 @@ public abstract class SparkPrivacyList {
      * 
      * @return
      */
-    protected int getNewItemOrder() {
+    public int getNewItemOrder() {
         return (getMaxItemOrder()+1);
     }
 
@@ -247,7 +266,7 @@ public abstract class SparkPrivacyList {
 
     public void addItem(String jid) throws XMPPException {
         String bareJid = StringUtils.parseBareAddress(jid);
-        addPrivacyItem(prepareItem(bareJid));
+        addPrivacyItem(prepareItem(bareJid));        
         save(); // Store list
     }
 
@@ -287,20 +306,36 @@ public abstract class SparkPrivacyList {
     }
 
     /**
-     * Add New privacy item without saving list without saving
+     * Add New privacy item without saving list
      *
      * @param item new privacyItem
      */
     public void addPrivacyItem(PrivacyItem item) throws XMPPException {
-        if ( item.getValue() == null || item.getValue().isEmpty() ) {
-            throw new PrivacyException("Item must contain JID!");
-        }
-        if (searchPrivacyItems(item.getType(), item.getValue()).size() < 1) {
-            getPrivacyItems().add(item);
-        }
-        fireItemAdded(item.getValue());
+	if (item.getValue() == null || item.getValue().isEmpty()) {
+	    throw new PrivacyException("Item must contain JID!");
+	}
+	if (searchPrivacyItems(item.getType(), item.getValue()).size() < 1) {
+	    getPrivacyItems().add(item);
+	}
+	
+	if (item.isFilterPresence_out() && this.isActive()) {
+	    if (item.getType().equals(PrivacyItem.Type.jid)) {
+
+		PrivacyManager.getInstance().sendUnavailableTo(item.getValue());
+
+	    } else if (item.getType().equals(PrivacyItem.Type.group)) {
+		ContactGroup group = SparkManager.getContactList().getContactGroup(item.getValue());
+		for (ContactItem cI:group.getContactItems())
+		{
+		    PrivacyManager.getInstance().sendUnavailableTo(cI.getJID());
+		}
+	    }
+	}
+
+	fireItemAdded(item.getValue());
     }
 
+    
     /**
      * Removes PrivacyItem From list without saving
      *
@@ -308,15 +343,25 @@ public abstract class SparkPrivacyList {
      * @param value value of item
      */
     public void removePrivacyItem(PrivacyItem.Type type, String value) {
-        if ( getPrivacyItems().size() < 1 ) {
-            return;
-        }
-        //If somewhere in list are more than one item
-        ArrayList<PrivacyItem> itemsFound = searchPrivacyItems(type, value);
-        for (PrivacyItem privacyItem : itemsFound) {
-            getPrivacyItems().remove(privacyItem);
-        }
-        fireItemRemoved(value);
+	if (getPrivacyItems().size() < 1) {
+	    return;
+	}
+	// If somewhere in list are more than one item
+	ArrayList<PrivacyItem> itemsFound = searchPrivacyItems(type, value);
+	for (PrivacyItem privacyItem : itemsFound) {
+	    getPrivacyItems().remove(privacyItem);
+	}
+	if (type.equals(PrivacyItem.Type.group) && this.isActive()) {
+	    ContactGroup group = SparkManager.getContactList().getContactGroup(value);
+	    for (ContactItem cI : group.getContactItems()) {
+		PrivacyManager.getInstance().sendRealPresenceTo(cI.getJID());
+	    }
+	} else
+	{
+	    PrivacyManager.getInstance().sendRealPresenceTo(value);
+	}
+
+	fireItemRemoved(value);
     }
 
     /**
@@ -359,6 +404,31 @@ public abstract class SparkPrivacyList {
      */
     public void setListAsActive() throws XMPPException {
         PrivacyManager.getInstance().getPrivacyListManager().setActiveListName( getListName() );
+        if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName()))
+	{
+	    final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
+		.getPresence();
+	    	SparkManager.getSessionManager().changePresence(myPresence);
+	    	return;
+	}
+	for (PrivacyItem pI :privacyItems)
+	{
+	    if (pI.isFilterPresence_out())
+	    {
+		if (pI.getType().equals(PrivacyItem.Type.jid))
+		{
+		    PrivacyManager.getInstance().sendUnavailableTo(pI.getValue());
+		}
+		if (pI.getType().equals(PrivacyItem.Type.group))
+		{
+		    ContactGroup group = SparkManager.getContactList().getContactGroup(pI.getValue());
+		    for (ContactItem cI:group.getContactItems())
+		    {
+			PrivacyManager.getInstance().sendUnavailableTo(cI.getJID());
+		    }
+		}
+	    }
+	}
     }
 
     /**

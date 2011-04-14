@@ -36,6 +36,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
  * This is Privacy plugin for Spark.
@@ -78,6 +79,7 @@ public class PrivacyPlugin implements Plugin {
                             public void run() {
                                 addMenuItemToContactItems();
                                 scanContactList();
+                                setDefaultListAsActive();
                             }
                         });
                     } catch(Exception ex) {
@@ -86,6 +88,7 @@ public class PrivacyPlugin implements Plugin {
                 } else {
                     addMenuItemToContactItems();
                     scanContactList();
+                    setDefaultListAsActive();
                 }
             }
         };
@@ -107,11 +110,34 @@ public class PrivacyPlugin implements Plugin {
     public void uninstall() {
         
     }
+    
+    
+    /**
+     * Activate the default Privacy List
+     */
+    private void setDefaultListAsActive()
+    {
+	for (String s: PrivacyManager.getInstance().getPrivacyListNames())
+	{
+	    
+	    SparkPrivacyList plist = PrivacyManager.getInstance().getPrivacyList(s);
+	      if (plist.isDefault())
+	            {
+	        	try {
+	        	    
+			    plist.setListAsActive();
+			} catch (XMPPException e1) {
+			    Log.warning("Could not activate list "+plist.getListName(), e1);
+			}
+	            }
+	}
+    }
 
     /**
      * Search blocked items and append icons for them
      */
     protected void scanContactList() {
+	
         PrivacyManager manager = PrivacyManager.getInstance();
         ArrayList<PrivacyItem> items = (ArrayList<PrivacyItem>) manager.getBlackList().getBlockedItems();
         for (PrivacyItem privacyItem : items ) {
@@ -122,6 +148,12 @@ public class PrivacyPlugin implements Plugin {
         
     }
 
+    protected void addPrivacyListsToPresenceChange()
+    {
+	
+    }
+    
+    
     /**
      * Adding block menu item to contact popupmenu
      */
@@ -131,12 +163,12 @@ public class PrivacyPlugin implements Plugin {
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {
         	
-        	if(object instanceof ContactItem)
+        	if(object instanceof ContactItem && !PrivacyManager.getInstance().getActiveList().getListName().equals(PrivacyManager.getInstance().getBlackList().getListName()))
         	{
                     final ContactItem item = (ContactItem) object;
                     JMenuItem blockMenu;
                     
-                    if ( PrivacyManager.getInstance().getBlackList().isBlockedItem(item.getJID()) ) {
+                    if ( PrivacyManager.getInstance().getActiveList().isBlockedItem(item.getJID()) ) {
                         blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
                         blockMenu.addActionListener(new ActionListener() { //unblock contact
     
@@ -144,7 +176,7 @@ public class PrivacyPlugin implements Plugin {
                             public void actionPerformed(ActionEvent ae) {
                                 if ( item != null ) {
                                     try {
-                                        PrivacyManager.getInstance().getBlackList().removeItem(((ContactItem) item).getJID()); //Add to block list}
+                                        PrivacyManager.getInstance().getActiveList().removeItem(((ContactItem) item).getJID()); //Add to block list}
                                     } catch (XMPPException ex) {
                                         Log.error(ex); // @todo handle error
                                     }
@@ -159,7 +191,7 @@ public class PrivacyPlugin implements Plugin {
                             public void actionPerformed(ActionEvent ae) {
                                 if ( item != null ) {
                                     try {
-                                        PrivacyManager.getInstance().getBlackList().addItem(item.getJID()); //Add to block list
+                                        PrivacyManager.getInstance().getActiveList().addItem(item.getJID()); //Add to block list
                                     } catch (XMPPException ex) {
                                         Log.error(ex); // @todo handle error
                                     }

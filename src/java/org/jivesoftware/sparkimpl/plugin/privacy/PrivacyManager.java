@@ -19,15 +19,20 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PrivacyList;
 import org.jivesoftware.smack.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
@@ -77,9 +82,34 @@ public class PrivacyManager implements SparkPrivacyListListener {
 		return singleton;
 	}
 
-    @Deprecated
-    public void getPrivacyList(String listName) {
-        // @todo Create different privacy Lists Functionality.
+  
+	public void removePrivacyList(String listName)
+	{
+	    try {
+		privacyManager.deletePrivacyList(listName);
+	    } catch (XMPPException e) {
+		Log.warning("Could not remove PrivacyList "+listName); 
+		e.printStackTrace();
+	    }
+	}
+	
+	
+	
+    public SparkPrivacyList getPrivacyList(String listName) {
+        SparkPrivacyList privacyList = new SparkPrivacyList(listName) {
+	    
+	    @Override
+	    public PrivacyItem prepareItem(String jid) {
+		    // Creating new Privacy Item
+	        PrivacyItem newItem = new PrivacyItem(PrivacyItem.Type.jid.name(), false, getNewItemOrder());
+	        newItem.setValue(jid);
+	        newItem.setFilterMessage(true); // Locking only messages from contact
+	        newItem.setFilterPresence_out(true); // And hiding from blocked contact
+	        return newItem;
+	    }
+	};
+	
+	return privacyList;
     }
 
     /**
@@ -98,6 +128,27 @@ public class PrivacyManager implements SparkPrivacyListListener {
         return true;
     }
 
+    /**
+     * Returns the active PrivacyList
+     * @return the list if there is one, else null
+     */
+    public SparkPrivacyList getActiveList()
+    {
+	if (!hasActiveList())
+	    return null;
+	
+	PrivacyList list = null;
+	try {
+	    list = getPrivacyListManager().getActiveList();
+	} catch (XMPPException e)
+	{
+	    e.printStackTrace();
+	}
+	    
+	return getPrivacyList(list.toString());
+	
+    }
+    
     /**
      * Check if active list exist
      *
@@ -135,6 +186,56 @@ public class PrivacyManager implements SparkPrivacyListListener {
         return privacyManager;
     }
 
+    
+    public void createPrivacyList (String listName)
+    {
+	SparkPrivacyList list = new SparkPrivacyList(listName) {
+	    
+	    @Override
+	    public PrivacyItem prepareItem(String jid) {
+		    // Creating new Privacy Item
+	        PrivacyItem newItem = new PrivacyItem(PrivacyItem.Type.jid.name(), false, getNewItemOrder());
+	        newItem.setValue(jid);
+	        newItem.setFilterMessage(true); // Locking only messages from contact
+	        newItem.setFilterPresence_out(true); // And hiding from blocked contact
+	        return newItem;
+	    }
+	};
+	
+	try {
+	    list.createList();
+	} catch (XMPPException e) {
+	    if (!(e.getXMPPError().getCode() == 404))
+	    {
+		System.out.println(e.getXMPPError().getCode());
+		e.printStackTrace();
+	    }
+	} 
+    }
+    
+    
+    /**
+     * 	The server can store different privacylists.
+     * This method will return the names of the lists, currently available on the server
+     * 
+     * @return All Listnames
+     */
+    
+    public List<String> getPrivacyListNames()
+    {
+	List<String> nameList = new ArrayList<String>();
+	try {
+	    for (PrivacyList pl :privacyManager.getPrivacyLists())
+	    {
+	        nameList.add(pl.toString());
+	    }
+	} catch (XMPPException e) {
+	    Log.warning("Error load privaylist names");
+	    e.printStackTrace();
+	}
+	   return nameList;
+    }
+    
     /**
      * Send Unavailable (offline status) to jid .
      *

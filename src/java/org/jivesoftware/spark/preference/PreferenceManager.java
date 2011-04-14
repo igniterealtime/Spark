@@ -29,6 +29,7 @@ import javax.swing.JDialog;
 
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.sparkimpl.plugin.privacy.ui.PrivacyPreferences;
 import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
@@ -58,6 +59,10 @@ public class PreferenceManager {
         MediaPreference preferenes = new MediaPreference();
         addPreference(preferenes);
         preferenes.load();
+        
+        PrivacyPreferences privacy = new PrivacyPreferences();
+        addPreference(privacy);
+        privacy.load();
 
         LocalPreference localPreferences = new LocalPreference();
         addPreference(localPreferences);
