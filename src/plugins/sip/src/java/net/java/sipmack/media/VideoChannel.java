@@ -223,7 +223,6 @@ public class VideoChannel {
             try {
 				processor = javax.media.Manager.createProcessor( javax.media.Manager.createDataSource(locator));
 			} catch (NoDataSourceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         } catch (NoProcessorException npe) {

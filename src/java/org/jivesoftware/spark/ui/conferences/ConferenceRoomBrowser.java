@@ -817,14 +817,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
 	public void componentHidden(ComponentEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 	public void componentMoved(ComponentEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+			
 	}
 
 	public void componentResized(ComponentEvent e)
@@ -907,7 +905,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
 	public void componentShown(ComponentEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -886,8 +886,7 @@ public final class LoginDialog {
 				    try {
 					connection.connect();
 				    } catch (XMPPException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.error("connection error",e);
 				    }
 
 				}

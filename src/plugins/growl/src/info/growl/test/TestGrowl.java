@@ -127,7 +127,6 @@ public class TestGrowl extends JFrame {
 		} catch (GrowlException ge) {
 		    ge.printStackTrace();
 		} catch (IOException e) {
-		    // TODO Auto-generated catch block
 		    e.printStackTrace();
 		}
 	    }
@@ -165,7 +164,6 @@ public class TestGrowl extends JFrame {
 		} catch (GrowlException ge) {
 		    ge.printStackTrace();
 		} catch (IOException e) {
-		    // TODO Auto-generated catch block
 		    e.printStackTrace();
 		}
 	    }

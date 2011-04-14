@@ -46,8 +46,7 @@ public class GrowlMessageListener implements GlobalMessageListener {
 
 	    _growltalker = new GrowlTalker();
 	} catch (GrowlException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    Log.error("growl error",e);
 	}
     }
 

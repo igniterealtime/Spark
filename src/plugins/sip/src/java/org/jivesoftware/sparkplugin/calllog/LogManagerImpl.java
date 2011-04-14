@@ -151,11 +151,11 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
     }
 
     public void messageReceived(MessageEvent evt) {
-        // TODO Auto-generated method stub
+	
     }
 
     public void receivedUnknownMessage(UnknownMessageEvent evt) {
-        // TODO Auto-generated method stub
+
     }
 
     public void registerStatusChanged(RegisterEvent evt) {

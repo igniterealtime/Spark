@@ -82,8 +82,7 @@ public class TranslatorUtil {
 				
 				
 			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.warning("Translator error",e);
 			}
             
 //            int length = list.getLength();

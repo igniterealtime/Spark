@@ -77,13 +77,11 @@ public class PrivacyPreferences implements Preference {
 
     @Override
     public void load() {
-	// TODO Auto-generated method stub
 
     }
 
     @Override
     public void commit() {
-	// TODO Auto-generated method stub
 
     }
 
@@ -99,13 +97,11 @@ public class PrivacyPreferences implements Preference {
 
     @Override
     public Object getData() {
-	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
     public void shutdown() {
-	// TODO Auto-generated method stub
 
     }
 

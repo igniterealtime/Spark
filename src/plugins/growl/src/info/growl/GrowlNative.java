@@ -35,6 +35,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.jivesoftware.spark.util.log.Log;
+
 /**
  * Growl notification implementation. This uses JNI to send messages to Growl.
  * 
@@ -103,8 +105,7 @@ class GrowlNative implements Growl {
 
 	    imageData = baos.toByteArray();
 	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    Log.error("Growl error",e);
 	}
     }
 
