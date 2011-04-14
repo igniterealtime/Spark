@@ -43,6 +43,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
     private JCheckBox spellcheckingEnabled;
     private JCheckBox autospellcheckingEnabled;
     private JComboBox spellLanguages;
+    private JCheckBox ignoreCase;
 
     private JPanel spellPanel;
 
@@ -57,6 +58,16 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	autospellcheckingEnabled = new JCheckBox();
 	spellLanguages = new JComboBox();
 	spellPanel.setLayout(new GridBagLayout());
+	
+	ignoreCase = new JCheckBox();
+	ignoreCase.addActionListener(new ActionListener() {
+	    
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		setIgnoreUppercase(ignoreCase.isSelected());	
+	    }
+	});
+	
 	JLabel lLanguage = new JLabel();
 	// spellcheckingEnabled.setText(SpellcheckerResource.getString("preference.spellcheckingEnabled"));
 
@@ -79,18 +90,11 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	    }
 	}
 
-	spellPanel.add(spellcheckingEnabled, new GridBagConstraints(0, 0, 2, 1,
-		1.0, 1.0, GridBagConstraints.NORTHWEST,
-		GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-	spellPanel.add(autospellcheckingEnabled, new GridBagConstraints(0, 1,
-		2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST,
-		GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-	spellPanel.add(lLanguage, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0,
-		GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		new Insets(5, 5, 5, 5), 0, 0));
-	spellPanel.add(spellLanguages, new GridBagConstraints(1, 2, 2, 1, 1.0,
-		1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(spellcheckingEnabled, new GridBagConstraints(0, 0, 2, 1,	1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(autospellcheckingEnabled, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(lLanguage, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(spellLanguages, new GridBagConstraints(1, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(ignoreCase, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 	// Setup MNEMORICS
 	ResourceUtils.resButton(spellcheckingEnabled, SpellcheckerResource
@@ -99,7 +103,10 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 		.getString("preference.autoSpellcheckingEnabled"));
 	ResourceUtils.resLabel(lLanguage, spellLanguages,
 		SpellcheckerResource.getString("preference.language"));
-
+	
+	ResourceUtils.resButton(ignoreCase, 
+		SpellcheckerResource.getString("preference.ignore.uppercasedword"));
+	
 	setLayout(new VerticalFlowLayout());
 	spellPanel.setBorder(BorderFactory
 		.createTitledBorder(SpellcheckerResource
@@ -111,9 +118,11 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	if (enable) {
 	    autospellcheckingEnabled.setEnabled(true);
 	    spellLanguages.setEnabled(true);
+	    ignoreCase.setEnabled(true);
 	} else {
 	    autospellcheckingEnabled.setEnabled(false);
 	    spellLanguages.setEnabled(false);
+	    ignoreCase.setEnabled(false);
 	}
     }
 
@@ -147,5 +156,13 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 
     public void actionPerformed(ActionEvent event) {
 	updateUI(spellcheckingEnabled.isSelected());
+    }
+    
+    public boolean getIgnoreUppercase() {
+	return ignoreCase.isSelected();
+    }
+    
+    public void setIgnoreUppercase(boolean ignore) {
+	ignoreCase.setSelected(ignore);
     }
 }

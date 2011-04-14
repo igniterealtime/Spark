@@ -69,6 +69,13 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
 		    _spellingButton
 			    .addActionListener(SpellcheckChatRoomDecorator.this);
 		    _room.getEditorBar().add(_spellingButton);
+		    if (preference.getPreferences().getIgnoreUppercase()) {
+			_sc.getSpellChecker().setIgnoreUpperCaseWords(true);
+			_sc.getSpellChecker().setCaseSensitive(false);
+		    } else {
+			_sc.getSpellChecker().setIgnoreUpperCaseWords(false);
+			_sc.getSpellChecker().setCaseSensitive(true);
+		    }
 
 		    if (preference.getPreferences().isAutoSpellCheckerEnabled()) {
 			_sc.startRealtimeMarkErrors(_room.getChatInputEditor());

@@ -77,6 +77,7 @@ public class SpellcheckerPreference implements Preference {
 		.isAutoSpellCheckingEnabled());
 	preferences.setSpellCheckerEnabled(dialog.isSpellCheckingEnabled());
 	preferences.setSpellLanguage(dialog.getSelectedLanguage());
+	preferences.setIgnoreUppercase(dialog.getIgnoreUppercase());
 	SpellcheckManager.getInstance().loadDictionary(
 		dialog.getSelectedLanguage());
 	preferences.save();

@@ -92,4 +92,14 @@ public class SpellcheckerPreferences {
     private void setBoolean(String property, boolean value) {
 	props.setProperty(property, Boolean.toString(value));
     }
+    
+    public boolean getIgnoreUppercase()
+    {
+	return getBoolean("ignoreUppercase", false);
+    }
+    
+    public void setIgnoreUppercase(boolean ignore)
+    {
+	setBoolean("ignoreUppercase",ignore);
+    }
 }
