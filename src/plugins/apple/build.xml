@@ -27,9 +27,9 @@
         <javac srcdir="${src.dir}"
                destdir="${classes.dir}"
                classpathref="lib.classpath"
-               source="1.5"
+               source="1.6"
                debug="true"
-               target="1.5"/>
+               target="1.6"/>
         <copy todir="${classes.dir}">
             <fileset dir="${resources.dir}">
                 <include name="**/*"/>
