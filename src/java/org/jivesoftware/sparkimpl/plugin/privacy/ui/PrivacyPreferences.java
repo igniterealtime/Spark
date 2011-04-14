@@ -27,11 +27,12 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
 
+/**
+ * @author Holger Bergunde
+ */
 public class PrivacyPreferences implements Preference {
 
-    /**
-     * @author Holger Bergunde
-     */
+    
     String _title = Res.getString("privacy.label.preferences");
     String _toolTip = Res.getString("pricacy.tooltip.preferences");
 

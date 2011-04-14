@@ -58,12 +58,12 @@ import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyTreeNode;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
-
+/**
+ * @author Holger Bergunde
+ */
 public class PrivacyListTree extends JPanel {
 
-    /**
-     * @author Holger Bergunde
-     */
+    
     private static final long serialVersionUID = 1885262127050966627L;
     private DefaultTreeModel _model;
     private JTree _tree;

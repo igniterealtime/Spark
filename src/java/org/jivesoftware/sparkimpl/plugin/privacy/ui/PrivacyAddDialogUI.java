@@ -58,11 +58,12 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
 
+/**
+ * @author Holger Bergunde
+ */
 public class PrivacyAddDialogUI extends JPanel {
 
-    /**
-     * @author Holger Bergunde
-     */
+    
     private JCheckBox _showOffCheckbox = new JCheckBox();
     private static final long serialVersionUID = -7725304880236329893L;
     private DefaultListModel model = new DefaultListModel();

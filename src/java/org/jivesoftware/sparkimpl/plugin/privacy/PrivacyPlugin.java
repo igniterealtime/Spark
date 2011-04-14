@@ -117,19 +117,32 @@ public class PrivacyPlugin implements Plugin {
      */
     private void setDefaultListAsActive()
     {
-	for (String s: PrivacyManager.getInstance().getPrivacyListNames())
-	{
-	    
-	    SparkPrivacyList plist = PrivacyManager.getInstance().getPrivacyList(s);
+	PrivacyManager pmanager = PrivacyManager.getInstance();
+	for (String s : pmanager.getPrivacyListNames())
+	{    
+	    SparkPrivacyList plist = pmanager.getPrivacyList(s);
 	      if (plist.isDefault())
 	            {
 	        	try {
-	        	    
 			    plist.setListAsActive();
 			} catch (XMPPException e1) {
 			    Log.warning("Could not activate list "+plist.getListName(), e1);
 			}
 	            }
+	}
+
+	if (!pmanager.hasActiveList() && !pmanager.hasDefaultList()) {
+	    try {
+		pmanager.getBlackList().setListAsActive();
+
+	    } catch (XMPPException e) {
+		Log.error("error setting active list on startup " + pmanager.getBlackList().getListName());
+	    }
+	    try {
+		pmanager.getBlackList().setListAsDefault();
+	    } catch (XMPPException e) {
+		Log.error("error setting default list on startup " + pmanager.getBlackList().getListName());
+	    }
 	}
     }
 
@@ -163,12 +176,16 @@ public class PrivacyPlugin implements Plugin {
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {
         	
-        	if(object instanceof ContactItem && !PrivacyManager.getInstance().getActiveList().getListName().equals(PrivacyManager.getInstance().getBlackList().getListName()))
+        	PrivacyManager pManager = PrivacyManager.getInstance();
+        	final SparkPrivacyList activeList = pManager.getActiveList();
+        	
+        	if(object instanceof ContactItem && activeList!=null &&
+        		!activeList.getListName().equals(pManager.getBlackList().getListName()))
         	{
                     final ContactItem item = (ContactItem) object;
                     JMenuItem blockMenu;
                     
-                    if ( PrivacyManager.getInstance().getActiveList().isBlockedItem(item.getJID()) ) {
+                    if ( activeList.isBlockedItem(item.getJID()) ) {
                         blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
                         blockMenu.addActionListener(new ActionListener() { //unblock contact
     
@@ -176,7 +193,7 @@ public class PrivacyPlugin implements Plugin {
                             public void actionPerformed(ActionEvent ae) {
                                 if ( item != null ) {
                                     try {
-                                        PrivacyManager.getInstance().getActiveList().removeItem(((ContactItem) item).getJID()); //Add to block list}
+                                        activeList.removeItem(((ContactItem) item).getJID()); //Add to block list}
                                     } catch (XMPPException ex) {
                                         Log.error(ex); // @todo handle error
                                     }
@@ -191,7 +208,7 @@ public class PrivacyPlugin implements Plugin {
                             public void actionPerformed(ActionEvent ae) {
                                 if ( item != null ) {
                                     try {
-                                        PrivacyManager.getInstance().getActiveList().addItem(item.getJID()); //Add to block list
+                                        activeList.addItem(item.getJID()); //Add to block list
                                     } catch (XMPPException ex) {
                                         Log.error(ex); // @todo handle error
                                     }
@@ -202,6 +219,10 @@ public class PrivacyPlugin implements Plugin {
                     
                     popup.add(blockMenu);
                 }
+        	else if(activeList==null )
+        	{
+        	    // euh what?
+        	}
             }
 
             @Override

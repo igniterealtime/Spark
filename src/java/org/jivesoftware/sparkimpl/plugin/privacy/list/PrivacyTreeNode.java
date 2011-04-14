@@ -24,12 +24,13 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.spark.util.log.Log;
 
-
+/**
+ * Class to handle privacy tree nodes
+ * @author Holger Bergunde
+ */
 public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
-    /**
-     * @author Holger Bergunde
-     */
+    
     private static final long serialVersionUID = -8723928570664159522L;
     private boolean _isContactGroup = false;
     private PrivacyItem _item = null;
@@ -102,7 +103,8 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 	try {
 	    _list.setListAsActive();
 	} catch (XMPPException e) {
-	    Log.warning("Could not activate privacyList "+_list.getListName(), e);
+	    _isActive = false;
+	    Log.warning("Could not activate privacyList: "+_list.getListName(), e);
 	}
 	
     }
@@ -116,7 +118,8 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 	try {
 	    _list.setListAsDefault();
 	} catch (XMPPException e) {
-	    Log.warning("Could not set list as default privacyList "+_list.getListName(), e);
+	    _isDefault=false;
+	    Log.warning("Could not set list:\""+_list.getListName()+"\" as default privacyList ", e);
 	}
     }
 

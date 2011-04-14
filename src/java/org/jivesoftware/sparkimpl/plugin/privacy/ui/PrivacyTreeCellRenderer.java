@@ -41,11 +41,12 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyTreeNode;
 
+/**
+ * @author Holger Bergunde
+ */
 public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    /**
-     * @author Holger Bergunde
-     */
+    
     private static final long serialVersionUID = 5819051053144634773L;
 
     @Override
