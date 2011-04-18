@@ -428,8 +428,9 @@ public class VCardManager {
                 if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
                 {
                 	// update nickname.
-                	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-                	item.setNickname(vcard.getNickName());
+                    	//if the conract isn't on your list
+            		ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+            		if (item!= null)item.setNickname(vcard.getNickName());
                 	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
                 }
                 vcards.put(jid, vcard);
