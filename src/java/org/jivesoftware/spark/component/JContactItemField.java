@@ -159,16 +159,14 @@ public class JContactItemField extends JPanel {
         String typedItem = textField.getText();
 
         final List<ContactItem> validItems = new ArrayList<ContactItem>();
-        for (ContactItem contactItem : items) {
-            String nickname = contactItem.getDisplayName().toLowerCase();
-            if (nickname.startsWith(typedItem.toLowerCase())) {
-                validItems.add(contactItem);
-            }
-            else if(nickname.contains(typedItem.toLowerCase()))
-            {
-        	validItems.add(contactItem);
-            }
-        }
+	for (ContactItem contactItem : items) {
+	    String nickname = contactItem.getDisplayName().toLowerCase();
+	    if (nickname.startsWith(typedItem.toLowerCase())) {
+		validItems.add(contactItem);
+	    } else if (nickname.contains(typedItem.toLowerCase())) {
+		validItems.add(contactItem);
+	    }
+	}
 
 
         if (validItems.size() > 0) {
