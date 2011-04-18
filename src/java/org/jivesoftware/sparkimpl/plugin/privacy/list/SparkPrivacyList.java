@@ -404,6 +404,7 @@ public abstract class SparkPrivacyList {
      */
     public void setListAsActive() throws XMPPException {
         PrivacyManager.getInstance().getPrivacyListManager().setActiveListName( getListName() );
+        PrivacyManager.getInstance().forceActiveListReload();
         if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName()))
 	{
 	    final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
@@ -470,6 +471,7 @@ public abstract class SparkPrivacyList {
         getPrivacyItems().add(defItem); //Add default privacy action
         PrivacyManager.getInstance().getPrivacyListManager().createPrivacyList(getListName(), getPrivacyItems());
         getPrivacyItems().remove(defItem); // remove Default item it will be added on next save operation
+        PrivacyManager.getInstance().forceReloadLists();
     }
 
     /**

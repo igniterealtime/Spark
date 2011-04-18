@@ -24,7 +24,9 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PrivacyList;
@@ -45,8 +47,10 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyListBlackList;
 public class PrivacyManager implements SparkPrivacyListListener {
 
     private static PrivacyManager singleton;
-	private static final Object LOCK = new Object();
-    
+    private static final Object LOCK = new Object();
+    private static SparkPrivacyList _activeList = null;
+    private List<String> _nameList = new ArrayList<String>();
+    private Map<String,PrivacyList> _privacyLists = new HashMap<String, PrivacyList>();
     private PrivacyListManager privacyManager;
     private PrivacyListBlackList blackList;
 
@@ -63,7 +67,8 @@ public class PrivacyManager implements SparkPrivacyListListener {
         if ( conn == null ) {
             Log.error("Privacy plugin: Connection not initialized.");
         }
-        privacyManager = PrivacyListManager.getInstanceFor(conn);        
+        privacyManager = PrivacyListManager.getInstanceFor(conn);       
+        forceReloadLists();
     }
 
     /**
@@ -71,16 +76,18 @@ public class PrivacyManager implements SparkPrivacyListListener {
 	 *
 	 * @return instance of {@link PrivacyManager}
 	 */
-	public static PrivacyManager getInstance() {
-		// Synchronize on LOCK to ensure that we don't end up creating
-		// two singletons.
-        synchronized (LOCK) {
-            if (null == singleton) {
-                singleton = new PrivacyManager();
-            }
-        }
-		return singleton;
+    public static PrivacyManager getInstance() {
+	// Synchronize on LOCK to ensure that we don't end up creating
+	// two singletons.
+	synchronized (LOCK) {
+	    if (null == singleton) {
+		singleton = new PrivacyManager();
+		
+	    }	    
 	}
+	
+	return singleton;
+    }
 
   
 	public void removePrivacyList(String listName)
@@ -91,11 +98,12 @@ public class PrivacyManager implements SparkPrivacyListListener {
 		Log.warning("Could not remove PrivacyList "+listName); 
 		e.printStackTrace();
 	    }
+	    
+	    singleton.forceReloadLists();
 	}
 	
 	
-	
-    public SparkPrivacyList getPrivacyList(String listName) {
+    private SparkPrivacyList getSparkListFromPrivacyList (String listName) {
         SparkPrivacyList privacyList = new SparkPrivacyList(listName) {
 	    
 	    @Override
@@ -132,22 +140,56 @@ public class PrivacyManager implements SparkPrivacyListListener {
      * Returns the active PrivacyList
      * @return the list if there is one, else null
      */
-    public SparkPrivacyList getActiveList()
-    {
+    public SparkPrivacyList getActiveList() {
 	if (!hasActiveList())
 	    return null;
 	
-	PrivacyList list = null;
+	if (_activeList == null) {
+	    try {
+		_activeList = this.getSparkListFromPrivacyList(privacyManager.getActiveList().toString());
+	    } catch (XMPPException e) {
+		Log.warning("server reportet there is an active list available, but could not load id",e);
+	    }
+	}
+
+	return _activeList;
+
+    }
+
+    /**
+     * this forces the PrivacyManager to reload the active list. maybe another
+     * resource changed the active list, we can check this by updating the
+     * active list
+     */
+    public void forceActiveListReload() {
 	try {
-	    list = getPrivacyListManager().getActiveList();
-	} catch (XMPPException e)
-	{
+	    _activeList = this.getSparkListFromPrivacyList(privacyManager.getActiveList().toString());
+	} catch (XMPPException e) {
+	    Log.warning("force reload active list failed", e);
+	}
+    }
+    
+    
+    public SparkPrivacyList getPrivacyList(String s)
+    {
+	return getSparkListFromPrivacyList(_privacyLists.get(s).toString());
+    }
+    
+    public void forceReloadLists() {
+	_nameList = new ArrayList<String>();
+	try {
+	    for (PrivacyList pl : privacyManager.getPrivacyLists()) {
+		_nameList.add(pl.toString());
+		_privacyLists.put(pl.toString(), pl);
+	    }
+	} catch (XMPPException e) {
+	    Log.warning("Error load privaylist names");
 	    e.printStackTrace();
 	}
-	    
-	return getPrivacyList(list.toString());
-	
+	;
+
     }
+    
     
     /**
      * Check if active list exist
@@ -207,7 +249,7 @@ public class PrivacyManager implements SparkPrivacyListListener {
 	} catch (XMPPException e) {
 	    if (!(e.getXMPPError().getCode() == 404))
 	    {
-		System.out.println(e.getXMPPError().getCode());
+		Log.warning("error creating list", e);
 		e.printStackTrace();
 	    }
 	} 
@@ -215,7 +257,7 @@ public class PrivacyManager implements SparkPrivacyListListener {
     
     
     /**
-     * 	The server can store different privacylists.
+     * The server can store different privacylists.
      * This method will return the names of the lists, currently available on the server
      * 
      * @return All Listnames
@@ -223,17 +265,7 @@ public class PrivacyManager implements SparkPrivacyListListener {
     
     public List<String> getPrivacyListNames()
     {
-	List<String> nameList = new ArrayList<String>();
-	try {
-	    for (PrivacyList pl :privacyManager.getPrivacyLists())
-	    {
-	        nameList.add(pl.toString());
-	    }
-	} catch (XMPPException e) {
-	    Log.warning("Error load privaylist names");
-	    e.printStackTrace();
-	}
-	   return nameList;
+	   return _nameList;
     }
     
     /**
