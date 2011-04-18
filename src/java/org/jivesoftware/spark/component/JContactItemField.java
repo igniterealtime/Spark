@@ -164,6 +164,10 @@ public class JContactItemField extends JPanel {
             if (nickname.startsWith(typedItem.toLowerCase())) {
                 validItems.add(contactItem);
             }
+            else if(nickname.contains(typedItem.toLowerCase()))
+            {
+        	validItems.add(contactItem);
+            }
         }
 
 
