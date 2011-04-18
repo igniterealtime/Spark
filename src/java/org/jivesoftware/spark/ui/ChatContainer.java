@@ -92,18 +92,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * List of all ChatRoom Listeners.
      */
     private final List<ChatRoomListener> chatRoomListeners = new ArrayList<ChatRoomListener>();
-
     private final List<ChatRoom> chatRoomList = new ArrayList<ChatRoom>();
-
     private final Map<String, PacketListener> presenceMap = new HashMap<String, PacketListener>();
-
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
-
     private ChatFrame chatFrame;
-    
     private LocalPreferences localPref;
-
     private final TimerTask focusTask;
+
 
     /**
      * Creates the ChatRooms to hold all ChatRooms.
@@ -143,8 +138,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
 
             public void allTabsRemoved() {
-                chatFrame.setTitle("");
-                chatFrame.setVisible(false);
+
+		if (chatFrame != null) {
+		    chatFrame.setTitle("");
+		    chatFrame.setVisible(false);
+		    chatFrame = null;
+		}
+               
             }
 
 
@@ -276,26 +276,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     public synchronized void addChatRoom(final ChatRoom room) {
         createFrameIfNeeded();
-        LocalPreferences pref = SettingsManager.getLocalPreferences(); 
-        
-        
-        if(pref.getWindowTakesFocus() && !chatFrame.isVisible())
-        {
-           chatFrame.setState(Frame.NORMAL);
-           chatFrame.setVisible(true);
-        }
-
-        if (!pref.getWindowTakesFocus() && !chatFrame.isVisible())
-        {
-            chatFrame.setState(Frame.ICONIFIED);
-            chatFrame.setVisible(true);
-        }
-        
-      
-        
        
-        
-        
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
         AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(room.getRoomname()));
 
@@ -1200,23 +1181,20 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-        if (pref.isDockingEnabled()) {
-            chatFrame = MainWindow.getInstance();
-        }
-        else {
-            chatFrame = new ChatFrame();
-        }
-        if(pref.getWindowTakesFocus())
-        {
-           chatFrame.setState(Frame.NORMAL);
-           
-        }
+	if (pref.isDockingEnabled()) {
+	    chatFrame = MainWindow.getInstance();
+	} else {
+	    chatFrame = new ChatFrame();
+	}
+	
+        
+	if (pref.getWindowTakesFocus() || SparkManager.getMainWindow().isActive()) {
+	    chatFrame.setState(Frame.NORMAL);
 
-        if (!pref.getWindowTakesFocus())
-        {
-            chatFrame.setState(Frame.ICONIFIED);
-            
-        }
+	} else {
+	    chatFrame.setState(Frame.ICONIFIED);
+
+	}
       
         
         chatFrame.setVisible(true);
@@ -1246,12 +1224,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
 
 
-            public void windowClosing(WindowEvent windowEvent) {
-                // Save layout
-                chatFrame.saveLayout();
-                SparkManager.getChatManager().getChatContainer().closeAllChatRooms();
-                chatFrame.setVisible(false);
-            }
+	    public void windowClosing(WindowEvent windowEvent) {
+		// Save layout
+		    chatFrame.saveLayout();
+		    SparkManager.getChatManager().getChatContainer()
+			    .closeAllChatRooms();
+
+		}
         });
 
         // Start timer
