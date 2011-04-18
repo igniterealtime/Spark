@@ -66,6 +66,7 @@ public class Default {
     public static final String DEINSTALL_PLUGINS_DISABLED = "DEINSTALL_PLUGINS_DISABLED";
     public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
+    public static final String BROADCAST_IN_CHATWINDOW = "BROADCAST_IN_CHATWINDOW";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

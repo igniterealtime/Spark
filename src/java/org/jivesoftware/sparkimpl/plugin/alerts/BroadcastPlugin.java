@@ -19,6 +19,36 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
@@ -50,27 +80,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -109,9 +118,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         startConversationtMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ContactList contactList = SparkManager.getWorkspace().getContactList();
-                Collection selectedUsers = contactList.getSelectedUsers();
+                Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
                 String selectedUser = "";
-                Iterator selectedUsersIterator = selectedUsers.iterator();
+                Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
                 if (selectedUsersIterator.hasNext()) {
                     ContactItem contactItem = (ContactItem)selectedUsersIterator.next();
                     selectedUser = contactItem.getJID();
@@ -140,7 +149,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 if (component instanceof ContactGroup) {
                     final ContactGroup group = (ContactGroup)component;
                     Action broadcastMessageAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = -6411248110270296726L;
+
+			public void actionPerformed(ActionEvent e) {
                             broadcastToGroup(group);
                         }
                     };
@@ -267,25 +278,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         toaster.setBorder(BorderFactory.createBevelBorder(0));
 
 
-        if (!from.contains("@")) {
-            ChatManager chatManager = SparkManager.getChatManager();
-            ChatContainer container = chatManager.getChatContainer();
+	if (!from.contains("@")) {
+	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)) {
+		broadcastInChat(message);
+	    } else {
+		broadcastWithPanel(message);
+	    }
 
-            ChatRoomImpl chatRoom;
-            try {
-                chatRoom = (ChatRoomImpl)container.getChatRoom(from);
-            }
-            catch (ChatRoomNotFoundException e) {
-            	chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("administrator"));
-                chatRoom.getBottomPanel().setVisible(false);
-                chatRoom.getToolBar().setVisible(false);
-                SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
-            }
-
-
-            chatRoom.insertMessage(message);
-            broadcastRooms.add(chatRoom);
-        }
+	}
         else if (message.getFrom() != null) {
             String jid = StringUtils.parseBareAddress(from);
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
@@ -379,5 +379,82 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         }
 
         return false;
+    }
+    
+    /**
+     * Displays the Serverbroadcast like all other messages
+     * in its on chatcontainer with transcript history
+     * @param message
+     * @param from
+     */
+    private void broadcastInChat(Message message)
+    {
+	String from = message.getFrom() != null ? message.getFrom() : "";
+	ChatManager chatManager = SparkManager.getChatManager();
+        ChatContainer container = chatManager.getChatContainer();
+
+        ChatRoomImpl chatRoom;
+        try {
+            chatRoom = (ChatRoomImpl)container.getChatRoom(from);
+        }
+        catch (ChatRoomNotFoundException e) {
+        	chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("administrator"));
+            chatRoom.getBottomPanel().setVisible(false);
+            chatRoom.getToolBar().setVisible(false);
+            SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
+        }
+
+
+        chatRoom.insertMessage(message);
+        broadcastRooms.add(chatRoom);
+    }
+    
+    /**
+     * Displays a Serverbroadcast within a JFrame<br>
+     * Messages can contain html-tags
+     * @param message
+     */
+    private void broadcastWithPanel(Message message) {
+
+	String title = Res.getString("message.broadcast.from",
+		Res.getString("administrator"));
+	final JFrame alert = new JFrame(title);
+
+	alert.setLayout(new GridBagLayout());
+	alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
+		.getImage());
+	String msg = "<html><body>" + message.getBody().replace("\n", "<br>")
+		+ "</body></html>";
+
+	JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
+	JLabel alertlabel = new JLabel(msg);
+
+	JButton close = new JButton(Res.getString("close"));
+
+	close.addActionListener(new AbstractAction() {
+	    private static final long serialVersionUID = -3822361866008590946L;
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		alert.setVisible(false);
+		alert.dispose();
+	    }
+	});
+	
+	alert.add(icon,new GridBagConstraints(0,0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
+	alert.add(alertlabel, new GridBagConstraints(1,0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
+	alert.add(close, new GridBagConstraints(1,1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
+
+	alert.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	alert.setVisible(true);
+
+	alert.setMinimumSize(new Dimension(340, 200));
+	alert.pack();
+	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+	int x = (dim.width - alert.getSize().width) / 2;
+	int y = (dim.height - alert.getSize().height) / 2;
+	alert.setLocation(x, y);
+	alert.toFront();
+	alert.requestFocus();
     }
 }
