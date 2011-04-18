@@ -567,8 +567,7 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 		answer.setAnswer("Username", true);
 		answer.setAnswer("search", byname);
 
-		data = usersearchManager.getSearchResults(answer,
-			"search.jabber.int.kn");
+		data = usersearchManager.getSearchResults(answer, search);
 
 		ArrayList<String> columnnames = new ArrayList<String>();
 		Iterator<Column> columns = data.getColumns();
