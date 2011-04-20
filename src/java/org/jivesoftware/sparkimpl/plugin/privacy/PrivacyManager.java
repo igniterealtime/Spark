@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PrivacyList;
@@ -37,6 +38,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyListBlackList;
 
@@ -50,9 +53,10 @@ public class PrivacyManager implements SparkPrivacyListListener {
     private static final Object LOCK = new Object();
     private static SparkPrivacyList _activeList = null;
     private List<String> _nameList = new ArrayList<String>();
-    private Map<String,PrivacyList> _privacyLists = new HashMap<String, PrivacyList>();
+    private Map<String,SparkPrivacyList> _privacyLists = new HashMap<String, SparkPrivacyList>();
     private PrivacyListManager privacyManager;
     private PrivacyListBlackList blackList;
+    private boolean _startUpDone = false;
 
     /**
      * PrivacyLists will be used in spark
@@ -68,7 +72,7 @@ public class PrivacyManager implements SparkPrivacyListListener {
             Log.error("Privacy plugin: Connection not initialized.");
         }
         privacyManager = PrivacyListManager.getInstanceFor(conn);       
-        forceReloadLists();
+
     }
 
     /**
@@ -81,8 +85,9 @@ public class PrivacyManager implements SparkPrivacyListListener {
 	// two singletons.
 	synchronized (LOCK) {
 	    if (null == singleton) {
-		singleton = new PrivacyManager();
-		
+		singleton = new PrivacyManager(); 
+		singleton.forceReloadLists();
+
 	    }	    
 	}
 	
@@ -141,8 +146,8 @@ public class PrivacyManager implements SparkPrivacyListListener {
      * @return the list if there is one, else null
      */
     public SparkPrivacyList getActiveList() {
-	if (!hasActiveList())
-	    return null;
+//	if (!hasActiveList())
+//	    return null;
 	
 	if (_activeList == null) {
 	    try {
@@ -168,28 +173,55 @@ public class PrivacyManager implements SparkPrivacyListListener {
 	    Log.warning("force reload active list failed", e);
 	}
     }
-    
-    
+
+    /**
+     * Returns the sparkprivacylist that the manager keeps local, to get updated
+     * version try to forcereloadlists
+     * 
+     * @param s
+     *            the name of the list
+     * @return SparkPrivacyList
+     */
     public SparkPrivacyList getPrivacyList(String s)
     {
-	return getSparkListFromPrivacyList(_privacyLists.get(s).toString());
+	return _privacyLists.get(s);
     }
     
+    
+    /**
+     * Normally the manager will load the privacy lists from the server and
+     * managed them locally if you want to reload the lists from the server
+     * (because another resource changed sth) use this method
+     */
     public void forceReloadLists() {
-	_nameList = new ArrayList<String>();
-	try {
-	    for (PrivacyList pl : privacyManager.getPrivacyLists()) {
-		_nameList.add(pl.toString());
-		_privacyLists.put(pl.toString(), pl);
+	final TimerTask removeUITask = new SwingTimerTask() {
+	    public void doRun() {
+		_nameList = new ArrayList<String>();
+		_privacyLists = new HashMap<String, SparkPrivacyList>();
+		try {
+		    for (PrivacyList pl : privacyManager.getPrivacyLists()) {
+			_nameList.add(pl.toString());
+			SparkPrivacyList sparkList = getSparkListFromPrivacyList(pl.toString());
+			_privacyLists.put(pl.toString(), sparkList);
+			if (pl.isDefaultList() && !_startUpDone) {
+			    _startUpDone = true;
+			    sparkList.setListAsDefault();
+			    sparkList.setListAsActive();
+
+			}
+		    }
+		} catch (XMPPException e) {
+		    Log.warning("Error load privaylist names");
+		    e.printStackTrace();
+		}
+		;
+
 	    }
-	} catch (XMPPException e) {
-	    Log.warning("Error load privaylist names");
-	    e.printStackTrace();
-	}
-	;
+	};
+
+	TaskEngine.getInstance().schedule(removeUITask, 20);
 
     }
-    
     
     /**
      * Check if active list exist

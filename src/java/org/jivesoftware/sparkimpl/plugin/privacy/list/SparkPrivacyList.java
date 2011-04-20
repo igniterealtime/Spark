@@ -44,6 +44,8 @@ public abstract class SparkPrivacyList {
      * List name will be used to identify PrivacyList
      */
     protected String listName   = "";
+    protected boolean _isActive = false;
+    protected boolean _isDefault = false;
 
     /**
      * List Items
@@ -259,6 +261,20 @@ public abstract class SparkPrivacyList {
         } catch (XMPPException ex) {
             Log.error(ex);
         }
+        loadListParameters();
+    }
+
+    protected void loadListParameters() {
+	try {
+           _isActive =   PrivacyManager.getInstance().getPrivacyListManager().getActiveList().toString().equals(getListName());
+        } catch (XMPPException ex) {
+          //Do nothing. 
+        }
+        try {
+            _isDefault = PrivacyManager.getInstance().getPrivacyListManager().getDefaultList().toString().equals(getListName());
+        } catch (XMPPException ex) {
+            //Do nothing. 
+        }
     }
 
     public abstract PrivacyItem prepareItem(String jid);
@@ -370,15 +386,7 @@ public abstract class SparkPrivacyList {
      * @return is This list active or not
      */
     public boolean isActive() {
-        try {
-            return PrivacyManager.getInstance().getPrivacyListManager().getActiveList().toString().equals(getListName());
-        } catch (XMPPException ex) {
-            if (ex.getXMPPError().getCode() == 404) {
-                return false;
-            }
-            Log.error(ex);
-        }
-        return false;
+        return _isActive;
     }
 
     /**
@@ -387,15 +395,7 @@ public abstract class SparkPrivacyList {
      * @return is this list default
      */
     public boolean isDefault() {
-        try {
-            return PrivacyManager.getInstance().getPrivacyListManager().getDefaultList().toString().equals(getListName());
-        } catch (XMPPException ex) {
-            if (ex.getXMPPError().getCode() == 404) {
-                return false;
-            }
-            Log.error(ex);
-        }
-        return false;
+       return _isDefault;
     }
 
     /**
@@ -403,33 +403,29 @@ public abstract class SparkPrivacyList {
      * @throws XMPPException
      */
     public void setListAsActive() throws XMPPException {
-        PrivacyManager.getInstance().getPrivacyListManager().setActiveListName( getListName() );
-        PrivacyManager.getInstance().forceActiveListReload();
-        if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName()))
-	{
-	    final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
-		.getPresence();
-	    	SparkManager.getSessionManager().changePresence(myPresence);
-	    	return;
+	PrivacyManager.getInstance().getPrivacyListManager().setActiveListName(getListName());
+	PrivacyManager.getInstance().forceActiveListReload();
+	if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName())) {
+	    final Presence myPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+	    SparkManager.getSessionManager().changePresence(myPresence);
+	    PrivacyManager.getInstance().forceReloadLists();
+	    return;
 	}
-	for (PrivacyItem pI :privacyItems)
-	{
-	    if (pI.isFilterPresence_out())
-	    {
-		if (pI.getType().equals(PrivacyItem.Type.jid))
-		{
+	for (PrivacyItem pI : privacyItems) {
+	    if (pI.isFilterPresence_out()) {
+		if (pI.getType().equals(PrivacyItem.Type.jid)) {
 		    PrivacyManager.getInstance().sendUnavailableTo(pI.getValue());
 		}
-		if (pI.getType().equals(PrivacyItem.Type.group))
-		{
+		if (pI.getType().equals(PrivacyItem.Type.group)) {
 		    ContactGroup group = SparkManager.getContactList().getContactGroup(pI.getValue());
-		    for (ContactItem cI:group.getContactItems())
-		    {
+		    for (ContactItem cI : group.getContactItems()) {
 			PrivacyManager.getInstance().sendUnavailableTo(cI.getJID());
 		    }
 		}
 	    }
 	}
+	PrivacyManager.getInstance().forceReloadLists();
+
     }
 
     /**
@@ -439,6 +435,7 @@ public abstract class SparkPrivacyList {
      */
     public void setListAsDefault() throws XMPPException {
         PrivacyManager.getInstance().getPrivacyListManager().setDefaultListName( getListName() );
+        loadListParameters();
     }
 
     /**

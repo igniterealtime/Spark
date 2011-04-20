@@ -328,6 +328,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    
 		    try {
 			plist.setListAsActive();
 		    } catch (XMPPException e1) {
@@ -339,7 +340,7 @@ public class StatusBar extends JPanel implements VCardListener {
 	    });
 	}
         
-        popup.add(privMenu);
+       popup.add(privMenu);
         
         
         // Add change message
