@@ -1,147 +1,84 @@
-package pkg;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.FileInputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
- * Use this Class to compare your locale with the standard english to find missing entries
+ * To Run in Terminal:
+ * javac CompareLocales.java
+ * java CompareLocales
+ * 
+ * 
+ * 
+ * 
+ * Use this Class to compare your locale with the standard english to find
+ * missing entries
+ * 
  * @author wolf.posdorfer
- *
+ * 
  */
 public class CompareLocales {
 
-    private static ArrayList<String> _mainlist = new ArrayList<String>();
-    static ArrayList<String> _standardlist = new ArrayList<String>();
-    static ArrayList<String> _mylocalelist = new ArrayList<String>();
+    static HashMap<String, String>_englishlist = new HashMap<String, String>();
+    static HashMap<String, String> _mylocalelist = new HashMap<String, String>();
 
-    static String _endofFile = "#!#";
+    static String _path = "C:\\Dokumente und Einstellungen\\wolf.posdorfer\\Desktop\\eclipse\\spark\\src\\resources\\i18n\\spark_i18n";
+    static String english = _path + ".properties";
+    static String totest = _path + "_pl.properties";
 
-    public static void main(String[] args)
-    {
-	// Change Path
-	String path = "C:\\spark\\spark_i18n";
-	File standard = new File(path + ".properties");
-	
-	/**
-	 * Change this to your locale
-	 */
-	File mylocale = new File(path + "_de.properties");
+    public static void main(String[] args) {
 
+	readFile(new File(english), _englishlist);
+	readFile(new File(totest), _mylocalelist);
 	
 	
-	readFile(standard, _standardlist);
-	readFile(mylocale, _mylocalelist);
-
-	
-	// check if all standard items are in the locale file
-	for (String s : _standardlist) {
-	    if (!_mylocalelist.contains(s)) {
-		System.out.println(_mainlist.get(_standardlist.indexOf(s)));
+	for(String key : _englishlist.keySet())
+	{
+	    if(!_mylocalelist.containsKey(key))
+	    {
+		System.out.println(key +" = "+ _englishlist.get(key));
 	    }
 	}
-	// Check if all locale-items are in the standard file
-	for (String s : _mylocalelist) {
-	    if (!_standardlist.contains(s)) {
-		System.out.println("Delete this->"+s+ "  @"+_mylocalelist.indexOf(s));
+	
+	for(String key : _mylocalelist.keySet())
+	{
+	    
+	    if(!_englishlist.containsKey(key))
+	    {
+		System.out.println("Not Found in English:   "+key +" = "+ _mylocalelist.get(key));
 	    }
 	}
 
-	System.out.println("standardlist has: "+_standardlist.size() + " , my local has " + _mylocalelist.size());
 
-	
-	// Check if we have doubles
-	checkdoubles(mylocale);
+	System.out.println("standardlist has: " + _englishlist.size() + " , my local has " + _mylocalelist.size());
+
 
     }
 
-    /**
-     * Check if our File has double entries
-     * @param file
-     */
-    private static void checkdoubles(File file) {
-	try {
-	    BufferedReader reader = new BufferedReader(new FileReader(file));
-
-	    ArrayList<String> liste = new ArrayList<String>();
-	    HashSet<String> hashliste = new HashSet<String>();
-	    String zeile = "";
-
-	    boolean t = true;
-	    while (t) {
-
-		// Skip all files that are not items
-		// like comments and empty lines
-		if (zeile != null && zeile.contains("=")) {
-
-		    String s = zeile;
-		    s = zeile.replace(" ", "");
-		    s = s.substring(0, zeile.indexOf("="));
-		   
-		    liste.add(s);
-		    if (!hashliste.add(s))
-			System.out.println("Double-> "+zeile);
-
-		}
-
-		zeile = reader.readLine();
-		t = !zeile.contains(_endofFile);
-
-	    }
-
-	    System.out.println("\n     "+file.getName()+"\n            >>>containing " + liste.size() + " entries, with " + (liste.size()-hashliste.size())+ " doubles");
-	    reader.close();
-	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	}
-
-    }
 
     /**
      * Reads a file into the Destination
+     * 
      * @param file
      * @param destination
      */
-    public static void readFile(File file, ArrayList<String> destination) {
+    public static void readFile(File file, HashMap<String,String> destination) {
+
+	Properties props = new Properties();
+
 	try {
-	    BufferedReader reader = new BufferedReader(new FileReader(file));
 
-	    String zeile = "";
-
-	    boolean t = true;
-	    while (t) {
-
-		if (zeile != null && zeile.contains("=")) {
-		    if (destination.equals(_standardlist))
-			_mainlist.add(zeile);
-		    String s = zeile;
-		    s = zeile.replace(" ", "");
-		    s = s.substring(0, zeile.indexOf("="));
-		   
-		    destination.add(s);
-
-		}
-
-		zeile = reader.readLine();
-		t = !zeile.contains(_endofFile);
-
-	    }
-
-	    reader.close();
-	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
+	 props.load(new FileInputStream(file));
+	} catch (Exception e) {
+	    System.err.println("error with file");
+	}
+	
+	Enumeration<Object> enume = props.keys();
+	while(enume.hasMoreElements())
+	{
+	    String s = (String) enume.nextElement();
+	    destination.put(s, props.getProperty(s));
 	}
 
     }
