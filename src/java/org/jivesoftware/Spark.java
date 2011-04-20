@@ -447,41 +447,7 @@ public final class Spark {
             UIManager.put(property, c);
         }
         
-        
-//        UIManager.put("TextField.lightforeground", Color.gray);
-//        UIManager.put("TextField.foreground", Color.BLACK);
-//        UIManager.put("TextField.caretForeground", Color.black);      
-//        UIManager.put("List.selectionBackground", new Color(217, 232, 250));
-//        UIManager.put("List.selectionForeground", Color.black);
-//        UIManager.put("List.selectionBorder", new Color(187, 195, 215));
-//        UIManager.put("List.foreground", Color.black);
-//        UIManager.put("List.background", Color.white);
-//        UIManager.put("MenuItem.selectionBackground", new Color(217, 232, 250));
-//        UIManager.put("MenuItem.selectionForeground", Color.black);
-//        UIManager.put("TextPane.foreground", Color.black);
-//        UIManager.put("TextPane.background", new Color(255,255,255,0));
-//        UIManager.put("TextPane.inactiveForeground", Color.white);
-//        UIManager.put("TextPane.caretForeground", Color.black);
-//        UIManager.put("ChatInput.SelectedTextColor", Color.white);
-//        UIManager.put("ChatInput.SelectionColor", Color.blue);
-//        UIManager.put("ContactItemNickname.foreground", Color.black);
-//        UIManager.put("ContactItemDescription.foreground", Color.gray);
-//        UIManager.put("ContactItem.background", new Color(240, 243, 253,0));
-//        UIManager.put("ContactItemOffline.color", Color.gray);
-//        UIManager.put("Table.foreground", Color.black);
-//        UIManager.put("Table.background", Color.white);
-//     // Chat Area Text Settings
-//        UIManager.put("Link.foreground", Color.blue);
-//        UIManager.put("Address.foreground", new Color(212, 160, 0));
-//        UIManager.put("User.foreground", Color.blue);
-//        UIManager.put("OtherUser.foreground", Color.red);
-//        UIManager.put("Notification.foreground", new Color(0, 128, 0));
-//        UIManager.put("Error.foreground", Color.red);
-//        UIManager.put("Question.foreground", Color.red);
-//        UIManager.put("History.foreground", Color.darkGray);
-//        UIManager.put("SparkTabbedPane.startColor", new Color(236, 236, 236));
-//        UIManager.put("SparkTabbedPane.endColor", new Color(236, 236, 236));
-//        UIManager.put("SparkTabbedPane.borderColor", Color.lightGray);
+  
     }
 
     /**

@@ -19,10 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.systray;
 
-import java.awt.Menu;
-import java.awt.MenuItem;
 import java.awt.MouseInfo;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.Window;
@@ -450,12 +447,14 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
     // For Typing
     @Override
     public void cancelledNotification(String from, String packetID) {
+	System.out.println("set available");
 	trayIcon.setImage(availableIcon.getImage());
     }
 
     @Override
     public void composingNotification(String from, String packetID) {
 	if (pref.isTypingNotificationShown()) {
+	    System.out.println("set typing");
 	    trayIcon.setImage(typingIcon.getImage());
 	}
     }
