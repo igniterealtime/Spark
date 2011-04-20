@@ -435,7 +435,7 @@ public abstract class SparkPrivacyList {
      */
     public void setListAsDefault() throws XMPPException {
         PrivacyManager.getInstance().getPrivacyListManager().setDefaultListName( getListName() );
-        loadListParameters();
+        PrivacyManager.getInstance().forceReloadLists();
     }
 
     /**
