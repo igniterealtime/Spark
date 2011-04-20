@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -137,8 +138,8 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
                 e.setValue("numB", numB);
                 e.setValue("duration", String
                         .valueOf(call.getElapsedTime()));
-                e.setValue("datetime", new Date().toGMTString());
 
+                e.setValue("datetime",DateFormat.getInstance().format(new Date()));
                 e.setValue("type", type.name());
 
                 LogPacket.logEvent(SparkManager.getConnection(), e);

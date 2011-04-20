@@ -22,6 +22,8 @@ package org.jivesoftware.spark.ui;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+
 /**
  * The ContactGroupListener interface is one of the interfaces extension writers use to add functionality to Spark.
  * <p/>
@@ -63,7 +65,7 @@ public interface ContactGroupListener {
      *
      * @param e    the MouseEvent that triggered the event.
      * @param item the ContactItem clicked within the ContactGroup.
-     * @deprecated see <code>ContextMenuListener</code>
+     * @deprecated see {@link ContextMenuListener}
      */
     public void showPopup(MouseEvent e, ContactItem item);
 

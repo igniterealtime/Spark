@@ -1005,7 +1005,7 @@ public class SipManager implements SipListener {
      */
     public ArrayList<ViaHeader> getLocalViaHeaders() throws CommunicationsException {
 
-        ListeningPoint lp = sipProvider.getListeningPoint();
+        ListeningPoint lp = sipProvider.getListeningPoints()[0];
         viaHeaders = new ArrayList<ViaHeader>();
         try {
 

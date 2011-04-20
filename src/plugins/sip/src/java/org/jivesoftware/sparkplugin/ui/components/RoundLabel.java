@@ -161,7 +161,7 @@ public class RoundLabel extends JPanel {
         vFrame.add(label, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 10));
 
         vFrame.setTitle("Aqua Button");
-        vFrame.show();
+        vFrame.setVisible(true);
     }
 }
 

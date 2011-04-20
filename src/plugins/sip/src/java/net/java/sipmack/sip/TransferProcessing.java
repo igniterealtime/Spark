@@ -70,7 +70,7 @@ public class TransferProcessing {
             Log.error("hold", e);
         }
 
-        int cseq = ((CSeq) (refer.getHeader(CSeq.NAME)))
+        long cseq = ((CSeq) (refer.getHeader(CSeq.NAME)))
                 .getSequenceNumber() + 1;
         refer.removeHeader(CSeq.NAME);
         try {

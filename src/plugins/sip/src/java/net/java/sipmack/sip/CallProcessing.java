@@ -671,7 +671,7 @@ public class CallProcessing {
         // CSeq
         CSeqHeader cSeqHeader;
         try {
-            cSeqHeader = sipManCallback.headerFactory.createCSeqHeader(1,
+            cSeqHeader = sipManCallback.headerFactory.createCSeqHeader(1L,
                     Request.INVITE);
         }
         catch (ParseException ex) {

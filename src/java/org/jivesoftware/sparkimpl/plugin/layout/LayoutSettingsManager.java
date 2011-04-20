@@ -242,5 +242,39 @@ public class LayoutSettingsManager {
         
         return false;
     }
+    
+    /**
+     * converts a Rectangle to a String
+     * @param r
+     * @return
+     */
+    public static String rectangleToString(Rectangle r) {
+	return r.x + "," + r.y + "," + r.width + "," + r.height;
+    }
+
+    /**
+     * converts a String to a Rectangle
+     * @param s
+     * @return
+     */
+    public static Rectangle stringToRectangle(String s) {
+
+	if(s == null)
+	{
+	    return new Rectangle(0,0,0,0);
+	}
+	
+	if (!s.matches("[0-9]*,[0-9]*,[0-9]*,[0-9]*")) {
+	    return new Rectangle(0,0,0,0);
+	} else {
+	    String[] arr = s.split(",");
+	    
+
+	    return new Rectangle(Integer.parseInt(arr[0]),
+		    Integer.parseInt(arr[1]), Integer.parseInt(arr[2]),
+		    Integer.parseInt(arr[3]));
+	}
+
+    }
 
 }

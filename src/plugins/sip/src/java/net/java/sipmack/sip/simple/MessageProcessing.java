@@ -173,7 +173,7 @@ public class MessageProcessing {
             // CSeq
             CSeqHeader cSeqHeader;
             try {
-                cSeqHeader = sipManCallback.headerFactory.createCSeqHeader(1,
+                cSeqHeader = sipManCallback.headerFactory.createCSeqHeader(1L,
                         Request.MESSAGE);
             }
             catch (Exception ex) {
@@ -361,7 +361,7 @@ public class MessageProcessing {
             // CSeq
             CSeqHeader cSeqHeader;
             try {
-                cSeqHeader = sipManCallback.headerFactory.createCSeqHeader(1,
+                cSeqHeader = sipManCallback.headerFactory.createCSeqHeader(1L,
                         Request.MESSAGE);
             }
             catch (Exception ex) {

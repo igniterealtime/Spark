@@ -473,21 +473,21 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    if(Default.getString("PROXY_PROTOCOL").length()>0)
 	    {
 		protocolBox.setSelectedItem(Default.getString("PROXY_PROTOCOL"));
-		protocolBox.disable();
+		protocolBox.setEnabled(false);
 		useProxyBox.setSelected(true);
 		useProxyBox.setVisible(false);
 	    }
 	    if(Default.getString("PROXY_HOST").length()>0)
 	    {
 		hostField.setText(Default.getString("PROXY_HOST"));
-		hostField.disable();
+		hostField.setEnabled(false);
 		useProxyBox.setSelected(true);
 		useProxyBox.setVisible(false);
 	    }
 	    if(Default.getString("PROXY_PORT").length()>0)
 	    {
 		portField.setText(Default.getString("PROXY_PORT"));
-		portField.disable();
+		portField.setEnabled(false);
 	    }
 
 	}
