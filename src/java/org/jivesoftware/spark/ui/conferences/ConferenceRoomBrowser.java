@@ -75,6 +75,7 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
