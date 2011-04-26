@@ -46,6 +46,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -83,7 +84,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFronListener {
 	private static final long serialVersionUID = 7981019929515888299L;
 	private final JPanel chatPanel;
     private final JSplitPane splitPane;
@@ -118,6 +119,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private MouseAdapter transcriptWindowMouseListener;
 
     private KeyAdapter chatEditorKeyListener;
+    private ChatFrame _chatFrame;
+    private JCheckBox _alwaysOnTopItem;
 
     /**
      * Initializes the base layout and base background color.
@@ -141,6 +144,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
         fileDropListeners = new ArrayList<FileDropListener>();
 
+   
+        
+        
+        
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
         	
@@ -308,6 +315,32 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
     
+        
+        
+	
+	_alwaysOnTopItem = new JCheckBox();
+	_alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+	_alwaysOnTopItem.setSelectedIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+	_alwaysOnTopItem.setRolloverEnabled(false);
+	_alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
+        _alwaysOnTopItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                	if (_alwaysOnTopItem.isSelected())
+                	{
+                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                		_chatFrame.setWindowAlwaysOnTop(true);
+          
+                	}
+                	else
+                	{
+                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                		_chatFrame.setWindowAlwaysOnTop(false);
+                	}
+                }
+        });
+        
+ 
+        this.getRoomControllerBar().add(_alwaysOnTopItem);
     }
 
 
@@ -1152,6 +1185,19 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     public void reconnectionFailed(Exception e) {
     }
+    
+    
+    public void updateStatus(boolean active)
+    {
+	_alwaysOnTopItem.setSelected(active);
+    }
+    
+    public void registeredToFrame(ChatFrame chatframe)
+    {
+	this._chatFrame = chatframe;
+	_chatFrame.addWindowToFronListener(this);
+    }
+    
 }
 
 

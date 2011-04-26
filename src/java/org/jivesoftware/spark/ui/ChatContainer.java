@@ -184,6 +184,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
 
+    
+   
     /**
      * Adds navigation capability to chat rooms. Users can navigate using the alt-left or right arrow keys.
      */
@@ -291,7 +293,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         };
 
-
+        room.registeredToFrame(chatFrame);
+        
         SparkManager.getConnection().addPacketListener(myListener, presenceFilter);
 
         // Add to PresenceMap

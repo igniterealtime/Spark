@@ -28,18 +28,19 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import javax.swing.JCheckBoxMenuItem;
+
+import javax.swing.JCheckBox;
+
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -52,23 +53,20 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private static final long serialVersionUID = -7789413067818105293L;
     private long inactiveTime;
     private boolean focused;
-    
-    private JMenuBar chatWindowBar;
-    private JMenu optionMenu; 
-    private JCheckBoxMenuItem alwaysOnTopItem;
+    private JCheckBox alwaysOnTopItem;
     private ChatFrame chatFrame = this;
+    private Collection<ChatFrameToFronListener> _windowToFrontListeners = new ArrayList<ChatFrameToFronListener>();
+   
     /**
      * Creates default ChatFrame.
      */
     public ChatFrame() {
     	this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     	
-	chatWindowBar = new JMenuBar();
-	optionMenu = new JMenu();
-	ResourceUtils.resButton(optionMenu, Res.getString("menuitem.chatframe.option"));
+
 	
-	alwaysOnTopItem = new JCheckBoxMenuItem();
-        ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
+	alwaysOnTopItem = new JCheckBox();
+	alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
         alwaysOnTopItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
                 	if (alwaysOnTopItem.isSelected())
@@ -92,9 +90,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         
         
         
-        optionMenu.add(alwaysOnTopItem);
-        chatWindowBar.add(optionMenu);
-        setJMenuBar(chatWindowBar);
         
         setIconImage(SparkManager.getApplicationImage().getImage());
 
@@ -164,6 +159,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
                 }
             }
         });
+         
+        
     }
    	
 
@@ -241,4 +238,43 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         ShakeWindow d = new ShakeWindow(this);
         d.startShake();
     }
+
+
+    /**
+     * set if the chatFrame should always stay on top
+     * @param active
+     */
+    public void setWindowAlwaysOnTop(boolean active) {
+	SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(active);
+	chatFrame.setAlwaysOnTop(active);
+	this.fireWindowOnTopListeners(active);
+    }
+
+    
+    private void fireWindowOnTopListeners(boolean active) {
+	for (ChatFrameToFronListener fl: _windowToFrontListeners)
+	{
+	    fl.updateStatus(active);
+	}
+	
+    }
+
+    /**
+     * Add listeners who want to get informed 
+     * @param chatRoom
+     */
+    public void removeWindowToFronListener(ChatRoom chatRoom) {
+	_windowToFrontListeners .remove(chatRoom);	
+    }
+
+    /**
+     * 
+     * Remove listeners from the "window-alway-on-top" information
+     * @param chatRoom
+     */
+    public void addWindowToFronListener(ChatRoom chatRoom) {
+	_windowToFrontListeners .add(chatRoom);	
+	fireWindowOnTopListeners(chatFrame.isAlwaysOnTop());
+    }
+
 }
