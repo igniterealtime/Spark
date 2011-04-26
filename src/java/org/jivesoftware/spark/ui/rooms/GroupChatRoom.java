@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -71,6 +72,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GroupChatRoomTransferHandler;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
@@ -84,7 +86,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
  */
-public final class GroupChatRoom extends ChatRoom {
+public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
     private static final long serialVersionUID = 4469579438292227006L;
 
     private MultiUserChat chat;
@@ -138,6 +140,7 @@ public final class GroupChatRoom extends ChatRoom {
 
 	// The Room Name is the same as the ChatRoom name
 	roomname = chat.getRoom();
+	ChatManager.getInstance().addChatRoomListener(this);	
 
 	// We are just using a generic Group Chat.
 	tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
@@ -1331,5 +1334,38 @@ public final class GroupChatRoom extends ChatRoom {
 	}
 
 	return ChatManager.COLORS[index % ChatManager.COLORS.length];
+    }
+
+    @Override
+    public void chatRoomOpened(ChatRoom room) {
+
+	if (room instanceof GroupChatRoom) {
+	    JPanel bar = room.getRoomControllerBar();	   
+	    JButton settings = new JButton(SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+	    JButton thema = new JButton(SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+	    bar.add(thema);
+	    bar.add(settings);
+	}
+    }
+
+    @Override
+    public void chatRoomLeft(ChatRoom room) {
+    }
+
+    @Override
+    public void chatRoomClosed(ChatRoom room) {
+    }
+
+    @Override
+    public void chatRoomActivated(ChatRoom room) {
+    }
+
+    @Override
+    public void userHasJoined(ChatRoom room, String userid) {
+	
+    }
+
+    @Override
+    public void userHasLeft(ChatRoom room, String userid) {	
     }
 }

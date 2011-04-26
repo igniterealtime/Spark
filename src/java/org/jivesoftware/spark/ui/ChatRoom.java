@@ -19,6 +19,7 @@
  */ 
 package org.jivesoftware.spark.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -94,7 +95,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final ChatToolBar toolbar;
     private final JScrollPane textScroller;
     private final JPanel bottomPanel;
-    private final JPanel editorBar;
+    
+    private final JPanel editorWrapperBar;
+    private final JPanel editorBarRight;
+    private final JPanel editorBarLeft;
     private JPanel chatWindowPanel;
 
     private int unreadMessageCount;
@@ -129,7 +133,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         messageListeners = new ArrayList<MessageListener>();
         transcript = new ArrayList<Message>();
-        editorBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
+        
+        editorWrapperBar = new JPanel(new BorderLayout());
+        editorBarLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
+        editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
+        editorWrapperBar.add(editorBarLeft, BorderLayout.WEST);
+        editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
         fileDropListeners = new ArrayList<FileDropListener>();
 
         transcriptWindowMouseListener = new MouseAdapter() {
@@ -240,17 +249,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         splitPane.setLeftComponent(chatPanel);
 
         // Add edit buttons to Chat Room
-        editorBar.setOpaque(false);
+        editorBarLeft.setOpaque(false);
         chatPanel.setOpaque(false);
 
 
-        editorBar.add(new JSeparator(JSeparator.VERTICAL));
+        editorBarLeft.add(new JSeparator(JSeparator.VERTICAL));
 
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
         bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 15));
-        bottomPanel.add(editorBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        bottomPanel.add(editorWrapperBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
 
         // Set bottom panel border
         bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(197, 213, 230)));
@@ -672,9 +681,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Disables the ChatRoom toolbar.
      */
     public void disableToolbar() {
-        final int count = editorBar.getComponentCount();
+        final int count = editorBarLeft.getComponentCount();
         for (int i = 0; i < count; i++) {
-            final Object o = editorBar.getComponent(i);
+            final Object o = editorBarLeft.getComponent(i);
             if (o instanceof RolloverButton) {
                 final RolloverButton rb = (RolloverButton)o;
                 rb.setEnabled(false);
@@ -686,9 +695,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Enable the ChatRoom toolbar.
      */
     public void enableToolbar() {
-        final int count = editorBar.getComponentCount();
+        final int count = editorBarLeft.getComponentCount();
         for (int i = 0; i < count; i++) {
-            final Object o = editorBar.getComponent(i);
+            final Object o = editorBarLeft.getComponent(i);
             if (o instanceof RolloverButton) {
                 final RolloverButton rb = (RolloverButton)o;
                 rb.setEnabled(true);
@@ -879,16 +888,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
     /**
-     * Returns the button panel. The Button Panel contains all tool items
-     * above the send field.
-     *
-     * @return the chat's button panel.
-     */
-    public JPanel getSendFieldToolbar() {
-        return editorBar;
-    }
-
-    /**
      * Used for the top toolbar.
      */
     public class ChatToolBar extends JPanel {
@@ -1026,7 +1025,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @return the panel which contains the lower toolbar items.
      */
     public JPanel getEditorBar() {
-        return editorBar;
+        return editorBarLeft;
+    }
+    
+    /**
+     * Returns the panel next to the editor bar<br>
+     * for use with system buttons, like room controlling or toggle stay-on-top
+     * 
+     * @return
+     */
+    public JPanel getRoomControllerBar() {
+	return editorBarRight;
     }
 
     /**

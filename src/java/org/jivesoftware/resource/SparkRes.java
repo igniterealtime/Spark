@@ -325,6 +325,8 @@ public class SparkRes {
     public static final String TASK_DELETE_IMAGE = "TASK_DELETE_IMAGE";
     public static final String TRANSPORT_ICON = "TRANSPORT_ICON";
     public static final String COLOR_ICON = "COLOR_ICON";
+    public static final String SETTINGS_IMAGE_16x16 = "SETTINGS_IMAGE_16x16";
+    public static final String SETTINGS_IMAGE_24x24 = "SETTINGS_IMAGE_24x24";
     
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

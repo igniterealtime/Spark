@@ -162,7 +162,7 @@ public class InvitationPane {
                         chatRoom.getBottomPanel().setVisible(true);
 
                         chatRoom.getScrollPaneForTranscriptWindow().setVisible(true);
-                        chatRoom.getSendFieldToolbar().setVisible(true);
+                        chatRoom.getEditorBar().setVisible(true);
                         chatRoom.getChatInputEditor().setEnabled(true);
                         chatRoom.getToolBar().setVisible(true);
                         chatRoom.getVerticalSlipPane().setDividerLocation(0.8);
@@ -176,7 +176,7 @@ public class InvitationPane {
                             chatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
 
                             chatRoom.getToolBar().setVisible(true);
-                            chatRoom.getSendFieldToolbar().setVisible(true);
+                            chatRoom.getEditorBar().setVisible(true);
                             chatRoom.getChatInputEditor().setEnabled(true);
 
                             ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
