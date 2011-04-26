@@ -447,7 +447,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
     // For Typing
     @Override
     public void cancelledNotification(String from, String packetID) {
-	System.out.println("set available");
 	trayIcon.setImage(availableIcon.getImage());
     }
 
