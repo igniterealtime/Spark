@@ -33,6 +33,21 @@ import javax.swing.JComponent;
  * @author wolf.posdorfer
  */
 public class ImageCombiner {
+    
+    
+    /**
+     * Combines two images into one
+     * 
+     * @param image1
+     *            left image
+     * @param image2
+     *            right image
+     * @return combined Image
+     */
+    public static Image combine(Image image1, Image image2)
+    {
+	return combine(new ImageIcon(image1), new ImageIcon(image2));
+    }
 
     /**
      * Combines two images into one

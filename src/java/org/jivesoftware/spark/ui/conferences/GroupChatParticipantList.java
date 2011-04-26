@@ -117,6 +117,8 @@ public final class GroupChatParticipantList extends JPanel implements
 	private DiscoverInfo roomInformation;
 
 	private List<JLabel> users = new ArrayList<JLabel>();
+	
+	private HashMap<String,String> usersandRoles = new HashMap<String,String>();
 
 	/**
 	 * Creates a new RoomInfo instance using the specified ChatRoom. The
@@ -358,6 +360,8 @@ public final class GroupChatParticipantList extends JPanel implements
 	
 	String affiliation  = parseRoleFromPacket(presence)[0];
 	String userRole = parseRoleFromPacket(presence)[1];
+	
+	usersandRoles.put(participantJID, affiliation+","+userRole);
 	
 	Icon icon = null;
 	if (_localPreferences.isShowingRoleIcons()) {
@@ -1230,34 +1234,50 @@ public final class GroupChatParticipantList extends JPanel implements
      * and map it to an integer<br>
      * 0=owner,1=admin.....5=visitor<br>
      */
-    private int getCompareValue(String jid)
-    {
+    private int getCompareValue(String jid) {
 	int result = 100;
-	
-	switch(chat.getOccupant(jid).getAffiliation().charAt(0))
-	{
-	case 'o': result = 0;break; //owner
-	case 'a': result = 1;break; //admin
+
+	String affi = usersandRoles.get(jid).split(",")[0];
+	String role = usersandRoles.get(jid).split(",")[1];
+
+	if (affi == null)
+	    affi = "z";
+	if (role == null)
+	    role = "z";
+
+	switch (affi.charAt(0)) {
+	case 'o':
+	    result = 0;
+	    break; // owner
+	case 'a':
+	    result = 1;
+	    break; // admin
 	// Moderator is in between with 2
-	case 'm': result = 3;break; //member
-	default : result =100;
+	case 'm':
+	    result = 3;
+	    break; // member
+	default:
+	    result = 100;
 	}
-	
-	if (chat.getOccupant(jid).getAffiliation()
-		.equalsIgnoreCase("none")) {
-	   
-	    switch(chat.getOccupant(jid).getRole().charAt(0))
-	    {
-	    case 'm' : result = 2; break; //moderator
+
+	if (affi.equalsIgnoreCase("none")) {
+
+	    switch (role.charAt(0)) {
+	    case 'm':
+		result = 2;
+		break; // moderator
 	    // Member is in between with 3
-	    case 'p' : result = 4; break; //participant
-	    case 'v' : result = 5; break; //visitor
-	    default : result = 100;
+	    case 'p':
+		result = 4;
+		break; // participant
+	    case 'v':
+		result = 5;
+		break; // visitor
+	    default:
+		result = 100;
 	    }
 	}
-	if(chat.getOccupant(jid).getAffiliation()
-		.equalsIgnoreCase("member") && chat.getOccupant(jid).getRole().charAt(0)=='m')
-	{
+	if (affi.equalsIgnoreCase("member") && role.charAt(0) == 'm') {
 	    result = 2;
 	}
 	return result;
