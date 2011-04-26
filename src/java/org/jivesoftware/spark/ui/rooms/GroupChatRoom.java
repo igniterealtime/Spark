@@ -33,10 +33,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -44,6 +44,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -68,11 +69,11 @@ import org.jivesoftware.smackx.packet.MUCUser;
 import org.jivesoftware.smackx.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GroupChatRoomTransferHandler;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
@@ -86,7 +87,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
  */
-public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
+public final class GroupChatRoom extends ChatRoom {
     private static final long serialVersionUID = 4469579438292227006L;
 
     private MultiUserChat chat;
@@ -118,6 +119,7 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 	    .isShowJoinLeaveMessagesEnabled();
     private boolean isMucHighlightingNameEnabled = pref.isMucHighNameEnabled();
     private boolean isMucHighlightingTextEnabled = pref.isMucHighTextEnabled();
+    
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -140,7 +142,6 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 
 	// The Room Name is the same as the ChatRoom name
 	roomname = chat.getRoom();
-	ChatManager.getInstance().addChatRoomListener(this);	
 
 	// We are just using a generic Group Chat.
 	tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
@@ -169,6 +170,8 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 
 	// Add ContextMenuListener
 	getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
+	  
+
 	    public void poppingUp(Object component, JPopupMenu popup) {
 		popup.addSeparator();
 		Action inviteAction = new AbstractAction() {
@@ -206,13 +209,13 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 		configureAction.putValue(Action.NAME,
 			Res.getString("title.configure.room"));
 		configureAction.putValue(Action.SMALL_ICON,
-			SparkRes.getImageIcon(SparkRes.SMALL_ALL_AGENTS_IMAGE));
+			SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
 		if (SparkManager.getUserManager().isOwner(
 			(GroupChatRoom) getChatRoom(), chat.getNickname())) {
 		    popup.add(configureAction);
 		}
 
-		Action subjectAction = new AbstractAction() {
+		Action subjectChangeAction = new AbstractAction() {
 		    private static final long serialVersionUID = 6730534406025965089L;
 
 		    public void actionPerformed(ActionEvent actionEvent) {
@@ -232,11 +235,11 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 		    }
 		};
 
-		subjectAction.putValue(Action.NAME,
+		subjectChangeAction.putValue(Action.NAME,
 			Res.getString("menuitem.change.subject"));
-		subjectAction.putValue(Action.SMALL_ICON, SparkRes
+		subjectChangeAction.putValue(Action.SMALL_ICON, SparkRes
 			.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-		popup.add(subjectAction);
+		popup.add(subjectChangeAction);
 
 		// Define actions to modify/view room information
 		Action destroyRoomAction = new AbstractAction() {
@@ -297,6 +300,8 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 	GroupChatRoomTransferHandler transferHandler = new GroupChatRoomTransferHandler(
 		this);
 	getTranscriptWindow().setTransferHandler(transferHandler);
+	
+	addRoomConfigureButtons(this);
     }
 
     /**
@@ -1336,36 +1341,65 @@ public final class GroupChatRoom extends ChatRoom implements ChatRoomListener {
 	return ChatManager.COLORS[index % ChatManager.COLORS.length];
     }
 
-    @Override
-    public void chatRoomOpened(ChatRoom room) {
+    
+    /**
+     * Adds the Settings and Subject Button to the right Toolbar
+     * @param room
+     */
+    private void addRoomConfigureButtons(GroupChatRoom room) {
 
-	if (room instanceof GroupChatRoom) {
-	    JPanel bar = room.getRoomControllerBar();	   
-	    JButton settings = new JButton(SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
-	    JButton thema = new JButton(SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
-	    bar.add(thema);
-	    bar.add(settings);
-	}
+	RolloverButton settings = new RolloverButton(
+		SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+	settings.setToolTipText(Res.getString("title.configure.room"));
+	RolloverButton thema = new RolloverButton(
+		SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+	thema.setToolTipText(Res.getString("menuitem.change.subject"));
+
+	JPanel bar = room.getRoomControllerBar();
+
+	bar.add(thema);
+	bar.add(settings);
+
+	settings.addActionListener(new AbstractAction() {
+	    private static final long serialVersionUID = 6780230647854132857L;
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		try {
+		    ChatFrame chatFrame = SparkManager.getChatManager()
+			    .getChatContainer().getChatFrame();
+		    Form form = chat.getConfigurationForm().createAnswerForm();
+		    new DataFormDialog(chatFrame, chat, form);
+		} catch (XMPPException xmpe) {
+		    getTranscriptWindow().insertNotificationMessage(
+			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
+		    scrollToBottom();
+		}
+	    }
+	});
+
+	thema.addActionListener(new AbstractAction() {
+	    private static final long serialVersionUID = -9205709825867979395L;
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		String newSubject = JOptionPane.showInputDialog(getChatRoom(),
+			Res.getString("message.enter.new.subject") + ":",
+			Res.getString("title.change.subject"),
+			JOptionPane.QUESTION_MESSAGE);
+		if (ModelUtil.hasLength(newSubject)) {
+		    try {
+			chat.changeSubject(newSubject);
+		    } catch (XMPPException xmpee) {
+			getTranscriptWindow().insertNotificationMessage(
+				xmpee.getMessage(),
+				ChatManager.ERROR_COLOR);
+			scrollToBottom();
+		    }
+		}
+	    }
+	});
+
     }
 
-    @Override
-    public void chatRoomLeft(ChatRoom room) {
-    }
-
-    @Override
-    public void chatRoomClosed(ChatRoom room) {
-    }
-
-    @Override
-    public void chatRoomActivated(ChatRoom room) {
-    }
-
-    @Override
-    public void userHasJoined(ChatRoom room, String userid) {
-	
-    }
-
-    @Override
-    public void userHasLeft(ChatRoom room, String userid) {	
-    }
 }

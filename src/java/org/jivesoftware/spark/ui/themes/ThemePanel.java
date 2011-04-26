@@ -114,9 +114,23 @@ public class ThemePanel extends JPanel {
           lafname.add(ui[i].getName());
         }
 
-	String[] substance = {		
+	String[] nonSystemLookAndFeels = {	
+//		"de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel", //commec
+//		"de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel", //commerc
+//		"de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel", //free
+//		"de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel", //free
+//		"de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel", //free
+//		"de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel", //free
+//		"de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel", //free
+//		"de.javasoft.plaf.synthetica.SyntheticaClassyLookAndFeel", //commerc
+//		"de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel", //free
+//		"de.javasoft.plaf.synthetica.SyntheticaOrangeMetallicLookAndFeel", //commerc
+//		"de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel",	//free
+//		"de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel", //commerc
+//		"de.javasoft.plaf.synthetica.SyntheticaSkyMetallicLookAndFeel", //commerc
+//		"de.javasoft.plaf.synthetica.SyntheticaWhiteVisionLookAndFeel", //commerc
+		
 		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
-		"de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessLookAndFeel",
@@ -144,11 +158,9 @@ public class ThemePanel extends JPanel {
 		"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
 		};
     	
-	for(String s : substance)
+	for(String s : nonSystemLookAndFeels)
 	{
 	    _lookandfeelname.add(s);
-	    s = s.replace("Substance","");
-	    s = s.replace("Synthetica","");
 	    s = s.replace("LookAndFeel", "");
 	    s = s.substring(s.lastIndexOf(".")+1);
 	    lafname.add(s);
@@ -167,11 +179,11 @@ public class ThemePanel extends JPanel {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// Disable button for java.LaF's and for BlueMoon
+		// Disable button for java.LaF's and for Synthetica
 		if (_lookandfeel.getSelectedItem() != null 
 			&& ( _lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length 
-				|| _lookandfeelname.elementAt(_lookandfeel.getSelectedIndex()).contains("BlueMoon") 
-				|| UIManager.getLookAndFeel().getName().contains("BlueMoon"))) {
+				|| _lookandfeelname.elementAt(_lookandfeel.getSelectedIndex()).contains("Synthetica") 
+				|| UIManager.getLookAndFeel().getName().contains("Synthetica"))) {
 		    _lookandfeelpreview.setEnabled(false);
 		    _lookandfeelpreview
 			    .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
