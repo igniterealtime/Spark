@@ -87,8 +87,6 @@ exit 0
 /usr/share/spark/lib/spark.jar
 /usr/share/spark/lib/startup.jar
 /usr/share/spark/lib/swingx.jar
-/usr/share/spark/lib/synthetica.jar
-/usr/share/spark/lib/syntheticaBlueMoon.jar
 /usr/share/spark/lib/systeminfo.jar
 /usr/share/spark/lib/xpp.jar
 /usr/share/spark/lib/xstream.jar
