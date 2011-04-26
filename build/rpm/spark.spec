@@ -74,6 +74,9 @@ exit 0
 /usr/share/spark/lib/fmj.jar
 /usr/share/spark/lib/jdom.jar
 /usr/share/spark/lib/i4jruntime.jar
+/usr/share/spark/lib/jgoodies-common-1.2.0.jar
+/usr/share/spark/lib/jgoodies-looks-2.4.1.jar
+/usr/share/spark/lib/JTattoo.jar
 %dir /usr/share/spark/lib/linux/
 /usr/share/spark/lib/linux/libcivil.so
 %dir /usr/share/spark/lib/linux64/

@@ -26,9 +26,11 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -258,6 +260,19 @@ public final class Spark {
 	    }
 	} catch (Exception e) {
 	    Log.error(e);
+	}
+	
+	if(laf.contains("jtattoo"))
+	{  
+	    Properties props = new Properties();
+	    props.put("logoString", "Spark");  
+	    try {
+		Class<?> c = ClassLoader.getSystemClassLoader().loadClass(laf);
+		Method m = c.getMethod("setCurrentTheme", Properties.class);
+		m.invoke(c.newInstance(), props);
+	    } catch (Exception e) {
+		Log.error("Error Setting JTattoo ", e);
+	    }
 	}
 	installBaseUIProperties();
     }

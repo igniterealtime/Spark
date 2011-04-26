@@ -114,22 +114,25 @@ public class ThemePanel extends JPanel {
           lafname.add(ui[i].getName());
         }
 
-	String[] nonSystemLookAndFeels = {	
-//		"de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel", //commec
-//		"de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel", //commerc
-//		"de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel", //free
-//		"de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel", //free
-//		"de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel", //free
-//		"de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel", //free
-//		"de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel", //free
-//		"de.javasoft.plaf.synthetica.SyntheticaClassyLookAndFeel", //commerc
-//		"de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel", //free
-//		"de.javasoft.plaf.synthetica.SyntheticaOrangeMetallicLookAndFeel", //commerc
-//		"de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel",	//free
-//		"de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel", //commerc
-//		"de.javasoft.plaf.synthetica.SyntheticaSkyMetallicLookAndFeel", //commerc
-//		"de.javasoft.plaf.synthetica.SyntheticaWhiteVisionLookAndFeel", //commerc
-		
+	String[] nonSystemLookAndFeels = {
+		//JTattoo
+		"com.jtattoo.plaf.acryl.AcrylLookAndFeel",
+		"com.jtattoo.plaf.aero.AeroLookAndFeel",
+		"com.jtattoo.plaf.aluminium.AluminiumLookAndFeel",
+		"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel",
+		"com.jtattoo.plaf.fast.FastLookAndFeel",
+		"com.jtattoo.plaf.graphite.GraphiteLookAndFeel",
+		"com.jtattoo.plaf.hifi.HiFiLookAndFeel",
+		"com.jtattoo.plaf.luna.LunaLookAndFeel",
+		"com.jtattoo.plaf.mcwin.McWinLookAndFeel",
+		"com.jtattoo.plaf.mint.MintLookAndFeel",
+		"com.jtattoo.plaf.noire.NoireLookAndFeel",
+		"com.jtattoo.plaf.smart.SmartLookAndFeel",
+		//JGoodies
+		"com.jgoodies.looks.plastic.Plastic3DLookAndFeel",
+		"com.jgoodies.looks.plastic.PlasticLookAndFeel",
+		"com.jgoodies.looks.plastic.PlasticXPLookAndFeel",
+		//Substance
 		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
@@ -158,11 +161,17 @@ public class ThemePanel extends JPanel {
 		"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
 		};
     	
-	for(String s : nonSystemLookAndFeels)
-	{
+	for (String s : nonSystemLookAndFeels) {
 	    _lookandfeelname.add(s);
 	    s = s.replace("LookAndFeel", "");
-	    s = s.substring(s.lastIndexOf(".")+1);
+
+	    if (s.contains("jtattoo")) {
+		s = "JTattoo" + s.substring(s.lastIndexOf(".") + 1);
+	    } else if (s.contains("jgoodies")) {
+		s = "JGoodies" + s.substring(s.lastIndexOf(".") + 1);
+	    } else {
+		s = s.substring(s.lastIndexOf(".") + 1);
+	    }
 	    lafname.add(s);
 	}
 	
@@ -180,10 +189,7 @@ public class ThemePanel extends JPanel {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		// Disable button for java.LaF's and for Synthetica
-		if (_lookandfeel.getSelectedItem() != null 
-			&& ( _lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length 
-				|| _lookandfeelname.elementAt(_lookandfeel.getSelectedIndex()).contains("Synthetica") 
-				|| UIManager.getLookAndFeel().getName().contains("Synthetica"))) {
+		if (_lookandfeel.getSelectedItem() != null && !_lookandfeel.getSelectedItem().toString().contains("Substance")) {
 		    _lookandfeelpreview.setEnabled(false);
 		    _lookandfeelpreview
 			    .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
@@ -555,3 +561,19 @@ public class ThemePanel extends JPanel {
     
     
 }
+
+// Maybe Sometime well get a Synthetica License
+//"de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel", //commec
+//"de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel", //commerc
+//"de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel", //free
+//"de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel", //free
+//"de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel", //free
+//"de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel", //free
+//"de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel", //free
+//"de.javasoft.plaf.synthetica.SyntheticaClassyLookAndFeel", //commerc
+//"de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel", //free
+//"de.javasoft.plaf.synthetica.SyntheticaOrangeMetallicLookAndFeel", //commerc
+//"de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel",	//free
+//"de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel", //commerc
+//"de.javasoft.plaf.synthetica.SyntheticaSkyMetallicLookAndFeel", //commerc
+//"de.javasoft.plaf.synthetica.SyntheticaWhiteVisionLookAndFeel", //commerc
