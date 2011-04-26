@@ -55,7 +55,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private boolean focused;
     private JCheckBox alwaysOnTopItem;
     private ChatFrame chatFrame = this;
-    private Collection<ChatFrameToFronListener> _windowToFrontListeners = new ArrayList<ChatFrameToFronListener>();
+    private Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<ChatFrameToFrontListener>();
    
     /**
      * Creates default ChatFrame.
@@ -252,7 +252,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
     
     private void fireWindowOnTopListeners(boolean active) {
-	for (ChatFrameToFronListener fl: _windowToFrontListeners)
+	for (ChatFrameToFrontListener fl: _windowToFrontListeners)
 	{
 	    fl.updateStatus(active);
 	}

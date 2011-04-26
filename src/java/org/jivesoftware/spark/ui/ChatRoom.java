@@ -84,7 +84,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFronListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
 	private static final long serialVersionUID = 7981019929515888299L;
 	private final JPanel chatPanel;
     private final JSplitPane splitPane;
