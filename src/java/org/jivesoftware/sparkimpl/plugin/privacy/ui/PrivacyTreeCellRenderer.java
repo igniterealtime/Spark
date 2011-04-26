@@ -46,70 +46,67 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyTreeNode;
  */
 public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    
     private static final long serialVersionUID = 5819051053144634773L;
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-	final Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-	JPanel myPanel = new JPanel();
-	PrivacyTreeNode node = (PrivacyTreeNode) value;
+        final Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+        JPanel myPanel = new JPanel();
+        PrivacyTreeNode node = (PrivacyTreeNode) value;
 
-	myPanel.setLayout(new GridBagLayout());
+        myPanel.setLayout(new GridBagLayout());
 
-	if (leaf && node.isPrivacyItem()) {
-	    if (sel) {
-		myPanel.setBackground(Color.LIGHT_GRAY);
-	    }
+        if (leaf && node.isPrivacyItem()) {
+            if (sel) {
+                myPanel.setBackground(Color.LIGHT_GRAY);
+            }
 
-	    Icon iq = node.getPrivacyItem().isFilterIQ() ? SparkRes.getImageIcon("PRIVACY_QUERY_DENY") : SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW");
-	    Icon in = node.getPrivacyItem().isFilterPresence_in() ? SparkRes.getImageIcon("PRIVACY_PIN_DENY") : SparkRes.getImageIcon("PRIVACY_PIN_ALLOW");
-	    Icon out = node.getPrivacyItem().isFilterPresence_out() ? SparkRes.getImageIcon("PRIVACY_POUT_DENY") : SparkRes.getImageIcon("PRIVACY_POUT_ALLOW");
-	    Icon msg = node.getPrivacyItem().isFilterMessage() ? SparkRes.getImageIcon("PRIVACY_MSG_DENY") : SparkRes.getImageIcon("PRIVACY_MSG_ALLOW");
+            Icon iq = node.getPrivacyItem().isFilterIQ() ? SparkRes.getImageIcon("PRIVACY_QUERY_DENY") : SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW");
+            Icon in = node.getPrivacyItem().isFilterPresence_in() ? SparkRes.getImageIcon("PRIVACY_PIN_DENY") : SparkRes.getImageIcon("PRIVACY_PIN_ALLOW");
+            Icon out = node.getPrivacyItem().isFilterPresence_out() ? SparkRes.getImageIcon("PRIVACY_POUT_DENY") : SparkRes.getImageIcon("PRIVACY_POUT_ALLOW");
+            Icon msg = node.getPrivacyItem().isFilterMessage() ? SparkRes.getImageIcon("PRIVACY_MSG_DENY") : SparkRes.getImageIcon("PRIVACY_MSG_ALLOW");
 
-	    myPanel.add(new JLabel(node.getPrivacyItem().getValue()), new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
-		    new Insets(0, 10, 0, 0), 0, 0));
-	    myPanel.add(new JLabel(msg), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-	    myPanel.add(new JLabel(iq), new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-	    myPanel.add(new JLabel(in), new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-	    myPanel.add(new JLabel(out), new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            myPanel.add(new JLabel(node.getPrivacyItem().getValue()), new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 10, 0, 0), 0, 0));
+            myPanel.add(new JLabel(msg), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            myPanel.add(new JLabel(iq), new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            myPanel.add(new JLabel(in), new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            myPanel.add(new JLabel(out), new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-	} else {
+        } else {
 
-	    if (node.isRoot()) {
-		setIcon(SparkRes.getImageIcon("CLIPBOARD"));
-	    }
+            if (node.isRoot()) {
+                setIcon(SparkRes.getImageIcon("CLIPBOARD"));
+            }
 
-	    if (node.isGroupNode()) {
+            if (node.isGroupNode()) {
 
-		setIcon(SparkRes.getImageIcon(SparkRes.SMALL_CURRENT_AGENTS));
+                setIcon(SparkRes.getImageIcon(SparkRes.SMALL_CURRENT_AGENTS));
 
-	    } else if (node.isContactGroup()) {
-		setIcon(SparkRes.getImageIcon(SparkRes.AVAILABLE_USER));
+            } else if (node.isContactGroup()) {
+                setIcon(SparkRes.getImageIcon(SparkRes.AVAILABLE_USER));
 
-	    }
+            }
 
-	    if (node.isPrivacyList()) {
-		String listName = node.getPrivacyList().getListName();
-		if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName()))
-		{
-		    listName = Res.getString("privacy.name.for.default.list");
-		}
-		if (node.isActiveList()) {
-		    listName += " [" + Res.getString("privacy.label.list.is.active") + "]";
-		}
-		if (node.isDefaultList()) {
-		    listName += " [" + Res.getString("privacy.label.list.is.default") + "]";
-		}
-		setText(listName);
-		setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ENTRY));
+            if (node.isPrivacyList()) {
+                String listName = node.getPrivacyList().getListName();
+                if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName())) {
+                    listName = Res.getString("privacy.name.for.default.list");
+                }
+                if (node.isActiveList()) {
+                    listName += " [" + Res.getString("privacy.label.list.is.active") + "]";
+                }
+                if (node.isDefaultList()) {
+                    listName += " [" + Res.getString("privacy.label.list.is.default") + "]";
+                }
+                setText(listName);
+                setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ENTRY));
 
-	    }
+            }
 
-	    return c;
+            return c;
 
-	}
-	return myPanel;
+        }
+        return myPanel;
     }
-
 }

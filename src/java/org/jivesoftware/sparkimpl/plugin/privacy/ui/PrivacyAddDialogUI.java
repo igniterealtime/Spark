@@ -63,7 +63,6 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class PrivacyAddDialogUI extends JPanel {
 
-    
     private JCheckBox _showOffCheckbox = new JCheckBox();
     private static final long serialVersionUID = -7725304880236329893L;
     private DefaultListModel model = new DefaultListModel();
@@ -79,88 +78,87 @@ public class PrivacyAddDialogUI extends JPanel {
      * Creates a new instance of the RosterBrowser.
      */
     public PrivacyAddDialogUI() {
-	setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
 
-	_showOffCheckbox.setText(Res.getString("menuitem.show.offline.users"));
-	_showOffCheckbox.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		createList();
-		
-	    }
-	});
-	
-	JPanel checkBoxPanel  = createCheckBoxes();
-	this.add(checkBoxPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-	this.add(_showOffCheckbox, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-	this.add(new JScrollPane(rosterList), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        _showOffCheckbox.setText(Res.getString("menuitem.show.offline.users"));
+        _showOffCheckbox.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createList();
+
+            }
+        });
+
+        JPanel checkBoxPanel = createCheckBoxes();
+        this.add(checkBoxPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        this.add(_showOffCheckbox, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        this.add(new JScrollPane(rosterList), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
 
     }
 
-    private JPanel createCheckBoxes ()
-    {
-	JPanel panel = new JPanel();
-	panel.setLayout(new GridBagLayout());
-	panel.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.border.block")));
-	_blockPIn = new JCheckBox(Res.getString("privacy.label.pin.desc"));
-	_blockPIn.setIcon(SparkRes.getImageIcon("PRIVACY_PIN_ALLOW"));
-	_blockPIn.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_PIN_DENY"));
-	_blockPIn.setRolloverEnabled(false);
-	_blockPOout = new JCheckBox(Res.getString("privacy.label.pout.desc"));
-	_blockPOout.setIcon(SparkRes.getImageIcon("PRIVACY_POUT_ALLOW"));
-	_blockPOout.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_POUT_DENY"));
-	_blockPOout.setRolloverEnabled(false);
-	_blockMsg = new JCheckBox(Res.getString("privacy.label.msg.desc"));
-	_blockMsg.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_MSG_DENY"));
-	_blockMsg.setIcon(SparkRes.getImageIcon("PRIVACY_MSG_ALLOW"));
-	_blockMsg.setRolloverEnabled(false);
-	_blockIQ = new JCheckBox(Res.getString("privacy.label.iq.desc"));
-	_blockIQ.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_QUERY_DENY"));
-	_blockIQ.setIcon(SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW"));
-	_blockIQ.setRolloverEnabled(false);
-	panel.add(_blockPIn,new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-	panel.add(_blockPOout,new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-	panel.add(_blockMsg,new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-	panel.add(_blockIQ,new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-	
-	return panel;
+    private JPanel createCheckBoxes() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.border.block")));
+        _blockPIn = new JCheckBox(Res.getString("privacy.label.pin.desc"));
+        _blockPIn.setIcon(SparkRes.getImageIcon("PRIVACY_PIN_ALLOW"));
+        _blockPIn.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_PIN_DENY"));
+        _blockPIn.setRolloverEnabled(false);
+        _blockPOout = new JCheckBox(Res.getString("privacy.label.pout.desc"));
+        _blockPOout.setIcon(SparkRes.getImageIcon("PRIVACY_POUT_ALLOW"));
+        _blockPOout.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_POUT_DENY"));
+        _blockPOout.setRolloverEnabled(false);
+        _blockMsg = new JCheckBox(Res.getString("privacy.label.msg.desc"));
+        _blockMsg.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_MSG_DENY"));
+        _blockMsg.setIcon(SparkRes.getImageIcon("PRIVACY_MSG_ALLOW"));
+        _blockMsg.setRolloverEnabled(false);
+        _blockIQ = new JCheckBox(Res.getString("privacy.label.iq.desc"));
+        _blockIQ.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_QUERY_DENY"));
+        _blockIQ.setIcon(SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW"));
+        _blockIQ.setRolloverEnabled(false);
+        panel.add(_blockPIn, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        panel.add(_blockPOout, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        panel.add(_blockMsg, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        panel.add(_blockIQ, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
+        return panel;
     }
-    
+
     private void createList() {
-	_userList.clear();
-	final Roster roster = SparkManager.getConnection().getRoster();
-	if (_showGroups) {
-	    for (RosterGroup group : roster.getGroups()) {
-		_showOffCheckbox.setVisible(false);
-		ContactItem item = new ContactItem(group.getName(), null, group.getName());
-		_userList.add(item);
-	    }
-	} else {
-	    for (RosterEntry entry : roster.getEntries()) {
-		Presence presence = PresenceManager.getPresence(entry.getUser());
+        _userList.clear();
+        final Roster roster = SparkManager.getConnection().getRoster();
+        if (_showGroups) {
+            for (RosterGroup group : roster.getGroups()) {
+                _showOffCheckbox.setVisible(false);
+                ContactItem item = new ContactItem(group.getName(), null, group.getName());
+                _userList.add(item);
+            }
+        } else {
+            for (RosterEntry entry : roster.getEntries()) {
+                Presence presence = PresenceManager.getPresence(entry.getUser());
 
-		if (presence.isAvailable()) {
-		    ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
-		    item.setPresence(presence);
-		    _userList.add(item);
-		} else if (_showOffCheckbox.isSelected()) {
-		     ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
-		    item.setPresence(presence);
-		    _userList.add(item);
-		}
-	    }
-	}
-	
-	Collections.sort(_userList, itemComparator);
-	model.clear();
-	for (ContactItem item : _userList) {
-	    
-	    model.addElement(item);
-	}
+                if (presence.isAvailable()) {
+                    ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
+                    item.setPresence(presence);
+                    _userList.add(item);
+                } else if (_showOffCheckbox.isSelected()) {
+                    ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
+                    item.setPresence(presence);
+                    _userList.add(item);
+                }
+            }
+        }
 
-	
+        Collections.sort(_userList, itemComparator);
+        model.clear();
+        for (ContactItem item : _userList) {
+
+            model.addElement(item);
+        }
+
+
     }
 
     /**
@@ -168,106 +166,108 @@ public class PrivacyAddDialogUI extends JPanel {
      * 
      * @param parent
      *            the parent container.
-     * @return all items choosen in the pick list.
+     * @return all items chosen in the pick list.
      */
-
     public Collection<PrivacyItem> showRoster(JDialog parent, boolean showGroups) {
-	_showGroups = showGroups;
-	// Populate Invite Panel with Available users.
+        _showGroups = showGroups;
+        // Populate Invite Panel with Available users.
 
-	createList();
+        createList();
 
-	// Sort Users
-	
-	final JOptionPane pane;
+        // Sort Users
 
-	TitlePanel titlePanel;
+        final JOptionPane pane;
 
-	// Create the title panel for this dialog
-	titlePanel = new TitlePanel(Res.getString("privacy.title.add.picker"), Res.getString("privacy.pick.one.or.more"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel;
 
-	// Construct main panel w/ layout.
-	final JPanel mainPanel = new JPanel();
-	mainPanel.setLayout(new BorderLayout());
-	mainPanel.add(titlePanel, BorderLayout.NORTH);
+        // Create the title panel for this dialog
+        titlePanel = new TitlePanel(Res.getString("privacy.title.add.picker"), Res.getString("privacy.pick.one.or.more"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
-	// The user should only be able to close this dialog.
-	Object[] options = { Res.getString("ok"), Res.getString("cancel") };
-	pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        // Construct main panel w/ layout.
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-	mainPanel.add(pane, BorderLayout.CENTER);
+        // The user should only be able to close this dialog.
+        Object[] options = {Res.getString("ok"), Res.getString("cancel")};
+        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
-	final JOptionPane p = new JOptionPane();
+        mainPanel.add(pane, BorderLayout.CENTER);
 
-	final JDialog dlg = p.createDialog(parent, Res.getString("privacy.title.add.picker"));
-	dlg.setModal(true);
+        final JOptionPane p = new JOptionPane();
 
-	dlg.pack();
-	dlg.setSize(350, 450);
-	dlg.setResizable(true);
-	dlg.setContentPane(mainPanel);
-	dlg.setLocationRelativeTo(parent);
+        final JDialog dlg = p.createDialog(parent, Res.getString("privacy.title.add.picker"));
+        dlg.setModal(true);
 
-	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent e) {
-		String value = (String) pane.getValue();
-		if (Res.getString("cancel").equals(value)) {
-		    rosterList.clearSelection();
-		    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-		    dlg.dispose();
-		} else if (Res.getString("ok").equals(value)) {
-		    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-		    dlg.dispose();
-		}
-	    }
-	};
+        dlg.pack();
+        dlg.setSize(350, 450);
+        dlg.setResizable(true);
+        dlg.setContentPane(mainPanel);
+        dlg.setLocationRelativeTo(parent);
 
-	pane.addPropertyChangeListener(changeListener);
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
 
-	dlg.setVisible(true);
-	dlg.toFront();
-	dlg.requestFocus();
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                String value = (String) pane.getValue();
+                if (Res.getString("cancel").equals(value)) {
+                    rosterList.clearSelection();
+                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                    dlg.dispose();
+                } else if (Res.getString("ok").equals(value)) {
+                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                    dlg.dispose();
+                }
+            }
+        };
 
-	List<PrivacyItem> selectedContacts = new ArrayList<PrivacyItem>();
+        pane.addPropertyChangeListener(changeListener);
 
-	
-	
-	Object[] values = rosterList.getSelectedValues();
-	final int no = values != null ? values.length : 0;
-	for (int i = 0; i < no; i++) {
-	    try {
-		ContactItem item = (ContactItem) values[i];
-	
-		PrivacyItem.Type type = _showGroups?PrivacyItem.Type.group:PrivacyItem.Type.jid;
-		PrivacyItem pitem = new PrivacyItem(type.name(), false,999);
-		pitem.setFilterIQ(_blockIQ.isSelected());
-		pitem.setFilterMessage(_blockMsg.isSelected());
-		pitem.setFilterPresence_in(_blockPIn.isSelected());
-		pitem.setFilterPresence_out(_blockPOout.isSelected());
-		pitem.setValue(item.getJID());
-		
-		selectedContacts.add(pitem);
-	    } catch (NullPointerException e) {
-		Log.error(e);
-	    }
-	}
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();
 
-	return selectedContacts;
+        List<PrivacyItem> selectedContacts = new ArrayList<PrivacyItem>();
+
+
+
+        Object[] values = rosterList.getSelectedValues();
+        final int no = values != null ? values.length : 0;
+        for (int i = 0; i < no; i++) {
+            try {
+                ContactItem item = (ContactItem) values[i];
+
+                PrivacyItem.Type type = _showGroups ? PrivacyItem.Type.group : PrivacyItem.Type.jid;
+                PrivacyItem pitem = new PrivacyItem(type.name(), false, 999);
+                pitem.setFilterIQ(_blockIQ.isSelected());
+                pitem.setFilterMessage(_blockMsg.isSelected());
+                pitem.setFilterPresence_in(_blockPIn.isSelected());
+                pitem.setFilterPresence_out(_blockPOout.isSelected());
+                pitem.setValue(item.getJID());
+
+                selectedContacts.add(pitem);
+            } catch (NullPointerException e) {
+                Log.error(e);
+            }
+        }
+
+        return selectedContacts;
     }
-
     /**
      * Sorts ContactItems.
      */
     final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-	public int compare(ContactItem item1, ContactItem item2) {
-	    String nickname1 = item1.getDisplayName();
-	    String nickname2 = item2.getDisplayName();
-	    if (nickname1 == null || nickname2 == null) {
-		return 0;
-	    }
 
-	    return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
+        @Override
+        public int compare(ContactItem item1, ContactItem item2) {
+            String nickname1 = item1.getDisplayName();
+            String nickname2 = item2.getDisplayName();
+            if (nickname1 == null || nickname2 == null) {
+                return 0;
+            }
 
-	}
+            return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
+
+        }
     };
 }

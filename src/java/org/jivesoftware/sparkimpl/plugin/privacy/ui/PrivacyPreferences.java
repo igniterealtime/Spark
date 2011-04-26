@@ -32,77 +32,67 @@ import org.jivesoftware.spark.preference.Preference;
  */
 public class PrivacyPreferences implements Preference {
 
-    
     String _title = Res.getString("privacy.label.preferences");
     String _toolTip = Res.getString("pricacy.tooltip.preferences");
 
-    
-    public PrivacyPreferences()
-    {
-	
+    public PrivacyPreferences() {
     }
-    
-    
-    
+
     @Override
     public String getTitle() {
-	return _title;
+        return _title;
     }
 
     @Override
     public Icon getIcon() {
-	
-	return SparkRes.getImageIcon("PRIVACY_ICON");
+
+        return SparkRes.getImageIcon("PRIVACY_ICON");
     }
 
     @Override
     public String getTooltip() {
-	return _toolTip;
+        return _toolTip;
     }
 
     @Override
     public String getListName() {
-	return _title;
+        return _title;
     }
 
     @Override
     public String getNamespace() {
-	return "privacy";
+        return "privacy";
     }
 
     @Override
     public JComponent getGUI() {
-	return new PrivacyListTree();
+        return new PrivacyListTree();
     }
 
     @Override
     public void load() {
-
     }
 
     @Override
     public void commit() {
-
     }
 
     @Override
     public boolean isDataValid() {
-	return true;
+        return true;
     }
 
     @Override
     public String getErrorMessage() {
-	return "error in privacy plugin?";
+        return "error in privacy plugin?";
     }
 
     @Override
     public Object getData() {
-	return null;
+        return null;
     }
 
     @Override
     public void shutdown() {
-
     }
-
 }
