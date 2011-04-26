@@ -467,6 +467,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             setSelectedIndex(tabLocation);
             groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
             return;
+        } 
+        if(chatFrame.isVisible() && chatFrame.getState()== Frame.NORMAL)
+        {
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);           
         }
 
         if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocusOwner()) {
@@ -1191,12 +1195,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 	}
 	
         
-	if (pref.getWindowTakesFocus() || SparkManager.getMainWindow().isActive()) {
+	if (SparkManager.getMainWindow().isActive() || pref.getWindowTakesFocus()) {
 	    chatFrame.setState(Frame.NORMAL);
 
 	} else {
 	    chatFrame.setState(Frame.ICONIFIED);
-
 	}
       
         
