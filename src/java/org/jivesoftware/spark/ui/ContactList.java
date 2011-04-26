@@ -1472,8 +1472,8 @@ public final class ContactList extends JPanel implements ActionListener,
             }
         });
 
-
-        rename.addActionListener(new ActionListener() {
+     
+      rename.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String newName = JOptionPane.showInputDialog(group, Res.getString("label.rename.to") + ":", Res.getString("title.rename.roster.group"), JOptionPane.QUESTION_MESSAGE);
                 if (!ModelUtil.hasLength(newName)) {
@@ -1485,13 +1485,15 @@ public final class ContactList extends JPanel implements ActionListener,
                 RosterGroup rosterGroup = roster.getGroup(groupName);
                 //Do not remove ContactGroup if the name entered was the same 
                 if (rosterGroup != null && !groupName.equals(newName)) {
-                    removeContactGroup(group);
+                   removeContactGroup(group);
                     rosterGroup.setName(newName);
+                    addContactGroup(newName);
+                    toggleGroupVisibility(newName, true);        
+                    getContactGroup(newName).setCollapsed( group.isCollapsed());
                 }
 
             }
         });
-        
         expand.addActionListener(new ActionListener() {
            public void actionPerformed(ActionEvent e) {
          	Collection<ContactGroup> groups = getContactGroups();  
