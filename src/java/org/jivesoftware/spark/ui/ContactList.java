@@ -170,7 +170,7 @@ public final class ContactList extends JPanel implements ActionListener,
     public ContactList() {
         // Load Local Preferences
         localPreferences = SettingsManager.getLocalPreferences();
-
+        
         offlineGroup = new ContactGroup(Res.getString("group.offline"));
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -1765,7 +1765,7 @@ public final class ContactList extends JPanel implements ActionListener,
     // For plugin use only
 
     public void initialize() {
-        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+	this.setBorder(BorderFactory.createEmptyBorder());
 
         // Add Contact List
         addContactListToWorkspace();

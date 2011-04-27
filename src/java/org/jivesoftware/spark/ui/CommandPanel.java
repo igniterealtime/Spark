@@ -38,7 +38,7 @@ import javax.swing.JPanel;
 public class CommandPanel extends JPanel {
 
 	private static final long serialVersionUID = -720715661649067658L;
-	private final Image backgroundImage;
+	//private final Image backgroundImage;
 
     public CommandPanel() {
         if (Spark.isWindows()) {
@@ -48,17 +48,18 @@ public class CommandPanel extends JPanel {
             setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         }
 
+      setOpaque(false);
+      
+       // backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
-        backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
-
-        setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, new Color(197, 213, 230)));
+     //   setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, new Color(197, 213, 230)));
     }
 
 
-    public void paintComponent(Graphics g) {
-        double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
-        double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
-        AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        ((Graphics2D) g).drawImage(backgroundImage, xform, this);
-    }
+//    public void paintComponent(Graphics g) {
+//        double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
+//        double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
+//        AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+//        ((Graphics2D) g).drawImage(backgroundImage, xform, this);
+//    }
 }

@@ -62,6 +62,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.CommandPanel;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -87,7 +88,7 @@ public class StatusBar extends JPanel implements VCardListener {
     private JLabel nicknameLabel = new JLabel();
     private StatusPanel statusPanel = new StatusPanel();
     
-
+    private CommandPanel commandPanel ;
     private Image backgroundImage;
 
     private Presence currentPresence;
@@ -104,15 +105,13 @@ public class StatusBar extends JPanel implements VCardListener {
             final JLabel brandedLabel = new JLabel(brandedImage);
             add(brandedLabel, new GridBagConstraints(3, 0, 1, 3, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         }
+        commandPanel = new CommandPanel();
+       
+        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 8, 2, 2), 0, 0));
 
-
-        add(imageLabel, new GridBagConstraints(0, 0, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-
-        add(nicknameLabel, new GridBagConstraints(1, 0, 2, 2, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), 0, 0));
-        add(descriptiveLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
-
-        add(statusPanel, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
-
+        add(nicknameLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 12, 0, 0), 0, 0));
+        add(statusPanel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 7, 0, 0), 0, 0));
+        add(commandPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
         nicknameLabel.setToolTipText(SparkManager.getConnection().getUser());
         nicknameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
 
@@ -124,7 +123,7 @@ public class StatusBar extends JPanel implements VCardListener {
         currentPresence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
 
 
-        setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
+        //setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
 
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
@@ -171,6 +170,11 @@ public class StatusBar extends JPanel implements VCardListener {
         validateTree();
     }
 
+    public CommandPanel getCommandPanel()
+    {
+	return commandPanel;
+    }
+    
     public void setNickname(String nickname) {
         nicknameLabel.setText(nickname);
     }
@@ -514,7 +518,7 @@ public class StatusBar extends JPanel implements VCardListener {
                         ImageIcon avatarIcon = new ImageIcon(avatarBytes);
                         avatarIcon = VCardManager.scale(avatarIcon);
                         imageLabel.setIcon(avatarIcon);
-                        imageLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+                    //    imageLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
                         imageLabel.invalidate();
                         imageLabel.validate();
                         imageLabel.repaint();

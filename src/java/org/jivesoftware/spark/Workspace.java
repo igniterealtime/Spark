@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -161,21 +162,21 @@ public class Workspace extends JPanel implements PacketListener {
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
         workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
-
+        workspacePane.setBorder(BorderFactory.createEmptyBorder());
         // Add Panels.
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
         cardPanel.setOpaque(false);
         cardPanel.add(WORKSPACE_PANE, this);
-
+        
         statusBox = new StatusBar();
-        commandPanel = new CommandPanel();
-
+       // commandPanel = new CommandPanel();
+        
         // Build default workspace
         this.setLayout(new GridBagLayout());
-        add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 4, 4, 4), 0, 0));
-        add(statusBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 4, 4, 4), 0, 0));
-        add(commandPanel, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 4, 0, 4), 0, 0));
+        add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(statusBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+    //    add(commandPanel, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 4, 0, 4), 0, 0));
 
 
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
@@ -477,7 +478,7 @@ public class Workspace extends JPanel implements PacketListener {
      * @return the CommandPanel.
      */
     public CommandPanel getCommandPanel() {
-        return commandPanel;
+        return statusBox.getCommandPanel();
     }
 
     public ChatTranscriptPlugin getTranscriptPlugin() {
