@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Created-By: NetBeans IDE
+Specified-By: JTattoo.jarContent
+Main-Class: com.jtattoo.plaf.About
+

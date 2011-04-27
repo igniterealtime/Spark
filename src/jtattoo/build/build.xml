@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="JTattoo build script" default="dist" basedir=".">
+
+	<property name="debug" value="false"/>
+	<property name="optimize" value="true"/>
+	<property name="deprecation" value="false"/>
+	<property name="source" value="1.6"/>
+	<property name="target" value="1.6"/>
+
+	<property name="jtattoo.src.dir" value="../src"/>
+	<property name="jtattoo.build.dir" value=""/>
+	<property name="dest.source.build.dir" value="../build"/>
+	<property name="dest.dist.dir" value="../target"/>
+	<property name="dest.bin.dir" value="bin"/>
+
+	<!-- =================================================================== -->
+	<!-- Help on usage                                                       -->
+	<!-- =================================================================== -->
+	<target name="usage">
+		<echo message=""/>
+		<echo message="Verfuegbare Kommandos:"/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message="dist             Erzeugt die Distribution                    "/>
+		<echo message=""/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Clean target                                                        -->
+	<!-- =================================================================== -->
+	<target name="clean" description="cleans the destination dir">
+		<delete dir="${dest.dist.dir}"/>
+		<delete dir="${dest.bin.dir}"/>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Prepare target                                                      -->
+	<!-- =================================================================== -->
+	<target name="prepare" depends="clean" description="prepares destination dir">
+		<mkdir dir="${dest.dist.dir}"/>
+		<mkdir dir="${dest.bin.dir}"/>
+		<copy todir="${dest.bin.dir}">
+			<fileset 
+        dir="${jtattoo.src.dir}" 
+        includes="**/*.gif,**/*.jpg,**/*.GIF,**/*.JPG"
+      />
+		</copy>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Compile target                                                      -->
+	<!-- =================================================================== -->
+	<target name="compile" depends="prepare" description="compiles the source">
+		<javac 
+      srcdir="${jtattoo.src.dir}"
+      destdir="${dest.bin.dir}"
+      debug="${debug}"
+      optimize="${optimize}"
+      source="${source}"
+      target="${target}"
+      deprecation="${deprecation}"
+      includeantruntime="false"
+    />
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- JAR target                                                          -->
+	<!-- =================================================================== -->
+	<target name="jar" depends="compile" description="creates jar-files">
+		<delete dir="${dest.bin.dir}/com/jtattoo/plaf/custom" />
+		<jar 
+      basedir="${dest.bin.dir}" 
+      jarfile="${dest.dist.dir}/JTattoo.jar"
+      manifest="MANIFEST.MF"
+      compress="true" 
+    />
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Distribution target                                                 -->
+	<!-- =================================================================== -->
+	<target name="dist" depends="jar" description="creates distribution">
+	</target>
+
+	<target name="copy_to_spark" depends="jar" description="creates distribution">
+		<copy todir="../../../build/lib/dist">
+			<fileset dir="${dest.dist.dir}" includes="**/*.jar" />
+		</copy>
+
+	</target>
+
+</project>
