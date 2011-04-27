@@ -85,6 +85,8 @@ public class ChatRoomImpl extends ChatRoom {
     private String tabTitle;
     private String participantJID;
     private String participantNickname;
+    
+    private final Color TRANSPARENT_COLOR = new Color(0,0,0,0);
 
     private Presence presence;
 
@@ -269,7 +271,7 @@ public class ChatRoomImpl extends ChatRoom {
         lastActivity = System.currentTimeMillis();
 
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR, Color.white);
+            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR, TRANSPARENT_COLOR);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -494,7 +496,7 @@ public class ChatRoomImpl extends ChatRoom {
             checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
         }
 
-        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, Color.white);
+        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, TRANSPARENT_COLOR);
 
         // Set the participant jid to their full JID.
         participantJID = message.getFrom();
