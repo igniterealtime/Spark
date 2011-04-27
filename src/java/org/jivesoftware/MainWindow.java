@@ -160,7 +160,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         this.setJMenuBar(mainWindowBar);
         this.getContentPane().add(topToolbar, BorderLayout.NORTH);
 
-        setTitle(title + " - " + SparkManager.getSessionManager().getUsername());
+        setTitle(title);
         setIconImage(icon.getImage());
         
 	   	
