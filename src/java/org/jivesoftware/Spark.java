@@ -265,7 +265,7 @@ public final class Spark {
 	if(laf.contains("jtattoo"))
 	{  
 	    Properties props = new Properties();
-	    props.put("logoString", "Spark");  
+	    props.put("logoString", "");  
 	    try {
 		Class<?> c = ClassLoader.getSystemClassLoader().loadClass(laf);
 		Method m = c.getMethod("setCurrentTheme", Properties.class);
