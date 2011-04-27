@@ -13,7 +13,7 @@ import com.jtattoo.plaf.*;
  */
 public class LunaLookAndFeel extends AbstractLookAndFeel {
 
-    private static LunaDefaultTheme myTheme = null;
+    private static LunaSparkTheme myTheme = null;
 
     private static final ArrayList themesList = new ArrayList();
     private static final HashMap themesMap = new HashMap();
@@ -82,7 +82,7 @@ public class LunaLookAndFeel extends AbstractLookAndFeel {
 
     public static void setTheme(Properties themesProps) {
         if (myTheme == null) {
-            myTheme = new LunaDefaultTheme();
+            myTheme = new LunaSparkTheme();//LunaDefaultTheme();
         }
         if ((myTheme != null) && (themesProps != null)) {
             myTheme.setUpColor();
@@ -126,7 +126,7 @@ public class LunaLookAndFeel extends AbstractLookAndFeel {
 
     protected void createDefaultTheme() {
         if (myTheme == null) {
-            myTheme = new LunaDefaultTheme();
+            myTheme = new LunaSparkTheme();
         }
         setTheme(myTheme);
     }

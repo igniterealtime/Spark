@@ -261,26 +261,7 @@ public class MessageProcessing {
 
             try {
             	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
                 //((SIPClientTransaction) messageTransaction).sendRequest("\0".getBytes(), InetAddress.getByName(SIPConfig.getDefaultDomain()), SIPConfig.getRegistrarPort());
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
-            	// TODO : Anpassen
             }
             catch (Exception e) {
                 Log.error("sendKeepAlive", e);
