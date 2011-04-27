@@ -51,6 +51,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -75,6 +76,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 	ProviderManager.getInstance().addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
 	LocalPreferences localPref = SettingsManager.getLocalPreferences();
 	useTab = localPref.getShowTransportTab();
+	transferTab.setBackground((Color)UIManager.get("ContactItem.background"));
         SwingWorker thread = new SwingWorker() {
             public Object construct() {
                 try {

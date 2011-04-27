@@ -1,6 +1,5 @@
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -15,10 +14,10 @@ import javax.swing.DefaultListModel;
 
 import javax.swing.JCheckBox;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -58,8 +57,6 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private DefaultListModel model = new DefaultListModel();
     private JList _transportMenu = new JList(model);
     private JLabel _status = new JLabel();
-//    private JPanel _listPanel = new JPanel(new VerticalFlowLayout(
-//	    VerticalFlowLayout.TOP, 10, 0, true, false));
     private JPanel _listPanel = new JPanel(new GridBagLayout());
     private JLabel _statusIcon = new JLabel();
     private RolloverButton _signInOut = new RolloverButton();
@@ -75,14 +72,15 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 		SparkManager.getConnection(), _transport);
 
 	_autoJoin.setEnabled(false);
+	_autoJoin.setBackground((Color)UIManager.get("ContactItem.background"));
 	this.setIcon(transport.getIcon());
-	_status.setForeground(Color.gray);
+	_status.setForeground((Color)UIManager.get("ContactItemDescription.foreground"));
 	_status.setFont(new Font(getFont().getName(), Font.ITALIC, getFont()
 		.getSize()));
 	getTitlePane().add(_status);
 	this.setTitle(transport.getName());
 
-	_listPanel.setBackground(Color.lightGray);
+	_listPanel.setBackground((Color)UIManager.get("ContactItem.background"));
 	_transportMenu.setCellRenderer(new JPanelRenderer());
 
 	this.setContentPane(_listPanel);
@@ -143,7 +141,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private void createTransportMenu() {
 
 	_signInOut.addActionListener(new ActionListener() {
-
+	
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		if (signedIn) {
