@@ -43,6 +43,7 @@ public class GroupChatPreferencePanel extends JPanel {
     private JCheckBox highlightPopName		= new JCheckBox();
     private JCheckBox showjoinleavemessage 	= new JCheckBox();
     private JCheckBox showroleicons 	= new JCheckBox();
+    private JCheckBox _autoAcceptInvites = new JCheckBox();
 
     private JPanel gCPanel = new JPanel();
     /**
@@ -61,6 +62,7 @@ public class GroupChatPreferencePanel extends JPanel {
         ResourceUtils.resButton(highlightPopName	, Res.getString("menuitem.add.groupchat.popname"));
         ResourceUtils.resButton(showjoinleavemessage	, Res.getString("menuitem.add.groupchat.showjoinleavemessage"));
         ResourceUtils.resButton(showroleicons		, Res.getString("menuitem.add.groupchat.showrolesinsteadofstatus"));
+        ResourceUtils.resButton(_autoAcceptInvites 	, Res.getString("menuitem.add.groupchat.auto.accept.invite"));
         
         gCPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("title.group.chat.settings")));
 
@@ -73,6 +75,8 @@ public class GroupChatPreferencePanel extends JPanel {
         gCPanel.add(highlightPopName	, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(showjoinleavemessage, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(showroleicons	, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(_autoAcceptInvites	, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        
     }
 
     public void setMucHighNameEnabled(boolean mucNHigh) {
@@ -113,6 +117,14 @@ public class GroupChatPreferencePanel extends JPanel {
     
     public boolean isShowingRoleIcons() {
 	return showroleicons.isSelected();
+    }
+    
+    public void setAutoAcceptMuc(boolean accept) {
+	_autoAcceptInvites.setSelected(accept);
+    }
+
+    public boolean isAutoAcceptMuc() {
+	return _autoAcceptInvites.isSelected();
     }
 
 

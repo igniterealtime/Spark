@@ -982,6 +982,15 @@ public class LocalPreferences {
 	
 	private void setString(String property, String value) {
 		props.setProperty(property, value);
+	}
+
+    public boolean isAutoAcceptMucInvite() {
+	return getBoolean("autoAcceptMucInvite", false);
+    }
+
+    public void setAutoAcceptMucInvite(boolean autoAcceptMuc) {
+	setBoolean("autoAcceptMucInvite", autoAcceptMuc);
+
     }
 
 
