@@ -148,7 +148,7 @@ public class ScratchPadPlugin implements Plugin {
 
         // Add To toolbar
       JMenuBar menubar =  SparkManager.getMainWindow().getMenu();
-      JMenu menu =  menubar.getMenu(3);
+      JMenu menu =  menubar.getMenu(menubar.getMenuCount()-2);
       menu.add(taskMenu);
       menu.add(notesMenu);
 
