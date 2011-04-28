@@ -52,6 +52,7 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         final Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
         JPanel myPanel = new JPanel();
+        myPanel.setBackground(Color.white);
         PrivacyTreeNode node = (PrivacyTreeNode) value;
 
         myPanel.setLayout(new GridBagLayout());
