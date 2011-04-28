@@ -40,6 +40,9 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -124,29 +127,30 @@ public class ScratchPadPlugin implements Plugin {
             }
         }
 
-        RolloverButton taskButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
-        RolloverButton notesButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
-        taskButton.setToolTipText(Res.getString("button.view.tasklist"));
-        notesButton.setToolTipText(Res.getString("button.view.notes"));
+        
+        JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"),
+        	SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+        
+        JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
+        	SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
 
-        taskButton.addActionListener(new ActionListener() {
+        taskMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showTaskList();
             }
         });
 
-        notesButton.addActionListener(new ActionListener() {
+        notesMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 retrieveNotes();
             }
         });
 
         // Add To toolbar
-        SparkManager.getWorkspace().getCommandPanel().add(taskButton, index);
-        SparkManager.getWorkspace().getCommandPanel().add(notesButton, index);
-        SparkManager.getWorkspace().getCommandPanel().validate();
-        SparkManager.getWorkspace().getCommandPanel().invalidate();
-        SparkManager.getWorkspace().getCommandPanel().repaint();
+      JMenuBar menubar =  SparkManager.getMainWindow().getMenu();
+      JMenu menu =  menubar.getMenu(3);
+      menu.add(taskMenu);
+      menu.add(notesMenu);
 
         // Start notifications.
         new TaskNotification();
