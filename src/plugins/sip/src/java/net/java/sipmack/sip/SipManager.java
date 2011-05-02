@@ -597,15 +597,6 @@ public class SipManager implements SipListener {
         try {
 
         	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
-        	// TODO : Anpassen
             //SIPTransaction.setRegisterTimeout(10);
 
             //registerRetries = 0;
