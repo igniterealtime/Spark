@@ -1796,6 +1796,10 @@ public final class ContactList extends JPanel implements ActionListener,
     }
 
     private void loadContactList() {
+	
+        // Load all plugins
+        SparkManager.getWorkspace().loadPlugins();
+        
         // Build the initial contact list.
         buildContactList();
 
@@ -1810,8 +1814,7 @@ public final class ContactList extends JPanel implements ActionListener,
         // Add a subscription listener.
         addSubscriptionListener();
 
-        // Load all plugins
-        SparkManager.getWorkspace().loadPlugins();
+
     }
 
     public void addSubscriptionListener() {

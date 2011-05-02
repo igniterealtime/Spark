@@ -268,14 +268,14 @@ public class Workspace extends JPanel implements PacketListener {
         TaskEngine.getInstance().schedule(new TimerTask() {
             public void run() {
                 final PluginManager pluginManager = PluginManager.getInstance();
-                pluginManager.loadPlugins();
+                SparkManager.getMainWindow().addMainWindowListener(pluginManager);
                 pluginManager.initializePlugins();
 
                 // Subscriptions are always manual
                 Roster roster = SparkManager.getConnection().getRoster();
                 roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }
-        }, 2000);
+        }, 1000);
 
         // Check URI Mappings
         SparkManager.getChatManager().handleURIMapping(Spark.ARGUMENTS);

@@ -627,6 +627,9 @@ public class VCardManager {
      * @param vcard the users vcard.
      */
     private void persistVCard(String jid, VCard vcard) {
+        if (jid == null || vcard == null) {
+        	return;
+        } 
         String fileName = Base64.encodeBytes(jid.getBytes());
 
         byte[] bytes = vcard.getAvatar();
@@ -677,6 +680,9 @@ public class VCardManager {
      * @return the VCard if found, otherwise null.
      */
     private VCard loadFromFileSystem(String jid) {
+    	if (jid == null) {
+    		return null;
+    	}     	
         // Unescape JID
         String fileName = Base64.encodeBytes(jid.getBytes());
 

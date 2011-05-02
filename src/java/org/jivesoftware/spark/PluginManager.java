@@ -107,7 +107,6 @@ public class PluginManager implements MainWindowListener {
             movePlugins();
         }
 
-        SparkManager.getMainWindow().addMainWindowListener(this);
 
         // Create the extension directory if one does not exist.
         if (!PLUGINS_DIRECTORY.exists()) {

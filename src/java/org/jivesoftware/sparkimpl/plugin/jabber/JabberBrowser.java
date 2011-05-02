@@ -66,25 +66,6 @@ public class JabberBrowser implements Plugin {
     private XMPPConnection con;
     private JPanel browsePanel;
 
-    public JabberBrowser() {
-   	 
-   	 this.con = SparkManager.getConnection();
-   	 EventQueue.invokeLater(new Runnable() {
-
-   		 @Override
-   		 public void run() {
-   			 addressLabel = new JLabel();
-   			 addressField = new JComboBox();
-				
-
-   			 addressField.setEditable(true);
-   			 addressField.addItem(con.getHost());
-   		 }
-			 
-   	 });
-
-    }
-
     public void display() {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
@@ -233,6 +214,17 @@ public class JabberBrowser implements Plugin {
     }
 
     public void initialize() {
+    	this.con = SparkManager.getConnection();
+    	EventQueue.invokeLater(new Runnable() {
+    		@Override
+    		public void run() {
+    			addressLabel = new JLabel();
+    			addressField = new JComboBox();
+    			addressField.setEditable(true);
+    			addressField.addItem(con.getHost());
+    		}
+
+    	});      	
         SparkManager.getWorkspace().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F8"), "showBrowser");
         SparkManager.getWorkspace().getActionMap().put("showBrowser", new AbstractAction("showBrowser") {
 			private static final long serialVersionUID = 341826581565007606L;

@@ -457,11 +457,13 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public void paintComponent(Graphics g) {
-	      double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
-	      double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
-	      AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-	      ((Graphics2D)g).drawImage(backgroundImage, xform, this);
-		     
+    	  super.paintComponent(g);
+    	  if (backgroundImage != null) {
+    		  double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
+    		  double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
+    		  AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+    		  ((Graphics2D)g).drawImage(backgroundImage, xform, this);
+    	  }
     }
 
 

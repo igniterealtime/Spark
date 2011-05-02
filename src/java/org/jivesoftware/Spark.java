@@ -41,6 +41,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.ui.themes.ColorSettingManager;
 import org.jivesoftware.spark.ui.themes.ColorSettings;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -201,6 +202,11 @@ public final class Spark {
                 new Spark();
             }
         });
+        
+        //load plugins before Workspace initialization to avoid any UI delays
+        //during plugin rendering
+        final PluginManager pluginManager = PluginManager.getInstance();
+        pluginManager.loadPlugins();
 
         try {
 	        EventQueue.invokeAndWait(new Runnable(){
