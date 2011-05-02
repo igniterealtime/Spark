@@ -103,7 +103,7 @@
 	<property name="installer.release_root_path" value="${target.build}"/>
 
 	<property name="advinst.path" value="C:\Programme\Caphyon\Advanced Installer 7.2.1"/>
-	<property name="mac.build.dir" value="${target}/spark_${version.filename}"/>
+	<property name="mac.build.dir" value="${target}/spark_app"/>
 	<property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
 	<property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
 	<property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
@@ -619,24 +619,24 @@
 
 
 	<target name="mac.clean">
-		<symlink action="delete" failonerror="false" link="${mac.build.dir}/Applications"/>
-		<delete failonerror="false" includeemptydirs="true">
-			<fileset dir="${mac.build.dir}" followsymlinks="false"/>
-		</delete>
-		<delete file="${target}/tmp.dmg"/>
-		<delete file="${mac.dmg.file}"/>
+		<echo message="${mac.build.dir}" />
+		<exec executable="bash">
+			<arg value="unlink ${mac.build.dir}/Applications" />
+		</exec>
+		<delete file="${target}/tmp.dmg" />
+		<delete file="${mac.dmg.file}" />
 	</target>
 
 	<target name="mac.build.plugin" depends="jar">
 		<!-- build the apple jar and place it in the plugins -->
-		
-        <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="clean"/>
-        <ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="jar"/>
+
+		<ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="clean"/>
+		<ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="jar"/>
 
 		<!-- build the growl jar and place it in the plugins -->
-		
-        <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="clean"/>
-        <ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
+
+		<ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="clean"/>
+		<ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
 
 	</target>
 
@@ -706,14 +706,14 @@
 		<mkdir dir="${installer.dest.dir}"/>
 		<mkdir dir="${basedir}/installer"/>
 
-		<!--
-      <mkdir dir="${mac.build.dir}/.background"/>
 
-      <copy todir="${mac.build.dir}/.background">
-          <fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
-      </copy>
+		<mkdir dir="${mac.build.dir}/.background"/>
 
-     <symlink link="${mac.build.dir}/Applications" resource="/Applications"/> -->
+		<copy todir="${mac.build.dir}/.background">
+			<fileset file="${basedir}/build/installer/images/mac/dmgBackground.png"/>
+		</copy>
+
+		<symlink link="${mac.build.dir}/Applications" overwrite="true" resource="/Applications" />
 		<echo message="Create tmp.dmg"/>
 		<exec executable="hdiutil" failonerror="true">
 			<arg line="create -srcfolder '${mac.build.dir}' -volname '${mac.volname}' -fs HFS+ -fsargs '-c c=64,a=16,e=16' -format UDRW '${target}/tmp.dmg'"/>
@@ -722,23 +722,30 @@
 		<exec executable="hdiutil" failonerror="true">
 			<arg line="attach '${target}/tmp.dmg' -readwrite -noverify -noautoopen -noidme -mountpoint '${target}/tmp'"/>
 		</exec>
-		<!--
-          <exec executable="cp">
-              <arg line="${basedir}/build/installer/mac/RightDSStore ${basedir}/build/tmp/.DS_Store"/>
-          </exec>
 
-          <exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
-              <arg value="mac/dmg_spark.scpt"/>
-              <arg value="${mac.volname}"/>
-              <arg value="images/mac/background/"/>
-              <arg value="400"/>
-              <arg value="400"/>
-              <arg value="200"/>
-              <arg value="205"/>
-              <arg value="430"/>
-              <arg value="205"/>
-              <arg value="80"/>
-          </exec> -->
+		<exec executable="cp">
+			<arg line="${basedir}/build/installer/mac/RightDSStore ${basedir}/build/tmp/.DS_Store"/>
+		</exec>
+
+		<exec executable="osascript" dir="${basedir}/build/installer/" failonerror="true">
+			<arg value="mac/dmg_spark.scpt"/>
+			<arg value="${mac.volname}"/>
+			<arg value="images/mac/background/"/>
+			<arg value="648"/>
+			<!-- width-->
+			<arg value="450"/>
+			<!-- height-->
+			<arg value="200"/>
+			<!-- x1-->
+			<arg value="205"/>
+			<!-- y1-->
+			<arg value="430"/>
+			<!-- x2-->
+			<arg value="205"/>
+			<!-- y2-->
+			<arg value="80"/>
+			<!-- icon size-->
+		</exec>
 
 		<echo message="detach tmp"/>
 		<exec executable="hdiutil" failonerror="true">
