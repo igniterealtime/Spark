@@ -161,6 +161,7 @@
 				<or>
 					<contains string="${ant.java.version}" substring="1.5"/>
 					<contains string="${ant.java.version}" substring="1.6"/>
+					<contains string="${ant.java.version}" substring="1.7"/>
 				</or>
 			</not>
 		</condition>
@@ -247,6 +248,8 @@
 
 	<!-- build =================================================================================== -->
 	<target name="build" depends="init, resources, base, checkcode.checkstyle">
+		<echo message="${ant.version}"/>
+		<echo message="Java Version: ${ant.java.version}"/>
 		<!--Compiles the java code from ${src} directory into ${classes} directory-->
 		<javac destdir="${classes}"
                debug="true"
