@@ -262,10 +262,11 @@ public final class Spark {
 	    Log.error(e);
 	}
 	
-	if(laf.contains("jtattoo"))
-	{  
+	if (laf.contains("jtattoo")) {
 	    Properties props = new Properties();
-	    props.put("logoString", "");  
+	    String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? ""
+		    : Default.getString(Default.MENUBAR_TEXT);
+	    props.put("logoString", menubar);
 	    try {
 		Class<?> c = ClassLoader.getSystemClassLoader().loadClass(laf);
 		Method m = c.getMethod("setCurrentTheme", Properties.class);
@@ -275,6 +276,10 @@ public final class Spark {
 	    }
 	}
 	installBaseUIProperties();
+	
+	if (Default.getBoolean("CHANGE_COLORS_DISABLED")) {
+	    ColorSettingManager.restoreDefault();
+	}
     }
 
 

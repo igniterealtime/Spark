@@ -67,6 +67,7 @@ public class Default {
     public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
     public static final String BROADCAST_IN_CHATWINDOW = "BROADCAST_IN_CHATWINDOW";
+    public static final String MENUBAR_TEXT = "MENUBAR_TEXT";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
