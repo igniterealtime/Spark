@@ -20,11 +20,6 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.util.ResourceUtils;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,10 +28,14 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 /**
  * UI for editing Local Preferences.
@@ -59,7 +58,6 @@ public class LocalPreferencePanel extends JPanel {
     private JCheckBox _launchOnStartupBox = new JCheckBox();
     private JCheckBox _startMinimizedBox = new JCheckBox();
 
-    private JComboBox _showReconnectBox ;
 
     /**
      * Construct Local Preference UI.
@@ -67,10 +65,6 @@ public class LocalPreferencePanel extends JPanel {
     public LocalPreferencePanel() {
 	setLayout(new VerticalFlowLayout());
 
-	String[] r = { Res.getString("checkbox.reconnect.panel.big"),
-		Res.getString("checkbox.reconnect.panel.small"),
-		Res.getString("checkbox.reconnect.panel.icon") };
-	_showReconnectBox = new JComboBox(r);
 
 	// Load local localPref
 	LocalPreferences preferences = SettingsManager.getLocalPreferences();
@@ -81,8 +75,6 @@ public class LocalPreferencePanel extends JPanel {
 	_startMinimizedBox.setSelected(preferences.isStartedHidden());
 	
 	_idleStatusText = new JTextField(preferences.getIdleMessage());
-
-	_showReconnectBox.setSelectedIndex(preferences.getReconnectPanelType());
 
 	_savePasswordBox.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -107,12 +99,6 @@ public class LocalPreferencePanel extends JPanel {
 	    }
 	});
 
-	_showReconnectBox.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		if(_showReconnectBox.getSelectedIndex()!=-1)
-		setShowReconnectPanel(_showReconnectBox.getSelectedIndex());
-	    }
-	});
 
 	_idleBox.setSelected(preferences.isIdleOn());
 	_idleField.setText(Integer.toString(preferences.getIdleTime()));
@@ -171,9 +157,6 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 8, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add(new JLabel(), new GridBagConstraints(0, 9, 2, 1, 1.0,1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,new Insets(5, 5, 5, 5), 50, 0));
 	
-	JLabel reconnectionlabel= new JLabel(Res.getString("checkbox.reconnet.info"));
-	inputPanel.add(reconnectionlabel, new GridBagConstraints(0, 10, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_showReconnectBox, new GridBagConstraints(1, 10, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	
 	add(inputPanel);
     }
@@ -308,25 +291,7 @@ public class LocalPreferencePanel extends JPanel {
     public void setStartOnStartup(boolean startup) {
 	_launchOnStartupBox.setSelected(startup);
     }
-
-    /**
-     * Return 0,1,2
-     * 
-     * @return
-     */
-    public int getReconnectPanelType() {
-	return _showReconnectBox.getSelectedIndex();
-    }
-
-    /**
-     * set 0,1,2
-     * 
-     * @param reconnect
-     */
-    public void setShowReconnectPanel(int reconnect) {
-	_showReconnectBox.setSelectedIndex(reconnect);
-    }
-    
+   
     public String getIdleMessage(){
 	return _idleStatusText.getText();
     }

@@ -19,6 +19,30 @@
  */ 
 package org.jivesoftware.spark.ui.themes;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -33,30 +57,6 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.text.BadLocationException;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Vector;
-
 
 /**
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
@@ -64,7 +64,9 @@ import java.util.Vector;
 public class ThemePanel extends JPanel {
 	private static final long serialVersionUID = 2943854311454590459L;
 
-	private TranscriptWindow transcript;
+	private TranscriptWindow emoticonpreviewtranscript;
+	
+	private JLabel emoticonsdisplay;
 
     private JComboBox messageStyleBox;
 
@@ -94,6 +96,10 @@ public class ThemePanel extends JPanel {
     private JCheckBox _useTabsForTransports;
     
     private ThemePanel _themepanel;
+
+    private JComboBox _showReconnectBox;
+    
+    private LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     /**
      * Construct UI
@@ -244,14 +250,16 @@ public class ThemePanel extends JPanel {
 
         emoticonsLabel = new JLabel();
         emoticonBox = new JComboBox();
+        emoticonsdisplay = new JLabel();
+        emoticonsdisplay.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
         emoticonCheckBox = new JCheckBox();
 
         JButton addThemeButton = new JButton();
         addEmoticonButton = new JButton();
 
-        transcript = new TranscriptWindow();
-        transcript.setForceEmoticons(true);
+        emoticonpreviewtranscript = new TranscriptWindow();
+        emoticonpreviewtranscript.setForceEmoticons(true);
 
         showAvatarsBox = new JCheckBox();
         avatarSizeLabel = new JLabel();
@@ -263,6 +271,24 @@ public class ThemePanel extends JPanel {
 
         chatRoomFontField = new JTextField();
         chatRoomFontLabel = new JLabel();
+        
+        
+
+	String[] r = { Res.getString("checkbox.reconnect.panel.big"),
+		Res.getString("checkbox.reconnect.panel.small"),
+		Res.getString("checkbox.reconnect.panel.icon") };
+	_showReconnectBox = new JComboBox(r);
+	
+	_showReconnectBox.setSelectedIndex(pref.getReconnectPanelType());
+	
+	_showReconnectBox.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		if(_showReconnectBox.getSelectedIndex()!=-1)
+		setShowReconnectPanel(_showReconnectBox.getSelectedIndex());
+	    }
+	});
+
+	
         
         showVCards = new JCheckBox();
 
@@ -290,7 +316,8 @@ public class ThemePanel extends JPanel {
      */
     private void buildUI() {
         // Add Viewer
-        add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+//        add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        add(emoticonsdisplay, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         add(emoticonsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonBox, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -312,8 +339,14 @@ public class ThemePanel extends JPanel {
         add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(_useTabsForTransports, new GridBagConstraints(0, 10, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
+        
+        JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnet.info"));
+        add(reconnectionlabel, new GridBagConstraints(0, 11, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	add(_showReconnectBox, new GridBagConstraints(1, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+
+        
         // Activate live one.
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        
 
  
         _useTabsForTransports.setSelected(pref.getShowTransportTab());
@@ -391,34 +424,43 @@ public class ThemePanel extends JPanel {
      * Displays the active emoticon pack.
      */
     protected void showSelectedEmoticon() {
-        EmoticonManager emoticonManager = EmoticonManager.getInstance();
-        String activeEmoticonName = emoticonManager.getActiveEmoticonSetName();
+	EmoticonManager emoticonManager = EmoticonManager.getInstance();
+	String activeEmoticonName = emoticonManager.getActiveEmoticonSetName();
 
-        transcript.clear();
-        transcript.insertCustomText(activeEmoticonName + " Emoticons", true, true, Color.GRAY);
-        try {
-            transcript.insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
+	// emoticonpreviewtranscript.clear();
+	// emoticonpreviewtranscript.insertCustomText(activeEmoticonName + " Emoticons", true,
+	// true, Color.GRAY);
+	// try {
+	// emoticonpreviewtranscript.insertText("\n");
+	// }
+	// catch (BadLocationException e) {
+	// Log.error(e);
+	// }
 
-        StringBuilder builder = new StringBuilder();
-        if (emoticonManager.getActiveEmoticonSet() != null)
-        {
-	        for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
-	            String eq = emoticon.getEquivalants().get(0);
-	            builder.append(eq);
-	            builder.append(" ");
-	        }
-        }
-        
-        try {
-            transcript.insert(builder.toString());
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
+	// StringBuilder builder = new StringBuilder();
+	StringBuilder label = new StringBuilder();
+	if (emoticonManager.getActiveEmoticonSet() != null) {
+	    for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
+		String app = emoticonManager.getEmoticonURL(emoticon)
+			.toString();
+		label.append("<img src=\"" + app + "\"/>&nbsp");
+		//
+		// String eq = emoticon.getEquivalants().get(0);
+		// builder.append(eq);
+		// builder.append(" ");
+	    }
+	}
+
+	emoticonsdisplay.setText("<HTML><BODY><u><font color=\"#6E6E6E\">"
+		+ activeEmoticonName + " Emoticons</font></u><br><br>"
+		+ label.toString() + "</BODY></HTML>");
+
+	// try {
+	// emoticonpreviewtranscript.insert(builder.toString());
+	// }
+	// catch (BadLocationException e) {
+	// Log.error(e);
+	// }
     }
 
     /**
@@ -552,6 +594,24 @@ public class ThemePanel extends JPanel {
      */
     public String getLookAndFeel() {
 	return _lookandfeelname.get(_lookandfeel.getSelectedIndex());
+    }
+    
+    /**
+     * Return 0,1,2
+     * 
+     * @return
+     */
+    public int getReconnectPanelType() {
+	return _showReconnectBox.getSelectedIndex();
+    }
+
+    /**
+     * set 0,1,2
+     * 
+     * @param reconnect
+     */
+    public void setShowReconnectPanel(int reconnect) {
+	_showReconnectBox.setSelectedIndex(reconnect);
     }
     
     

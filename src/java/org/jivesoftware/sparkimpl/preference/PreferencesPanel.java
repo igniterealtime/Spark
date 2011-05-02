@@ -20,11 +20,13 @@
 
 package org.jivesoftware.sparkimpl.preference;
 
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
-import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -36,30 +38,37 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.Iterator;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
+import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
 
-	private static final long	serialVersionUID	= 1520420979038154046L;
-	private final JLabel titleLabel = new JLabel();
+    private static final long serialVersionUID = 1520420979038154046L;
+    private final JLabel titleLabel = new JLabel();
+    /**
+     * flowpanel is the right panel, where the plugin specific UI is displayed
+     */
     private final JPanel flowPanel = new JPanel(new BorderLayout());
+    /**
+     * scrollPane is the left panel displaying the preference icons
+     */
+    private JScrollPane scrollPane;
     private DefaultListModel listModel = new DefaultListModel();
     private JList list = new JList(listModel);
     private Preference currentPreference;
+    
 
-    public PreferencesPanel(Iterator preferences) {
+    public PreferencesPanel(Iterator<Preference> preferences) {
         this.setLayout(new GridBagLayout());
 
         titleLabel.setText(Res.getString("title.preferences"));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize(new Dimension(125, 0));
+        scrollPane.setMinimumSize(new Dimension(125,100));
         list.setFixedCellHeight(50);
 
         add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 50, 0));
@@ -70,7 +79,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         list.addListSelectionListener(this);
         // Populate with current preferences
         while (preferences.hasNext()) {
-            Preference preference = (Preference)preferences.next();
+            Preference preference = preferences.next();
             listModel.addElement(new PreferenceUI(preference));
         }
 

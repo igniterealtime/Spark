@@ -111,7 +111,8 @@ public class ThemePreference implements Preference {
         pref.setLookAndFeel(panel.getThemePanel().getLookAndFeel());
         pref.setAvatarVisible(panel.getThemePanel().areAvatarsVisible());
         pref.setContactListIconSize(panel.getThemePanel().getContactListIconSize());
-        pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());
+        pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());        
+        pref.setReconnectPanelType(panel.getThemePanel().getReconnectPanelType());
 
         try {
             String chatRoomFontSize = panel.getThemePanel().getChatRoomFontSize();
