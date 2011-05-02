@@ -22,21 +22,25 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 import org.jivesoftware.smack.packet.PacketExtension;
 
 /**
- *
+ * XEP-0224 Compliance<br>
+ * see <a
+ * href="http://xmpp.org/extensions/xep-0224.html">http://xmpp.org/extensions
+ * /xep-0224.html</a>
  */
 public class BuzzPacket implements PacketExtension {
     public String getElementName() {
-        return "buzz";
+	return "attention";
     }
 
     public String getNamespace() {
-        return "http://www.jivesoftware.com/spark";
+	return "urn:xmpp:attention:0";
     }
 
+    
+    //TODO 2.6.1 remove buzz only attention gets to stay
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\"/>");
-        return buf.toString();
+	return "<" + getElementName() + " xmlns=\"" + getNamespace()
+		+ "\"/><buzz xmlns=\"http://www.jivesoftware.com/spark\"/>";
     }
 
 }
