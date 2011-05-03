@@ -275,7 +275,7 @@ public class Workspace extends JPanel implements PacketListener {
                 Roster roster = SparkManager.getConnection().getRoster();
                 roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }
-        }, 1000);
+        }, 2000);
 
         // Check URI Mappings
         SparkManager.getChatManager().handleURIMapping(Spark.ARGUMENTS);

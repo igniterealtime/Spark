@@ -1796,24 +1796,23 @@ public final class ContactList extends JPanel implements ActionListener,
     }
 
     private void loadContactList() {
-	
-        // Load all plugins
-        SparkManager.getWorkspace().loadPlugins();
-        
-        // Build the initial contact list.
-        buildContactList();
 
-        boolean show = localPreferences.isEmptyGroupsShown();
+	// Build the initial contact list.
+	buildContactList();
 
-        // Hide all groups initially
-        showEmptyGroups(show);
-        
-        // Hide all Offline Users
-        showOfflineUsers(localPreferences.isOfflineUsersShown());
+	boolean show = localPreferences.isEmptyGroupsShown();
 
-        // Add a subscription listener.
-        addSubscriptionListener();
+	// Hide all groups initially
+	showEmptyGroups(show);
 
+	// Hide all Offline Users
+	showOfflineUsers(localPreferences.isOfflineUsersShown());
+
+	// Add a subscription listener.
+	addSubscriptionListener();
+
+	// Load all plugins
+	SparkManager.getWorkspace().loadPlugins();
 
     }
 
