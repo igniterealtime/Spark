@@ -620,8 +620,8 @@
 
 	<target name="mac.clean">
 		<echo message="${mac.build.dir}" />
-		<exec executable="bash">
-			<arg value="unlink ${mac.build.dir}/Applications" />
+		<exec dir="." executable="/bin/unlink" os="Mac OS X">
+			<arg value="${mac.build.dir}/Applications" />
 		</exec>
 		<delete file="${target}/tmp.dmg" />
 		<delete file="${mac.dmg.file}" />
@@ -639,6 +639,13 @@
 		<ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
 
 	</target>
+    
+    <target name="mac.app.zip" depends="mac.app">   
+    <exec executable="/bin/bash" dir="${basedir}/build/installer/" failonerror="true">
+			<arg value="mac/tar.sh"/>
+			<arg value="${mac.build.dir}"/>
+		</exec>
+    </target>
 
 	<target name="mac.app" depends="mac.clean,mac.build.plugin">
 
