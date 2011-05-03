@@ -862,12 +862,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	boolean result = false;
 	try {
 
-	    RoomInfo rif = MultiUserChat.getRoomInfo(
-		    SparkManager.getConnection(), roomjid);
+	    RoomInfo rif = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomjid);
 
 	    result = rif.isMembersOnly() || rif.isPasswordProtected();
 
 	} catch (XMPPException e) {
+
+	} catch (NumberFormatException nfe) {
+
 	}
 
 	return result;
