@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.language;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.log.Log;
@@ -57,14 +58,15 @@ public class LanguagePlugin implements Plugin {
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
 
         languageMenu = new JMenu(Res.getString("menuitem.languages"));
+        languageMenu.setIcon(SparkRes.getImageIcon("LANGUAGE_ICON"));
 
         locales = Locale.getAvailableLocales();
 
         // Load files
         URL sparkJar = getClass().getClassLoader().getResource("spark.jar");
         if (sparkJar == null) {
-            // Do not initialize
-            return;
+            sparkJar =  getClass().getProtectionDomain().getCodeSource().getLocation();
+            if (sparkJar == null) return;
         }
 
         try {
