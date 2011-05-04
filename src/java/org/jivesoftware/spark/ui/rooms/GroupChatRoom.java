@@ -76,6 +76,7 @@ import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GroupChatRoomTransferHandler;
+import org.jivesoftware.spark.ui.conferences.AnswerFormDialog;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
@@ -822,10 +823,11 @@ public final class GroupChatRoom extends ChatRoom {
      */
     private void setupListeners() {
 	chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
-	    public void kicked(String participant) {
+	    
+	    public void kicked(String participant, String actor, String reason) {
 		String nickname = StringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.kicked.from.room",
-			nickname));
+			nickname,actor,reason));
 	    }
 
 	    public void voiceGranted(String participant) {
@@ -839,9 +841,9 @@ public final class GroupChatRoom extends ChatRoom {
 			.getString("message.user.voice.revoked", nickname));
 	    }
 
-	    public void banned(String participant) {
+	    public void banned(String participant, String actor, String reason) {
 		String nickname = StringUtils.parseResource(participant);
-		insertText(Res.getString("message.user.banned", nickname));
+		insertText(Res.getString("message.user.banned", nickname, reason));
 	    }
 
 	    public void membershipGranted(String participant) {
@@ -1351,14 +1353,20 @@ public final class GroupChatRoom extends ChatRoom {
 	RolloverButton settings = new RolloverButton(
 		SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
 	settings.setToolTipText(Res.getString("title.configure.room"));
+	
 	RolloverButton thema = new RolloverButton(
 		SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
 	thema.setToolTipText(Res.getString("menuitem.change.subject"));
+	
+	RolloverButton register = new RolloverButton(
+		SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
+	register.setToolTipText(Res.getString("button.register").replace("&",""));
 
 	JPanel bar = room.getRoomControllerBar();
 
-	bar.add(thema);
-	bar.add(settings);
+	bar.add(settings,0);
+	bar.add(thema,0);
+	bar.add(register,0);
 
 	settings.addActionListener(new AbstractAction() {
 	    private static final long serialVersionUID = 6780230647854132857L;
@@ -1396,6 +1404,24 @@ public final class GroupChatRoom extends ChatRoom {
 				ChatManager.ERROR_COLOR);
 			scrollToBottom();
 		    }
+		}
+	    }
+	});
+	
+	register.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		try {
+		    Form form = chat.getRegistrationForm();
+		    ChatFrame chatFrame = SparkManager.getChatManager()
+			    .getChatContainer().getChatFrame();
+
+		    new AnswerFormDialog(chatFrame, chat, form);
+
+		}  catch (XMPPException xmpe) {
+		    getTranscriptWindow().insertNotificationMessage(
+			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
+		    scrollToBottom();
 		}
 	    }
 	});

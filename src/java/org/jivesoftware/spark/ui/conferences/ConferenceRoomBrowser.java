@@ -853,7 +853,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     /**
-     * Returns true if the room is password protected
+     * Returns true if the room is password protected or Members only
      * 
      * @param roomjid
      * @return
@@ -862,7 +862,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	boolean result = false;
 	try {
 
-	    RoomInfo rif = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomjid);
+	    RoomInfo rif = MultiUserChat.getRoomInfo(
+		    SparkManager.getConnection(), roomjid);
 
 	    result = rif.isMembersOnly() || rif.isPasswordProtected();
 

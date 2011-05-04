@@ -360,118 +360,123 @@ public class SparkTabbedPane extends JPanel {
 		}
 	}
 
-	private class TabPanel extends JPanel {
-		private static final long serialVersionUID = -8249981130816404360L;
-		private final BorderLayout layout = new BorderLayout(5,5);
-		private final Font defaultFont = new Font("Dialog", Font.PLAIN, 11);
-		private JLabel iconLabel;
-		private JLabel titleLabel;
+    private class TabPanel extends JPanel {
+	private static final long serialVersionUID = -8249981130816404360L;
+	private final BorderLayout layout = new BorderLayout(5, 5);
+	private final Font defaultFontPlain = new Font("Dialog", Font.PLAIN, 11);
+	private final Font defaultFontBold = new Font("Dialog", Font.BOLD, 11);
+	private JLabel iconLabel;
+	private JLabel titleLabel;
+	private JLabel tabCloseButton = new JLabel(closeInactiveButtonIcon);
 
-		public TabPanel(final SparkTab sparktab, String title, Icon icon) {
-			setOpaque(false);		
-			this.setLayout(layout);
-			
-			titleLabel = new JLabel(title);
-			titleLabel.setFont(defaultFont);
-			if (icon != null)
-			{
-				iconLabel = new JLabel(icon);
-				add(iconLabel, BorderLayout.WEST);
+	public TabPanel(final SparkTab sparktab, String title, Icon icon) {
+	    setOpaque(false);
+	    this.setLayout(layout);
+	    titleLabel = new JLabel(title);
+
+	    titleLabel.setFont(closeEnabled ? defaultFontBold
+		    : defaultFontPlain);
+	    if (icon != null) {
+		iconLabel = new JLabel(icon);
+		add(iconLabel, BorderLayout.WEST);
+	    }
+
+	    add(titleLabel, BorderLayout.CENTER);
+	    if (closeEnabled) {
+		tabCloseButton.addMouseListener(new MouseAdapter() {
+		    public void mouseEntered(MouseEvent mouseEvent) {
+			if (Spark.isWindows()) {
+			    tabCloseButton.setIcon(closeActiveButtonIcon);
 			}
-			
-			add(titleLabel, BorderLayout.CENTER);
-			if (closeEnabled) {
-				final JLabel tabCloseButton = new JLabel(
-						closeInactiveButtonIcon);
-				tabCloseButton.addMouseListener(new MouseAdapter() {
-					public void mouseEntered(MouseEvent mouseEvent) {
-						if (Spark.isWindows()) {
-							tabCloseButton.setIcon(closeActiveButtonIcon);
-						}
-						setCursor(HAND_CURSOR);
-					}
+			setCursor(HAND_CURSOR);
+		    }
 
-					public void mouseExited(MouseEvent mouseEvent) {
-						if (Spark.isWindows()) {
-							tabCloseButton.setIcon(closeInactiveButtonIcon);
-						}
-						setCursor(DEFAULT_CURSOR);
-					}
-
-					public void mousePressed(MouseEvent mouseEvent) {
-						final SwingWorker closeTimerThread = new SwingWorker() {
-							public Object construct() {
-								try {
-									Thread.sleep(100);
-								} catch (InterruptedException e) {
-									Log.error(e);
-								}
-								return true;
-							}
-
-							public void finished() {
-								close(sparktab);
-							}
-						};
-						closeTimerThread.start();
-					}
-				});
-				add(tabCloseButton, BorderLayout.EAST);
-			}	
-		}
-
-		@Override
-		public Dimension getPreferredSize() {
-		    Dimension dim = super.getPreferredSize();
-		    if (closeEnabled && titleLabel.getText().length() < 6) {
-			return new Dimension(80, dim.height);
-
-		    } else
-			return super.getPreferredSize();
-
-		}
-		
-		public Font getDefaultFont() {
-			return defaultFont;
-		}
-
-		public void setIcon(Icon icon) {
-			iconLabel.setIcon(icon);
-		}
-
-		public void setTitle(String title) {
-			titleLabel.setText(title);
-		}
-
-		public void setTitleColor(Color color) {
-			titleLabel.setForeground(color);
-			titleLabel.validate();
-			titleLabel.repaint();
-		}
-
-		public void setTitleBold(boolean bold) {
-			Font oldFont = titleLabel.getFont();
-			Font newFont;
-			if (bold) {
-				newFont = new Font(oldFont.getFontName(), Font.BOLD, oldFont
-						.getSize());
-			} else {
-				newFont = new Font(oldFont.getFontName(), Font.PLAIN, oldFont
-						.getSize());
+		    public void mouseExited(MouseEvent mouseEvent) {
+			if (Spark.isWindows()) {
+			    tabCloseButton.setIcon(closeInactiveButtonIcon);
 			}
+			setCursor(DEFAULT_CURSOR);
+		    }
 
-			titleLabel.setFont(newFont);
-			titleLabel.validate();
-			titleLabel.repaint();
-		}
+		    public void mousePressed(MouseEvent mouseEvent) {
+			final SwingWorker closeTimerThread = new SwingWorker() {
+			    public Object construct() {
+				try {
+				    Thread.sleep(100);
+				} catch (InterruptedException e) {
+				    Log.error(e);
+				}
+				return true;
+			    }
 
-		public void setTitleFont(Font font) {
-			titleLabel.setFont(font);
-			titleLabel.validate();
-			titleLabel.repaint();
-		}
+			    public void finished() {
+				close(sparktab);
+			    }
+			};
+			closeTimerThread.start();
+		    }
+		});
+		add(tabCloseButton, BorderLayout.EAST);
+	    }
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+	    Dimension dim = super.getPreferredSize();
+
+	    if (closeEnabled && titleLabel.getText().length() < 6
+		    && dim.getWidth() < 80) {
+		return new Dimension(80, dim.height);
+
+	    } else {
+		return dim;
+	    }
 
 	}
+
+	public Font getDefaultFont() {
+	    return defaultFontPlain;
+	}
+
+	public void setIcon(Icon icon) {
+	    iconLabel.setIcon(icon);
+	}
+
+	public void setTitle(String title) {
+	    titleLabel.setText(title);
+	}
+
+	public void setTitleColor(Color color) {
+	    titleLabel.setForeground(color);
+	    titleLabel.validate();
+	    titleLabel.repaint();
+	}
+
+	public void setTitleBold(boolean bold) {
+	    Font oldFont = titleLabel.getFont();
+	    Font newFont;
+	    if (bold) {
+		newFont = new Font(oldFont.getFontName(), Font.BOLD,
+			oldFont.getSize());
+	    } else {
+		newFont = new Font(oldFont.getFontName(), Font.PLAIN,
+			oldFont.getSize());
+	    }
+
+	    titleLabel.setFont(newFont);
+	    titleLabel.validate();
+	    titleLabel.repaint();
+	    titleLabel.revalidate();
+	}
+
+	public void setTitleFont(Font font) {
+	    titleLabel.setFont(font);
+	    titleLabel.validate();
+	    titleLabel.repaint();
+	    titleLabel.revalidate();
+	}
+
+    }
 
 	/**
 	 * Drag and Drop

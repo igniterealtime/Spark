@@ -327,6 +327,7 @@ public class SparkRes {
     public static final String COLOR_ICON = "COLOR_ICON";
     public static final String SETTINGS_IMAGE_16x16 = "SETTINGS_IMAGE_16x16";
     public static final String SETTINGS_IMAGE_24x24 = "SETTINGS_IMAGE_24x24";
+    public static final String PEOPLE_IMAGE = "PEOPLE_IMAGE";
     
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
