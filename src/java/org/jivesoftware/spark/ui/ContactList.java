@@ -276,19 +276,19 @@ public final class ContactList extends JPanel implements ActionListener,
 
         // Get command panel and add View Online/Offline, Add Contact
 //        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel(); 
-
-
-        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
-        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
-        	commandPanel.add(addContactButton);
-        }
-        addContactButton.setToolTipText(Res.getString("message.add.a.contact"));
-        addContactButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new RosterDialog().showRosterDialog();
-            }
-        });
+//        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel(); 
+//
+//
+//        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
+//        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
+//        	commandPanel.add(addContactButton);
+//        }
+//        addContactButton.setToolTipText(Res.getString("message.add.a.contact"));
+//        addContactButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                new RosterDialog().showRosterDialog();
+//            }
+//        });
         
     }
     

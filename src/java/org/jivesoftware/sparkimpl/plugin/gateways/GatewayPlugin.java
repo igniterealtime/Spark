@@ -103,16 +103,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 
                 
                 
-                if (TransportUtils.getTransports().size() > 0 ) {
-                    if(useTab)
-                    {
-                    SparkManager.getWorkspace().getWorkspacePane().addTab(Res.getString("title.transports"), SparkRes.getImageIcon(SparkRes.TRANSPORT_ICON), transferTab);
-                    } 
-                    else
-                    {
-                    final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
-                    commandPanel.add(dividerLabel);
-                    }
+                if (TransportUtils.getTransports().size() > 0  && useTab) {
+                   SparkManager.getWorkspace().getWorkspacePane().addTab(Res.getString("title.transports"), SparkRes.getImageIcon(SparkRes.TRANSPORT_ICON), transferTab); 
                 }
 
                 for (final Transport transport : TransportUtils.getTransports()) {

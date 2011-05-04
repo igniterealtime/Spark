@@ -114,7 +114,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
-        actionsMenu.add(startConversationtMenu);
+        actionsMenu.add(startConversationtMenu,0);
         startConversationtMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -141,6 +141,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 }
             }
         });
+        
+
 
         // Add send to selected users.
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -177,9 +179,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));
-
-        // Add Broadcast button to command panel.
-        commandPanel.add(broadcastToRosterButton);
+//
+//        // Add Broadcast button to command panel.
+//        commandPanel.add(broadcastToRosterButton);
 
         statusBar.invalidate();
         statusBar.validate();

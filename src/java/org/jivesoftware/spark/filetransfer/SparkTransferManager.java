@@ -184,6 +184,7 @@ public class SparkTransferManager {
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
         JMenuItem downloadsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
+        actionsMenu.addSeparator();
         actionsMenu.add(downloadsMenu);
         downloadsMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {        
@@ -237,22 +238,22 @@ public class SparkTransferManager {
 
         addPresenceListener();
 
-        // Add View Downloads to Command Panel
-        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
-
-        RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
-        viewDownloads.setToolTipText(Res.getString("menuitem.view.downloads"));
-        commandPanel.add(viewDownloads);
-        viewDownloads.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {              
-                try {
-					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
-				} catch (IOException e1) {
-					Log.error("Could not find file-browser");
-				}
-            }
-        });
-    }
+//        // Add View Downloads to Command Panel
+//        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+//
+//        RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
+//        viewDownloads.setToolTipText(Res.getString("menuitem.view.downloads"));
+//        commandPanel.add(viewDownloads);
+//        viewDownloads.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {              
+//                try {
+//					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
+//				} catch (IOException e1) {
+//					Log.error("Could not find file-browser");
+//				}
+//            }
+//        });
+       }
 
     private void handleTransferRequest(FileTransferRequest request, ContactList contactList) {
         // Check if a listener handled this request

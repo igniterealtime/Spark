@@ -31,6 +31,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -91,14 +92,12 @@ public class ConferenceServices implements InvitationListener {
 
             addPopupListeners();
 
-            // Add Join Conference Button to StatusBar
-            // Get command panel and add View Online/Offline, Add Contact
-            JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
-
-            RolloverButton joinConference = new RolloverButton(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
-            joinConference.setToolTipText(Res.getString("message.join.conference.room"));
-            commandPanel.add(joinConference);
-            joinConference.addActionListener(new ActionListener() {
+            // Add Join Conference Button to ActionMenu
+            
+              final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+            JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+            actionsMenu.add(actionMenuItem,1);
+            actionMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
                     rooms.invoke();
