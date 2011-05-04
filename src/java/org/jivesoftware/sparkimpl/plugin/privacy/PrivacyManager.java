@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
+
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PrivacyList;
@@ -38,8 +38,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyListBlackList;
 
@@ -57,6 +55,7 @@ public class PrivacyManager implements SparkPrivacyListListener {
     private PrivacyListManager privacyManager;
     private PrivacyListBlackList blackList;
     private boolean _startUpDone = false;
+    private Thread _removeUITask;
 
     /**
      * PrivacyLists will be used in spark
@@ -194,8 +193,12 @@ public class PrivacyManager implements SparkPrivacyListListener {
      * (because another resource changed sth) use this method
      */
     public void forceReloadLists() {
-	final TimerTask removeUITask = new SwingTimerTask() {
-	    public void doRun() {
+
+	if (_removeUITask != null && _removeUITask.isAlive()) {
+	    return;
+	}
+	_removeUITask = new Thread("catch privacy lists") {
+	    public void run() {
 		_nameList = new ArrayList<String>();
 		_privacyLists = new HashMap<String, SparkPrivacyList>();
 		try {
@@ -214,12 +217,10 @@ public class PrivacyManager implements SparkPrivacyListListener {
 		    Log.warning("Error load privaylist names");
 		    e.printStackTrace();
 		}
-		;
-
 	    }
 	};
 
-	TaskEngine.getInstance().schedule(removeUITask, 20);
+	_removeUITask.start();
 
     }
     
