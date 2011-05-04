@@ -63,17 +63,6 @@ public class LunaIcons extends BaseIcons {
 //------------------------------------------------------------------------------
     private static class TitleButtonIcon implements Icon {
 
-        private static Color blueFrameColor = Color.white;
-        private static Color blueColorLight = new Color(154, 183, 250);
-        private static Color blueColorDark = new Color(0, 69, 211);
-        private static Color closerColorLight = new Color(241, 172, 154);
-        private static Color closerColorDark = new Color(224, 56, 2);
-        public static final int ICON_ICON_TYP = 0;
-        public static final int MIN_ICON_TYP = 1;
-        public static final int MAX_ICON_TYP = 2;
-        public static final int CLOSE_ICON_TYP = 3;
-        private int iconTyp = ICON_ICON_TYP;
-        
         private Icon _active;
         private Icon _inactive;
 
@@ -94,9 +83,9 @@ public class LunaIcons extends BaseIcons {
 	    AbstractButton btn = (AbstractButton) c;
 
 	    Graphics2D g2D = (Graphics2D) g;
-	    Color fc = blueFrameColor;
-	    Color cHi = blueColorLight;
-	    Color cLo = blueColorDark;
+	    Color fc = Color.white;
+	    Color cHi = new Color(154, 183, 250);
+	    Color cLo = new Color(0, 69, 211);
 	    int w = c.getWidth();
 	    int h = c.getHeight();
 	    g2D.setPaint(new GradientPaint(0, 0, cHi, w, h, cLo));
