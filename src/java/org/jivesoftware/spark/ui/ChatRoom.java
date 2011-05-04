@@ -120,7 +120,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private KeyAdapter chatEditorKeyListener;
     private ChatFrame _chatFrame;
-    private JCheckBox _alwaysOnTopItem;
+    private RolloverButton _alwaysOnTopItem;
+    private boolean _isAlwaysOnTopActive;
 
     /**
      * Initializes the base layout and base background color.
@@ -317,24 +318,31 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     
         
         
-	
-	_alwaysOnTopItem = new JCheckBox();
-	_alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
-	_alwaysOnTopItem.setSelectedIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
-	_alwaysOnTopItem.setRolloverEnabled(false);
+	_isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
+	_alwaysOnTopItem = new RolloverButton();
+	if (_isAlwaysOnTopActive) {
+	    
+	    _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+	} else {
+	    _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+	}
 	_alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
         _alwaysOnTopItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                	if (_alwaysOnTopItem.isSelected())
+                	if (!_isAlwaysOnTopActive)
                 	{
                 		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
                 		_chatFrame.setWindowAlwaysOnTop(true);
+                		_isAlwaysOnTopActive = true;
+                		 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
           
                 	}
                 	else
                 	{
                 		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
                 		_chatFrame.setWindowAlwaysOnTop(false);
+                		_isAlwaysOnTopActive = false;
+                		  _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
                 	}
                 }
         });
