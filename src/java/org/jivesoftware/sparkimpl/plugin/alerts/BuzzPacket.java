@@ -24,8 +24,7 @@ import org.jivesoftware.smack.packet.PacketExtension;
 /**
  * XEP-0224 Compliance<br>
  * see <a
- * href="http://xmpp.org/extensions/xep-0224.html">http://xmpp.org/extensions
- * /xep-0224.html</a>
+ * href="http://xmpp.org/extensions/xep-0224.html">http://xmpp.org/extensions/xep-0224.html</a>
  */
 public class BuzzPacket implements PacketExtension {
     public String getElementName() {
@@ -36,8 +35,7 @@ public class BuzzPacket implements PacketExtension {
 	return "urn:xmpp:attention:0";
     }
 
-    
-    //TODO 2.6.1 remove buzz only attention gets to stay
+    // TODO 2.6.1 remove buzz only attention gets to stay
     public String toXML() {
 	return "<" + getElementName() + " xmlns=\"" + getNamespace()
 		+ "\"/><buzz xmlns=\"http://www.jivesoftware.com/spark\"/>";
