@@ -118,9 +118,9 @@ public class PrivacyPlugin implements Plugin {
     private void setDefaultListAsActive()
     {
 	PrivacyManager pmanager = PrivacyManager.getInstance();
-	for (String s : pmanager.getPrivacyListNames())
+	for (int i = 0; i < pmanager.getPrivacyListNames().size(); ++i)
 	{    
-	    SparkPrivacyList plist = pmanager.getPrivacyList(s);
+	    SparkPrivacyList plist = pmanager.getPrivacyList(pmanager.getPrivacyListNames().get(i));
 	      if (plist.isDefault())
 	            {
 	        	try {
