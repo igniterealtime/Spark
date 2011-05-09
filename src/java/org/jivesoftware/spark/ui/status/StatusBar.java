@@ -65,6 +65,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.CommandPanel;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.SwingTimerTask;
@@ -72,6 +73,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
@@ -164,7 +166,8 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public void setAvatar(Icon icon) {
-        imageLabel.setIcon(icon);
+        Image image = ImageCombiner.iconToImage(icon);        
+        imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
         imageLabel.setBorder(null);
         invalidate();
         validateTree();
@@ -327,6 +330,8 @@ public class StatusBar extends JPanel implements VCardListener {
 	    privMenu.add(it);
 	    if (plist.isActive()) {
 		it.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
+	    } else {
+	        it.setIcon(null);
 	    }
 	    it.addActionListener(new ActionListener() {
 
@@ -334,7 +339,9 @@ public class StatusBar extends JPanel implements VCardListener {
 		public void actionPerformed(ActionEvent e) {
 		    
 		    try {
+		        PrivacyPlugin.removeiconFromContacts();
 			plist.setListAsActive();
+			PrivacyPlugin.scanContactList();
 		    } catch (XMPPException e1) {
 			Log.warning("Could not activate list " + plist.getListName(), e1);
 			e1.printStackTrace();
@@ -519,8 +526,7 @@ public class StatusBar extends JPanel implements VCardListener {
                     try {
                         ImageIcon avatarIcon = new ImageIcon(avatarBytes);
                         avatarIcon = VCardManager.scale(avatarIcon);
-                        imageLabel.setIcon(avatarIcon);
-                    //    imageLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+                        setAvatar(avatarIcon);
                         imageLabel.invalidate();
                         imageLabel.validate();
                         imageLabel.repaint();

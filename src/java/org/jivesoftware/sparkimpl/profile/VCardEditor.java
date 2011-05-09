@@ -185,7 +185,6 @@ public class VCardEditor {
 	tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 
 	// Build the UI
-	_vcard = vCard;
 	buildUI(vCard);
 	
 	final JOptionPane pane;
@@ -242,7 +241,6 @@ public class VCardEditor {
                     VCardManager manager = SparkManager.getVCardManager();
                     VCard card = manager.reloadVCard(vCard.getJabberId());
                     fillUI(card);
-                    saveVCard();
                 }
 		
 	    }
@@ -437,7 +435,7 @@ public class VCardEditor {
 	    avatarBytes = GraphicUtils.getBytesFromImage(avatarFile);
 	    ImageIcon icon = new ImageIcon(avatarBytes);
 	    Image image = icon.getImage();
-	    image = image.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
+	    image = image.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
 	    avatarBytes = GraphicUtils.getBytesFromImage(image);
 
 	}
