@@ -339,9 +339,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		public void actionPerformed(ActionEvent e) {
 		    
 		    try {
-		        PrivacyPlugin.removeiconFromContacts();
 			plist.setListAsActive();
-			PrivacyPlugin.scanContactList();
 		    } catch (XMPPException e1) {
 			Log.warning("Could not activate list " + plist.getListName(), e1);
 			e1.printStackTrace();
