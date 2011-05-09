@@ -178,13 +178,10 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
         // Add Broadcast to roster
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+
 
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));
-//
-//        // Add Broadcast button to command panel.
-//        commandPanel.add(broadcastToRosterButton);
 
         statusBar.invalidate();
         statusBar.validate();
@@ -223,18 +220,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
                         showAlert((Message)packet, message.getType());
                     }
-//                    else if (message.getType() == Message.Type.headline && message.getBody() != null) {
-//                	
-//                	LocalPreferences pref = SettingsManager.getLocalPreferences();
-//                	
-//                	if(pref.getShowToasterPopup()){
-//                            SparkToaster toaster = new SparkToaster();
-//                            toaster.setDisplayTime(30000);
-//                            toaster.setBorder(BorderFactory.createBevelBorder(0));
-//                            toaster.setTitle(Res.getString("title.notification"));
-//                            toaster.showToaster(message.getBody());
-//                	}
-//                    }
                     else {
                         String host = SparkManager.getSessionManager().getServerAddress();
                         String from = packet.getFrom() != null ? packet.getFrom() : "";
