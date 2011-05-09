@@ -64,6 +64,7 @@ public class VCardEditor {
     private HomePanel homePanel;
     private AvatarPanel avatarPanel;
     private JLabel avatarLabel;
+    private VCard _vcard;
 
     /**
      * Displays the VCard for an individual.
@@ -184,8 +185,9 @@ public class VCardEditor {
 	tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 
 	// Build the UI
+	_vcard = vCard;
 	buildUI(vCard);
-
+	
 	final JOptionPane pane;
 	final JDialog dlg;
 
@@ -206,7 +208,7 @@ public class VCardEditor {
 	mainPanel.add(titlePanel, BorderLayout.NORTH);
 
 	// The user should only be able to close this dialog.
-	Object[] options = { Res.getString("close") };
+	Object[] options = { Res.getString("close"), Res.getString("refresh") };
 	pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
 		JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
@@ -221,7 +223,6 @@ public class VCardEditor {
 	dlg.setResizable(true);
 	dlg.setContentPane(mainPanel);
 	dlg.setLocationRelativeTo(parent);
-
 	PropertyChangeListener changeListener = new PropertyChangeListener() {
 	    public void propertyChange(PropertyChangeEvent e) {
 		Object o = pane.getValue();
@@ -236,6 +237,14 @@ public class VCardEditor {
 		    pane.removePropertyChangeListener(this);
 		    dlg.dispose();
 		}
+		
+		if (Res.getString("refresh").equals(value)) {
+                    VCardManager manager = SparkManager.getVCardManager();
+                    VCard card = manager.reloadVCard(vCard.getJabberId());
+                    fillUI(card);
+                    saveVCard();
+                }
+		
 	    }
 	};
 
@@ -329,38 +338,9 @@ public class VCardEditor {
      *            the vcard used to build the UI.
      */
     private void buildUI(VCard vcard) {
-	personalPanel.setFirstName(vcard.getFirstName());
-	personalPanel.setMiddleName(vcard.getMiddleName());
-	personalPanel.setLastName(vcard.getLastName());
-	personalPanel.setEmailAddress(vcard.getEmailHome());
-	personalPanel.setNickname(vcard.getNickName());
-	personalPanel.setJID(vcard.getJabberId());
 
-	businessPanel.setCompany(vcard.getOrganization());
-	businessPanel.setDepartment(vcard.getOrganizationUnit());
-	businessPanel.setStreetAddress(vcard.getAddressFieldWork("STREET"));
-	businessPanel.setCity(vcard.getAddressFieldWork("LOCALITY"));
-	businessPanel.setState(vcard.getAddressFieldWork("REGION"));
-	businessPanel.setZipCode(vcard.getAddressFieldWork("PCODE"));
-	businessPanel.setCountry(vcard.getAddressFieldWork("CTRY"));
-	businessPanel.setJobTitle(vcard.getField("TITLE"));
-	businessPanel.setPhone(vcard.getPhoneWork("VOICE"));
-	businessPanel.setFax(vcard.getPhoneWork("FAX"));
-	businessPanel.setPager(vcard.getPhoneWork("PAGER"));
-	businessPanel.setMobile(vcard.getPhoneWork("CELL"));
-	businessPanel.setWebPage(vcard.getField("URL"));
-
-	// Load Home Info
-	homePanel.setStreetAddress(vcard.getAddressFieldHome("STREET"));
-	homePanel.setCity(vcard.getAddressFieldHome("LOCALITY"));
-	homePanel.setState(vcard.getAddressFieldHome("REGION"));
-	homePanel.setZipCode(vcard.getAddressFieldHome("PCODE"));
-	homePanel.setCountry(vcard.getAddressFieldHome("CTRY"));
-	homePanel.setPhone(vcard.getPhoneHome("VOICE"));
-	homePanel.setFax(vcard.getPhoneHome("FAX"));
-	homePanel.setPager(vcard.getPhoneHome("PAGER"));
-	homePanel.setMobile(vcard.getPhoneHome("CELL"));
-
+        fillUI(vcard);
+        
 	// Set avatar
 	byte[] bytes = vcard.getAvatar();
 	if (bytes != null && bytes.length > 0) {
@@ -375,6 +355,41 @@ public class VCardEditor {
 	}
     }
 
+    private void fillUI(VCard vcard){
+        personalPanel.setFirstName(vcard.getFirstName());
+        personalPanel.setMiddleName(vcard.getMiddleName());
+        personalPanel.setLastName(vcard.getLastName());
+        personalPanel.setEmailAddress(vcard.getEmailHome());
+        personalPanel.setNickname(vcard.getNickName());
+        personalPanel.setJID(vcard.getJabberId());
+
+        businessPanel.setCompany(vcard.getOrganization());
+        businessPanel.setDepartment(vcard.getOrganizationUnit());
+        businessPanel.setStreetAddress(vcard.getAddressFieldWork("STREET"));
+        businessPanel.setCity(vcard.getAddressFieldWork("LOCALITY"));
+        businessPanel.setState(vcard.getAddressFieldWork("REGION"));
+        businessPanel.setZipCode(vcard.getAddressFieldWork("PCODE"));
+        businessPanel.setCountry(vcard.getAddressFieldWork("CTRY"));
+        businessPanel.setJobTitle(vcard.getField("TITLE"));
+        businessPanel.setPhone(vcard.getPhoneWork("VOICE"));
+        businessPanel.setFax(vcard.getPhoneWork("FAX"));
+        businessPanel.setPager(vcard.getPhoneWork("PAGER"));
+        businessPanel.setMobile(vcard.getPhoneWork("CELL"));
+        businessPanel.setWebPage(vcard.getField("URL"));
+
+        // Load Home Info
+        homePanel.setStreetAddress(vcard.getAddressFieldHome("STREET"));
+        homePanel.setCity(vcard.getAddressFieldHome("LOCALITY"));
+        homePanel.setState(vcard.getAddressFieldHome("REGION"));
+        homePanel.setZipCode(vcard.getAddressFieldHome("PCODE"));
+        homePanel.setCountry(vcard.getAddressFieldHome("CTRY"));
+        homePanel.setPhone(vcard.getPhoneHome("VOICE"));
+        homePanel.setFax(vcard.getPhoneHome("FAX"));
+        homePanel.setPager(vcard.getPhoneHome("PAGER"));
+        homePanel.setMobile(vcard.getPhoneHome("CELL"));
+    }
+    
+    
     /**
      * Saves the VCard.
      */
