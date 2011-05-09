@@ -81,11 +81,8 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import de.javawi.jstun.attribute.MessageAttributeInterface.MessageAttributeType;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
