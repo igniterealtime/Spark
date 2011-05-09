@@ -22,13 +22,17 @@ package org.jivesoftware.spark.ui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,8 +40,11 @@ import java.net.URISyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JWindow;
+import javax.swing.Timer;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.packet.VCard;
@@ -58,6 +65,7 @@ public class VCardPanel extends JPanel {
 	private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
+    private JWindow _avatarHoverWindow = new JWindow();
     private final String jid;
     private final JLabel avatarImage;
 
@@ -75,7 +83,7 @@ public class VCardPanel extends JPanel {
         this.jid = jid;
         avatarImage = new JLabel();
         add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
-
+        buildAvatarHover();
 
         Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
         aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
@@ -118,6 +126,55 @@ public class VCardPanel extends JPanel {
         vcard.setJabberId(jid);
         buildUI(vcard);
     }
+    
+    
+    private void buildAvatarHover() {
+        _avatarHoverWindow.addMouseListener(new MouseAdapter() {
+            public void mouseExited(MouseEvent e) {
+                showAvatarBig(false, null);
+
+            };
+        });
+
+    }
+
+    private void showAvatarBig(boolean bool, VCard vcard) {
+        if (bool && !_avatarHoverWindow.isVisible()) {
+
+            _avatarHoverWindow.setLocation(avatarImage.getLocationOnScreen().x+2,avatarImage.getLocationOnScreen().y+2);
+            _avatarHoverWindow.setVisible(true);
+            ImageIcon icon = null;
+            JLabel label = new JLabel();
+            _avatarHoverWindow.add(label);
+            byte[] bytes = vcard.getAvatar();
+            Image newImage = null;
+            if (bytes != null && bytes.length > 0) {
+                try {
+                    icon = new ImageIcon(bytes);
+                    newImage = icon.getImage();
+                    newImage = newImage.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
+                    icon = new ImageIcon(newImage);
+
+                } catch (Exception e1) {
+                    Log.error(e1);
+                }
+
+            } else {
+                icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
+            }
+
+            label.setIcon(icon);
+            _avatarHoverWindow.pack();
+            _avatarHoverWindow.invalidate();
+            _avatarHoverWindow.validate();
+            _avatarHoverWindow.repaint();
+
+        } else {
+
+            _avatarHoverWindow.setVisible(false);
+        }
+
+    }
 
     private void buildUI(final VCard vcard) {
 
@@ -127,6 +184,26 @@ public class VCardPanel extends JPanel {
                     SparkManager.getVCardManager().viewProfile(vcard.getJabberId(), avatarImage);
                 }
             }
+
+            final Timer timer = new Timer(500, new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    showAvatarBig(true, vcard);
+                }
+            });
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                timer.start();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                super.mouseExited(e);
+                timer.stop();
+            }
+
         });
 
         String firstName = vcard.getFirstName();
