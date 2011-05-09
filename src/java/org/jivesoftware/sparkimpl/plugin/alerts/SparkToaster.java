@@ -60,6 +60,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -71,6 +72,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -669,7 +671,13 @@ public class SparkToaster {
         }
 
         public void setIcon(Icon icon) {
+            if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
+                Image image = ImageCombiner.iconToImage(icon);
+                label.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
+            } else
+            {
             label.setIcon(icon);
+            }
         }
 
         public RolloverButton getCloseButton() {
