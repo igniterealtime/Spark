@@ -27,7 +27,7 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "2.6.0 RC 2";
+        return "2.6.0";
     }
 
     /*
@@ -37,7 +37,7 @@ public class JiveInfo {
      * SVN revision number of the build 
      */
     public static String getBuildNumber() {
-        return "12285";
+        return "12343";
     }
 
     public static String getOS() {
