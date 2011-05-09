@@ -55,6 +55,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.DelayInformation;
@@ -80,6 +81,11 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import de.javawi.jstun.attribute.MessageAttributeInterface.MessageAttributeType;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -216,21 +222,27 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
                     boolean broadcast = message.getProperty("broadcast") != null;
 
-                    if ((broadcast || message.getType() == Message.Type.normal) && message.getBody() != null) {
-                        showAlert((Message)packet);
+                    if ((broadcast || message.getType() == Message.Type.normal 
+                	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
+                        showAlert((Message)packet, message.getType());
                     }
-                    else if (message.getType() == Message.Type.headline && message.getBody() != null) {
-                        SparkToaster toaster = new SparkToaster();
-                        toaster.setDisplayTime(30000);
-                        toaster.setBorder(BorderFactory.createBevelBorder(0));
-                        toaster.setTitle(Res.getString("title.notification"));
-                        toaster.showToaster(message.getBody());
-                    }
+//                    else if (message.getType() == Message.Type.headline && message.getBody() != null) {
+//                	
+//                	LocalPreferences pref = SettingsManager.getLocalPreferences();
+//                	
+//                	if(pref.getShowToasterPopup()){
+//                            SparkToaster toaster = new SparkToaster();
+//                            toaster.setDisplayTime(30000);
+//                            toaster.setBorder(BorderFactory.createBevelBorder(0));
+//                            toaster.setTitle(Res.getString("title.notification"));
+//                            toaster.showToaster(message.getBody());
+//                	}
+//                    }
                     else {
                         String host = SparkManager.getSessionManager().getServerAddress();
                         String from = packet.getFrom() != null ? packet.getFrom() : "";
                         if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
-                            showAlert((Message)packet);
+                            showAlert((Message)packet, message.getType());
                         }
                     }
                 }
@@ -246,8 +258,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      * Show Server Alert.
      *
      * @param message the message to show.
+     * @param type 
      */
-    private void showAlert(Message message) {
+    private void showAlert(Message message, Type type) {
         // Do not show alert if the message is an error.
         if (message.getError() != null) {
             return;
@@ -274,12 +287,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         p.add(window, BorderLayout.CENTER);
         p.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
-
-        SparkToaster toaster = new SparkToaster();
-        toaster.setDisplayTime(30000);
-        toaster.setBorder(BorderFactory.createBevelBorder(0));
-
-
 	if (!from.contains("@")) {
 	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)) {
 		broadcastInChat(message);
@@ -302,9 +309,28 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 chatRoom = new ChatRoomImpl(jid, nickname, nickname);
                 SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
             }
-
-            chatRoom.insertMessage(message);
+            
+            Message m = new Message();
+            m.setBody(message.getBody());
+            m.setTo(message.getTo());
+            
+            String name = StringUtils.parseName(message.getFrom());
+            
+            String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
+            m.setFrom(name +" "+broadcasttype);
+            
+            chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
             broadcastRooms.add(chatRoom);
+            
+            
+	    LocalPreferences pref = SettingsManager.getLocalPreferences();
+	    if (pref.getShowToasterPopup()) {
+		SparkToaster toaster = new SparkToaster();
+		toaster.setDisplayTime(30000);
+		toaster.setBorder(BorderFactory.createBevelBorder(0));
+		toaster.setTitle(broadcasttype);
+		toaster.showToaster(message.getBody());
+	    }
 
             chatRoom.addMessageListener(new MessageListener() {
                 boolean waiting = true;
