@@ -522,7 +522,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         
         // Build Help Menu
 	if(!Default.getBoolean(Default.DISABLE_UPDATES)){
-        helpMenu.add(updateMenu);
+	    helpMenu.add(updateMenu);
 	}
         helpMenu.addSeparator();
         helpMenu.add(viewErrors);
@@ -570,14 +570,16 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    }
 	});
 
-        // Execute spark update checker after one minute.
-        final TimerTask task = new SwingTimerTask() {
-            public void doRun() {
-                checkForUpdates(false);
-            }
-        };
+	if (!Default.getBoolean("DISABLE_UPDATES")) {
+	    // Execute spark update checker after one minute.
+	    final TimerTask task = new SwingTimerTask() {
+		public void doRun() {
+		    checkForUpdates(false);
+		}
+	    };
 
-        TaskEngine.getInstance().schedule(task, 60000);
+	    TaskEngine.getInstance().schedule(task, 60000);
+	}
 
     }
 
