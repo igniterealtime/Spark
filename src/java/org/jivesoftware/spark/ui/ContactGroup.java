@@ -366,6 +366,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         updateTitle();
     }
 
+    /**
+     * Adds a sub group to this Contact group.
+     * 
+     * @param contactGroup
+     *            that should be the new subgroup
+     */
     public void addContactGroup(ContactGroup contactGroup) {
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.add(contactGroup, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 15, 0, 0), 0, 0));
@@ -373,8 +379,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactGroup.setSubPane(true);
 
         // contactGroup.setStyle(CollapsiblePane.TREE_STYLE);
-        listPanel.add(panel);
         contactGroups.add(contactGroup);
+        Collections.sort(contactGroups, ContactList.GROUP_COMPARATOR);
+        listPanel.add(panel, contactGroups.indexOf(contactGroup));
     }
 
     /**
