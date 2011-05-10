@@ -121,7 +121,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
         else {
             avatar.setIcon(icon);
         }
-
         avatar.setText("");
     }
 
@@ -190,8 +189,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 try {
                     ImageIcon imageOnDisk = new ImageIcon(selectedFile.getCanonicalPath());
                     Image avatarImage = imageOnDisk.getImage();
-                    if (avatarImage.getHeight(null) > 96 || avatarImage.getWidth(null) > 96) {
-                        avatarImage = avatarImage.getScaledInstance(-1, 96, Image.SCALE_SMOOTH);
+                    if (avatarImage.getHeight(null) > 128 || avatarImage.getWidth(null) > 128) {
+                        avatarImage = avatarImage.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
                     }
                     return avatarImage;
                 }

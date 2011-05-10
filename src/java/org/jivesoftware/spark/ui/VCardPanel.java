@@ -107,7 +107,9 @@ public class VCardPanel extends JPanel {
             try {
                 icon = new ImageIcon(bytes);
                 Image newImage = icon.getImage();
+                if (icon.getIconHeight() > 48 || icon.getIconWidth() > 48) {
                 newImage = newImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
+                }
                 icon = new ImageIcon(newImage);
             }
             catch (Exception e) {
@@ -152,7 +154,9 @@ public class VCardPanel extends JPanel {
                 try {
                     icon = new ImageIcon(bytes);
                     newImage = icon.getImage();
+                    if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
                     newImage = newImage.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
+                    }
                     icon = new ImageIcon(newImage);
 
                 } catch (Exception e1) {
