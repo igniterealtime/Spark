@@ -24,15 +24,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
@@ -40,66 +36,27 @@ import javax.swing.JWindow;
 import com.sun.awt.AWTUtilities;
 
 public class RoarPanel {
-
-    private static ImageIcon xicon = new ImageIcon(
-	    "C:\\Dokumente und Einstellungen\\wolf.posdorfer\\Desktop\\eclipse\\spark\\src\\resources\\images\\close_dark.png");
-    private static ImageIcon icon = new ImageIcon(
-	    "C:\\Dokumente und Einstellungen\\wolf.posdorfer\\Desktop\\eclipse\\spark\\src\\resources\\images\\spark-32x32.png");
-    private static String _text = "laaaaaaaaaaaaaaaaaaaaaaaaang laaaaaaaaaaaaaaaang\nlaaaaaaaaaaaaaaaang\nlaaaaaaaaaaaaaaaang";
-
     private static int _width = 300;
     private static int _height = 80;
 
 
-    public static void main(String[] args) throws InterruptedException {
-
-	int x = Toolkit.getDefaultToolkit().getScreenSize().width;
-
-	RoarMessageListener rml = new RoarMessageListener();
-
-	popupWindow(rml, icon, "head1", _text, x, 0);
-	Thread.sleep(500);
-
-	popupWindow(rml, icon, "head2", _text, x, 5 + 80);
-	Thread.sleep(500);
-
-	popupWindow(rml, icon, "head3", _text, x, 5 + 80 + 5 + 80);
-	Thread.sleep(500);
-
-	popupWindow(rml, icon, "head4", _text, x, 5 + 80 + 5 + 80 + 5 + 80);
-	Thread.sleep(500);
-
-	popupWindow(rml, icon, "head5", _text, x, 5 + 80 + 5 + 80 + 5 + 80 + 5
-		+ 80);
-
-    }
-
     private static JWindow createWindow(Icon icon, String head, String body,
-	    int posx, int posy) {
+	    int posx, int posy, Color backgroundcolor, Color headerColor, Color messageColor) {
 
 	final JWindow window = new JWindow();
 	JPanel windowpanel = new JPanel(new GridBagLayout());
-	windowpanel.setBackground(Color.BLACK);
+	windowpanel.setBackground(backgroundcolor);
 
 	AWTUtilities.setWindowShape(window, new RoundRectangle2D.Float(0, 0,
 		_width, _height, 20, 20));
 	AWTUtilities.setWindowOpaque(window, true);
 
 
-	JLabel close = new JLabel(xicon);
-
-	close.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-		window.dispose();
-	    }
-	});
-
 	JLabel text = new JLabel("<HTML>" + body + "</HTML>");
-	text.setForeground(Color.WHITE);
+	text.setForeground(messageColor);
 
 	JLabel header = new JLabel(head);
-	header.setForeground(Color.RED);
+	header.setForeground(headerColor);
 	header.setFont(new Font(header.getFont().getName(), Font.BOLD, header
 		.getFont().getSize() + 2));
 
@@ -120,21 +77,10 @@ public class RoarPanel {
     {
 	AWTUtilities.setWindowOpacity(window, 0.9f);
 	window.setVisible(true);
-//	
-//	for(float i=3; i<10;i++)
-//	{
-//	    AWTUtilities.setWindowOpacity(window, i/10.f);
-//	    try {
-//		Thread.sleep(70);
-//	    } catch (InterruptedException e) {
-//	    }
-//	}
-	
-	
     }
     
-    public static void popupWindow(final RoarMessageListener owner, Icon icon, String head, String text, int x, int y) {
-	final JWindow window = createWindow(icon, head, text, x, y);
+    public static void popupWindow(final RoarMessageListener owner, Icon icon, String head, String text, int x, int y, Color backgroundcolor, int duration) {
+	final JWindow window = createWindow(icon, head, text, x, y,backgroundcolor, Color.RED, Color.WHITE);
 	fadein(window);
 	
 
@@ -149,7 +95,7 @@ public class RoarPanel {
 	};
 
 	Timer t = new Timer();
-	t.schedule(closeTimer, 3000);
+	t.schedule(closeTimer, duration);
     }
 
 }

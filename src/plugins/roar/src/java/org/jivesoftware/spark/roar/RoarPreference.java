@@ -37,9 +37,12 @@ public class RoarPreference implements Preference {
 
     
     private RoarPreferencePanel _prefPanel;
+    private RoarProperties _props;
 
     public RoarPreference() {
 
+	_props = new RoarProperties();
+	
 	try {
 	    if (EventQueue.isDispatchThread()) {
 		_prefPanel = new RoarPreferencePanel();
@@ -90,15 +93,19 @@ public class RoarPreference implements Preference {
 
     @Override
     public void load() {
+	_prefPanel.setBackgroundColor(_props.getBackgroundColor());
+	_prefPanel.setShowingPopups(_props.getShowingPopups());
+	_prefPanel.setDuration(_props.getDuration());
+	_prefPanel.setAmount(_props.getMaximumPopups());
     }
 
     @Override
     public void commit() {
-	
-	RoarProperties props = new RoarProperties();
-	
-	props.setBackgroundColor(_prefPanel.getBackgroundColor());
-	props.save();
+	_props.setDuration(_prefPanel.getDuration());
+	_props.setShowingPopups(_prefPanel.getShowingPopups());
+	_props.setBackgroundColor(_prefPanel.getBackgroundColor());
+	_props.setMaximumPopups(_prefPanel.getAmount());
+	_props.save();
 
     }
 
@@ -114,7 +121,7 @@ public class RoarPreference implements Preference {
 
     @Override
     public Object getData() {
-	return null;
+	return _props;
     }
 
     @Override

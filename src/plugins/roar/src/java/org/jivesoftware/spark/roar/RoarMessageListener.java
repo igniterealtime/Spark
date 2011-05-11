@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.spark.roar;
 
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
@@ -33,16 +32,18 @@ import org.jivesoftware.spark.ui.GlobalMessageListener;
 
 /**
  * Message Listener
+ * 
  * @author wolf.posdorfer
- *
+ * 
  */
-public class RoarMessageListener implements GlobalMessageListener{
+public class RoarMessageListener implements GlobalMessageListener {
 
-    
     private int _lastusedXpos;
     private int _lastusedYpos;
     private Dimension _screensize;
-    
+
+    private int _amount;
+
     private final int WIDTH = 300;
     private final int HEIGHT = 80;
 
@@ -51,42 +52,46 @@ public class RoarMessageListener implements GlobalMessageListener{
 
 	_lastusedXpos = _screensize.width - 5;
 	_lastusedYpos = 5;
+	_amount = 0;
 
     }
-
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
+	RoarProperties props = new RoarProperties();
+	if (props.getShowingPopups()
+		&& (_amount < props.getMaximumPopups() || props.getMaximumPopups() == 0)) {
+	    
+	    ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
 
-	ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
-	
-	String nickname = StringUtils.parseName(message.getFrom());
-	
-	RoarPanel.popupWindow(this, icon, nickname,  message.getBody(), _lastusedXpos, _lastusedYpos);
-	
-	_lastusedYpos += HEIGHT+5;
+	    String nickname = StringUtils.parseName(message.getFrom());
 
-	
-	if(_lastusedYpos>= _screensize.height-90)
-	{
-	    _lastusedXpos -= WIDTH+5;
-	    _lastusedYpos = 5;
+	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
+		    _lastusedXpos, _lastusedYpos, props.getBackgroundColor(),
+		    props.getDuration());
+
+	    ++_amount;
+	    _lastusedYpos += HEIGHT + 5;
+
+	    if (_lastusedYpos >= _screensize.height - 90) {
+		_lastusedXpos -= WIDTH + 5;
+		_lastusedYpos = 5;
+	    }
 	}
-	
+
     }
-    
-    public void closingRoarPanel(int x, int y)
-    {
-	if(_lastusedYpos>(y-5))
-	{
-	    _lastusedYpos=y-5;
+
+    public void closingRoarPanel(int x, int y) {
+	if (_lastusedYpos > (y - 5)) {
+	    _lastusedYpos = y - 5;
 	}
-	
-	if(_lastusedXpos<(x+5))
-	{
-	    _lastusedXpos=x+WIDTH+5;
+
+	if (_lastusedXpos < (x + 5)) {
+	    _lastusedXpos = x + WIDTH + 5;
 	}
-	
+
+	--_amount;
+
     }
 
     @Override

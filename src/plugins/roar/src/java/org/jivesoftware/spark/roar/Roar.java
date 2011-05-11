@@ -22,13 +22,17 @@ package org.jivesoftware.spark.roar;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
+/**
+ * The Main Class of the Roar Plugin
+ * @author wolf.posdorfer
+ *
+ */
 public class Roar implements Plugin {
 
     private RoarMessageListener _listener;
 
     @Override
     public void initialize() {
-	
 	
 	RoarPreference pref = new RoarPreference();
 	SparkManager.getPreferenceManager().addPreference(pref);
