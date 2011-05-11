@@ -19,7 +19,7 @@
  */ 
 package org.jivesoftware.spark.ui.themes;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -62,15 +63,12 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
  */
 public class ThemePanel extends JPanel {
-	private static final long serialVersionUID = 2943854311454590459L;
+    private static final long serialVersionUID = 2943854311454590459L;
 
-	private TranscriptWindow emoticonpreviewtranscript;
-	
-	private JLabel emoticonsdisplay;
+    private TranscriptWindow emoticonpreviewtranscript;
 
     private JComboBox messageStyleBox;
 
-    private JLabel emoticonsLabel;
     private JComboBox emoticonBox;
 
     private JButton addEmoticonButton;
@@ -88,18 +86,22 @@ public class ThemePanel extends JPanel {
     private JCheckBox showVCards;
     private JLabel avatarSizeLabel;
     private JComboBox avatarSizeField;
-    
+
     private JLabel _lookandfeelLabel;
     private JComboBox _lookandfeel;
     private JButton _lookandfeelpreview;
     private Vector<String> _lookandfeelname = new Vector<String>();
     private JCheckBox _useTabsForTransports;
-    
+
     private ThemePanel _themepanel;
 
     private JComboBox _showReconnectBox;
-    
+
     private LocalPreferences pref = SettingsManager.getLocalPreferences();
+
+    private JScrollPane emoticonscrollpane;
+
+    private JPanel emoticonspanel;
 
     /**
      * Construct UI
@@ -248,10 +250,15 @@ public class ThemePanel extends JPanel {
         JLabel messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
 
-        emoticonsLabel = new JLabel();
+       
+        emoticonspanel = new EmoticonPanel(10);
+        emoticonscrollpane = new JScrollPane(emoticonspanel);
+        emoticonscrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        emoticonscrollpane.setPreferredSize(new Dimension(300,300));
+        
+        
         emoticonBox = new JComboBox();
-        emoticonsdisplay = new JLabel();
-        emoticonsdisplay.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
         emoticonCheckBox = new JCheckBox();
 
@@ -294,7 +301,7 @@ public class ThemePanel extends JPanel {
 
         // Set ResourceUtils
         ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
-        ResourceUtils.resLabel(emoticonsLabel, emoticonBox, Res.getString("label.emoticons") + ":");
+//        ResourceUtils.resLabel(emoticonsLabel, emoticonBox, Res.getString("label.emoticons") + ":");
         ResourceUtils.resButton(emoticonCheckBox, Res.getString("checkbox.enable.emoticons"));
 
         ResourceUtils.resButton(addThemeButton, Res.getString("button.add"));
@@ -317,9 +324,8 @@ public class ThemePanel extends JPanel {
     private void buildUI() {
         // Add Viewer
 //        add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-        add(emoticonsdisplay, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        add(emoticonscrollpane, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(emoticonsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonBox, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonCheckBox, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -425,42 +431,23 @@ public class ThemePanel extends JPanel {
      */
     protected void showSelectedEmoticon() {
 	EmoticonManager emoticonManager = EmoticonManager.getInstance();
-	String activeEmoticonName = emoticonManager.getActiveEmoticonSetName();
 
-	// emoticonpreviewtranscript.clear();
-	// emoticonpreviewtranscript.insertCustomText(activeEmoticonName + " Emoticons", true,
-	// true, Color.GRAY);
-	// try {
-	// emoticonpreviewtranscript.insertText("\n");
-	// }
-	// catch (BadLocationException e) {
-	// Log.error(e);
-	// }
-
-	// StringBuilder builder = new StringBuilder();
-	StringBuilder label = new StringBuilder();
-	if (emoticonManager.getActiveEmoticonSet() != null) {
-	    for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
-		String app = emoticonManager.getEmoticonURL(emoticon)
-			.toString();
-		label.append("<img src=\"" + app + "\"/>&nbsp");
-		//
-		// String eq = emoticon.getEquivalants().get(0);
-		// builder.append(eq);
-		// builder.append(" ");
-	    }
+	int i = emoticonManager.getActiveEmoticonSet().size();
+	
+	if (i < 25) {
+	    emoticonspanel = new EmoticonPanel(i);
+	} else {
+	    emoticonspanel = new EmoticonPanel(10);
 	}
+	for(Emoticon emoticon : emoticonManager.getActiveEmoticonSet())
+	{
+	   ImageIcon ico = new ImageIcon(emoticonManager.getEmoticonURL(emoticon));
+	   JLabel label = new JLabel(ico);
+	   emoticonspanel.add(label);
 
-	emoticonsdisplay.setText("<HTML><BODY><u><font color=\"#6E6E6E\">"
-		+ activeEmoticonName + " Emoticons</font></u><br><br>"
-		+ label.toString() + "</BODY></HTML>");
-
-	// try {
-	// emoticonpreviewtranscript.insert(builder.toString());
-	// }
-	// catch (BadLocationException e) {
-	// Log.error(e);
-	// }
+	}
+	
+	emoticonscrollpane.setViewportView(emoticonspanel);
     }
 
     /**

@@ -305,11 +305,11 @@ public class EmoticonManager {
 
 		Node root = emoticonFile.selectSingleNode("/plist/dict/dict");
 
-		List keyList = root.selectNodes("key");
-		List dictonaryList = root.selectNodes("dict");
+		List<?> keyList = root.selectNodes("key");
+		List<?> dictonaryList = root.selectNodes("dict");
 
-		Iterator keys = keyList.iterator();
-		Iterator dicts = dictonaryList.iterator();
+		Iterator<?> keys = keyList.iterator();
+		Iterator<?> dicts = dictonaryList.iterator();
 
 		while (keys.hasNext()) {
 			Element keyEntry = (Element) keys.next();
@@ -320,7 +320,7 @@ public class EmoticonManager {
 
 			// Load equivilants
 			final List<String> equivs = new ArrayList<String>();
-			final List equivilants = dict.selectNodes("array/string");
+			final List<?> equivilants = dict.selectNodes("array/string");
 			for (Object equivilant1 : equivilants) {
 				Element equivilant = (Element) equivilant1;
 				String equivilantString = equivilant.getText();
@@ -489,7 +489,7 @@ public class EmoticonManager {
 	private boolean containsEmoticonPList(File zip) {
 		try {
 			ZipFile zipFile = new JarFile(zip);
-			for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+			for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
 				JarEntry entry = (JarEntry) e.nextElement();
 				if (entry.getName().contains("Emoticons.plist")) {
 					return true;
@@ -516,7 +516,7 @@ public class EmoticonManager {
 			ZipFile zipFile = new JarFile(zip);
 
 			dir.mkdir();
-			for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+			for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
 				JarEntry entry = (JarEntry) e.nextElement();
 				File entryFile = new File(dir, entry.getName());
 				// Ignore any manifest.mf entries.
