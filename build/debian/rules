@@ -4,7 +4,7 @@ include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/ant.mk
 
-DEST := $(CURDIR)/debian/spark
+DEST := $(CURDIR)/debian/spark-messenger/
 TARGET := $(CURDIR)/target/build
 SPARK := $(DEST)/usr/share/spark
 
