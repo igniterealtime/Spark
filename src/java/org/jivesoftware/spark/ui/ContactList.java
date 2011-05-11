@@ -1063,6 +1063,7 @@ public final class ContactList extends JPanel implements ActionListener,
                 if (realGroupName.endsWith("::")) {
                     realGroupName = realGroupName.substring(0, realGroupName.length() - 2);
                 }
+
                 newContactGroup.setGroupName(realGroupName);
             }
             else {
@@ -1126,7 +1127,6 @@ public final class ContactList extends JPanel implements ActionListener,
 
         groupList.add(rootGroup);
 
-        
 
         int loc = tempList.indexOf(rootGroup);
 
@@ -1139,7 +1139,7 @@ public final class ContactList extends JPanel implements ActionListener,
         }
 
         //Check if i should show groups with no users online
-        if (getContactGroup(groupName) != null &&!getContactGroup(groupName).hasAvailableContacts())
+        if (getContactGroup(groupName) != null && !getContactGroup(groupName).hasAvailableContacts())
         {
             showEmptyGroups(localPreferences.isEmptyGroupsShown());
         }
@@ -2090,12 +2090,6 @@ public final class ContactList extends JPanel implements ActionListener,
             // Make sure that offline group is always on bottom.
             if (group2.isOfflineGroup()) {
                 return -1;
-            }   
-            if (group1.getGroupName().lastIndexOf("::") != -1 && group2.getGroupName().lastIndexOf("::") != -1)
-            {
-              return  group1.getGroupName().trim().toLowerCase().replace("::", "").compareTo(group2.getGroupName().trim().toLowerCase().replace("::", ""));
-                
-                
             }
             return group1.getGroupName().trim().toLowerCase().compareTo(group2.getGroupName().trim().toLowerCase());
         }
