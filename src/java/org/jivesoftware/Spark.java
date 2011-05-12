@@ -221,19 +221,30 @@ public final class Spark {
         }
     }
 
+    private String getLookandFeel(LocalPreferences preferences) {
+	String result = "";
+
+	String whereToLook = isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC
+		: Default.DEFAULT_LOOK_AND_FEEL;
+
+	if (!Default.getBoolean("LOOK_AND_FEEL_DISABLED")) {
+	    result = preferences.getLookAndFeel();
+	} else if (Default.getString(whereToLook).length() > 0) {
+	    result = Default.getString(whereToLook);
+	} else {
+	    result = UIManager.getSystemLookAndFeelClassName();
+	}
+
+	return result;
+
+    }
+    
     /**
      * Handles the Loading of the Look And Feel
      */
     private void loadLookAndFeel() {
 	final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-	final String laf;
-	if (!Default.getBoolean("LOOK_AND_FEEL_DISABLED")) {
-	    laf = preferences.getLookAndFeel();
-	} else if (Default.getString(Default.DEFAULT_LOOK_AND_FEEL).length() > 0) {
-	    laf = Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
-	} else {
-	    laf = UIManager.getSystemLookAndFeelClassName();
-	}
+	final String laf = getLookandFeel(preferences);
        
 	try {
 	    if (laf.toLowerCase().contains("substance")) {
