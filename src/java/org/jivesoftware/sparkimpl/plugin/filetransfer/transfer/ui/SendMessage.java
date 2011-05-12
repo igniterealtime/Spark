@@ -182,7 +182,7 @@ public class SendMessage extends JPanel {
         });
 
 
-        progressBar.setMaximum((int)fileSize);
+	progressBar.setMaximum((int) (fileSize / getDivisorForByte(fileSize)));
         progressBar.setVisible(false);
         progressBar.setStringPainted(true);
         add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
@@ -272,7 +272,7 @@ public class SendMessage extends JPanel {
             try {
             	SwingUtilities.invokeAndWait(new Runnable() {
             		public void run() {
-            			progressBar.setValue((int)transfer.getBytesSent());
+            			progressBar.setValue((int)(transfer.getBytesSent()/getDivisorForByte(transfer.getFileSize())));
             		}
             	});
             }
@@ -369,6 +369,19 @@ public class SendMessage extends JPanel {
         if (transfer != null) {
             transfer.cancel();
         }
+    }
+    
+    
+    public static int getDivisorForByte(long filezise) {
+	if (filezise >= 1073741824) // giga
+	{
+	    return 1024;
+	} else if (filezise >= 1099511627776L) // tera
+	{
+	    return 1048576;
+	} else {
+	    return 1;
+	}
     }
 
 }

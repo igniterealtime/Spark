@@ -231,8 +231,7 @@ public class ReceiveMessage extends JPanel {
 
             final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
 
-
-            progressBar.setMaximum((int)request.getFileSize());
+            progressBar.setMaximum((int)(request.getFileSize()/SendMessage.getDivisorForByte(request.getFileSize())));
             progressBar.setStringPainted(true);
 
             SwingWorker worker = new SwingWorker() {
@@ -264,7 +263,7 @@ public class ReceiveMessage extends JPanel {
                         try {
                         	SwingUtilities.invokeAndWait(new Runnable() {
                         		public void run() {
-                        			progressBar.setValue((int)bytesRead);
+                        			progressBar.setValue((int)(bytesRead/SendMessage.getDivisorForByte(transfer.getFileSize())));
                         		}
                         	});
                         }
