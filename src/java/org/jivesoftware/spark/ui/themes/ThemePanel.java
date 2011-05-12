@@ -255,7 +255,6 @@ public class ThemePanel extends JPanel {
         emoticonscrollpane = new JScrollPane(emoticonspanel);
         emoticonscrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        emoticonscrollpane.setPreferredSize(new Dimension(300,300));
         
         
         emoticonBox = new JComboBox();
@@ -444,10 +443,12 @@ public class ThemePanel extends JPanel {
 	   ImageIcon ico = new ImageIcon(emoticonManager.getEmoticonURL(emoticon));
 	   JLabel label = new JLabel(ico);
 	   emoticonspanel.add(label);
-
 	}
-	
+
+	int rows= Math.min(((EmoticonPanel)emoticonspanel).getNumRows()*45, 300);	
+	emoticonscrollpane.setPreferredSize(new Dimension(300,rows));	
 	emoticonscrollpane.setViewportView(emoticonspanel);
+	this.revalidate();
     }
 
     /**

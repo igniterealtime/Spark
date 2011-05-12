@@ -35,8 +35,8 @@ import javax.swing.JPanel;
 public class EmoticonPanel extends JPanel {
 
     private static final long serialVersionUID = 4884193790861293275L;
-    private int spalte=0;
-    private int zeile=0;
+    private int _spalte=0;
+    private int _zeile=0;
     private int _numberInRow;
     
     /**
@@ -54,14 +54,14 @@ public class EmoticonPanel extends JPanel {
     @Override
     public Component add(Component comp) {
 
-	add(comp,new GridBagConstraints(spalte,zeile, 1, 1, 0.1, 0.1, 
+	add(comp,new GridBagConstraints(_spalte,_zeile, 1, 1, 0.1, 0.1, 
 		GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0, 0));
 	
-	spalte++;	
-	if(spalte>_numberInRow)
+	_spalte++;	
+	if(_spalte>_numberInRow)
 	{
-	    spalte=0;
-	    zeile++;
+	    _spalte=0;
+	    _zeile++;
 	}
 	return comp;	
     }
@@ -69,8 +69,13 @@ public class EmoticonPanel extends JPanel {
     @Override
     public void removeAll() {
         super.removeAll();
-        zeile=0;
-        spalte=0;
+        _zeile=0;
+        _spalte=0;
+    }
+    
+    public int getNumRows()
+    {
+	return _zeile;
     }
 
 
