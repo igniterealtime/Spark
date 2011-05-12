@@ -2,7 +2,7 @@
  * $Revision: $
  * $Date: $
  * 
- * Copyright (C) 2004-2010 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
