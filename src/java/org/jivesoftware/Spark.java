@@ -227,7 +227,7 @@ public final class Spark {
 	String whereToLook = isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC
 		: Default.DEFAULT_LOOK_AND_FEEL;
 
-	if (!Default.getBoolean("LOOK_AND_FEEL_DISABLED")) {
+	if (!Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)) {
 	    result = preferences.getLookAndFeel();
 	} else if (Default.getString(whereToLook).length() > 0) {
 	    result = Default.getString(whereToLook);

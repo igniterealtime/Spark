@@ -683,8 +683,12 @@ public class LocalPreferences {
     public String getLookAndFeel() {
 	String defaultstring = "";
 	try {
-	    defaultstring = Default.getString("DEFAULT_LOOK_AND_FEEL");
+	    defaultstring = Spark.isMac() ? Default.getString(Default.DEFAULT_LOOK_AND_FEEL_MAC)
+		    : Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
 	} catch (Exception e) {
+	    defaultstring = UIManager.getSystemLookAndFeelClassName();
+	}
+	if (defaultstring.length() < 1) {
 	    defaultstring = UIManager.getSystemLookAndFeelClassName();
 	}
 	return getString("LookAndFeel", defaultstring);
