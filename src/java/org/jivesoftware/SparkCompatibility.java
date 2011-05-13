@@ -138,9 +138,6 @@ public class SparkCompatibility {
      * @return Directory name depending on Operating System.
      */
     private static String getUserConf() {
-        if (Spark.isLinux()) {
-            return ".Spark";
-        }
-        return "Spark";
+	return Spark.getUserConf();
     }
 }

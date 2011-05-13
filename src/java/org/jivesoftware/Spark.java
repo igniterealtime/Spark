@@ -422,7 +422,7 @@ public final class Spark {
      *
      * @return Directory name depending on Operating System.
      */
-    private static String getUserConf() {
+    public static String getUserConf() {
         if (isLinux()) {
             return ".Spark";
         }
