@@ -506,7 +506,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public ContactItem getContactItemByJID(String bareJID) {
         for (ContactItem item : new ArrayList<ContactItem>(contactItems)) {
-            if (item.getJID().equals(bareJID)) {
+            if (item != null && item.getJID().equals(bareJID)) {
                 return item;
             }
         }
