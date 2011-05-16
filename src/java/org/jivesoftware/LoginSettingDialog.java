@@ -690,8 +690,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    }
 
 	    if (ModelUtil.hasLength(principalName)) {
-		wrappedLabel.setText("This will use the Desktop Account for \""
-			+ principalName + "\" to login to the server.");
+		wrappedLabel.setText(Res.getString("title.advanced.connection.sso.account",principalName));
 	    } else {
 		wrappedLabel
 			.setText("Spark is unable to find the principal to use for Single Sign-On. This will prevent SSO from working.");
