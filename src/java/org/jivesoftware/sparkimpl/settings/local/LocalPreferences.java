@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import javax.swing.UIManager;
 
+import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -95,9 +96,9 @@ public class LocalPreferences {
 	 * 
 	 * @return the encoded password.
 	 */
-	public String getPassword() {
-		return props.getProperty("password");
-	}
+//	public String getPassword() {
+//		return props.getProperty("password");
+//	}
 
 	/**
 	 * Sets the encoded password.
@@ -105,8 +106,37 @@ public class LocalPreferences {
 	 * @param password
 	 *            the encoded password.
 	 */
-	public void setPassword(String password) {
-		props.setProperty("password", password);
+//	public void setPassword(String password) {
+//		props.setProperty("password", password);
+//	}
+	
+	/**
+	 * returns the password for an encrypted jid
+	 * @param barejid
+	 * @return
+	 */
+	public String getPasswordForUser(String barejid)
+	{
+	    try {
+		String pw = "password"+Encryptor.encrypt(barejid);
+		return Encryptor.decrypt(props.getProperty(pw)); 	
+	    } catch(Exception e){
+		return null; 
+	    }      
+	}
+	
+	/**
+	 * Sets the password for barejid<br>
+	 * both will be encrypted
+	 * @param barejid
+	 * @param password
+	 * @throws Exception 
+	 */
+	public void setPasswordForUser(String barejid, String password) throws Exception
+	{
+	    String user = "password"+Encryptor.encrypt(barejid);
+	    String pw = Encryptor.encrypt(password);
+	    props.setProperty(user, pw);  
 	}
 
 	/**
@@ -209,11 +239,11 @@ public class LocalPreferences {
 	}
 
 	/**
-	 * Returns the users username.
+	 * Returns the last used Username
 	 * 
 	 * @return the username of the agent.
 	 */
-	public String getUsername() {
+	public String getLastUsername() {
 		return props.getProperty("username");
 	}
 
@@ -223,7 +253,7 @@ public class LocalPreferences {
 	 * @param username
 	 *            the agents username.
 	 */
-	public void setUsername(String username) {
+	public void setLastUsername(String username) {
 		props.setProperty("username", username);
 	}
 

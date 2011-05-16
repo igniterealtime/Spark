@@ -203,7 +203,6 @@ public class VCardPanel extends JPanel {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                // TODO Auto-generated method stub
                 super.mouseExited(e);
                 timer.stop();
             }

@@ -38,6 +38,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
@@ -50,6 +52,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -68,9 +72,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
@@ -94,7 +100,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.DummySSLSocketFactory;
-import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -114,6 +119,8 @@ public final class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
+    
+    private Map<String,String> _usernames = new TreeMap<String, String>();
 
     /**
      * Empty Constructor
@@ -246,6 +253,8 @@ public final class LoginDialog {
         private JLabel accountNameLabel = new JLabel();
         private JLabel serverNameLabel = new JLabel();
         private JLabel ssoServerLabel = new JLabel();
+        
+        private JLabel otherUsers = new JLabel(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
 
         LoginPanel() {
@@ -275,6 +284,8 @@ public final class LoginDialog {
 
             accountNameLabel.setForeground(new Color(106, 127, 146));
             serverNameLabel.setForeground(new Color(106, 127, 146));
+            
+            otherUsers.setFocusable(false);
 
 
             add(usernameLabel,
@@ -284,6 +295,11 @@ public final class LoginDialog {
                     new GridBagConstraints(1, 0, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
+
+            add(otherUsers, new GridBagConstraints(3, 0, 1, 1,
+                            0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(10, 0, 5, 5), 0, 0));
+            
             add(accountLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -371,6 +387,13 @@ public final class LoginDialog {
             quitButton.addActionListener(this);
             loginButton.addActionListener(this);
             advancedButton.addActionListener(this);
+            
+            otherUsers.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        	   getPopup().show(otherUsers, e.getX(), e.getY()); 
+        	}
+	    });
 
             // Make same size
             GraphicUtils.makeSameSize(usernameField, passwordField);
@@ -389,8 +412,19 @@ public final class LoginDialog {
             ResourceUtils.resButton(advancedButton, Res.getString("button.advanced"));
 
             // Load previous instances
-            String userProp = localPref.getUsername();
+            String userProp = localPref.getLastUsername();
             String serverProp = localPref.getServer();
+            
+           File file = new File(Spark.getSparkUserHome(), "/user/");
+           File[] userprofiles = file.listFiles();
+           
+           for(File f : userprofiles)
+           {
+               String username = f.getName().split("@")[0];
+               String server = f.getName().split("@")[1];
+              _usernames.put(username, server);
+           }
+           
 
             if (userProp != null) {
                 usernameField.setText(StringUtils.unescapeNode(userProp));
@@ -402,10 +436,10 @@ public final class LoginDialog {
 
             // Check Settings
             if (localPref.isSavePassword()) {
-                String encryptedPassword = localPref.getPassword();
+        	
+                String encryptedPassword = localPref.getPasswordForUser(getBareJid());
                 if (encryptedPassword != null) {
-                    String password = Encryptor.decrypt(encryptedPassword);
-                    passwordField.setText(password);
+                    passwordField.setText(encryptedPassword);
                 }
                 savePasswordBox.setSelected(true);
                 loginButton.setEnabled(true);
@@ -460,6 +494,15 @@ public final class LoginDialog {
          */
         private String getUsername() {
             return StringUtils.escapeNode(usernameField.getText().trim());
+        }
+        
+        /**
+         * Returns the resulting bareJID from username and server
+         * @return
+         */
+        private String getBareJid()
+        {
+            return usernameField.getText()+"@"+serverField.getText();
         }
 
         /**
@@ -522,6 +565,39 @@ public final class LoginDialog {
                 }
             }
         }
+        
+        private JPopupMenu getPopup()
+        {
+            JPopupMenu popup = new JPopupMenu();
+	    for(final String key : _usernames.keySet())
+	    {
+		
+		JMenuItem menu = new JMenuItem(key+"@"+_usernames.get(key));
+		menu.addActionListener(new ActionListener() {
+		    
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			usernameField.setText(key);
+			serverField.setText(_usernames.get(key));
+			
+			try {
+			    passwordField.setText(localPref.getPasswordForUser(getBareJid()));
+			    if(passwordField.getPassword().length<1) {
+				loginButton.setEnabled(false);
+			    }
+			    else {
+				loginButton.setEnabled(true);
+			    }
+			} catch (Exception e1) {
+			}
+			
+		    }
+		});
+		
+		popup.add(menu);
+	    }
+	    return popup;
+        }
 
         /**
          * KeyListener implementation.
@@ -533,8 +609,11 @@ public final class LoginDialog {
         }
 
         public void keyPressed(KeyEvent e) {
-
-            // Do nothing.
+            if(e.getKeyCode() == KeyEvent.VK_RIGHT &&
+        	    ((JTextField)e.getSource()).getCaretPosition()==((JTextField)e.getSource()).getText().length())
+            {
+        	getPopup().show(otherUsers,0,0);
+            }
         }
 
         public void keyReleased(KeyEvent e) {
@@ -702,7 +781,7 @@ public final class LoginDialog {
                 Configuration.setConfiguration(config);
 
                 LoginContext lc;
-                String princName = localPref.getUsername();
+                String princName = localPref.getLastUsername();
                 String princRealm = null;
                 try {
                     lc = new LoginContext("com.sun.security.jgss.krb5.initiate");
@@ -747,7 +826,7 @@ public final class LoginDialog {
                     System.clearProperty("java.security.krb5.kdc");
                 }
 
-                String userName = localPref.getUsername();
+                String userName = localPref.getLastUsername();
                 if (ModelUtil.hasLength(userName)) {
                     usernameField.setText(userName);
                 } else {
@@ -978,21 +1057,16 @@ public final class LoginDialog {
             connection.addConnectionListener(SparkManager.getSessionManager());
 
             // Persist information
-            localPref.setUsername(getUsername());
+            localPref.setLastUsername(getUsername());
 
             // Check to see if the password should be saved.
             if (savePasswordBox.isSelected()) {
-                String encodedPassword;
                 try {
-                    encodedPassword = Encryptor.encrypt(getPassword());
-                    localPref.setPassword(encodedPassword);
+                    localPref.setPasswordForUser(getBareJid(), getPassword());
                 }
                 catch (Exception e) {
                     Log.error("Error encrypting password.", e);
                 }
-            }
-            else {
-                localPref.setPassword("");
             }
 
             localPref.setSavePassword(savePasswordBox.isSelected());
@@ -1234,15 +1308,12 @@ public final class LoginDialog {
                 return;
             }
 
-            List plugins = pluginXML.selectNodes("/settings");
+            List<?> plugins = pluginXML.selectNodes("/settings");
             for (Object plugin1 : plugins) {
                 Element plugin = (Element) plugin1;
 
-                String password = plugin.selectSingleNode("password").getText();
-                localPref.setPassword(password);
-
                 String username = plugin.selectSingleNode("username").getText();
-                localPref.setUsername(username);
+                localPref.setLastUsername(username);
 
                 String server = plugin.selectSingleNode("server").getText();
                 localPref.setServer(server);
@@ -1252,6 +1323,9 @@ public final class LoginDialog {
 
                 String savePassword = plugin.selectSingleNode("savePassword").getText();
                 localPref.setSavePassword(Boolean.parseBoolean(savePassword));
+                
+                String password = plugin.selectSingleNode("password").getText();
+                localPref.setPasswordForUser(username+"@"+server, password);
 
                 SettingsManager.saveSettings();
             }
@@ -1277,9 +1351,9 @@ public final class LoginDialog {
     
             ArrayList<Integer> priorities = new ArrayList<Integer>();
             HashMap<Integer,List<String>> records = new HashMap<Integer,List<String>>();
-            for (Enumeration e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
+            for (Enumeration<?> e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
                 Attribute record = (Attribute)e.nextElement();
-                for (Enumeration e2 = record.getAll() ; e2.hasMoreElements() ; ) {
+                for (Enumeration<?> e2 = record.getAll() ; e2.hasMoreElements() ; ) {
                     String sRecord = (String)e2.nextElement();
                     String [] sRecParts = sRecord.split(" ");
                     Integer pri = Integer.valueOf(sRecParts[0]);
