@@ -47,6 +47,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -253,8 +254,8 @@ public class ThemePanel extends JPanel {
        
         emoticonspanel = new EmoticonPanel(10);
         emoticonscrollpane = new JScrollPane(emoticonspanel);
-        emoticonscrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        emoticonscrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
         
         emoticonBox = new JComboBox();
@@ -432,8 +433,13 @@ public class ThemePanel extends JPanel {
 	EmoticonManager emoticonManager = EmoticonManager.getInstance();
 
 	int i = emoticonManager.getActiveEmoticonSet().size();
-	
-	if (i < 25) {
+	if (i==0)
+	{
+	    emoticonspanel = new EmoticonPanel(1);
+	    JLabel label = new JLabel(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+	    emoticonspanel.add(label);
+	}	
+	else if (i < 25) {
 	    emoticonspanel = new EmoticonPanel(i);
 	} else {
 	    emoticonspanel = new EmoticonPanel(10);

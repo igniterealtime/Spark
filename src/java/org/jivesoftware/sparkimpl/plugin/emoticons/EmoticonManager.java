@@ -41,6 +41,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -173,12 +174,13 @@ public class EmoticonManager {
 		String emoticonPack = null;
 		emoticonPack = pref.getEmoticonPack();
 		// If EmoticonPack is set
+		//When no emoticon set is available, return an empty list
 		if (emoticonPack != null) {
-
-			return emoticonMap.get(emoticonPack);
+			Collection<Emoticon> emoticonSet = emoticonMap.get(emoticonPack);
+			Collection<Emoticon> empty = Collections.emptyList();
+			return emoticonSet == null ? empty : emoticonSet;
 		}
-
-		return null;
+		return Collections.emptyList();
 	}
 
 	/**
