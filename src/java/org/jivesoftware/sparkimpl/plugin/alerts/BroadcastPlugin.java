@@ -268,9 +268,22 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         p.setLayout(new BorderLayout());
         p.add(window, BorderLayout.CENTER);
         p.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+        
+        // Count the number of linebreaks <br> and \n
+        
+        String s = message.getBody();
+        s = s.replace("<br/>", "\n");
+        s = s.replace("<br>", "\n");
+        int linebreaks = org.jivesoftware.spark.util.StringUtils.
+        countNumberOfOccurences(s,'\n');
 
 	if (!from.contains("@")) {
-	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)) {
+	    // if theres no "@" it means the message came from the server
+	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)
+		    || linebreaks > 20 || message.getBody().length() > 1000) {
+		// if we have more than 20 linebreaks or the message is longer
+		// than 1000characters we should broadcast
+		// in a normal chatwindow
 		broadcastInChat(message);
 	    } else {
 		broadcastWithPanel(message);
@@ -433,8 +446,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	alert.setLayout(new GridBagLayout());
 	alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
 		.getImage());
-	String msg = "<html><body>" + message.getBody().replace("\n", "<br>")
-		+ "</body></html>";
+	String msg = "<html>" + message.getBody().replace("\n", "<br/>")+ "</html>";
 
 	JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
 	JLabel alertlabel = new JLabel(msg);

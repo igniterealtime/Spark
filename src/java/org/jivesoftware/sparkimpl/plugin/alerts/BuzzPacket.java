@@ -35,7 +35,7 @@ public class BuzzPacket implements PacketExtension {
 	return "urn:xmpp:attention:0";
     }
 
-    // TODO 2.6.1 remove buzz only attention gets to stay
+    // TODO 2.7.0 remove buzz only attention gets to stay
     public String toXML() {
 	return "<" + getElementName() + " xmlns=\"" + getNamespace()
 		+ "\"/><buzz xmlns=\"http://www.jivesoftware.com/spark\"/>";

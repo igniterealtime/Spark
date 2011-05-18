@@ -2021,4 +2021,20 @@ public class StringUtils {
 	fis.close();
 	return complete.digest();
     }
+    
+    /**
+     * Counts the Number of Occurences of a specified char c in string
+     * 
+     * @param string
+     * @param c
+     * @return {@link Integer}
+     */
+    public static int countNumberOfOccurences(String string, char c) {
+	int result = 0;
+	for (int i = 0; i < string.length(); i++) {
+	    if (string.charAt(i) == c)
+		result++;
+	}
+	return result;
+    }
 }
