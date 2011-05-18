@@ -52,9 +52,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -119,8 +116,7 @@ public final class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    
-    private Map<String,String> _usernames = new TreeMap<String, String>();
+    private ArrayList<String> _usernames = new ArrayList<String>();
 
     /**
      * Empty Constructor
@@ -418,12 +414,16 @@ public final class LoginDialog {
            File file = new File(Spark.getSparkUserHome(), "/user/");
            File[] userprofiles = file.listFiles();
            
-           for(File f : userprofiles)
-           {
-               String username = f.getName().split("@")[0];
-               String server = f.getName().split("@")[1];
-              _usernames.put(username, server);
-           }
+	    for (File f : userprofiles) {
+
+		if (f.getName().contains("@")) {
+		    _usernames.add(f.getName());
+		} else {
+		    Log.error("Profile contains wrong format: \"" + f.getName()
+			    + "\" located at: " + f.getAbsolutePath());
+		}
+
+	    }
            
 
             if (userProp != null) {
@@ -569,16 +569,19 @@ public final class LoginDialog {
         private JPopupMenu getPopup()
         {
             JPopupMenu popup = new JPopupMenu();
-	    for(final String key : _usernames.keySet())
+	    for(final String key : _usernames)
 	    {
 		
-		JMenuItem menu = new JMenuItem(key+"@"+_usernames.get(key));
+		JMenuItem menu = new JMenuItem(key);
+		
+		final String username = key.split("@")[0];
+		final String host = key.split("@")[1];
 		menu.addActionListener(new ActionListener() {
 		    
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-			usernameField.setText(key);
-			serverField.setText(_usernames.get(key));
+			usernameField.setText(username);
+			serverField.setText(host);
 			
 			try {
 			    passwordField.setText(localPref.getPasswordForUser(getBareJid()));
