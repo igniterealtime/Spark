@@ -25,6 +25,10 @@ extensive plugin API allows for complete client flexibility but is still simple 
 directly into the <a href="api/index.html">Javadocs</a>.
 </p>
 
+<h3>How to build</h3>
+
+<a href="sparkplug_compile.html">Spark Plugin Compile Guide</a></p>
+
 <h3>Once I Build It, Then What?</h3>
 <p>After you've built your amazingly cool Sparkplug, it's easy to rollout to your users. Just have them drop it in the plugins directory of
 their Spark installation. If your Sparkplug is generally useful, we hope you'll share it with the whole Spark community! To make your Sparkplug 
@@ -66,31 +70,31 @@ The Spark API provides a framework for adding extensions on top of the protocol 
 <li>Ability to add your own XMPP functions using the SMACK API.
 <li>Managers - Managers allow for better (lazy) loading of particular areas within the Spark client as well as providing access points to the system. Some of the more relevant managers are:
 <ul>
-<li> <a href="api/com/jivesoftware/spark/SparkManager.html">SparkManager</a> -- Acts as the central manager for all of Spark.  You use this manager to get instances of ChatManager, SessionManager, SoundManager, and UserManager.
-<li> <a href="api/com/jivesoftware/spark/ChatManager.html">ChatManager</a> -- Handles registration of most chat listeners and filters, as well as creation and retrieval of chat rooms. It is also used to retrieve the UI of the ChatFrame.
-<li> <a href="api/com/jivesoftware/spark/SessionManager.html">SessionManager</a> -- Contains the information about the current session, such as the server connected to, the handling of connection errors and notification of personal presence changes.
-<li> <a href="api/com/jivesoftware/spark/SoundManager.html">SoundManager</a> -- Used to play sounds.
+<li> <a href="api/org/jivesoftware/spark/SparkManager.html">SparkManager</a> -- Acts as the central manager for all of Spark.  You use this manager to get instances of ChatManager, SessionManager, SoundManager, and UserManager.
+<li> <a href="api/org/jivesoftware/spark/ChatManager.html">ChatManager</a> -- Handles registration of most chat listeners and filters, as well as creation and retrieval of chat rooms. It is also used to retrieve the UI of the ChatFrame.
+<li> <a href="api/org/jivesoftware/spark/SessionManager.html">SessionManager</a> -- Contains the information about the current session, such as the server connected to, the handling of connection errors and notification of personal presence changes.
+<li> <a href="api/org/jivesoftware/spark/SoundManager.html">SoundManager</a> -- Used to play sounds.
 </ul>
 <li> Event Handlers -- Spark contains numerous listeners and handlers to allow more pluggability into the Spark client. Some of the more common listeners and handlers are:
 <ul>
-<li> <a href="api/com/jivesoftware/spark/ui/ChatRoomListener.html">ChatRoomListener</a> (and ChatRoomListenerAdapter) -- Allows the plugin to listen for chat rooms being opened, closed and activated. You would generally use this to customize individual chat rooms.
+<li> <a href="api/org/jivesoftware/spark/ui/ChatRoomListener.html">ChatRoomListener</a> (and ChatRoomListenerAdapter) -- Allows the plugin to listen for chat rooms being opened, closed and activated. You would generally use this to customize individual chat rooms.
 
 
-<li> <a href="api/com/jivesoftware/spark/ui/MessageListener.html">MessageListener</a> -- Allows for notification when a message has been received or sent.
-<li> <a href="api/com/jivesoftware/spark/ui/ContactGroupListener.html">ContactGroupListener</a> -- Allows for notification of changes to a Contact Group.
-<li> <a href="api/com/jivesoftware/spark/ui/ContactListListener.html">ContactListListener</a> -- Allows for notification of changes to the Contact List.
-<li> <a href="api/com/jivesoftware/spark/plugin/impl/filetransfer/transfer/TransferListener.html">TransferListener</a> -- Allows you to intercept File transfers.
-<li> <a href="api/com/jivesoftware/spark/plugin/ContextMenuListener.html">ContextMenuListener</a> -- Allows for the addition or removal of actions or menu items to right-click (context menu) popups.
-<li> <a href="api/com/jivesoftware/spark/ui/PresenceListener.html">PresenceListener</a> -- Allows for notification when Spark presence changes.
-<li> <a href="api/com/jivesoftware/spark/ui/ContactItemHandler.html">ContactItemHandler</a> -- Allows the plugin to control the effects of presence changes within a ContactItem and the associated invoke call.
+<li> <a href="api/org/jivesoftware/spark/ui/MessageListener.html">MessageListener</a> -- Allows for notification when a message has been received or sent.
+<li> <a href="api/org/jivesoftware/spark/ui/ContactGroupListener.html">ContactGroupListener</a> -- Allows for notification of changes to a Contact Group.
+<li> <a href="api/org/jivesoftware/spark/ui/ContactListListener.html">ContactListListener</a> -- Allows for notification of changes to the Contact List.
+<li> <a href="api/org/jivesoftware/spark/plugin/impl/filetransfer/transfer/TransferListener.html">TransferListener</a> -- Allows you to intercept File transfers.
+<li> <a href="api/org/jivesoftware/spark/plugin/ContextMenuListener.html">ContextMenuListener</a> -- Allows for the addition or removal of actions or menu items to right-click (context menu) popups.
+<li> <a href="api/org/jivesoftware/spark/ui/PresenceListener.html">PresenceListener</a> -- Allows for notification when Spark presence changes.
+<li> <a href="api/org/jivesoftware/spark/ui/ContactItemHandler.html">ContactItemHandler</a> -- Allows the plugin to control the effects of presence changes within a ContactItem and the associated invoke call.
 </ul>
 <li> Components -- Spark contains many Swing components that will regularly be used during the creation of your plugin.  Some of the more commonly used components are :
 <ul>
-<li> <a href="api/com/jivesoftware/MainWindow.html">MainWindow</a> -- The frame containing the Contact List. You use MainWindow to add new tabs, menu items, or force focus.
-<li> <a href="api/com/jivesoftware/spark/ui/ChatRoom.html">ChatRoom</a> -- The base abstract class of all chat rooms within Spark. Known implementations are ChatRoomImpl and GroupChatRoom.
-<li> <a href="api/com/jivesoftware/spark/ui/ChatArea.html">ChatArea</a> -- The base chat viewer for both the TranscriptWindow and ChatInputEditor.
-<li> <a href="api/com/jivesoftware/spark/ui/ContactList.html">ContactList</a> -- The ContactList UI in Spark.
-<li> <a href="api/com/jivesoftware/spark/ui/ChatRoomButton.html">ChatRoomButton</a> -- The button that should be used to conform to the look and feel of other buttons within a ChatRoom.
+<li> <a href="api/org/jivesoftware/MainWindow.html">MainWindow</a> -- The frame containing the Contact List. You use MainWindow to add new tabs, menu items, or force focus.
+<li> <a href="api/org/jivesoftware/spark/ui/ChatRoom.html">ChatRoom</a> -- The base abstract class of all chat rooms within Spark. Known implementations are ChatRoomImpl and GroupChatRoom.
+<li> <a href="api/org/jivesoftware/spark/ui/ChatArea.html">ChatArea</a> -- The base chat viewer for both the TranscriptWindow and ChatInputEditor.
+<li> <a href="api/org/jivesoftware/spark/ui/ContactList.html">ContactList</a> -- The ContactList UI in Spark.
+<li> <a href="api/org/jivesoftware/spark/ui/ChatRoomButton.html">ChatRoomButton</a> -- The button that should be used to conform to the look and feel of other buttons within a ChatRoom.
 </ul>
 </ul>
 
@@ -125,7 +129,10 @@ file might look like the following:
         &lt;version&gt;1.0&lt;/version&gt;
         &lt;description&gt;Enables users to find files and emails relating to users using Google Desktop technology.&lt;/description&gt;
         &lt;email&gt;ddman@jivesoftware.com&lt;/email&gt;
+        &lt;minSparkVersion&gt;2.6.0&lt;/minSparkVersion&gt;
+        &lt;os&gt;Windows,Linux,Mac&lt;/os&gt;
       &lt;/plugin&gt;
+      
 </pre>
 </fieldset>
 
@@ -148,7 +155,7 @@ You only need to drop your newly created <tt>jar file</tt> into the plugins dire
 
 
 <p>Your plugin class must implement the
-<tt><a href="api/com/jivesoftware/spark/plugin/plugin.html">Plugin</a></tt>
+<tt><a href="api/org/jivesoftware/spark/plugin/plugin.html">Plugin</a></tt>
 
 interface from the <a href="api/index.html">Spark Client API</a>. The Plugin interface has
 methods for initializing and shutting down the plugin.
@@ -156,47 +163,11 @@ methods for initializing and shutting down the plugin.
 
 <h2><a id="gettingStarted">Getting Started Writing Sparkplugs</a></h2>
 <p>
-In order to build your own Sparkplugs, you will need to setup your project properly to have all items in your classpath. 
-
-With the Sparkplug.zip or Sparplug.tar.gz you have just extracted, you should see the following contents:
-
-<fieldset>
-    <legend>Directory Structure</legend> 
-<pre>Sparkplugs/
- |- build/     &lt;- Simple structure to allow you to easily build your plugins using ANT.
- |- images/       &lt;-  Images used in this guide.
- |- plugin_development_guide.html/ &lt;- The complete development guide (this document).
- |- api/  &lt;- Contains the Sparkplug Javadocs.
- |- spark/ &lt;- The spark build structure you will need for classpath purposes
-    |-bin    &lt;- Contacts the startup.bat which starts up Spark for testing.
-    |-lib    &lt;- Contains all the archives needed to run Spark.
-    |-logs   &lt;- Where all logs are stored.
-    |-plugins &lt;- Location where all plugins should be deployed to.
-    |-resources &lt;- Contains native libraries for running OS specific operations.
-</pre>
-</fieldset>
-
-<p>
-To setup a project to run Spark within your IDE, you will need to the following:
-</p>
-
-<ul>
-<li>It is required that you use the <b>1.4 JRE</b> to build Spark. 
-<li>Add all *.jar files in the Sparkplugs/spark/lib and Sparkplugs/spark/lib/windows directories to your classpath.
-<li>Add the resource directory (Sparkplugins/spark/resource) to your classpath for the native libraries.</li>
-<li>Main Class - com.jivesoftware.Spark
-<li>VM Parameters - -Dplugin=path_to_your_plugin.xml file.  This allows you to run your plugins within your IDE without deploying.
-<li>That's it. 
-
-</ul>
-<p>We have also provided a build structure to easily build and deploy your own plugins directly into your Spark test bed. To use, read the <a href="builder/how-to-build.txt">how-to-build.txt</a> file in the builder/ directory.</p>
-
+In order to build your own Sparkplugs, you will need the Spark source code, which can be acquired with svn from
+<b>http://svn.igniterealtime.org/svn/repos/spark/</b> </p>
+To build an example plugin follow <a href="sparkplug_compile.html">Spark Plugin Compile Guide</a>
 
 <h3><a id="examples">Spark How-To's</a></h3>
-
-<p>
-All code samples can be found in the <a href="examples.jar">examples.jar</a> file located here.
-</p>
 
 <ul>
 <li><a href="#simplePlugin">How do I create a simple plugin?</a>
@@ -227,9 +198,9 @@ All code samples can be found in the <a href="examples.jar">examples.jar</a> fil
 
     <legend>Simple Plugin</legend>
 <pre class="java">
-package com.jivesoftware.spark.examples;
+package org.jivesoftware.spark.examples;
 
-import com.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.plugin.Plugin;
 
 /**
  * Implements the Spark Plugin framework to display the different possibilities using
@@ -522,11 +493,11 @@ public class ExamplePlugin implements Plugin {
 See the SearchMe code below.
 <pre class="java"> 
     
-package com.jivesoftware.spark.examples;
+package org.jivesoftware.spark.examples;
 
-import com.jivesoftware.spark.search.Searchable;
-import com.jivesoftware.spark.SparkManager;
-import com.jivesoftware.resource.LaRes;
+import org.jivesoftware.spark.search.Searchable;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.resource.LaRes;
 
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
@@ -867,10 +838,10 @@ public class SearchMe implements Searchable {
  * This software is the proprietary information of Jive Software.
  * Use is subject to license terms.
  */
-package com.jivesoftware.spark.examples.preferences;
+package org.jivesoftware.spark.examples.preferences;
 
-import com.jivesoftware.spark.preference.Preference;
-import com.jivesoftware.resource.LaRes;
+import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.resource.LaRes;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -941,9 +912,9 @@ public class MyPreferences implements Preference {
 
 <li>Create a UI class that your Preference will use.
 <pre class="java">
-package com.jivesoftware.spark.examples.preferences;
+package org.jivesoftware.spark.examples.preferences;
 
-import com.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
