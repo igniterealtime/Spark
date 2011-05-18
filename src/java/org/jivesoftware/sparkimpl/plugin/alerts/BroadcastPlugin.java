@@ -277,10 +277,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         int linebreaks = org.jivesoftware.spark.util.StringUtils.
         countNumberOfOccurences(s,'\n');
 
+        // Currently Serverbroadcasts dont contain Subjects, so this might be a MOTD message
+        boolean mightbeMOTD = message.getSubject()!=null;
+
 	if (!from.contains("@")) {
 	    // if theres no "@" it means the message came from the server
 	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)
-		    || linebreaks > 20 || message.getBody().length() > 1000) {
+		    || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
 		// if we have more than 20 linebreaks or the message is longer
 		// than 1000characters we should broadcast
 		// in a normal chatwindow
@@ -421,10 +424,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
             chatRoom = (ChatRoomImpl)container.getChatRoom(from);
         }
         catch (ChatRoomNotFoundException e) {
-        	chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), Res.getString("administrator"));
-            chatRoom.getBottomPanel().setVisible(false);
-            chatRoom.getToolBar().setVisible(false);
-            SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
+           String windowtitle = message.getSubject()!=null ? message.getSubject() : Res.getString("administrator");
+           chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), windowtitle);
+           chatRoom.getBottomPanel().setVisible(false);
+           chatRoom.getToolBar().setVisible(false);
+           SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
         }
 
 
