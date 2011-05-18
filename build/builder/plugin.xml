@@ -7,5 +7,10 @@
     <email>foo@foo.com</email>
     <description>Sample Plugin</description>
     <class>com.jivesoftware.plugin.MyPlugin</class>
+    <minSparkVersion>2.6.0</minSparkVersion>
+    <os>Windows,Linux,Mac</os>
 </plugin>
 
+
+
+<!-- os can contain any operating system seperated by a commata  -->
