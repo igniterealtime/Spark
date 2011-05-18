@@ -1,4 +1,7 @@
 <project name="sparkplug" default="jar" basedir="..">
+	
+	<!-- specify the name of your .jar -->
+	<property name="jarname" value="myplugin.jar"/>
 
     <property name="plug.dir" value="${basedir}/."/>
     <property name="plug.lib.dir" value="${plug.dir}/lib"/>
@@ -8,13 +11,14 @@
     <property name="target.dir" value="${plug.dir}/target"/>
     <property name="target.lib.dir" value="${plug.dir}/target/lib"/>
     <property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
-
+	
     <property name="spark.home" value="${plug.dir}/../spark" />
+	<property name="spark.lib" value="${plug.dir}/../../target/build/lib"/>
 
     <path id="lib.classpath">
         <fileset dir="${plug.lib.dir}" includes="**/*.jar, **/*.zip"/>
-        <fileset dir="${spark.home}/lib" includes="**/*.jar, **/*.zip"/>
-        <fileset dir="${spark.home}/lib/windows" includes="**/*.jar" />
+        <fileset dir="${spark.lib}" includes="**/*.jar, **/*.zip"/>
+        <fileset dir="${spark.lib}/windows" includes="**/*.jar" />
     </path>
 
     <target name="clean" description="Cleans all build related output">
@@ -24,13 +28,16 @@
     </target>
 
     <target name="compile" description="Compiles plugin source">
+    	
+    	<echo message="${spark.lib}"/>
+    	
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}"
                destdir="${classes.dir}"
                classpathref="lib.classpath"
-               source="1.4"
+               source="1.6"
                debug="true"
-               target="1.4"/>
+               target="1.6"/>
         <copy todir="${classes.dir}">
 		<fileset dir="${src.dir}" includes="**/*.png"/>
 		<fileset dir="${src.dir}" includes="**/*.gif"/>
@@ -53,14 +60,14 @@
 
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
-        <zip zipfile="${plug.dir}/myplugin.jar" basedir="${target.dir}" />
+        <zip zipfile="${plug.dir}/${jarname}" basedir="${target.dir}" />
     </target>
 
     <target name="run" depends="jar" description="Makes a plugin jar and starts Spark with that plugin">
         <copy todir="${basedir}/../spark/plugins"
-            file="${plug.dir}/myplugin.jar" />
+            file="${plug.dir}/${jarname}" />
 
-        <property name="sparklib" value="${basedir}/../spark/lib" />
+        <property name="sparklib" value="${basedir}/../lib" />
         <java fork="true" classname="org.jivesoftware.Spark" dir="${basedir}/../spark/bin">
             <classpath>
                 <fileset dir="${sparklib}">

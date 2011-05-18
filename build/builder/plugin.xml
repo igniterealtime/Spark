@@ -6,7 +6,7 @@
     <homePage>http://www.jivesoftware.org</homePage>
     <email>foo@foo.com</email>
     <description>Sample Plugin</description>
-    <class>com.jivesoftware.plugin.MyPlugin</class>
+    <class>example.ExamplePlugin</class>
     <minSparkVersion>2.6.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>
 </plugin>
