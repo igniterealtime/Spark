@@ -250,7 +250,7 @@ public final class LoginDialog {
         private JLabel serverNameLabel = new JLabel();
         private JLabel ssoServerLabel = new JLabel();
         
-        private JLabel otherUsers = new JLabel(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+        private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
 
         LoginPanel() {
@@ -290,11 +290,11 @@ public final class LoginDialog {
             add(usernameField,
                     new GridBagConstraints(1, 0, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(5, 5, 0, 5), 0, 0));
+                            new Insets(5, 5, 0, 0), 0, 0));
 
             add(otherUsers, new GridBagConstraints(3, 0, 1, 1,
                             0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(10, 0, 5, 5), 0, 0));
+                            new Insets(5, 0, 0, 0), 0, 0));
             
             add(accountLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
@@ -304,28 +304,29 @@ public final class LoginDialog {
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
 
-            add(passwordField,
-                    new GridBagConstraints(1, 1, 2, 1,
-                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(5, 5, 0, 5), 0, 0));
             add(passwordLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
+            add(passwordField,
+                    new GridBagConstraints(1, 1, 2, 1,
+                            1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                            new Insets(5, 5, 0, 0), 0, 0));
+
 
             // Add Server Field Properties
+            add(serverLabel,
+                    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
             add(serverField,
                     new GridBagConstraints(1, 2, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                            new Insets(5, 5, 0, 5), 0, 0));
+                            new Insets(5, 5, 0, 0), 0, 0));
 
             add(serverNameLabel,
                     new GridBagConstraints(1, 2, 2, 1,
                             1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 5, 0, 5), 0, 0));
 
-            add(serverLabel,
-                    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 5, 0));
             add(headerLabel,
                     new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
