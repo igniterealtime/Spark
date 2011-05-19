@@ -37,6 +37,8 @@ public class RoarProperties {
     private File configFile;
 
     public static final String BACKGROUNDCOLOR = "backgroundcolor";
+    public static final String HEADERCOLOR = "headercolor";
+    public static final String TEXTCOLOR = "textcolor";
     public static final String DURATION = "duration";
     public static final String ACTIVE = "active";
     public static final String AMOUNT = "amount";
@@ -82,6 +84,25 @@ public class RoarProperties {
 
     public void setBackgroundColor(Color c) {
 	setColor(BACKGROUNDCOLOR, c);
+    }
+    
+    public Color getHeaderColor()
+    {
+	return getColor(HEADERCOLOR);
+    }
+    public void setHeaderColor(Color c)
+    {
+	setColor(HEADERCOLOR, c);
+    }
+    
+    public Color getTextColor()
+    {
+	return getColor(TEXTCOLOR);
+    }
+    
+    public void setTextColor(Color c)
+    {
+	setColor(TEXTCOLOR, c);
     }
 
     public int getDuration() {

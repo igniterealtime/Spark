@@ -79,8 +79,9 @@ public class RoarPanel {
 	window.setVisible(true);
     }
     
-    public static void popupWindow(final RoarMessageListener owner, Icon icon, String head, String text, int x, int y, Color backgroundcolor, int duration) {
-	final JWindow window = createWindow(icon, head, text, x, y,backgroundcolor, Color.RED, Color.WHITE);
+    public static void popupWindow(final RoarMessageListener owner, Icon icon, String head, String text, int x, int y, int duration, Color backgroundcolor, Color headercolor, Color textcolor) {
+	
+	final JWindow window = createWindow(icon, head, text, x, y,backgroundcolor, headercolor, textcolor);
 	fadein(window);
 	
 

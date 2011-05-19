@@ -93,7 +93,11 @@ public class RoarPreference implements Preference {
 
     @Override
     public void load() {
-	_prefPanel.setBackgroundColor(_props.getBackgroundColor());
+
+	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.BACKGROUNDCOLOR, _props.getBackgroundColor());
+	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.HEADERCOLOR, _props.getHeaderColor());
+	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.TEXTCOLOR, _props.getTextColor());
+	
 	_prefPanel.setShowingPopups(_props.getShowingPopups());
 	_prefPanel.setDuration(_props.getDuration());
 	_prefPanel.setAmount(_props.getMaximumPopups());
@@ -103,7 +107,13 @@ public class RoarPreference implements Preference {
     public void commit() {
 	_props.setDuration(_prefPanel.getDuration());
 	_props.setShowingPopups(_prefPanel.getShowingPopups());
-	_props.setBackgroundColor(_prefPanel.getBackgroundColor());
+	
+	
+	_props.setBackgroundColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.BACKGROUNDCOLOR));
+	_props.setHeaderColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.HEADERCOLOR));
+	_props.setTextColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.TEXTCOLOR));
+	
+	
 	_props.setMaximumPopups(_prefPanel.getAmount());
 	_props.save();
 

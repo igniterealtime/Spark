@@ -67,8 +67,8 @@ public class RoarMessageListener implements GlobalMessageListener {
 	    String nickname = StringUtils.parseName(message.getFrom());
 
 	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
-		    _lastusedXpos, _lastusedYpos, props.getBackgroundColor(),
-		    props.getDuration());
+		    _lastusedXpos, _lastusedYpos,props.getDuration(), props.getBackgroundColor(),
+		    props.getHeaderColor(),props.getTextColor());
 
 	    ++_amount;
 	    _lastusedYpos += HEIGHT + 5;
