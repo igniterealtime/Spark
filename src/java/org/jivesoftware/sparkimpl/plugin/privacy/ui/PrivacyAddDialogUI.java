@@ -59,7 +59,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
- * @author Holger Bergunde
+ * @author Bergunde Holger
  */
 public class PrivacyAddDialogUI extends JPanel {
 

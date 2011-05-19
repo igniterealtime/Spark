@@ -19,7 +19,6 @@
  */ 
 package org.jivesoftware.spark.ui.status;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -56,7 +55,6 @@ import javax.swing.border.Border;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.VCard;
@@ -73,7 +71,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
-import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
@@ -318,42 +315,41 @@ public class StatusBar extends JPanel implements VCardListener {
 
         
         //Add privacy menu
-	JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
-	privMenu.setIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
-	PrivacyManager pmanager = PrivacyManager.getInstance();
-	for (String s : pmanager.getPrivacyListNames()) {
-
-	    final SparkPrivacyList plist = pmanager.getPrivacyList(s);
-
-	    JMenuItem it;
-	    if (s.equals(pmanager.getBlackList().getListName())) {
-		it = new JMenuItem(Res.getString("privacy.name.for.default.list"));
-	    } else {
-		it = new JMenuItem(s);
-	    }
-	    privMenu.add(it);
-	    if (plist.isActive()) {
-		it.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
-	    } else {
-	        it.setIcon(null);
-	    }
-	    it.addActionListener(new ActionListener() {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    
-		    try {
-			plist.setListAsActive();
-		    } catch (XMPPException e1) {
-			Log.warning("Could not activate list " + plist.getListName(), e1);
-			e1.printStackTrace();
-		    }
-
-		}
-	    });
-	}
+        JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
+        privMenu.setIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
+        final PrivacyManager pmanager = PrivacyManager.getInstance();
+        for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
+            JMenuItem it = new JMenuItem(plist.getListName());
+            privMenu.add(it);
+            if (plist.isActive()) {
+                it.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
+            } else {
+                it.setIcon(null);
+            }
+            final SparkPrivacyList finalList = plist;
+            it.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    PrivacyManager.getInstance().setListAsActive(finalList.getListName());
+                }
+            });
+        }
         
-       popup.add(privMenu);
+        if (pmanager.hasActiveList()) {
+            JMenuItem remMenu = new JMenuItem(Res.getString("privacy.menuitem.deactivate.current.list", pmanager.getActiveList().getListName()),
+                    SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+            remMenu.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    pmanager.declineActiveList();
+                }
+            });
+            privMenu.addSeparator();
+            privMenu.add(remMenu);
+        }
+        
+        popup.add(privMenu);
         
         
         // Add change message

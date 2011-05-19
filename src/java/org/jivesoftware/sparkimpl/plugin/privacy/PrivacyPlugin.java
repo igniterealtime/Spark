@@ -30,6 +30,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smack.packet.PrivacyItem.Type;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -44,7 +45,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
  * This plugin built using specification: XEP-0016: Privacy Lists
  * {@link http://xmpp.org/extensions/xep-0016.html}
  *
- * @author Zolotarev Konstantin
+ * @author Zolotarev Konstantin, Bergunde Holger
  */
 public class PrivacyPlugin implements Plugin {
 
@@ -78,8 +79,7 @@ public class PrivacyPlugin implements Plugin {
                             @Override
                             public void run() {
                                 addMenuItemToContactItems();
-                                scanContactList();
-                                setDefaultListAsActive();
+
                             }
                         });
                     } catch(Exception ex) {
@@ -87,8 +87,6 @@ public class PrivacyPlugin implements Plugin {
                     }
                 } else {
                     addMenuItemToContactItems();
-                    scanContactList();
-                    setDefaultListAsActive();
                 }
             }
         };
@@ -112,54 +110,7 @@ public class PrivacyPlugin implements Plugin {
     }
     
     
-    /**
-     * Activate the default Privacy List
-     */
-    private void setDefaultListAsActive()
-    {
-	PrivacyManager pmanager = PrivacyManager.getInstance();
-	for (int i = 0; i < pmanager.getPrivacyListNames().size(); ++i)
-	{    
-	    SparkPrivacyList plist = pmanager.getPrivacyList(pmanager.getPrivacyListNames().get(i));
-	      if (plist.isDefault())
-	            {
-	        	try {
-			    plist.setListAsActive();
-			} catch (XMPPException e1) {
-			    Log.warning("Could not activate list "+plist.getListName(), e1);
-			}
-	            }
-	}
-
-	if (!pmanager.hasActiveList() && !pmanager.hasDefaultList()) {
-	    try {
-		pmanager.getBlackList().setListAsActive();
-
-	    } catch (XMPPException e) {
-		Log.error("error setting active list on startup " + pmanager.getBlackList().getListName());
-	    }
-	    try {
-		pmanager.getBlackList().setListAsDefault();
-	    } catch (XMPPException e) {
-		Log.error("error setting default list on startup " + pmanager.getBlackList().getListName());
-	    }
-	}
-    }
-
-    /**
-     * Search blocked items and append icons for them
-     */
-    protected void scanContactList() {
-	
-        PrivacyManager manager = PrivacyManager.getInstance();
-        ArrayList<PrivacyItem> items = (ArrayList<PrivacyItem>) manager.getBlackList().getBlockedItems();
-        for (PrivacyItem privacyItem : items ) {
-            if ( privacyItem.getValue() != null && !privacyItem.getValue().isEmpty() ) {
-                PrivacyManager.getInstance().setBlockedIconToContact(privacyItem.getValue());
-            }
-        }
-        
-    }
+    
 
     protected void addPrivacyListsToPresenceChange()
     {
@@ -167,21 +118,22 @@ public class PrivacyPlugin implements Plugin {
     }
     
     
-    /**
-     * Adding block menu item to contact popupmenu
-     */
+//    /**
+//     * Adding block menu item to contact popupmenu
+//     */
     protected void addMenuItemToContactItems() {
         
         SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {
         	
-        	PrivacyManager pManager = PrivacyManager.getInstance();
+        	final PrivacyManager pManager = PrivacyManager.getInstance();
+        	
+        	if (pManager.hasActiveList())
+        	{
         	final SparkPrivacyList activeList = pManager.getActiveList();
         	
-        	if(object instanceof ContactItem && activeList!=null &&
-        		!activeList.getListName().equals(pManager.getBlackList().getListName()))
-        	{
+        	
                     final ContactItem item = (ContactItem) object;
                     JMenuItem blockMenu;
                     
@@ -192,11 +144,8 @@ public class PrivacyPlugin implements Plugin {
                             @Override
                             public void actionPerformed(ActionEvent ae) {
                                 if ( item != null ) {
-                                    try {
-                                        activeList.removeItem(((ContactItem) item).getJID()); //Add to block list}
-                                    } catch (XMPPException ex) {
-                                        Log.error(ex); // @todo handle error
-                                    }
+                                        activeList.removeItem(((ContactItem) item).getJID()); //Add to block list  
+                                        activeList.save();
                                 }
                             }
                         });
@@ -207,21 +156,20 @@ public class PrivacyPlugin implements Plugin {
                             @Override
                             public void actionPerformed(ActionEvent ae) {
                                 if ( item != null ) {
-                                    try {
-                                        activeList.addItem(item.getJID()); //Add to block list
-                                    } catch (XMPPException ex) {
-                                        Log.error(ex); // @todo handle error
-                                    }
+                                    PrivacyItem pItem = new PrivacyItem(Type.jid.toString(), false, activeList.getNewItemOrder());
+                                    pItem.setFilterMessage(true);
+                                    pItem.setFilterPresence_out(true);
+                                    pItem.setValue(item.getJID());
+                                    
+                                    activeList.addItem(pItem); //Add to block list
+                                    activeList.save();
                                 }
                             }
                         });
                     }              
                     
+            
                     popup.add(blockMenu);
-                }
-        	else if(activeList==null )
-        	{
-        	    // euh what?
         	}
             }
 

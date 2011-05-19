@@ -35,14 +35,10 @@ import javax.swing.JTree;
 
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 
-import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
-import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyTreeNode;
-
 /**
- * @author Holger Bergunde
+ * @author Bergunde Holger
  */
 public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -91,15 +87,12 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
 
             if (node.isPrivacyList()) {
                 String listName = node.getPrivacyList().getListName();
-                if (listName.equals(PrivacyManager.getInstance().getBlackList().getListName())) {
-                    listName = Res.getString("privacy.name.for.default.list");
-                }
-                if (node.isActiveList()) {
-                    listName += " [" + Res.getString("privacy.label.list.is.active") + "]";
-                }
-                if (node.isDefaultList()) {
-                    listName += " [" + Res.getString("privacy.label.list.is.default") + "]";
-                }
+//                if (node.isActiveList()) {
+//                    listName += " [" + Res.getString("privacy.label.list.is.active") + "]";
+//                }
+//                if (node.isDefaultList()) {
+//                    listName += " [" + Res.getString("privacy.label.list.is.default") + "]";
+//                }
                 setText(listName);
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ENTRY));
 

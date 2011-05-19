@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy.ui;
 
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +37,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 import javax.swing.BorderFactory;
+
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,17 +52,16 @@ import javax.swing.tree.TreePath;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
-import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
-import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyTreeNode;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
 /**
- * @author Holger Bergunde
+ * @author Bergunde Holger
  */
-public class PrivacyListTree extends JPanel {
+public class PrivacyListTree extends JPanel implements SparkPrivacyListListener {
 
     private static final long serialVersionUID = 1885262127050966627L;
     private DefaultTreeModel _model;
@@ -68,7 +69,13 @@ public class PrivacyListTree extends JPanel {
     private PrivacyManager _pManager;
     private PrivacyTreeNode _top = new PrivacyTreeNode(Res.getString("privacy.root.node"));
     private JComponent _comp;
-
+    private JPanel treeandInfo = new JPanel(new GridBagLayout());
+   
+    private RolloverButton _actList;
+    private RolloverButton _defList;
+   
+   
+   
     public PrivacyListTree() {
 
         _comp = this;
@@ -78,15 +85,17 @@ public class PrivacyListTree extends JPanel {
         _tree = new JTree(_model);
         _tree.setCellRenderer(new PrivacyTreeCellRenderer());
         JScrollPane _scrollPane = new JScrollPane(_tree);
-        _scrollPane.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.title.preferences")));
-
-        this.add(_scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        
+        treeandInfo.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.title.preferences")));
+        treeandInfo.add(_scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        this.add(treeandInfo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         createInfoPanel();
         initializeTree();
-
+        createCurrentListInfoPanel();
     }
 
     private void createInfoPanel() {
+        _pManager.addListListener(this);
         JPanel info = new JPanel(new GridBagLayout());
         JLabel infolabel = new JLabel(Res.getString("privacy.label.information"));
         info.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.border.information")));
@@ -100,9 +109,70 @@ public class PrivacyListTree extends JPanel {
         info.add(pin, new GridBagConstraints(2, 1, 1, 1, 0.0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
         info.add(pout, new GridBagConstraints(3, 1, 1, 1, 0.0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
+       
         this.add(info, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
     }
 
+    
+    private void createCurrentListInfoPanel() {
+        JPanel listInfo = new JPanel(new GridBagLayout());
+        _actList = new RolloverButton();
+        _actList.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _pManager.declineActiveList();
+            }
+        });
+        _defList = new RolloverButton();
+        _defList.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _pManager.declineDefaultList();
+
+            }
+        });
+        _actList.setHorizontalTextPosition(SwingConstants.LEFT);
+        _defList.setHorizontalTextPosition(SwingConstants.LEFT);
+        if (_pManager.hasActiveList()) {
+            _actList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+            _actList.setText(_pManager.getActiveList().getListName());
+            _actList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+
+        } else {
+            _actList.setText(Res.getString("privacy.button.no.list.selected"));
+            _actList.setEnabled(false);
+            _actList.setIcon(null);
+        }
+
+        if (_pManager.hasDefaultList()) {
+            _defList.setText(_pManager.getDefaultList().getListName());
+            _defList.setEnabled(true);
+            _defList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+
+        } else {
+            _defList.setText(Res.getString("privacy.button.no.list.selected"));
+            _defList.setEnabled(false);
+            _defList.setIcon(null);
+        }
+
+        JLabel actListLabel = new JLabel(Res.getString("privacy.label.list.is.active"));
+        JLabel defListLabel = new JLabel(Res.getString("privacy.label.list.is.default"));
+
+        JPanel actPanel = new JPanel(new FlowLayout());
+        actPanel.add(actListLabel);
+        actPanel.add(_actList);
+        JPanel defPanel = new JPanel(new FlowLayout());
+        defPanel.add(defListLabel);
+        defPanel.add(_defList);
+
+        listInfo.add(actPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 00, 00, 0), 0, 0));
+        listInfo.add(defPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 00, 00, 0), 0, 0));
+        treeandInfo.add(listInfo, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        // treeandInfo.add(listInfo);
+    }
+    
     /**
      * Initialize the jtree for the UI. Sets the model and adds the PrivacyLists
      * to the model using loadPrivacyLists()
@@ -146,13 +216,11 @@ public class PrivacyListTree extends JPanel {
                     PrivacyTreeNode parent = (PrivacyTreeNode) path.getPathComponent(1);
                     SparkPrivacyList list = parent.getPrivacyList();
                     // Remove contact or group
-                    list.removePrivacyItem(node.getPrivacyItem().getType(), node.getPrivacyItem().getValue());
-                    try {
+                    list.removeItem(node.getPrivacyItem().getValue());
+                    //list.removePrivacyItem(node.getPrivacyItem().getType(), node.getPrivacyItem().getValue());
+                  
                         list.save();
-                    } catch (XMPPException e1) {
-                        Log.warning("Could not save privacylist " + list.getListName(), e1);
-                        e1.printStackTrace();
-                    }
+                    
                     _model.removeNodeFromParent(node);
                 }
 
@@ -190,20 +258,14 @@ public class PrivacyListTree extends JPanel {
                 Collection<PrivacyItem> col = browser.showRoster(dlg, node.isContactGroup() ? false : true);
                 for (PrivacyItem pI : col) {
                     pI.setOrder(list.getNewItemOrder());
-                    try {
-                        list.addPrivacyItem(pI);
+                  
+                        list.addItem(pI);
                         PrivacyTreeNode newChild = new PrivacyTreeNode(pI);
                         _model.insertNodeInto(newChild, parent, 0);
-                    } catch (XMPPException e1) {
-                        Log.warning("Could not add item to privacy list" + list.getListName(), e1);
-                    }
+                    
                 }
-
-                try {
                     list.save();
-                } catch (XMPPException e1) {
-                    Log.warning("could not save privacy list " + list.getListName(), e1);
-                }
+                
 
             }
         });
@@ -301,9 +363,7 @@ public class PrivacyListTree extends JPanel {
         _model.insertNodeInto(node, parent, 0);
 
         SparkPrivacyList plist = node.getPrivacyList();
-        if (node.getPrivacyList().getListName().equals(PrivacyManager.getInstance().getBlackList().getListName())) {
-            return;
-        }
+      
         PrivacyTreeNode contacts = new PrivacyTreeNode(Res.getString("privacy.node.contacts"));
         contacts.setisContactGroup(true);
         _model.insertNodeInto(contacts, node, 0);
@@ -326,8 +386,8 @@ public class PrivacyListTree extends JPanel {
      */
     private void loadPrivacyLists() {
 
-        for (String listName : _pManager.getPrivacyListNames()) {
-            addListNode(new PrivacyTreeNode(_pManager.getPrivacyList(listName)), _top);
+        for (SparkPrivacyList list : _pManager.getPrivacyLists()) {
+            addListNode(new PrivacyTreeNode(list), _top);
         }
 
         _tree.addMouseListener(new MouseListener() {
@@ -340,10 +400,12 @@ public class PrivacyListTree extends JPanel {
                     _tree.setSelectionRow(row);
                 } else if (SwingUtilities.isRightMouseButton(e)) {
                     boolean found = false;
-                    for (int i : _tree.getSelectionRows()) {
-                        if (i == row) {
-                            found = true;
-                            break;
+                    if (_tree.getSelectionRows() != null) {
+                        for (int i : _tree.getSelectionRows()) {
+                            if (i == row) {
+                                found = true;
+                                break;
+                            }
                         }
                     }
                     if (!found) {
@@ -396,5 +458,39 @@ public class PrivacyListTree extends JPanel {
             }
         });
 
+    }
+
+    @Override
+    public void listActivated(String listname) {
+        _actList.setText(listname);       
+        _actList.setEnabled(true);
+        _actList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+    }
+
+    @Override
+    public void listDeActivated(String listname) {
+       if (_actList.getText().equals(listname))
+       {
+           _actList.setText(Res.getString("privacy.button.no.list.selected"));
+           _actList.setEnabled(false);
+           _actList.setIcon(null);
+       }     
+    }
+
+    @Override
+    public void listSetAsDefault(String listname) {
+       _defList.setText(listname);
+       _defList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+       _defList.setEnabled(true);
+    }
+
+    @Override
+    public void listRemovedAsDefault(String listname) {
+        if (_defList.getText().equals(listname))
+        {
+            _defList.setText(Res.getString("privacy.button.no.list.selected"));
+            _defList.setEnabled(false);
+            _defList.setIcon(null);
+        }
     }
 }

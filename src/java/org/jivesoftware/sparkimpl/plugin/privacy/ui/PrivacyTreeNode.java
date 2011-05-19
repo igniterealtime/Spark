@@ -17,16 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkimpl.plugin.privacy.list;
+package org.jivesoftware.sparkimpl.plugin.privacy.ui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
-import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
  * Class to handle privacy tree nodes
- * @author Holger Bergunde
+ * @author Bergunde Holger
  */
 public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
@@ -39,6 +39,7 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
     private boolean _isGroupGroup = false;
     private boolean _isDefault = false;
     private boolean _isActive = false;
+    private PrivacyManager _pmanager = PrivacyManager.getInstance(); 
 
     /**
      * Creates a Node with a reference to the SparkPrivacyList and changes the
@@ -100,13 +101,7 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
      */
     public void setListAsActive() {
 	_isActive = true;
-	try {
-	    _list.setListAsActive();
-	} catch (XMPPException e) {
-	    _isActive = false;
-	    Log.warning("Could not activate privacyList: "+_list.getListName(), e);
-	}
-	
+	_pmanager.setListAsActive(_list.getListName());
     }
 
     /**
@@ -115,12 +110,9 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
      */
     public void setListAsDefault() {
 	_isDefault = true;
-	try {
-	    _list.setListAsDefault();
-	} catch (XMPPException e) {
-	    _isDefault=false;
-	    Log.warning("Could not set list:\""+_list.getListName()+"\" as default privacyList ", e);
-	}
+	_pmanager.setListAsDefault(_list.getListName());
+	
+
     }
 
     /**

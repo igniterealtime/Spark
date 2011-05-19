@@ -28,7 +28,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
 
 /**
- * @author Holger Bergunde
+ * @author Bergunde Holger
  */
 public class PrivacyPreferences implements Preference {
 
