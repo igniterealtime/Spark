@@ -2,9 +2,11 @@
     <name>Roar!!!</name>
     <class>org.jivesoftware.spark.roar.Roar</class>
     <author>Wolf Posdorfer</author>
-    <version>0.1</version>
+    <version>0.2</version>
     <homePage>http://www.jivesoftware.com</homePage>
     <description>Shows awesome Popups</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <minSparkVersion>2.6.0</minSparkVersion>
+    <os>Windows,Linux</os>
+    <java>1.6.0_17</java>
 </plugin>

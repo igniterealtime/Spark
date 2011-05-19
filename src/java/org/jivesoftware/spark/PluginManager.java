@@ -267,7 +267,7 @@ public class PluginManager implements MainWindowListener {
 
         Plugin pluginClass = null;
 
-        List plugins = pluginXML.selectNodes("/plugin");
+        List<?> plugins = pluginXML.selectNodes("/plugin");
         for (Object plugin1 : plugins) {
             PublicPlugin publicPlugin = new PublicPlugin();
 
@@ -290,16 +290,39 @@ public class PluginManager implements MainWindowListener {
 
                     if (!ok) {
                         return null;
-                    }
+                    }                  
                 }
                 catch (Exception e) {
                     Log.error("Unable to load plugin " + name + " due to no minSparkVersion.");
                     return null;
                 }
                 
+                // Check for minimum Java version
+                try {       
+                  String javaversion = plugin.selectSingleNode("java").getText().replace("_", "").replace(".", "");
+                  javaversion = javaversion == null? "0" : javaversion;
+                  int jv = Integer.parseInt(javaversion);
+                  
+                  String myversion = System.getProperty("java.version").replace("_","").replace(".","");
+                  int mv = Integer.parseInt(myversion);
+
+                  boolean ok = (mv >= jv);
+
+                  if (!ok) {
+                      Log.error("Unable to load plugin " + name +
+                	    " due to old JavaVersion.\nIt Requires "+plugin.selectSingleNode("java").getText()+
+                	    " you have "+ System.getProperty("java.version"));
+                      return null;
+                  }
+                  
+                }
+                catch (NullPointerException e) {
+                    Log.warning("Plugin "+name+" has no <java>-Tag, consider getting a newer Version");
+                }
+                
                 // set dependencies 
                 try {
-                   List dependencies = plugin.selectNodes("depends/plugin");
+                   List<?> dependencies = plugin.selectNodes("depends/plugin");
                    for (Object depend1 : dependencies) {
                       Element depend = (Element) depend1;
                   	 PluginDependency dependency = new PluginDependency();
@@ -380,7 +403,7 @@ public class PluginManager implements MainWindowListener {
         catch (DocumentException e) {
             Log.error(e);
         }
-        List plugins = pluginXML.selectNodes("/plugins/plugin");
+        List<?> plugins = pluginXML.selectNodes("/plugins/plugin");
         for (final Object plugin1 : plugins) {
 
           		EventQueue.invokeLater(new Runnable() {
@@ -746,7 +769,7 @@ public class PluginManager implements MainWindowListener {
                 return;
             }
             dir.mkdir();
-            for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+            for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
                 JarEntry entry = (JarEntry)e.nextElement();
                 File entryFile = new File(dir, entry.getName());
                 // Ignore any manifest.mf entries.

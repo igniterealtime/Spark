@@ -71,7 +71,7 @@ public class RoarProperties {
     }
 
     public boolean getShowingPopups() {
-	return getBoolean(ACTIVE, true);
+	return getBoolean(ACTIVE, false);
     }
 
     public void setShowingPopups(boolean popups) {
