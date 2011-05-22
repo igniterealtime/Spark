@@ -19,42 +19,36 @@
  */
 package com.jivesoftware.spark.plugin.apple;
 
-import com.apple.eawt.Application;
-import com.apple.eawt.ApplicationAdapter;
-import com.apple.eawt.ApplicationEvent;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.NativeHandler;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.ui.status.StatusItem;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.PresenceListener;
+import org.jivesoftware.spark.ui.status.StatusItem;
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Component;
-import java.awt.Frame;
-import java.awt.MenuItem;
-import java.awt.Window;
-import java.awt.event.*;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JSeparator;
-import javax.swing.UIManager;
+import com.apple.eawt.Application;
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
 
 /**
  * Plugins for handling Mac OS X specific functionality supports 10.6+
@@ -63,8 +57,10 @@ import javax.swing.UIManager;
  */
 public class ApplePlugin implements Plugin, NativeHandler {
 
+    @SuppressWarnings("unused")
     private AppleDock _appledock;
-    private AppleUtils _appleUtils;
+
+    private AppleBounce _applebounce;
     private boolean unavailable;
     private int previousPriority;
     private boolean addedFrameListener;
@@ -74,56 +70,56 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
     private Application _application;
 
+    private AppleProperties _props;
+
     @SuppressWarnings("deprecation")
     public void initialize() {
-	if (Spark.isMac()) {
-	    
-	    
-	    _appleUtils = new AppleUtils();
-	    _appledock = new AppleDock();
 
-	    SparkManager.getNativeManager().addNativeHandler(this);
+	_props = new AppleProperties();
+	ApplePreference pref = new ApplePreference(_props);
+	SparkManager.getPreferenceManager().addPreference(pref);
 
-	    handleIdle();
+	_applebounce = new AppleBounce(_props);
+	_appledock = new AppleDock();
 
-	    // // register an application listener to show the about box
-	    _application = Application.getApplication();
+	SparkManager.getNativeManager().addNativeHandler(this);
 
-	    _application.setEnabledPreferencesMenu(true);
-	    _application.addPreferencesMenuItem();
-	    _application.addApplicationListener(new ApplicationAdapter() {
+	handleIdle();
 
-		public void handlePreferences(ApplicationEvent applicationEvent) {
-		    SparkManager.getPreferenceManager().showPreferences();
+	// // register an application listener to show the about box
+	_application = Application.getApplication();
+
+	_application.setEnabledPreferencesMenu(true);
+	_application.addPreferencesMenuItem();
+	_application.addApplicationListener(new ApplicationAdapter() {
+
+	    public void handlePreferences(ApplicationEvent applicationEvent) {
+		SparkManager.getPreferenceManager().showPreferences();
+	    }
+
+	    public void handleReOpenApplication(ApplicationEvent event) {
+		MainWindow mainWindow = SparkManager.getMainWindow();
+		if (!mainWindow.isVisible()) {
+		    mainWindow.setState(Frame.NORMAL);
+		    mainWindow.setVisible(true);
 		}
 
-		public void handleReOpenApplication(ApplicationEvent event) {
-		    MainWindow mainWindow = SparkManager.getMainWindow();
-		    if (!mainWindow.isVisible()) {
-			mainWindow.setState(Frame.NORMAL);
-			mainWindow.setVisible(true);
-		    }
-
-		    if (SparkManager.getChatManager().getChatContainer()
-			    .getTotalNumberOfUnreadMessages() > 0) {
-			final ChatFrame frame = SparkManager.getChatManager().getChatContainer()
-				.getChatFrame();
-			frame.setState(Frame.NORMAL);
-			frame.setVisible(true);
-			frame.toFront();
-		    }
+		if (SparkManager.getChatManager().getChatContainer()
+			.getTotalNumberOfUnreadMessages() > 0) {
+		    final ChatFrame frame = SparkManager.getChatManager().getChatContainer()
+			    .getChatFrame();
+		    frame.setState(Frame.NORMAL);
+		    frame.setVisible(true);
+		    frame.toFront();
 		}
+	    }
 
-		public void handleQuit(ApplicationEvent applicationEvent) {
-		    SparkManager.getMainWindow().shutdown();
-		}
+	    public void handleQuit(ApplicationEvent applicationEvent) {
+		SparkManager.getMainWindow().shutdown();
+	    }
 
-	    });
+	});
 
-	    // Create Mac MenuBar when not in system.laf
-	    createMenuBarEntries();
-
-	}
     }
 
     public void shutdown() {
@@ -141,18 +137,16 @@ public class ApplePlugin implements Plugin, NativeHandler {
     }
 
     public void flashWindow(Window window) {
-	_appleUtils.bounceDockIcon(false);
+	if (_props.getDockBounce())
+	    _applebounce.bounceDockIcon(_props.getRepeatBounce());
     }
 
     public void flashWindowStopWhenFocused(Window window) {
-	_appleUtils.bounceDockIcon(false);
 
     }
 
     public void stopFlashing(Window window) {
-	_appleUtils.resetDock();
-	_appleUtils.bounceDockIcon(false);
-
+	_applebounce.resetDock();
     }
 
     public boolean handleNotification() {
@@ -313,61 +307,5 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    Log.error(e);
 	}
 	return true;
-    }
-
-    /**
-     * Creates Mac Specific MenuBar entries When not using the system look and
-     * feel
-     */
-    private void createMenuBarEntries() {
-
-	String curlaf = UIManager.getLookAndFeel().getName();
-
-	if (!curlaf.equals("Mac OS X")) {
-	    _application.setDefaultMenuBar(SparkManager.getMainWindow().getMenu());
-	}
-
-	// MainWindow mainWindow = SparkManager.getMainWindow();
-	//
-	// JMenu helpMenu = mainWindow.getMenuByName("Help");
-	// Component[] menuComponents = helpMenu.getMenuComponents();
-	// Component prev = null;
-	// for (Component current : menuComponents) {
-	// if (current instanceof JMenuItem) {
-	// JMenuItem item = (JMenuItem) current;
-	// if ("About".equals(item.getText())) {
-	// helpMenu.remove(item);
-	//
-	// // We want to remove the seperator
-	// if (prev != null && (prev instanceof JSeparator)) {
-	// helpMenu.remove(prev);
-	// }
-	// }
-	// }
-	// prev = current;
-	// }
-	//
-	// JMenu connectMenu = mainWindow.getMenuByName("Spark");
-	// connectMenu.setText("Connect");
-	// menuComponents = connectMenu.getMenuComponents();
-	// JSeparator lastSeperator = null;
-	// for (Component current : menuComponents) {
-	// if (current instanceof JMenuItem) {
-	// JMenuItem item = (JMenuItem) current;
-	//
-	// if ("Preferences".equals(item.getText())) {
-	// connectMenu.remove(item);
-	// } else if ("Log Out".equals(item.getText())) {
-	// connectMenu.remove(item);
-	// }
-	//
-	// } else if (current instanceof JSeparator) {
-	// lastSeperator = (JSeparator) current;
-	// }
-	// }
-	// if (lastSeperator != null) {
-	// connectMenu.remove(lastSeperator);
-	// }
-
     }
 }

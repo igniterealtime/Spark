@@ -7,4 +7,5 @@
     <description>Provides Growl notifications on Mac OS X.(http://growl.info)</description>
     <class>com.jivesoftware.spark.plugin.growl.GrowlPlugin</class>
     <minSparkVersion>2.0.0.1</minSparkVersion>
+    <java>1.6.0_00</java>
 </plugin>
