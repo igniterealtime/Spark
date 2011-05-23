@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.preference.media;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -38,11 +39,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import net.sf.fmj.media.RegistryDefaults;
 import net.sf.fmj.media.cdp.GlobalCaptureDevicePlugger;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -54,8 +57,10 @@ public class MediaPreferencePanel  extends JPanel {
 	
 	private JComboBox audioDevice = new JComboBox();
 	private JComboBox videoDevice = new JComboBox();
+	private JTextField _stunServerInput = new JTextField();
+        private JTextField _stunPortInput = new JTextField();
 	
-	public MediaPreferencePanel() {
+    public MediaPreferencePanel() {
 		setLayout(new VerticalFlowLayout());
 		
 		JPanel panel = new JPanel();
@@ -91,6 +96,8 @@ public class MediaPreferencePanel  extends JPanel {
         ResourceUtils.resLabel(lAudio, audioDevice, Res.getString("label.audio.device") + ":");
         
         scanDevices();
+        
+        createSTUNPanel();
 	}
 	
 	private String convertSysString(String src)
@@ -128,6 +135,25 @@ public class MediaPreferencePanel  extends JPanel {
 		}
 	}
 	
+	private void createSTUNPanel() 
+	{
+	    JPanel stunPanel = new JPanel(new GridBagLayout());
+	    stunPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("stun.border.label")));
+	    add(stunPanel);
+	    
+	    JLabel stunServer = new JLabel(Res.getString("stun.server.addr"));
+	    JLabel stunPort = new JLabel(Res.getString("stun.server.port"));
+	    
+	    
+	    _stunServerInput.setPreferredSize(new Dimension(120, 20));
+	    _stunPortInput.setPreferredSize(new Dimension(120, 20));
+	    
+	    stunPanel.add(stunServer, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+	    stunPanel.add(_stunServerInput, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+	    stunPanel.add(stunPort, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+            stunPanel.add(_stunPortInput, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0)); 
+	}
+	
 	public String getAudioDevice() {
 		if (audioDevice.getSelectedIndex() >= 0) {
 			return vectorAudioDevices.get(audioDevice.getSelectedIndex()).getLocator().toExternalForm();
@@ -157,6 +183,26 @@ public class MediaPreferencePanel  extends JPanel {
 		}
 		return "";
 	}
+	
+	       
+        public String getStunServer() {
+            return _stunServerInput.getText();
+        }
+
+        public void setStunServer(String server) {
+            this._stunServerInput.setText(server);
+        }
+
+        public int getStunPort() {
+            return Integer.valueOf(_stunPortInput.getText());
+        }
+
+        public void setStunPort(int port) {
+         
+            this._stunPortInput.setText(String.valueOf(port));
+        }
+	
+	
 	
 	/**
 	 * Logs the audio devices

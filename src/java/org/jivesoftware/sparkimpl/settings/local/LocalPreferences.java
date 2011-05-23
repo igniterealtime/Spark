@@ -962,12 +962,20 @@ public class LocalPreferences {
 	
 	public String getStunFallbackHost()
 	{
-	    return getString("stunFallbackHost", "none");
+	    return getString("stunFallbackHost", "");
 	}
 	
 	public int getStunFallbackPort()
 	{
 	    return getInt("stunFallbackPort", 3478);
+	}
+	
+	public void setStunFallbackHost(String host) {
+	    setString("stunFallbackHost", host);
+	}
+
+	public void setStunFallbackPort(int port) {
+	    setInt("stunFallbackPort", port);
 	}
 	
 	public boolean getShowTransportTab()

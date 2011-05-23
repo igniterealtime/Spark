@@ -83,6 +83,8 @@ public class MediaPreference implements Preference {
 		 LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
 		 panel.setVideoDevice(localPreferences.getVideoDevice());
 		 panel.setAudioDevice(localPreferences.getAudioDevice());
+		 panel.setStunServer(localPreferences.getStunFallbackHost());
+		 panel.setStunPort(localPreferences.getStunFallbackPort());
 	}
 
 	@Override
@@ -90,6 +92,8 @@ public class MediaPreference implements Preference {
 		LocalPreferences pref = SettingsManager.getLocalPreferences();
 		pref.setAudioDevice(panel.getAudioDevice());
 		pref.setVideoDevice(panel.getVideoDevice());
+		pref.setStunFallbackHost(panel.getStunServer());
+		pref.setStunFallbackPort(panel.getStunPort());
 		SettingsManager.saveSettings();
 	}
 	
