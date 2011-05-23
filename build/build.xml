@@ -364,21 +364,15 @@
 		</if>
 	</target>
 
-	<target name="windows-plugins">
+	<target name="build.plugins">
 		<subant target="">
 			<fileset dir="./src/plugins/fastpath/" includes="*/build.xml" />
-		</subant>
-		<subant target="">
-			<fileset dir="./src/plugins/flashing/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
 			<fileset dir="./src/plugins/google/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
 			<fileset dir="./src/plugins/jingle/" includes="*/build.xml" />
-		</subant>
-		<subant target="">
-			<fileset dir="./src/plugins/reversi/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
 			<fileset dir="./src/plugins/sip/" includes="*/build.xml" />
@@ -394,10 +388,22 @@
 		</subant>
 	</target>
 
+	<target name="windows.build.plugins" depends="build.plugins">
+		<subant target="">
+			<fileset dir="./src/plugins/flashing/" includes="*/build.xml" />
+		</subant>
+	</target>
+
+	<target name="linux.build.plugins" depends="build.plugins">
+		<subant target="">
+			<fileset dir="./src/plugins/linux/" includes="*/build.xml" />
+		</subant>
+	</target>
+
 
 
 	<!-- exe =================================================================================== -->
-	<target name="exe" depends="jar">
+	<target name="exe" depends="jar,windows.build.plugins">
 		<taskdef name="launch4j" 
 				 classname="net.sf.launch4j.ant.Launch4jTask"
 				 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
@@ -432,7 +438,7 @@
 	<!-- javadocs =================================================================================== -->
 	<target name="javadocs" depends="init">
 		<mkdir dir="${targetdocsapi}" />
-		<javadoc destdir="${targetdocsapi}" author="true" version="true" use="true" windowtitle="API for Agent">
+		<javadoc destdir="${targetdocsapi}" author="true" version="true" use="true" windowtitle="API for Agent" useexternalfile="yes">
 			<classpath>
 				<path refid="agent.dependencies"/>
 			</classpath>
@@ -534,7 +540,7 @@
 
 	<!-- installers ============================================================================= -->
 
-	<target name="installer.install4j" depends="jar"
+	<target name="installer.install4j" depends="jar,build.plugins"
             description="build Install4J release executable and docs dirs for Windows">
 
 		<condition property="install4j.not.ok" value="true">
@@ -639,13 +645,13 @@
 		<ant antfile="${basedir}/src/plugins/growl/build.xml" inheritall="no" target="jar"/>
 
 	</target>
-    
-    <target name="mac.app.zip" depends="mac.app">   
-    <exec executable="/bin/bash" dir="${basedir}/build/installer/" failonerror="true">
+
+	<target name="mac.app.zip" depends="mac.app">
+		<exec executable="/bin/bash" dir="${basedir}/build/installer/" failonerror="true">
 			<arg value="mac/tar.sh"/>
 			<arg value="${mac.build.dir}"/>
 		</exec>
-    </target>
+	</target>
 
 	<target name="mac.app" depends="mac.clean,mac.build.plugin">
 
@@ -918,7 +924,7 @@
 	<tstamp>
 		<format property="rpm.builddate" pattern="EEE MMM dd yyyy" locale="en"/>
 	</tstamp>
-	<target name="installer.rpm" depends="dist.src" description="Builds a rpm of spark.">
+	<target name="installer.rpm" depends="dist.src,linux.build.plugins" description="Builds a rpm of spark.">
 
 		<mkdir dir="${target.rpm}/SPECS" />
 		<mkdir dir="${target.rpm}/SOURCES" />
