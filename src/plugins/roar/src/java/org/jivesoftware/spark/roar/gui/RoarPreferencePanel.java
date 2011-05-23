@@ -44,7 +44,6 @@ import javax.swing.event.ChangeListener;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.roar.RoarResources;
 import org.jivesoftware.spark.roar.displaytype.BottomRight;
-import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import org.jivesoftware.spark.roar.displaytype.TopRight;
 import org.jivesoftware.spark.util.ColorPick;
 
