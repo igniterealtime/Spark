@@ -386,12 +386,24 @@
 		<subant target="">
 			<fileset dir="./src/plugins/translator/" includes="*/build.xml" />
 		</subant>
+
+		<copy todir="${plugins}">
+			<fileset dir="${commercial.plugin.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="windows.build.plugins" depends="build.plugins">
 		<subant target="">
 			<fileset dir="./src/plugins/flashing/" includes="*/build.xml" />
 		</subant>
+		
+		<copy todir="${plugins}">
+			<fileset dir="${commercial.plugin.dir}">
+				<include name="flashing.jar" />
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="linux.build.plugins" depends="build.plugins">
@@ -540,7 +552,7 @@
 
 	<!-- installers ============================================================================= -->
 
-	<target name="installer.install4j" depends="jar,build.plugins"
+	<target name="installer.install4j" depends="jar,windows.build.plugins"
             description="build Install4J release executable and docs dirs for Windows">
 
 		<condition property="install4j.not.ok" value="true">
