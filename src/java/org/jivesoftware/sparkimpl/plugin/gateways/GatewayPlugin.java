@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketListener;
@@ -306,10 +305,10 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
                 if (presence.getType() == Presence.Type.available) {
-                    item.setSideIcon(transport.getIcon());
+                    item.setSpecialIcon(transport.getIcon());
                 }
                 else {
-                    item.setSideIcon(transport.getInactiveIcon());
+                    item.setSpecialIcon(transport.getInactiveIcon());
                 }
                 return false;
             }

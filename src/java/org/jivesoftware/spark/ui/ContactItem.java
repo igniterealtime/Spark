@@ -52,6 +52,7 @@ public class ContactItem extends JPanel {
 
 	private static final long serialVersionUID = 1514044406550293152L;
 	private JLabel imageLabel;
+	private JLabel specialImageLabel;
     private JLabel displayNameLabel;
     private JLabel descriptionLabel;
     private String nickname;
@@ -102,6 +103,7 @@ public class ContactItem extends JPanel {
         displayNameLabel = new JLabel();
         descriptionLabel = new JLabel();
         imageLabel = new JLabel();
+        specialImageLabel = new JLabel();
         sideIcon = new JLabel();
         if (avatarsShowing) {
             sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
@@ -125,7 +127,8 @@ public class ContactItem extends JPanel {
         add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 0), 0, 0));
         add(displayNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
         add(descriptionLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
-        add(sideIcon, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+        add(specialImageLabel, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+        add(sideIcon, new GridBagConstraints(4, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
         this.alias = alias;
         this.nickname = nickname;
@@ -525,13 +528,25 @@ public class ContactItem extends JPanel {
     }
 
     /**
-     * The icon to use to show extra information about this contact. An example would be to
-     * represent that this user is from a 3rd party transport.
+     * The icon should only be used to display avatars in contact list. if you want to add an icon 
+     * to indicated that this contact is a transport e.g you should use setSpecialIcon()
      *
      * @param icon the icon to use.
      */
     public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
+    }
+    
+    
+    /**
+     * The icon to use to show extra information about this contact. An example would be to
+     * represent that this user is from a 3rd party transport.
+     *
+     * @param icon the icon to use.
+     */
+    public void setSpecialIcon(Icon icon)
+    {
+        specialImageLabel.setIcon(icon);
     }
 
     /**
