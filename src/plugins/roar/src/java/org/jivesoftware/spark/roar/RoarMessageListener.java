@@ -19,84 +19,37 @@
  */
 package org.jivesoftware.spark.roar;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-
-import javax.swing.ImageIcon;
-
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 
 /**
- * Message Listener
+ * Message Listener<br>
  * 
  * @author wolf.posdorfer
  * 
  */
 public class RoarMessageListener implements GlobalMessageListener {
 
-    private int _lastusedXpos;
-    private int _lastusedYpos;
-    private Dimension _screensize;
-
-    private int _amount;
-
-    private final int WIDTH = 300;
-    private final int HEIGHT = 80;
+    private RoarDisplayType _displaytype;
 
     public RoarMessageListener() {
-	_screensize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	_lastusedXpos = _screensize.width - 5;
-	_lastusedYpos = 5;
-	_amount = 0;
+	_displaytype = RoarProperties.getInstance().getDisplayTypeClass();
 
     }
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
-	RoarProperties props = new RoarProperties();
-	if (props.getShowingPopups()
-		&& (_amount < props.getMaximumPopups() || props.getMaximumPopups() == 0)) {
-	    
-	    ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
-
-	    String nickname = StringUtils.parseName(message.getFrom());
-
-	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
-		    _lastusedXpos, _lastusedYpos,props.getDuration(), props.getBackgroundColor(),
-		    props.getHeaderColor(),props.getTextColor());
-
-	    ++_amount;
-	    _lastusedYpos += HEIGHT + 5;
-
-	    if (_lastusedYpos >= _screensize.height - 90) {
-		_lastusedXpos -= WIDTH + 5;
-		_lastusedYpos = 5;
-	    }
-	}
-
-    }
-
-    public void closingRoarPanel(int x, int y) {
-	if (_lastusedYpos > (y - 5)) {
-	    _lastusedYpos = y - 5;
-	}
-
-	if (_lastusedXpos < (x + 5)) {
-	    _lastusedXpos = x + WIDTH + 5;
-	}
-
-	--_amount;
+	_displaytype.messageReceived(room, message);
 
     }
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
-	// who cares?
+	_displaytype.messageSent(room, message);
     }
+    
 
 }

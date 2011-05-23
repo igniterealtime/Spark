@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.spark.roar;
+package org.jivesoftware.spark.roar.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -32,6 +32,7 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -41,6 +42,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.roar.RoarResources;
+import org.jivesoftware.spark.roar.displaytype.BottomRight;
+import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
+import org.jivesoftware.spark.roar.displaytype.TopRight;
 import org.jivesoftware.spark.util.ColorPick;
 
 /**
@@ -60,10 +65,14 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
     private JCheckBox _checkbox;
     
     private JList _colorlist;
+    private JComboBox _typelist;
 
     private ColorPick _colorpicker;
     
     private HashMap<ColorTypes,Color> _colormap;
+
+    private String[] _typelistdata;
+    
 
     public RoarPreferencePanel() {
 	
@@ -77,12 +86,12 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
 	contents.setLayout(new GridBagLayout());
 	contents.setBackground(new Color(0,0,0,0));
 	this.setLayout(new VerticalFlowLayout());
-	contents.setBorder(BorderFactory.createTitledBorder("Roar Settings"));
+	contents.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.settings")));
 	
 	
 	add(contents);
 	ClassLoader cl = getClass().getClassLoader();
-	_backgroundimage = new ImageIcon(cl.getResource("background.png"))
+	_backgroundimage = new ImageIcon(cl.getResource("background2.png"))
 		.getImage();
 		
 	_colorpicker = new ColorPick(false);
@@ -92,27 +101,38 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
 	_duration = new JTextField();
 	_amount = new JTextField();
 	
-	_checkbox = new JCheckBox("Popups enabled");
-	_checkbox.setBackground(new Color(0,0,0,0));
+	_checkbox = new JCheckBox(RoarResources.getString("roar.enabled"));
 	
-	ColorTypes[] data = {ColorTypes.BACKGROUNDCOLOR, ColorTypes.HEADERCOLOR, ColorTypes.TEXTCOLOR};
-	_colorlist = new JList(data);
+	ColorTypes[] colortypesdata = {ColorTypes.BACKGROUNDCOLOR, ColorTypes.HEADERCOLOR, ColorTypes.TEXTCOLOR};
+	_colorlist = new JList(colortypesdata);
+	
+	_typelistdata = new String[2];
+	_typelistdata[0] = TopRight.getLocalizedName();
+	_typelistdata[1] = BottomRight.getLocalizedName();
+
+	_typelist = new JComboBox(_typelistdata);
+
 
 	Insets in = new Insets(5,5,5,5);
 
 	contents.add(_colorlist, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 	contents.add(_colorpicker, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 
-	contents.add(new JLabel("Duration in ms:"), new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+	contents.add(new JLabel(RoarResources.getString("roar.duration")), new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 	contents.add(_duration, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 
-	contents.add(new JLabel("Maximum Popups on Screen (0=infinity):"), new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+	contents.add(new JLabel(RoarResources.getString("roar.amount")), new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 	contents.add(_amount, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 
 	
 	contents.add(_checkbox, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
 
 	
+	contents.add(new JLabel(RoarResources.getString("roar.location")), new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+
+	contents.add(_typelist, new GridBagConstraints(1, 4, 1, 1, 0.8, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+
+
 	
 	_colorlist.addMouseListener(new MouseAdapter() {
 	    @Override
@@ -213,29 +233,57 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
 
     }
     
+    public void setDisplayType(String t) {
+
+	if (t.equals((TopRight.getName()))) {
+	    _typelist.setSelectedItem(TopRight.getLocalizedName());
+	} else {
+	    _typelist.setSelectedItem(BottomRight.getLocalizedName());
+	}
+    }
+
+    public String getDisplayType() {
+	String o = (String) _typelist.getSelectedItem();
+	if (o.equals(TopRight.getLocalizedName())) {
+	    return TopRight.getName();
+	}
+
+	else {
+	    return BottomRight.getName();
+	}
+
+    }
+    
     
     // ====================================================================================
     // ====================================================================================
     // ====================================================================================
     public void paintComponent(Graphics g) {
+
 	
-	int imgwi = _backgroundimage.getWidth(null);
-	int imghe = _backgroundimage.getHeight(null);
+	// CENTER LOGO
+	// int imgwi = _backgroundimage.getWidth(null);
+	// int imghe = _backgroundimage.getHeight(null);
+
+	// int x = this.getSize().width;
+	// x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
+	//
+	// int y = this.getSize().height;
+	// y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
+
 	
-	int x = this.getSize().width;
-	x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
-	
-	int y = this.getSize().height;
-	y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
+	// LOGO in bottom right corner
+	int x = this.getSize().width - _backgroundimage.getWidth(null);
+	int y = this.getSize().height - _backgroundimage.getHeight(null);
 
 	g.drawImage(_backgroundimage, x, y, this);
     }
     
     
     public enum ColorTypes {
-	BACKGROUNDCOLOR ("Background color"),
-	HEADERCOLOR ("Header color"),
-	TEXTCOLOR ("Text color");
+	BACKGROUNDCOLOR (RoarResources.getString("roar.background")),
+	HEADERCOLOR (RoarResources.getString("roar.header")),
+	TEXTCOLOR (RoarResources.getString("roar.text"));
 
 	private String string;
 

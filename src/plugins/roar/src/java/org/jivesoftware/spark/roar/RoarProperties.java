@@ -27,10 +27,15 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.roar.displaytype.BottomRight;
+import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
+import org.jivesoftware.spark.roar.displaytype.TopRight;
+
 /**
  * RoarProperties file stuff
+ * 
  * @author wolf.posdorfer
- *
+ * 
  */
 public class RoarProperties {
     private Properties props;
@@ -42,8 +47,25 @@ public class RoarProperties {
     public static final String DURATION = "duration";
     public static final String ACTIVE = "active";
     public static final String AMOUNT = "amount";
+    public static final String ROARDISPLAYTYPE = "roardisplaytype";
+    
+    private static final Object LOCK = new Object();  
+    private static RoarProperties instance = null;
+    
+    /**
+     * returns the Instance of this Properties file
+     * @return
+     */
+    public static RoarProperties getInstance() {
+	synchronized (LOCK) {
+	    if (instance == null) {
+		instance = new RoarProperties();
+	    }
+	    return instance;
+	}
+    }
 
-    public RoarProperties() {
+    private RoarProperties() {
 	this.props = new Properties();
 
 	try {
@@ -79,29 +101,26 @@ public class RoarProperties {
     }
 
     public Color getBackgroundColor() {
-	return getColor(BACKGROUNDCOLOR);
+	return getColor(BACKGROUNDCOLOR, Color.BLACK);
     }
 
     public void setBackgroundColor(Color c) {
 	setColor(BACKGROUNDCOLOR, c);
     }
-    
-    public Color getHeaderColor()
-    {
-	return getColor(HEADERCOLOR);
+
+    public Color getHeaderColor() {
+	return getColor(HEADERCOLOR, Color.RED);
     }
-    public void setHeaderColor(Color c)
-    {
+
+    public void setHeaderColor(Color c) {
 	setColor(HEADERCOLOR, c);
     }
-    
-    public Color getTextColor()
-    {
-	return getColor(TEXTCOLOR);
+
+    public Color getTextColor() {
+	return getColor(TEXTCOLOR, Color.WHITE);
     }
-    
-    public void setTextColor(Color c)
-    {
+
+    public void setTextColor(Color c) {
 	setColor(TEXTCOLOR, c);
     }
 
@@ -113,7 +132,7 @@ public class RoarProperties {
     public void setDuration(int dur) {
 	setInt(DURATION, dur);
     }
-    
+
     public int getMaximumPopups() {
 	return getInt(AMOUNT);
     }
@@ -123,7 +142,27 @@ public class RoarProperties {
     }
     
     
+    public void setDisplayType(String classstring)
+    {
+	props.setProperty(ROARDISPLAYTYPE, classstring);
+    }
     
+    public String getDisplayType() {
+
+	return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
+
+    }
+    
+    public RoarDisplayType getDisplayTypeClass() {
+
+	if (getDisplayType().equals(TopRight.getName())) {
+	    return new TopRight();
+	} else {
+	    return new BottomRight();
+	}
+	
+    }
+
     // ===============================================================================
     // ===============================================================================
     // ===============================================================================
@@ -148,8 +187,13 @@ public class RoarProperties {
 	props.setProperty(property, convertColor(color));
     }
 
-    private Color getColor(String property) {
-	return convertString(props.getProperty(property));
+    private Color getColor(String property, Color defaultcolor) {
+	try {
+	    return convertString(props.getProperty(property));
+	} catch (Exception e) {
+	    return defaultcolor;
+	}
+
     }
 
     public String getProperty(String property) {
@@ -163,14 +207,10 @@ public class RoarProperties {
      * @param s
      * @return
      */
-    public static Color convertString(String s) {
-	try {
-	    String[] arr = s.split(",");
-	    return new Color(Integer.parseInt(arr[0]),
-		    Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));
-	} catch (Exception e) {
-	    return Color.black;
-	}
+    public static Color convertString(String s) throws Exception {
+	String[] arr = s.split(",");
+	return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]),
+		Integer.parseInt(arr[2]));
 
     }
 
@@ -185,4 +225,5 @@ public class RoarProperties {
     public static String convertColor(Color color) {
 	return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
     }
-}
+    
+ }

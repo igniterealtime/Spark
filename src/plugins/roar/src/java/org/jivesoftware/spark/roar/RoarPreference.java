@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.roar.gui.RoarPreferencePanel;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -41,7 +42,7 @@ public class RoarPreference implements Preference {
 
     public RoarPreference() {
 
-	_props = new RoarProperties();
+	_props = RoarProperties.getInstance();
 	
 	try {
 	    if (EventQueue.isDispatchThread()) {
@@ -68,7 +69,7 @@ public class RoarPreference implements Preference {
     @Override
     public Icon getIcon() {
 	ClassLoader cl = getClass().getClassLoader();
-	return new ImageIcon(cl.getResource("paw.png"));
+	return new ImageIcon(cl.getResource("roar-logo.png"));
     }
 
     @Override
@@ -98,6 +99,8 @@ public class RoarPreference implements Preference {
 	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.HEADERCOLOR, _props.getHeaderColor());
 	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.TEXTCOLOR, _props.getTextColor());
 	
+	_prefPanel.setDisplayType(_props.getDisplayType());
+	
 	_prefPanel.setShowingPopups(_props.getShowingPopups());
 	_prefPanel.setDuration(_props.getDuration());
 	_prefPanel.setAmount(_props.getMaximumPopups());
@@ -113,6 +116,8 @@ public class RoarPreference implements Preference {
 	_props.setHeaderColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.HEADERCOLOR));
 	_props.setTextColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.TEXTCOLOR));
 	
+	_props.setDisplayType(_prefPanel.getDisplayType());
+
 	
 	_props.setMaximumPopups(_prefPanel.getAmount());
 	_props.save();
