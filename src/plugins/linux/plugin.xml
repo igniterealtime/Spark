@@ -8,5 +8,6 @@
     <description>Adds System Tray functionality.</description>
     <class>org.jivesoftware.spark.plugins.SystemTrayPlugin</class>
     <minSparkVersion>2.5.0</minSparkVersion>
+    <java>1.6.0_00</java>
 </plugin>
 

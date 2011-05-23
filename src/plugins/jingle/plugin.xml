@@ -6,6 +6,7 @@
     <email>derek@jivesoftware.com</email>
     <description>Allows for PC to PC calling.</description>
     <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
-    <minSparkVersion>2.5.0</minSparkVersion>
+    <minSparkVersion>2.6.0</minSparkVersion>
     <os>Windows,mac,linux</os>
+    <java>1.6.0_00</java>
 </plugin>

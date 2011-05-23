@@ -7,6 +7,7 @@
     <email>pete@jivesoftware.com</email>
     <description>Adds the ability to automatically reject file transfers based on preference configuration</description>
     <class>org.jivesoftware.spark.plugins.transfersettings.FileTransferSettingsPlugin</class>
-    <minSparkVersion>2.0.2</minSparkVersion>
+    <minSparkVersion>2.6.0</minSparkVersion>
+    <java>1.6.0_00</java>
 </plugin>
 

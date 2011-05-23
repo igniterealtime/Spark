@@ -7,5 +7,6 @@
     <email>derek@jivesoftware.com</email>
     <description>Adds Google Desktop Search   to Spark.</description>
     <class>org.jivesoftware.spark.plugin.GooglePlugin</class>
-    <minSparkVersion>2.0.2</minSparkVersion>
+    <minSparkVersion>2.6.0</minSparkVersion>
+    <java>1.6.0_00</java>
 </plugin>

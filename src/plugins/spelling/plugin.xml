@@ -9,5 +9,6 @@
     <class>org.jivesoftware.spellchecker.SpellcheckerPlugin</class>
     <minSparkVersion>2.6.0</minSparkVersion>
     <os>Windows,Mac,Linux</os>
+    <java>1.6.0_00</java>
 </plugin>
 
