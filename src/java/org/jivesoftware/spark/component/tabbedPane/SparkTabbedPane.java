@@ -63,6 +63,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -76,6 +77,7 @@ public class SparkTabbedPane extends JPanel {
 	private Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;
 	private int dragTabIndex = -1;
+	private JPanel contactListPanel;
 
 	/**
 	 * The default Hand cursor.
@@ -90,6 +92,20 @@ public class SparkTabbedPane extends JPanel {
 
 	public SparkTabbedPane() {
 		this(JTabbedPane.TOP);
+	}	
+	
+        /**
+         * Returns the Contactlistpanel<br>
+         * might be <code>null</code>, because the {@link ContactList} sets itself here
+         * 
+         * @return
+         */
+        public JPanel getContactListPanel() {
+            return contactListPanel;
+        }
+
+	public void setContactListPanel(JPanel contactListPanel) {
+		this.contactListPanel = contactListPanel;
 	}
 
 	public SparkTabbedPane(final int type) {

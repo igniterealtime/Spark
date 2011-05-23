@@ -93,6 +93,7 @@ public class ThemePanel extends JPanel {
     private JButton _lookandfeelpreview;
     private Vector<String> _lookandfeelname = new Vector<String>();
     private JCheckBox _useTabsForTransports;
+    private JCheckBox _useTabsForConference;
 
     private ThemePanel _themepanel;
 
@@ -245,7 +246,8 @@ public class ThemePanel extends JPanel {
 	});
         
         
-	_useTabsForTransports = new JCheckBox("");
+	    _useTabsForTransports = new JCheckBox("");
+	    _useTabsForConference = new JCheckBox("");
 	
 	
         JLabel messageStyleLabel = new JLabel();
@@ -313,6 +315,7 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
         ResourceUtils.resButton(showVCards, Res.getString("title.appearance.showVCards"));
         _useTabsForTransports.setText(Res.getString("checkbox.transport.tab.setting"));
+        _useTabsForConference.setText(Res.getString("checkbox.conference.tab.setting"));
 
         // Build UI
         buildUI();
@@ -344,11 +347,12 @@ public class ThemePanel extends JPanel {
         add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(_useTabsForTransports, new GridBagConstraints(0, 10, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_useTabsForConference, new GridBagConstraints(0, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         
         JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnet.info"));
-        add(reconnectionlabel, new GridBagConstraints(0, 11, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	add(_showReconnectBox, new GridBagConstraints(1, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(reconnectionlabel, new GridBagConstraints(0, 12, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	add(_showReconnectBox, new GridBagConstraints(1, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         
         // Activate live one.
@@ -364,6 +368,16 @@ public class ThemePanel extends JPanel {
 		
 	    }
 	});
+		_useTabsForConference.setSelected(pref.isShowConferenceTab());
+		_useTabsForConference.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingsManager.getLocalPreferences().setShowConferenceTab(
+						_useTabsForConference.isSelected());
+
+			}
+		});        
         
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null)

@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spark;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,12 +40,17 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
+import javax.swing.JPanel;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PluginClassLoader;
 import org.jivesoftware.spark.plugin.PluginDependency;
@@ -594,6 +600,17 @@ public class PluginManager implements MainWindowListener {
 			              long end = System.currentTimeMillis();
 			              Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
 			          }
+			          //We need to wait for all plugins to be initialized to determine if we need to display tabs or not
+			          //because plugins also can add tabs (not spark only: transport or conference tab) 
+			          //When there is no tab added by plugins or spark (transport or conference tab) we will
+			          //clean the workspace and display the contact list without tabs			          
+			          SparkTabbedPane workspacePane = SparkManager.getWorkspace().getWorkspacePane();
+			          JPanel contactListPanel = workspacePane.getContactListPanel();
+			          int tabNumber = workspacePane.getTabCount();
+			          if (tabNumber == 1) {
+			        	  workspacePane.removeAll();
+			        	  workspacePane.add(contactListPanel);
+			          }			        	  			          
 			      }
 			  });
 		}

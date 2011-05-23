@@ -988,6 +988,16 @@ public class LocalPreferences {
 	    setBoolean("useTabForTransport", value);
 	}
 	
+	public boolean isShowConferenceTab()
+	{
+	    return getBoolean("useTabForConference", false);
+	}
+	
+	public void setShowConferenceTab(boolean value)
+	{
+	    setBoolean("useTabForConference", value);
+	}	
+	
 	public String getAvailableCodecs() {
 		return getString("AvailableCodecs", null);
 	}

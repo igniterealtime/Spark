@@ -1671,7 +1671,7 @@ public final class ContactList extends JPanel implements ActionListener,
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
         }       
-        else if( entry!=null && entry.getType() != RosterPacket.ItemType.both && entry.getStatus().SUBSCRIPTION_PENDING == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
+        else if( entry!=null && entry.getType() != RosterPacket.ItemType.both && entry.getStatus() == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
         {
             popup.add(subscribeAction);
         }
@@ -1933,8 +1933,10 @@ public final class ContactList extends JPanel implements ActionListener,
 
     private void addContactListToWorkspace() {
         Workspace workspace = SparkManager.getWorkspace();
-        workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.SMALL_ALL_CHATS_IMAGE), this); //NOTRANS
-
+        //save the contact list panel. After all plugins are initialized we will decide if
+        //we keep contact list in a tab or not
+        workspace.getWorkspacePane().setContactListPanel(this);
+        workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.SMALL_ALL_CHATS_IMAGE), this);
         // Add To Contacts Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
         JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
