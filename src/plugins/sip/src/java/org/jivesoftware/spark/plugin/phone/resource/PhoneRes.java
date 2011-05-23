@@ -45,7 +45,7 @@ public class PhoneRes {
 
     static {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("org/jivesoftware/spark/plugin/phone/resource/phone");
-        irb = (PropertyResourceBundle)ResourceBundle.getBundle("org/jivesoftware/spark/plugin/phone/resource/spark_i18n");
+        irb = (PropertyResourceBundle)ResourceBundle.getBundle("org/jivesoftware/spark/plugin/phone/resource/sip_spark_i18n");
     }
 
     public static final String getString(String propertyName) {
