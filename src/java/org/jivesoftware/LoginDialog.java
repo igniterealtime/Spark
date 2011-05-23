@@ -270,7 +270,7 @@ public final class LoginDialog {
             accountNameLabel.setVisible(false);
             serverNameLabel.setVisible(false);
 
-            headerLabel.setText("Using Single Sign-On (SSO)");
+            headerLabel.setText(Res.getString("title.advanced.connection.sso"));
             headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
             accountLabel.setText("Account:");
             ssoServerLabel.setText("Server:");
@@ -1044,7 +1044,7 @@ public final class LoginDialog {
      	                                JOptionPane.ERROR_MESSAGE);
      								}
      								else {
-     	                        JOptionPane.showMessageDialog(loginDialog, "Unable to connect using Single Sign-On. Please check your principal and server settings.", Res.getString("title.login.error"),
+     	                        JOptionPane.showMessageDialog(loginDialog, Res.getString("title.advanced.connection.sso.unable"), Res.getString("title.login.error"),
      	                                JOptionPane.ERROR_MESSAGE);
      	                        //useSSO(false);
      	                        //localPref.setSSOEnabled(false);
