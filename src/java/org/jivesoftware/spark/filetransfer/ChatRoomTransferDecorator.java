@@ -95,17 +95,19 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
     public void keyReleased(KeyEvent e) {
     }
 
-    public void filesDropped(Collection files, Component component) {
-        if (component instanceof ChatRoomImpl) {
-            ChatRoomImpl roomImpl = (ChatRoomImpl)component;
+    @Override
+    public void filesDropped(Collection<File> files, Component component) {
+	if (component instanceof ChatRoomImpl) {
+	    ChatRoomImpl roomImpl = (ChatRoomImpl) component;
 
+	    for (File file : files) {
+		SparkManager.getTransferManager().sendFile(file,
+			roomImpl.getParticipantJID());
+	    }
 
-            for (Object file : files) {
-                SparkManager.getTransferManager().sendFile((File) file, roomImpl.getParticipantJID());
-            }
-
-            SparkManager.getChatManager().getChatContainer().activateChatRoom(roomImpl);
-        }
+	    SparkManager.getChatManager().getChatContainer()
+		    .activateChatRoom(roomImpl);
+	}
     }
 
 

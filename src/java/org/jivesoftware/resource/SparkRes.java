@@ -37,6 +37,7 @@ public class SparkRes {
     private static PropertyResourceBundle prb;
 
     public static final String ALERT = "ALERT";
+    public static final String CANCEL_IMAGE = "CANCEL_IMAGE";
     public static final String NOTE_EDIT_16x16 = "NOTE_EDIT_16x16";
     public static final String MAGICIAN_IMAGE = "MAGICIAN_IMAGE";
     public static final String IM_AWAY = "IM_AWAY";

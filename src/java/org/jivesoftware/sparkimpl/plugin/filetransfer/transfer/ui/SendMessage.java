@@ -92,6 +92,8 @@ public class SendMessage extends JPanel {
 
         cancelButton.setText(Res.getString("cancel"));
         retryButton.setText(Res.getString("retry"));
+        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.CANCEL_IMAGE));
+        retryButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
 
         add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(retryButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
@@ -114,6 +116,7 @@ public class SendMessage extends JPanel {
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+
 
         retryButton.setForeground(new Color(73, 113, 196));
         retryButton.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -314,18 +317,6 @@ public class SendMessage extends JPanel {
 		public TransferButton() {
             decorate();
         }
-
-        /**
-         * Create a new RolloverButton.
-         *
-         * @param text the button text.
-         * @param icon the button icon.
-         */
-        public TransferButton(String text, Icon icon) {
-            super(text, icon);
-            decorate();
-        }
-
 
         /**
          * Decorates the button with the approriate UI configurations.

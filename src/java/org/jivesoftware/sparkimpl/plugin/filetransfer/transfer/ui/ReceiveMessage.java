@@ -78,8 +78,8 @@ public class ReceiveMessage extends JPanel {
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
-    private TransferButton acceptLabel = new TransferButton();
-    private TransferButton declineLabel = new TransferButton();
+    private TransferButton acceptButton = new TransferButton(Res.getString("accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
+    private TransferButton declineButton = new TransferButton(Res.getString("reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
     private JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
     private TransferButton cancelButton = new TransferButton();
@@ -96,47 +96,46 @@ public class ReceiveMessage extends JPanel {
         titleLabel.setForeground(new Color(211, 174, 102));
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
-        add(acceptLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(acceptButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
-        add(declineLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(declineButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
-
-        ResourceUtils.resButton(acceptLabel, Res.getString("accept"));
-        ResourceUtils.resButton(declineLabel, Res.getString("reject"));
+//        ResourceUtils.resButton(acceptLabel, Res.getString("accept"));
+//        ResourceUtils.resButton(declineLabel, Res.getString("reject"));
 
         // Decorate Cancel Button
         decorateCancelButton();
 
 
-        acceptLabel.setForeground(new Color(73, 113, 196));
-        declineLabel.setForeground(new Color(73, 113, 196));
-        declineLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-        acceptLabel.setFont(new Font("Dialog", Font.BOLD, 11));
+        acceptButton.setForeground(new Color(73, 113, 196));
+        declineButton.setForeground(new Color(73, 113, 196));
+        declineButton.setFont(new Font("Dialog", Font.BOLD, 11));
+        acceptButton.setFont(new Font("Dialog", Font.BOLD, 11));
 
-        acceptLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-        declineLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+        acceptButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+        declineButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
 
-        acceptLabel.addMouseListener(new MouseAdapter() {
+        acceptButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                acceptLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                acceptButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
             }
 
             public void mouseExited(MouseEvent e) {
-                acceptLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                acceptButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
 
-        declineLabel.addMouseListener(new MouseAdapter() {
+        declineButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                declineLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                declineButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             public void mouseExited(MouseEvent e) {
-                declineLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                declineButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
     }
@@ -178,7 +177,7 @@ public class ReceiveMessage extends JPanel {
         }
 
 
-        acceptLabel.addMouseListener(new MouseAdapter() {
+        acceptButton.addMouseListener(new MouseAdapter() {
 
             public void mousePressed(MouseEvent e) {
                 acceptRequest(request);
@@ -186,7 +185,7 @@ public class ReceiveMessage extends JPanel {
 
         });
 
-        declineLabel.addMouseListener(new MouseAdapter() {
+        declineButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 rejectRequest(request);
             }
@@ -198,8 +197,8 @@ public class ReceiveMessage extends JPanel {
         request.reject();
 
         setBackground(new Color(239, 245, 250));
-        acceptLabel.setText("");
-        declineLabel.setText("");
+        acceptButton.setVisible(false);
+        declineButton.setVisible(false);
         fileLabel.setText("");
         titleLabel.setText(Res.getString("message.file.transfer.canceled"));
         titleLabel.setForeground(new Color(65, 139, 179));
@@ -217,8 +216,8 @@ public class ReceiveMessage extends JPanel {
         final ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
         setBackground(new Color(239, 245, 250));
-        acceptLabel.setText("");
-        declineLabel.setText("");
+        acceptButton.setVisible(false);
+        declineButton.setVisible(false);
         titleLabel.setText(Res.getString("message.negotiate.file.transfer"));
         titleLabel.setForeground(new Color(65, 139, 179));
 
@@ -373,8 +372,8 @@ public class ReceiveMessage extends JPanel {
     }
 
     private void setFinishedText(String text) {
-        acceptLabel.setText("");
-        declineLabel.setText("");
+        acceptButton.setVisible(false);
+        declineButton.setVisible(false);
         fileLabel.setText("");
         titleLabel.setText(text);
         titleLabel.setForeground(new Color(65, 139, 179));
@@ -398,8 +397,8 @@ public class ReceiveMessage extends JPanel {
         titleLabel.setText(Res.getString("message.received.file", contactItem.getDisplayName()));
         fileLabel.setText(request.getFileName());
 
-        remove(acceptLabel);
-        remove(declineLabel);
+        remove(acceptButton);
+        remove(declineButton);
         remove(progressBar);
 
 
@@ -570,10 +569,14 @@ public class ReceiveMessage extends JPanel {
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
+        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.CANCEL_IMAGE));
 
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cancelTransfer();
+                acceptButton.setVisible(false);
+                declineButton.setVisible(false);
+                
             }
         });
 
