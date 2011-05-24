@@ -46,7 +46,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -54,7 +53,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -260,8 +258,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         editorBarLeft.setOpaque(false);
         chatPanel.setOpaque(false);
 
-
-        editorBarLeft.add(new JSeparator(JSeparator.VERTICAL));
 
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);

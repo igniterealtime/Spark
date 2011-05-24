@@ -25,6 +25,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -85,6 +86,7 @@ public class ColorPick extends JPanel implements ChangeListener {
 
 
 	_preview = new JLabel("   ");
+	_preview.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 	_preview.setOpaque(true);
 	
 	this.add(red,new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0));
