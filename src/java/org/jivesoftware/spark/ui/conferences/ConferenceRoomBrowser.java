@@ -41,6 +41,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -329,85 +330,61 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private void bookmarkRoom(String serviceName) {
-	int selectedRow = roomsTable.getSelectedRow();
-	if (-1 == selectedRow) {
-	    JOptionPane.showMessageDialog(dlg,
-		    Res.getString("message.select.add.room.to.add"),
-		    Res.getString("title.group.chat"),
-		    JOptionPane.INFORMATION_MESSAGE);
-	    return;
-	}
+        int selectedRow = roomsTable.getSelectedRow();
+        if (-1 == selectedRow) {
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.select.add.room.to.add"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
-	final String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@"
-		+ serviceName;
-	final String roomName = roomsTable.getValueAt(selectedRow, 1)
-		.toString();
+        final String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+        final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
 
-	// Check to see what type of room this is.
-	try {
-	    final RoomInfo roomInfo = MultiUserChat.getRoomInfo(
-		    SparkManager.getConnection(), roomJID);
-	    if (!roomInfo.isPersistent()) {
-		JOptionPane
-			.showMessageDialog(
-				dlg,
-				Res.getString("message.bookmark.temporary.room.error"),
-				Res.getString("title.error"),
-				JOptionPane.ERROR_MESSAGE);
-		return;
-	    }
-	} catch (Exception e) {
-	    // Do not return
-	}
+        // Check to see what type of room this is.
+        try {
+            final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
+            if (!roomInfo.isPersistent()) {
+                JOptionPane.showMessageDialog(dlg, Res.getString("message.bookmark.temporary.room.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (Exception e) {
+            // Do not return
+        }
 
-	Tree serviceTree = conferences.getTree();
-	JiveTreeNode rootNode = (JiveTreeNode) serviceTree.getModel().getRoot();
+        Tree serviceTree = conferences.getTree();
+        JiveTreeNode rootNode = (JiveTreeNode) serviceTree.getModel().getRoot();
 
-	TreePath rootPath = serviceTree.findByName(serviceTree, new String[] {
-		rootNode.toString(), serviceName });
+        TreePath rootPath = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName });
 
-	boolean isBookmarked = isBookmarked(roomJID);
+        boolean isBookmarked = isBookmarked(roomJID);
 
-	if (!isBookmarked) {
-	    JiveTreeNode node = (JiveTreeNode) serviceTree
-		    .getLastSelectedPathComponent();
-	    if (node == null) {
-		TreePath path = serviceTree.findByName(
-			serviceTree,
-			new String[] { rootNode.toString(),
-				ConferenceServices.getDefaultServiceName() });
-		node = (JiveTreeNode) path.getLastPathComponent();
-	    }
-	    JiveTreeNode roomNode = new JiveTreeNode(roomName, false,
-		    SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
-	    roomNode.setAssociatedObject(roomJID);
-	    node.add(roomNode);
-	    final DefaultTreeModel model = (DefaultTreeModel) serviceTree
-		    .getModel();
-	    model.nodeStructureChanged(node);
-	    serviceTree.expandPath(rootPath);
-	    roomsTable.getTableModel().setValueAt(
-		    new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)),
-		    selectedRow, 0);
-	    addBookmarkUI(false);
+        if (!isBookmarked) {
+            JiveTreeNode node = (JiveTreeNode) serviceTree.getLastSelectedPathComponent();
+            if (node == null) {
+                TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), ConferenceServices.getDefaultServiceName() });
+                node = (JiveTreeNode) path.getLastPathComponent();
+            }
+            JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
+            roomNode.setAssociatedObject(roomJID);
+            node.add(roomNode);
+            final DefaultTreeModel model = (DefaultTreeModel) serviceTree.getModel();
+            model.nodeStructureChanged(node);
+            serviceTree.expandPath(rootPath);
+            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)), selectedRow, 0);
+            addBookmarkUI(false);
 
-	    conferences.addBookmark(roomName, roomJID, false);
-	} else {
-	    // Remove bookmark
-	    TreePath path = serviceTree.findByName(serviceTree, new String[] {
-		    rootNode.toString(), serviceName, roomName });
-	    JiveTreeNode node = (JiveTreeNode) path.getLastPathComponent();
-	    final DefaultTreeModel model = (DefaultTreeModel) serviceTree
-		    .getModel();
-	    model.removeNodeFromParent(node);
-	    roomsTable.getTableModel().setValueAt(
-		    new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)),
-		    selectedRow, 0);
-	    addBookmarkUI(true);
+            conferences.addBookmark(roomName, roomJID, false);
+        } else {
+            // Remove bookmark
+            TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName, roomName });
+            JiveTreeNode node = (JiveTreeNode) path.getLastPathComponent();
+            final DefaultTreeModel model = (DefaultTreeModel) serviceTree.getModel();
+            model.removeNodeFromParent(node);
+            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
+            addBookmarkUI(true);
 
-	    String jid = (String) node.getAssociatedObject();
-	    conferences.removeBookmark(jid);
-	}
+            String jid = (String) node.getAssociatedObject();
+            conferences.removeBookmark(jid);
+        }
     }
 
     private void joinSelectedRoom() {
@@ -648,33 +625,59 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	    return super.getCellRenderer(row, column);
 	}
 
-	private void checkPopup(MouseEvent e) {
-	    if (e.isPopupTrigger()) {
-		final JPopupMenu popupMenu = new JPopupMenu();
+        private void checkPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                final JPopupMenu popupMenu = new JPopupMenu();
 
-		Action roomInfoAction = new AbstractAction() {
-		    private static final long serialVersionUID = 5142016247851363420L;
+                Action roomInfoAction = new AbstractAction() {
+                    private static final long serialVersionUID = 5142016247851363420L;
 
-		    public void actionPerformed(ActionEvent actionEvent) {
-			int selectedRow = roomsTable.getSelectedRow();
-			if (selectedRow != -1) {
-			    String roomJID = roomsTable.getValueAt(selectedRow,
-				    2) + "@" + serviceName;
-			    RoomBrowser roomBrowser = new RoomBrowser();
-			    roomBrowser.displayRoomInformation(roomJID);
-			}
-		    }
-		};
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        int selectedRow = roomsTable.getSelectedRow();
+                        if (selectedRow != -1) {
+                            String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                            RoomBrowser roomBrowser = new RoomBrowser();
+                            roomBrowser.displayRoomInformation(roomJID);
+                        }
+                    }
+                };
 
-		roomInfoAction.putValue(Action.NAME,
-			Res.getString("menuitem.view.room.info"));
-		roomInfoAction.putValue(Action.SMALL_ICON,
-			SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+                roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
+                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
 
-		popupMenu.add(roomInfoAction);
-		popupMenu.show(roomsTable, e.getX(), e.getY());
-	    }
-	}
+                final int selectedRow = roomsTable.getSelectedRow();
+                final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
+                popupMenu.add(roomInfoAction);
+                final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
+                autoJoin.addActionListener(new ActionListener() {
+                    
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                        conferences.removeBookmark(roomJID);
+                        conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
+                    }
+                });
+                
+                
+                if (selectedRow != -1) {
+                   
+                    for (BookmarkedConference bookmark :conferences.getBookmarks())
+                    {
+                        if (roomName.equals(bookmark.getName()))
+                        {
+                            autoJoin.setSelected(bookmark.isAutoJoin());
+                            popupMenu.add(autoJoin);
+                        }
+                        
+                    }
+                    
+                    
+                }
+               
+                popupMenu.show(roomsTable, e.getX(), e.getY());
+            }
+        }
 
     }
 

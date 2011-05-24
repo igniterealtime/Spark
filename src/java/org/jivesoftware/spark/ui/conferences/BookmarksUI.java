@@ -414,6 +414,10 @@ public class BookmarksUI extends JPanel {
 
     public void addBookmark(String roomName, String roomJID, boolean autoJoin) {
         try {
+            if (autoJoin)
+            {
+                autoJoinRooms.add(roomJID);
+            } 
             manager.addBookmarkedConference(roomName, roomJID, autoJoin, null, null);
             fireBookmarksAdded(roomJID);  //fire bookmark event
         }
@@ -424,6 +428,10 @@ public class BookmarksUI extends JPanel {
 
     public void removeBookmark(String roomJID) {
         try {
+            if (autoJoinRooms.contains(roomJID))
+            {
+                autoJoinRooms.remove(roomJID);
+            }
             manager.removeBookmarkedConference(roomJID);
             fireBookmarksRemoved(roomJID); // fire bookmark remove event
         }
