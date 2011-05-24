@@ -258,12 +258,9 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
     // ====================================================================================
     // ====================================================================================
     public void paintComponent(Graphics g) {
-
-	
 	// CENTER LOGO
 	// int imgwi = _backgroundimage.getWidth(null);
 	// int imghe = _backgroundimage.getHeight(null);
-
 	// int x = this.getSize().width;
 	// x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
 	//
@@ -272,9 +269,11 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
 
 	
 	// LOGO in bottom right corner
+
 	int x = this.getSize().width - _backgroundimage.getWidth(null);
 	int y = this.getSize().height - _backgroundimage.getHeight(null);
-
+	
+	super.paintComponent(g);
 	g.drawImage(_backgroundimage, x, y, this);
     }
     
