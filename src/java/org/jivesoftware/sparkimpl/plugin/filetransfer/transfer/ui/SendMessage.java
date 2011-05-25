@@ -48,9 +48,9 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
-import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.ui.ContactItem;
@@ -78,6 +78,8 @@ public class SendMessage extends JPanel {
     private FileTransferManager transferManager;
     private String fullJID;
     private String nickname;
+    private JLabel progressLabel = new JLabel();
+    private long _starttime;
 
     public SendMessage() {
         setLayout(new GridBagLayout());
@@ -95,8 +97,8 @@ public class SendMessage extends JPanel {
         cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.CANCEL_IMAGE));
         retryButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
 
-        add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-        add(retryButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         retryButton.setVisible(false);
 
         retryButton.addActionListener(new ActionListener() {
@@ -185,24 +187,39 @@ public class SendMessage extends JPanel {
         });
 
 
-	progressBar.setMaximum((int) (fileSize / getDivisorForByte(fileSize)));
+	progressBar.setMaximum(100);
         progressBar.setVisible(false);
         progressBar.setStringPainted(true);
         add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
+	add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
 
 
         SwingWorker worker = new SwingWorker() {
+            
+            
             public Object construct() {
                 while (true) {
                     try {
-                        Thread.sleep(10);
+                	if(transfer.getBytesSent() >0 && _starttime==0){
+                	   _starttime = System.currentTimeMillis();
+                	}
+                	
+                	long starttime = System.currentTimeMillis();
+                	long startbyte = transfer.getBytesSent();
+                        Thread.sleep(500);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == Status.error ||
                             status == Status.complete || status == Status.cancelled ||
                             status == Status.refused) {
                             break;
                         }
-                        updateBar(transfer, nickname);
+                        long endtime = System.currentTimeMillis();
+                        long endbyte = transfer.getBytesSent();
+                        
+                        long timediff = endtime-starttime;
+                        long bytediff = endbyte-startbyte;
+                                              
+                        updateBar(transfer, nickname, TransferUtils.calculateSpeed(bytediff, timediff) );
                     }
                     catch (InterruptedException e) {
                         Log.error("Unable to sleep thread.", e);
@@ -213,7 +230,7 @@ public class SendMessage extends JPanel {
             }
 
             public void finished() {
-                updateBar(transfer, nickname);
+                updateBar(transfer, nickname, "??MB/s");
             }
         };
 
@@ -250,7 +267,7 @@ public class SendMessage extends JPanel {
 		}
     }
 
-    private void updateBar(final OutgoingFileTransfer transfer, String nickname) {
+    private void updateBar(final OutgoingFileTransfer transfer, String nickname, String kBperSecond) {
         FileTransfer.Status status = transfer.getStatus();
         if (status == Status.negotiating_stream) {
             titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
@@ -260,6 +277,7 @@ public class SendMessage extends JPanel {
                 Log.error("Error occured during file transfer.", transfer.getException());
             }
             progressBar.setVisible(false);
+            progressLabel.setVisible(false);
             titleLabel.setText(Res.getString("message.unable.to.send.file", nickname));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
@@ -270,12 +288,16 @@ public class SendMessage extends JPanel {
             showAlert(false);
             if (!progressBar.isVisible()) {
                 progressBar.setVisible(true);
+                progressLabel.setVisible(true);
             }
             
             try {
             	SwingUtilities.invokeAndWait(new Runnable() {
             		public void run() {
-            			progressBar.setValue((int)(transfer.getBytesSent()/getDivisorForByte(transfer.getFileSize())));
+            		    // 100 % = Filesize
+        		    // x %   = Currentsize	    
+            		    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
+            		    progressBar.setValue(Math.round(p));
             		}
             	});
             }
@@ -285,16 +307,22 @@ public class SendMessage extends JPanel {
 
             ByteFormat format = new ByteFormat();
             String bytesSent = format.format(transfer.getBytesSent());
-            progressBar.setString(bytesSent + " sent");
+            String est = TransferUtils.calculateEstimate(transfer.getBytesSent(), transfer.getFileSize(), _starttime, System.currentTimeMillis());
+           
+            progressLabel.setText(Res.getString("message.transfer.progressbar.text.sent", bytesSent, kBperSecond, est));
         }
         else if (status == Status.complete) {
             progressBar.setVisible(false);
+            
+            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(System.currentTimeMillis()-_starttime)/1000);
+            progressLabel.setText(Res.getString("label.time", fin));
             titleLabel.setText(Res.getString("message.you.have.sent", nickname));
             cancelButton.setVisible(false);
             showAlert(true);
         }
         else if (status == Status.cancelled) {
             progressBar.setVisible(false);
+            progressLabel.setVisible(false);
             titleLabel.setText(Res.getString("message.file.transfer.canceled"));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
@@ -302,6 +330,7 @@ public class SendMessage extends JPanel {
         }
         else if (status == Status.refused) {
             progressBar.setVisible(false);
+            progressLabel.setVisible(false);
             titleLabel.setText(Res.getString("message.file.transfer.rejected", nickname));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
@@ -312,22 +341,22 @@ public class SendMessage extends JPanel {
 
     private class TransferButton extends JButton {
 
-		private static final long serialVersionUID = 8807434179541503654L;
+	private static final long serialVersionUID = 8807434179541503654L;
 
-		public TransferButton() {
-            decorate();
-        }
+	public TransferButton() {
+	    decorate();
+	}
 
-        /**
-         * Decorates the button with the approriate UI configurations.
-         */
-        private void decorate() {
-            setBorderPainted(false);
-            setOpaque(true);
+	/**
+	 * Decorates the button with the approriate UI configurations.
+	 */
+	private void decorate() {
+	    setBorderPainted(false);
+	    setOpaque(true);
 
-            setContentAreaFilled(false);
-            setMargin(new Insets(1, 1, 1, 1));
-        }
+	    setContentAreaFilled(false);
+	    setMargin(new Insets(1, 1, 1, 1));
+	}
 
     }
 
@@ -361,18 +390,6 @@ public class SendMessage extends JPanel {
             transfer.cancel();
         }
     }
-    
-    
-    public static int getDivisorForByte(long filezise) {
-	if (filezise >= 1073741824) // giga
-	{
-	    return 1024;
-	} else if (filezise >= 1099511627776L) // tera
-	{
-	    return 1048576;
-	} else {
-	    return 1;
-	}
-    }
+
 
 }

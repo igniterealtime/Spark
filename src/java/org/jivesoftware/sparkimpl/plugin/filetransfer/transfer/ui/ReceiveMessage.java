@@ -19,26 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.filetransfer.FileTransfer;
-import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
-import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.FileDragLabel;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.ByteFormat;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.URLFileSystem;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -58,6 +38,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -71,12 +53,30 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
+import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.FileDragLabel;
+import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.ByteFormat;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.URLFileSystem;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
 public class ReceiveMessage extends JPanel {
 
-	private static final long serialVersionUID = -2974192409566650923L;
-	private FileDragLabel imageLabel = new FileDragLabel();
+    private static final long serialVersionUID = -2974192409566650923L;
+    private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
@@ -85,7 +85,10 @@ public class ReceiveMessage extends JPanel {
     private JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
     private TransferButton cancelButton = new TransferButton();
+    private JLabel progressLabel = new JLabel();
     private long bytesRead;
+    private long _starttime;
+    private long _endtime;
 
     public ReceiveMessage() {
         setLayout(new GridBagLayout());
@@ -101,9 +104,6 @@ public class ReceiveMessage extends JPanel {
         add(acceptButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         add(declineButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-
-//        ResourceUtils.resButton(acceptLabel, Res.getString("accept"));
-//        ResourceUtils.resButton(declineLabel, Res.getString("reject"));
 
         // Decorate Cancel Button
         decorateCancelButton();
@@ -211,167 +211,194 @@ public class ReceiveMessage extends JPanel {
     }
 
     private void acceptRequest(final FileTransferRequest request) {
-        String requestor = request.getRequestor();
-        String bareJID = StringUtils.parseBareAddress(requestor);
+	String requestor = request.getRequestor();
+	String bareJID = StringUtils.parseBareAddress(requestor);
 
-        ContactList contactList = SparkManager.getWorkspace().getContactList();
-        final ContactItem contactItem = contactList.getContactItemByJID(bareJID);
+	ContactList contactList = SparkManager.getWorkspace().getContactList();
+	final ContactItem contactItem = contactList
+		.getContactItemByJID(bareJID);
 
-        setBackground(new Color(239, 245, 250));
-        acceptButton.setVisible(false);
-        declineButton.setVisible(false);
-        titleLabel.setText(Res.getString("message.negotiate.file.transfer"));
-        titleLabel.setForeground(new Color(65, 139, 179));
+	setBackground(new Color(239, 245, 250));
+	acceptButton.setVisible(false);
+	declineButton.setVisible(false);
+	titleLabel.setText(Res.getString("message.negotiate.file.transfer"));
+	titleLabel.setForeground(new Color(65, 139, 179));
 
-
-        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
-        add(cancelButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
-        cancelButton.setVisible(true);
-        transfer = request.accept();
-        try {
-
-            final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
-
-            progressBar.setMaximum((int)(request.getFileSize()/SendMessage.getDivisorForByte(request.getFileSize())));
-            progressBar.setStringPainted(true);
-
-            SwingWorker worker = new SwingWorker() {
-                public Object construct() {
-                    try {
-                        transfer.recieveFile(downloadedFile);
-                    }
-                    catch (XMPPException e) {
-                        Log.error(e);
-                    }
-
-                    while (true) {
-
-                        try {
-                            Thread.sleep(10);
-                        }
-                        catch (InterruptedException e) {
-                            Log.error(e);
-                        }
-
-                        bytesRead = transfer.getAmountWritten();
-                        if (bytesRead == -1) {
-                            bytesRead = 0;
-                        }
-                        ByteFormat format = new ByteFormat();
-                        String text = format.format(bytesRead);
-                        progressBar.setString(text + " received");
-
-                        try {
-                        	SwingUtilities.invokeAndWait(new Runnable() {
-                        		public void run() {
-                        			progressBar.setValue((int)(bytesRead/SendMessage.getDivisorForByte(transfer.getFileSize())));
-                        		}
-                        	});
-                        }
-                        catch (Exception e) {
-                            Log.error(e);
-                        }
-                        	
-                        FileTransfer.Status status = transfer.getStatus();
-                        if (status == FileTransfer.Status.error ||
-                            status == FileTransfer.Status.complete || status == FileTransfer.Status.cancelled ||
-                            status == FileTransfer.Status.refused) {
-                            break;
-                        }
-                        else if (status == FileTransfer.Status.negotiating_stream) {
-                            titleLabel.setText(Res.getString("message.negotiate.stream"));
-                        }
-                        else if (status == FileTransfer.Status.in_progress) {
-                            titleLabel.setText(Res.getString("message.receiving.file", contactItem.getDisplayName()));
-                        }
-                    }
-
-                    return "ok";
-                }
-
-                public void finished() {
-                    if (transfer.getAmountWritten() >= request.getFileSize()) {
-                        transferDone(request, transfer);
-
-                        imageLabel.setFile(downloadedFile);
-                        imageLabel.setToolTipText(Res.getString("message.click.to.open"));
-                        titleLabel.setToolTipText(Res.getString("message.click.to.open"));
-
-                        imageLabel.addMouseListener(new MouseAdapter() {
-                            public void mouseClicked(MouseEvent e) {
-                                if (e.getClickCount() == 2) {
-                                    launchFile(downloadedFile);
-                                }
-                            }
-                        });
-
-                        imageLabel.addMouseListener(new MouseAdapter() {
-                            public void mouseEntered(MouseEvent e) {
-                                imageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                            }
-
-                            public void mouseExited(MouseEvent e) {
-                                imageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                            }
-                        });
-
-                        titleLabel.addMouseListener(new MouseAdapter() {
-                            public void mouseClicked(MouseEvent e) {
-                                if (e.getClickCount() == 2) {
-                                    launchFile(downloadedFile);
-                                }
-                            }
-                        });
-
-                        titleLabel.addMouseListener(new MouseAdapter() {
-                            public void mouseEntered(MouseEvent e) {
-                                titleLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                            }
-
-                            public void mouseExited(MouseEvent e) {
-                                titleLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-                            }
-                        });
-
-
-                        invalidate();
-                        validate();
-                        repaint();
-                        return;
-                    }
-
-                    String transferMessage = "";
-                    if (transfer.getStatus() == FileTransfer.Status.error) {
-                        if (transfer.getException() != null) {
-                            Log.error("There was an error during file transfer.", transfer.getException());
-                        }
-                        transferMessage = Res.getString("message.error.during.file.transfer");
-                    }
-                    else if (transfer.getStatus() == FileTransfer.Status.refused) {
-                        transferMessage = Res.getString("message.transfer.refused");
-                    }
-                    else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
-                        transfer.getAmountWritten() < request.getFileSize()) {
-                        transferMessage = Res.getString("message.transfer.cancelled");
-                    }
-
-                    setFinishedText(transferMessage);
-                    showAlert(true);
-                }
-            };
-
-            worker.start();
-
+	add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
+	add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
+	add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+	cancelButton.setVisible(true);
+	transfer = request.accept(); 
+	final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
+	
+	try {
+	    _starttime = System.currentTimeMillis();
+            transfer.recieveFile(downloadedFile);
         }
-        catch (Exception e) {
+        catch (XMPPException e) {
             Log.error(e);
         }
+	
+        progressBar.setMaximum(100); // setting it to percent
+        progressBar.setStringPainted(true);
 
 
+	
+	TimerTask updateProgessBar = new TimerTask() {
+	    @Override
+	    public void run() {
+		if (transfer.getAmountWritten() >= request.getFileSize() 
+			|| transfer.getStatus() == FileTransfer.Status.error 
+			|| transfer.getStatus() == FileTransfer.Status.refused
+			|| transfer.getStatus() == FileTransfer.Status.cancelled) 
+		{
+		    this.cancel();
+		    _endtime = System.currentTimeMillis();
+		    updateonFinished(request, downloadedFile);
+		}else
+		{
+		    // 100 % = Filesize
+		    // x %   = Currentsize	    
+		    long p = (transfer.getAmountWritten() * 100 / transfer.getFileSize() );
+		    progressBar.setValue(Math.round(p));        
+		}
+		
+	    }
+	};
+	
+	
+	TimerTask updatePrograssBarText = new TimerTask() {
+	long timenow;
+	long timeearlier;
+	long bytesnow;
+	long bytesearlier;
+	    @Override
+	    public void run() {
+		if (transfer.getAmountWritten() >= request.getFileSize() 
+			|| transfer.getStatus() == FileTransfer.Status.error 
+			|| transfer.getStatus() == FileTransfer.Status.refused
+			|| transfer.getStatus() == FileTransfer.Status.cancelled) 
+		{
+		    this.cancel();
+		}
+		else{
+    		
+            	timenow = System.currentTimeMillis();
+            	bytesnow = transfer.getAmountWritten();
+            	bytesRead = transfer.getAmountWritten();
+                    if (bytesRead == -1) {
+                        bytesRead = 0;
+                    }
+                    ByteFormat format = new ByteFormat();
+                    String text = format.format(bytesRead);
+                    
+                    
+                                    
+                    	
+                    FileTransfer.Status status = transfer.getStatus();
+                    if (status == FileTransfer.Status.in_progress) 
+                    {
+                        titleLabel.setText(Res.getString("message.receiving.file", contactItem.getDisplayName()));
+                        String speed =TransferUtils.calculateSpeed(bytesnow-bytesearlier, timenow-timeearlier);
+                        String est = TransferUtils.calculateEstimate(bytesnow, transfer.getFileSize(), _starttime, System.currentTimeMillis());
+                        progressLabel.setText(Res.getString("message.transfer.progressbar.text.received", text, speed, est));
+                    }
+                    else if (status == FileTransfer.Status.negotiating_stream) {
+                        titleLabel.setText(Res.getString("message.negotiate.stream"));
+                    }
+                    bytesearlier = bytesnow;
+                    timeearlier = timenow;
+		}
+	    }
+	};
+	
+	
+	Timer timer = new Timer();	
+	timer.scheduleAtFixedRate(updateProgessBar, 10, 10);
+	
+	Timer timer2 = new Timer();
+	timer2.scheduleAtFixedRate(updatePrograssBarText, 10, 500);
+	
     }
+
+    private void updateonFinished(final FileTransferRequest request,
+	    final File downloadedFile) {
+	if (transfer.getAmountWritten() >= request.getFileSize()) {
+            transferDone(request, transfer);
+
+            imageLabel.setFile(downloadedFile);
+            imageLabel.setToolTipText(Res.getString("message.click.to.open"));
+            titleLabel.setToolTipText(Res.getString("message.click.to.open"));
+            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(_endtime-_starttime)/1000);
+            progressLabel.setText(Res.getString("label.time", fin));
+
+            imageLabel.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        launchFile(downloadedFile);
+                    }
+                }
+            });
+
+            imageLabel.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    imageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    imageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
+                        
+
+            titleLabel.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        launchFile(downloadedFile);
+                    }
+                }
+            });
+
+            titleLabel.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    titleLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    titleLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
+
+            invalidate();
+            validate();
+            repaint();
+        }
+
+        String transferMessage = "";
+        if (transfer.getStatus() == FileTransfer.Status.error) {
+            if (transfer.getException() != null) {
+                Log.error("There was an error during file transfer.", transfer.getException());
+            }
+            transferMessage = Res.getString("message.error.during.file.transfer");
+        }
+        else if (transfer.getStatus() == FileTransfer.Status.refused) {
+            transferMessage = Res.getString("message.transfer.refused");
+        }
+        else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
+            transfer.getAmountWritten() < request.getFileSize()) {
+            transferMessage = Res.getString("message.transfer.cancelled");
+        }
+        else if(transfer.getAmountWritten() >= request.getFileSize())
+        {
+            transferMessage = Res.getString("message.transfer.complete", transfer.getFileName());
+        }
+
+        setFinishedText(transferMessage);
+        showAlert(true);
+    }
+    
+
 
     private void setFinishedText(String text) {
         acceptButton.setVisible(false);
@@ -568,6 +595,7 @@ public class ReceiveMessage extends JPanel {
                 cancelTransfer();
                 acceptButton.setVisible(false);
                 declineButton.setVisible(false);
+                cancelButton.setVisible(false);
                 
             }
         });
