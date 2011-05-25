@@ -55,6 +55,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
@@ -298,7 +300,7 @@ public class ReceiveMessage extends JPanel {
                         imageLabel.addMouseListener(new MouseAdapter() {
                             public void mouseClicked(MouseEvent e) {
                                 if (e.getClickCount() == 2) {
-                                    openFile(downloadedFile);
+                                    launchFile(downloadedFile);
                                 }
                             }
                         });
@@ -317,7 +319,7 @@ public class ReceiveMessage extends JPanel {
                         titleLabel.addMouseListener(new MouseAdapter() {
                             public void mouseClicked(MouseEvent e) {
                                 if (e.getClickCount() == 2) {
-                                    openFile(downloadedFile);
+                                    launchFile(downloadedFile);
                                 }
                             }
                         });
@@ -406,9 +408,9 @@ public class ReceiveMessage extends JPanel {
         final TransferButton openFolderButton = new TransferButton();
         add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-
-        final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
-
+        
+        
+        final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());     
         openFileButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 openFileButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -420,7 +422,7 @@ public class ReceiveMessage extends JPanel {
             }
 
             public void mousePressed(MouseEvent e) {
-                openFile(downloadedFile);
+                launchFile(Downloads.getDownloadDirectory()+"\\"+request.getFileName());
             }
         });
 
@@ -435,11 +437,7 @@ public class ReceiveMessage extends JPanel {
             }
 
             public void mousePressed(MouseEvent event) {
-            	try {
-            		Desktop.getDesktop().open(Downloads.getDownloadDirectory());
-        		} catch (IOException e) {
-        			Log.error(e);
-        		}
+                launchFile(Downloads.getDownloadDirectory());
             }
         });
 
@@ -488,13 +486,7 @@ public class ReceiveMessage extends JPanel {
         repaint();
     }
 
-    private void openFile(File downloadedFile) {
-    	try {
-    		Desktop.getDesktop().open(downloadedFile);
-		} catch (IOException e) {
-			Log.error(e);
-		}
-    }
+  
 
     private class TransferButton extends JButton {
 
@@ -634,6 +626,70 @@ public class ReceiveMessage extends JPanel {
             saveAsAction.putValue(Action.NAME, Res.getString("menuitem.save.as"));
             popup.add(saveAsAction);
             popup.show(this, e.getX(), e.getY());
+        }
+    }
+    
+    /**
+     * Return correct URI for filePath. dont mind of local or remote path
+     * 
+     * @param filePath
+     * @return
+     */
+    private static URI getFileURI(String filePath) {
+        URI uri = null;
+        filePath = filePath.trim();
+        if (filePath.indexOf("http") == 0 || filePath.indexOf("\\") == 0) {
+            if (filePath.indexOf("\\") == 0)
+                filePath = "file:" + filePath;
+            try {
+                filePath = filePath.replaceAll(" ", "%20");
+                URL url = new URL(filePath);
+                uri = url.toURI();
+            } catch (MalformedURLException ex) {
+                ex.printStackTrace();
+            } catch (URISyntaxException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            File file = new File(filePath);
+            uri = file.toURI();
+        }
+        return uri;
+    }
+    
+    /**
+     * Launches a file browser or opens a file with java Desktop.open() if is
+     * supported
+     * 
+     * @param file
+     */
+    private void launchFile(File file) {
+        if (!Desktop.isDesktopSupported())
+            return;
+        Desktop dt = Desktop.getDesktop();
+        try {
+            dt.open(file);
+        } catch (IOException ex) {
+            launchFile(file.getPath());
+        }
+    }
+
+    /**
+     * Launches a file browser or opens a file with java Desktop.open() if is
+     * supported
+     * 
+     * @param filePath
+     */
+    private void launchFile(String filePath) {
+        if (filePath == null || filePath.trim().length() == 0)
+            return;
+        if (!Desktop.isDesktopSupported())
+            return;
+        Desktop dt = Desktop.getDesktop();
+        try {
+            dt.browse(getFileURI(filePath));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
