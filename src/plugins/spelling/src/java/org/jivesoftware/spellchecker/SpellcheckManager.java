@@ -73,7 +73,7 @@ public class SpellcheckManager {
 	checker.setDictionary(getDictionary(language));
     }
 
-    private SpellDictionary getDictionary(String language) {
+    public SpellDictionary getDictionary(String language) {
 	SpellDictionary dict = null;
 	try {
 	    InputStream dictionary = getClass().getClassLoader()

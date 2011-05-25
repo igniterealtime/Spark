@@ -44,7 +44,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
     private JCheckBox autospellcheckingEnabled;
     private JComboBox spellLanguages;
     private JCheckBox ignoreCase;
-
+    private JCheckBox showLanguages; 
     private JPanel spellPanel;
 
     private Locale[] locales;
@@ -57,6 +57,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	spellcheckingEnabled = new JCheckBox();
 	autospellcheckingEnabled = new JCheckBox();
 	spellLanguages = new JComboBox();
+	showLanguages = new JCheckBox();
 	spellPanel.setLayout(new GridBagLayout());
 	
 	ignoreCase = new JCheckBox();
@@ -94,7 +95,8 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	spellPanel.add(autospellcheckingEnabled, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 	spellPanel.add(lLanguage, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 	spellPanel.add(spellLanguages, new GridBagConstraints(1, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-	spellPanel.add(ignoreCase, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(showLanguages, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	spellPanel.add(ignoreCase, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 	// Setup MNEMORICS
 	ResourceUtils.resButton(spellcheckingEnabled, SpellcheckerResource
@@ -106,6 +108,8 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	
 	ResourceUtils.resButton(ignoreCase, 
 		SpellcheckerResource.getString("preference.ignore.uppercasedword"));
+	ResourceUtils.resButton(showLanguages, SpellcheckerResource
+                .getString("preference.show.langauage.in.chat.windows"));
 	
 	setLayout(new VerticalFlowLayout());
 	spellPanel.setBorder(BorderFactory
@@ -119,10 +123,12 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	    autospellcheckingEnabled.setEnabled(true);
 	    spellLanguages.setEnabled(true);
 	    ignoreCase.setEnabled(true);
+	    showLanguages.setEnabled(true);
 	} else {
 	    autospellcheckingEnabled.setEnabled(false);
 	    spellLanguages.setEnabled(false);
 	    ignoreCase.setEnabled(false);
+	    showLanguages.setEnabled(false);
 	}
     }
 
@@ -137,6 +143,17 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	else
 	    return "";
     }
+    
+    public boolean getEnableLanuageSelection()
+    {
+        return showLanguages.isSelected();
+    }
+    
+    public void setEnableLanuageSelection(boolean show)
+    {
+        showLanguages.setSelected(show);
+    }
+    
 
     public void setSelectedLanguage(String language) {
 	spellLanguages.setSelectedIndex(languages.indexOf(language));

@@ -83,7 +83,17 @@ public class SpellcheckerPreferences {
     public boolean isAutoSpellCheckerEnabled() {
 	return getBoolean("autoSpellCheckerEnabled", true);
     }
+    
+    public boolean getLanguageSelectionInChatRoom()
+    {
+       return getBoolean("showLanguageSelectionInChatRoom", false);
+    }
 
+    public void setLanguageSelectionInChatRoom(boolean value)
+    {
+       setBoolean("showLanguageSelectionInChatRoom", value);
+    }
+    
     private boolean getBoolean(String property, boolean defaultValue) {
 	return Boolean.parseBoolean(props.getProperty(property,
 		Boolean.toString(defaultValue)));

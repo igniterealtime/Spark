@@ -78,8 +78,8 @@ public class SpellcheckerPreference implements Preference {
 	preferences.setSpellCheckerEnabled(dialog.isSpellCheckingEnabled());
 	preferences.setSpellLanguage(dialog.getSelectedLanguage());
 	preferences.setIgnoreUppercase(dialog.getIgnoreUppercase());
-	SpellcheckManager.getInstance().loadDictionary(
-		dialog.getSelectedLanguage());
+	preferences.setLanguageSelectionInChatRoom(dialog.getEnableLanuageSelection());
+	SpellcheckManager.getInstance().loadDictionary(dialog.getSelectedLanguage());
 	preferences.save();
     }
 
@@ -125,6 +125,7 @@ public class SpellcheckerPreference implements Preference {
 		.isAutoSpellCheckerEnabled());
 	dialog.setSelectedLanguage(preferences.getSpellLanguage());
 	dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
+	dialog.setEnableLanuageSelection(preferences.getLanguageSelectionInChatRoom());
     }
 
     public void shutdown() {

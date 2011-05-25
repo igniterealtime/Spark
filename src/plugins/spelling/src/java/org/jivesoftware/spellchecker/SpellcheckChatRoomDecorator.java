@@ -21,9 +21,16 @@ package org.jivesoftware.spellchecker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.dts.spell.SpellChecker;
 import org.dts.spell.swing.JTextComponentSpellChecker;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -40,9 +47,11 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
     private JTextComponentSpellChecker _sc;
     private RolloverButton _spellingButton;
     private ChatRoom _room;
+    private JComboBox _languageSelection = new JComboBox();
+    private Map<String, String> _languages;
 
     public SpellcheckChatRoomDecorator(ChatRoom room) {
-	_room = room;
+	_room = room; 
 
 	SwingWorker worker = new SwingWorker() {
 	    public Object construct() {
@@ -52,13 +61,35 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
 
 	    public void finished() {
 
-		SpellcheckerPreference preference = (SpellcheckerPreference) SparkManager
+		final SpellcheckerPreference preference = (SpellcheckerPreference) SparkManager
 			.getPreferenceManager().getPreference(
 				SpellcheckerPreference.NAMESPACE);
 		if (preference.getPreferences().isSpellCheckerEnabled()) {
 		    _sc = new JTextComponentSpellChecker(SpellcheckManager
 			    .getInstance().getSpellChecker());
 
+		    languagestoLocales();
+		    
+		    _languageSelection.addActionListener(new ActionListener() {
+                        
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            String lang = _languages.get((String)_languageSelection.getSelectedItem());
+                            _sc.stopRealtimeMarkErrors();
+                            _sc = new JTextComponentSpellChecker(new SpellChecker(SpellcheckManager.getInstance().getDictionary(lang)));
+                           
+                            if (preference.getPreferences().getIgnoreUppercase()) {
+                                _sc.getSpellChecker().setIgnoreUpperCaseWords(true);
+                                _sc.getSpellChecker().setCaseSensitive(false);
+                            } else {
+                                _sc.getSpellChecker().setIgnoreUpperCaseWords(false);
+                                _sc.getSpellChecker().setCaseSensitive(true);
+                            }
+                            _sc.startRealtimeMarkErrors(_room.getChatInputEditor());
+                        }
+                    });
+		    
+		    
 		    ClassLoader cl = getClass().getClassLoader();
 
 		    ImageIcon spellingIcon = new ImageIcon(
@@ -69,6 +100,10 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
 		    _spellingButton
 			    .addActionListener(SpellcheckChatRoomDecorator.this);
 		    _room.getEditorBar().add(_spellingButton);
+                    if (preference.getPreferences().getLanguageSelectionInChatRoom())
+                    {
+                        _room.getEditorBar().add(_languageSelection);
+                    }
 		    if (preference.getPreferences().getIgnoreUppercase()) {
 			_sc.getSpellChecker().setIgnoreUpperCaseWords(true);
 			_sc.getSpellChecker().setCaseSensitive(false);
@@ -93,7 +128,8 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
     public void actionPerformed(ActionEvent event) {
 	if (_sc.spellCheck(_room.getChatInputEditor())) {
 	    JOptionPane.showMessageDialog(_room.getChatInputEditor(),
-		    "Text is OK");
+	            SpellcheckerResource
+	                .getString("dialog.no.mistakes"));
 	    _room.getChatInputEditor().requestFocusInWindow();
 	}
 
@@ -102,6 +138,29 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
     @Override
     public void closing() {
 
+    }
+    
+    
+    private void languagestoLocales()
+    {
+        _languages = new HashMap<String, String>();
+        Locale[] locales = Locale.getAvailableLocales();
+        ArrayList<String> languages = SpellcheckManager.getInstance().getSupportedLanguages();
+        for (int i = 0; i < languages.size(); i++) {
+            for (final Locale locale : locales) {
+                if (locale.toString().equals(languages.get(i))) {
+                    String label = locale.getDisplayLanguage(Locale
+                            .getDefault());
+                    if (locale.getDisplayCountry(locale) != null
+                            && locale.getDisplayCountry(locale).trim().length() > 0) {
+                        label = label + "-"
+                                + locale.getDisplayCountry(locale).trim();
+                    }
+                    _languages.put(label, languages.get(i));
+                    _languageSelection.addItem(label);
+                }
+            }
+        }
     }
 
 }
