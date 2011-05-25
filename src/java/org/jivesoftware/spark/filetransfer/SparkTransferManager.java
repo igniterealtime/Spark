@@ -43,6 +43,10 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -188,12 +192,8 @@ public class SparkTransferManager {
         actionsMenu.add(downloadsMenu);
         downloadsMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {        
-                try {
-					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
-				} catch (IOException e1) {
-					Log.error("Could not find file-browser");
-				}
-            }
+   		launchFile(Downloads.getDownloadDirectory());
+            }			
         });
 
         // Create the file transfer manager
@@ -255,6 +255,35 @@ public class SparkTransferManager {
 //        });
        }
 
+    
+    /**
+     * Return correct URI for filePath. dont mind of local or remote path
+     * 
+     * @param filePath
+     * @return
+     */
+    private static URI getFileURI(String filePath) {
+        URI uri = null;
+        filePath = filePath.trim();
+        if (filePath.indexOf("http") == 0 || filePath.indexOf("\\") == 0) {
+            if (filePath.indexOf("\\") == 0)
+                filePath = "file:" + filePath;
+            try {
+                filePath = filePath.replaceAll(" ", "%20");
+                URL url = new URL(filePath);
+                uri = url.toURI();
+            } catch (MalformedURLException ex) {
+                ex.printStackTrace();
+            } catch (URISyntaxException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            File file = new File(filePath);
+            uri = file.toURI();
+        }
+        return uri;
+    }
+    
     private void handleTransferRequest(FileTransferRequest request, ContactList contactList) {
         // Check if a listener handled this request
         if (fireTransferListeners(request)) {
@@ -703,6 +732,43 @@ public class SparkTransferManager {
         return false;
     }
 
+    
+    /**
+     * Launches a file browser or opens a file with java Desktop.open() if is
+     * supported
+     * 
+     * @param file
+     */
+    private void launchFile(File file) {
+        if (!Desktop.isDesktopSupported())
+            return;
+        Desktop dt = Desktop.getDesktop();
+        try {
+            dt.open(file);
+        } catch (IOException ex) {
+            launchFile(file.getPath());
+        }
+    }
+
+    /**
+     * Launches a file browser or opens a file with java Desktop.open() if is
+     * supported
+     * 
+     * @param filePath
+     */
+    private void launchFile(String filePath) {
+        if (filePath == null || filePath.trim().length() == 0)
+            return;
+        if (!Desktop.isDesktopSupported())
+            return;
+        Desktop dt = Desktop.getDesktop();
+        try {
+            dt.browse(getFileURI(filePath));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     /**
      * Sets the current default directory to store files.
      *
