@@ -25,6 +25,8 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.View;
 import javax.swing.text.html.HTMLDocument;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -271,7 +273,7 @@ public class ChatPrinter implements Printable {
                 pageStartY = 0;
                 pageEndY = 0;
                 currentPage = -1;
-                System.out.println("Error Printing Document");
+                Log.error("Error Printing Document",printerException);
             }
         }
     }

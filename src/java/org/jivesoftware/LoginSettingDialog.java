@@ -227,10 +227,6 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    xmppHostField.setText(localPreferences.getXmppHost());
 	    resourceField.setText(localPreferences.getResource());
 
-	    if (localPreferences.getResource() == null) {
-		resourceField.setText("spark");
-	    }
-
 	    autoDiscoverBox.addActionListener(this);
 
 	    autoDiscoverBox.setSelected(!localPreferences
@@ -692,8 +688,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    if (ModelUtil.hasLength(principalName)) {
 		wrappedLabel.setText(Res.getString("title.advanced.connection.sso.account",principalName));
 	    } else {
-		wrappedLabel
-			.setText("Spark is unable to find the principal to use for Single Sign-On. This will prevent SSO from working.");
+		wrappedLabel.setText(Res.getString("title.advanced.connection.sso.noprincipal"));
 	    }
 	    wrappedLabel.setBackground(Color.white);
 

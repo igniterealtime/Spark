@@ -185,7 +185,7 @@ public final class GraphicUtils {
 	    try {
 		tracker.waitForID(0, 0);
 	    } catch (InterruptedException e) {
-		System.out.println("INTERRUPTED while loading Image");
+		Log.error("INTERRUPTED while loading Image",e);
 	    }
 	    tracker.removeImage(image, 0);
 	}

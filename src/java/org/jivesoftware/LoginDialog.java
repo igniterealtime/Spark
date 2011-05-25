@@ -807,7 +807,7 @@ public final class LoginDialog {
                 }
                 catch (LoginException le) {
                     Log.debug(le.getMessage());
-                    accountNameLabel.setText("Unable to determine.");
+                    accountNameLabel.setText(Res.getString("title.login.no.account"));
                     //useSSO(false);
                 }
 
@@ -979,10 +979,7 @@ public final class LoginDialog {
 			connection.connect();
 		    }
 
-                    String resource = localPref.getResource();
-                    if (!ModelUtil.hasLength(resource)) {
-                        resource = "spark";
-                    }                   
+                    String resource = localPref.getResource();                 
 
                     connection.login(getUsername(), getPassword(),
                 	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource));

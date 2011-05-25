@@ -31,6 +31,7 @@ import java.util.Properties;
 import javax.swing.UIManager;
 
 import org.jivesoftware.spark.util.Encryptor;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -447,9 +448,13 @@ public class LocalPreferences {
 		setBoolean("hostAndPort", configured);
 	}
 
-	public String getResource() {
-		return props.getProperty("resource", "spark");
+    public String getResource() {
+
+	if (!ModelUtil.hasLength(props.getProperty("resource", "spark"))) {
+	    return "";
 	}
+	return props.getProperty("resource", "spark");
+    }
 
 	public void setResource(String resource) {
 		props.setProperty("resource", resource);

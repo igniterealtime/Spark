@@ -453,7 +453,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
     @Override
     public void composingNotification(String from, String packetID) {
 	if (pref.isTypingNotificationShown()) {
-	    System.out.println("set typing");
 	    trayIcon.setImage(typingIcon.getImage());
 	}
     }
