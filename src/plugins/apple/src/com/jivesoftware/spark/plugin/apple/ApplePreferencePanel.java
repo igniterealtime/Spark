@@ -54,8 +54,8 @@ public class ApplePreferencePanel extends JPanel {
 	_repeatedbouncing = new JCheckBox("Dockicon bounces repeatedly");
 	
 	ClassLoader cl = getClass().getClassLoader();
-	ImageIcon badge = new ImageIcon(cl.getResource("badge.png"));
-	ImageIcon bounce = new ImageIcon(cl.getResource("bounce.png"));
+	ImageIcon badge = new ImageIcon(cl.getResource("images/badge.png"));
+	ImageIcon bounce = new ImageIcon(cl.getResource("images/bounce.png"));
 
 	
 	mainpanel.add(_dockbadges, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));

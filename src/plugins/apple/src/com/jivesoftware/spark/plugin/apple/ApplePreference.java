@@ -70,7 +70,7 @@ public class ApplePreference implements Preference {
     @Override
     public Icon getIcon() {
 	ClassLoader cl = getClass().getClassLoader();
-	ImageIcon icon = new ImageIcon(cl.getResource("X.png"));
+	ImageIcon icon = new ImageIcon(cl.getResource("images/X.png"));
 	Image x = icon.getImage().getScaledInstance(24, 24, java.awt.Image.SCALE_FAST);
 	icon = new ImageIcon(x);
 	return icon;
