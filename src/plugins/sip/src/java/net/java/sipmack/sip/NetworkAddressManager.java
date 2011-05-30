@@ -19,13 +19,18 @@
  */
 package net.java.sipmack.sip;
 
-import net.java.sipmack.common.Log;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
-import javax.swing.*;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.net.*;
-import java.util.*;
+import net.java.sipmack.common.Log;
 
 /**
  * Title: Spark Phone
@@ -325,7 +330,7 @@ public class NetworkAddressManager {
         return addresses;
     }
 
-    public static class InetAddressWrapper implements Comparable {
+    public static class InetAddressWrapper implements Comparable<InetAddressWrapper> {
 
         private int value = 0;
         private InetAddress inetAddress = null;
@@ -343,11 +348,9 @@ public class NetworkAddressManager {
             return inetAddress;
         }
 
-        public int compareTo(Object o) {
+        public int compareTo(InetAddressWrapper o) {
 
-            if (!(o instanceof InetAddressWrapper)) return 1;
-
-            InetAddressWrapper other = (InetAddressWrapper) o;
+            InetAddressWrapper other = o;
 
             if (this.value < other.getValue()) return -1;
             else if (this.value < other.getValue()) return 0;

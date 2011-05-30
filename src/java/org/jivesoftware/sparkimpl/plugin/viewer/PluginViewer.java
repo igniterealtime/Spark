@@ -211,7 +211,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
 
         SwingWorker worker = new SwingWorker() {
-            Collection pluginList = null;
+            Collection<PublicPlugin> pluginList = null;
 
             public Object construct() {
                 // Prepare HTTP post
@@ -258,11 +258,11 @@ public class PluginViewer extends JPanel implements Plugin {
                     JOptionPane.showMessageDialog(availablePanel, Res.getString("message.plugins.not.available"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                Iterator plugs = pluginList.iterator();
+                Iterator<PublicPlugin> plugs = pluginList.iterator();
                 availablePanel.removeAll();
 
                 while (plugs.hasNext()) {
-                    PublicPlugin plugin = (PublicPlugin)plugs.next();
+                    PublicPlugin plugin = plugs.next();
                     if (!pluginManager.isInstalled(plugin)) {
                         SparkPlugUI ui = new SparkPlugUI(plugin);
                         availablePanel.add(ui);
@@ -397,9 +397,9 @@ public class PluginViewer extends JPanel implements Plugin {
             Log.error(e);
         }
 
-        List plugins = pluginXML.selectNodes("/plugins/plugin");
+        List<? extends Node> plugins = pluginXML.selectNodes("/plugins/plugin");
 
-        for (Object plugin1 : plugins) {
+        for (Node plugin1 : plugins) {
             PublicPlugin publicPlugin = new PublicPlugin();
 
             String clazz;

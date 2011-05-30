@@ -73,7 +73,7 @@ public class DataManager {
         metadataListeners.remove(listener);
     }
 
-    public void setMetadataForRoom(ChatRoom room, Map map) {
+    public void setMetadataForRoom(ChatRoom room, Map<?, ?> map) {
         for (MetadataListener listener : metadataListeners) {
             listener.metadataAssociatedWithRoom(room, map);
         }

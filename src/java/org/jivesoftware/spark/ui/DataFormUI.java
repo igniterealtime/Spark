@@ -79,7 +79,7 @@ public class DataFormUI extends JPanel {
             String label = field.getLabel();
             String type = field.getType();
 
-            Iterator iter = field.getValues();
+            Iterator<?> iter = field.getValues();
             List<Object> valueList = new ArrayList<Object>();
             while (iter.hasNext()) {
                 valueList.add(iter.next());
@@ -127,7 +127,7 @@ public class DataFormUI extends JPanel {
             }
             else if (type.equals(FormField.TYPE_LIST_MULTI)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                Iterator i = field.getValues();
+                Iterator<?> i = field.getValues();
                 while (i.hasNext()) {
                     String value = (String)i.next();
                     checkBoxList.addCheckBox(new JCheckBox(value), value);

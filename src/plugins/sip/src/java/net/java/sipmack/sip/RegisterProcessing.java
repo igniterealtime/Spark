@@ -615,10 +615,8 @@ class RegisterProcessing {
     }
 
     private class KeepAliveTask extends TimerTask {
-        private int sec = 0;
 
         public KeepAliveTask(int s) {
-            sec = s;
         }
        
         public void run() {

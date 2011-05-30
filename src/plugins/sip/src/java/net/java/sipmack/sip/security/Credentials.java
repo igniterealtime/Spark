@@ -31,7 +31,7 @@ public class Credentials {
      * @param userName The user name to set.
      */
     public void setUserName(String userName) {
-        this.userName = userName;
+        Credentials.userName = userName;
     }
 
     /**
@@ -40,7 +40,7 @@ public class Credentials {
      * @param userName The user name to set in Authentication challenge.
      */
     public void setAuthUserName(String userName) {
-        this.authUserName = userName;
+        Credentials.authUserName = userName;
     }
 
     public static void clean() {
@@ -59,7 +59,7 @@ public class Credentials {
      * @return the user name.
      */
     public String getUserName() {
-        return this.userName;
+        return Credentials.userName;
     }
 
     /**
@@ -68,8 +68,8 @@ public class Credentials {
      * @return the user name.
      */
     public String getAuthUserName() {
-        return this.authUserName != null && !this.authUserName.equals("") ? this.authUserName
-                : this.userName;
+        return Credentials.authUserName != null && !Credentials.authUserName.equals("") ? Credentials.authUserName
+                : Credentials.userName;
     }
 
     /**
@@ -78,7 +78,7 @@ public class Credentials {
      * @param passwd The password associated with username
      */
     public void setPassword(char[] passwd) {
-        this.password = passwd;
+        Credentials.password = passwd;
     }
 
     /**

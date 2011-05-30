@@ -194,7 +194,7 @@ public class JMFInit extends Frame implements Runnable {
                 PlugInManager.addPlugIn(dar, inputFormats, new Format[0],
                         plType);
                 // Move it to the top of the list
-                Vector rendList = PlugInManager.getPlugInList(null, null, plType);
+                Vector<String> rendList = PlugInManager.getPlugInList(null, null, plType);
                 int listSize = rendList.size();
                 if (rendList.elementAt(listSize - 1).equals(dar)) {
                     rendList.removeElementAt(listSize - 1);
@@ -215,7 +215,7 @@ public class JMFInit extends Frame implements Runnable {
     }
 
     private void detectS8DirectAudio() {
-        Class cls;
+        Class<?> cls;
         int plType = PlugInManager.RENDERER;
         String dar = "com.sun.media.renderer.audio.DirectAudioRenderer";
         try {
@@ -230,7 +230,7 @@ public class JMFInit extends Frame implements Runnable {
             if (rend instanceof ExclusiveUse
                     && !((ExclusiveUse)rend).isExclusive()) {
                 // sol8+, DAR supports mixing
-                Vector rendList = PlugInManager.getPlugInList(null, null,
+                Vector<String> rendList = PlugInManager.getPlugInList(null, null,
                         plType);
                 int listSize = rendList.size();
                 boolean found = false;

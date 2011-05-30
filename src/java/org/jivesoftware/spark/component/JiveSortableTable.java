@@ -153,7 +153,7 @@ public abstract class JiveSortableTable extends Table {
      *
      * @param list the list to add to the model.
      */
-    public void add(List list) {
+    public void add(List<Object> list) {
         for (Object aList : list) {
             Object[] newRow = (Object[]) aList;
             tableModel.addRow(newRow);

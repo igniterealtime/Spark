@@ -39,7 +39,6 @@ import sun.audio.AudioStream;
  * @author Thiago Rocha Camargo (thiago@jivesoftware.com)
  */
 
-@SuppressWarnings("restriction")
 public class DialSoundManager {
   
   AudioPlayer audioPlayer = AudioPlayer.player;

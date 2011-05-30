@@ -19,18 +19,11 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.Spark;
-
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.AffineTransform;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+
+import org.jivesoftware.Spark;
 
 /**
  *

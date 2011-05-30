@@ -37,6 +37,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.JPanel;
@@ -44,6 +45,7 @@ import javax.swing.JPanel;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
@@ -270,23 +272,22 @@ public class PluginManager implements MainWindowListener {
 
         Plugin pluginClass = null;
 
-        List<?> plugins = pluginXML.selectNodes("/plugin");
-        for (Object plugin1 : plugins) {
+        List<? extends Node> plugins = pluginXML.selectNodes("/plugin");
+        for (Node plugin1 : plugins) {
             PublicPlugin publicPlugin = new PublicPlugin();
 
             String clazz = null;
             String name;
             String minVersion;
-
+            
             try {
-                Element plugin = (Element) plugin1;
 
-                name = plugin.selectSingleNode("name").getText();
-                clazz = plugin.selectSingleNode("class").getText();
+                name = plugin1.selectSingleNode("name").getText();
+                clazz = plugin1.selectSingleNode("class").getText();
 
                 // Check for minimum Spark version
                 try {
-                    minVersion = plugin.selectSingleNode("minSparkVersion").getText();
+                    minVersion = plugin1.selectSingleNode("minSparkVersion").getText();
 
                     String buildNumber = JiveInfo.getVersion();
                     boolean ok = buildNumber.compareTo(minVersion) >= 0;
@@ -296,13 +297,13 @@ public class PluginManager implements MainWindowListener {
                     }                  
                 }
                 catch (Exception e) {
-                    Log.error("Unable to load plugin " + name + " due to no minSparkVersion.");
+                    Log.error("Unable to load plugin " + name + " due to missing <minSparkVersion>-Tag in plugin.xml.");
                     return null;
                 }
                 
                 // Check for minimum Java version
                 try {       
-                  String javaversion = plugin.selectSingleNode("java").getText().replace("_", "").replace(".", "");
+                  String javaversion = plugin1.selectSingleNode("java").getText().replace("_", "").replace(".", "");
                   javaversion = javaversion == null? "0" : javaversion;
                   int jv = Integer.parseInt(javaversion);
                   
@@ -313,7 +314,7 @@ public class PluginManager implements MainWindowListener {
 
                   if (!ok) {
                       Log.error("Unable to load plugin " + name +
-                	    " due to old JavaVersion.\nIt Requires "+plugin.selectSingleNode("java").getText()+
+                	    " due to old JavaVersion.\nIt Requires "+plugin1.selectSingleNode("java").getText()+
                 	    " you have "+ System.getProperty("java.version"));
                       return null;
                   }
@@ -325,8 +326,8 @@ public class PluginManager implements MainWindowListener {
                 
                 // set dependencies 
                 try {
-                   List<?> dependencies = plugin.selectNodes("depends/plugin");
-                   for (Object depend1 : dependencies) {
+                   List<? extends Node> dependencies = plugin1.selectNodes("depends/plugin");
+                   for (Node depend1 : dependencies) {
                       Element depend = (Element) depend1;
                   	 PluginDependency dependency = new PluginDependency();
                   	 dependency.setVersion(depend.selectSingleNode("version").getText());
@@ -340,7 +341,7 @@ public class PluginManager implements MainWindowListener {
                 
 
                 // Do operating system check.
-                boolean operatingSystemOK = isOperatingSystemOK(plugin);
+                boolean operatingSystemOK = isOperatingSystemOK(plugin1);
                 if (!operatingSystemOK) {
                     return null;
                 }
@@ -349,19 +350,19 @@ public class PluginManager implements MainWindowListener {
                 publicPlugin.setName(name);
 
                 try {
-                    String version = plugin.selectSingleNode("version").getText();
+                    String version = plugin1.selectSingleNode("version").getText();
                     publicPlugin.setVersion(version);
 
-                    String author = plugin.selectSingleNode("author").getText();
+                    String author = plugin1.selectSingleNode("author").getText();
                     publicPlugin.setAuthor(author);
 
-                    String email = plugin.selectSingleNode("email").getText();
+                    String email = plugin1.selectSingleNode("email").getText();
                     publicPlugin.setEmail(email);
 
-                    String description = plugin.selectSingleNode("description").getText();
+                    String description = plugin1.selectSingleNode("description").getText();
                     publicPlugin.setDescription(description);
 
-                    String homePage = plugin.selectSingleNode("homePage").getText();
+                    String homePage = plugin1.selectSingleNode("homePage").getText();
                     publicPlugin.setHomePage(homePage);
                 }
                 catch (Exception e) {
@@ -406,7 +407,7 @@ public class PluginManager implements MainWindowListener {
         catch (DocumentException e) {
             Log.error(e);
         }
-        List<?> plugins = pluginXML.selectNodes("/plugins/plugin");
+        List<? extends Node> plugins = pluginXML.selectNodes("/plugins/plugin");
         for (final Object plugin1 : plugins) {
 
           		EventQueue.invokeLater(new Runnable() {
@@ -783,7 +784,7 @@ public class PluginManager implements MainWindowListener {
                 return;
             }
             dir.mkdir();
-            for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
+            for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
                 JarEntry entry = (JarEntry)e.nextElement();
                 File entryFile = new File(dir, entry.getName());
                 // Ignore any manifest.mf entries.
@@ -877,7 +878,7 @@ public class PluginManager implements MainWindowListener {
      * @param plugin the Plugin element to check.
      * @return true if the operating system is ok for the plugin to run on.
      */
-    private boolean isOperatingSystemOK(Element plugin) {
+    private boolean isOperatingSystemOK(Node plugin) {
         // Check for operating systems
         try {
 

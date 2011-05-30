@@ -19,17 +19,6 @@
  */
 package org.jivesoftware.sparkplugin.ui.call;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
-
-import net.java.sipmack.common.Log;
-import net.java.sipmack.softphone.SoftPhoneManager;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -55,6 +44,16 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import net.java.sipmack.common.Log;
+import net.java.sipmack.softphone.SoftPhoneManager;
+
+import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
 /**
  * Responsible for the handling and displaying of missed calls. The toaster should remain visible until the user explicitly closes it.

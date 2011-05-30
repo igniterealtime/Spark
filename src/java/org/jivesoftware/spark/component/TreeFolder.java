@@ -52,7 +52,7 @@ public class TreeFolder implements Serializable {
         subFolders.remove(folder);
     }
 
-    public Iterator getSubFolders() {
+    public Iterator<TreeFolder> getSubFolders() {
         return subFolders.iterator();
     }
 
@@ -64,7 +64,7 @@ public class TreeFolder implements Serializable {
         paletteItems.remove(item);
     }
 
-    public Iterator getPaletteItems() {
+    public Iterator<TreeItem> getPaletteItems() {
         return paletteItems.iterator();
     }
 

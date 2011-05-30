@@ -55,7 +55,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
 import org.jivesoftware.sparkplugin.components.CallPanelButton;
 import org.jivesoftware.sparkplugin.components.EndCallButton;
 import org.jivesoftware.sparkplugin.components.RedialButton;

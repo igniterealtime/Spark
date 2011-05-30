@@ -502,8 +502,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     /**
      * Sort HistoryMessages by date.
      */
-    final Comparator dateComparator = new Comparator() {
-        public int compare(Object messageOne, Object messageTwo) {
+    final Comparator<HistoryMessage> dateComparator = new Comparator<HistoryMessage>() {
+        public int compare(HistoryMessage messageOne, HistoryMessage messageTwo) {
             final HistoryMessage historyMessageOne = (HistoryMessage)messageOne;
             final HistoryMessage historyMessageTwo = (HistoryMessage)messageTwo;
 

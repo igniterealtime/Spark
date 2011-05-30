@@ -37,6 +37,7 @@ import javax.swing.JLabel;
  */
 public class RectangleButton extends JButton implements MouseListener {
 
+    private static final long serialVersionUID = -8127392477943332824L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;

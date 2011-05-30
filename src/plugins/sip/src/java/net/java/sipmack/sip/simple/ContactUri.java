@@ -37,7 +37,7 @@ package net.java.sipmack.sip.simple;
  * @version 1.0
  */
 
-public class ContactUri implements Comparable {
+public class ContactUri implements Comparable<ContactUri> {
     /**
      */
     private float priority = 0;
@@ -93,12 +93,12 @@ public class ContactUri implements Comparable {
      * @return a negative integer, zero, or a positive integer as this object is
      *         less than, equal to, or greater than the specified object.
      */
-    public int compareTo(Object o) {
-        if (!(o instanceof ContactUri))
-            return Integer.MAX_VALUE;
-        return -(((int)(getPriority() * 1000)) - (int)(((ContactUri)o)
-                .getPriority() * 1000));
-    }
+//    public int compareTo(Object o) {
+//        if (!(o instanceof ContactUri))
+//            return Integer.MAX_VALUE;
+//        return -(((int)(getPriority() * 1000)) - (int)(((ContactUri)o)
+//                .getPriority() * 1000));
+//    }
 
     public Object clone() {
         ContactUri clone = new ContactUri();
@@ -106,4 +106,10 @@ public class ContactUri implements Comparable {
         clone.setPriority(getPriority());
         return clone;
 	}
+
+    @Override
+    public int compareTo(ContactUri o) {
+	return -(((int)(getPriority() * 1000)) - (int)(((ContactUri)o)
+                .getPriority() * 1000));
+    }
 }

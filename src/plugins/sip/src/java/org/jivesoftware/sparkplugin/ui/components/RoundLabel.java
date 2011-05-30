@@ -48,6 +48,9 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class RoundLabel extends JPanel {
+
+    private static final long serialVersionUID = 3033706476185642799L;
+
     public static float[] BLUR = {0.10f, 0.10f, 0.10f, 0.10f, 0.30f, 0.10f, 0.10f, 0.10f, 0.10f};
 
     private int inset = 0;
@@ -88,7 +91,6 @@ public class RoundLabel extends JPanel {
         // Calculate the size of the button
         int vButtonHeight = vHeight - (inset * 2);
         int vButtonWidth = vWidth - (inset * 2);
-        int vArcSize = vButtonHeight;
 
         BufferedImage vBuffer = new BufferedImage(vWidth, vHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D bg = vBuffer.createGraphics();
@@ -111,7 +113,6 @@ public class RoundLabel extends JPanel {
         int vHighlightInset = 2;
         int vButtonHighlightHeight = vButtonHeight - (vHighlightInset * 2);
         int vButtonHighlightWidth = vButtonWidth - (vHighlightInset * 2);
-        int vHighlightArcSize = vButtonHighlightHeight;
 
         bg.setClip(new RoundRectangle2D.Float(inset + vHighlightInset, inset + vHighlightInset, vButtonHighlightWidth, vButtonHighlightHeight / 2, vButtonHighlightHeight / 3, vButtonHighlightHeight / 3));
        // bg.fillRoundRect(inset + vHighlightInset, inset + vHighlightInset, vButtonHighlightWidth, vButtonHighlightHeight, vHighlightArcSize, vHighlightArcSize);

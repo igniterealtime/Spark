@@ -39,6 +39,7 @@ import java.awt.event.MouseListener;
  */
 public class RedialButton extends JButton implements MouseListener {
 
+    private static final long serialVersionUID = 6125240318370634545L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;

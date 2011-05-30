@@ -45,6 +45,7 @@ import java.util.List;
  * onto the actual frame via <code>File</code> object.
  */
 public abstract class DroppableFrame extends JFrame implements DropTargetListener, DragSourceListener, DragGestureListener {
+    private static final long serialVersionUID = -4250762326200861757L;
     private DragSource dragSource = DragSource.getDefaultDragSource();
 
     /**
@@ -87,9 +88,9 @@ public abstract class DroppableFrame extends JFrame implements DropTargetListene
             Transferable transferable = dropTargetDropEvent.getTransferable();
             if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-                List fileList = (List)transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                for (Object aFileList : fileList) {
-                    File file = (File) aFileList;
+                List<File> fileList = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                for (File aFileList : fileList) {
+                    File file = aFileList;
                     if (file.isFile()) {
                         fileDropped(file);
                     }

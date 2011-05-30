@@ -35,6 +35,7 @@ import javax.swing.JButton;
  */
 public class CloseButton extends JButton implements MouseListener {
 
+    private static final long serialVersionUID = -439443751174954392L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;

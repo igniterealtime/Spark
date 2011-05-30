@@ -20,6 +20,7 @@
 package com.jivesoftware.spark.translator;
 
 import org.jivesoftware.spark.translator.TranslatorUtil;
+import org.jivesoftware.spark.translator.TranslatorUtil.TranslationType;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -32,7 +33,7 @@ import java.util.*;
 public class TestTranslator {
 
     public static void main(String[] args) {
-        Map translationMap = initalizeTranslationMap();
+        Map<Integer, TranslationType> translationMap = initalizeTranslationMap();
 
         boolean again = true;
         while (again) {
@@ -52,9 +53,8 @@ public class TestTranslator {
 
             System.out.println("Great, now enter the translation id. Below are the following choices:");
 
-            for (Object o : translationMap.entrySet()) {
-                Map.Entry entry = (Map.Entry) o;
-                System.out.println(entry.getKey() + " - " + ((TranslatorUtil.TranslationType) entry.getValue()).getName());
+            for (Map.Entry<Integer, TranslationType> o : translationMap.entrySet()) {
+                System.out.println(o.getKey() + " - " + o.getValue().getName());
             }
 
             String translationID = "";
@@ -93,7 +93,7 @@ public class TestTranslator {
         }
     }
 
-    private static Map initalizeTranslationMap() {
+    private static Map<Integer, TranslationType> initalizeTranslationMap() {
         TranslatorUtil.TranslationType[] types = TranslatorUtil.TranslationType.getTypes();
         Map<Integer,TranslatorUtil.TranslationType> map = new TreeMap<Integer,TranslatorUtil.TranslationType>(new Comparator<Integer>() {
             public int compare(Integer i1, Integer i2) {

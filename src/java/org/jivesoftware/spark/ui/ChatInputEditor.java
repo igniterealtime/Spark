@@ -20,7 +20,6 @@
 package org.jivesoftware.spark.ui;
 
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

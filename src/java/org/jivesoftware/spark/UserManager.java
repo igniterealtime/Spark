@@ -111,8 +111,8 @@ public class UserManager {
      *                for the bare jid.
      * @return a Collection of jids found in the room.
      */
-    public Collection getUserJidsInRoom(String room, boolean fullJID) {
-        return new ArrayList();
+    public Collection<String> getUserJidsInRoom(String room, boolean fullJID) {
+        return new ArrayList<String>();
     }
 
     /**
@@ -292,8 +292,8 @@ public class UserManager {
      * @return the Collection of all ChatUsers.
      * @see <code>ChatUser</code>
      */
-    public Collection getAllParticipantsInRoom(ChatRoom chatRoom) {
-        return new ArrayList();
+    public Collection<String> getAllParticipantsInRoom(ChatRoom chatRoom) {
+        return new ArrayList<String>();
     }
 
 

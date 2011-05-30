@@ -270,7 +270,8 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
      * Represents a single entry into the phone history list.
      */
     public class CallEntry extends JPanel {
-        private String number;
+	private static final long serialVersionUID = -5942381098669018012L;
+	private String number;
         private HistoryCall call;
         private String type;
 
@@ -372,10 +373,10 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
         }
     }
 
-    final Comparator itemComparator = new Comparator() {
-        public int compare(Object contactItemOne, Object contactItemTwo) {
-            final HistoryCall time1 = (HistoryCall)contactItemOne;
-            final HistoryCall time2 = (HistoryCall)contactItemTwo;
+    final Comparator<HistoryCall> itemComparator = new Comparator<HistoryCall>() {
+        public int compare(HistoryCall contactItemOne, HistoryCall contactItemTwo) {
+            final HistoryCall time1 = contactItemOne;
+            final HistoryCall time2 = contactItemTwo;
             if (time1.getTime() < time2.getTime()) {
                 return 1;
             }
@@ -406,7 +407,9 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
     private static class CallHistoryRenderer extends JPanel implements ListCellRenderer {
 
 
-        public Component getListCellRendererComponent(JList list,
+	private static final long serialVersionUID = 6992445460154181873L;
+
+	public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
                                                       boolean isSelected,

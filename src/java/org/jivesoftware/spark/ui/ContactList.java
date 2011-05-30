@@ -482,18 +482,18 @@ public final class ContactList extends JPanel implements ActionListener,
             }
 
             if (contactGroup != null) {
-                ContactItem contactItem = null;
+                ContactItem changeContactItem = null;
                 if (contactGroup.getContactItemByJID(entry.getUser()) == null) {
 
                     // If we are reconnecting we have to check if we are on the
                     // dispatch thread
                     if (EventQueue.isDispatchThread()) {
-                        contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-                        contactGroup.addContactItem(contactItem);
-                        contactItem.setAvailable(true);
-                        contactItem.setPresence(presence);                        
-                        contactItem.updateAvatarInSideIcon();
-                        contactItem.showUserComingOnline();                       
+                        changeContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                        contactGroup.addContactItem(changeContactItem);
+                        changeContactItem.setAvailable(true);
+                        changeContactItem.setPresence(presence);                        
+                        changeContactItem.updateAvatarInSideIcon();
+                        changeContactItem.showUserComingOnline();                       
                         //contactItem.updatePresenceIcon(contactItem.getPresence());
                         toggleGroupVisibility(contactGroup.getGroupName(), true);
                         //contactGroup.fireContactGroupUpdated();
@@ -503,7 +503,7 @@ public final class ContactList extends JPanel implements ActionListener,
                                 + numberOfMillisecondsInTheFuture);
                         Timer timer = new Timer();
 
-                        final ContactItem staticItem = contactItem;
+                        final ContactItem staticItem = changeContactItem;
                         final ContactGroup staticGroup = contactGroup;
                         timer.schedule(new TimerTask() {
                             public void run() {
@@ -523,13 +523,13 @@ public final class ContactList extends JPanel implements ActionListener,
                             @Override
                             public void run() {
 
-                                ContactItem contactItem = new ContactItem(entry.getName(), null,entry.getUser());
-                                staticContactGroup.addContactItem(contactItem);
-                                contactItem.setPresence(staticItemPrecense);
-                                contactItem.setAvailable(true);
-                                contactItem.updateAvatarInSideIcon();
-                                contactItem.showUserComingOnline();
-                                contactItem.updatePresenceIcon(contactItem.getPresence());
+                                ContactItem changeContact = new ContactItem(entry.getName(), null,entry.getUser());
+                                staticContactGroup.addContactItem(changeContact);
+                                changeContact.setPresence(staticItemPrecense);
+                                changeContact.setAvailable(true);
+                                changeContact.updateAvatarInSideIcon();
+                                changeContact.showUserComingOnline();
+                                changeContact.updatePresenceIcon(changeContact.getPresence());
                                 toggleGroupVisibility(staticContactGroup.getGroupName(), true);
                                 staticContactGroup.fireContactGroupUpdated();
                                 
@@ -607,8 +607,8 @@ public final class ContactList extends JPanel implements ActionListener,
         	if(group.getName() == null || group.getName() == ""){
         		for(RosterEntry entry : group.getEntries()){
         			
-        			ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-                    moveToOffline(contactItem);
+        			ContactItem buildContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                    moveToOffline(buildContactItem);
         		}
         	}else{
         		
@@ -660,8 +660,8 @@ public final class ContactList extends JPanel implements ActionListener,
         if (EventQueue.isDispatchThread()) {
             // Add Unfiled Group
             for (RosterEntry entry : roster.getUnfiledEntries()) {
-                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-                moveToOffline(contactItem);
+                ContactItem moveToOfflineContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                moveToOffline(moveToOfflineContactItem);
             }
         }
         else
@@ -672,8 +672,8 @@ public final class ContactList extends JPanel implements ActionListener,
 				@Override
 				public void run() {
 		            for (RosterEntry entry : roster.getUnfiledEntries()) {
-		                ContactItem contactItem = new ContactItem(entry.getName(), null, entry.getUser());
-		                moveToOffline(contactItem);
+		                ContactItem moveToOfflineContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+		                moveToOffline(moveToOfflineContactItem);
 		            }
 				}
         		

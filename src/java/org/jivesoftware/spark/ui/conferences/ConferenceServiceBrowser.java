@@ -25,6 +25,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -88,9 +89,9 @@ public class ConferenceServiceBrowser {
                 String address = serverAddress.getText();
                 if (ModelUtil.hasLength(address)) {
                     try {
-                        Collection col = getConferenceServices(address);
-                        for (Object aCol : col) {
-                            String service = (String) aCol;
+                        Collection<String> col = getConferenceServices(address);
+                        for (String aCol : col) {
+                            String service = aCol;
                             model.addElement(service);
                         }
                     }
@@ -147,12 +148,12 @@ public class ConferenceServiceBrowser {
         return (String)list.getSelectedValue();
     }
 
-    public Collection getConferenceServices(String server) throws Exception {
+    public Collection<String> getConferenceServices(String server) throws Exception {
         List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
-        for (Iterator it = items.getItems(); it.hasNext();) {
-            DiscoverItems.Item item = (DiscoverItems.Item)it.next();
+        for (Iterator<Item> it = items.getItems(); it.hasNext();) {
+            Item item = it.next();
             if (item.getEntityID().startsWith("conference") || item.getEntityID().startsWith("private")) {
                 answer.add(item.getEntityID());
             }

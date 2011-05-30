@@ -93,7 +93,7 @@ public class DataFormDialog extends JPanel {
                 String label = field.getLabel();
                 String type = field.getType();
 
-                Iterator iter = field.getValues();
+                Iterator<?> iter = field.getValues();
                 List<Object> valueList = new ArrayList<Object>();
                 while (iter.hasNext()) {
                     valueList.add(iter.next());
@@ -145,7 +145,7 @@ public class DataFormDialog extends JPanel {
                 }
                 else if (type.equals(FormField.TYPE_LIST_MULTI)) {
                     CheckBoxList checkBoxList = new CheckBoxList();
-                    Iterator i = field.getValues();
+                    Iterator<?> i = field.getValues();
                     while (i.hasNext()) {
                         String value = (String)i.next();
                         checkBoxList.addCheckBox(new JCheckBox(value), value);
@@ -231,7 +231,7 @@ public class DataFormDialog extends JPanel {
                     submitForm.setAnswer(answer, list);
                 }
             } else if (o instanceof CheckBoxList) {
-                List list = ((CheckBoxList) o).getSelectedValues();
+                List<String> list = ((CheckBoxList) o).getSelectedValues();
                 if (list.size() > 0) {
                     submitForm.setAnswer(answer, list);
                 }

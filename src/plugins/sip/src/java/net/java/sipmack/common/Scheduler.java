@@ -46,21 +46,6 @@ public class Scheduler {
     }
 
     /**
-     * @author thiagoc
-     */
-    private class DelegatorTask extends TimerTask {
-        private TimerTask task = null;
-
-        public DelegatorTask(TimerTask task) {
-            this.task = task;
-        }
-
-        public void run() {
-            task.run();
-        }
-    }
-
-    /**
      * ReSchedules the specified task to execute after the specified delay.
      *
      * @param task the task to reschedule

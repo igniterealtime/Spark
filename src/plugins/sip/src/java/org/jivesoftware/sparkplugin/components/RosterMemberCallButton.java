@@ -39,6 +39,7 @@ import java.awt.event.MouseListener;
  */
 public class RosterMemberCallButton extends JButton implements MouseListener {
 
+    private static final long serialVersionUID = 6038719724559294212L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;

@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -256,17 +255,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
 		private static final long serialVersionUID = 7083309769944609925L;
 
 		public CallButton() {
-            decorate();
-        }
-
-        /**
-         * Create a new RolloverButton.
-         *
-         * @param text the button text.
-         * @param icon the button icon.
-         */
-        public CallButton(String text, Icon icon) {
-            super(text, icon);
             decorate();
         }
 

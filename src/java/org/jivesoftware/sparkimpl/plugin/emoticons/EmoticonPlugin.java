@@ -89,13 +89,8 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 			final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
 			URL smileURL = emoticonManager.getEmoticonURL(smileEmoticon);
 			ImageIcon icon = new ImageIcon(smileURL);
-			
-			if (icon == null) {
-				emoticonPicker = new RolloverButton("Smiley's", icon);
 
-			} else {
-				emoticonPicker = new RolloverButton(icon);
-			}
+			emoticonPicker = new RolloverButton(icon);
 
 			room.getEditorBar().add(emoticonPicker);
 

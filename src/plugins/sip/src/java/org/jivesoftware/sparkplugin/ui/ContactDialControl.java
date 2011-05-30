@@ -281,10 +281,10 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
         callHistory.invoke();
     }
 
-    final Comparator itemComparator = new Comparator() {
-        public int compare(Object contactItemOne, Object contactItemTwo) {
-            final HistoryCall time1 = (HistoryCall)contactItemOne;
-            final HistoryCall time2 = (HistoryCall)contactItemTwo;
+    final Comparator<HistoryCall> itemComparator = new Comparator<HistoryCall>() {
+        public int compare(HistoryCall contactItemOne, HistoryCall contactItemTwo) {
+            final HistoryCall time1 = contactItemOne;
+            final HistoryCall time2 = contactItemTwo;
             if (time1.getTime() < time2.getTime()) {
                 return 1;
             }

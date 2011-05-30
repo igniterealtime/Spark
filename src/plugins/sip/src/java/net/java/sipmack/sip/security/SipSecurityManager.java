@@ -115,7 +115,7 @@ public class SipSecurityManager {
 
             reoriginatedRequest = (Request) challengedRequest.clone();
 
-            ListIterator authHeaders = null;
+            ListIterator<?> authHeaders = null;
 
             if (challenge == null || reoriginatedRequest == null)
                 throw new NullPointerException(

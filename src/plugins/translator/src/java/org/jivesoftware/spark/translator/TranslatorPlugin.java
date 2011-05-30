@@ -19,7 +19,12 @@
  */
 package org.jivesoftware.spark.translator;
 
-import org.jdesktop.swingx.util.StringUtils;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComboBox;
+
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -28,16 +33,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-
-import com.install4j.runtime.util.StringUtil;
-
-import javax.management.Notification;
-import javax.swing.JComboBox;
-import javax.swing.text.BadLocationException;
-
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * A plugin that uses google's translation service to translate instant messages between two users.

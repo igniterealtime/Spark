@@ -19,24 +19,21 @@
  */
 package org.jivesoftware.spark.translator;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import javax.xml.transform.TransformerException;
+
+import org.jivesoftware.spark.util.log.Log;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpUnitOptions;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import com.sun.org.apache.xpath.internal.XPathAPI;
-
-import org.jivesoftware.spark.util.log.Log;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-
-import javax.xml.transform.TransformerException;
 
 /**
  * A utility class that uses google's translation service to translate text to various languages.

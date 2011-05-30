@@ -25,6 +25,8 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.ReportedData.Column;
+import org.jivesoftware.smackx.ReportedData.Row;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.Table;
@@ -75,9 +77,9 @@ public class UserSearchResults extends JPanel {
      */
     public void showUsersFound(ReportedData data) {
         List<String> columnList = new ArrayList<String>();
-        Iterator columns = data.getColumns();
+        Iterator<Column> columns = data.getColumns();
         while (columns.hasNext()) {
-            ReportedData.Column column = (ReportedData.Column)columns.next();
+            Column column = columns.next();
             String label = column.getLabel();
             columnList.add(label);
         }
@@ -111,16 +113,16 @@ public class UserSearchResults extends JPanel {
             resultsTable.clearTable();
         }
         // Populate with answers
-        Iterator rows = data.getRows();
+        Iterator<Row> rows = data.getRows();
         List<String> modelList;
         while (rows.hasNext()) {
             modelList = new ArrayList<String>();
-            ReportedData.Row row = (ReportedData.Row)rows.next();
+            Row row = rows.next();
             for (int i = 0; i < resultsTable.getColumnCount(); i++) {
                 String tableValue = (String)resultsTable.getTableHeader().getColumnModel().getColumn(i).getHeaderValue();
-                Iterator columnIterator = data.getColumns();
+                Iterator<Column> columnIterator = data.getColumns();
                 while (columnIterator.hasNext()) {
-                    ReportedData.Column column = (ReportedData.Column)columnIterator.next();
+                    Column column = columnIterator.next();
                     if (column.getLabel().equals(tableValue)) {
                         tableValue = column.getVariable();
                         break;
@@ -146,7 +148,9 @@ public class UserSearchResults extends JPanel {
         final JPopupMenu menu = new JPopupMenu();
 
         Action addContactAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = -6377937878941477145L;
+
+	    public void actionPerformed(ActionEvent e) {
                 RosterDialog dialog = new RosterDialog();
                 String jid = (String)resultsTable.getValueAt(row, 0);
 
@@ -177,13 +181,17 @@ public class UserSearchResults extends JPanel {
         };
 
         Action chatAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = 5651812282020177800L;
+
+	    public void actionPerformed(ActionEvent e) {
                 openChatRoom(row);
             }
         };
 
         Action profileAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+  	    private static final long serialVersionUID = -2014872840628217586L;
+
+	    public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
                 String jid = (String)resultsTable.getValueAt(row, 0);
                 vcardSupport.viewProfile(jid, resultsTable);
@@ -212,7 +220,9 @@ public class UserSearchResults extends JPanel {
     }
 
     private final class UsersInfoTable extends Table {
-        UsersInfoTable(String[] headers) {
+	private static final long serialVersionUID = -7097826349368800291L;
+
+	UsersInfoTable(String[] headers) {
             super(headers);
             getColumnModel().setColumnMargin(0);
             setSelectionBackground(Table.SELECTION_COLOR);
@@ -230,9 +240,9 @@ public class UserSearchResults extends JPanel {
      */
     public String getFirstValue(ReportedData.Row row, String key) {
         try {
-            final Iterator rows = row.getValues(key);
+            final Iterator<String> rows = row.getValues(key);
             while (rows.hasNext()) {
-                return (String)rows.next();
+                return rows.next();
             }
         }
         catch (Exception e) {

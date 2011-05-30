@@ -19,9 +19,6 @@
  */
 package net.java.sipmack.sip.simple;
 
-import gov.nist.javax.sip.stack.SIPClientTransaction;
-
-import java.net.InetAddress;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -36,7 +33,6 @@ import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContentLengthHeader;
 import javax.sip.header.ContentTypeHeader;
-import javax.sip.header.ExpiresHeader;
 import javax.sip.header.FromHeader;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.ToHeader;
@@ -208,10 +204,9 @@ public class MessageProcessing {
                         "Cseq Header must contain a integer value!", ex);
             }
 
-            ExpiresHeader expiresHeader = null;
+            //ExpiresHeader expiresHeader = null;
             try {
-                expiresHeader = sipManCallback.headerFactory
-                        .createExpiresHeader(30);
+                sipManCallback.headerFactory.createExpiresHeader(30);
             }
             catch (InvalidArgumentException ex) {
                 throw new CommunicationsException(
@@ -249,12 +244,12 @@ public class MessageProcessing {
                 Log.error("sendKeepAlive", e);
             }
 
-            ClientTransaction messageTransaction = null;
-            String subscriber = sipManCallback.getFromHeader().getAddress()
-                    .getURI().toString();
+            //ClientTransaction messageTransaction = null;
+            //String subscriber = sipManCallback.getFromHeader().getAddress()
+            //        .getURI().toString();
 
             try {
-                messageTransaction = sipManCallback.sipProvider.getNewClientTransaction(message);
+                sipManCallback.sipProvider.getNewClientTransaction(message);
             } catch (TransactionUnavailableException e) {
                 e.printStackTrace();
             }
@@ -397,10 +392,9 @@ public class MessageProcessing {
                 * CommunicationsException( "Unable to create event header!", ex); }
                 */
 
-            ExpiresHeader expiresHeader = null;
+            //ExpiresHeader expiresHeader = null;
             try {
-                expiresHeader = sipManCallback.headerFactory
-                        .createExpiresHeader(30);
+                sipManCallback.headerFactory.createExpiresHeader(30);
             }
             catch (InvalidArgumentException ex) {
                 throw new CommunicationsException(
@@ -408,7 +402,7 @@ public class MessageProcessing {
             }
 
             // ViaHeaders
-            ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+            ArrayList<ViaHeader> viaHeaders = sipManCallback.getLocalViaHeaders();
             // MaxForwards
             MaxForwardsHeader maxForwards = sipManCallback
                     .getMaxForwardsHeader();
@@ -427,8 +421,8 @@ public class MessageProcessing {
             }
 
             ClientTransaction messageTransaction = null;
-            String subscriber = sipManCallback.getFromHeader().getAddress()
-                    .getURI().toString();
+            //String subscriber = sipManCallback.getFromHeader().getAddress()
+            //        .getURI().toString();
 
             try {
                 messageTransaction = sipManCallback.sipProvider

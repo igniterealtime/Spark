@@ -113,11 +113,7 @@ public class CallProcessing {
         String sdp = response.getRawContent() != null ? response
                 .getRawContent().toString() : "";
         call.setRemoteSdpDescription(sdp);
-        if (call == null) {
-            // ?maybe we should just ignore it?
-            sipManCallback.fireUnknownMessageReceived(response);
-            return;
-        }
+
         // change status
         call.setState(Call.RINGING);
     }
@@ -127,11 +123,6 @@ public class CallProcessing {
         // find the call
         Call call = callDispatcher.findCall(clientTransaction.getDialog());
         call.setRemoteSdpDescription(new String(response.getRawContent()));
-        if (call == null) {
-            // ?maybe we should just ignore it?
-            sipManCallback.fireUnknownMessageReceived(response);
-            return;
-        }
         // change status
         call.setState(Call.RINGING);
 
@@ -703,7 +694,7 @@ public class CallProcessing {
                     "Null is not an allowed tag for the to header!", ex);
         }
         // ViaHeaders
-        ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+        ArrayList<ViaHeader> viaHeaders = sipManCallback.getLocalViaHeaders();
         // MaxForwards
         MaxForwardsHeader maxForwards = sipManCallback
                 .getMaxForwardsHeader();
@@ -923,7 +914,6 @@ public class CallProcessing {
     private void sendNumDTMF(Dialog dialog, String digit)
             throws CommunicationsException {
 
-        Request request = dialog.getFirstTransaction().getRequest();
         Request info = null;
         String body = "Signal=" + digit + "\nDuration=160";
         String contentType = "application/dtmf-relay";
@@ -969,53 +959,53 @@ public class CallProcessing {
     }
 
     // send message
-    private void sendInfoMessage(Dialog dialog, String body)
-            throws CommunicationsException {
-        Request request = dialog.getFirstTransaction().getRequest();
-        Request info = null;
-        String contentType = "application/dtmd-relay";
-        String[] contentTypeTab = contentType.split("/");
-        ContentTypeHeader contentTypeHeader = null;
-        try {
-            info = dialog.createRequest(Request.INFO);
-            try {
-                contentTypeHeader = sipManCallback.headerFactory
-                        .createContentTypeHeader(contentTypeTab[0],
-                                contentTypeTab[1]);
-                info.setContent(body, contentTypeHeader);
-            }
-            catch (ParseException ex) {
-
-                throw new CommunicationsException(
-                        "ContentType Header must look like type/subtype!",
-                        ex);
-            }
-        }
-        catch (SipException ex) {
-
-            throw new CommunicationsException(
-                    "Failed to create bye request!", ex);
-        }
-        ClientTransaction clientTransaction = null;
-        try {
-            clientTransaction = sipManCallback.sipProvider
-                    .getNewClientTransaction(info);
-        }
-        catch (TransactionUnavailableException ex) {
-
-            throw new CommunicationsException(
-                    "Failed to construct a client transaction from the INFO request",
-                    ex);
-        }
-        try {
-            dialog.sendRequest(clientTransaction);
-        }
-        catch (SipException ex1) {
-            throw new CommunicationsException(
-                    "Failed to send the INFO request");
-        }
-
-    } // send message
+//    private void sendInfoMessage(Dialog dialog, String body)
+//            throws CommunicationsException {
+//        Request request = dialog.getFirstTransaction().getRequest();
+//        Request info = null;
+//        String contentType = "application/dtmd-relay";
+//        String[] contentTypeTab = contentType.split("/");
+//        ContentTypeHeader contentTypeHeader = null;
+//        try {
+//            info = dialog.createRequest(Request.INFO);
+//            try {
+//                contentTypeHeader = sipManCallback.headerFactory
+//                        .createContentTypeHeader(contentTypeTab[0],
+//                                contentTypeTab[1]);
+//                info.setContent(body, contentTypeHeader);
+//            }
+//            catch (ParseException ex) {
+//
+//                throw new CommunicationsException(
+//                        "ContentType Header must look like type/subtype!",
+//                        ex);
+//            }
+//        }
+//        catch (SipException ex) {
+//
+//            throw new CommunicationsException(
+//                    "Failed to create bye request!", ex);
+//        }
+//        ClientTransaction clientTransaction = null;
+//        try {
+//            clientTransaction = sipManCallback.sipProvider
+//                    .getNewClientTransaction(info);
+//        }
+//        catch (TransactionUnavailableException ex) {
+//
+//            throw new CommunicationsException(
+//                    "Failed to construct a client transaction from the INFO request",
+//                    ex);
+//        }
+//        try {
+//            dialog.sendRequest(clientTransaction);
+//        }
+//        catch (SipException ex1) {
+//            throw new CommunicationsException(
+//                    "Failed to send the INFO request");
+//        }
+//
+//    } // send message
 
     // Bye
     private void sayBye(Dialog dialog) throws CommunicationsException {
@@ -1074,7 +1064,6 @@ public class CallProcessing {
 
     // cancel
     private void sayCancel(Dialog dialog) throws CommunicationsException {
-        Request request = dialog.getFirstTransaction().getRequest();
         if (dialog.isServer()) {
 
             throw new CommunicationsException(

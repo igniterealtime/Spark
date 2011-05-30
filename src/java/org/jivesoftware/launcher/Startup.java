@@ -80,7 +80,7 @@ public class Startup {
             Thread.currentThread().setContextClassLoader(loader);
 
             // Get class
-            Class sparkClass = loader.loadClass("org.jivesoftware.Spark");
+            Class<?> sparkClass = loader.loadClass("org.jivesoftware.Spark");
             Object instanceOfSpark = sparkClass.newInstance();
 
             // Handle arguments

@@ -57,6 +57,7 @@ import javax.swing.event.CaretListener;
  */
 public class TransferManager extends JPanel implements TransferListener {
 
+    private static final long serialVersionUID = 2830745814617073226L;
     private TelephoneTextField callField;
     private RolloverButton callButton;
     private JDialog dialog;

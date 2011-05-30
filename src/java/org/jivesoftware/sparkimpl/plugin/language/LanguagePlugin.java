@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.nio.charset.Charset;
 
@@ -72,7 +73,7 @@ public class LanguagePlugin implements Plugin {
         try {
             String url = URLDecoder.decode(sparkJar.getPath(), Charset.defaultCharset().toString());
             ZipFile zipFile = new JarFile(new File(url));
-            for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
+            for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
                 JarEntry entry = (JarEntry)e.nextElement();
                 String propertiesName = entry.getName();
                 // Ignore any manifest.mf entries.
@@ -101,7 +102,9 @@ public class LanguagePlugin implements Plugin {
         for (final Locale locale : locales) {
             if (locale.toString().equals(language)) {
                 Action action = new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
+		    private static final long serialVersionUID = -7093236616888591766L;
+
+		    public void actionPerformed(ActionEvent e) {
                         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
                         preferences.setLanguage(locale.toString());
                         SettingsManager.saveSettings();

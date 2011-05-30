@@ -452,7 +452,7 @@ public class SipManager implements SipListener {
 
             if (sipStack != null) {
 
-                for (Iterator it = sipStack.getSipProviders(); it.hasNext();) {
+                for (Iterator<?> it = sipStack.getSipProviders(); it.hasNext();) {
                     SipProvider element = (SipProvider) it.next();
                     try {
                         sipStack.deleteSipProvider(element);

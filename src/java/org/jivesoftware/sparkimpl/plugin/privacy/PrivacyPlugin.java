@@ -23,12 +23,12 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.smack.packet.PrivacyItem.Type;
 import org.jivesoftware.spark.SparkManager;

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jivesoftware.smack.PrivacyList;
-import org.jivesoftware.smack.PrivacyListManager;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.spark.util.log.Log;

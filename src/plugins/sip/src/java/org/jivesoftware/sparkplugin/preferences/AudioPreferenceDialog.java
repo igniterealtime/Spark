@@ -40,6 +40,7 @@ import java.util.Vector;
  */
 public class AudioPreferenceDialog extends JPanel {
 
+    private static final long serialVersionUID = -7436724748439424479L;
     private JComboBox audioBox = new JComboBox();
     private JDialog dialog;
     private JButton closeButton;
@@ -71,10 +72,10 @@ public class AudioPreferenceDialog extends JPanel {
         });
         add(closeButton, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
-        final Vector audioDevices = CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR, 44100, 16, 1));
+        final Vector<CaptureDeviceInfo> audioDevices = CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR, 44100, 16, 1));
         final int dev = audioDevices != null ? audioDevices.size() : 0;
         for (int i = 0; i < dev; i++) {
-            CaptureDeviceInfo audioDevice = (CaptureDeviceInfo)audioDevices.get(i);
+            CaptureDeviceInfo audioDevice = audioDevices.get(i);
             audioBox.addItem(audioDevice.getName());
         }
 

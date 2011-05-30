@@ -117,11 +117,13 @@ public class TaskUI extends JPanel implements ActionListener {
         return box.isSelected();
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void updateTitleFont() {
         if (task.isCompleted()) {
             Font font = box.getFont();
 
-            Map attribs = font.getAttributes();
+            
+	    Map attribs = font.getAttributes();
 
             attribs.put(TextAttribute.STRIKETHROUGH, true);
 
@@ -131,7 +133,7 @@ public class TaskUI extends JPanel implements ActionListener {
         else {
             Font font = box.getFont();
 
-            Map Attribs = font.getAttributes();
+	    Map Attribs = font.getAttributes();
 
             Attribs.put(TextAttribute.STRIKETHROUGH, false);
 

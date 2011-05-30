@@ -31,6 +31,7 @@ import java.util.List;
  * UI for the file transfer preferences. It displays all the various preference settings for editing.
  */
 public class TransferSettingsPanel extends JPanel {
+    private static final long serialVersionUID = -2481011951921919518L;
     private BlockedTypesPanel pnlTypes = new BlockedTypesPanel();
     private BlockedPeoplePanel pnlPeople = new BlockedPeoplePanel();
     private FileSizePanel pnlSize = new FileSizePanel();
@@ -69,7 +70,8 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private class BlockedTypesPanel extends JPanel {
-        private JTextArea txtBlockedTypes = new JTextArea(2, 0);
+	private static final long serialVersionUID = 6152402556852606706L;
+	private JTextArea txtBlockedTypes = new JTextArea(2, 0);
 
         BlockedTypesPanel() {
             txtBlockedTypes.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
@@ -80,17 +82,18 @@ public class TransferSettingsPanel extends JPanel {
             add(txtBlockedTypes, BorderLayout.CENTER);
         }
 
-        public void setBlockedTypes(List types) {
+        public void setBlockedTypes(List<String> types) {
             txtBlockedTypes.setText(FileTransferSettings.convertSettingsListToString(types));
         }
 
-        public List getBlockedTypes() {
+        public List<String> getBlockedTypes() {
             return FileTransferSettings.convertSettingsStringToList(txtBlockedTypes.getText());
         }
     }
 
     private class BlockedPeoplePanel extends JPanel {
-        private JTextArea txtBlockedPeople = new JTextArea(2, 0);
+	private static final long serialVersionUID = -1069560705582838620L;
+	private JTextArea txtBlockedPeople = new JTextArea(2, 0);
 
         BlockedPeoplePanel() {
             txtBlockedPeople.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
@@ -102,17 +105,18 @@ public class TransferSettingsPanel extends JPanel {
             add(txtBlockedPeople, BorderLayout.CENTER);
         }
 
-        public void setBlockedPeople(List people) {
+        public void setBlockedPeople(List<String> people) {
             txtBlockedPeople.setText(FileTransferSettings.convertSettingsListToString(people));
         }
 
-        public List getBlockedPeople() {
+        public List<String> getBlockedPeople() {
             return FileTransferSettings.convertSettingsStringToList(txtBlockedPeople.getText());
         }
     }
 
     private class FileSizePanel extends JPanel {
-        private JSpinner spinMaxSize = new JSpinner();
+	private static final long serialVersionUID = -8457074359832858639L;
+	private JSpinner spinMaxSize = new JSpinner();
         private JCheckBox chkMaxEnabled = new JCheckBox("Limit File Size");
 
         FileSizePanel() {
@@ -156,7 +160,8 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private class CannedResponsePanel extends JPanel {
-        private JTextArea txtMessage = new JTextArea(2, 0);
+ 	private static final long serialVersionUID = -5992704440953686488L;
+	private JTextArea txtMessage = new JTextArea(2, 0);
 
         CannedResponsePanel() {
             txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));

@@ -59,6 +59,8 @@ import javax.swing.UIManager;
  */
 public class TransferGroupUI extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private List<TransferListener> listeners = new ArrayList<TransferListener>();
 
     private List<UserEntry> userEntries = new ArrayList<UserEntry>();
@@ -90,7 +92,11 @@ public class TransferGroupUI extends JPanel {
      */
     private class UserEntry extends JPanel {
 
-        private String name;
+        /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String name;
         private String workNumber;
         private String homeNumber;
         private String mobileNumber;
@@ -176,7 +182,8 @@ public class TransferGroupUI extends JPanel {
 
         }
 
-        public String getNickname() {
+        @SuppressWarnings("unused")
+	public String getNickname() {
             return name;
         }
 
@@ -198,7 +205,8 @@ public class TransferGroupUI extends JPanel {
      * Simple Action to handle selection of numbers.
      */
     private class NumberAction extends AbstractAction {
-        private String number;
+	private static final long serialVersionUID = 1L;
+	private String number;
 
         public NumberAction(String label, String number, Icon icon) {
             this.number = number;
@@ -271,10 +279,10 @@ public class TransferGroupUI extends JPanel {
     /**
      * Sorts RosterEntries
      */
-    final Comparator entryComparator = new Comparator() {
-        public int compare(Object one, Object two) {
-            final RosterEntry entryOne = (RosterEntry)one;
-            final RosterEntry entryTwo = (RosterEntry)two;
+    final Comparator<RosterEntry> entryComparator = new Comparator<RosterEntry>() {
+        public int compare(RosterEntry one, RosterEntry two) {
+            final RosterEntry entryOne = one;
+            final RosterEntry entryTwo = two;
             return entryOne.getName().toLowerCase().compareTo(entryTwo.getName().toLowerCase());
 
         }

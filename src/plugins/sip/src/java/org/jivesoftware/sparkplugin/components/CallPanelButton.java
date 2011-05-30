@@ -39,6 +39,7 @@ import java.awt.event.MouseListener;
  */
 public class CallPanelButton extends JButton implements MouseListener {
 
+    private static final long serialVersionUID = 3376625276352251288L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;

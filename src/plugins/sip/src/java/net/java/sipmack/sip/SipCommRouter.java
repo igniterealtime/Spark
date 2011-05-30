@@ -93,10 +93,10 @@ public class SipCommRouter implements Router {
         if (outboundProxy != null) {
             hops.add(outboundProxy);
         }
-        ListIterator routes = sipRequest.getHeaders(RouteHeader.NAME);
+        ListIterator<RouteHeader> routes = sipRequest.getHeaders(RouteHeader.NAME);
         if (routes != null && routes.hasNext()) {
             while (routes.hasNext()) {
-                RouteHeader route = (RouteHeader) routes.next();
+                RouteHeader route = routes.next();
                 SipURI uri = (SipURI) route.getAddress().getURI();
                 int port = uri.getPort();
                 port = (port == -1) ? 5060 : port;
@@ -161,10 +161,10 @@ public class SipCommRouter implements Router {
         if (outboundProxy != null) {
             return outboundProxy;
         }
-        ListIterator routes = request.getHeaders(RouteHeader.NAME);
+        ListIterator<RouteHeader> routes = request.getHeaders(RouteHeader.NAME);
         if (routes != null && routes.hasNext()) {
             while (routes.hasNext()) {
-                RouteHeader route = (RouteHeader) routes.next();
+                RouteHeader route = routes.next();
                 SipURI uri = (SipURI) route.getAddress().getURI();
                 int port = uri.getPort();
                 port = (port == -1) ? 5060 : port;

@@ -564,9 +564,6 @@ public class ConferenceUtils {
     public static void enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password) {
         final GroupChatRoom room = new GroupChatRoom(groupChat);
         room.setTabTitle(tabTitle);
-        if (room == null) {
-            return;
-        }
 
         final List<String> errors = new ArrayList<String>();
 

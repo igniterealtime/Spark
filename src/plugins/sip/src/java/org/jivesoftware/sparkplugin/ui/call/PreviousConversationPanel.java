@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -135,7 +136,7 @@ public class PreviousConversationPanel extends JPanel {
 
 
         int count = 0;
-        final List<HistoryCall> calls = (List)SoftPhoneManager.getInstance().getLogManager().getCallHistory();
+        final List<HistoryCall> calls = new ArrayList<HistoryCall>(SoftPhoneManager.getInstance().getLogManager().getCallHistory());
         Collections.sort(calls, itemComparator);
         
         for (HistoryCall call : calls){
@@ -210,10 +211,10 @@ public class PreviousConversationPanel extends JPanel {
         oldConversation.setText(formatter.format(startTime) + " - " + end + " (" + durationLabel.getText() + ")");
     }
 
-    final Comparator itemComparator = new Comparator() {
-        public int compare(Object contactItemOne, Object contactItemTwo) {
-            final HistoryCall time1 = (HistoryCall)contactItemOne;
-            final HistoryCall time2 = (HistoryCall)contactItemTwo;
+    final Comparator<HistoryCall> itemComparator = new Comparator<HistoryCall>() {
+        public int compare(HistoryCall contactItemOne, HistoryCall contactItemTwo) {
+            final HistoryCall time1 = contactItemOne;
+            final HistoryCall time2 = contactItemTwo;
             if (time1.getTime() < time2.getTime()) {
                 return 1;
             }

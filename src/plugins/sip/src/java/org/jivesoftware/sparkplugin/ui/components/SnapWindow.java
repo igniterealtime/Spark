@@ -19,10 +19,6 @@
  */
 package org.jivesoftware.sparkplugin.ui.components;
 
-import javax.swing.JFrame;
-import javax.swing.JWindow;
-
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -34,6 +30,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
+import javax.swing.JFrame;
+import javax.swing.JWindow;
 
 /**
  * Component to attach itself to a Frame.
@@ -98,8 +97,6 @@ public class SnapWindow extends JWindow implements ComponentListener, WindowList
         }
 
         Point mainWindowLocation = parentFrame.getLocationOnScreen();
-        Container con = parentFrame.getContentPane();
-        Point loc = con.getLocationOnScreen();
 
         int x = (int)mainWindowLocation.getX() + parentFrame.getWidth();
 

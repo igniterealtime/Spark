@@ -27,6 +27,8 @@ import javax.swing.Icon;
  * Creates one tree node with a check box.
  */
 public class CheckNode extends JiveTreeNode {
+    private static final long serialVersionUID = -5071520630042479195L;
+
     /**
      * Mode to use if the node should not expand when selected.
      */
@@ -135,9 +137,9 @@ public class CheckNode extends JiveTreeNode {
 
         if (selectionMode == DIG_IN_SELECTION
                 && children != null) {
-            Enumeration nodeEnum = children.elements();
+            Enumeration<CheckNode> nodeEnum = children.elements();
             while (nodeEnum.hasMoreElements()) {
-                CheckNode node = (CheckNode)nodeEnum.nextElement();
+                CheckNode node = nodeEnum.nextElement();
                 node.setSelected(isSelected);
             }
         }

@@ -45,6 +45,8 @@ import java.util.Map;
 
 
 public final class RosterTree extends JPanel {
+
+    private static final long serialVersionUID = 7892174130061826144L;
     private final JiveTreeNode rootNode = new JiveTreeNode("Contact List");
     private final Tree rosterTree;
     private final Map<JiveTreeNode,String> addressMap = new HashMap<JiveTreeNode,String>();
@@ -93,15 +95,15 @@ public final class RosterTree extends JPanel {
         final Roster roster = xmppCon.getRoster();
 
         roster.addRosterListener(new RosterListener() {
-            public void entriesAdded(Collection addresses) {
+            public void entriesAdded(Collection<String> addresses) {
 
             }
 
-            public void entriesUpdated(Collection addresses) {
+            public void entriesUpdated(Collection<String> addresses) {
 
             }
 
-            public void entriesDeleted(Collection addresses) {
+            public void entriesDeleted(Collection<String> addresses) {
 
             }
 

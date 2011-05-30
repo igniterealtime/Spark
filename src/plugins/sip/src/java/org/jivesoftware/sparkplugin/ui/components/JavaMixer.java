@@ -274,7 +274,8 @@ public class JavaMixer {
 
     public class MixerNode extends DefaultMutableTreeNode {
 
-        Mixer mixer;
+	private static final long serialVersionUID = 5514718793497318648L;
+	Mixer mixer;
 
         public MixerNode(Mixer mixer) {
             super(mixer.getMixerInfo(), true);
@@ -289,7 +290,8 @@ public class JavaMixer {
 
     public class PortNode extends DefaultMutableTreeNode {
 
-        Line port;
+	private static final long serialVersionUID = -4388437363589688167L;
+	Line port;
 
         public PortNode(Line port) {
             super(port.getLineInfo(), true);
@@ -304,7 +306,8 @@ public class JavaMixer {
 
     public class ControlNode extends DefaultMutableTreeNode {
 
-        Control control;
+	private static final long serialVersionUID = 8840473247266403685L;
+	Control control;
         Component component;
 
         public ControlNode(Control control) {
@@ -359,7 +362,8 @@ public class JavaMixer {
     }
 
     public class BooleanControlButtonModel extends DefaultButtonModel {
-        private BooleanControl control;
+	private static final long serialVersionUID = -8264153878420797906L;
+	private BooleanControl control;
 
         public BooleanControlButtonModel(BooleanControl control) {
             this.control = control;
@@ -381,7 +385,8 @@ public class JavaMixer {
 
     public class FloatControlBoundedRangeModel extends DefaultBoundedRangeModel {
 
-        private FloatControl control;
+	private static final long serialVersionUID = 7826447995854231838L;
+	private FloatControl control;
         private float factor;
 
         public FloatControlBoundedRangeModel(FloatControl control) {
@@ -457,8 +462,8 @@ public class JavaMixer {
         }
 
         if (node.getChildCount() >= 0) {
-            for (Enumeration e = node.children(); e.hasMoreElements();) {
-                TreeNode n = (TreeNode) e.nextElement();
+            for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
+                TreeNode n = e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 boolean find;
 

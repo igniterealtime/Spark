@@ -147,7 +147,7 @@ public class JmfMediaManager {
 
             throw new MediaException("Incorrect SDP data!", ex);
         }
-        Vector mediaDescriptions;
+        Vector<?> mediaDescriptions;
         try {
             mediaDescriptions = sessionDescription
                     .getMediaDescriptions(true);
@@ -213,7 +213,7 @@ public class JmfMediaManager {
             }
             
             // Find formats
-            Vector sdpFormats = null;
+            Vector<?> sdpFormats = null;
             try {
                 sdpFormats = media.getMediaFormats(true);
             }
@@ -313,7 +313,7 @@ public class JmfMediaManager {
 
             throw new MediaException("Incorrect SDP data!", ex);
         }
-        Vector mediaDescriptions;
+        Vector<?> mediaDescriptions;
         try {
             mediaDescriptions = sessionDescription
                     .getMediaDescriptions(true);
@@ -379,7 +379,7 @@ public class JmfMediaManager {
             }
             
             // Find formats
-            Vector sdpFormats = null;
+            Vector<?> sdpFormats = null;
             try {
                 sdpFormats = media.getMediaFormats(true);
             }
@@ -478,7 +478,7 @@ public class JmfMediaManager {
      * @return
      * @throws MediaException
      */
-    protected ArrayList<String> extractTransmittableJmfFormats(Vector sdpFormats)
+    protected ArrayList<String> extractTransmittableJmfFormats(Vector<?> sdpFormats)
             throws MediaException {
         ArrayList<String> jmfFormats = new ArrayList<String>();
         for (int i = 0; i < sdpFormats.size(); i++) {

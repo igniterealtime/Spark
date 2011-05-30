@@ -124,46 +124,44 @@ public class AudioReceiverChannel {
      */
     private String createReceiver() {
 
-        rtpMgrs = new RTPManager[1];
-        SessionAddress localAddr, destAddr;
-        audioReceiver = new AudioReceiver(this);
+	rtpMgrs = new RTPManager[1];
+	SessionAddress localAddr, destAddr;
+	audioReceiver = new AudioReceiver(this);
 
-        for (int i = 0; i < 3; i++) {
-            try {
-                rtpMgrs[i] = RTPManager.newInstance();
+	try {
+	    rtpMgrs[0] = RTPManager.newInstance();
 
-                localAddr = new SessionAddress(InetAddress.getByName(this.localIpAddress),
-                        localPort);
+	    localAddr = new SessionAddress(
+		    InetAddress.getByName(this.localIpAddress), localPort);
 
-                destAddr = new SessionAddress(InetAddress.getByName(this.remoteIpAddress),
-                        remotePort);
+	    destAddr = new SessionAddress(
+		    InetAddress.getByName(this.remoteIpAddress), remotePort);
 
-                rtpMgrs[i].addReceiveStreamListener(audioReceiver);
-                rtpMgrs[i].addSessionListener(audioReceiver);
+	    rtpMgrs[0].addReceiveStreamListener(audioReceiver);
+	    rtpMgrs[0].addSessionListener(audioReceiver);
 
-                BufferControl bc = (BufferControl) rtpMgrs[i].getControl("javax.media.control.BufferControl");
-                if (bc != null) {
-                    int bl = 160;
-                    bl = SIPConfig.getDefaultBufferLength() != -1 ? SIPConfig.getDefaultBufferLength()
-                            : bl;
+	    BufferControl bc = (BufferControl) rtpMgrs[0]
+		    .getControl("javax.media.control.BufferControl");
+	    if (bc != null) {
+		int bl = 160;
+		bl = SIPConfig.getDefaultBufferLength() != -1 ? SIPConfig
+			.getDefaultBufferLength() : bl;
 
-                    bc.setBufferLength(bl);
-                }
+		bc.setBufferLength(bl);
+	    }
 
-                rtpMgrs[i].initialize(localAddr);
+	    rtpMgrs[0].initialize(localAddr);
 
-                rtpMgrs[i].addTarget(destAddr);
+	    rtpMgrs[0].addTarget(destAddr);
 
-                System.err.println("Created RTP session at " + localPort);
-                break;
+	    System.err.println("Created RTP session at " + localPort);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                return e.getMessage();
-            }
-        }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    return e.getMessage();
+	}
 
-        return null;
+	return null;
     }
 
 }

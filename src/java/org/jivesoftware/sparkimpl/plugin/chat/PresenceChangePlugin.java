@@ -46,9 +46,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 

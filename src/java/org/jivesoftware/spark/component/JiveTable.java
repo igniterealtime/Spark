@@ -70,7 +70,7 @@ public class JiveTable extends JTable {
         }
     }
 
-    public void add(List list) {
+    public void add(List<Object> list) {
         for (Object aList : list) {
             Object[] newRow = (Object[]) aList;
             tableModel.addRow(newRow);

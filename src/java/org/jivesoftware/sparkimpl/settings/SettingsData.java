@@ -49,8 +49,8 @@ public class SettingsData implements PrivateData {
         StringBuffer buf = new StringBuffer();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         String key;
-        for (Iterator iter = settingsMap.keySet().iterator(); iter.hasNext(); buf.append("</").append(key).append("></entry>")) {
-            key = (String)iter.next();
+        for (Iterator<String> iter = settingsMap.keySet().iterator(); iter.hasNext(); buf.append("</").append(key).append("></entry>")) {
+            key = iter.next();
             String value = settingsMap.get(key);
             buf.append("<entry xmlns=\"\">");
             buf.append("<").append(key).append(">");

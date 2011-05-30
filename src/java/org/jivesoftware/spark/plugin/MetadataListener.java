@@ -28,5 +28,5 @@ import java.util.Map;
  */
 public interface MetadataListener {
 
-    void metadataAssociatedWithRoom(ChatRoom room, Map metadata);
+    void metadataAssociatedWithRoom(ChatRoom room, Map<?, ?> metadata);
 }

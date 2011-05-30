@@ -19,19 +19,23 @@
  */
 package org.jivesoftware.spark.plugins.transfersettings;
 
-import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * Bean whose properties are the various preference settings for file transfer.
  */
 public class FileTransferSettings {
 
-    private List extensions = new ArrayList();
-    private List JIDs = new ArrayList();
+    private List<String> extensions = new ArrayList<String>();
+    private List<String> JIDs = new ArrayList<String>();
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
@@ -42,7 +46,7 @@ public class FileTransferSettings {
      * Returns a {@link List} of strings - one for each blocked file extension. Strings are in the form <tt>*.{extension}</tt>.
      * @return a {@link List} of blocked file extensions
      */
-    public List getBlockedExtensions(){
+    public List<String> getBlockedExtensions(){
         return extensions;
     }
 
@@ -50,7 +54,7 @@ public class FileTransferSettings {
      * Sets the {@link List} of blocked file extensions.
      * @param extensions    the {@link List} of blocked file extensions.
      */
-    public void setBlockedExtensions(List extensions){
+    public void setBlockedExtensions(List<String> extensions){
         this.extensions = extensions;
     }
 
@@ -58,7 +62,7 @@ public class FileTransferSettings {
      * Returns a {@link List} of blocked JIDs. File transfers from users with those JIDs will be automaticlly rejected.
      * @return a {@link List} of blocked JIDs.
      */
-    public List getBlockedJIDs() {
+    public List<String> getBlockedJIDs() {
         return JIDs;
     }
 
@@ -66,7 +70,7 @@ public class FileTransferSettings {
      * Sets the {@link List} of blocked JIDs.
      * @param JIDs  the {@link List} of blocked JIDs.
      */
-    public void setBlockedJIDS(List JIDs){
+    public void setBlockedJIDS(List<String> JIDs){
         this.JIDs = JIDs;
     }
 
@@ -155,7 +159,7 @@ public class FileTransferSettings {
                 this.cannedRejectionMessage = props.getProperty("cannedResponse");
 
             } catch (IOException ioe) {
-                System.err.println(ioe);
+                System.out.println("Error Loading properties from Filesystem"+ioe);
                 //TODO handle error better.
             }
         }
@@ -188,9 +192,9 @@ public class FileTransferSettings {
      * @param settings the {@link List} of strings.
      * @return a comma separated string.
      */
-    public static String convertSettingsListToString(List settings) {
+    public static String convertSettingsListToString(List<String> settings) {
         StringBuffer buffer = new StringBuffer();
-        for (Iterator iter=settings.iterator(); iter.hasNext(); ) {
+        for (Iterator<String> iter=settings.iterator(); iter.hasNext(); ) {
             buffer.append(iter.next());
             if (iter.hasNext()) {
                 buffer.append(",");
