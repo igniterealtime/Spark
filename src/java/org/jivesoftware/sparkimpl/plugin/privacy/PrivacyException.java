@@ -26,6 +26,7 @@ import org.jivesoftware.smack.XMPPException;
  * @author Zolotarev Konstantin
  */
 public class PrivacyException extends XMPPException {
+    private static final long serialVersionUID = -3987030036255653472L;
 
     public PrivacyException() {
         super();

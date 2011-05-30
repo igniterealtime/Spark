@@ -63,6 +63,8 @@ public class VCardEditor {
     private HomePanel homePanel;
     private AvatarPanel avatarPanel;
     private JLabel avatarLabel;
+    //TODO REMOVE
+    @SuppressWarnings("unused")
     private VCard _vcard;
 
     /**

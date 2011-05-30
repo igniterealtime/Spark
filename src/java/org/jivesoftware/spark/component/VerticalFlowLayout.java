@@ -37,6 +37,7 @@ import java.awt.Insets;
  * component to the remaining height of the container.
  */
 public class VerticalFlowLayout extends FlowLayout {
+    private static final long serialVersionUID = 2459290675844452874L;
 
     /**
      * Specify alignment top.

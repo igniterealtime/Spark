@@ -33,8 +33,7 @@ public class WinRegistryReader {
 
     private static final String REGQUERY_UTIL = "reg query ";
     private static final String REGSTR_TOKEN = "REG_SZ";
-    private static final String REGDWORD_TOKEN = "REG_DWORD";
-
+  
     private static final String PERSONAL_FOLDER_CMD = REGQUERY_UTIL
             + "\"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\"
             + "Explorer\\Shell Folders\" /v Personal";

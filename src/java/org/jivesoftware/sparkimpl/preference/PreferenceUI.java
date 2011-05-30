@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import java.awt.event.MouseEvent;
 
 public class PreferenceUI extends JLabel {
+    private static final long serialVersionUID = 1094181037849878301L;
     private Preference preference;
 
     public PreferenceUI(Preference preference) {

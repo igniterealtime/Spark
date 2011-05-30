@@ -41,6 +41,8 @@ import java.util.Enumeration;
  */
 public class Tree extends JTree implements TreeSelectionListener, MouseMotionListener {
 
+    private static final long serialVersionUID = 295484232488085142L;
+
     /**
      * Creates the Tree from a root node.
      *

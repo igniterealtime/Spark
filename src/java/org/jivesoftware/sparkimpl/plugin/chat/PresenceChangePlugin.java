@@ -66,7 +66,9 @@ public class PresenceChangePlugin implements Plugin {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
         final Action listenAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = 7705539667621148816L;
+
+	    public void actionPerformed(ActionEvent e) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
                 String bareAddress = StringUtils.parseBareAddress(item.getJID());
                 sparkContacts.add(bareAddress);
@@ -77,7 +79,9 @@ public class PresenceChangePlugin implements Plugin {
         listenAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ALARM_CLOCK));
 
         final Action removeAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+	    private static final long serialVersionUID = -8726129089417116105L;
+
+	    public void actionPerformed(ActionEvent e) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
                 String bareAddress = StringUtils.parseBareAddress(item.getJID());
                 sparkContacts.remove(bareAddress);

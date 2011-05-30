@@ -51,6 +51,8 @@ import java.util.Map;
  * @version 1.0, 03/12/14
  */
 public abstract class JiveSortableTable extends Table {
+    private static final long serialVersionUID = 1862216857622703383L;
+
     private Table.JiveTableModel tableModel;
 
     /**
@@ -204,7 +206,8 @@ public abstract class JiveSortableTable extends Table {
      * The internal Table Model.
      */
     public static class JiveTableModel extends DefaultTableModel {
-        private boolean isEditable;
+	private static final long serialVersionUID = -8112392992589859403L;
+	private boolean isEditable;
 
         /**
          * Use the JiveTableModel in order to better handle the table. This allows
@@ -235,7 +238,8 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display labels within a table.
      */
     public class JLabelRenderer extends JLabel implements TableCellRenderer {
-        Border unselectedBorder;
+	private static final long serialVersionUID = 8670248883432881619L;
+	Border unselectedBorder;
         Border selectedBorder;
         boolean isBordered = true;
 
@@ -293,8 +297,9 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer to dispaly Textareas within a table.
      */
     public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
+	private static final long serialVersionUID = -1704445909682732833L;
 
-        /**
+	/**
          * Create new renderer with font.
          *
          * @param font the font to use in the renderer.
@@ -322,7 +327,8 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display Buttons within a table.
      */
     public class JButtonRenderer extends JButton implements TableCellRenderer {
-        Border unselectedBorder;
+ 	private static final long serialVersionUID = -1847536957519732935L;
+	Border unselectedBorder;
         Border selectedBorder;
         boolean isBordered = true;
 
@@ -373,7 +379,9 @@ public abstract class JiveSortableTable extends Table {
     }
 
     public class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
-        public ComboBoxRenderer() {
+	private static final long serialVersionUID = 5892858463680797611L;
+
+	public ComboBoxRenderer() {
 
         }
 
@@ -399,7 +407,9 @@ public abstract class JiveSortableTable extends Table {
     }
 
     public class MyComboBoxEditor extends DefaultCellEditor {
-        public MyComboBoxEditor(String[] items) {
+	private static final long serialVersionUID = 1003726653998005772L;
+
+	public MyComboBoxEditor(String[] items) {
             super(new JComboBox(items));
         }
     }

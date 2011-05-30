@@ -46,6 +46,7 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public final class TitlePanel extends JPanel {
+    private static final long serialVersionUID = -967166058268240672L;
     private final JLabel titleLabel = new JLabel();
     private final JLabel descriptionLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
@@ -130,7 +131,8 @@ public final class TitlePanel extends JPanel {
     }
 
     public class ImagePanel extends JPanel {
-        final ImageIcon icons = Default.getImageIcon(Default.SECONDARY_BACKGROUND_IMAGE);
+ 	private static final long serialVersionUID = 5155908601530113727L;
+	final ImageIcon icons = Default.getImageIcon(Default.SECONDARY_BACKGROUND_IMAGE);
 
         public ImagePanel() {
 

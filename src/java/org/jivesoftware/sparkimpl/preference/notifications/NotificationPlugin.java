@@ -210,7 +210,8 @@ public class NotificationPlugin implements Plugin, PacketListener {
 
     private class ChatAction extends AbstractAction {
 
-        private String jid;
+	private static final long serialVersionUID = 4752515615833181939L;
+	private String jid;
 
         public ChatAction(String jid) {
             this.jid = jid;

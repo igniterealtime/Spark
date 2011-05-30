@@ -40,6 +40,7 @@ import java.util.List;
  * @version 1.0, 03/12/14
  */
 public class JiveTable extends JTable {
+    private static final long serialVersionUID = -7140811933957438525L;
     private JiveTable.JiveTableModel tableModel;
 
 
@@ -95,7 +96,8 @@ public class JiveTable extends JTable {
     }
 
     public class JiveTableModel extends DefaultTableModel {
-        private boolean _isEditable;
+ 	private static final long serialVersionUID = -2072664365332767844L;
+	private boolean _isEditable;
 
         /**
          * Use the JiveTableModel in order to better handle the table. This allows
@@ -119,7 +121,8 @@ public class JiveTable extends JTable {
     }
 
     class JLabelRenderer extends JLabel implements TableCellRenderer {
-        Border unselectedBorder = null;
+  	private static final long serialVersionUID = 4387574944818048720L;
+	Border unselectedBorder = null;
         Border selectedBorder = null;
         boolean isBordered = true;
 
@@ -168,7 +171,9 @@ public class JiveTable extends JTable {
 
 
     class JButtonRenderer extends JButton implements TableCellRenderer {
-        Border unselectedBorder = null;
+
+	private static final long serialVersionUID = -5287214156125954342L;
+	Border unselectedBorder = null;
         Border selectedBorder = null;
         boolean isBordered = true;
 

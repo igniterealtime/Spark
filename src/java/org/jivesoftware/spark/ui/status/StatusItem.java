@@ -28,6 +28,7 @@ import javax.swing.JLabel;
  * Represents a single UI instance in the status bar.
  */
 public class StatusItem extends JLabel {
+    private static final long serialVersionUID = 725324886254656704L;
     private Presence presence;
 
     /**

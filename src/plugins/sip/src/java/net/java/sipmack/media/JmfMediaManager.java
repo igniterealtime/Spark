@@ -703,6 +703,8 @@ public class JmfMediaManager {
      * 
      * @return
      */
+    //TODO REMOVE
+    @SuppressWarnings("unused")
     private AudioFormat getPreferredFormat(ArrayList<String> formate){
    	 LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
    	 // gets the selected order from preferences

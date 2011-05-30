@@ -1120,7 +1120,7 @@ public class SipManager implements SipListener {
                 // Add the stack name to the properties that will pass the stack
             }
 
-            String retransmissionFilter = SIPConfig.getRetransmissionFilter();
+//            String retransmissionFilter = SIPConfig.getRetransmissionFilter();
 
             // ------------ application properties --------------
             //currentlyUsedURI = SIPConfig.getPublicAddress();
@@ -1133,8 +1133,8 @@ public class SipManager implements SipListener {
 
             // at this point we are sure we have a sip: prefix in the uri
             // we construct our pres: uri by replacing that prefix.
-            String presenceUri = "pres"
-                    + currentlyUsedURI.substring(currentlyUsedURI.indexOf(':'));
+//            String presenceUri = "pres"
+//                    + currentlyUsedURI.substring(currentlyUsedURI.indexOf(':'));
 
             registrarAddress = SIPConfig.getRegistrarAddress();
             try {
@@ -1159,7 +1159,7 @@ public class SipManager implements SipListener {
                 sipStackPath = "gov.nist";
             }
 
-            String routerPath = SIPConfig.getRouterPath();
+//            String routerPath = SIPConfig.getRouterPath();
 
             transport = SIPConfig.getTransport();
 
@@ -1401,7 +1401,8 @@ public class SipManager implements SipListener {
             return;
         }
 
-
+        //TODO REMOVE
+        @SuppressWarnings("unused")
         Request requestClone = (Request) request.clone();
         // INVITE
         if (request.getMethod().equals(Request.INVITE)) {
@@ -1512,9 +1513,13 @@ public class SipManager implements SipListener {
         }
         Response response = responseReceivedEvent.getResponse();
 
+        //TODO REMOVE
+        @SuppressWarnings("unused")
         Dialog dialog = clientTransaction.getDialog();
         String method = ((CSeqHeader) response.getHeader(CSeqHeader.NAME))
                 .getMethod();
+        //TODO REMOVE
+        @SuppressWarnings("unused")
         Response responseClone = (Response) response.clone();
 
         // OK
@@ -1628,7 +1633,8 @@ public class SipManager implements SipListener {
                 callProcessing.processAuthenticationChallenge(
                         clientTransaction, response);
             } else if (method.equals(Request.REGISTER)) {
-
+        	//TODO REMOVE
+        	@SuppressWarnings("unused")
                 CSeqHeader cseq = (CSeqHeader) response.getHeader(CSeqHeader.NAME);
 
                 registerProcessing.processAuthenticationChallenge(

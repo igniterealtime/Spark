@@ -148,6 +148,8 @@ public class SparkPrivacyList {
      * @param value value of item
      * @return privacyItem or null if Item not found
      */
+    //TODO REMOVE
+    @SuppressWarnings("unused")
     private PrivacyItem searchPrivacyItem(PrivacyItem.Type type, String value) {
         for (PrivacyItem privacyItem : getPrivacyItems()) {
             if ( privacyItem.getValue().equalsIgnoreCase(value) && privacyItem.getType() == type ) {

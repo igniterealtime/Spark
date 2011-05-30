@@ -51,6 +51,7 @@ import java.util.List;
  */
 public class JContactItemField extends JPanel {
 
+    private static final long serialVersionUID = -8556694682789891531L;
     private JTextField textField = new JTextField();
     private DefaultListModel model = new DefaultListModel();
     private JList list;
@@ -60,7 +61,9 @@ public class JContactItemField extends JPanel {
     public JContactItemField(List<ContactItem> items) {
         setLayout(new BorderLayout());
         list = new JList(model) {
-            public String getToolTipText(MouseEvent e) {
+	    private static final long serialVersionUID = -9031169221430835595L;
+
+	    public String getToolTipText(MouseEvent e) {
                 int row = locationToIndex(e.getPoint());
                 if (row >= 0)
                 {
@@ -265,8 +268,9 @@ public class JContactItemField extends JPanel {
     }
 
     class PopupRenderer extends JLabel implements ListCellRenderer {
+	private static final long serialVersionUID = 239608430590852355L;
 
-        /**
+	/**
          * Construct Default JLabelIconRenderer.
          */
         public PopupRenderer() {

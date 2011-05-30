@@ -81,14 +81,18 @@ public class ContactListAssistantPlugin implements Plugin {
                             continue;
                         }
                         final Action moveAction = new AbstractAction() {
-                            @Override
+			    private static final long serialVersionUID = 6542011870221162331L;
+
+			    @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 moveItems(contactItems, group.getGroupName());
                             }
                         };
 
                         final Action copyAction = new AbstractAction() {
-                            @Override
+   			    private static final long serialVersionUID = 2232885525630977329L;
+
+			    @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 copyItems(contactItems, group.getGroupName());
                             }

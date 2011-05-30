@@ -38,6 +38,7 @@ import java.awt.Insets;
  * could be used to build out your own search objects.
  */
 public class IconTextField extends JPanel {
+    private static final long serialVersionUID = -7000758637988415370L;
     private JTextField textField;
     private JLabel imageComponent;
     private JLabel downOption;

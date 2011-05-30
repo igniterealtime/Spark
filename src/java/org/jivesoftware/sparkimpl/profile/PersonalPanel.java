@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 
 public class PersonalPanel extends JPanel {
 
+    private static final long serialVersionUID = 8348926698365178921L;
     private JTextField firstNameField;
     private JTextField middleNameField;
     private JTextField lastNameField;

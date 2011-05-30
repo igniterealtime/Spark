@@ -57,6 +57,8 @@ public class LogPacket extends IQ {
      */
     public static final String NAMESPACE = "http://www.jivesoftware.com/protocol/log";
 
+    //TODO REMOVE
+    @SuppressWarnings("unused")
     private XmlPullParser parser = null;
 
     public LogPacket() {
@@ -83,12 +85,13 @@ public class LogPacket extends IQ {
 
         public IQ parseIQ(XmlPullParser parser) throws Exception {
             boolean done = false;
-            StringBuilder buffer = null;
             LogPacket lp = new LogPacket();
             lp.parser = parser;
             while (!done) {
                 int eventType = parser.next();
                 if (eventType == XmlPullParser.START_TAG) {
+                    //TODO REMOVE
+                    @SuppressWarnings("unused")
                     String str = null;
                     if (parser.getName().equals("iq")) {
                         int max = parser.getAttributeCount();

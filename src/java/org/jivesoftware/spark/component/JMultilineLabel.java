@@ -33,6 +33,7 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
 public class JMultilineLabel extends JComponent {
+    private static final long serialVersionUID = 3061233171993075054L;
     private String text;
     private Insets margin = new Insets(1, 1, 1, 1);
     private int maxWidth = Integer.MAX_VALUE;

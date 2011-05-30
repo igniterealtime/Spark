@@ -22,6 +22,7 @@ package org.jivesoftware.spark.component;
 import java.io.Serializable;
 
 public class TreeItem implements Serializable {
+    private static final long serialVersionUID = 4892011237317645034L;
     private String displayName;
     private String toolTip;
     private String description;

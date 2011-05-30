@@ -93,7 +93,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
             public void finished() {
         	
-        	final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
         	transferTab.setLayout(new VerticalFlowLayout(0,0,0,true,false));
         	Boolean transportExists = (Boolean)get();
                 if (!transportExists) {

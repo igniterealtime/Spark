@@ -222,6 +222,8 @@ public class JingleRoom extends JPanel {
     /**
      * Called when a new call is established.
      */
+    //TODO REMOVE
+    @SuppressWarnings("unused")
     private void callStarted() {
         // Show History
         historyPanel.removeAll();

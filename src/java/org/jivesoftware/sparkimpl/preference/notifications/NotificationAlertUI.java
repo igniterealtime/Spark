@@ -48,6 +48,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class NotificationAlertUI extends JPanel {
+    private static final long serialVersionUID = 3359608942567718697L;
     private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel emailAddressLabel = new JLabel();

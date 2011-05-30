@@ -117,6 +117,8 @@ public class ScratchPadPlugin implements Plugin {
             }
         });
 
+        //TODO REMOVE
+        @SuppressWarnings("unused")
         int index = -1;
         JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
         for (int i = 0; i < commandPanel.getComponentCount(); i++) {

@@ -53,6 +53,7 @@ import java.io.IOException;
  * UI to view/edit avatar.
  */
 public class AvatarPanel extends JPanel implements ActionListener {
+    private static final long serialVersionUID = -5526978906063691519L;
     private JLabel avatar;
     private byte[] bytes;
     private File avatarFile;

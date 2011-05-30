@@ -509,6 +509,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	 * 
 	 * @return true if a proxy is set.
 	 */
+	//TODO REMOVE
+	@SuppressWarnings("unused")
 	public boolean useProxy() {
 	    return useProxyBox.isSelected();
 	}

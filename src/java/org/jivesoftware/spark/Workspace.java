@@ -90,7 +90,7 @@ public class Workspace extends JPanel implements PacketListener {
 	private static final long serialVersionUID = 7076407890063933765L;
 	private SparkTabbedPane workspacePane;
     private StatusBar statusBox;
-    private CommandPanel commandPanel;
+    
     private ContactList contactList;
     private ConferenceServices conferences;
     private GatewayPlugin gatewayPlugin;
@@ -170,13 +170,11 @@ public class Workspace extends JPanel implements PacketListener {
         cardPanel.add(WORKSPACE_PANE, this);
         
         statusBox = new StatusBar();
-       // commandPanel = new CommandPanel();
         
         // Build default workspace
         this.setLayout(new GridBagLayout());
         add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(statusBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-    //    add(commandPanel, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 4, 0, 4), 0, 0));
 
 
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F12"), "showDebugger");

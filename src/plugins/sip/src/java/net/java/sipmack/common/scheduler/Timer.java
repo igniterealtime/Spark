@@ -63,6 +63,8 @@ public class Timer {
      * finalizer would be susceptible to a subclass's finalizer forgetting to
      * call it.
      */
+    //TODO REMOVE
+    @SuppressWarnings("unused")
     private Object threadReaper = new Object() {
         protected void finalize() throws Throwable {
             synchronized (queue) {

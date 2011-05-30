@@ -105,6 +105,8 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 
     private final List<SoftPhoneListener> softPhoneListeners = new CopyOnWriteArrayList<SoftPhoneListener>();
 
+    // TODO REMOVE
+    @SuppressWarnings("unused")
     private SoftPhoneMedia softPhoneMedia = null;
 
     private SoftPhoneSecurity softPhoneSecurity = null;

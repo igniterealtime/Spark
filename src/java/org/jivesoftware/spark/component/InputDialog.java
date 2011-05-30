@@ -139,7 +139,9 @@ public final class InputDialog implements PropertyChangeListener {
      * Move to focus forward action.
      */
     public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
-        public void actionPerformed(ActionEvent evt) {
+	private static final long serialVersionUID = 1L;
+
+	public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocus();
         }
     };
@@ -148,7 +150,9 @@ public final class InputDialog implements PropertyChangeListener {
      * Moves the focus backwards in the dialog.
      */
     public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
-        public void actionPerformed(ActionEvent evt) {
+	private static final long serialVersionUID = 1L;
+
+	public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocusBackward();
         }
     };

@@ -35,6 +35,8 @@ import java.awt.event.MouseEvent;
  * @author Derek DeMoro
  */
 public class RolloverButton extends JButton {
+    private static final long serialVersionUID = 6351541211385798436L;
+
 
     /**
      * Create a new RolloverButton.

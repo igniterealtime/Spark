@@ -40,6 +40,7 @@ import javax.swing.tree.TreeCellRenderer;
  * @author Derek DeMoro
  */
 public class CheckRenderer extends JPanel implements TreeCellRenderer {
+    private static final long serialVersionUID = 687507314190933733L;
     private JCheckBox check;
     private TreeLabel label;
 
@@ -114,7 +115,8 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
      * Represents one UI node for the checkbox node.
      */
     public class TreeLabel extends JLabel {
-        boolean isSelected;
+	private static final long serialVersionUID = -6367572474576692556L;
+	boolean isSelected;
         boolean hasFocus;
 
         /**

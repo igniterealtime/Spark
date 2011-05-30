@@ -55,6 +55,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Collection;
 
 public class SearchService extends JPanel {
+    private static final long serialVersionUID = 6407801290193187867L;
     private IconTextField findField;
     private Image backgroundImage;
     private boolean newSearch;
@@ -162,7 +163,9 @@ public class SearchService extends JPanel {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final Searchable searchable : searchables) {
                     Action action = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 1289193809077193703L;
+
+			public void actionPerformed(ActionEvent e) {
                             setActiveSearchService(searchable);
                         }
                     };

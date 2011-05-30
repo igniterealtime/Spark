@@ -36,6 +36,7 @@ import java.awt.Component;
  * @author Derek DeMoro
  */
 public class JPanelRenderer extends JPanel implements ListCellRenderer {
+    private static final long serialVersionUID = -8968866073878932932L;
 
     /**
      * Construct Default JPanelRenderer.

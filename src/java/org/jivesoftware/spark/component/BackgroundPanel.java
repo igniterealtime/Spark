@@ -34,6 +34,9 @@ import java.awt.geom.AffineTransform;
  */
 public class BackgroundPanel extends JPanel {
 
+    private static final long serialVersionUID = 1655446485534962735L;
+
+
     /**
      * Creates a background panel using the default Spark background image.
      */
