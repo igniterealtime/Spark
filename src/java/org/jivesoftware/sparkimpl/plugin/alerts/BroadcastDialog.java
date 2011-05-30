@@ -66,13 +66,9 @@ import org.jivesoftware.spark.util.ModelUtil;
  */
 public class BroadcastDialog extends JPanel {
 
-    /**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 1L;
-
-	private ChatInputEditor messageBox;
-	private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
+    private static final long serialVersionUID = -8998994627855985137L;
+    private ChatInputEditor messageBox;
+    private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
     private JRadioButton normalMessageButton;
     
     private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<ArrayList<Object>>();

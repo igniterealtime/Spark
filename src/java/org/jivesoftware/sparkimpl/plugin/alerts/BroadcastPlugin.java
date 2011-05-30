@@ -432,7 +432,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         }
 
 
-        chatRoom.insertMessage(message);
+        chatRoom.getTranscriptWindow().insertNotificationMessage(message.getBody(), ChatManager.NOTIFICATION_COLOR);
         broadcastRooms.add(chatRoom);
     }
     
