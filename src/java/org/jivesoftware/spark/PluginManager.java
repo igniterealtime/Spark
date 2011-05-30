@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.spark;
 
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,8 +47,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PluginClassLoader;
