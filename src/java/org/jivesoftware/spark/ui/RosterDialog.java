@@ -22,6 +22,7 @@ package org.jivesoftware.spark.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -87,7 +88,7 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 /**
  * The RosterDialog is used to add new users to the users XMPP Roster.
  */
-public class RosterDialog implements PropertyChangeListener, ActionListener {
+public class RosterDialog implements ActionListener {
     private JPanel panel;
     private JTextField jidField;
     private JTextField nicknameField;
@@ -96,7 +97,6 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 
     private JComboBox groupBox;
     private JComboBox accounts;
-    private JOptionPane pane;
     private JDialog dialog;
     private ContactList contactList;
     private JCheckBox publicBox;
@@ -157,7 +157,6 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
 	    }
 	});
 
-        pane = null;
         dialog = null;
         panel.setLayout(new GridBagLayout());
         panel.add(contactIDLabel, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
@@ -338,30 +337,48 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), null, true);
 
 
-        JPanel mainPanel = new JPanel() {
-			private static final long serialVersionUID = -7489967438182277375L;
+	JPanel mainPanel = new JPanel() {
+	    private static final long serialVersionUID = -7489967438182277375L;
 
-			public Dimension getPreferredSize() {
-                final Dimension size = super.getPreferredSize();
-                size.width = 450;
-                return size;
-            }
-        };
+	    public Dimension getPreferredSize() {
+		final Dimension size = super.getPreferredSize();
+		size.width = 450;
+		return size;
+	    }
+	};
 
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
-        Object[] options = {
-                Res.getString("add"), Res.getString("cancel")
-        };
-        pane = new JOptionPane(panel, -1, 2, null, options, options[0]);
-        mainPanel.add(pane, BorderLayout.CENTER);
+        mainPanel.add(panel, BorderLayout.CENTER);
+       
+        JButton addbutton = new JButton(Res.getString("add"));
+        
+        addbutton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		addContactButton();
+	    }
+	});
+        
+        JButton cancelbutton = new JButton(Res.getString("cancel"));
+        cancelbutton.addActionListener(new ActionListener() {    
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		dialog.dispose();
+	    }
+	});
+        
+        
+        JPanel buttonpanel = new JPanel(new FlowLayout());
+        buttonpanel.add(addbutton);
+        buttonpanel.add(cancelbutton);
+        mainPanel.add(buttonpanel, BorderLayout.SOUTH);
+        
         dialog = new JDialog(parent, Res.getString("title.add.contact"), false);
         dialog.setContentPane(mainPanel);
         dialog.pack();
 
         dialog.setLocationRelativeTo(parent);
-        pane.addPropertyChangeListener(this);
-
 
         dialog.setVisible(true);
         dialog.toFront();
@@ -375,89 +392,6 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
      */
     public void showRosterDialog() {
         showRosterDialog(SparkManager.getMainWindow());
-    }
-
-    public void propertyChange(PropertyChangeEvent e) {
-        if (pane != null && pane.getValue() instanceof Integer) {
-            pane.removePropertyChangeListener(this);
-            dialog.dispose();
-            return;
-        }
-
-        try {
-            String value = (String)pane.getValue();
-            String errorMessage = Res.getString("title.error");
-            if (Res.getString("cancel").equals(value)) {
-                dialog.setVisible(false);
-            }
-            else if (Res.getString("add").equals(value)) {
-                String jid = getJID();
-                String contact = UserManager.escapeJID(jid);
-                String nickname = nicknameField.getText();
-                String group = (String)groupBox.getSelectedItem();
-
-                Transport transport = null;
-                if (publicBox.isSelected()) {
-                    AccountItem item = (AccountItem)accounts.getSelectedItem();
-                    transport = item.getTransport();
-                }
-
-                if (transport == null) {
-                    if (contact.indexOf("@") == -1) {
-                        contact = contact + "@" + SparkManager.getConnection().getServiceName();
-                    }
-                }
-                else {
-                    if (contact.indexOf("@") == -1) {
-                        contact = contact + "@" + transport.getServiceName();
-                    }
-                }
-
-                if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
-                    // Try to load nickname from VCard
-                    VCard vcard = new VCard();
-                    try {
-                        vcard.load(SparkManager.getConnection(), contact);
-                        nickname = vcard.getNickName();
-                    }
-                    catch (XMPPException e1) {
-                        Log.error(e1);
-                    }
-                    // If no nickname, use first name.
-                    if (!ModelUtil.hasLength(nickname)) {
-                        nickname = StringUtils.parseName(contact);
-                    }
-                    nicknameField.setText(nickname);
-                }
-
-                ContactGroup contactGroup = contactList.getContactGroup(group);
-                boolean isSharedGroup = contactGroup != null && contactGroup.isSharedGroup();
-
-                if (isSharedGroup) {
-                    errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
-                }
-                else if (!ModelUtil.hasLength(contact)) {
-                    errorMessage = Res.getString("message.specify.contact.jid");
-                }
-                else if (StringUtils.parseBareAddress(contact).indexOf("@") == -1) {
-                    errorMessage = Res.getString("message.invalid.jid.error");
-                }
-                else if (!ModelUtil.hasLength(group)) {
-                    errorMessage = Res.getString("message.specify.group");
-                }
-                else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group) && !isSharedGroup) {
-                    addEntry();
-                    dialog.setVisible(false);
-                    return;
-                }
-
-                JOptionPane.showMessageDialog(dialog, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-            }
-        }
-        catch (NullPointerException ee) {
-            Log.error(ee);
-        }
     }
 
     private void addEntry() {
@@ -680,6 +614,82 @@ public class RosterDialog implements PropertyChangeListener, ActionListener {
         }
 
         return list;
+    }
+    
+    /**
+     * Method to handle the Add-Button
+     */
+    private void addContactButton() {
+	String errorMessage = Res.getString("title.error");
+	String jid = getJID();
+	
+	if(jid.length()==0)
+	{
+	    JOptionPane.showMessageDialog(dialog, Res.getString("message.invalid.jid.error"),
+			Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+		return;
+	}
+	
+	String contact = UserManager.escapeJID(jid);
+	String nickname = nicknameField.getText();
+	String group = (String) groupBox.getSelectedItem();
+
+	Transport transport = null;
+	if (publicBox.isSelected()) {
+	    AccountItem item = (AccountItem) accounts.getSelectedItem();
+	    transport = item.getTransport();
+	}
+
+	if (transport == null) {
+	    if (!contact.contains("@")) {
+		contact = contact + "@"
+			+ SparkManager.getConnection().getServiceName();
+	    }
+	} else {
+	    if (!contact.contains("@")) {
+		contact = contact + "@" + transport.getServiceName();
+	    }
+	}
+
+	if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
+	    // Try to load nickname from VCard
+	    VCard vcard = new VCard();
+	    try {
+		vcard.load(SparkManager.getConnection(), contact);
+		nickname = vcard.getNickName();
+	    } catch (XMPPException e1) {
+		Log.error(e1);
+	    }
+	    // If no nickname, use first name.
+	    if (!ModelUtil.hasLength(nickname)) {
+		nickname = StringUtils.parseName(contact);
+	    }
+	    nicknameField.setText(nickname);
+	}
+
+	ContactGroup contactGroup = contactList.getContactGroup(group);
+	boolean isSharedGroup = contactGroup != null
+		&& contactGroup.isSharedGroup();
+
+	if (isSharedGroup) {
+	    errorMessage = Res
+		    .getString("message.cannot.add.contact.to.shared.group");
+	} else if (!ModelUtil.hasLength(contact)) {
+	    errorMessage = Res.getString("message.specify.contact.jid");
+	} else if (!StringUtils.parseBareAddress(contact).contains("@")) {
+	    errorMessage = Res.getString("message.invalid.jid.error");
+	} else if (!ModelUtil.hasLength(group)) {
+	    errorMessage = Res.getString("message.specify.group");
+	} else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group)
+		&& !isSharedGroup) {
+	    addEntry();
+	    dialog.setVisible(false);
+	    return;
+	} else {
+
+	    JOptionPane.showMessageDialog(dialog, errorMessage,
+		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+	}
     }
 
     class AccountItem extends JPanel {
