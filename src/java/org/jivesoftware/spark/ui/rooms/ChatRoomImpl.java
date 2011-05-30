@@ -397,9 +397,11 @@ public class ChatRoomImpl extends ChatRoom {
                 }
                 else if (packet instanceof Message) {
                     lastActivity = System.currentTimeMillis();
-
+                 
+                    
                     // Do something with the incoming packet here.
                     final Message message = (Message)packet;
+                    fireReceivingIncomingMessage(message);
                     if (message.getError() != null) {
                         if (message.getError().getCode() == 404) {
                             // Check to see if the user is online to recieve this message.

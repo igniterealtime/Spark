@@ -495,6 +495,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void insertMessage(Message message) {
         // Fire Message Filters
+        
         SparkManager.getChatManager().filterIncomingMessage(this, message);
 
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(this, message);
