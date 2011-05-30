@@ -1,0 +1,16 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>OTR Plugin</name>
+    <version>0.11</version>
+    <author>Holger Bergunde</author>
+    <homePage>http://www.stytrix.de</homePage>
+    <email>holger@bergunde.de</email>
+    <description>Adds OTR support to Spark</description>
+    <minSparkVersion>2.6.0</minSparkVersion>
+    <class>org.jivesoftware.spark.otrplug.OTRPlugin</class>
+    <os>Windows,Linux,Mac</os>
+</plugin>
+
+
+
+<!-- os can contain any operating system seperated by a commata  -->
