@@ -23,9 +23,9 @@
 	<property file="${basedir}/build/build.properties"/>
 	<property name="version.major" value="2"/>
 	<property name="version.minor" value="6"/>
-	<property name="version.revision" value="0"/>
+	<property name="version.revision" value="1"/>
 
-	<property name="version.extra" value="12343"/>
+	<property name="version.extra" value="12434"/>
 
 	<!--
 	<loadfile property="version.extra" srcFile="./.svn/entries">

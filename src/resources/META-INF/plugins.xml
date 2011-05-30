@@ -185,10 +185,10 @@
     </plugin>
     <plugin>
         <name>Privacy Lists</name>
-        <version>1.0</version>
-        <author>Zolotarev Konstantin</author>
+        <version>2.0</version>
+        <author>Holger Bergunde</author>
         <homePage>http://www.igniterealtime.org</homePage>
-        <email>konstantin.zolotarev@gmail.com</email>
+        <email>9bergund@informatik.uni-hamburg.de</email>
         <description>Privacy lists.</description>
         <class>org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin</class>
     </plugin>

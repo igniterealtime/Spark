@@ -47,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 public class SearchForm extends JPanel {
+    private static final long serialVersionUID = -6935368899659597477L;
     private UserSearchResults searchResults;
     private DataFormUI questionForm;
     private UserSearchManager searchManager;
@@ -94,7 +95,9 @@ public class SearchForm extends JPanel {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(enterString), "enter");
 
         getActionMap().put("enter", new AbstractAction("enter") {
-            public void actionPerformed(ActionEvent evt) {
+	    private static final long serialVersionUID = -7308854327447291219L;
+
+	    public void actionPerformed(ActionEvent evt) {
                 performSearch();
             }
         });
