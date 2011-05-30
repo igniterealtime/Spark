@@ -1,12 +1,9 @@
 package example;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.preference.Preference;
 
 /**
  * Example Plugin to demonstrate the use of Plugins

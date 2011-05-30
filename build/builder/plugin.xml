@@ -9,6 +9,7 @@
     <class>example.ExamplePlugin</class>
     <minSparkVersion>2.6.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>
+    <java>1.6.0_00</java>
 </plugin>
 
 
