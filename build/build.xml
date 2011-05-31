@@ -645,7 +645,7 @@
 		<delete file="${mac.dmg.file}" />
 	</target>
 
-	<target name="mac.build.plugin" depends="jar">
+	<target name="mac.build.plugin" depends="jar,build.plugins">
 		<!-- build the apple jar and place it in the plugins -->
 
 		<ant antfile="${basedir}/src/plugins/apple/build.xml" inheritall="no" target="clean"/>
@@ -684,7 +684,7 @@
                     bundleid="com.jivesoftware.SparkBundle"
                     developmentregion="English"
                     jvmversion="1.6+"
-					jvmarchs="i386 x64_86 ppc"
+					jvmarchs="i386"
                     smalltabs="true"
                     antialiasedgraphics="true"
                     antialiasedtext="true"
@@ -692,7 +692,7 @@
                     growbox="true"
                     growboxintrudes="true"
                     screenmenu="true"
-                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true -D32"
+                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true -d32"
                     workingdirectory="$APP_PACKAGE/Contents/Resources"
                     extraclasspath="/System/Library/Java">
 			<jarfileset dir="${target.build}/lib">
