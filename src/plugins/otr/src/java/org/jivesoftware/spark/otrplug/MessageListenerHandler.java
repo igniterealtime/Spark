@@ -20,8 +20,8 @@ public class MessageListenerHandler extends ChatRoomListenerAdapter {
     public void chatRoomOpened(ChatRoom room) {
         super.chatRoomOpened(room);
         if (room instanceof ChatRoomImpl) {
-            OTRManager.getInstance().startOTRSession((ChatRoomImpl) room, ((ChatRoomImpl) room).getParticipantJID());
-            
+//            OTRManager.getInstance().startOTRSession((ChatRoomImpl) room, ((ChatRoomImpl) room).getParticipantJID());
+//            
             
             ((ChatRoomImpl) room).addMessageEventListener(new MessageEventListener() {
 

@@ -27,16 +27,7 @@ public class OTREngineHost implements OtrEngineHost {
     
     @Override
     public KeyPair getKeyPair(SessionID arg0) {
-        KeyPairGenerator kg;
-        try {
-            kg = KeyPairGenerator.getInstance("DSA");
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return kg.genKeyPair();
+        return OTRManager.getInstance().getKeyManager().loadLocalKeyPair(arg0);
     }
 
     @Override

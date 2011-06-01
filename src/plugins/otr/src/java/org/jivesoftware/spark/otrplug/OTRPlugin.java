@@ -1,6 +1,11 @@
 package org.jivesoftware.spark.otrplug;
 
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.ui.OTRPreferences;
+
+
 
 public class OTRPlugin implements Plugin{
 
@@ -9,7 +14,15 @@ public class OTRPlugin implements Plugin{
     @Override
     public void initialize() {
         System.out.println("initialized");
-        _manager.getInstance();
+        
+        //Create OTRManager singleton
+        
+        _manager = OTRManager.getInstance();
+        
+        // The following will add an Entry into the Spark Preferences Window
+        Preference mypreference = new OTRPreferences();
+        SparkManager.getPreferenceManager().addPreference(mypreference);
+        
     }
 
     @Override
