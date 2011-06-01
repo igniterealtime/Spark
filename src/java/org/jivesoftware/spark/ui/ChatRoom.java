@@ -843,7 +843,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Returns the <code>Message.Type</code> specific to this
      * chat room.
-     * GroupChat is Message.Type.GROUP_CHAT
+     * GroupChat is Message.Type.groupchat
      * Normal Chat is Message.TYPE.NORMAL
      *
      * @return the ChatRooms Message.TYPE

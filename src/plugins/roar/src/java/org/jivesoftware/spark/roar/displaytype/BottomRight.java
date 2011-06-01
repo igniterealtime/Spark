@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.roar.RoarProperties;
 import org.jivesoftware.spark.roar.RoarResources;
@@ -74,7 +75,12 @@ public class BottomRight implements RoarDisplayType {
 
 	    ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
 
-	    String nickname = room.getTabTitle();
+	    
+	    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+	    if(room.getChatType() == Message.Type.groupchat)
+	    {
+		nickname = StringUtils.parseResource(nickname);
+	    }
 
 	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
 		    _lastusedXpos, _lastusedYpos, props.getDuration(),
