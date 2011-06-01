@@ -995,7 +995,7 @@ public class LocalPreferences {
 	
 	public boolean isShowConferenceTab()
 	{
-	    return getBoolean("useTabForConference", false);
+	    return getBoolean("useTabForConference", true);
 	}
 	
 	public void setShowConferenceTab(boolean value)
