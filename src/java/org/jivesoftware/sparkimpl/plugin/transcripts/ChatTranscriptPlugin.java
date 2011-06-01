@@ -504,11 +504,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
      */
     final Comparator<HistoryMessage> dateComparator = new Comparator<HistoryMessage>() {
         public int compare(HistoryMessage messageOne, HistoryMessage messageTwo) {
-            final HistoryMessage historyMessageOne = (HistoryMessage)messageOne;
-            final HistoryMessage historyMessageTwo = (HistoryMessage)messageTwo;
 
-            long time1 = historyMessageOne.getDate().getTime();
-            long time2 = historyMessageTwo.getDate().getTime();
+            long time1 = messageOne.getDate().getTime();
+            long time2 = messageTwo.getDate().getTime();
 
             if (time1 < time2) {
                 return 1;

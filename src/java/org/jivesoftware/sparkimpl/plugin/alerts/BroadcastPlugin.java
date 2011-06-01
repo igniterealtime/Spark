@@ -218,13 +218,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
                     if ((broadcast || message.getType() == Message.Type.normal 
                 	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
-                        showAlert((Message)packet, message.getType());
+                        showAlert((Message)packet);
                     }
                     else {
                         String host = SparkManager.getSessionManager().getServerAddress();
                         String from = packet.getFrom() != null ? packet.getFrom() : "";
                         if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
-                            showAlert((Message)packet, message.getType());
+                            showAlert((Message)packet);
                         }
                     }
                 }
@@ -242,7 +242,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      * @param message the message to show.
      * @param type 
      */
-    private void showAlert(Message message, Type type) {
+    private void showAlert(Message message) {
+	Type type = message.getType();
         // Do not show alert if the message is an error.
         if (message.getError() != null) {
             return;
@@ -294,64 +295,79 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
 	}
         else if (message.getFrom() != null) {
-            String jid = StringUtils.parseBareAddress(from);
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-            ChatManager chatManager = SparkManager.getChatManager();
-            ChatContainer container = chatManager.getChatContainer();
+            userToUserBroadcast(message, type, from);
+        }
+    }
 
-            ChatRoomImpl chatRoom;
-            try {
-                chatRoom = (ChatRoomImpl)container.getChatRoom(jid);
-            }
-            catch (ChatRoomNotFoundException e) {
-                chatRoom = new ChatRoomImpl(jid, nickname, nickname);
-                SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
-            }
-            
-            Message m = new Message();
-            m.setBody(message.getBody());
-            m.setTo(message.getTo());
-            
-            String name = StringUtils.parseName(message.getFrom());
-            
-            String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
-            m.setFrom(name +" "+broadcasttype);
-            
-            chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
-            broadcastRooms.add(chatRoom);
-            
-            
-	    LocalPreferences pref = SettingsManager.getLocalPreferences();
-	    if (pref.getShowToasterPopup()) {
-		SparkToaster toaster = new SparkToaster();
-		toaster.setDisplayTime(30000);
-		toaster.setBorder(BorderFactory.createBevelBorder(0));
-		toaster.setTitle(broadcasttype);
-		toaster.showToaster(message.getBody());
+    /**
+     * Handles Broadcasts made from a user to another user
+     * 
+     * @param message
+     *            the message
+     * @param type
+     *            the message type
+     * @param from
+     *            the sender
+     */
+    private void userToUserBroadcast(Message message, Type type, String from) {
+	String jid = StringUtils.parseBareAddress(from);
+	String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+	ChatManager chatManager = SparkManager.getChatManager();
+	ChatContainer container = chatManager.getChatContainer();
+
+	ChatRoomImpl chatRoom;
+	try {
+	    chatRoom = (ChatRoomImpl)container.getChatRoom(jid);
+	}
+	catch (ChatRoomNotFoundException e) {
+	    chatRoom = new ChatRoomImpl(jid, nickname, nickname);
+	    SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
+	}
+	
+	Message m = new Message();
+	m.setBody(message.getBody());
+	m.setTo(message.getTo());
+	
+	String name = StringUtils.parseName(message.getFrom());
+	
+	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
+	m.setFrom(name +" "+broadcasttype);
+	
+	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
+	chatRoom.addToTranscript(m,true);
+	broadcastRooms.add(chatRoom);
+	
+	
+	LocalPreferences pref = SettingsManager.getLocalPreferences();
+	if (pref.getShowToasterPopup()) {
+	    SparkToaster toaster = new SparkToaster();
+	    toaster.setDisplayTime(30000);
+	    toaster.setBorder(BorderFactory.createBevelBorder(0));
+	    toaster.setTitle(broadcasttype);
+	    toaster.showToaster(message.getBody());
+	}
+
+	chatRoom.addMessageListener(new MessageListener() {
+	    boolean waiting = true;
+
+	    public void messageReceived(ChatRoom room, Message message) {
+	        removeAsBroadcast(room);
 	    }
 
-            chatRoom.addMessageListener(new MessageListener() {
-                boolean waiting = true;
+	    public void messageSent(ChatRoom room, Message message) {
+	        removeAsBroadcast(room);
+	    }
 
-                public void messageReceived(ChatRoom room, Message message) {
-                    removeAsBroadcast(room);
-                }
+	    private void removeAsBroadcast(ChatRoom room) {
+	        if (waiting) {
+	            broadcastRooms.remove(room);
 
-                public void messageSent(ChatRoom room, Message message) {
-                    removeAsBroadcast(room);
-                }
-
-                private void removeAsBroadcast(ChatRoom room) {
-                    if (waiting) {
-                        broadcastRooms.remove(room);
-
-                        // Notify decorators
-                        SparkManager.getChatManager().notifySparkTabHandlers(room);
-                        waiting = false;
-                    }
-                }
-            });
-        }
+	            // Notify decorators
+	            SparkManager.getChatManager().notifySparkTabHandlers(room);
+	            waiting = false;
+	        }
+	    }
+	});
     }
 
     /**

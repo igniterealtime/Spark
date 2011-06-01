@@ -35,11 +35,14 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -208,15 +211,42 @@ public class BroadcastDialog extends JPanel {
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
-        JOptionPane p = new JOptionPane();
+        final JOptionPane p = new JOptionPane();
         dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("broadcast"));
-        dlg.setModal(false);
 
+        
+        
+        
         dlg.pack();
         dlg.setSize(800, 600);
         dlg.setResizable(false);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
+        
+        
+        // Go through all the damn Components to find the OK-Button
+        // This is necessary due to
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4230329
+        // and
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4235583
+        JRootPane rootPane = (JRootPane) dlg.getComponent(0);
+        JLayeredPane layerdpane = (JLayeredPane) rootPane.getComponent(1);
+        JPanel panel = (JPanel) layerdpane.getComponent(1);
+        JOptionPane optionpane = (JOptionPane) panel.getComponent(1);
+        JPanel buttonpanel = (JPanel) optionpane.getComponent(1);
+        JButton okbutton = (JButton) buttonpanel.getComponent(0);
+        // Add listener
+        okbutton.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		if (sendBroadcasts(dlg)) {
+		    dlg.setVisible(false);
+		}
+
+	    }
+	});
+
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {
@@ -229,8 +259,8 @@ public class BroadcastDialog extends JPanel {
                     dlg.setVisible(false);
                 }
                 else {
-                    dlg.setVisible(false);
-                    sendBroadcasts();
+                  // Nothing, this is handled by the action 
+                  // listener of okbutton, to ensure mutliple clicks
                 }
             }
         };
@@ -241,7 +271,8 @@ public class BroadcastDialog extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
 
-        messageBox.requestFocus();
+        messageBox.requestFocus();        
+        
     }
 
     private void hideOfflineUsers() {
@@ -309,20 +340,28 @@ public class BroadcastDialog extends JPanel {
     
     /**
      * Sends a broadcast message to all users selected.
+     * @param dlg 
      */
-    private void sendBroadcasts() {
+    private boolean sendBroadcasts(JDialog dlg) {
         final Set<String> jids = new HashSet<String>();
-
+        
         for (CheckNode node : nodes) {
             if (node.isSelected()) {
                 String jid = (String)node.getAssociatedObject();
                 jids.add(jid);
             }
         }
+        
+        if(jids.size() == 0)
+        {
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.user.selected"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
         String text = messageBox.getText();
         if (!ModelUtil.hasLength(text)) {
-            return;
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.text"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            return false;
         }
 
         for (String jid : jids) {
@@ -338,5 +377,7 @@ public class BroadcastDialog extends JPanel {
             }
             SparkManager.getConnection().sendPacket(message);
         }
+       
+        return true;
     }
 }
