@@ -44,6 +44,7 @@ import javax.swing.event.ChangeListener;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.roar.RoarResources;
 import org.jivesoftware.spark.roar.displaytype.BottomRight;
+import org.jivesoftware.spark.roar.displaytype.SparkToasterHandler;
 import org.jivesoftware.spark.roar.displaytype.TopRight;
 import org.jivesoftware.spark.util.ColorPick;
 
@@ -105,10 +106,11 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
 	ColorTypes[] colortypesdata = {ColorTypes.BACKGROUNDCOLOR, ColorTypes.HEADERCOLOR, ColorTypes.TEXTCOLOR};
 	_colorlist = new JList(colortypesdata);
 	
-	_typelistdata = new String[2];
+	_typelistdata = new String[3];
 	_typelistdata[0] = TopRight.getLocalizedName();
 	_typelistdata[1] = BottomRight.getLocalizedName();
-
+	_typelistdata[2] = SparkToasterHandler.getLocalizedName();
+	
 	_typelist = new JComboBox(_typelistdata);
 
 
@@ -234,20 +236,30 @@ public class RoarPreferencePanel extends JPanel implements ChangeListener {
     
     public void setDisplayType(String t) {
 
-	if (t.equals((TopRight.getName()))) {
+	if (t.equals(TopRight.getName())) {
 	    _typelist.setSelectedItem(TopRight.getLocalizedName());
-	} else {
+	}
+	else if(t.equals(SparkToasterHandler.getName()))
+	{
+	    _typelist.setSelectedItem(SparkToasterHandler.getLocalizedName());
+	}	
+	else {
 	    _typelist.setSelectedItem(BottomRight.getLocalizedName());
 	}
     }
 
     public String getDisplayType() {
 	String o = (String) _typelist.getSelectedItem();
-	if (o.equals(TopRight.getLocalizedName())) {
+	if (o.equals(TopRight.getLocalizedName())) 
+	{
 	    return TopRight.getName();
+	} 
+	else if (o.equals(SparkToasterHandler.getLocalizedName())) 
+	{
+	    return SparkToasterHandler.getName();
 	}
-
-	else {
+	else 
+	{
 	    return BottomRight.getName();
 	}
 

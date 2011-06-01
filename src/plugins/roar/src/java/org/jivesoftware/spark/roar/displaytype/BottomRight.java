@@ -10,7 +10,6 @@ import javax.swing.ImageIcon;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.roar.RoarProperties;
 import org.jivesoftware.spark.roar.RoarResources;
@@ -18,6 +17,12 @@ import org.jivesoftware.spark.roar.gui.RoarPanel;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 
+/**
+ * handles Popups in the lower right corner and stacking upwards
+ * 
+ * @author wolf.posdorfer
+ * 
+ */
 public class BottomRight implements RoarDisplayType {
 
     private int _lastusedXpos;
@@ -45,8 +50,7 @@ public class BottomRight implements RoarDisplayType {
 	_defaulty = _lastusedYpos;
 
 	_amount = 0;
-	
-	
+
 	_customaction = new AbstractAction() {
 	    private static final long serialVersionUID = -7237306342417462544L;
 
@@ -70,7 +74,7 @@ public class BottomRight implements RoarDisplayType {
 
 	    ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
 
-	    String nickname = StringUtils.parseName(message.getFrom());
+	    String nickname = room.getTabTitle();
 
 	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
 		    _lastusedXpos, _lastusedYpos, props.getDuration(),
@@ -98,7 +102,7 @@ public class BottomRight implements RoarDisplayType {
     public void closingRoarPanel(int x, int y) {
 
 	if (_lastusedYpos < (y + 5 + TASKBAR)) {
-	    _lastusedYpos = y - 5 ;
+	    _lastusedYpos = y - 5;
 	}
 	if (_lastusedXpos < (x + 5)) {
 	    _lastusedXpos = x + WIDTH + 5;
@@ -126,7 +130,7 @@ public class BottomRight implements RoarDisplayType {
     public static String getName() {
 	return "BottomRight";
     }
-    
+
     public static String getLocalizedName() {
 	return RoarResources.getString("roar.display.bottomright");
     }

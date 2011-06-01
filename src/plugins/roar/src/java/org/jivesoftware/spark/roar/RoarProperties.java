@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.roar.displaytype.BottomRight;
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
+import org.jivesoftware.spark.roar.displaytype.SparkToasterHandler;
 import org.jivesoftware.spark.roar.displaytype.TopRight;
 
 /**
@@ -157,7 +158,13 @@ public class RoarProperties {
 
 	if (getDisplayType().equals(TopRight.getName())) {
 	    return new TopRight();
-	} else {
+	}
+	else if(getDisplayType().equals(SparkToasterHandler.getName()))
+	{
+	    return new SparkToasterHandler();
+	}
+	
+	else {
 	    return new BottomRight();
 	}
 	

@@ -11,7 +11,6 @@ import javax.swing.ImageIcon;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.roar.RoarProperties;
 import org.jivesoftware.spark.roar.RoarResources;
@@ -19,6 +18,12 @@ import org.jivesoftware.spark.roar.gui.RoarPanel;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 
+/**
+ * handles Popups in the upper right corner and stacking downwards
+ * 
+ * @author wolf.posdorfer
+ * 
+ */
 public class TopRight implements RoarDisplayType {
 
     private int _lastusedXpos;
@@ -62,7 +67,7 @@ public class TopRight implements RoarDisplayType {
 
 	    ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
 
-	    String nickname = StringUtils.parseName(message.getFrom());
+	    String nickname = room.getTabTitle();
 
 	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
 		    _lastusedXpos, _lastusedYpos, props.getDuration(),
@@ -107,7 +112,6 @@ public class TopRight implements RoarDisplayType {
     public static String getName() {
 	return "TopRight";
     }
-
 
     public static String getLocalizedName() {
 	return RoarResources.getString("roar.display.topright");
