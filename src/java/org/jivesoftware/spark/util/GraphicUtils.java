@@ -798,7 +798,35 @@ public final class GraphicUtils {
      */
     public static ImageIcon scale(ImageIcon icon, int newHeight, int newWidth) {
 	Image img = icon.getImage();
-	img = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+	int height = icon.getIconHeight();
+	int width = icon.getIconWidth();
+	boolean scaleHeight = height * newWidth > width * newHeight;
+	if (height > newHeight) {
+	    // Too tall
+	    if (width <= newWidth || scaleHeight) {
+		// Width is okay or height is limiting factor due to aspect
+		// ratio
+		height = newHeight;
+		width = -1;
+	    } else {
+		// Width is limiting factor due to aspect ratio
+		height = -1;
+		width = newWidth;
+	    }
+	} else if (width > newWidth) {
+	    // Too wide and height is okay
+	    height = -1;
+	    width = newWidth;
+	} else if (scaleHeight) {
+	    // Height is limiting factor due to aspect ratio
+	    height = newHeight;
+	    width = -1;
+	} else {
+	    // Width is limiting factor due to aspect ratio
+	    height = -1;
+	    width = newWidth;
+	}
+	img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 	return new ImageIcon(img);
     }
 
