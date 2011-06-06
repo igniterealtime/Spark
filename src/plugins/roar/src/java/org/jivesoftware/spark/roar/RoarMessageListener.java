@@ -20,7 +20,9 @@
 package org.jivesoftware.spark.roar;
 
 import java.util.Calendar;
+
 import javax.swing.JFrame;
+
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
@@ -57,7 +59,8 @@ public class RoarMessageListener implements GlobalMessageListener {
 	    boolean isoldgroupchat = isOldGroupchat(message);
 
 	    if (framestate == JFrame.NORMAL && activeroom.equals(room)
-		    && room.isShowing() && isoldgroupchat) {
+		    && room.isShowing()
+		    && (isoldgroupchat || isMessageFromRoom(room, message))) {
 		// Do Nothing
 	    } else {
 		_displaytype.messageReceived(room, message);
@@ -142,13 +145,25 @@ public class RoarMessageListener implements GlobalMessageListener {
      * Extracts the time stamp from a given xmpp packet
      * 
      * @param xmlstring
-     * @return String like <b>20110526T08:27:18</b>, split at "T"
+     * @return String like <b>20110526T08:27:18</b>, split at <b>"T"</b>
      */
-    public String extractDate(String xmlstring) {
+    private String extractDate(String xmlstring) {
 	int indexofstamp = xmlstring.indexOf("stamp=");
 	String result = xmlstring
-		.substring(indexofstamp + 7, indexofstamp + 24);
+		.substring(indexofstamp + 7, indexofstamp + 24)
+		.replace("-", "");
 	return result;
+
+    }
+
+    /**
+     * Check if the message comes directly from the room
+     * @param room
+     * @param message
+     * @return boolean
+     */
+    private boolean isMessageFromRoom(ChatRoom room, Message message) {
+	return message.getFrom().equals(room.getRoomname());
 
     }
 
