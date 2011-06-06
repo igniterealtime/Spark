@@ -206,9 +206,19 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * Removes the last appearance of word from the TextArea
      * @param word
      */
-    public void removeWord(String word)
+    public void removeLastWord(String word)
     {
 	select(getText().lastIndexOf(word),getText().length());	
+	replaceSelection("");
+    }
+    
+    /**
+     * Removes everything in between <b>begin</b> and <b>end</b>
+     * @param begin
+     * @param end
+     */
+    public void removeWordInBetween(int begin, int end){
+	select(begin, end);
 	replaceSelection("");
     }
 

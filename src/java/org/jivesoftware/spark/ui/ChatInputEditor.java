@@ -85,18 +85,52 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
+		
+		// We have Text selected, remove it
+		if (getSelectedText() != null && getSelectedText().length() > 0) {
+		    _chatinputeditor.removeWordInBetween(getSelectionStart(),
+			    getSelectionEnd());
 
-		String wordToRemove = "";
+		    // We are somewhere in betwee 0 and str.length
+		} else if (getCaretPosition() < getText().length()) {
 
-		if (getSelectedText()!=null && getSelectedText().equals(getText())) {
-		    wordToRemove = getText();
+		    String preCaret = getText()
+			    .substring(0, getCaretPosition());
+
+		    int lastSpace = preCaret.lastIndexOf(" ") != -1 ? preCaret
+			    .lastIndexOf(" ") : 0;
+
+		    if (lastSpace != -1 && lastSpace!=0)
+		    {	
+			// Do we have anymore spaces before the current one?
+			for (int i = lastSpace; getText().charAt(i) == ' '; --i) {
+			    lastSpace--;
+			}
+			lastSpace++;
+		    }
+		    _chatinputeditor.removeWordInBetween(lastSpace,
+			    getCaretPosition());
+
+		    if (lastSpace <= getText().length()) {
+			setCaretPosition(lastSpace);
+		    } else {
+			setCaretPosition(getText().length());
+		    }
+
+		    // We are at the end and will remove until the next SPACE
 		} else if (getText().contains(" ")) {
-		    wordToRemove = getText().substring(
-			    getText().lastIndexOf(" "));
+		    int untilhere = getText().lastIndexOf(" ");
+
+		    // Do we have anymore spaces before the last one?
+		    for (int i = untilhere; getText().charAt(i) == ' '; --i) {
+			untilhere--;
+		    }
+		    untilhere++;
+		    _chatinputeditor.removeLastWord(getText().substring(
+			    untilhere));
 		} else {
-		    wordToRemove = getText();
+		    _chatinputeditor.removeLastWord(getText());
 		}
-		_chatinputeditor.removeWord(wordToRemove);
 	    }
 	};
 
