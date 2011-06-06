@@ -26,13 +26,13 @@ public class TransferUtils {
 	if (kB < 1024) {
 	    String KB = Double.toString(kB);
 	    // Convert 3.1415926535897932384626433832795 to 3.1
-	    KB = KB.contains(".") ? KB.substring(0, KB.indexOf(".") + 2) : KB;
+	    KB = splitAtDot(KB, 1);
 
 	    return KB + "kB/s";
 	} else {
 	    String MB = Double.toString((kB / 1024.0));
 	    // Convert 3.1415926535897932384626433832795 to 3.1
-	    MB = MB.contains(".") ? MB.substring(0, MB.indexOf(".") + 2) : MB;
+	    MB = splitAtDot(MB, 1);
 
 	    return MB + "MB/s";
 	}
@@ -98,6 +98,60 @@ public class TransferUtils {
 	String ss = seconds < 10 ? "0" + seconds : "" + seconds;
 
 	return "(" + hh + ":" + mm + ":" + ss + ")";
+
+    }
+    
+    /**
+     * Converts a given Byte into KB or MB or GB if applicable
+     * @param bytes
+     * @return "12 KB" or "27 MB" etc
+     */
+    public static String getAppropriateByteWithSuffix(long bytes)
+    {
+	if(bytes >= 1099511627776L)
+	{
+	    String x = splitAtDot(""+(bytes/1099511627776L),2);
+	    return x +" TB"; 
+	}
+	else if(bytes >= 1073741824)
+	{
+	    String x = splitAtDot(""+(bytes/1073741824L),2);
+	    return x +" GB"; 
+	}
+	else if(bytes >= 1048576)
+	{
+	    String x = splitAtDot(""+(bytes/1048576L),2);
+	    return x +" MB"; 
+	}
+	else if(bytes >= 1024)
+	{
+	    String x = splitAtDot(""+(bytes/1024L),2);
+	    return x +" KB";
+	}
+	else return bytes + " B";
+    }
+    /**
+     * shorten a double or long with sig.digits<br>
+     * splitAtDot("3.123",2) -> "3.12"<br>
+     * does not round!
+     * @param string
+     * @param significantdigits
+     * @return
+     */
+    private static String splitAtDot(String string, int significantdigits) {
+	if (string.contains(".")) {
+	    // no idea why but string.split doesnt like "."
+	    String s = string.replace(".", "T").split("T")[1];
+
+	    if (s.length() >= significantdigits) {
+		return string.substring(0, string.indexOf(".") + 1
+			+ significantdigits);
+	    } else {
+		return string
+			.substring(0, string.indexOf(".") + 1 + s.length());
+	    }
+	}
+	else return string;
 
     }
 

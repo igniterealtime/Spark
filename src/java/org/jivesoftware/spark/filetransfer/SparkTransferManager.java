@@ -66,6 +66,7 @@ import javax.swing.text.StyledDocument;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
@@ -103,6 +104,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
+import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 /**
@@ -538,6 +540,30 @@ public class SparkTransferManager {
      * @return the ChatRoom of the user.
      */
     public ChatRoom sendFile(File file, String jid) {
+	
+	long maxsize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_MAXIMUM_SIZE));
+	long warningsize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_WARNING_SIZE));
+	
+
+	if(file.length()>= maxsize && maxsize != -1)
+	{
+	    String maxsizeString = TransferUtils.getAppropriateByteWithSuffix(maxsize);
+	    String yoursizeString = TransferUtils.getAppropriateByteWithSuffix(file.length());
+	    String output = Res.getString("message.file.transfer.file.too.big.error", maxsizeString, yoursizeString);
+	    JOptionPane.showMessageDialog(null, output, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+	    return null;
+	}
+	
+	if(file.length() >= warningsize && warningsize != -1)
+	{
+	    int result = JOptionPane.showConfirmDialog(null, Res.getString("message.file.transfer.file.too.big.warning"), Res.getString("title.error"), JOptionPane.YES_NO_OPTION);
+	
+	    if(result != 0)
+	    {
+		return null;
+	    }
+	}
+	
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         String bareJID = StringUtils.parseBareAddress(jid);
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
