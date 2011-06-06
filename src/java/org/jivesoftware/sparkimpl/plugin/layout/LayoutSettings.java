@@ -19,6 +19,9 @@
  */
 package org.jivesoftware.sparkimpl.plugin.layout;
 
+import java.awt.Toolkit;
+
+
 public class LayoutSettings {
 
     private int mainWindowX;
@@ -54,10 +57,13 @@ public class LayoutSettings {
     }
 
     public int getMainWindowWidth() {
-        if (mainWindowWidth < 100) {
-            mainWindowWidth = 100;
-        }
-        return mainWindowWidth;
+	if (mainWindowWidth < 100) {
+	    mainWindowWidth = 100;
+	} else if (mainWindowHeight > Toolkit.getDefaultToolkit()
+		.getScreenSize().width) {
+	    mainWindowWidth = Toolkit.getDefaultToolkit().getScreenSize().width - 50;
+	}
+	return mainWindowWidth;
     }
 
     public void setMainWindowWidth(int mainWindowWidth) {
@@ -65,10 +71,13 @@ public class LayoutSettings {
     }
 
     public int getMainWindowHeight() {
-        if (mainWindowHeight < 200) {
-            mainWindowHeight = 500;
-        }
-        return mainWindowHeight;
+	if (mainWindowHeight < 200) {
+	    mainWindowHeight = 500;
+	} else if (mainWindowHeight > Toolkit.getDefaultToolkit()
+		.getScreenSize().height) {
+	    mainWindowHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 50;
+	}
+	return mainWindowHeight;
     }
 
     public void setMainWindowHeight(int mainWindowHeight) {
