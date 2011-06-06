@@ -162,8 +162,20 @@ public class OTRSession {
                     {
                        PublicKey rempubkey =  _engine.getRemotePublicKey(_mySession);
                        OTRManager.getInstance().getKeyManager().savePublicKey(_mySession, rempubkey);
-                       remkey =   OTRManager.getInstance().getKeyManager().getRemoteFingerprint(_mySession);
+                       remkey = OTRManager.getInstance().getKeyManager().getRemoteFingerprint(_mySession);
                     }
+                    
+                    System.out.println(remkey);
+                    
+                    if (OTRManager.getInstance().getKeyManager().isVerified(_mySession))
+                    {
+                        System.out.println("verified");
+                        
+                    }
+                    
+                    System.out.println(_mySession.getUserID());
+                    System.out.println( OTRManager.getInstance().getKeyManager().getLocalFingerprint(_mySession));;
+                    
                     //String remkey = OTRManager.getInstance().getKeyManager().getRemoteFingerprint(_mySession);
                     _chatRoom.getTranscriptWindow().insertNotificationMessage("From now on, your conversation is encrypted Remotekey: "+remkey, Color.gray);
                     _otrButton.setIcon(new ImageIcon(cl.getResource("otr_on.png")));

@@ -4,13 +4,17 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.otrplug.OTRManager;
+import org.jivesoftware.spark.otrplug.OTRProperties;
+import org.jivesoftware.spark.otrplug.OTRResources;
 import org.jivesoftware.spark.preference.Preference;
 
 public class OTRPreferences implements Preference {
 
+    private OTRPrefPanel pref = new OTRPrefPanel();
+    
     @Override
     public String getTitle() {
-        return "Off-The-Record Plugin";
+        return OTRResources.getString("otr.title");
     }
 
     @Override
@@ -27,7 +31,7 @@ public class OTRPreferences implements Preference {
     @Override
     public String getListName() {
         
-        return "OTR";
+        return OTRResources.getString("otr.list.entry");
     }
 
     @Override
@@ -38,7 +42,7 @@ public class OTRPreferences implements Preference {
 
     @Override
     public JComponent getGUI() {
-        return new OTRPrefPanel();
+        return pref;
     }
 
     @Override
@@ -49,7 +53,8 @@ public class OTRPreferences implements Preference {
 
     @Override
     public void commit() {
-        // TODO Auto-generated method stub
+        OTRProperties.getInstance().setIsOTREnabled(pref.isOTREnabled());
+        OTRProperties.getInstance().save();
 
     }
 

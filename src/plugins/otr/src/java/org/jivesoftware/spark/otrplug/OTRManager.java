@@ -33,7 +33,8 @@ public class OTRManager  extends ChatRoomListenerAdapter {
     private MessageListenerHandler _msgListener;
     private Map<String, OTRSession> _activeSessions = new HashMap<String,OTRSession>();
     final ChatManager chatManager = SparkManager.getChatManager();
-    private static OtrKeyManager _keyManager;
+    private static MyOtrKeyManager _keyManager;
+
 
     private OTRManager()
     {
@@ -81,7 +82,7 @@ public class OTRManager  extends ChatRoomListenerAdapter {
         }
     }
     
-    public OtrKeyManager getKeyManager()
+    public MyOtrKeyManager getKeyManager()
     {
         return _keyManager;
     }
