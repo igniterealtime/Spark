@@ -24,11 +24,14 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.ImageIcon;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 public class Default {
     private static PropertyResourceBundle prb;
@@ -141,6 +144,32 @@ public class Default {
             Log.debug(propertyName + " not found.");
         }
         return null;
+    }
+    
+    /**
+     * Returns a Collection of Plugins on the Blacklist<br>
+     * Containing the Name and also if specified the entrypoint-class
+     * @return Collection
+     */
+    public static Collection<String> getPluginBlacklist() {
+	String pluginlist = getString("PLUGIN_BLACKLIST").replace(" ", "")
+		.toLowerCase();
+	StringTokenizer tokenizer = new StringTokenizer(pluginlist, ",");
+	ArrayList<String> list = new ArrayList<String>();
+
+	while (tokenizer.hasMoreTokens()) {
+	    list.add(tokenizer.nextToken());
+	}
+
+	StringTokenizer clazztokenz = new StringTokenizer(
+		getString("PLUGIN_BLACKLIST_CLASS").replace(" ", ""), ",");
+
+	while (clazztokenz.hasMoreTokens()) {
+	    list.add(clazztokenz.nextToken());
+	}
+
+	return list;
+
     }
     
     /**

@@ -49,6 +49,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PluginClassLoader;
@@ -78,6 +79,7 @@ public class PluginManager implements MainWindowListener {
     private Plugin pluginClass;
     private PluginClassLoader classLoader;
 
+    private Collection<String> _blacklistPlugins;
 
     /**
      * Returns the singleton instance of <CODE>PluginManager</CODE>,
@@ -117,6 +119,8 @@ public class PluginManager implements MainWindowListener {
         if (!PLUGINS_DIRECTORY.exists()) {
             PLUGINS_DIRECTORY.mkdirs();
         }
+        
+        _blacklistPlugins = Default.getPluginBlacklist();
     }
 
     private void movePlugins() {
@@ -260,6 +264,7 @@ public class PluginManager implements MainWindowListener {
      * @return the new Plugin model for the Public Plugin.
      */
     private Plugin loadPublicPlugin(File pluginDir) {
+		
         File pluginFile = new File(pluginDir, "plugin.xml");
         SAXReader saxReader = new SAXReader();
         Document pluginXML = null;
@@ -284,6 +289,18 @@ public class PluginManager implements MainWindowListener {
 
                 name = plugin1.selectSingleNode("name").getText();
                 clazz = plugin1.selectSingleNode("class").getText();
+                
+		try {
+		    String lower = name.replace(" ","").toLowerCase();
+		    // Dont load the plugin if its on the Blacklist
+		    if(_blacklistPlugins.contains(lower) || _blacklistPlugins.contains(clazz))
+		    {
+			return null;
+		    }    
+		} catch (Exception e) {
+		    // Whatever^^
+		    return null;
+		}
 
                 // Check for minimum Spark version
                 try {
