@@ -744,6 +744,14 @@ public class LocalPreferences {
 	public boolean isMucHighTextEnabled() {
 		return getBoolean("isMucHighTextOn", false);
 	}
+	
+	public boolean isMucRandomColors(){
+	    return getBoolean("isMucRandomColors", true);
+	}
+	
+	public void setMucRandomColors(boolean value){
+	    setBoolean("isMucRandomColors", value);
+	}
 
 	public boolean isMucHighToastEnabled() {
 		return getBoolean("isMucHighToastOn", false);

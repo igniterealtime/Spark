@@ -44,7 +44,8 @@ public class GroupChatPreferencePanel extends JPanel {
     private JCheckBox showjoinleavemessage 	= new JCheckBox();
     private JCheckBox showroleicons 	= new JCheckBox();
     private JCheckBox _autoAcceptInvites = new JCheckBox();
-
+    private JCheckBox _randomcolors = new JCheckBox();
+    
     private JPanel gCPanel = new JPanel();
     /**
      * Constructor invokes UI setup.
@@ -63,6 +64,7 @@ public class GroupChatPreferencePanel extends JPanel {
         ResourceUtils.resButton(showjoinleavemessage	, Res.getString("menuitem.add.groupchat.showjoinleavemessage"));
         ResourceUtils.resButton(showroleicons		, Res.getString("menuitem.add.groupchat.showrolesinsteadofstatus"));
         ResourceUtils.resButton(_autoAcceptInvites 	, Res.getString("menuitem.add.groupchat.auto.accept.invite"));
+        ResourceUtils.resButton(_randomcolors	 	, Res.getString("menuitem.add.groupchat.random.colors"));
         
         gCPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("title.group.chat.settings")));
 
@@ -72,10 +74,11 @@ public class GroupChatPreferencePanel extends JPanel {
         
         gCPanel.add(highlightMyName	, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(highlightMyText	, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        gCPanel.add(highlightPopName	, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        gCPanel.add(showjoinleavemessage, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        gCPanel.add(showroleicons	, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        gCPanel.add(_autoAcceptInvites	, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(_randomcolors	, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(highlightPopName	, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(showjoinleavemessage, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(showroleicons	, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        gCPanel.add(_autoAcceptInvites	, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         
     }
 
@@ -125,6 +128,14 @@ public class GroupChatPreferencePanel extends JPanel {
 
     public boolean isAutoAcceptMuc() {
 	return _autoAcceptInvites.isSelected();
+    }
+    
+    public void setRandomColors(boolean random) {
+	_randomcolors.setSelected(random);
+    }
+
+    public boolean isRandomColors() {
+	return _randomcolors.isSelected();
     }
 
 

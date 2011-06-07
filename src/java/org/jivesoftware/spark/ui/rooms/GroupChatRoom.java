@@ -1334,13 +1334,28 @@ public final class GroupChatRoom extends ChatRoom {
 	return subjectPanel;
     }
 
+    /**
+     * Returns the Color to use 
+     * Use Color.blue for yourself
+     * @param nickname
+     * @return
+     */
     public Color getColor(String nickname) {
-	int index = 0;
-	for (int i = 0; i < nickname.length(); i++) {
-	    index += nickname.charAt(i) * i;
-	}
 
-	return ChatManager.COLORS[index % ChatManager.COLORS.length];
+	if (nickname.equals(this.getNickname())) {
+	    return Color.BLUE;
+	} else {
+	    if (pref.isMucRandomColors()) {
+		int index = 0;
+		for (int i = 0; i < nickname.length(); i++) {
+		    index += nickname.charAt(i) * i;
+		}
+
+		return ChatManager.COLORS[index % ChatManager.COLORS.length];
+	    } else {
+		return Color.red;
+	    }
+	}
     }
 
     
