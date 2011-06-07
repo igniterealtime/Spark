@@ -89,7 +89,11 @@ public class MyOtrKeyManager implements OtrKeyManager {
 
         public void removeProperty(String id) {
             properties.remove(id);
-
+            try {
+                this.store();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public byte[] getPropertyBytes(String id) {
@@ -271,9 +275,8 @@ public class MyOtrKeyManager implements OtrKeyManager {
 
         if (!isVerified(sessionID))
             return;
-
+        
         this.store.removeProperty(sessionID.getUserID() + ".publicKey.verified");
-
         for (OtrKeyManagerListener l : listeners)
             l.verificationStatusChanged(sessionID);
 

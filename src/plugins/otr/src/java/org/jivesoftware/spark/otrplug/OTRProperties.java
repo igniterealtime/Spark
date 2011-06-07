@@ -64,7 +64,7 @@ public class OTRProperties {
 
     public boolean getIsOTREnabled()
     {
-        return getBoolean("isOTREnabled", true);
+        return getBoolean("isOTREnabeld", true);
     }
     
     public void setIsOTREnabled(boolean enabled)
@@ -72,6 +72,25 @@ public class OTRProperties {
         setBoolean("isOTREnabeld", enabled);
     }
    
+    public boolean getOTRCloseOnDisc()
+    {
+        return getBoolean("OTRCloseOnDisc", true);
+    }
+    
+    public void setOTRCloseOnDisc(boolean enabled)
+    {
+        setBoolean("OTRCloseOnDisc", enabled);
+    }
+
+    public boolean getOTRCloseOnChatClose()
+    {
+        return getBoolean("OTRCloseOnChatClose", false);
+    }
+    
+    public void setOTRCloseOnChatClose(boolean enabled)
+    {
+        setBoolean("OTRCloseOnChatClose", enabled);
+    }
 
     // ===============================================================================
     // ===============================================================================

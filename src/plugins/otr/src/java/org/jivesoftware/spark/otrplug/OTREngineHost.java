@@ -2,13 +2,11 @@ package org.jivesoftware.spark.otrplug;
 
 import java.awt.Color;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 import net.java.otr4j.OtrEngineHost;
@@ -38,14 +36,12 @@ public class OTREngineHost implements OtrEngineHost {
     @Override
     public void injectMessage(SessionID arg0, String arg1) {
         System.err.println("Send msg via injection "+arg1);     
-      //  _chatRoom.sendMessage(arg1);
         Message injection = new Message();
         injection.setType(Message.Type.chat);
         injection.setTo(_chatRoom.getParticipantJID());
         injection.setFrom(SparkManager.getSessionManager().getJID()); 
         String threadID = StringUtils.randomString(6);
         injection.setThread(threadID);
-        // Set the body of the message using typedMessage
         injection.setBody(arg1);
         SparkManager.getConnection().sendPacket(injection);
     }

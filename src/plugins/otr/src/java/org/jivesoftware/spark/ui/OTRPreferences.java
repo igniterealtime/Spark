@@ -3,7 +3,6 @@ package org.jivesoftware.spark.ui;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import org.jivesoftware.spark.otrplug.OTRManager;
 import org.jivesoftware.spark.otrplug.OTRProperties;
 import org.jivesoftware.spark.otrplug.OTRResources;
 import org.jivesoftware.spark.preference.Preference;
@@ -19,7 +18,7 @@ public class OTRPreferences implements Preference {
 
     @Override
     public Icon getIcon() {
-        return OTRManager.getInstance().getIcon("otr_pref.png");
+        return OTRResources.getIcon("otr_pref.png");
     }
 
     @Override
@@ -42,7 +41,8 @@ public class OTRPreferences implements Preference {
 
     @Override
     public JComponent getGUI() {
-        return pref;
+        pref = new OTRPrefPanel();
+        return pref.getGUI();
     }
 
     @Override
@@ -54,6 +54,8 @@ public class OTRPreferences implements Preference {
     @Override
     public void commit() {
         OTRProperties.getInstance().setIsOTREnabled(pref.isOTREnabled());
+        OTRProperties.getInstance().setOTRCloseOnChatClose(pref.isCloseOnChatClose());
+        OTRProperties.getInstance().setOTRCloseOnDisc(pref.isCloseOnDisc());
         OTRProperties.getInstance().save();
 
     }

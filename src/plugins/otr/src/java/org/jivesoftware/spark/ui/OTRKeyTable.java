@@ -4,8 +4,9 @@ import java.awt.BorderLayout;
 
 import java.util.Vector;
 
-import javax.swing.JComponent;
 
+
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -14,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.jivesoftware.spark.otrplug.OTRResources;
 
-public class OTRKeyTable extends JComponent {
+public class OTRKeyTable extends JPanel {
 
     /**
      * 
@@ -29,7 +30,8 @@ public class OTRKeyTable extends JComponent {
 
         _tableModel = new MyTableModel(header);
         _table = new JTable(_tableModel);
-
+        _table.getTableHeader().setReorderingAllowed(false);
+       
         this.setLayout(new BorderLayout());
         this.add(new JScrollPane(_table), BorderLayout.CENTER);
 
@@ -60,7 +62,6 @@ public class OTRKeyTable extends JComponent {
                 return Boolean.class;
             } else
                 return String.class;
-
         }
     }
 

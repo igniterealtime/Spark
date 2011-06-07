@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -39,7 +40,6 @@ public class OTRPrefPanel extends JPanel {
     private JButton _renewPrivateKey;
     private OTRKeyTable _keytable;
     private JTextField _privateKey;
-    private JPanel _gridPanel;
     private MyOtrKeyManager _keyManager;
     private OTRProperties _properties;
     
@@ -48,35 +48,48 @@ public class OTRPrefPanel extends JPanel {
         _manager = OTRManager.getInstance();
         _keyManager = _manager.getKeyManager();
         _properties = OTRProperties.getInstance();
-        setLayout(new VerticalFlowLayout());
+        setLayout(new GridBagLayout());
         init();
         buildGUI();
         OtrEnableSwitch();
-        this.add(_gridPanel);
     }
 
     private void OtrEnableSwitch() {
-    
-       _enableOTR.setSelected(_properties.getIsOTREnabled());
-        
+        if (!_enableOTR.isSelected())
+        {
+            _closeSessionOff.setEnabled(false);
+            _closeSessionOnWindowClose.setEnabled(false);
+            _renewPrivateKey.setEnabled(false);
+            _keytable.setEnabled(false);
+        } else {
+            _closeSessionOff.setEnabled(true);
+            _closeSessionOnWindowClose.setEnabled(true);
+            _renewPrivateKey.setEnabled(true);
+            _keytable.setEnabled(true);
+        }
     }
 
-    public boolean isOTREnabled()
-    {
-        return _enableOTR.isSelected();
-    }
-    
     private void init() {
-        _gridPanel = new JPanel(new GridBagLayout());
 
         _enableOTR = new JCheckBox();
         _enableOTR.setText(OTRResources.getString("otr.enable"));
+        _enableOTR.setSelected(_properties.getIsOTREnabled());
+        
+        _enableOTR.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OtrEnableSwitch();            
+            }
+        });
         
         _closeSessionOff = new JCheckBox();
         _closeSessionOff.setText(OTRResources.getString("otr.close.session.on.contact.off"));
+        _closeSessionOff.setSelected(_properties.getOTRCloseOnDisc());
         
         _closeSessionOnWindowClose = new JCheckBox();
         _closeSessionOnWindowClose.setText(OTRResources.getString("otr.close.session.on.window.close"));
+        _closeSessionOnWindowClose.setSelected(_properties.getOTRCloseOnChatClose());
         
         _currentKeyLabel = new JLabel();
         _currentKeyLabel.setText(OTRResources.getString("current.priv.key"));
@@ -95,12 +108,28 @@ public class OTRPrefPanel extends JPanel {
 
         _privateKey = new JTextField();
         _privateKey.setEditable(false);
-        _privateKey.setSize(300, 20);
         _privateKey.setText(getCurrentLocalKey());
 
         _keytable = new OTRKeyTable();
 
         loadRemoteKeys();
+
+        
+
+    }
+
+
+
+    private void loadRemoteKeys() {
+
+        for (RosterEntry entry : SparkManager.getConnection().getRoster().getEntries()) {
+            SessionID curSession = new SessionID(SparkManager.getConnection().getUser(), entry.getUser(), "Scytale");
+            String remoteKey = _keyManager.getRemoteFingerprint(curSession);
+            if (remoteKey != null) {
+                boolean isVerified = _keyManager.isVerified(curSession);
+                _keytable.addEntry(entry.getUser(), remoteKey, isVerified);
+            }
+        }
 
         _keytable.addTableChangeListener(new TableModelListener() {
 
@@ -113,47 +142,56 @@ public class OTRPrefPanel extends JPanel {
                     boolean selection = (Boolean) _keytable.getValueAt(row, col);
                     String JID = (String)_keytable.getValueAt(row, 0);
                     SessionID curSelectedSession = new SessionID(SparkManager.getConnection().getUser(), JID, "Scytale");
-                    if (selection) {
+                    if (!selection) {
                         _keyManager.verify(curSelectedSession);
                     } else
-
                     {
                         _keyManager.unverify(curSelectedSession);
                     }
                 }
             }
         });
-
+        
     }
 
+    private void buildGUI() {
+        this.setBorder(BorderFactory.createTitledBorder(OTRResources.getString("otr.settings")));
+        this.add(_enableOTR, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        this.add(_closeSessionOff, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+        this.add(_closeSessionOnWindowClose, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        this.add(_currentKeyLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
+        this.add(_privateKey, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 5), 0, 0));
+        this.add(_renewPrivateKey, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0));
+        this.add(_keytable, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(20, 5, 10, 5), 0, 0));
+    }
+
+    
     private String getCurrentLocalKey() {
         SessionID mySession = new SessionID(SparkManager.getConnection().getUser(), "no one", "Scytale");
         String myKey = _keyManager.getLocalFingerprint(mySession);
         return myKey;
     }
-
-    private void loadRemoteKeys() {
-
-        for (RosterEntry entry : SparkManager.getConnection().getRoster().getEntries()) {
-            SessionID curSession = new SessionID(SparkManager.getConnection().getUser(), entry.getUser(), "Scytale");
-            String remoteKey = _keyManager.getRemoteFingerprint(curSession);
-            if (remoteKey != null) {
-                boolean isVerified = _keyManager.isVerified(curSession);
-                _keytable.addEntry(entry.getUser(), remoteKey, isVerified);
-            }
-        }
+    
+    public JComponent getGUI() {
+        _keytable = new OTRKeyTable();
+        loadRemoteKeys();
+        return this;
     }
 
-    private void buildGUI() {
-        _gridPanel.setBorder(BorderFactory.createTitledBorder(OTRResources.getString("otr.settings")));
 
-        _gridPanel.add(_enableOTR, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        _gridPanel.add(_closeSessionOff, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        _gridPanel.add(_closeSessionOnWindowClose, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        _gridPanel.add(_currentKeyLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-        _gridPanel.add(_privateKey, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        _gridPanel.add(_renewPrivateKey, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-        _gridPanel.add(_keytable, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(20, 0, 0, 0), 0, 0));
+    public boolean isOTREnabled()
+    {
+        return _enableOTR.isSelected();
     }
-
+    
+    public boolean isCloseOnDisc()
+    {
+        return _closeSessionOff.isSelected();
+    }
+    public boolean isCloseOnChatClose()
+    {
+        return _closeSessionOnWindowClose.isSelected();
+    }
+    
+    
 }
