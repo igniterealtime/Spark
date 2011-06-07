@@ -106,6 +106,11 @@ public class TopRight implements RoarDisplayType {
 	}
 
 	--_amount;
+	
+	if (_amount == 0) {
+	    _lastusedXpos = _screensize.width - 5;
+	    _lastusedYpos = 5;
+	}
 
     }
 

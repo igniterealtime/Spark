@@ -85,25 +85,31 @@ public final class ChatTranscripts {
 
     private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {
         final StringBuilder builder = new StringBuilder();
+        
+        final String one = " ";
+        final String two = "  ";
+        final String three = "   ";
 
         // Handle new transcript file.
         if (!transcriptFile.exists() || !append) {
-            builder.append("<transcript><messages>");
+            builder.append("<transcript>\n");
+            builder.append(one+"<messages>\n");
         }
 
         for (HistoryMessage m : messages) {
-            builder.append("<message>");
-            builder.append("<to>").append(m.getTo()).append("</to>");
-            builder.append("<from>").append(m.getFrom()).append("</from>");
-            builder.append("<body>").append(StringUtils.escapeForXML(m.getBody())).append("</body>");
+            builder.append(two+"<message>\n");
+            builder.append(three+"<to>").append(m.getTo()).append("</to>\n");
+            builder.append(three+"<from>").append(m.getFrom()).append("</from>\n");
+            builder.append(three+"<body>").append(StringUtils.escapeForXML(m.getBody())).append("</body>\n");
 
             String dateString = FORMATTER.format(m.getDate());
-            builder.append("<date>").append(dateString).append("</date>");
-            builder.append("</message>");
+            builder.append(three+"<date>").append(dateString).append("</date>\n");
+            builder.append(two+"</message>\n");
         }
 
         if (!transcriptFile.exists() || !append) {
-            builder.append("</messages></transcript>");
+            builder.append(one+"</messages>\n");
+            builder.append("</transcript>");
         }
 
 
@@ -127,7 +133,7 @@ public final class ChatTranscripts {
 
             // We want to append near the end of the document as the last
             // child in the transcript.
-            final String endTag = "</messages></transcript>";
+            final String endTag = " </messages>\n</transcript>";
             builder.append(endTag);
 
             raf.seek(transcriptFile.length() - endTag.length());
@@ -192,6 +198,7 @@ public final class ChatTranscripts {
         catch (Exception e) {
             e.printStackTrace();
         }
+      
 
         return transcript;
     }

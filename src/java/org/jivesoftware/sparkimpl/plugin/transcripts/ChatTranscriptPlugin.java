@@ -35,6 +35,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -341,10 +342,28 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                 final TimerTask transcriptTask = new TimerTask() {
                     public void run() {
-                        final ChatTranscript transcript = (ChatTranscript)get();
+                        ChatTranscript transcript = (ChatTranscript)get();
+                        
+                        // reduce the size of our transcript to the last 5000Messages
+                        // This will prevent JavaOutOfHeap Errors
+                        ArrayList<HistoryMessage> toobig = (ArrayList<HistoryMessage>) transcript.getMessage(null);
+                        
+                        // Get the Maximum size from settingsfile
+                        int maxsize = SettingsManager.getLocalPreferences().getMaximumHistory();
+                        if (toobig.size() > maxsize)
+                        {
+                            transcript = new ChatTranscript();
+                            
+                            for(int i = toobig.size()-1; i>=toobig.size()-maxsize;--i)
+                            {
+                        	transcript.addHistoryMessage(toobig.get(i));
+                            }
+                        }
+                        
                         final List<HistoryMessage> list = transcript.getMessage(
                 		Res.getString("message.search.for.history").equals(searchField.getText())
                 			? null : searchField.getText());
+
                         
                         final String personalNickname = SparkManager.getUserManager().getNickname();
                         Date lastPost = null;

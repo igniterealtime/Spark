@@ -1049,6 +1049,20 @@ public class LocalPreferences {
 	setBoolean("autoAcceptMucInvite", autoAcceptMuc);
 
     }
+    
+    /**
+     * Returns the Maximum visible amount of History entries
+     * Default is 5000
+     * @return int
+     */
+    public int getMaximumHistory() {
+	int x = getInt("maximumHistory", -1);
+	if (x == -1) {
+	    x = 5000;
+	    setInt("maximumHistory", x);
+	}
+	return x;
+    }
 
 
 }
