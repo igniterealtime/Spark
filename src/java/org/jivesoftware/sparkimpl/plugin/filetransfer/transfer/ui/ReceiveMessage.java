@@ -588,7 +588,7 @@ public class ReceiveMessage extends JPanel {
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.CANCEL_IMAGE));
+        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

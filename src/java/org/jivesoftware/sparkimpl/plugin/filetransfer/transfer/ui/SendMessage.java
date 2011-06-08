@@ -94,7 +94,7 @@ public class SendMessage extends JPanel {
 
         cancelButton.setText(Res.getString("cancel"));
         retryButton.setText(Res.getString("retry"));
-        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.CANCEL_IMAGE));
+        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
         retryButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
 
         add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));

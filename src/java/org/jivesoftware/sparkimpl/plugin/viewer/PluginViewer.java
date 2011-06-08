@@ -19,6 +19,41 @@
  */
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
@@ -27,6 +62,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -44,42 +80,9 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
+/**
+ * Class to handle the viewing of installed and downloadable Plugins
+ */
 public class PluginViewer extends JPanel implements Plugin {
 
 	private static final long serialVersionUID = -4249017716988031394L;
@@ -97,41 +100,47 @@ public class PluginViewer extends JPanel implements Plugin {
 
     public PluginViewer() {
 
-   		EventQueue.invokeLater(new Runnable() {
-   			public void run() {
-   				
-						tabbedPane = new JTabbedPane();
-						installedPanel = new JPanel();
-						availablePanel = new JPanel();
-					   setLayout(new GridBagLayout());
-					
-					   installedPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-					   installedPanel.setBackground(Color.white);
-					
-					   availablePanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-					   availablePanel.setBackground(Color.white);
-					
-					   // Add TabbedPane
-					   add(tabbedPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-					
-					   // Add Tabs
-					   tabbedPane.addTab(Res.getString("tab.installed.plugins"), new JScrollPane(installedPanel));
-					   if(!Default.getBoolean(Default.INSTALL_PLUGINS_DISABLED)){
-					   tabbedPane.addTab(Res.getString("tab.available.plugins"), new JScrollPane(availablePanel));	   
-					   }
-					
-					   loadInstalledPlugins();
-					
-					   tabbedPane.addChangeListener(new ChangeListener() {
-			            public void stateChanged(ChangeEvent changeEvent) {
-			                if (tabbedPane.getSelectedIndex() == 1) {
-			                    loadAvailablePlugins();
-			                    loaded = true;
-			                }
-			            }
-			        });
-   			}
-   		});
+	EventQueue.invokeLater(new Runnable() {
+	    public void run() {
+
+		tabbedPane = new JTabbedPane();
+		installedPanel = new JPanel();
+		availablePanel = new JPanel();
+		setLayout(new GridBagLayout());
+
+		installedPanel.setLayout(new VerticalFlowLayout(
+			VerticalFlowLayout.TOP, 0, 0, true, false));
+		installedPanel.setBackground(Color.white);
+
+		availablePanel.setLayout(new VerticalFlowLayout(
+			VerticalFlowLayout.TOP, 0, 0, true, false));
+		availablePanel.setBackground(Color.white);
+
+		// Add TabbedPane
+		add(tabbedPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
+			GridBagConstraints.WEST, GridBagConstraints.BOTH,
+			new Insets(5, 5, 5, 5), 0, 0));
+
+		// Add Tabs
+		tabbedPane.addTab(Res.getString("tab.installed.plugins"),
+			new JScrollPane(installedPanel));
+		if (!Default.getBoolean(Default.INSTALL_PLUGINS_DISABLED)) {
+		    tabbedPane.addTab(Res.getString("tab.available.plugins"),
+			    new JScrollPane(availablePanel));
+		}
+
+		loadInstalledPlugins();
+
+		tabbedPane.addChangeListener(new ChangeListener() {
+		    public void stateChanged(ChangeEvent changeEvent) {
+			if (tabbedPane.getSelectedIndex() == 1) {
+			    loadAvailablePlugins();
+			    loaded = true;
+			}
+		    }
+		});
+	    }
+	});
     }
 
     private void loadInstalledPlugins() {
@@ -177,7 +186,10 @@ public class PluginViewer extends JPanel implements Plugin {
             // Delete main jar.
             File pluginDir = plugin.getPluginDir();
             File pluginJAR = new File(plugin.getPluginDir().getParentFile(), pluginDir.getName() + ".jar");
+            File mainpluginJar = new File(Spark.getBinDirectory().getParent()+"/plugins/"+pluginJAR.getName());
+            
             pluginJAR.delete();
+            mainpluginJar.delete();
 
             JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark.changes"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
             PluginManager.getInstance().removePublicPlugin(plugin);
@@ -475,7 +487,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
                 }
                 catch (Exception e) {
-                    System.out.println("We can ignore these.");
+                    Log.error("Error retrieving PluginInformation from xml.",e);
                 }
                 pluginList.add(publicPlugin);
             }
@@ -555,22 +567,26 @@ public class PluginViewer extends JPanel implements Plugin {
                 ui.setSelected(true);
 
                 final PluginManager pluginManager = PluginManager.getInstance();
-                ui.getInstallButton().addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        boolean isInstalled = pluginManager.isInstalled(ui.getPlugin());
+                ui.getInstallButton().addMouseListener(new MouseAdapter() {
+                    
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+
+                        boolean isInstalled = pluginManager.isInstalled(ui.getPlugin());                       
                         if (isInstalled) {
                             boolean uninstalled = uninstall(ui.getPlugin());
                             if (uninstalled) {
                                 installedPanel.remove(ui);
                                 installedPanel.invalidate();
                                 installedPanel.repaint();
+                                installedPanel.revalidate();
                             }
                         }
                         else {
                             downloadPlugin(ui.getPlugin());
                         }
                     }
-                });
+		});
             }
         });
     }
