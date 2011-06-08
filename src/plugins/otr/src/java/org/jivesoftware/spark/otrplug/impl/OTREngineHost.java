@@ -1,0 +1,61 @@
+package org.jivesoftware.spark.otrplug.impl;
+
+import java.awt.Color;
+import java.security.KeyPair;
+
+
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.otrplug.OTRManager;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+
+import net.java.otr4j.OtrEngineHost;
+import net.java.otr4j.OtrPolicy;
+import net.java.otr4j.session.SessionID;
+
+public class OTREngineHost implements OtrEngineHost {
+
+    private ChatRoomImpl _chatRoom;
+    private OtrPolicy _policy;
+    public OTREngineHost(OtrPolicy policy, ChatRoomImpl chatroom)
+    {
+        _policy = policy;
+        _chatRoom = chatroom;
+    }
+    
+    @Override
+    public KeyPair getKeyPair(SessionID arg0) {
+        return OTRManager.getInstance().getKeyManager().loadLocalKeyPair(arg0);
+    }
+
+    @Override
+    public OtrPolicy getSessionPolicy(SessionID arg0) {
+        return _policy;
+    }
+
+    @Override
+    public void injectMessage(SessionID arg0, String arg1) {    
+        Message injection = new Message();
+        injection.setType(Message.Type.chat);
+        injection.setTo(_chatRoom.getParticipantJID());
+        injection.setFrom(SparkManager.getSessionManager().getJID()); 
+        String threadID = StringUtils.randomString(6);
+        injection.setThread(threadID);
+        injection.setBody(arg1);
+        SparkManager.getConnection().sendPacket(injection);
+    }
+
+    @Override
+    public void showError(SessionID arg0, String arg1) {
+        _chatRoom.getTranscriptWindow().insertNotificationMessage(arg1, Color.red);
+
+    }
+
+    @Override
+    public void showWarning(SessionID arg0, String arg1) {
+        _chatRoom.getTranscriptWindow().insertNotificationMessage(arg1, Color.red);
+
+    }
+
+}

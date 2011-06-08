@@ -1,0 +1,16 @@
+Building a Sparkplug
+
+To easily build a Sparkplug, we have added a simple ANT script to create a deployed plug.  To create, do the following:
+
+1) Copy your java source files to the src directory.
+2) Place any dependencies (besides Spark) into the lib directory.
+3) Update the plugin.xml file to represent your plugin.
+4) Go to the build directory, and type ant jar to build your plugin or
+.... type "ant run" to build and deploy your plugin directly to Spark and
+have Spark startup to test your plugin right away.
+
+Your new plugin will be called myplugin.jar.  
+
+If you wish to deploy your plugin later, just copy your new myplugin.jar to the plugins directory of your Sparkplug distro kit.
+
+Enjoy!

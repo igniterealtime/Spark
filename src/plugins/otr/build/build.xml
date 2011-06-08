@@ -1,0 +1,97 @@
+<project name="otrplug" default="jar" basedir="..">
+
+	<property name="plug.dir" value="${basedir}"/>
+	<property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
+	<property name="plug.lib.dist.dir" value="${plug.lib.dir}/dist"/>
+
+	<property name="spark.home" value="${basedir}/../../.."/>
+	<property name="spark.target" value="${basedir}/../../../target"/>
+	<property name="spark.build" value="${basedir}/../../../target/build"/>
+
+	<property name="classes.dir" value="${spark.target}/plugins-dev/otrplug/classes"/>
+	<property name="src.dir" value="${plug.dir}/src/java"/>
+	<property name="resources.dir" location="${plug.dir}/src/resources"/>
+
+	<property name="target.dir" value="${spark.target}/plugins/otrplug"/>
+	<property name="target.lib.dir" value="${target.dir}/lib"/>
+	<property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
+
+	<path id="lib.classpath">
+		<fileset dir="${plug.lib.dir}" includes="**/*.jar, **/*.zip"/>
+		<fileset dir="${plug.lib.dist.dir}" includes="**/*.jar, **/*.zip"/>
+		<fileset dir="${spark.home}/target/build/lib/" includes="**/*.jar, **/*.zip"/>
+		<fileset dir="${spark.home}/target/build/lib/windows" includes="**/*.jar"/>
+	</path>
+
+	<target name="clean" description="Cleans all build related output">
+		<delete file="${jar.file}"/>
+		<delete dir="${classes.dir}"/>
+		<delete dir="${target.dir}"/>
+	</target>
+
+	<target name="compile" description="Compiles plugin source">
+		<mkdir dir="${classes.dir}"/>
+		<javac srcdir="${src.dir}"
+               destdir="${classes.dir}"
+               classpathref="lib.classpath"
+               source="1.6"
+               debug="true"
+               target="1.6"/>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}" includes="**/*.png"/>
+			<fileset dir="${src.dir}" includes="**/*.gif"/>
+			<fileset dir="${src.dir}" includes="**/*.jpg"/>
+			<fileset dir="${src.dir}" includes="**/*.jpeg"/>
+			<fileset dir="${src.dir}" includes="**/*.wav"/>
+			<fileset dir="${src.dir}" includes="**/*.properties"/>
+		</copy>
+	</target>
+
+	<target name="jar" depends="clean,compile,resources" description="Makes a plugin jar">
+		<mkdir dir="${target.dir}"/>
+		<mkdir dir="${target.lib.dir}"/>
+
+		 <copy todir="${target.lib.dir}">
+		            <fileset file="${plug.lib.dist.dir}/*.*"/>
+		        </copy>
+
+		<copy todir="${target.dir}">
+			<fileset file="${plug.dir}/plugin.xml"/>
+		</copy>
+
+		<jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
+
+		<zip zipfile="${spark.build}/plugins/otrplug.jar" basedir="${target.dir}"/>
+
+		<copy todir="${spark.home}/src/commercial">
+			<fileset file="${spark.build}/plugins/otrplug.jar"/>
+		</copy>
+	</target>
+
+	<!-- resources =================================================================================== -->
+	<target name="resources">
+		<copy todir="${classes.dir}">
+			<fileset dir="${resources.dir}">
+				<include name="**/*"/>
+			</fileset>
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
+	</target>
+
+	
+	<property name="pluginsstuff" value="${basedir}\..\..\..\target\build\plugins"/>
+
+		<target name="copy" depends="jar">
+
+			<echo message="${pluginsstuff}"/>
+
+			<copy todir="${pluginsstuff}">
+				<fileset file="${spark.build}/plugins/otrplug.jar"/>
+			</copy>
+
+		</target>
+
+
+</project>
