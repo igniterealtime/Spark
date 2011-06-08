@@ -56,6 +56,7 @@ public class SparkRes {
     public static final String AVAILABLE_USER = "AVAILABLE_USER";
     public static final String SPARK_IMAGE = "SPARK_IMAGE";
     public static final String VIEW = "VIEW";
+    public static final String SMALL_STOP = "SMALL_STOP";
     public static final String TEXT_BOLD = "TEXT_BOLD";
     public static final String SMALL_USER1_MESSAGE = "SMALL_USER1_MESSAGE";
     public static final String SERVER_UNAVAILABLE = "SERVER_UNAVAILABLE";
