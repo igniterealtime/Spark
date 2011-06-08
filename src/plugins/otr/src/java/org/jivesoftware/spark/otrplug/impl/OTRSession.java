@@ -48,6 +48,9 @@ public class OTRSession {
 
         _engine = new OtrEngineImpl(_otrEngineHost);
 
+        
+        
+        
         setUpMessageListener();
 
         createButton();

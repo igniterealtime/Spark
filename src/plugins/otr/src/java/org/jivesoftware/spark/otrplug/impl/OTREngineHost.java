@@ -35,8 +35,7 @@ public class OTREngineHost implements OtrEngineHost {
     }
 
     @Override
-    public void injectMessage(SessionID arg0, String arg1) {
-        System.err.println("Send msg via injection "+arg1);     
+    public void injectMessage(SessionID arg0, String arg1) {    
         Message injection = new Message();
         injection.setType(Message.Type.chat);
         injection.setTo(_chatRoom.getParticipantJID());

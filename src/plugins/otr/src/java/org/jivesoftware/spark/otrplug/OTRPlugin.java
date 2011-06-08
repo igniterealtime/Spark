@@ -13,8 +13,6 @@ public class OTRPlugin implements Plugin{
     
     @Override
     public void initialize() {
-        System.out.println("initialized");
-        
         //Create OTRManager singleton
         
         _manager = OTRManager.getInstance();

@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
+import net.java.otr4j.session.SessionID;
+
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -75,6 +77,13 @@ public class OTRManager  extends ChatRoomListenerAdapter implements ContactItemH
                 singleton = controller;
                 try {
                     _keyManager = new MyOtrKeyManager(SparkManager.getUserDirectory().getPath()+"/otrkey.priv");
+                    //we should generate a local keyprint if there is no avaiable
+                    String key = _keyManager.getLocalFingerprint(new SessionID(SparkManager.getConnection().getUser(), "none", "Scytale"));
+                    if (key == null)
+                    {
+                        _keyManager.generateLocalKeyPair(new SessionID(SparkManager.getConnection().getUser(), "none", "Scytale"));
+                    }
+                    
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

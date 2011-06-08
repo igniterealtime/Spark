@@ -135,7 +135,7 @@ public class OTRConnectionPanel {
         _succesfull = true;
         _waiting = false;
         _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_CHECK).getImage());
-        _label.setText("Sucessfully Connected. Your conversation is encrypted");
+        _label.setText(OTRResources.getString("otr.successfull"));
     }
 
 }
