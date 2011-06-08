@@ -320,12 +320,12 @@ public class PluginManager implements MainWindowListener {
                 
                 // Check for minimum Java version
                 try {       
-                  String javaversion = plugin1.selectSingleNode("java").getText().replace("_", "").replace(".", "");
+                  String javaversion = plugin1.selectSingleNode("java").getText().replaceAll("[^0-9]", "");
                   javaversion = javaversion == null? "0" : javaversion;
-                  int jv = Integer.parseInt(javaversion);
+                  int jv = Integer.parseInt(attachMissingZero(javaversion));
                   
-                  String myversion = System.getProperty("java.version").replace("_","").replace(".","");
-                  int mv = Integer.parseInt(myversion);
+                  String myversion = System.getProperty("java.version").replaceAll("[^0-9]", "");
+                  int mv = Integer.parseInt(attachMissingZero(myversion));
 
                   boolean ok = (mv >= jv);
 
@@ -408,6 +408,15 @@ public class PluginManager implements MainWindowListener {
         }
 
         return pluginClass;
+    }
+    
+    private String attachMissingZero(String value)
+    {
+	while(value.length()<5)
+	{
+	    value = value+"0";
+	}
+	return value;
     }
 
     /**
