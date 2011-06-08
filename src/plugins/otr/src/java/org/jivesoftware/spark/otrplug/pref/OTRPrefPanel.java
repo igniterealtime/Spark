@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.otrplug.pref;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,10 +21,11 @@ import net.java.otr4j.session.SessionID;
 
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.VerticalFlowLayout;
+
 import org.jivesoftware.spark.otrplug.OTRManager;
-import org.jivesoftware.spark.otrplug.OTRProperties;
-import org.jivesoftware.spark.otrplug.OTRResources;
+import org.jivesoftware.spark.otrplug.impl.MyOtrKeyManager;
+import org.jivesoftware.spark.otrplug.util.OTRProperties;
+import org.jivesoftware.spark.otrplug.util.OTRResources;
 
 public class OTRPrefPanel extends JPanel {
 

@@ -1,10 +1,11 @@
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.otrplug.pref;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import org.jivesoftware.spark.otrplug.OTRProperties;
-import org.jivesoftware.spark.otrplug.OTRResources;
+
+import org.jivesoftware.spark.otrplug.util.OTRProperties;
+import org.jivesoftware.spark.otrplug.util.OTRResources;
 import org.jivesoftware.spark.preference.Preference;
 
 public class OTRPreferences implements Preference {

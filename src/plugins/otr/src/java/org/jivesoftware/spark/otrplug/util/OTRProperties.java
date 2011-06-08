@@ -1,5 +1,5 @@
 
-package org.jivesoftware.spark.otrplug;
+package org.jivesoftware.spark.otrplug.util;
 
 import java.awt.Color;
 import java.io.File;
@@ -112,47 +112,8 @@ public class OTRProperties {
         props.setProperty(property, "" + integer);
     }
 
-    private void setColor(String property, Color color) {
-        props.setProperty(property, convertColor(color));
-    }
-
-    private Color getColor(String property, Color defaultcolor) {
-        try {
-            return convertString(props.getProperty(property));
-        } catch (Exception e) {
-            return defaultcolor;
-        }
-
-    }
-
     public String getProperty(String property) {
         return props.getProperty(property);
     }
 
-    /**
-     * Converts a {@link String} matching xxx,xxx,xxx to a {@link Color}<br>
-     * where xxx is a number from 0 to 255
-     * 
-     * @param s
-     * @return
-     */
-    public static Color convertString(String s) throws Exception {
-        String[] arr = s.split(",");
-        return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]),
-                Integer.parseInt(arr[2]));
-
-    }
-
-    /**
-     * Converts a {@link Color} to a {@link String} in this format:<br>
-     * <b>xxx,xxx,xxx</b> <br>
-     * where xxx is a number from 0 to 255
-     * 
-     * @param color
-     * @return
-     */
-    public static String convertColor(Color color) {
-        return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
-    }
-    
  }

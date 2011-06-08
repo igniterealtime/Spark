@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.otrplug.pref;
 
 import java.awt.BorderLayout;
 
@@ -13,7 +13,8 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.jivesoftware.spark.otrplug.OTRResources;
+import org.jivesoftware.spark.otrplug.util.OTRResources;
+
 
 public class OTRKeyTable extends JPanel {
 

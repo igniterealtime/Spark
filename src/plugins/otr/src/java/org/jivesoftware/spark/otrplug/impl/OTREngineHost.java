@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.otrplug;
+package org.jivesoftware.spark.otrplug.impl;
 
 import java.awt.Color;
 import java.security.KeyPair;
@@ -7,6 +7,7 @@ import java.security.KeyPair;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.otrplug.OTRManager;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 import net.java.otr4j.OtrEngineHost;

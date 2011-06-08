@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.otrplug.impl;
 
 import java.io.BufferedInputStream;
 import java.io.File;

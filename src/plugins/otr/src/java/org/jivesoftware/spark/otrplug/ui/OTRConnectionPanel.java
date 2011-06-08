@@ -1,0 +1,141 @@
+package org.jivesoftware.spark.otrplug.ui;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.otrplug.OTRManager;
+import org.jivesoftware.spark.otrplug.util.OTRResources;
+import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+
+public class OTRConnectionPanel {
+
+    private ChatRoomImpl _chatRoom;
+    private JLabel _label;
+    private ImageIcon _icon;
+    private JPanel _conPanel;
+    private int _i;
+    private  StyledDocument _doc;
+    private TranscriptWindow _transcriptWindow;
+    private JButton _retry;
+    private boolean _succesfull = false;
+    private boolean _waiting = false;
+
+    public OTRConnectionPanel(ChatRoomImpl chatroom) {
+        _chatRoom = chatroom;
+        _transcriptWindow = _chatRoom.getTranscriptWindow();
+        _doc = _transcriptWindow.getStyledDocument(); 
+        _retry = new JButton(OTRResources.getString("otr.retry"));
+        _retry.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OTRManager.getInstance().startOtrWithUser(_chatRoom.getParticipantJID());
+                
+            }
+        });
+        
+        _retry.setVisible(false);
+
+
+    }
+
+    public void tryToStart() {
+        if (!_succesfull && !_waiting) {
+            renewPanel();
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE).getImage());
+
+            
+            _conPanel.setVisible(true);
+
+            _i = 10;
+            _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds",_i));
+
+            Timer t = new Timer();
+            TimerTask task = new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    if (_i != 0 && !_succesfull) {
+                        _waiting = true;
+                        _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds",_i));
+                        decI();
+                    } else if (!_succesfull) {
+                        _waiting = true;
+                        _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_DELETE).getImage());
+                        _label.setText(OTRResources.getString("otr.failed.to.establish",_i));
+                        _retry.setVisible(true);
+                        
+                        this.cancel();
+                    } else {
+                        this.cancel();
+                    }
+                }
+            };
+            t.scheduleAtFixedRate(task, 0, 1000);
+        }
+    }
+
+    private void renewPanel() {
+        _conPanel = new JPanel(new GridBagLayout());
+        _label = new JLabel();
+        _icon = new ImageIcon();
+
+        _conPanel.add(new JLabel(_icon), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+        _conPanel.add(_label, new GridBagConstraints(1, 0, 1, 1, 0.7, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 15, 0, 0), 0, 0));
+        _conPanel.add(_retry,new GridBagConstraints(2, 0, 1, 1, 2.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+        
+        Style style = _doc.addStyle("OTRStyle", null);
+        StyleConstants.setComponent(style, _conPanel);
+        
+        try {
+            _doc.insertString(_doc.getLength(), "ignored text", style);
+            _doc.insertString(_doc.getLength(), "\n", null);
+        } catch (BadLocationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }      
+    }
+
+    public void connectionClosed() {
+        if (_succesfull) {
+            renewPanel();
+            _succesfull = false;
+            _label.setText(OTRResources.getString("otr.disconnected"));
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_STOP).getImage());
+            _conPanel.setVisible(true);
+        }
+    }
+
+    private void decI() {
+        --_i;
+    }
+
+    public void sucessfullyCon() {
+        if(!_waiting)
+            renewPanel();
+        _retry.setVisible(false);
+        _conPanel.setVisible(true);
+        _succesfull = true;
+        _waiting = false;
+        _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_CHECK).getImage());
+        _label.setText("Sucessfully Connected. Your conversation is encrypted");
+    }
+
+}

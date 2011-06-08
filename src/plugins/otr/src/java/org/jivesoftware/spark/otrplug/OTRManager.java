@@ -3,28 +3,24 @@ package org.jivesoftware.spark.otrplug;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
-import net.java.otr4j.OtrKeyManager;
-import net.java.otr4j.OtrKeyManagerImpl;
-
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
+
+import org.jivesoftware.spark.otrplug.impl.MyOtrKeyManager;
+import org.jivesoftware.spark.otrplug.impl.OTRSession;
+import org.jivesoftware.spark.otrplug.util.OTRProperties;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactItemHandler;
-import org.jivesoftware.spark.ui.MessageEventListener;
-import org.jivesoftware.spark.ui.MyOtrKeyManager;
-import org.jivesoftware.spark.ui.OTRSession;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 
@@ -34,7 +30,6 @@ public class OTRManager  extends ChatRoomListenerAdapter implements ContactItemH
 
     private static OTRManager singleton;
     private static Object LOCK = new Object();
-    private MessageListenerHandler _msgListener;
     private Map<String, OTRSession> _activeSessions = new HashMap<String,OTRSession>();
     final ChatManager chatManager = SparkManager.getChatManager();
     private static MyOtrKeyManager _keyManager;
@@ -42,7 +37,6 @@ public class OTRManager  extends ChatRoomListenerAdapter implements ContactItemH
 
     private OTRManager()
     {
-        _msgListener = new MessageListenerHandler();
         chatManager.addChatRoomListener(this);
         chatManager.addContactItemHandler(this);
     }
@@ -91,6 +85,13 @@ public class OTRManager  extends ChatRoomListenerAdapter implements ContactItemH
         return singleton;
     }
 
+    public void startOtrWithUser(String jid)
+    {
+        if (_activeSessions.containsKey(jid))
+        {
+            _activeSessions.get(jid).startSession();
+        }
+    }
     
     private void createOTRSession(ChatRoomImpl chatroom, String jid)
     {

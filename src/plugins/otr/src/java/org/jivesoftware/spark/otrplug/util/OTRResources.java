@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.otrplug;
+package org.jivesoftware.spark.otrplug.util;
 
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;

@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.otrplug.impl;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -9,12 +9,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.otrplug.OTREngineHost;
 import org.jivesoftware.spark.otrplug.OTRManager;
-import org.jivesoftware.spark.otrplug.OTRProperties;
-import org.jivesoftware.spark.otrplug.OTRResources;
+import org.jivesoftware.spark.otrplug.ui.OTRConnectionPanel;
+import org.jivesoftware.spark.otrplug.util.OTRProperties;
+import org.jivesoftware.spark.otrplug.util.OTRResources;
+import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.MessageEventListener;
+
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 import net.java.otr4j.OtrEngineHost;
@@ -35,6 +36,7 @@ public class OTRSession {
     private OtrEngineImpl _engine;
     private OTRManager _manager = OTRManager.getInstance();
     final ChatRoomButton _otrButton = new ChatRoomButton();
+    private OTRConnectionPanel _conPanel;
     private boolean _OtrEnabled = false;
 
     public OTRSession(ChatRoomImpl chatroom, String myJID, String remoteJID) {
@@ -60,6 +62,10 @@ public class OTRSession {
     }
 
     private void setUpMessageListener() {
+        
+        _conPanel = new OTRConnectionPanel(_chatRoom);
+       
+        
         _chatRoom.addMessageEventListener(new MessageEventListener() {
 
             @Override
@@ -93,7 +99,6 @@ public class OTRSession {
                     }
                 } else if (!_OtrEnabled)
                 {
-                    System.out.println("bin drin");
                     String old = message.getBody();
                     message.setBody(null);
                     if (old.length() > 3 && old.substring(0, 4).equals("?OTR")) {
@@ -142,7 +147,8 @@ public class OTRSession {
                 @Override
                 public void sessionStatusChanged(SessionID arg0) {
                     if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
-
+                        _conPanel.sucessfullyCon();
+                        
                         String otrkey = _manager.getKeyManager().getRemoteFingerprint(_mySession);
                         if (otrkey == null) {
                             PublicKey pubkey = _engine.getRemotePublicKey(_mySession);
@@ -161,15 +167,13 @@ public class OTRSession {
                             }
 
                         }
-
-                        _chatRoom.getTranscriptWindow().insertNotificationMessage("From now on, your conversation is encrypted Remotekey: ", Color.gray);
                         _otrButton.setIcon(new ImageIcon(cl.getResource("otr_on.png")));
                     } else if (_engine.getSessionStatus(_mySession).equals(SessionStatus.FINISHED)) {
-                        _chatRoom.getTranscriptWindow().insertNotificationMessage("From now on, your conversation is NOT encrypted", Color.gray);
                         _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
                         stopSession();
                     } else if (_engine.getSessionStatus(_mySession).equals(SessionStatus.PLAINTEXT)) {
-                        _chatRoom.getTranscriptWindow().insertNotificationMessage("From now on, your conversation is NOT encrypted", Color.gray);
+                        _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
+                        stopSession();
                     }
 
                 }
@@ -178,12 +182,13 @@ public class OTRSession {
     }
 
     public void startSession() {
+        _conPanel.tryToStart();
         _engine.startSession(_mySession);
-        _chatRoom.getTranscriptWindow().insertNotificationMessage("Trying to establish OTR Connection", Color.green);
     }
 
     public void stopSession() {
-        if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+        _conPanel.connectionClosed();
+        if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {          
             final ClassLoader cl = getClass().getClassLoader();
             _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
             _engine.endSession(_mySession);
