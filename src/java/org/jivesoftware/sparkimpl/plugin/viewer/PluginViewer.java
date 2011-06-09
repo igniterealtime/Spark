@@ -26,6 +26,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -62,7 +63,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -78,6 +78,8 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
 /**
@@ -97,15 +99,23 @@ public class PluginViewer extends JPanel implements Plugin {
 
     private JPanel installedPanel;
     private JPanel availablePanel;
+    private JPanel deactivatedPanel;
+    private LocalPreferences _prefs;
+    private List<String> _deactivatedPlugins;
 
     public PluginViewer() {
+	_prefs = SettingsManager.getLocalPreferences();
+	_deactivatedPlugins = _prefs.getDeactivatedPlugins();
 
 	EventQueue.invokeLater(new Runnable() {
+	   
+
 	    public void run() {
 
 		tabbedPane = new JTabbedPane();
 		installedPanel = new JPanel();
 		availablePanel = new JPanel();
+		deactivatedPanel = new JPanel();
 		setLayout(new GridBagLayout());
 
 		installedPanel.setLayout(new VerticalFlowLayout(
@@ -115,6 +125,7 @@ public class PluginViewer extends JPanel implements Plugin {
 		availablePanel.setLayout(new VerticalFlowLayout(
 			VerticalFlowLayout.TOP, 0, 0, true, false));
 		availablePanel.setBackground(Color.white);
+				
 
 		// Add TabbedPane
 		add(tabbedPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0,
@@ -128,8 +139,9 @@ public class PluginViewer extends JPanel implements Plugin {
 		    tabbedPane.addTab(Res.getString("tab.available.plugins"),
 			    new JScrollPane(availablePanel));
 		}
-
+		
 		loadInstalledPlugins();
+		loadDeactivatedPlugins();
 
 		tabbedPane.addChangeListener(new ChangeListener() {
 		    public void stateChanged(ChangeEvent changeEvent) {
@@ -153,6 +165,27 @@ public class PluginViewer extends JPanel implements Plugin {
             installedPanel.add(ui);
             addSparkPlugUIListener(ui);
         }
+    }
+    
+    /**
+     * Initializes the Deactivated Plugins Tab
+     */
+    private void loadDeactivatedPlugins() {
+	deactivatedPanel.setLayout(new VerticalFlowLayout(
+		VerticalFlowLayout.TOP, 0, 0, true, false));
+
+	tabbedPane.addTab(Res.getString("tab.deactivated.plugins"), new JScrollPane(deactivatedPanel));
+
+	for (final String s : _deactivatedPlugins) {
+	    PublicPlugin plg = new PublicPlugin();
+	    plg.setName(s);
+	    final SparkPlugUI ui = new SparkPlugUI(plg);
+            ui.useLocalIcon();
+            deactivatedPanel.add(ui);
+            addDeactivatedListener(ui);
+
+	}
+
     }
 
 
@@ -180,17 +213,30 @@ public class PluginViewer extends JPanel implements Plugin {
         sparkMenu.insert(viewPluginsMenu, 2);
     }
 
-    private boolean uninstall(PublicPlugin plugin) {
+    private boolean uninstall(final PublicPlugin plugin) {
         int ok = JOptionPane.showConfirmDialog(installedPanel, Res.getString("message.prompt.plugin.uninstall", plugin.getName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.YES_OPTION) {
-            // Delete main jar.
-            File pluginDir = plugin.getPluginDir();
-            File pluginJAR = new File(plugin.getPluginDir().getParentFile(), pluginDir.getName() + ".jar");
-            File mainpluginJar = new File(Spark.getBinDirectory().getParent()+"/plugins/"+pluginJAR.getName());
             
-            pluginJAR.delete();
-            mainpluginJar.delete();
-
+            // DOENST DELETE ANYMORE, Plugin will be added to a 'do-not-load-list'
+	    // Delete main jar.
+	    // File pluginDir = plugin.getPluginDir();
+	    // File pluginJAR = new File(plugin.getPluginDir().getParentFile(),
+	    // pluginDir.getName() + ".jar");
+	    // File mainpluginJar = new
+	    // File(Spark.getBinDirectory().getParent()+"/plugins/"+pluginJAR.getName());
+	    // pluginJAR.delete();
+	    // mainpluginJar.delete();
+            
+            List<String> deact = _prefs.getDeactivatedPlugins();
+            deact.add(plugin.getName());    
+            _prefs.setDeactivatedPlugins(deact);
+            _deactivatedPlugins = deact;
+            
+            final SparkPlugUI ui = new SparkPlugUI(plugin);
+            deactivatedPanel.add(ui);
+            addDeactivatedListener(ui);
+         
+            
             JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark.changes"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
             PluginManager.getInstance().removePublicPlugin(plugin);
             return true;
@@ -589,6 +635,40 @@ public class PluginViewer extends JPanel implements Plugin {
 		});
             }
         });
+    }
+    /**
+     * Adds the MouseClick Listener to the PluginPreview <br>
+     * Adds the MouseClick Listener to the InstallButton
+     * @param ui
+     */
+    private void addDeactivatedListener(final SparkPlugUI ui) {
+
+	ui.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		
+		for(Component c : deactivatedPanel.getComponents())
+		{
+		    if (c instanceof SparkPlugUI)
+		    {
+			((SparkPlugUI)c).setSelected(false);
+		    }
+		}	
+		ui.setSelected(true);
+	    }
+	});
+
+	ui.getInstallButton().addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		deactivatedPanel.remove(ui);
+		_deactivatedPlugins.remove(ui.getPlugin().getName());
+		_prefs.setDeactivatedPlugins(_deactivatedPlugins);
+		deactivatedPanel.repaint();
+		deactivatedPanel.revalidate();
+	    }
+	});
     }
 
     public void uninstall() {

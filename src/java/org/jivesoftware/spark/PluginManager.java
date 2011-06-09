@@ -59,6 +59,7 @@ import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * This manager is responsible for the loading of all Plugins and Workspaces within Spark environment.
@@ -289,11 +290,12 @@ public class PluginManager implements MainWindowListener {
 
                 name = plugin1.selectSingleNode("name").getText();
                 clazz = plugin1.selectSingleNode("class").getText();
-                
+
 		try {
-		    String lower = name.replace(" ","").toLowerCase();
+		    String lower = name.replaceAll("[^0-9a-zA-Z]","").toLowerCase();
 		    // Dont load the plugin if its on the Blacklist
-		    if(_blacklistPlugins.contains(lower) || _blacklistPlugins.contains(clazz))
+		    if(_blacklistPlugins.contains(lower) || _blacklistPlugins.contains(clazz) 
+			    || SettingsManager.getLocalPreferences().getDeactivatedPlugins().contains(name))
 		    {
 			return null;
 		    }    

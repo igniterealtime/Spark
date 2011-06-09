@@ -250,7 +250,8 @@ public class ReceiveMessage extends JPanel {
 		if (transfer.getAmountWritten() >= request.getFileSize() 
 			|| transfer.getStatus() == FileTransfer.Status.error 
 			|| transfer.getStatus() == FileTransfer.Status.refused
-			|| transfer.getStatus() == FileTransfer.Status.cancelled) 
+			|| transfer.getStatus() == FileTransfer.Status.cancelled
+			|| transfer.getStatus() == FileTransfer.Status.complete) 
 		{
 		    this.cancel();
 		    _endtime = System.currentTimeMillis();
@@ -277,7 +278,8 @@ public class ReceiveMessage extends JPanel {
 		if (transfer.getAmountWritten() >= request.getFileSize() 
 			|| transfer.getStatus() == FileTransfer.Status.error 
 			|| transfer.getStatus() == FileTransfer.Status.refused
-			|| transfer.getStatus() == FileTransfer.Status.cancelled) 
+			|| transfer.getStatus() == FileTransfer.Status.cancelled
+			|| transfer.getStatus() == FileTransfer.Status.complete) 
 		{
 		    this.cancel();
 		}

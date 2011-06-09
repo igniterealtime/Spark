@@ -25,8 +25,11 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.swing.UIManager;
 
@@ -1070,6 +1073,37 @@ public class LocalPreferences {
 	    setInt("maximumHistory", x);
 	}
 	return x;
+    }
+    
+    public List<String> getDeactivatedPlugins()
+    {
+	String plugs = getString("deactivatedPlugins", "");
+	ArrayList<String> liste = new ArrayList<String>();
+	
+	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
+	
+	while(tokenz.hasMoreTokens())
+	{
+	    String x = tokenz.nextToken();
+	    liste.add(x);	    
+	}
+	return liste;
+    }
+    
+    public void setDeactivatedPlugins(List<String> list) {
+	
+	// [hallo, hallo, hallo, hallo, hallo]
+	// =
+	// hallo,hallo,hallo,hallo,hallo
+	if (list.size() > 0) {
+	    String liste = list.toString().substring(1,
+		    list.toString().length() - 1);
+	    liste = liste.replace(", ", ",");
+	    setString("deactivatedPlugins", liste);
+	} else {
+	    setString("deactivatedPlugins", "");
+	}
+
     }
 
 
