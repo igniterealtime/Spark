@@ -73,7 +73,7 @@ public class SpellcheckerPreferences {
     }
 
     public boolean isSpellCheckerEnabled() {
-	return getBoolean("spellCheckerEnabled", true);
+	return getBoolean("spellCheckerEnabled", false);
     }
 
     public void setAutoSpellCheckerEnabled(boolean enabled) {
@@ -81,7 +81,7 @@ public class SpellcheckerPreferences {
     }
 
     public boolean isAutoSpellCheckerEnabled() {
-	return getBoolean("autoSpellCheckerEnabled", true);
+	return getBoolean("autoSpellCheckerEnabled", false);
     }
     
     public boolean getLanguageSelectionInChatRoom()
