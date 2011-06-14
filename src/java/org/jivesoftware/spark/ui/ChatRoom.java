@@ -72,6 +72,7 @@ import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -790,6 +791,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().removeContextMenuListener(this);
         getTranscriptWindow().removeMouseListener(transcriptWindowMouseListener);
         getChatInputEditor().removeKeyListener(chatEditorKeyListener);
+        this.removeAll();
 
         textScroller.getViewport().remove(transcriptWindow);
 
@@ -808,6 +810,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getActionMap().remove("closeTheRoom");
         chatAreaButton.getButton().removeActionListener(this);
         bottomPanel.remove(chatAreaButton);
+        _chatFrame.removeWindowToFrontListener(this);
+        
     }
 
     /**

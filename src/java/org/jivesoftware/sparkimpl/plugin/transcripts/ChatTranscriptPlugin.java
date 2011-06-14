@@ -263,6 +263,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         ChatTranscripts.appendToTranscript(jid, transcript);
+        lastMessage.remove(room);
     }
 
     public void chatRoomActivated(ChatRoom room) {
@@ -328,12 +329,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 window.requestFocus();
                 GraphicUtils.centerWindowOnScreen(frame);
                 frame.setVisible(true);
-
-                frame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        window.setText("");
-                    }
-                });
 
                 window.setEditable(false);
 
@@ -445,6 +440,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                         window.setText(builder.toString());
                         builder.replace(0, builder.length(), "");
+                        transcript.release();
                     }
                 };
 
@@ -477,8 +473,23 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 });
                 
                 TaskEngine.getInstance().schedule(transcriptTask, 10);
+                
+                frame.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        window.setText("");
+                    }
+                     @Override
+                    public void windowClosed(WindowEvent e) {
+                	frame.removeWindowListener(this);
+                        frame.dispose();
+                        transcriptTask.cancel();
+                        topPanel.remove(vacardPanel);
+                    }
+                });
             }
         };
+        
+        
 
         transcriptLoader.start();
     }
@@ -565,6 +576,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         		chatHistoryButton.removeActionListener(this);
             }
             chatRoom.removeClosingListener(this);
+            chatRoom = null;
+            chatHistoryButton = null;
         }
 
         public void actionPerformed(ActionEvent e) {

@@ -50,13 +50,11 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 	private KeyStroke undoKeyStroke;
 	private KeyStroke ctrlbackspaceKeyStroke;
 	private KeyStroke escapeKeyStroke;
-	private ChatInputEditor _chatinputeditor;
 
     /**
      * Creates a new Default ChatSendField.
      */
     public ChatInputEditor() {
-	_chatinputeditor = this;
         undoManager = new UndoManager();
 
         this.setDragEnabled(true);
@@ -88,7 +86,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 		
 		// We have Text selected, remove it
 		if (getSelectedText() != null && getSelectedText().length() > 0) {
-		    _chatinputeditor.removeWordInBetween(getSelectionStart(),
+		   ChatInputEditor.this.removeWordInBetween(getSelectionStart(),
 			    getSelectionEnd());
 
 		    // We are somewhere in betwee 0 and str.length
@@ -108,7 +106,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 			}
 			lastSpace++;
 		    }
-		    _chatinputeditor.removeWordInBetween(lastSpace,
+		    ChatInputEditor.this.removeWordInBetween(lastSpace,
 			    getCaretPosition());
 
 		    if (lastSpace <= getText().length()) {
@@ -126,10 +124,10 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 			untilhere--;
 		    }
 		    untilhere++;
-		    _chatinputeditor.removeLastWord(getText().substring(
+		    ChatInputEditor.this.removeLastWord(getText().substring(
 			    untilhere));
 		} else {
-		    _chatinputeditor.removeLastWord(getText());
+		    ChatInputEditor.this.removeLastWord(getText());
 		}
 	    }
 	};

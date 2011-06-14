@@ -21,7 +21,6 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.TimerTask;
 
 import javax.swing.JLabel;
@@ -46,34 +45,21 @@ public class BuzzRoomDecorator implements ActionListener {
 
     private ChatRoom chatRoom;
     private RolloverButton buzzButton;
-    private static ArrayList<BuzzRoomDecorator> objects = new ArrayList<BuzzRoomDecorator>();
-    private String jid;
+
     
     public BuzzRoomDecorator(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
-        jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
-        boolean added = false;
-        
-        for(BuzzRoomDecorator buzz : objects)
-        {
-      	  if(buzz.jid == ((ChatRoomImpl)chatRoom).getParticipantJID())
-      	  {
-      		  addBuzzButton(buzz);
-      		  added = true;
-      	  }
-        }
-        
-        if(!added)
-        {
-	        buzzButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
-	        buzzButton.setToolTipText(Res.getString("message.buzz.alert.notification"));
-	        buzzButton.addActionListener(this);
-	
-	        final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
-	        chatRoom.getEditorBar().add(dividerLabel);
-	        chatRoom.getEditorBar().add(buzzButton);
-	        objects.add(this);
-        }
+	this.chatRoom = chatRoom;
+
+	buzzButton = new RolloverButton(
+		SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
+	buzzButton.setToolTipText(Res
+		.getString("message.buzz.alert.notification"));
+	buzzButton.addActionListener(this);
+
+	final JLabel dividerLabel = new JLabel(
+		SparkRes.getImageIcon("DIVIDER_IMAGE"));
+	chatRoom.getEditorBar().add(dividerLabel);
+	chatRoom.getEditorBar().add(buzzButton);
     }
 
     public void addBuzzButton(BuzzRoomDecorator buzzer)

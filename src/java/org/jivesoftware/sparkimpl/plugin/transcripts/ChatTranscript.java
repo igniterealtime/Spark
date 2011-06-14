@@ -88,4 +88,11 @@ public class ChatTranscript {
 	    	return searchResult;
     	}
     }
+    
+    /**
+     * Clears the Message History if its not needed anymore
+     */
+    public void release() {
+	messages.clear();
+    }
 }

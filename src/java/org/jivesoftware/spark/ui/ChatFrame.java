@@ -260,11 +260,11 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
 
     /**
-     * Add listeners who want to get informed 
+     * removes the Window to Front Listener for specified {@link ChatRoom}
      * @param chatRoom
      */
-    public void removeWindowToFronListener(ChatRoom chatRoom) {
-	_windowToFrontListeners .remove(chatRoom);	
+    public void removeWindowToFrontListener(ChatRoom chatRoom) {
+	_windowToFrontListeners.remove(chatRoom);	
     }
 
     /**
@@ -273,7 +273,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
      * @param chatRoom
      */
     public void addWindowToFronListener(ChatRoom chatRoom) {
-	_windowToFrontListeners .add(chatRoom);	
+	_windowToFrontListeners.add(chatRoom);	
 	fireWindowOnTopListeners(chatFrame.isAlwaysOnTop());
     }
 

@@ -109,6 +109,7 @@ public class ChatRoomImpl extends ChatRoom {
     private ChatRoomButton infoButton;
 
     private ChatRoomButton addToRosterButton;
+    private VCardPanel vcardPanel;
 
     /**
      * Constructs a 1-to-1 ChatRoom.
@@ -228,6 +229,11 @@ public class ChatRoomImpl extends ChatRoom {
             typingTimerTask = null;
         }
         active = false;
+        this.remove(vcardPanel);
+        vcardPanel.removeAll();
+        vcardPanel = null;
+        
+        this.removeAll();
     }
 
     public void sendMessage() {
@@ -635,7 +641,7 @@ public class ChatRoomImpl extends ChatRoom {
 
     private void loadHistory() {
         // Add VCard Panel
-        final VCardPanel vcardPanel = new VCardPanel(participantJID);
+        vcardPanel = new VCardPanel(participantJID);
         getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
 
@@ -682,7 +688,8 @@ public class ChatRoomImpl extends ChatRoom {
         }
         if ( 0 < chatTranscript.getMessages().size() ) { // Check if we have history mesages
             getTranscriptWindow().insertHorizontalLine();
-    }
+        }
+        chatTranscript.release();
     }
 
     private boolean isOnline() {

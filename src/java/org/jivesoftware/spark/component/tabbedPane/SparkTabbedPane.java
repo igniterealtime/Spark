@@ -362,7 +362,7 @@ public class SparkTabbedPane extends JPanel {
 		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
-			((SparkTabbedPaneListener) list.next()).allTabsRemoved();
+			list.next().allTabsRemoved();
 		}
 	}
 
