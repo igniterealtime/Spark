@@ -1,4 +1,3 @@
-
 package org.jivesoftware.spark.otrplug.util;
 
 import java.io.File;
@@ -17,12 +16,13 @@ import org.jivesoftware.spark.SparkManager;
 public class OTRProperties {
     private Properties props;
     private File configFile;
-    
-    private static final Object LOCK = new Object();  
+
+    private static final Object LOCK = new Object();
     private static OTRProperties instance = null;
-    
+
     /**
      * returns the Instance of this Properties file
+     * 
      * @return
      */
     public static OTRProperties getInstance() {
@@ -54,40 +54,33 @@ public class OTRProperties {
 
     public void save() {
         try {
-            props.store(new FileOutputStream(getConfigFile()),
-                    "Storing OTRPlugin properties");
+            props.store(new FileOutputStream(getConfigFile()), "Storing OTRPlugin properties");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean getIsOTREnabled()
-    {
+    public boolean getIsOTREnabled() {
         return getBoolean("isOTREnabeld", true);
     }
-    
-    public void setIsOTREnabled(boolean enabled)
-    {
+
+    public void setIsOTREnabled(boolean enabled) {
         setBoolean("isOTREnabeld", enabled);
     }
-   
-    public boolean getOTRCloseOnDisc()
-    {
+
+    public boolean getOTRCloseOnDisc() {
         return getBoolean("OTRCloseOnDisc", true);
     }
-    
-    public void setOTRCloseOnDisc(boolean enabled)
-    {
+
+    public void setOTRCloseOnDisc(boolean enabled) {
         setBoolean("OTRCloseOnDisc", enabled);
     }
 
-    public boolean getOTRCloseOnChatClose()
-    {
+    public boolean getOTRCloseOnChatClose() {
         return getBoolean("OTRCloseOnChatClose", false);
     }
-    
-    public void setOTRCloseOnChatClose(boolean enabled)
-    {
+
+    public void setOTRCloseOnChatClose(boolean enabled) {
         setBoolean("OTRCloseOnChatClose", enabled);
     }
 
@@ -95,8 +88,7 @@ public class OTRProperties {
     // ===============================================================================
     // ===============================================================================
     private boolean getBoolean(String property, boolean defaultValue) {
-        return Boolean.parseBoolean(props.getProperty(property,
-                Boolean.toString(defaultValue)));
+        return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
     private void setBoolean(String property, boolean value) {
@@ -115,4 +107,4 @@ public class OTRProperties {
         return props.getProperty(property);
     }
 
- }
+}

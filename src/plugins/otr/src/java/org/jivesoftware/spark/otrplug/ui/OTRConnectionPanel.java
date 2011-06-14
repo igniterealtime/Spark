@@ -23,6 +23,12 @@ import org.jivesoftware.spark.otrplug.util.OTRResources;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
+/**
+ * Shows StyledDocuments in transcript window for info if the session
+ * established successfully or not
+ * 
+ * @author Bergunde Holger
+ */
 public class OTRConnectionPanel {
 
     private ChatRoomImpl _chatRoom;
@@ -30,7 +36,7 @@ public class OTRConnectionPanel {
     private ImageIcon _icon;
     private JPanel _conPanel;
     private int _i;
-    private  StyledDocument _doc;
+    private StyledDocument _doc;
     private TranscriptWindow _transcriptWindow;
     private JButton _retry;
     private boolean _succesfull = false;
@@ -39,32 +45,36 @@ public class OTRConnectionPanel {
     public OTRConnectionPanel(ChatRoomImpl chatroom) {
         _chatRoom = chatroom;
         _transcriptWindow = _chatRoom.getTranscriptWindow();
-        _doc = _transcriptWindow.getStyledDocument(); 
+        _doc = _transcriptWindow.getStyledDocument();
         _retry = new JButton(OTRResources.getString("otr.retry"));
         _retry.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 OTRManager.getInstance().startOtrWithUser(_chatRoom.getParticipantJID());
-                
+
             }
         });
-        
-        _retry.setVisible(false);
 
+        _retry.setVisible(false);
 
     }
 
+    /**
+     * Indicates that OTR is trying to establish an OTR session. This will
+     * inject a styledDocument. You have 10 seconds to approve that the
+     * connection was successful using method successfullyCon()
+     * 
+     */
     public void tryToStart() {
         if (!_succesfull && !_waiting) {
             renewPanel();
             _icon.setImage(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE).getImage());
 
-            
             _conPanel.setVisible(true);
 
             _i = 10;
-            _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds",_i));
+            _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds", _i));
 
             Timer t = new Timer();
             TimerTask task = new TimerTask() {
@@ -74,14 +84,14 @@ public class OTRConnectionPanel {
 
                     if (_i > 0 && !_succesfull) {
                         _waiting = true;
-                        _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds",_i));
+                        _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds", _i));
                         decI();
                     } else if (!_succesfull) {
                         _waiting = true;
                         _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_DELETE).getImage());
-                        _label.setText(OTRResources.getString("otr.failed.to.establish",_i));
+                        _label.setText(OTRResources.getString("otr.failed.to.establish", _i));
                         _retry.setVisible(true);
-                        
+
                         this.cancel();
                     } else {
                         this.cancel();
@@ -99,20 +109,23 @@ public class OTRConnectionPanel {
 
         _conPanel.add(new JLabel(_icon), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
         _conPanel.add(_label, new GridBagConstraints(1, 0, 1, 1, 0.7, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 15, 0, 0), 0, 0));
-        _conPanel.add(_retry,new GridBagConstraints(2, 0, 1, 1, 2.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-        
+        _conPanel.add(_retry, new GridBagConstraints(2, 0, 1, 1, 2.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+
         Style style = _doc.addStyle("OTRStyle", null);
         StyleConstants.setComponent(style, _conPanel);
-        
+
         try {
             _doc.insertString(_doc.getLength(), "ignored text", style);
             _doc.insertString(_doc.getLength(), "\n", null);
         } catch (BadLocationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }      
+        }
     }
 
+    /**
+     * Indicates in the transcript window, that the OTR session has been closed
+     */
     public void connectionClosed() {
         if (_succesfull) {
             renewPanel();
@@ -126,13 +139,12 @@ public class OTRConnectionPanel {
     private void decI() {
         --_i;
     }
-    
-    public void  setConnected(boolean con)
-    {
-        _succesfull = con;
-    }
 
-    public void sucessfullyCon() {
+    /**
+     * Should be called after you called tryToStart(). It will indicate that the
+     * session is now encrypted
+     */
+    public void successfullyCon() {
         if (!_succesfull) {
             if (!_waiting)
                 renewPanel();

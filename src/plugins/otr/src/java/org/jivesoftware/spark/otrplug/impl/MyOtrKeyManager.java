@@ -30,14 +30,34 @@ import net.java.otr4j.crypto.OtrCryptoEngineImpl;
 import net.java.otr4j.crypto.OtrCryptoException;
 import net.java.otr4j.session.SessionID;
 
+/**
+ * An implementation of the OtrKeyManager provided by otr4j. It stores the local
+ * key chain
+ * 
+ * @author Bergunde Holger
+ * 
+ */
 public class MyOtrKeyManager implements OtrKeyManager {
 
     private OtrKeyManagerStore store;
 
+    /**
+     * Use this consturctor if you want to use your own implementation for key
+     * storage
+     * 
+     * @param store
+     *            Imlementation of OtrKeyManagerStore
+     */
     public MyOtrKeyManager(OtrKeyManagerStore store) {
         this.store = store;
     }
 
+    /**
+     * Inner class, own implemented key sotrage
+     * 
+     * @author Bergunde Holger
+     * 
+     */
     class DefaultPropertiesStore implements OtrKeyManagerStore {
         private final Properties properties = new Properties();
         private String filepath;
@@ -112,12 +132,23 @@ public class MyOtrKeyManager implements OtrKeyManager {
         }
     }
 
+    /**
+     * Use this consturctor if key manager should use his own implementation of
+     * key storage
+     * 
+     * @param filepath
+     *            file where the keys should be stored
+     * @throws IOException
+     */
     public MyOtrKeyManager(String filepath) throws IOException {
         this.store = new DefaultPropertiesStore(filepath);
     }
 
     private List<OtrKeyManagerListener> listeners = new Vector<OtrKeyManagerListener>();
 
+    /**
+     * Adds listener to key manager
+     */
     public void addListener(OtrKeyManagerListener l) {
         synchronized (listeners) {
             if (!listeners.contains(l))
@@ -125,12 +156,22 @@ public class MyOtrKeyManager implements OtrKeyManager {
         }
     }
 
+    /**
+     * Remove listener from key manager
+     */
     public void removeListener(OtrKeyManagerListener l) {
         synchronized (listeners) {
             listeners.remove(l);
         }
     }
 
+    /**
+     * Generate a local key pair. Be careful. If there is already an key pair,
+     * it will override it
+     * 
+     * @param sessionID
+     *            the sessionID that is identified with the local machine
+     */
     public void generateLocalKeyPair(SessionID sessionID) {
         if (sessionID == null)
             return;
@@ -157,6 +198,13 @@ public class MyOtrKeyManager implements OtrKeyManager {
         this.store.setProperty(accountID + ".privateKey", pkcs8EncodedKeySpec.getEncoded());
     }
 
+    /**
+     * 
+     * Returns the local finger print for specified session. If there is no
+     * finger print you might generate one.
+     * 
+     * @return the local finger print for this sessionID
+     */
     public String getLocalFingerprint(SessionID sessionID) {
         KeyPair keyPair = loadLocalKeyPair(sessionID);
 
@@ -173,6 +221,11 @@ public class MyOtrKeyManager implements OtrKeyManager {
         }
     }
 
+    /**
+     * Return remote finger print for specified sessionID.
+     * 
+     * @return finger print for remote contact
+     */
     public String getRemoteFingerprint(SessionID sessionID) {
         PublicKey remotePublicKey = loadRemotePublicKey(sessionID);
         if (remotePublicKey == null)
@@ -185,6 +238,10 @@ public class MyOtrKeyManager implements OtrKeyManager {
         }
     }
 
+    /**
+     * check if the specified sessionID is verified for this machine
+     * 
+     */
     public boolean isVerified(SessionID sessionID) {
         if (sessionID == null)
             return false;
@@ -192,6 +249,12 @@ public class MyOtrKeyManager implements OtrKeyManager {
         return this.store.getPropertyBoolean(sessionID.getUserID() + ".publicKey.verified", false);
     }
 
+    /**
+     * Returns the key pair (private and public key) for the local machine
+     * 
+     * @param sessionID
+     *            sessionID for currect machine
+     */
     public KeyPair loadLocalKeyPair(SessionID sessionID) {
         if (sessionID == null)
             return null;
@@ -231,6 +294,10 @@ public class MyOtrKeyManager implements OtrKeyManager {
         return new KeyPair(publicKey, privateKey);
     }
 
+    /**
+     * Loads the public key for the specified sessionID. If there is no key
+     * stored, you will get 'null'
+     */
     public PublicKey loadRemotePublicKey(SessionID sessionID) {
         if (sessionID == null)
             return null;
@@ -257,6 +324,14 @@ public class MyOtrKeyManager implements OtrKeyManager {
         }
     }
 
+    /**
+     * Stores the public key for a specified user from sessionID
+     * 
+     * @param sessionID
+     *            sessionID to identifiy the owner of the key
+     * @param pubKey
+     *            the key which should be stored
+     */
     public void savePublicKey(SessionID sessionID, PublicKey pubKey) {
         if (sessionID == null)
             return;
@@ -269,19 +344,25 @@ public class MyOtrKeyManager implements OtrKeyManager {
         this.store.removeProperty(userID + ".publicKey.verified");
     }
 
+    /**
+     * Removes the verification for the specified sessionID
+     */
     public void unverify(SessionID sessionID) {
         if (sessionID == null)
             return;
 
         if (!isVerified(sessionID))
             return;
-        
+
         this.store.removeProperty(sessionID.getUserID() + ".publicKey.verified");
         for (OtrKeyManagerListener l : listeners)
             l.verificationStatusChanged(sessionID);
 
     }
 
+    /**
+     * Verify the specified sessionID
+     */
     public void verify(SessionID sessionID) {
         if (sessionID == null)
             return;

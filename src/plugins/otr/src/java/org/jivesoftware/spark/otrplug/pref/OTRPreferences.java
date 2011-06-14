@@ -3,15 +3,19 @@ package org.jivesoftware.spark.otrplug.pref;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-
 import org.jivesoftware.spark.otrplug.util.OTRProperties;
 import org.jivesoftware.spark.otrplug.util.OTRResources;
 import org.jivesoftware.spark.preference.Preference;
 
+/**
+ * Implementation of Preference interface provided by Spark
+ * 
+ * @author Bergunde Holger
+ */
 public class OTRPreferences implements Preference {
 
     private OTRPrefPanel pref = new OTRPrefPanel();
-    
+
     @Override
     public String getTitle() {
         return OTRResources.getString("otr.title");
@@ -24,13 +28,12 @@ public class OTRPreferences implements Preference {
 
     @Override
     public String getTooltip() {
-        // TODO Auto-generated method stub
-        return null;
+        return OTRResources.getString("otr.title");
     }
 
     @Override
     public String getListName() {
-        
+
         return OTRResources.getString("otr.list.entry");
     }
 

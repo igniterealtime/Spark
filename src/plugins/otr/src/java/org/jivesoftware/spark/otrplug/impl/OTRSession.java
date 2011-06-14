@@ -26,6 +26,12 @@ import net.java.otr4j.OtrPolicyImpl;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
 
+/**
+ * OTRSession are unique for every conversation. It handles the otrEngine for
+ * the chat and controls if the chat is encrypted or not.
+ * 
+ * @author Bergunde Holger
+ */
 public class OTRSession {
 
     private ChatRoomImpl _chatRoom;
@@ -41,6 +47,16 @@ public class OTRSession {
     private boolean _OtrEnabled = false;
     private OtrEngineListener _otrListener;
 
+    /**
+     * OTRSession Constructor
+     * 
+     * @param chatroom
+     *            chat room related to this OTR session
+     * @param myJID
+     *            my own JID
+     * @param remoteJID
+     *            the JID of the participant
+     */
     public OTRSession(ChatRoomImpl chatroom, String myJID, String remoteJID) {
         _chatRoom = chatroom;
         _myJID = myJID;
@@ -50,33 +66,36 @@ public class OTRSession {
 
         _engine = new OtrEngineImpl(_otrEngineHost);
 
-        
-        
-        
         setUpMessageListener();
 
         createButton();
-        
-        //Only initialize the actionListener once 
-        _otrButton.addActionListener(
-                new ActionListener() {
 
-             @Override
-             public void actionPerformed(ActionEvent e) {
-                 if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
-                     stopSession();
-                 } else {
-                     startSession();
-                 }
+        // Only initialize the actionListener once
+        _otrButton.addActionListener(new ActionListener() {
 
-             }
-         });
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+                    stopSession();
+                } else {
+                    startSession();
+                }
+
+            }
+        });
+
         _otrButton.setToolTipText(OTRResources.getString("otr.chat.button.tooltip"));
-        
+
         _OtrEnabled = OTRProperties.getInstance().getIsOTREnabled();
     }
 
+    /**
+     * Maybe you want to update the chat room because it was reopend but the OTR
+     * session is still alive.
+     * 
+     * @param chatroom
+     *            the chat room related to this OTR session
+     */
     public void updateChatRoom(ChatRoomImpl chatroom) {
         _OtrEnabled = OTRProperties.getInstance().getIsOTREnabled();
         _chatRoom = chatroom;
@@ -117,14 +136,13 @@ public class OTRSession {
                         }
                         message.setBody(old);
                     }
-                } else if (!_OtrEnabled)
-                {
+                } else if (!_OtrEnabled) {
                     String old = message.getBody();
                     message.setBody(null);
                     if (old.length() > 3 && old.substring(0, 4).equals("?OTR")) {
                         _chatRoom.getTranscriptWindow().insertNotificationMessage(OTRResources.getString("otr.not.enabled"), Color.gray);
                     } else {
-                    message.setBody(old);
+                        message.setBody(old);
                     }
                 }
 
@@ -141,23 +159,22 @@ public class OTRSession {
             ImageIcon otricon = null;
             if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
                 otricon = new ImageIcon(cl.getResource("otr_on.png"));
-                _conPanel.sucessfullyCon();
+                _conPanel.successfullyCon();
             } else {
                 otricon = new ImageIcon(cl.getResource("otr_off.png"));
             }
 
             _otrButton.setIcon(otricon);
 
-          
             _engine.removeOtrEngineListener(_otrListener);
             _chatRoom.getToolBar().addChatRoomButton(_otrButton);
-             _otrListener = new OtrEngineListener() {
+            _otrListener = new OtrEngineListener() {
 
                 @Override
                 public void sessionStatusChanged(SessionID arg0) {
                     if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
-                        _conPanel.sucessfullyCon();
-                        
+                        _conPanel.successfullyCon();
+
                         String otrkey = _manager.getKeyManager().getRemoteFingerprint(_mySession);
                         if (otrkey == null) {
                             PublicKey pubkey = _engine.getRemotePublicKey(_mySession);
@@ -191,14 +208,20 @@ public class OTRSession {
         }
     }
 
+    /**
+     * Start the OTR session manually from outside
+     */
     public void startSession() {
         _conPanel.tryToStart();
         _engine.startSession(_mySession);
     }
 
+    /**
+     * Stop the OTR session manually from outside
+     */
     public void stopSession() {
         _conPanel.connectionClosed();
-        if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {          
+        if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
             final ClassLoader cl = getClass().getClassLoader();
             _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
             _engine.endSession(_mySession);
