@@ -37,7 +37,9 @@ public class OTRSession {
     private OTRManager _manager = OTRManager.getInstance();
     final ChatRoomButton _otrButton = new ChatRoomButton();
     private OTRConnectionPanel _conPanel;
+    private MessageEventListener _msgEvnt;
     private boolean _OtrEnabled = false;
+    private OtrEngineListener _otrListener;
 
     public OTRSession(ChatRoomImpl chatroom, String myJID, String remoteJID) {
         _chatRoom = chatroom;
@@ -54,6 +56,22 @@ public class OTRSession {
         setUpMessageListener();
 
         createButton();
+        
+        //Only initialize the actionListener once 
+        _otrButton.addActionListener(
+                new ActionListener() {
+
+             @Override
+             public void actionPerformed(ActionEvent e) {
+                 if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+                     stopSession();
+                 } else {
+                     startSession();
+                 }
+
+             }
+         });
+        
         _OtrEnabled = OTRProperties.getInstance().getIsOTREnabled();
     }
 
@@ -65,11 +83,9 @@ public class OTRSession {
     }
 
     private void setUpMessageListener() {
-        
         _conPanel = new OTRConnectionPanel(_chatRoom);
-       
-        
-        _chatRoom.addMessageEventListener(new MessageEventListener() {
+        _chatRoom.removeMessageEventListener(_msgEvnt);
+        _msgEvnt = new MessageEventListener() {
 
             @Override
             public void sendingMessage(Message message) {
@@ -92,7 +108,6 @@ public class OTRSession {
                         mesg = _engine.transformReceiving(_mySession, old);
                     }
                     if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
-
                         message.setBody(mesg);
                     } else {
                         if (old.length() > 3 && old.substring(0, 4).equals("?OTR")) {
@@ -112,8 +127,8 @@ public class OTRSession {
                 }
 
             }
-        });
-
+        };
+        _chatRoom.addMessageEventListener(_msgEvnt);
     }
 
     private void createButton() {
@@ -124,28 +139,17 @@ public class OTRSession {
             ImageIcon otricon = null;
             if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
                 otricon = new ImageIcon(cl.getResource("otr_on.png"));
-                _chatRoom.getTranscriptWindow().insertNotificationMessage("From now on, your conversation is encrypted", Color.gray);
+                _conPanel.sucessfullyCon();
             } else {
                 otricon = new ImageIcon(cl.getResource("otr_off.png"));
             }
 
             _otrButton.setIcon(otricon);
 
-            _otrButton.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
-                        stopSession();
-                    } else {
-                        startSession();
-                    }
-
-                }
-            });
-
+          
+            _engine.removeOtrEngineListener(_otrListener);
             _chatRoom.getToolBar().addChatRoomButton(_otrButton);
-            _engine.addOtrEngineListener(new OtrEngineListener() {
+             _otrListener = new OtrEngineListener() {
 
                 @Override
                 public void sessionStatusChanged(SessionID arg0) {
@@ -180,7 +184,8 @@ public class OTRSession {
                     }
 
                 }
-            });
+            };
+            _engine.addOtrEngineListener(_otrListener);
         }
     }
 

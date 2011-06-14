@@ -72,7 +72,7 @@ public class OTRConnectionPanel {
                 @Override
                 public void run() {
 
-                    if (_i != 0 && !_succesfull) {
+                    if (_i > 0 && !_succesfull) {
                         _waiting = true;
                         _label.setText(OTRResources.getString("otr.try.to.connect.for.seconds",_i));
                         decI();
@@ -126,16 +126,23 @@ public class OTRConnectionPanel {
     private void decI() {
         --_i;
     }
+    
+    public void  setConnected(boolean con)
+    {
+        _succesfull = con;
+    }
 
     public void sucessfullyCon() {
-        if(!_waiting)
-            renewPanel();
-        _retry.setVisible(false);
-        _conPanel.setVisible(true);
-        _succesfull = true;
-        _waiting = false;
-        _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_CHECK).getImage());
-        _label.setText(OTRResources.getString("otr.successfull"));
+        if (!_succesfull) {
+            if (!_waiting)
+                renewPanel();
+            _retry.setVisible(false);
+            _conPanel.setVisible(true);
+            _succesfull = true;
+            _waiting = false;
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_CHECK).getImage());
+            _label.setText(OTRResources.getString("otr.successfull"));
+        }
     }
 
 }
