@@ -56,6 +56,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.RawPacketSender;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -579,6 +580,21 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    };
 
 	    TaskEngine.getInstance().schedule(task, 60000);
+	}
+	
+	if(SettingsManager.getLocalPreferences().isDebuggerEnabled())
+	{
+	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.TRAY_IMAGE));
+	    rawPackets.setText("Send Packets");
+	    rawPackets.addActionListener(new ActionListener() { 
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	    		new RawPacketSender();
+	    	
+	        }
+	    });
+	    
+	    connectMenu.add(rawPackets,2);
 	}
 
     }
