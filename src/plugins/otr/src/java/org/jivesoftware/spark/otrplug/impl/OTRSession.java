@@ -72,6 +72,8 @@ public class OTRSession {
              }
          });
         
+        _otrButton.setToolTipText(OTRResources.getString("otr.chat.button.tooltip"));
+        
         _OtrEnabled = OTRProperties.getInstance().getIsOTREnabled();
     }
 
