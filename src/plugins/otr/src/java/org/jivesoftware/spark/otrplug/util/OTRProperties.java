@@ -9,9 +9,9 @@ import java.util.Properties;
 import org.jivesoftware.spark.SparkManager;
 
 /**
- * RoarProperties file stuff
+ * OTRProperties file stuff
  * 
- * @author wolf.posdorfer
+ * @author Bergunde Holger
  * 
  */
 public class OTRProperties {

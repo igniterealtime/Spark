@@ -72,6 +72,8 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
 		    
 		    _languageSelection.addActionListener(new ActionListener() {
                         
+		        
+		        
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             String lang = _languages.get((String)_languageSelection.getSelectedItem());
@@ -139,10 +141,10 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
     public void closing() {
 
     }
-    
-    
+
     private void languagestoLocales()
     {
+        String spellLanguage = SpellcheckManager.getInstance().getSpellcheckerPreference().getPreferences().getSpellLanguage();
         _languages = new HashMap<String, String>();
         Locale[] locales = Locale.getAvailableLocales();
         ArrayList<String> languages = SpellcheckManager.getInstance().getSupportedLanguages();
@@ -158,6 +160,11 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
                     }
                     _languages.put(label, languages.get(i));
                     _languageSelection.addItem(label);
+                    if (languages.get(i).equals(spellLanguage))
+                    {
+                        _languageSelection.setSelectedItem(label);
+                    }
+                    
                 }
             }
         }
