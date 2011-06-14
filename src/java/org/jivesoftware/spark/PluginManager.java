@@ -183,22 +183,18 @@ public class PluginManager implements MainWindowListener {
 			try {
 			    File f = new File(installPath + jarFile.getName());
 			    if (installerFiles.contains(f)) {
-				String oldfile = StringUtils
-					.getMD5Checksum(jarFile
-						.getAbsolutePath());
-				String newfile = StringUtils.getMD5Checksum(f
-					.getAbsolutePath());
-				Log.debug(f.getAbsolutePath() + "   "
-					+ jarFile.getAbsolutePath());
-				Log.debug(newfile + " " + oldfile + " equal:"
-					+ oldfile.equals(newfile));
+				String oldfile = StringUtils.getMD5Checksum(jarFile.getAbsolutePath());
+				String newfile = StringUtils.getMD5Checksum(f.getAbsolutePath());
+				
+				Log.debug(f.getAbsolutePath() + "   " + jarFile.getAbsolutePath());
+				Log.debug(newfile + " " + oldfile + " equal:" + oldfile.equals(newfile));
+				
 				if (!oldfile.equals(newfile)) {
-				    Log.debug("deleting: "
-					    + file.getAbsolutePath() + ","
-					    + jarFile.getAbsolutePath());
+				    Log.debug("deleting: "+ file.getAbsolutePath() + "," + jarFile.getAbsolutePath());
 				    uninstall(file);
 				    jarFile.delete();
 				}
+				
 			    }
 
 			} catch (Exception e) {

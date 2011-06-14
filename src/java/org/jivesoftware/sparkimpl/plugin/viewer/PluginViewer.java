@@ -399,6 +399,9 @@ public class PluginViewer extends JPanel implements Plugin {
                                 if (sparkPlug.getPlugin().getDownloadURL().equals(plugin.getDownloadURL())) {
                                     availablePanel.remove(sparkPlug);
 
+                                    _deactivatedPlugins.remove(sparkPlug.getPlugin().getName());
+                                    _prefs.setDeactivatedPlugins(_deactivatedPlugins);
+                                    
                                     PluginManager.getInstance().addPlugin(sparkPlug.getPlugin());
 
                                     sparkPlug.showOperationButton();

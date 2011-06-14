@@ -24,7 +24,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +31,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -67,29 +65,8 @@ public class SparkPlugUI extends JPanel {
         JLabel versionLabel = new JLabel();
         JLabel descriptionLabel = new JLabel();
 
-
-        if (getFilename() != null) {
-            URL url = null;
-            try {
-                url = new URL("http://www.igniterealtime.org/updater/sparkplugs?filename=" + getFilename());
-                final Image pluginImage = ImageIO.read(url);
-
-                // In some cases, people are not supplying icons. This case needs to be handled.
-                if (pluginImage != null) {
-                    ImageIcon pluginIcon = new ImageIcon(pluginImage);
-                    imageIcon.setIcon(pluginIcon);
-                    if (pluginIcon.getIconWidth() == -1) {
-                        imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
-                    }
-                }
-            }
-            catch (Exception e) {
-                Log.debug("Unable to find image for " + url);
-            }
-        }
-        else {
-            imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
-        }
+	imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
+        
 
         add(imageIcon, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -100,7 +77,10 @@ public class SparkPlugUI extends JPanel {
         add(versionLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         titleLabel.setText(plugin.getName());
-        versionLabel.setText(plugin.getVersion() + " by " + plugin.getAuthor());
+	if (plugin.getVersion() != null && plugin.getAuthor() != null) {
+	    versionLabel.setText(plugin.getVersion() + " by "
+		    + plugin.getAuthor());
+	}
         descriptionLabel.setText(plugin.getDescription());
 
 
