@@ -26,6 +26,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -126,33 +128,33 @@ public class ThemePanel extends JPanel {
 
 	String[] nonSystemLookAndFeels = {
 		//JTattoo
-		"com.jtattoo.plaf.acryl.AcrylLookAndFeel",
+		//"com.jtattoo.plaf.acryl.AcrylLookAndFeel",
 		"com.jtattoo.plaf.aero.AeroLookAndFeel",
 		"com.jtattoo.plaf.aluminium.AluminiumLookAndFeel",
-		"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel",
+		//"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel",
 		"com.jtattoo.plaf.fast.FastLookAndFeel",
-		"com.jtattoo.plaf.graphite.GraphiteLookAndFeel",
-		"com.jtattoo.plaf.hifi.HiFiLookAndFeel",
+		//"com.jtattoo.plaf.graphite.GraphiteLookAndFeel",
+		//"com.jtattoo.plaf.hifi.HiFiLookAndFeel",
 		"com.jtattoo.plaf.luna.LunaLookAndFeel",
 		"com.jtattoo.plaf.mcwin.McWinLookAndFeel",
 		"com.jtattoo.plaf.mint.MintLookAndFeel",
-		"com.jtattoo.plaf.noire.NoireLookAndFeel",
+		//"com.jtattoo.plaf.noire.NoireLookAndFeel",
 		"com.jtattoo.plaf.smart.SmartLookAndFeel",
 		//Substance
-		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
+		//"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel",
+		//"org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceCremeCoffeeLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceCremeLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceDustCoffeeLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceDustLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel",
+		//"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel",
 		"org.jvnet.substance.api.skin.SubstanceGeminiLookAndFeel",
 		"org.jvnet.substance.api.skin.SubstanceGraphiteAquaLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel",
-		"org.jvnet.substance.api.skin.SubstanceMagellanLookAndFeel",
+		//"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel",
+		//"org.jvnet.substance.api.skin.SubstanceMagellanLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceModerateLookAndFeel",
@@ -162,9 +164,9 @@ public class ThemePanel extends JPanel {
 		"org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel",
 		"org.jvnet.substance.skin.SubstanceRavenGraphiteGlassLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceRavenLookAndFeel",
+		//"org.jvnet.substance.skin.SubstanceRavenLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceSaharaLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
+		//"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
 		};
     	
 	for (String s : nonSystemLookAndFeels) {
@@ -194,8 +196,9 @@ public class ThemePanel extends JPanel {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// Disable button for java.LaF's and for Synthetica
-		if (_lookandfeel.getSelectedItem() != null && !_lookandfeel.getSelectedItem().toString().contains("Substance")) {
+		// Disable button for java.LaF's and for Synthetica 
+		
+		if (_lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length) {
 		    _lookandfeelpreview.setEnabled(false);
 		    _lookandfeelpreview
 			    .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
@@ -225,8 +228,9 @@ public class ThemePanel extends JPanel {
 			  try {
 			    UIManager.setLookAndFeel(_lookandfeelname.get(_lookandfeel
 			    	    .getSelectedIndex()));
+			    setJTattooBar(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
 			} catch (Exception e) {
-			//WTF
+			//WTF, i dont care
 			}
 		
 			SwingUtilities.updateComponentTreeUI(_themepanel);
@@ -620,6 +624,31 @@ public class ThemePanel extends JPanel {
      */
     public void setShowReconnectPanel(int reconnect) {
 	_showReconnectBox.setSelectedIndex(reconnect);
+    }
+    
+    /**
+     * Tries to set the Menubar String for JTatto LaFs, doesnt work on Substance
+     * @param s, the class of the LookandFeel
+     */
+    private void setJTattooBar(String classname) {
+	
+	if (classname.contains("jtattoo")) {
+	    try {
+		Properties props = new Properties();
+		
+		String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? ""
+			: Default.getString(Default.MENUBAR_TEXT);
+		
+		props.put("logoString", menubar);
+		
+		Class<?> c = ClassLoader.getSystemClassLoader().loadClass(classname);
+		Method m = c.getMethod("setCurrentTheme", Properties.class);
+		
+		m.invoke(c.newInstance(), props);
+	    } catch (Exception e) {
+		Log.error("Error Setting JTattoo ", e);
+	    }
+	}
     }
     
     
