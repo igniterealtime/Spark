@@ -105,20 +105,19 @@ public class ReversiPlugin implements Plugin {
     public void shutdown() {
         // Remove Reversi button from chat toolbar.
         removeToolbarButton();
-
         // Remove IQ listener
         SparkManager.getConnection().removePacketListener(gameOfferListener);
-
-        // See if there are any pending offers or invitations. If so, cancel
-        // them.
-        for (Iterator<String> i = gameOffers.keySet().iterator(); i.hasNext();) {
-            // String opponentJID = (String)i.next();
-            // TODO: cancel game offer.
-        }
-        for (Iterator<String> i = gameInvitations.keySet().iterator(); i.hasNext();) {
-            // String opponentJID = (String)i.next();
-            // TODO: reject game invitation.
-        }
+//
+//        // See if there are any pending offers or invitations. If so, cancel
+//        // them.
+//        for (Iterator<String> i = gameOffers.keySet().iterator(); i.hasNext();i.next()) {
+//          System.out.println("gameoffer");
+//
+//        }
+//        System.out.println(gameInvitations.size());
+//        for (Iterator<String> i = gameInvitations.keySet().iterator(); i.hasNext(); i.next()) {
+//          
+//        }
         gameOffers.clear();
         gameInvitations.clear();
 
@@ -275,7 +274,6 @@ public class ReversiPlugin implements Plugin {
                         request.add(requestPanel, BorderLayout.WEST);
 
                         String opponentJID = ((ChatRoomImpl) room).getJID();
-                        System.out.println("sending to "+opponentJID);
                         String opponentName = "[" + opponentJID + "]"; // TODO:
                                                                        // convert
                                                                        // to
