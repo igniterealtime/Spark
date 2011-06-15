@@ -1,0 +1,28 @@
+<plugins>
+    <plugin>
+        <name>Testplugin1</name>
+        <version>1.0</version>
+        <author>Some Guy</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>someguy@somewebsite.com</email>
+        <description>Used for doing stuff</description>
+        <class>org.jivesoftware.spark.test.plugin.stuff</class>
+        <minSparkVersion>2.6.0</minSparkVersion>
+        <downloadURL>http://localhost/test.jar</downloadURL>
+        <changeLog>http://www.google.de/search?q=changelog</changeLog>      
+        <readme>http://www.google.de/search?q=readme</readme>
+    </plugin>
+    <plugin>
+        <name>Other Plugin</name>
+        <version>1.0</version>
+        <author>Joe Mamma</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>Joe@Mama.com</email>
+        <description>Adds some weird features you dont want</description>
+        <class>org.weird.feature.class.mainclass</class>
+     <minSparkVersion>2.6.0</minSparkVersion>
+     <downloadURL>http://localhost/test.jar</downloadURL>
+     <changeLog>http://www.google.de/search?q=changelog</changeLog>
+     <readme>http://www.google.de/search?q=readme</readme>
+    </plugin>
+</plugins>

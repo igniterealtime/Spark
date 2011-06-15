@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -93,7 +94,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
     private boolean loaded = false;
 
-    private String retrieveListURL = "http://www.igniterealtime.org/updater/plugins.jsp";
+    private String retrieveListURL = Default.getString("PLUGIN_REPOSITORY");
 
     private JProgressBar progressBar;
 
@@ -145,7 +146,8 @@ public class PluginViewer extends JPanel implements Plugin {
 
 		tabbedPane.addChangeListener(new ChangeListener() {
 		    public void stateChanged(ChangeEvent changeEvent) {
-			if (tabbedPane.getSelectedIndex() == 1) {
+			if (tabbedPane.getSelectedComponent().equals(
+				((JViewport)availablePanel.getParent()).getParent())) {
 			    loadAvailablePlugins();
 			    loaded = true;
 			}
@@ -278,14 +280,18 @@ public class PluginViewer extends JPanel implements Plugin {
                 // Get HTTP client
                 Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
                 final HttpClient httpclient = new HttpClient();
-                String proxyHost = System.getProperty("http.proxyHost");
-                String proxyPort = System.getProperty("http.proxyPort");
-                if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
-                    try {
-                        httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
-                    }
-                    catch (NumberFormatException e) {
-                        Log.error(e);
+
+                if(Default.getBoolean("PLUGIN_REPOSITORY_USE_PROXY"))
+                {
+                    String proxyHost = System.getProperty("http.proxyHost");
+                    String proxyPort = System.getProperty("http.proxyPort");
+                    if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
+                        try {
+                            httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
+                        }
+                        catch (NumberFormatException e) {
+                            Log.error(e);
+                        }
                     }
                 }
 
@@ -346,14 +352,18 @@ public class PluginViewer extends JPanel implements Plugin {
         final HttpClient httpclient = new HttpClient();
         String proxyHost = System.getProperty("http.proxyHost");
         String proxyPort = System.getProperty("http.proxyPort");
-        if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
-            try {
-                httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
-            }
-            catch (NumberFormatException e) {
-                Log.error(e);
-            }
-        }
+        
+	if (Default.getBoolean("PLUGIN_REPOSITORY_USE_PROXY")) {
+	    if (ModelUtil.hasLength(proxyHost)
+		    && ModelUtil.hasLength(proxyPort)) {
+		try {
+		    httpclient.getHostConfiguration().setProxy(proxyHost,
+			    Integer.parseInt(proxyPort));
+		} catch (NumberFormatException e) {
+		    Log.error(e);
+		}
+	    }
+	}
         // Execute request
 
 
@@ -514,14 +524,14 @@ public class PluginViewer extends JPanel implements Plugin {
                         publicPlugin.setDownloadURL(downloadURL);
                     }
 
-                    Node changeLog = plugin.selectSingleNode("changeLog");
-                    if (changeLog != null) {
-                        publicPlugin.setChangeLogAvailable(true);
+                    Node changeLogNode = plugin.selectSingleNode("changeLog");
+                    if (changeLogNode != null) {
+                        publicPlugin.setChangeLogURL(changeLogNode.getText());
                     }
 
-                    Node readMe = plugin.selectSingleNode("readme");
-                    if (readMe != null) {
-                        publicPlugin.setReadMeAvailable(true);
+                    Node readMeNode = plugin.selectSingleNode("readme");
+                    if (readMeNode != null) {
+                        publicPlugin.setReadMeURL(readMeNode.getText());
                     }
 
                     Node smallIcon = plugin.selectSingleNode("smallIcon");

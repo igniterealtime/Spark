@@ -51,12 +51,12 @@ import org.jivesoftware.spark.util.log.Log;
 public class SparkPlugUI extends JPanel {
 
 	private static final long serialVersionUID = -4206533328807591854L;
-	private PublicPlugin plugin;
+	private PublicPlugin _plugin;
     private final JButton installButton = new JButton();
     private JLabel imageIcon = new JLabel();
 
     public SparkPlugUI(PublicPlugin plugin) {
-        this.plugin = plugin;
+        _plugin = plugin;
 
         setLayout(new GridBagLayout());
         setBackground(Color.white);
@@ -78,8 +78,8 @@ public class SparkPlugUI extends JPanel {
 
         titleLabel.setText(plugin.getName());
 	if (plugin.getVersion() != null && plugin.getAuthor() != null) {
-	    versionLabel.setText(plugin.getVersion() + " by "
-		    + plugin.getAuthor());
+	    versionLabel.setText(_plugin.getVersion() + " by "
+		    + _plugin.getAuthor());
 	}
         descriptionLabel.setText(plugin.getDescription());
 
@@ -87,7 +87,7 @@ public class SparkPlugUI extends JPanel {
         add(installButton, new GridBagConstraints(4, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
 
-        if (plugin.isChangeLogAvailable() && plugin.isReadMeAvailable()) {
+        if (_plugin.getChangeLog()!=null && _plugin.getReadMeURL() != null) {
             RolloverButton changeLogButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CHANGELOG_IMAGE));
             RolloverButton readMeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.README_IMAGE));
 
@@ -95,7 +95,7 @@ public class SparkPlugUI extends JPanel {
             changeLogButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        BrowserLauncher.openURL("http://www.igniterealtime.org/updater/retrieve.jsp?filename=" + getFilename() + "&changeLog=true");
+                	BrowserLauncher.openURL(_plugin.getChangeLog());
                     }
                     catch (Exception e1) {
                         Log.error(e1);
@@ -106,7 +106,7 @@ public class SparkPlugUI extends JPanel {
             readMeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        BrowserLauncher.openURL("http://www.igniterealtime.org/updater/retrieve.jsp?filename=" + getFilename() + "&readme=true");
+                        BrowserLauncher.openURL(_plugin.getReadMeURL());
                     }
                     catch (Exception e1) {
                         Log.error(e1);
@@ -134,7 +134,7 @@ public class SparkPlugUI extends JPanel {
 
     public void showOperationButton() {
         final PluginManager pluginManager = PluginManager.getInstance();
-        if (!pluginManager.isInstalled(plugin)) {
+        if (!pluginManager.isInstalled(_plugin)) {
             installButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
         }
         else {
@@ -165,7 +165,7 @@ public class SparkPlugUI extends JPanel {
 
 
     public PublicPlugin getPlugin() {
-        return plugin;
+        return _plugin;
     }
 
     public JButton getInstallButton() {
@@ -173,7 +173,7 @@ public class SparkPlugUI extends JPanel {
     }
 
     public void useLocalIcon() {
-        File pluginDIR = plugin.getPluginDir();
+        File pluginDIR = _plugin.getPluginDir();
         try {
             File smallIcon = new File(pluginDIR, "logo_small.gif");
             File largeIcon = new File(pluginDIR, "logo_large.gif");
@@ -190,10 +190,14 @@ public class SparkPlugUI extends JPanel {
 
     }
 
+    /**
+     * Returns the Filename of provided Download URL
+     * @return
+     */
     public String getFilename() {
         String filename = null;
         try {
-            URL downloadURL = new URL(plugin.getDownloadURL());
+            URL downloadURL = new URL(_plugin.getDownloadURL());
             filename = URLFileSystem.getFileName(downloadURL);
         }
         catch (MalformedURLException e) {

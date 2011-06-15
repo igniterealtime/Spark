@@ -98,7 +98,7 @@ public class Default {
     }
     
     public static boolean getBoolean(String propertyName) {
-	return getString(propertyName).equals("true");
+	return getString(propertyName).replace(" ","").equals("true");
     }
 
     public static ImageIcon getImageIcon(String imageName) {

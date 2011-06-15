@@ -32,8 +32,8 @@ public class PublicPlugin {
     private String description;
     private String homePage;
     private String downloadURL;
-    private boolean changeLogAvailable;
-    private boolean readMeAvailable;
+    private String changeLogURL;
+    private String readMeURL;
     private boolean smallIconAvailable;
     private boolean largeIconAvailable;
     private String minVersion;
@@ -112,20 +112,20 @@ public class PublicPlugin {
         this.downloadURL = downloadURL;
     }
 
-    public boolean isChangeLogAvailable() {
-        return changeLogAvailable;
+    public String getChangeLog() {
+        return changeLogURL;
     }
 
-    public void setChangeLogAvailable(boolean changeLogAvailable) {
-        this.changeLogAvailable = changeLogAvailable;
+    public void setChangeLogURL(String changeLogURL) {
+        this.changeLogURL = changeLogURL;
     }
 
-    public boolean isReadMeAvailable() {
-        return readMeAvailable;
+    public String getReadMeURL() {
+        return readMeURL;
     }
 
-    public void setReadMeAvailable(boolean readMeAvailable) {
-        this.readMeAvailable = readMeAvailable;
+    public void setReadMeURL(String readMeURL) {
+        this.readMeURL = readMeURL;
     }
 
     public boolean isSmallIconAvailable() {

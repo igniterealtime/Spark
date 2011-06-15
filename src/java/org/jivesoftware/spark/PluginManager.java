@@ -767,30 +767,29 @@ public class PluginManager implements MainWindowListener {
      * @throws Exception thrown if there was a problem loading the plugin.
      */
     public void addPlugin(PublicPlugin plugin) throws Exception {
-			expandNewPlugins();
+	expandNewPlugins();
 
-			URL url = new URL(plugin.getDownloadURL());
-	      String name = URLFileSystem.getName(url);
-	      File pluginDownload = new File(PluginManager.PLUGINS_DIRECTORY, name);
+	URL url = new URL(plugin.getDownloadURL());
+	String name = URLFileSystem.getName(url);
+	File pluginDownload = new File(PluginManager.PLUGINS_DIRECTORY, name);
 
-	      ((PluginClassLoader)getParentClassLoader()).addPlugin(pluginDownload);
-	        
-			pluginClass = loadPublicPlugin(pluginDownload);
-				
-     		try {
-				EventQueue.invokeAndWait(new Runnable() {
-		 				@Override
-		 				public void run() {
+	((PluginClassLoader) getParentClassLoader()).addPlugin(pluginDownload);
 
-		 					Log.debug("Trying to initialize " + pluginClass);
-		 					pluginClass.initialize();
-		 				}
-		 			});
-	  	   }
-	  	   catch(Exception e){
-	  	   	 Log.error(e);
-	  	   }
-        
+	pluginClass = loadPublicPlugin(pluginDownload);
+
+	try {
+	    EventQueue.invokeAndWait(new Runnable() {
+		@Override
+		public void run() {
+
+		    Log.debug("Trying to initialize " + pluginClass);
+		    pluginClass.initialize();
+		}
+	    });
+	} catch (Exception e) {
+	    Log.error(e);
+	}
+
     }
 
     /**
