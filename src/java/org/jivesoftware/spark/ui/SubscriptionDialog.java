@@ -43,11 +43,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -56,7 +58,9 @@ import java.awt.Insets;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 /**
  * SubscriptionDialog handles all subscription requests.
  *
@@ -215,11 +219,7 @@ public class SubscriptionDialog {
         denyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Send subscribed
-                Presence response = new Presence(Presence.Type.unsubscribe);
-                response.setTo(jid);
-                SparkManager.getConnection().sendPacket(response);
-
-                dialog.dispose();
+                unsubscribeAndClose();
             }
         });
 
@@ -239,8 +239,24 @@ public class SubscriptionDialog {
             }
         };
         dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {       
+                super.windowClosing(e);
+                unsubscribeAndClose();
+            }
+        });
+      
+        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                unsubscribeAndClose();
+                
+            }
+        };
+        dialog.getRootPane().registerKeyboardAction(action,key,JComponent.WHEN_FOCUSED);
         dialog.setIconImage(SparkManager.getApplicationImage().getImage());
         dialog.getContentPane().add(mainPanel);
         dialog.pack();
@@ -264,6 +280,14 @@ public class SubscriptionDialog {
     }
 
 
+    private void unsubscribeAndClose()
+    {
+        Presence response = new Presence(Presence.Type.unsubscribe);
+        response.setTo(jid);
+        SparkManager.getConnection().sendPacket(response);
+
+        dialog.dispose();
+    }
     private boolean addEntry() {
         String errorMessage = Res.getString("title.error");
         String nickname = nicknameField.getText();
