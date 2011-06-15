@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.privacy.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -168,7 +169,7 @@ public class PrivacyAddDialogUI extends JPanel {
      *            the parent container.
      * @return all items chosen in the pick list.
      */
-    public Collection<PrivacyItem> showRoster(JDialog parent, boolean showGroups) {
+    public Collection<PrivacyItem> showRoster(Component parent, boolean showGroups) {
         _showGroups = showGroups;
         // Populate Invite Panel with Available users.
 

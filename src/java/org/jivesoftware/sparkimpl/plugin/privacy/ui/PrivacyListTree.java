@@ -92,6 +92,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         createInfoPanel();
         initializeTree();
         createCurrentListInfoPanel();
+        System.out.println("schnauze voll");
     }
 
     private void createInfoPanel() {
@@ -253,9 +254,8 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                JDialog dlg = new JDialog();
                 PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
-                Collection<PrivacyItem> col = browser.showRoster(dlg, node.isContactGroup() ? false : true);
+                Collection<PrivacyItem> col = browser.showRoster(_comp, node.isContactGroup() ? false : true);
                 for (PrivacyItem pI : col) {
                     pI.setOrder(list.getNewItemOrder());
                   
