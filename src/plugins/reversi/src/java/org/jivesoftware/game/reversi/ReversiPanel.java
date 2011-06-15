@@ -20,6 +20,7 @@
 package org.jivesoftware.game.reversi;
 
 import javax.swing.*;
+
 import java.util.*;
 import java.util.List;
 import java.awt.*;
@@ -62,14 +63,17 @@ public class ReversiPanel extends JPanel {
     private ReversiModel reversi;
 
     // All images used by the game.
-    private Image imageBackground = new ImageIcon(getClass().getResource("images/reversi-board.png")).getImage();
-    private Image imageScoreWhite = new ImageIcon(getClass().getResource("images/score-button-white.png")).getImage();
-    private Image imageScoreBlack = new ImageIcon(getClass().getResource("images/score-button-black.png")).getImage();
-    private Image imageTurnBlack = new ImageIcon(getClass().getResource("images/turn-label-black.png")).getImage();
-    private Image imageTurnWhite = new ImageIcon(getClass().getResource("images/turn-label-white.png")).getImage();
-    private Image imageButtonResign = new ImageIcon(getClass().getResource("images/button-resign.png")).getImage();
-    private Image imageYou = new ImageIcon(getClass().getResource("images/you.png")).getImage();
-    private Image imageThem = new ImageIcon(getClass().getResource("images/them.png")).getImage();
+    
+     ImageIcon imageIcon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
+    
+    private Image imageBackground = ReversiRes.getImageIcon(ReversiRes.REVERSI_BOARD).getImage();
+    private Image imageScoreWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_WHITE).getImage();
+    private Image imageScoreBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_BLACK).getImage();
+    private Image imageTurnBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_LABEL_BLACK).getImage();
+    private Image imageTurnWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_LABEL_WHITE).getImage();
+    private Image imageButtonResign = ReversiRes.getImageIcon(ReversiRes.REVERSI_RESIGN).getImage();
+    private Image imageYou = ReversiRes.getImageIcon(ReversiRes.REVERSI_YOU).getImage();
+    private Image imageThem = ReversiRes.getImageIcon(ReversiRes.REVERSI_THEM).getImage();
 
     /**
      * Creates a new Reversi panel.
@@ -180,11 +184,26 @@ public class ReversiPanel extends JPanel {
                 BOARD_SIZE + BORDER_SIZE*2 + 42);
 
         // Draw who's turn it is.
-        if (reversi.getCurrentPlayer() == ReversiModel.BLACK) {
+        if (!reversi.isGameFinished())
+        {      
+            if (reversi.getCurrentPlayer() == ReversiModel.BLACK) {
             g.drawImage(imageTurnBlack, 116, BOARD_SIZE + BORDER_SIZE*2 + 11, null);
-        }
-        else {
+            }
+            else {
             g.drawImage(imageTurnWhite, 116, BOARD_SIZE + BORDER_SIZE*2 + 11, null);
+            }
+        } else
+        {
+            int me  = otherPlayer==ReversiModel.BLACK?ReversiModel.WHITE:ReversiModel.BLACK;
+            String whoWins = "Draw";
+            if (reversi.getBlackScore() > reversi.getWhiteScore())
+            {   
+                if (me == ReversiModel.BLACK)
+                    whoWins = "YOU WIN!";
+                else
+                    whoWins = "YOU LOST!";
+            }
+            g.drawString(whoWins, 130, BOARD_SIZE + BORDER_SIZE*2 + 20);
         }
         if (reversi.getCurrentPlayer() == otherPlayer) {
             g.drawImage(imageThem, 163, BOARD_SIZE + BORDER_SIZE*2 + 31, null);
@@ -192,7 +211,7 @@ public class ReversiPanel extends JPanel {
         else {
             g.drawImage(imageYou, 163, BOARD_SIZE + BORDER_SIZE*2 + 31, null);
         }
-
+        
         // The resign button.
         g.drawImage(imageButtonResign, 281, BOARD_SIZE + BORDER_SIZE*2 + 17, null);
     }

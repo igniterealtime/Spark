@@ -1,12 +1,13 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Reversi</name>
-    <version>1.0</version>
-    <author>Matt Tucker, Bill Lynch</author>
+    <version>1.3</version>
+    <author>Matt Tucker, Bill Lynch, Holger Bergunde</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>plugins@jivesoftware.org</email>
     <description>Multiplayer game of Reversi</description>
     <class>org.jivesoftware.game.reversi.ReversiPlugin</class>
-    <minSparkVersion>2.0.2</minSparkVersion>
+    <minSparkVersion>2.6.0</minSparkVersion>
+    <java>1.6.0_01</java>
 </plugin>
 

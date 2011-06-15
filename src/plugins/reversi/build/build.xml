@@ -73,9 +73,28 @@
 
         <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
 
-
+		
 
         <zip zipfile="${target.dir}/reversi.jar" basedir="${target.dir}"/>
+    	
+    	<copy todir="${basedir}../../../commercial">
+    				<fileset file="${target.dir}/reversi.jar"/>
+    	</copy>
     </target>
+	
+	
+	
+    	<property name="pluginsstuff" value="${basedir}\..\..\..\target\build\plugins"/>
+
+    			<target name="copy" depends="jar">
+
+    				<echo message="${pluginsstuff}"/>
+
+    				<copy todir="${pluginsstuff}">
+    					<fileset file="${target.dir}/reversi.jar"/>
+    				</copy>
+
+    			</target>
+	
 
 </project>
