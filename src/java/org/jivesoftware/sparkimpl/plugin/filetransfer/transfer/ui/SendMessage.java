@@ -218,7 +218,8 @@ public class SendMessage extends JPanel {
                         
                         long timediff = endtime-starttime;
                         long bytediff = endbyte-startbyte;
-                                              
+                           
+                        System.out.println("update bar, bytessend: "+endbyte);
                         updateBar(transfer, nickname, TransferUtils.calculateSpeed(bytediff, timediff) );
                     }
                     catch (InterruptedException e) {
@@ -284,6 +285,7 @@ public class SendMessage extends JPanel {
             showAlert(true);
         }
         else if (status == Status.in_progress) {
+            System.out.println("in progress!");
             titleLabel.setText(Res.getString("message.sending.file.to", nickname));
             showAlert(false);
             if (!progressBar.isVisible()) {
@@ -297,6 +299,7 @@ public class SendMessage extends JPanel {
             		    // 100 % = Filesize
         		    // x %   = Currentsize	    
             		    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
+            		    System.out.println("set value to: "+Math.round(p));
             		    progressBar.setValue(Math.round(p));
             		}
             	});
