@@ -202,6 +202,12 @@ public class ReversiPanel extends JPanel {
                     whoWins = "YOU WIN!";
                 else
                     whoWins = "YOU LOST!";
+            } else if(reversi.getBlackScore() < reversi.getWhiteScore())
+            {
+                if (me == ReversiModel.WHITE)
+                    whoWins = "YOU WIN!";
+                else
+                    whoWins = "YOU LOST!";
             }
             g.drawString(whoWins, 130, BOARD_SIZE + BORDER_SIZE*2 + 20);
         }
