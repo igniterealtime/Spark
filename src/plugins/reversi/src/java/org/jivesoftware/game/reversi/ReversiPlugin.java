@@ -25,7 +25,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.ImageIcon;

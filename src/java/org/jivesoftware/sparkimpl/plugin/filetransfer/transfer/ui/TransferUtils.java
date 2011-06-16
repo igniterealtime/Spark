@@ -72,8 +72,8 @@ public class TransferUtils {
 
 	// currentsize = timediff
 	// sizeleft = x
-
-	long x = sizeleft * timediff / currentsize==0l?1l:currentsize;
+	currentsize = currentsize == 0 ? 1L : currentsize;
+	long x = sizeleft * timediff / currentsize;
 
 	// Make it seconds
 	x = x / 1000;
