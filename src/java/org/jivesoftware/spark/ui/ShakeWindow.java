@@ -24,7 +24,9 @@ import org.jivesoftware.spark.SparkManager;
 import javax.swing.Timer;
 import javax.swing.JFrame;
 
+import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -41,6 +43,7 @@ public class ShakeWindow {
     private Point naturalLocation;
     private long startTime;
     private Timer shakeTimer;
+    private Timer moveTimer;
     private final double TWO_PI = Math.PI * 2.0;
     private boolean added = false;
 
@@ -105,6 +108,47 @@ public class ShakeWindow {
 
         SparkManager.getNativeManager().stopFlashing(window);
     }
+    
+    /**
+     * punishes the User by moving the Chatwindow around for 10 seconds
+     */
+    public void startRandomMovement(final int seconds)
+    {
+	if(window instanceof JFrame){
+            JFrame f = (JFrame)window;
+            f.setState(Frame.NORMAL);
+            f.setVisible(true);
+        }
+        SparkManager.getNativeManager().flashWindow(window);
+        
+        final long startTime = System.currentTimeMillis()/1000L;
+        
+	moveTimer = new Timer(5, new ActionListener() {
 
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+
+		double x = Math.random()*10000 % d.getWidth();
+		double y = Math.random()*10000 % d.getHeight();
+		int xx = Math.round(Math.round(x));
+		int yy = Math.round(Math.round(y));
+		window.setLocation(xx,yy);
+		window.repaint();
+		
+		long now = System.currentTimeMillis()/1000L;
+		long diff = now-startTime;
+		System.out.println(diff);
+		if(diff > seconds)
+		{
+		    moveTimer.stop();
+		}
+
+	        }
+	    });
+	
+	moveTimer.start();
+	
+    }
 
 }

@@ -357,7 +357,14 @@ public class ChatRoomImpl extends ChatRoom {
         return true;
     }
 
-
+    /**
+     * Returns the Bare-Participant JID
+     * 
+     * <b> user@server.com </b> <br>
+     * for retrieving the full Jid use ChatRoomImpl.getJID()
+     * 
+     * @return
+     */
     public String getParticipantJID() {
         return participantJID;
     }

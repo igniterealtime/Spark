@@ -21,20 +21,21 @@ package tic.tac.toe.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ShakeWindow;
-
 import tic.tac.toe.GameBoard;
 import tic.tac.toe.Mark;
 import tic.tac.toe.TTTRes;
+import tic.tac.toe.packet.InvalidMove;
 import tic.tac.toe.packet.MovePacket;
 
 /**
@@ -95,13 +96,48 @@ public class GamePanel extends JPanel {
 			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
 
 		if (move.getGameID() == _gameID) {
+		    
+		    if(_gameboard.isValidMove(getYourMark() ,move.getPositionX(), move.getPositionY()))
+		    {
 		    _gameboardpanel.placeMark(getYourMark(),
 			    move.getPositionX(), move.getPositionY());
+		    }
+		    else
+		    {
+			InvalidMove inval = new InvalidMove();
+			inval.setGameID(move.getGameID());
+			inval.setPositionX(move.getPositionX());
+			inval.setPositionY(move.getPositionY());
+			Message message =new Message(_opponent);
+			message.addExtension(inval);
+			_connection.sendPacket(message);
+			
+			ChatRoom cr = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(_opponent));
+			cr.getTranscriptWindow().insertCustomText(_opponent+"seems to be cheating\n"+
+				"He tried placing a wrong Move", true, false, Color.red);
+			
+		    }
 		}
 
 	    }
 	}, new PacketExtensionFilter(MovePacket.ELEMENT_NAME,
 		MovePacket.NAMESPACE));
+	
+	_connection.addPacketListener(new PacketListener() {
+	    
+	    @Override
+	    public void processPacket(Packet packet) {
+		
+		//InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
+		ChatRoom cr = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(_opponent));
+		cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n"+
+			"You placed a wrong Move", true, false, Color.red);
+		ShakeWindow sw = new ShakeWindow(_frame);
+		    sw.startRandomMovement(10);
+		
+	    }
+	}, new PacketExtensionFilter(InvalidMove.ELEMENT_NAME,
+		InvalidMove.NAMESPACE));
 
     }
 
@@ -145,8 +181,6 @@ public class GamePanel extends JPanel {
 	    
 	    if (_gameboard.getWinner() == getMyMark().getValue()) {
 		
-		
-
 		remove(_playerdisplay);
 		add(new GameEndsUI(TTTRes.getString("ttt.win"), Color.GREEN), BorderLayout.SOUTH);
 		

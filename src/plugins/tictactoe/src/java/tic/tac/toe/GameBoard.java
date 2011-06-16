@@ -204,4 +204,15 @@ public class GameBoard {
 	return null;
 
     }
+    
+    /**
+     * Checks if the palced move is Valid
+     * @param x
+     * @param y
+     * @return
+     */
+    public boolean isValidMove(Mark markplaced, int x , int y)
+    {
+	return _board[x][y] == 0 && _currentPlayer == markplaced.getValue();
+    }
 }

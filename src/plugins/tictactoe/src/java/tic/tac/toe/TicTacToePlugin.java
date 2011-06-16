@@ -47,6 +47,7 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import tic.tac.toe.packet.GameOfferPacket;
+import tic.tac.toe.packet.InvalidMove;
 import tic.tac.toe.packet.MovePacket;
 import tic.tac.toe.ui.GamePanel;
 
@@ -77,6 +78,7 @@ public class TicTacToePlugin implements Plugin {
 
 	ProviderManager.getInstance().addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE,GameOfferPacket.class);
 	ProviderManager.getInstance().addExtensionProvider(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE, MovePacket.class);
+	ProviderManager.getInstance().addExtensionProvider(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE, InvalidMove.class);
 
 	// Add IQ listener to listen for incoming game invitations.
 	_gameOfferListener = new PacketListener() {
@@ -165,6 +167,14 @@ public class TicTacToePlugin implements Plugin {
 		    }
 		});
 
+	    }
+
+	    @Override
+	    public void chatRoomClosed(ChatRoom room) {
+		if (room instanceof ChatRoomImpl) {
+		    ChatRoomImpl cri = (ChatRoomImpl) room;
+		    _currentInvitations.remove(cri.getParticipantJID());
+		}
 	    }
 	};
 	
