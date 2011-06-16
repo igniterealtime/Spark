@@ -19,19 +19,22 @@
  */ 
 package org.jivesoftware.spark.ui.themes;
 
+import java.awt.Image;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 
+/**
+ * Holds the AppearanceTab and the ColorTab
+ * @author wolf.posdorfer
+ *
+ */
 public class MainThemePanel extends JPanel {
-    
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 6014253744953992190L;
     
     private ThemePanel _themepanel;
@@ -45,10 +48,12 @@ public class MainThemePanel extends JPanel {
 	_colorpanel = new ColorPreferencePanel();
 	
 	JTabbedPane tabs = new JTabbedPane();
+	ImageIcon appe = new ImageIcon(SparkRes.getImageIcon(SparkRes.PALETTE_24x24_IMAGE).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+	ImageIcon color = new ImageIcon(SparkRes.getImageIcon(SparkRes.COLOR_ICON).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 	
-	tabs.addTab(Res.getString("title.appearance.preferences"),SparkRes.getImageIcon(SparkRes.PALETTE_24x24_IMAGE), _themepanel);	
+	tabs.addTab(Res.getString("title.appearance.preferences"),appe, _themepanel);	
 	if(!Default.getBoolean("CHANGE_COLORS_DISABLED")){
-	    tabs.addTab(Res.getString("lookandfeel.color.label"),SparkRes.getImageIcon(SparkRes.COLOR_ICON),_colorpanel);
+	    tabs.addTab(Res.getString("lookandfeel.color.label"),color,_colorpanel);
 	}
 	add(tabs);
 	
