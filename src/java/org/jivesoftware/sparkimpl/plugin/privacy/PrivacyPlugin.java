@@ -127,50 +127,53 @@ public class PrivacyPlugin implements Plugin {
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {
         	
-        	final PrivacyManager pManager = PrivacyManager.getInstance();
+                if (object instanceof ContactItem)
+                {
+                    final PrivacyManager pManager = PrivacyManager.getInstance();
         	
-        	if (pManager.hasActiveList())
-        	{
-        	final SparkPrivacyList activeList = pManager.getActiveList();
+                    if (pManager.hasActiveList())
+                    {
+                        final SparkPrivacyList activeList = pManager.getActiveList();
         	
         	
-                    final ContactItem item = (ContactItem) object;
-                    JMenuItem blockMenu;
+                        final ContactItem item = (ContactItem) object;
+                        JMenuItem blockMenu;
                     
-                    if ( activeList.isBlockedItem(item.getJID()) ) {
-                        blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
-                        blockMenu.addActionListener(new ActionListener() { //unblock contact
+                        if ( activeList.isBlockedItem(item.getJID()) ) {
+                            blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
+                            blockMenu.addActionListener(new ActionListener() { //unblock contact
     
-                            @Override
-                            public void actionPerformed(ActionEvent ae) {
-                                if ( item != null ) {
+                                @Override
+                                public void actionPerformed(ActionEvent ae) {
+                                    if ( item != null ) {
                                         activeList.removeItem(((ContactItem) item).getJID()); //Add to block list  
                                         activeList.save();
+                                    }
                                 }
-                            }
-                        });
-                    } else {
-                        blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
-                        blockMenu.addActionListener(new ActionListener() { //Block contact
+                            });
+                        } else {
+                            blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
+                            blockMenu.addActionListener(new ActionListener() { //Block contact
     
-                            @Override
-                            public void actionPerformed(ActionEvent ae) {
-                                if ( item != null ) {
-                                    PrivacyItem pItem = new PrivacyItem(Type.jid.toString(), false, activeList.getNewItemOrder());
-                                    pItem.setFilterMessage(true);
-                                    pItem.setFilterPresence_out(true);
-                                    pItem.setValue(item.getJID());
+                                @Override
+                                public void actionPerformed(ActionEvent ae) {
+                                    if ( item != null ) {
+                                        PrivacyItem pItem = new PrivacyItem(Type.jid.toString(), false, activeList.getNewItemOrder());
+                                        pItem.setFilterMessage(true);
+                                        pItem.setFilterPresence_out(true);
+                                        pItem.setValue(item.getJID());
                                     
-                                    activeList.addItem(pItem); //Add to block list
-                                    activeList.save();
+                                        activeList.addItem(pItem); //Add to block list
+                                        activeList.save();
+                                    }
                                 }
-                            }
-                        });
-                    }              
+                            });
+                        }              
                     
             
-                    popup.add(blockMenu);
-        	}
+                        popup.add(blockMenu);
+                    }
+                }
             }
 
             @Override
