@@ -261,7 +261,6 @@ public class ReceiveMessage extends JPanel {
 		    // 100 % = Filesize
 		    // x %   = Currentsize	    
 		    long p = (transfer.getAmountWritten() * 100 / transfer.getFileSize() );
-		    System.out.println("value: "+Math.round(p));
 		    progressBar.setValue(Math.round(p));        
 		}
 		

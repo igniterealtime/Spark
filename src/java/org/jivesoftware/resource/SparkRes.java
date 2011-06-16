@@ -403,7 +403,7 @@ public class SparkRes {
                 }
 
                 if (!exists) {
-                    System.out.println(imageFile.getAbsolutePath() + " is not used.");
+                    Log.error(imageFile.getAbsolutePath() + " is not used.");
                 }
             }
             catch (NullPointerException e) {

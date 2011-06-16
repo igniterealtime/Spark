@@ -604,10 +604,10 @@ public class Base64 {
                 return 3;
             }
             catch (Exception e) {
-                System.out.println("" + source[srcOffset] + ": " + (DECODABET[source[srcOffset]]));
-                System.out.println("" + source[srcOffset + 1] + ": " + (DECODABET[source[srcOffset + 1]]));
-                System.out.println("" + source[srcOffset + 2] + ": " + (DECODABET[source[srcOffset + 2]]));
-                System.out.println("" + source[srcOffset + 3] + ": " + (DECODABET[source[srcOffset + 3]]));
+                Log.error("" + source[srcOffset] + ": " + (DECODABET[source[srcOffset]]));
+                Log.error("" + source[srcOffset + 1] + ": " + (DECODABET[source[srcOffset + 1]]));
+                Log.error("" + source[srcOffset + 2] + ": " + (DECODABET[source[srcOffset + 2]]));
+                Log.error("" + source[srcOffset + 3] + ": " + (DECODABET[source[srcOffset + 3]]));
                 return -1;
             }   //e nd catch
         }

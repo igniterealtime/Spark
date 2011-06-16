@@ -23,21 +23,14 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
-
-
-
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-
 import javax.swing.BorderFactory;
-
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,7 +42,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.PrivacyItem;
@@ -92,7 +84,6 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         createInfoPanel();
         initializeTree();
         createCurrentListInfoPanel();
-        System.out.println("schnauze voll");
     }
 
     private void createInfoPanel() {
