@@ -700,7 +700,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     private static void showAboutBox() {
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion(),
-            Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE);
+            Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.MAIN_IMAGE));
     }
 
     /**
