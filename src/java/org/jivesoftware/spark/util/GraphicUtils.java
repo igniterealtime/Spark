@@ -41,18 +41,13 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -700,59 +695,31 @@ public final class GraphicUtils {
     }
 
     /**
-     * Gets the Bytes from an Image using an ImageInputStream, this way
-     * transparency is kept
+     * Gets the Bytes from an Image using an FileInputStream
      * 
      * @param file
      *            , input {@link File}
      * @return byte[]
      */
     public static byte[] getBytesFromImage(File file) {
-	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	try {
-	    Object input = file;
-
-	    ImageInputStream stream = ImageIO.createImageInputStream(input);
-	    Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
-
-	    if (!readers.hasNext())
-		throw new RuntimeException("no image reader found");
-
-	    ImageReader reader = readers.next();
-	    reader.setInput(stream);
-	    int n = reader.getNumImages(true);
-	    for (int i = 0; i < n; i++) {
-		BufferedImage image = reader.read(i);
-		ImageIO.write(image, "PNG", baos);
+	 FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(file);
+            byte[] data = new byte[(int) file.length()];
+	    fileInputStream.read(data);
+	    fileInputStream.close();
+	        return data;
+	} catch (IOException e) {
+	    if (fileInputStream != null) {
+		try {
+		    fileInputStream.close();
+		} catch (IOException e1) {
+		}
 	    }
-	    stream.close();
-
-	} catch (IOException e) {
-	    Log.error(e);
+	   return null;
 	}
-	return baos.toByteArray();
+       
 
-    }
-
-    /**
-     * Returns the ByteArray From an Image using ImageIO.write Transparency is
-     * not handled
-     * 
-     * @param image
-     *            , input {@link Image}
-     * @return byte[]
-     */
-    public static byte[] getBytesFromImage(Image image) {
-	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	try {
-	    ImageIO.write(convert(image), "PNG", baos);
-	} catch (IOException e) {
-	    Log.error(e);
-	} catch (InterruptedException e) {
-	    Log.error(e);
-	}
-
-	return baos.toByteArray();
     }
 
     /**

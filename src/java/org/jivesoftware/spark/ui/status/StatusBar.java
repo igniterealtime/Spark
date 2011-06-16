@@ -170,8 +170,7 @@ public class StatusBar extends JPanel implements VCardListener {
             imageLabel.setIcon(icon);
         }
         imageLabel.setBorder(null);
-        invalidate();
-        validateTree();
+        revalidate();
     }
 
     public CommandPanel getCommandPanel()

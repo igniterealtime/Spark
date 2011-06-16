@@ -439,7 +439,6 @@ public class VCardEditor {
 	    if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
 	        image = image.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
 	    } 
-	    avatarBytes = GraphicUtils.getBytesFromImage(image);
 
 	}
 
