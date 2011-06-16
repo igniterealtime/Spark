@@ -1,0 +1,12 @@
+<plugin>
+    <name>TicTacToe of Doom</name>
+    <class>tic.tac.toe.TicTacToePlugin</class>
+    <author>Wolf Posdorfer</author>
+    <version>0.1</version>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <description>The most sophisticated TicTacToe Game ever created</description>
+    <email>9posdorf@informatik.uni-hamburg.de</email>
+    <minSparkVersion>2.6.1</minSparkVersion>
+    <os>Windows,Linux,Mac</os>
+    <java>1.6.0_00</java>
+</plugin>

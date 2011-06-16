@@ -251,6 +251,11 @@ public class ReversiPlugin implements Plugin {
             ImageIcon icon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
 
             public void chatRoomOpened(final ChatRoom room) {
+        	if(!(room instanceof ChatRoomImpl))
+		{
+		    // Don't do anything if this is not a 1on1-Chat
+		    return;
+		}
                 ChatRoomButton button = new ChatRoomButton(icon);
                 button.setToolTipText("Reversi");
                 room.getToolBar().addChatRoomButton(button);
