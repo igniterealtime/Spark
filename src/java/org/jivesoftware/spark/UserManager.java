@@ -376,7 +376,7 @@ public class UserManager {
 
 
     public void searchContacts(String contact, final JFrame parent) {
-        if (parents.get(parent) == null) {
+        if (parents.get(parent) == null && parent.getGlassPane() !=null) {
         	parents.put(parent, parent.getGlassPane());
         }
 
@@ -390,6 +390,7 @@ public class UserManager {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
+            contactGroup.clearSelection();
             for (ContactItem contactItem : contactGroup.getContactItems()) {
                 if (!contactMap.containsKey(contactItem.getJID())) {
                     contacts.add(contactItem);

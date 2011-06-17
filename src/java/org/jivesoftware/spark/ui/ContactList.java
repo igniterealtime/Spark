@@ -1964,7 +1964,7 @@ public final class ContactList extends JPanel implements ActionListener,
                     if (contactGroup == null) {
                         contactGroup = addContactGroup(groupName);
                         contactGroup.setVisible(true);
-                        validateTree();
+                        //validateTree();
                         repaint();
                     }
                 }
