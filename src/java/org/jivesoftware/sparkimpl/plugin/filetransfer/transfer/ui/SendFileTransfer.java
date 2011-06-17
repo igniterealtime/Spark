@@ -60,7 +60,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
-public class SendMessage extends JPanel {
+public class SendFileTransfer extends JPanel {
 
 	private static final long serialVersionUID = -4403839897649365671L;
 	private FileDragLabel imageLabel = new FileDragLabel();
@@ -81,7 +81,7 @@ public class SendMessage extends JPanel {
     private JLabel progressLabel = new JLabel();
     private long _starttime;
 
-    public SendMessage() {
+    public SendFileTransfer() {
         setLayout(new GridBagLayout());
 
         setBackground(new Color(250, 249, 242));

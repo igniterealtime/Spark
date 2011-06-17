@@ -73,7 +73,7 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
-public class ReceiveMessage extends JPanel {
+public class ReceiveFileTransfer extends JPanel {
 
     private static final long serialVersionUID = -2974192409566650923L;
     private FileDragLabel imageLabel = new FileDragLabel();
@@ -90,7 +90,7 @@ public class ReceiveMessage extends JPanel {
     private long _starttime;
     private long _endtime;
 
-    public ReceiveMessage() {
+    public ReceiveFileTransfer() {
         setLayout(new GridBagLayout());
 
         setBackground(new Color(250, 249, 242));
@@ -243,7 +243,7 @@ public class ReceiveMessage extends JPanel {
         progressBar.setStringPainted(true);
 
 
-	
+	final Timer timer = new Timer();
 	TimerTask updateProgessBar = new TimerTask() {
 	    @Override
 	    public void run() {
@@ -254,6 +254,7 @@ public class ReceiveMessage extends JPanel {
 			|| transfer.getStatus() == FileTransfer.Status.complete) 
 		{
 		    this.cancel();
+		    timer.cancel();
 		    _endtime = System.currentTimeMillis();
 		    updateonFinished(request, downloadedFile);
 		}else
@@ -267,7 +268,7 @@ public class ReceiveMessage extends JPanel {
 	    }
 	};
 	
-	
+	final Timer timer2 = new Timer();
 	TimerTask updatePrograssBarText = new TimerTask() {
 	long timenow;
 	long timeearlier;
@@ -282,6 +283,7 @@ public class ReceiveMessage extends JPanel {
 			|| transfer.getStatus() == FileTransfer.Status.complete) 
 		{
 		    this.cancel();
+		    timer2.cancel();
 		}
 		else{
     		
@@ -315,10 +317,8 @@ public class ReceiveMessage extends JPanel {
 	};
 	
 	
-	Timer timer = new Timer();	
-	timer.scheduleAtFixedRate(updateProgessBar, 10, 10);
 	
-	Timer timer2 = new Timer();
+	timer.scheduleAtFixedRate(updateProgessBar, 10, 10);
 	timer2.scheduleAtFixedRate(updatePrograssBarText, 10, 500);
 	
     }
@@ -619,7 +619,7 @@ public class ReceiveMessage extends JPanel {
         if (e.isPopupTrigger()) {
             final JPopupMenu popup = new JPopupMenu();
 
-            final ReceiveMessage ui = this;
+            final ReceiveFileTransfer ui = this;
             Action saveAsAction = new AbstractAction() {
 				private static final long serialVersionUID = -3010501340128285438L;
 

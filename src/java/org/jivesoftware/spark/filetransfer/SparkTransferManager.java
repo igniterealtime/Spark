@@ -102,8 +102,8 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
-import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveMessage;
-import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendMessage;
+import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveFileTransfer;
+import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendFileTransfer;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
@@ -312,7 +312,7 @@ public class SparkTransferManager {
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
 
-        final ReceiveMessage receivingMessageUI = new ReceiveMessage();
+        final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer();
         receivingMessageUI.acceptFileTransfer(request);
 
         chatRoom.addClosingListener(new ChatRoomClosingListener() {
@@ -611,7 +611,7 @@ public class SparkTransferManager {
         // The image must first be wrapped in a style
         Style style = doc.addStyle("StyleName", null);
 
-        SendMessage sendingUI = new SendMessage();
+        SendFileTransfer sendingUI = new SendFileTransfer();
         try {
             transfer.sendFile(file, "Sending file");
         }

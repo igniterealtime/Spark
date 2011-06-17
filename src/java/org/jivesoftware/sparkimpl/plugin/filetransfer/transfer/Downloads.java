@@ -28,28 +28,43 @@ import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+/**
+ * Provides Acces to the DownloadDirectory and a JFileChooser starting at the
+ * DownloadDirectory
+ * 
+ */
 public class Downloads {
-	private static File downloadedDir;
-	private static JFileChooser chooser;
-	private static LocalPreferences _localPreferences;
+    private static File downloadedDir;
+    private static JFileChooser chooser;
+    private static LocalPreferences _localPreferences;
 
-	public static File getDownloadDirectory() {
-		LocalPreferences pref = SettingsManager.getLocalPreferences();
-		downloadedDir = new File(pref.getDownloadDir());
-		return downloadedDir;
+    /**
+     * Returns the Downloaddirectory
+     * 
+     * @return
+     */
+    public static File getDownloadDirectory() {
+	LocalPreferences pref = SettingsManager.getLocalPreferences();
+	downloadedDir = new File(pref.getDownloadDir());
+	return downloadedDir;
+    }
+
+    /**
+     * Returns a {@link JFileChooser} starting at the DownloadDirectory
+     * 
+     * @return
+     */
+    public static JFileChooser getFileChooser() {
+	if (chooser == null) {
+
+	    _localPreferences = SettingsManager.getLocalPreferences();
+	    downloadedDir = new File(_localPreferences.getDownloadDir());
+
+	    chooser = new JFileChooser(downloadedDir);
+	    if (Spark.isWindows()) {
+		chooser.setFileSystemView(new WindowsFileSystemView());
+	    }
 	}
-
-	public static JFileChooser getFileChooser() {
-		if (chooser == null) {
-
-			_localPreferences = SettingsManager.getLocalPreferences();
-			downloadedDir = new File(_localPreferences.getDownloadDir());
-
-			chooser = new JFileChooser(downloadedDir);
-			if (Spark.isWindows()) {
-				chooser.setFileSystemView(new WindowsFileSystemView());
-			}
-		}
-		return chooser;
-	}
+	return chooser;
+    }
 }
