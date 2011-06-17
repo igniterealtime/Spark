@@ -42,10 +42,10 @@ import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -106,6 +106,8 @@ public class ChatManager implements MessageEventNotificationListener {
     private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
 
     private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
+    
+    private UriManager _uriManager = new UriManager();
 
 
     /**
@@ -817,21 +819,51 @@ public class ChatManager implements MessageEventNotificationListener {
             return;
         }
 
-        if (arguments.indexOf("?message") != -1) {
+        if (arguments.indexOf(UriManager.uritypes.message.getXML()) != -1) {
             try {
-                handleJID(arguments);
+                _uriManager.handleMessage(arguments);
             }
             catch (Exception e) {
-                Log.error(e);
+                Log.error("error with ?message URI",e);
             }
         }
-        else if (arguments.indexOf("?join") != -1) {
+        else if (arguments.indexOf(UriManager.uritypes.join.getXML()) != -1) {
             try {
-                handleConference(arguments);
+                _uriManager.handleConference(arguments);
             }
             catch (Exception e) {
-                Log.error(e);
+                Log.error("error with ?join URI",e);
             }
+        }
+        else if (arguments.contains(UriManager.uritypes.subscribe.getXML())) {
+	    try {
+		_uriManager.handleSubscribe(arguments);
+	    } catch (Exception e) {
+		Log.error("error with ?subscribe URI", e);
+	    }
+	} 
+        else if (arguments.contains(UriManager.uritypes.unsubscribe.getXML())) {
+	    try {
+		_uriManager.handleUnsubscribe(arguments);
+	    } catch (Exception e) {
+		Log.error("error with ?subscribe URI", e);
+	    }
+	}
+        else if(arguments.contains(UriManager.uritypes.roster.getXML()))
+        {
+	    try {
+		_uriManager.handleRoster(arguments);
+	    } catch (Exception e) {
+		Log.error("error with ?subscribe URI", e);
+	    }
+        }
+        else if (arguments.contains(UriManager.uritypes.remove.getXML()))
+        {
+	    try {
+		_uriManager.handleRemove(arguments);
+	    } catch (Exception e) {
+		Log.error("error with ?subscribe URI", e);
+	    }
         }
         else if (arguments.indexOf("?") == -1) {
             // Then use the direct jid
@@ -850,59 +882,7 @@ public class ChatManager implements MessageEventNotificationListener {
                 chatManager.getChatContainer().activateChatRoom(chatRoom);
             }
         }
-    }
 
-    /**
-     * Factory method to handle different types of URI Mappings.
-     *
-     * @param uriMapping the uri mapping string.
-     */
-    private void handleJID(String uriMapping) {
-        int index = uriMapping.indexOf("xmpp:");
-        int messageIndex = uriMapping.indexOf("?message");
-
-        int bodyIndex = uriMapping.indexOf("body=");
-
-        String jid = uriMapping.substring(index + 5, messageIndex);
-        String body = null;
-
-        // Find body
-        if (bodyIndex != -1) {
-            body = uriMapping.substring(bodyIndex + 5);
-        }
-
-        body = org.jivesoftware.spark.util.StringUtils.unescapeFromXML(body);
-        body = org.jivesoftware.spark.util.StringUtils.replace(body, "%20", " ");
-
-        UserManager userManager = SparkManager.getUserManager();
-        String nickname = userManager.getUserNicknameFromJID(jid);
-        if (nickname == null) {
-            nickname = jid;
-        }
-
-        ChatManager chatManager = SparkManager.getChatManager();
-        ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-        if (body != null) {
-            Message message = new Message();
-            message.setBody(body);
-            chatRoom.sendMessage(message);
-        }
-
-        chatManager.getChatContainer().activateChatRoom(chatRoom);
-    }
-
-    /**
-     * Handles the URI Mapping to join a conference room.
-     *
-     * @param uriMapping the uri mapping.
-     * @throws Exception thrown if the conference cannot be joined.
-     */
-    private void handleConference(String uriMapping) throws Exception {
-        int index = uriMapping.indexOf("xmpp:");
-        int join = uriMapping.indexOf("?join");
-
-        String conference = uriMapping.substring(index + 5, join);
-        ConferenceUtils.joinConferenceOnSeperateThread(conference, conference, null);
     }
 
 }
