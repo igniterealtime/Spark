@@ -1,384 +1,226 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
-xmlns="http://www.w3.org/TR/REC-html40">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 
+<html>
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 11">
-<meta name=Originator content="Microsoft Word 11">
-<link rel=File-List href="README-Dateien/filelist.xml">
-<title>Spark Readme</title>
-<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
- name="State"/>
-<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
- name="place"/>
-<!--[if gte mso 9]><xml>
- <o:DocumentProperties>
-  <o:Author>wolf.posdorfer</o:Author>
-  <o:LastAuthor>wolf.posdorfer</o:LastAuthor>
-  <o:Revision>9</o:Revision>
-  <o:Created>2011-05-11T08:08:00Z</o:Created>
-  <o:LastSaved>2011-05-11T08:17:00Z</o:LastSaved>
-  <o:Pages>1</o:Pages>
-  <o:Words>334</o:Words>
-  <o:Characters>2111</o:Characters>
-  <o:Company>K&#252;hne + Nagel (AG &amp; Co.) KG</o:Company>
-  <o:Lines>17</o:Lines>
-  <o:Paragraphs>4</o:Paragraphs>
-  <o:CharactersWithSpaces>2441</o:CharactersWithSpaces>
-  <o:Version>11.9999</o:Version>
- </o:DocumentProperties>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:WordDocument>
-  <w:Zoom>95</w:Zoom>
-  <w:HyphenationZone>21</w:HyphenationZone>
-  <w:ValidateAgainstSchemas/>
-  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
-  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
-  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
- </w:WordDocument>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
- </w:LatentStyles>
-</xml><![endif]--><!--[if !mso]><object
- classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
-<style>
-st1\:*{behavior:url(#ieooui) }
-</style>
-<![endif]-->
-<style>
-<!--#PAGECONTAINER
-	{-moz-border-radius: 6px;
-	position:relative;}
-#PAGEHEADER
-	{-moz-border-radius: 5px 5px 0 0;
-	position:relative;}
-a:hover {
-	color: #7a1d42;
-	text-decoration : underline;
+<title>Spark Changelog</title>
+<style type="text/css">
+/* global font and body settings */
+body {
+    font-size: 100%;
+    background-color: #d3d6d9;
+    padding: 0;
+    margin: 0 0 30px 0;
 }
-.NAVIGATION
-	{overflow:hidden;
-	position:relative;}
-.navigation a:hover { color: #ffffff; }
-h1
-	{position:relative;}
 
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-parent:"";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-h1
-	{margin-top:22.5pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:15.0pt;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	mso-outline-level:1;
-	font-size:20.5pt;
-	font-family:"Times New Roman";
-	color:#670E15;
-	font-weight:bold;}
-h2
-	{margin-top:30.0pt;
-	margin-right:0cm;
-	margin-bottom:4.5pt;
-	margin-left:0cm;
-	mso-pagination:widow-orphan;
-	mso-outline-level:2;
-	font-size:15.5pt;
-	font-family:"Times New Roman";
-	color:#335588;
-	font-weight:bold;}
-h3
-	{margin-top:18.75pt;
-	margin-right:0cm;
-	margin-bottom:2.25pt;
-	margin-left:0cm;
-	mso-pagination:widow-orphan;
-	mso-outline-level:3;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	color:#334466;
-	font-weight:bold;}
-a:link, span.MsoHyperlink
-	{color:#11568C;
-	text-decoration:underline;
-	text-underline:single;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:#571C8D;
-	text-decoration:underline;
-	text-underline:single;}
-p
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:11.25pt;
-	margin-left:0cm;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-code
-	{mso-ansi-font-size:9.0pt;
-	mso-bidi-font-size:9.0pt;
-	font-family:"Courier New";
-	mso-ascii-font-family:"Courier New";
-	mso-fareast-font-family:"Times New Roman";
-	mso-hansi-font-family:"Courier New";
-	mso-bidi-font-family:"Courier New";}
-pre
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
-	font-size:9.0pt;
-	font-family:"Courier New";
-	mso-fareast-font-family:"Times New Roman";}
-tt
-	{mso-ansi-font-size:9.0pt;
-	mso-bidi-font-size:9.0pt;
-	font-family:"Courier New";
-	mso-ascii-font-family:"Courier New";
-	mso-fareast-font-family:"Times New Roman";
-	mso-hansi-font-family:"Courier New";
-	mso-bidi-font-family:"Courier New";
-	color:#006600;
-	font-weight:bold;}
-p.navigation, li.navigation, div.navigation
-	{mso-style-name:navigation;
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:18.75pt;
-	margin-left:0cm;
-	line-height:13.5pt;
-	mso-pagination:widow-orphan;
-	background:#335588;
-	border:none;
-	mso-border-left-alt:solid #CCCCCC .75pt;
-	mso-border-bottom-alt:solid #CCCCCC .75pt;
-	mso-border-right-alt:solid #CCCCCC .75pt;
-	padding:0cm;
-	mso-padding-alt:0cm 0cm 0cm 0cm;
-	font-size:8.5pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";
-	color:white;}
-p.footer, li.footer, div.footer
-	{mso-style-name:footer;
-	margin-top:24.0pt;
-	margin-right:0cm;
-	margin-bottom:11.25pt;
-	margin-left:0cm;
-	text-align:center;
-	mso-pagination:widow-orphan;
-	border:none;
-	mso-border-top-alt:solid #CCCCCC .75pt;
-	padding:0cm;
-	mso-padding-alt:6.0pt 0cm 0cm 0cm;
-	font-size:8.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";
-	color:#666666;}
-@page Section1
-	{size:595.3pt 841.9pt;
-	margin:70.85pt 70.85pt 2.0cm 70.85pt;
-	mso-header-margin:35.4pt;
-	mso-footer-margin:35.4pt;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
--->
+body, td, th {
+    font-family: arial, helvetica, sans-serif;
+    font-size: 10pt;
+}
+
+pre, tt, code {
+    font-family: courier new, monospace;
+    font-size: 9pt;
+}
+
+#pageContainer {
+    display: block;
+    position: relative;
+    clear: both;
+    background-color: #fff;
+    border: 1px solid #999;
+    padding: 40px;
+    margin: 30px;
+    -moz-border-radius: 6px;
+}
+
+#pageHeader {
+    display: block;
+    position: relative;
+    height: 80px;
+    background-color: #e7eaee;
+    border: 1px solid #cccccc;
+    border-bottom: none;
+    -moz-border-radius: 5px 5px 0 0;
+    margin: 10px 0 0 0;
+}
+
+#pageBody {
+    margin: 0 18px 0 20px;
+}
+
+/* anchors */
+a:link {
+    color: #11568c;
+}
+
+a:visited {
+    color: #571c8d;
+}
+
+a:hover {
+    color: #7a1d42;
+    text-decoration: underline;
+}
+
+a:active {
+    color: #7a1d42;
+}
+
+/* page header elements (logo and navigation) */
+.navigation {
+    display: block;
+    position: relative;
+    height: 20px;
+    background-color: #335588;
+    border: 1px solid #cccccc;
+    border-top: none;
+    color: #ffffff;
+    font-size: 11px;
+    line-height: 18px;
+    padding: 0 0 0 0;
+    margin: 0 0 25px 0;
+    overflow: hidden;
+}
+
+.navigation a {
+    margin: 0 20px 0 20px;
+}
+
+.navigation a:link {
+    color: #ffffff;
+}
+
+.navigation a:visited {
+    color: #ffffff;
+}
+
+.navigation a:hover {
+    color: #ffffff;
+}
+
+.navigation a:active {
+    color: #ffffff;
+}
+
+/* headings */
+h1 {
+    display: block;
+    position: relative;
+    font-size: 1.7em;
+    font-weight: bold;
+    color: #670e15;
+    padding: 0;
+    margin: 30px 0 0 20px;
+}
+
+h2 {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 40px 0 6px 0;
+    padding: 0;
+    color: #335588;
+}
+
+h3 {
+    font-size: 1.0em;
+    font-weight: bold;
+    margin: 25px 0 3px 0;
+    padding: 0;
+    color: #334466;
+}
+
+/* general elements */
+p {
+    margin: 0 0 15px 0;
+}
+
+ul {
+    margin: 5px 0 15px 35px;
+}
+
+li {
+    padding-bottom: 4px;
+}
+
+tt {
+    font-family: courier new, monospace;
+    font-weight: bold;
+    color: #060;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    background-color: #999999;
+    border: none;
+    margin: 40px 0 20px 0;
+}
+
+.footer {
+    font-size: 8pt;
+    color: #666;
+    text-align: center;
+    margin-top: 2em;
+    padding-top: 0.5em;
+    border-top: 1px #CCC solid;
+}
 </style>
-<!--[if gte mso 10]>
-<style>
- /* Style Definitions */
- table.MsoNormalTable
-	{mso-style-name:"Normale Tabelle";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	mso-style-noshow:yes;
-	mso-style-parent:"";
-	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
-	mso-para-margin:0cm;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:10.0pt;
-	font-family:"Times New Roman";
-	mso-ansi-language:#0400;
-	mso-fareast-language:#0400;
-	mso-bidi-language:#0400;}
-</style>
-<![endif]--><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext="edit" spidmax="3074"/>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <o:shapelayout v:ext="edit">
-  <o:idmap v:ext="edit" data="1"/>
- </o:shapelayout></xml><![endif]-->
 </head>
+<body>
 
-<body bgcolor="#D3D6D9" lang=DE link="#11568C" vlink="#571C8D"
-style='tab-interval:35.4pt;margin-bottom:22.5pt'>
+<div id="pageContainer">
 
-<div class=Section1>
-
-<div style='border:solid #999999 1.0pt;mso-border-alt:solid #999999 .75pt;
-padding:30.0pt 30.0pt 30.0pt 30.0pt;margin-left:22.5pt;margin-top:22.5pt;
-margin-right:22.5pt;margin-bottom:22.5pt' id=pageContainer>
-
-<div style='border:solid #CCCCCC 1.0pt;border-bottom:none;mso-border-top-alt:
-solid #CCCCCC .75pt;mso-border-left-alt:solid #CCCCCC .75pt;mso-border-right-alt:
-solid #CCCCCC .75pt;padding:0cm 0cm 0cm 0cm;margin-top:7.5pt' id=pageHeader>
-
-<h1 style='background:#E7EAEE'><span style='font-size:17.0pt;font-family:Arial'>Spark
-Readme<o:p></o:p></span></h1>
-
+<div id="pageHeader">
+    <h1>Spark Readme</h1>
+</div>
+<div class="navigation">
+    <a href="README.html">Readme</a>|<a href="changelog.html">Changelog</a>|<a href="LICENSE.html">License</a>
 </div>
 
-<div style='border:solid #CCCCCC 1.0pt;border-top:none;mso-border-left-alt:
-solid #CCCCCC .75pt;mso-border-bottom-alt:solid #CCCCCC .75pt;mso-border-right-alt:
-solid #CCCCCC .75pt;padding:0cm 0cm 0cm 0cm;margin-bottom:18.75pt'>
+<div id="pageBody">
+<h2>Version 2.6.1 <br/>Released June 17th, 2011</h2>
 
-<p class=MsoNormal style='line-height:13.5pt;background:#335588'><span
-style='font-size:8.5pt;font-family:Arial;color:white'><a href="README.html"><strong><span
-style='font-family:Arial;color:white'>Readme</span></strong></a>|<a
-href="changelog.html"><span style='color:white'>Changelog</span></a>|<a
-href="LICENSE.html"><span style='color:white'>License</span></a> <o:p></o:p></span></p>
+Thank you for choosing Spark!</br>
+Spark is a full-features instant messaging (IM) and groupchat client that uses the XMPP protocol.</br>
+Further information can be found on the <a href="http://www.igniterealtime.org/projects/spark">Spark website.</a></br>
 
-</div>
+<h2>Changelog</h2>
+View the <a href="changelog.html">changelog</a> for a list of changes since the last release. 
 
-<div style='margin-left:15.0pt;margin-right:13.5pt' id=pageBody>
+<h2>Support</h2>
+Free support is provided by the Spark community in the <a href="http://www.igniterealtime.org/forum/forum.jspa?forumID=49">online forums</a>.
 
-<table class=MsoNormalTable border=0 cellpadding=0 style='mso-cellspacing:1.5pt;
- mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
- <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
-  <td style='padding:.75pt .75pt .75pt .75pt'>
-  <p class=MsoNormal align=right style='text-align:right'><span
-  style='font-size:10.0pt;font-family:Arial'>version:<o:p></o:p></span></p>
-  </td>
-  <td style='padding:.75pt .75pt .75pt .75pt'>
-  <p class=MsoNormal><b><span style='font-size:10.0pt;font-family:Arial'>2.6.1</span></b><span style='font-size:10.0pt;font-family:Arial'><o:p></o:p></span></p>
-  </td>
- </tr>
- <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes'>
-  <td style='padding:.75pt .75pt .75pt .75pt'>
-  <p class=MsoNormal align=right style='text-align:right'><span
-  style='font-size:10.0pt;font-family:Arial'>released:<o:p></o:p></span></p>
-  </td>
-  <td style='padding:.75pt .75pt .75pt .75pt'>
-  <p class=MsoNormal><b><span style='font-size:10.0pt;font-family:Arial'>June
-  17th, 2011</span></b><span style='font-size:10.0pt;font-family:Arial'><o:p></o:p></span></p>
-  </td>
- </tr>
-</table>
+<h2>License Agreements</h2>
+The Spark source code is governed by the Apache-License 2, which can be found in the <a href="LICENSE.html">LICENSE.html</a> file in this distribution.<br/>
+Spark also contains Open Source software from third-parties. <br/>
+Licensing terms for those components is specifically noted in the relevant source files.<br/> <br/>
 
-<p style='background:white'><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
 
-<p style='background:white'><span lang=EN-GB style='font-size:10.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>Thank you for choosing Spark! <o:p></o:p></span></p>
+Spark contains icons which are free for non-commercial use,
+are licensed from INCORS GmbH or owned by Jive Software.<br/>
+All icons and images in Spark owned by INCORS GmbH or Jive Software are provided under the following license agreement:<br/>
 
-<p style='background:white'><span lang=EN-GB style='font-size:10.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>Spark is a full-features instant messaging
-(IM) and groupchat client that uses the XMPP protocol. <o:p></o:p></span></p>
-
-<p style='background:white'><span lang=EN-GB style='font-size:10.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>Further information can be found on
-the </span><span style='font-size:10.0pt;font-family:Arial'><a
-href="http://www.igniterealtime.org/projects/spark"><span lang=EN-GB
-style='mso-ansi-language:EN-GB'>Spark website</span></a></span><span
-lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>.
-<o:p></o:p></span></p>
-
-<h2 style='background:white'><span lang=EN-GB style='font-size:13.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>Changelog<o:p></o:p></span></h2>
-
-<p class=MsoNormal style='background:white'><span lang=EN-GB style='font-size:
-10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>View the </span><span
-style='font-size:10.0pt;font-family:Arial'><a href="changelog.html"><span
-lang=EN-GB style='mso-ansi-language:EN-GB'>changelog</span></a></span><span
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'> <span
-lang=EN-GB>for a list of changes since the last release. <o:p></o:p></span></span></p>
-
-<h2 style='background:white'><span lang=EN-GB style='font-size:13.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>Support<o:p></o:p></span></h2>
-
-<p class=MsoNormal style='background:white'><span lang=EN-GB style='font-size:
-10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Free support is provided by
-the Spark community in the </span><span style='font-size:10.0pt;font-family:
-Arial'><a href="http://www.igniterealtime.org/forum/forum.jspa?forumID=49"><span
-lang=EN-GB style='mso-ansi-language:EN-GB'>online forums</span></a></span><span
-lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>.
-<o:p></o:p></span></p>
-
-<h2 style='background:white'><span lang=EN-GB style='font-size:13.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>License Agreements<o:p></o:p></span></h2>
-
-<p class=MsoNormal style='background:white'><span lang=EN-GB style='font-size:
-10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>The Spark source code is
-governed by the Apache-License 2, which can be found in the </span><span
-style='font-size:10.0pt;font-family:Arial'><a href="LICENSE.html"><span
-lang=EN-GB style='mso-ansi-language:EN-GB'>LICENSE.html</span></a></span><span
-lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>
-file in this distribution. Spark also contains Open Source software from
-third-parties. Licensing terms for those components is specifically noted in
-the relevant source files.<o:p></o:p></span></p>
-
-<p class=MsoNormal style='background:white'><span lang=EN-GB style='font-size:
-10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Spark contains icons which
-are free for non-commercial use, are licensed from INCORS GmbH or owned by Jive
-Software. All icons and images in Spark owned by INCORS GmbH or Jive Software
-are provided under the following license agreement:<o:p></o:p></span></p>
-
-<pre style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>License Agreement<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>This is a legal agreement between You, the User of the Spark application<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>(&quot;The Software&quot;), and Jive Software (&quot;Jive Software&quot;). By downloading the Software,<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>you agree to be bound by the terms of this agreement.<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>All ownership and copyright of the images and icons included in the Software<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>distribution remain the property of Jive Software and INCORS GmbH. Jive Software<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>grants to you a nonexclusive, non-sublicensable right to use the icons royalty-free<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>as part of Spark.<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>You may not lease, license or sub-license the icons, or a subset of the icons,<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>or any modified icons to any third party. You may not incorporate them into your<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>own software or design products.<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>All icon files are provided &quot;As is&quot; without warranties of merchantability and<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>fitness for a particular purpose. You agree to hold Jive Software harmless for<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>any result that may occur during the course of using the licensed icons.<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>This License Agreement shall be governed and construed in accordance with the<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>laws of <st1:place
-w:st="on"><st1:State w:st="on">Oregon</st1:State></st1:place>. If any provision of this License Agreement is held to be<o:p></o:p></span></pre><pre
-style='background:white'><span lang=EN-GB style='mso-ansi-language:EN-GB'>unenforceable, this License Agreement will remain in effect with the provision<o:p></o:p></span></pre><pre
-style='background:white'>omitted.</pre>
-
-<div style='border:none;border-top:solid #CCCCCC 1.0pt;mso-border-top-alt:solid #CCCCCC .75pt;
-padding:6.0pt 0cm 0cm 0cm;margin-top:24.0pt'>
-
-<p class=MsoNormal align=center style='text-align:center;tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
-background:white'><span style='font-size:8.0pt;font-family:Arial;color:#666666'>Copyright
-&copy; Jive Software, 2006-2007 <o:p></o:p></span></p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</body>
-
-</html>
+<PRE STYLE="font-family:monospace;"><span><o:p>&nbsp;</o:p></span> 
+<span>License Agreement<o:p></o:p></span>
+<span><o:p>&nbsp;</o:p></span>
+<span>This is a legal agreement between You, the User of the Spark application<o:p></o:p></span>
+<span>(&quot;The Software&quot;), and Jive Software (&quot;Jive Software&quot;). By downloading the Software,<o:p></o:p></span>
+<span>you agree to be bound by the terms of this agreement.<o:p></o:p></span>
+<span><o:p>&nbsp;</o:p></span>
+<span>All ownership and copyright of the images and icons included in the Software<o:p></o:p></span>
+<span>distribution remain the property of Jive Software and INCORS GmbH. Jive Software<o:p></o:p></span>
+<span>grants to you a nonexclusive, non-sublicensable right to use the icons royalty-free<o:p></o:p></span>
+<span>as part of Spark.<o:p></o:p></span>
+<span><o:p>&nbsp;</o:p></span>
+<span>You may not lease, license or sub-license the icons, or a subset of the icons,<o:p></o:p></span>
+<span>or any modified icons to any third party. You may not incorporate them into your<o:p></o:p></span>
+<span>own software or design products.<o:p></o:p></span>
+<span><o:p>&nbsp;</o:p></span>
+<span>All icon files are provided &quot;As is&quot; without warranties of merchantability and<o:p></o:p></span>
+<span>fitness for a particular purpose. You agree to hold Jive Software harmless for<o:p></o:p></span>
+<span>any result that may occur during the course of using the licensed icons.<o:p></o:p></span>
+<span><o:p>&nbsp;</o:p></span>
+<span>This License Agreement shall be governed and construed in accordance with the<o:p></o:p></span>
+<span>laws of <st1:place w:st="on"><st1:State w:st="on">Oregon</st1:State></st1:place>. If any provision of this License Agreement is held to be<o:p></o:p></span>
+<span>unenforceable, this License Agreement will remain in effect with the provision<o:p></o:p></span>
+<span>omitted.</span>      </pre>
