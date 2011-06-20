@@ -134,6 +134,15 @@ public final class ChatTranscripts {
             // We want to append near the end of the document as the last
             // child in the transcript.
             final String endTag = " </messages>\n</transcript>";
+            
+          String line =  raf.readLine();
+          if(line.contains("</messages></transcript>"))
+          {
+              // replace the old one with the new one
+              line = line.replace("</messages></transcript>",endTag);
+              raf.write(line.getBytes("UTF-8"));
+          }
+
             builder.append(endTag);
 
             raf.seek(transcriptFile.length() - endTag.length());
