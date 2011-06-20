@@ -61,7 +61,7 @@ public class PrivacyPreferences implements Preference {
 
     @Override
     public String getNamespace() {
-        return "privacy";
+        return "jabber:iq:privacy";
     }
 
     @Override

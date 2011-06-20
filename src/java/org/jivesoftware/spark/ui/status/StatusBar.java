@@ -314,42 +314,43 @@ public class StatusBar extends JPanel implements VCardListener {
 
         
         //Add privacy menu
-        JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
-        privMenu.setIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
-        final PrivacyManager pmanager = PrivacyManager.getInstance();
-        for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
-            JMenuItem it = new JMenuItem(plist.getListName());
-            privMenu.add(it);
-            if (plist.isActive()) {
-                it.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
-            } else {
-                it.setIcon(null);
+        if (PrivacyManager.getInstance().isPrivacyActive()) {
+            JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
+            privMenu.setIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
+            final PrivacyManager pmanager = PrivacyManager.getInstance();
+            for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
+                JMenuItem it = new JMenuItem(plist.getListName());
+                privMenu.add(it);
+                if (plist.isActive()) {
+                    it.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
+                } else {
+                    it.setIcon(null);
+                }
+                final SparkPrivacyList finalList = plist;
+                it.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PrivacyManager.getInstance().setListAsActive(finalList.getListName());
+                    }
+                });
             }
-            final SparkPrivacyList finalList = plist;
-            it.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    PrivacyManager.getInstance().setListAsActive(finalList.getListName());
-                }
-            });
-        }
-        
-        if (pmanager.hasActiveList()) {
-            JMenuItem remMenu = new JMenuItem(Res.getString("privacy.menuitem.deactivate.current.list", pmanager.getActiveList().getListName()),
-                    SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
-            remMenu.addActionListener(new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    pmanager.declineActiveList();
-                }
-            });
-            privMenu.addSeparator();
-            privMenu.add(remMenu);
+            if (pmanager.hasActiveList()) {
+                JMenuItem remMenu = new JMenuItem(Res.getString("privacy.menuitem.deactivate.current.list", pmanager.getActiveList().getListName()),
+                        SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+                remMenu.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pmanager.declineActiveList();
+                    }
+                });
+                privMenu.addSeparator();
+                privMenu.add(remMenu);
+            }
+
+            popup.add(privMenu);
         }
-        
-        popup.add(privMenu);
-        
         
         // Add change message
         final JMenuItem changeStatusMenu = new JMenuItem(Res.getString("menuitem.set.status.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));

@@ -24,11 +24,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.smack.packet.PrivacyItem.Type;
 import org.jivesoftware.spark.SparkManager;
@@ -41,10 +43,10 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
  * This is Privacy plugin for Spark.
- *
- * This plugin built using specification: XEP-0016: Privacy Lists
- * {@link http://xmpp.org/extensions/xep-0016.html}
- *
+ * 
+ * This plugin built using specification: XEP-0016: Privacy Lists {@link http
+ * ://xmpp.org/extensions/xep-0016.html}
+ * 
  * @author Zolotarev Konstantin, Bergunde Holger
  */
 public class PrivacyPlugin implements Plugin {
@@ -56,10 +58,10 @@ public class PrivacyPlugin implements Plugin {
             @Override
             public Object construct() {
                 try {
-                    // Let's try and avoid any timing issues with the PrivacyManager presence.
+                    // Let's try and avoid any timing issues with the
+                    // PrivacyManager presence.
                     Thread.sleep(5000);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.error(e);
                     return false;
                 }
@@ -68,11 +70,11 @@ public class PrivacyPlugin implements Plugin {
 
             @Override
             public void finished() {
-                Boolean privacyListExist = (Boolean)get();
+                Boolean privacyListExist = (Boolean) get();
                 if (!privacyListExist) {
                     return;
                 }
-                if (!EventQueue.isDispatchThread() ) {
+                if (!EventQueue.isDispatchThread()) {
                     try {
                         EventQueue.invokeAndWait(new Runnable() {
 
@@ -82,7 +84,7 @@ public class PrivacyPlugin implements Plugin {
 
                             }
                         });
-                    } catch(Exception ex) {
+                    } catch (Exception ex) {
                         Log.error(ex);
                     }
                 } else {
@@ -90,8 +92,8 @@ public class PrivacyPlugin implements Plugin {
                 }
             }
         };
-        thread.start();        
-        
+        thread.start();
+
     }
 
     @Override
@@ -106,87 +108,86 @@ public class PrivacyPlugin implements Plugin {
 
     @Override
     public void uninstall() {
-        
-    }
-    
-    
-    
 
-    protected void addPrivacyListsToPresenceChange()
-    {
-	
     }
-    
-    
-//    /**
-//     * Adding block menu item to contact popupmenu
-//     */
+
+    protected void addPrivacyListsToPresenceChange() {
+
+    }
+
+    // /**
+    // * Adding block menu item to contact popupmenu
+    // */
     protected void addMenuItemToContactItems() {
-        
-        SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
-            @Override
-            public void poppingUp(Object object, JPopupMenu popup) {
-        	
-                if (object instanceof ContactItem)
-                {
-                    final PrivacyManager pManager = PrivacyManager.getInstance();
-        	
-                    if (pManager.hasActiveList())
-                    {
-                        final SparkPrivacyList activeList = pManager.getActiveList();
-        	
-        	
-                        final ContactItem item = (ContactItem) object;
-                        JMenuItem blockMenu;
-                    
-                        if ( activeList.isBlockedItem(item.getJID()) ) {
-                            blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
-                            blockMenu.addActionListener(new ActionListener() { //unblock contact
-    
-                                @Override
-                                public void actionPerformed(ActionEvent ae) {
-                                    if ( item != null ) {
-                                        activeList.removeItem(((ContactItem) item).getJID()); //Add to block list  
-                                        activeList.save();
-                                    }
-                                }
-                            });
-                        } else {
-                            blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
-                            blockMenu.addActionListener(new ActionListener() { //Block contact
-    
-                                @Override
-                                public void actionPerformed(ActionEvent ae) {
-                                    if ( item != null ) {
-                                        PrivacyItem pItem = new PrivacyItem(Type.jid.toString(), false, activeList.getNewItemOrder());
-                                        pItem.setFilterMessage(true);
-                                        pItem.setFilterPresence_out(true);
-                                        pItem.setValue(item.getJID());
-                                    
-                                        activeList.addItem(pItem); //Add to block list
-                                        activeList.save();
-                                    }
-                                }
-                            });
-                        }              
-                    
-            
-                        popup.add(blockMenu);
+        if (PrivacyManager.getInstance().isPrivacyActive()) {
+            SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
+                @Override
+                public void poppingUp(Object object, JPopupMenu popup) {
+
+                    if (object instanceof ContactItem) {
+                        final PrivacyManager pManager = PrivacyManager.getInstance();
+
+                        if (pManager.hasActiveList()) {
+                            final SparkPrivacyList activeList = pManager.getActiveList();
+
+                            final ContactItem item = (ContactItem) object;
+                            JMenuItem blockMenu;
+
+                            if (activeList.isBlockedItem(item.getJID())) {
+                                blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
+                                blockMenu.addActionListener(new ActionListener() { // unblock
+                                                                                   // contact
+
+                                            @Override
+                                            public void actionPerformed(ActionEvent ae) {
+                                                if (item != null) {
+                                                    activeList.removeItem(((ContactItem) item).getJID()); // Add
+                                                                                                          // to
+                                                                                                          // block
+                                                                                                          // list
+                                                    activeList.save();
+                                                }
+                                            }
+                                        });
+                            } else {
+                                blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
+                                blockMenu.addActionListener(new ActionListener() { // Block
+                                                                                   // contact
+
+                                            @Override
+                                            public void actionPerformed(ActionEvent ae) {
+                                                if (item != null) {
+                                                    PrivacyItem pItem = new PrivacyItem(Type.jid.toString(), false, activeList.getNewItemOrder());
+                                                    pItem.setFilterMessage(true);
+                                                    pItem.setFilterPresence_out(true);
+                                                    pItem.setValue(item.getJID());
+
+                                                    activeList.addItem(pItem); // Add
+                                                                               // to
+                                                                               // block
+                                                                               // list
+                                                    activeList.save();
+                                                }
+                                            }
+                                        });
+                            }
+
+                            popup.add(blockMenu);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void poppingDown(JPopupMenu popup) {
-                //ignore
-            }
+                @Override
+                public void poppingDown(JPopupMenu popup) {
+                    // ignore
+                }
 
-            @Override
-            public boolean handleDefaultAction(MouseEvent e) {
-                return false;
-            }      
-        });
-
+                @Override
+                public boolean handleDefaultAction(MouseEvent e) {
+                    return false;
+                }
+            });
+        }
 
     }
 

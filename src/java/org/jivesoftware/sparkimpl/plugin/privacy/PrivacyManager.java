@@ -25,6 +25,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,9 @@ import org.jivesoftware.smack.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.packet.DiscoverInfo.Feature;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -48,6 +52,7 @@ public class PrivacyManager {
     private PrivacyListManager privacyManager;
     private PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
     private Set<SparkPrivacyListListener> _listListeners = new HashSet<SparkPrivacyListListener>();
+    private boolean _active = false;;
 
     /**
      * Creating PrivacyListManager instance
@@ -57,8 +62,14 @@ public class PrivacyManager {
         if (conn == null) {
             Log.error("Privacy plugin: Connection not initialized.");
         }
-        privacyManager = PrivacyListManager.getInstanceFor(conn);
-        initializePrivacyLists();
+
+        checkIfPrivacyIsSupported(conn);
+    
+        if (_active)
+        {
+            privacyManager = PrivacyListManager.getInstanceFor(conn);
+            initializePrivacyLists();
+        }
     }
     
     /**
@@ -79,6 +90,27 @@ public class PrivacyManager {
         return singleton;
     }
 
+    
+    private void checkIfPrivacyIsSupported(XMPPConnection conn)
+    {
+        ServiceDiscoveryManager servDisc = new ServiceDiscoveryManager(conn);
+        DiscoverInfo info = null;
+        try {
+            info = servDisc.discoverInfo(conn.getHost());
+        } catch (XMPPException e) {
+            //We could not query the server
+        }
+        
+        for(Iterator<Feature> i = info.getFeatures(); i.hasNext();)
+        {
+            String s = i.next().getVar();
+            if (s.contains("jabber:iq:privacy"))
+            {
+                _active = true;
+            }
+
+        }
+    }
     
     private void initializePrivacyLists()
     {
@@ -307,6 +339,11 @@ public class PrivacyManager {
             Log.warning("Could not decline default privacy list");
             e.printStackTrace();
         }    
+    }
+    
+    public boolean isPrivacyActive()
+    {
+        return _active ;
     }
     
     public void addListListener (SparkPrivacyListListener listener)

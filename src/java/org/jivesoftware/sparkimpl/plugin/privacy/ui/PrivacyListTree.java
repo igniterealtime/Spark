@@ -79,11 +79,19 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         JScrollPane _scrollPane = new JScrollPane(_tree);
         
         treeandInfo.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.title.preferences")));
-        treeandInfo.add(_scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        this.add(treeandInfo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+           this.add(treeandInfo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         createInfoPanel();
+        if (_pManager.isPrivacyActive())
+        {
+            treeandInfo.add(_scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+            
         initializeTree();
         createCurrentListInfoPanel();
+        } else
+        {
+            JLabel notActive = new JLabel(Res.getString("privacy.label.not.supported"));
+            treeandInfo.add(notActive, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
+        }
     }
 
     private void createInfoPanel() {
