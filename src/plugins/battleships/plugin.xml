@@ -1,0 +1,12 @@
+<plugin>
+    <name>Battleships</name>
+    <class>battleship.BattleshipPlugin</class>
+    <author>Wolf Posdorfer</author>
+    <version>0.1</version>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <description>Battleship plugin for Spark</description>
+    <email>9posdorf@informatik.uni-hamburg.de</email>
+    <minSparkVersion>2.6.1</minSparkVersion>
+    <os>Windows,Linux,Mac</os>
+    <java>1.6.0_00</java>
+</plugin>
