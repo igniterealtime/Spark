@@ -34,8 +34,8 @@ import java.util.StringTokenizer;
 import javax.swing.UIManager;
 
 import org.jivesoftware.spark.util.Encryptor;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 
 /**
  * Represents the LocalPreference Model for this system.
@@ -451,12 +451,8 @@ public class LocalPreferences {
 		setBoolean("hostAndPort", configured);
 	}
 
-    public String getResource() {
-
-	if (!ModelUtil.hasLength(props.getProperty("resource", "spark"))) {
-	    return "";
-	}
-	return props.getProperty("resource", "spark");
+        public String getResource() {  
+        return props.getProperty("resource", "Spark "+JiveInfo.getVersion());
     }
 
 	public void setResource(String resource) {
