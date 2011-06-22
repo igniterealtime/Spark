@@ -263,7 +263,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         ChatTranscripts.appendToTranscript(jid, transcript);
-        lastMessage.remove(room);
+       
     }
 
     public void chatRoomActivated(ChatRoom room) {
