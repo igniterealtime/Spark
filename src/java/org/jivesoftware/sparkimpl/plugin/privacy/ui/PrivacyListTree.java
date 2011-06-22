@@ -285,7 +285,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         JMenuItem addList = new JMenuItem(Res.getString("privacy.menu.add.list"));
         addList.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
         JMenuItem rem = new JMenuItem(Res.getString("privacy.menu.remove.list"));
-        JMenuItem act = new JMenuItem(Res.getString("privacy.menu.avtivate.list"));
+        JMenuItem act = new JMenuItem(Res.getString("privacy.menu.activate.list"));
         act.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
         JMenuItem def = new JMenuItem(Res.getString("privacy.menu.default.list"));
         def.setIcon(SparkRes.getImageIcon("PRIVACY_CHECK"));
