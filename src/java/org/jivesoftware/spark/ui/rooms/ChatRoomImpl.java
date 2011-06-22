@@ -229,7 +229,6 @@ public class ChatRoomImpl extends ChatRoom {
             typingTimerTask = null;
         }
         active = false;
-        this.remove(vcardPanel);
         vcardPanel.removeAll();
         vcardPanel = null;
         

@@ -28,6 +28,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -72,10 +74,10 @@ import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -192,7 +194,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
-
+               
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
 
@@ -219,6 +221,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         // Add Focus Listener
         addFocusListener(this);
+        
+        scrollToBottom();
+        
     }
 
     // Setup base layout.
@@ -239,6 +244,49 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         verticalSplit.setTopComponent(splitPane);
 
         textScroller.setAutoscrolls(true);
+        
+        // For the first 5*150ms we wait for transcript to load and move
+        // scrollpane to max postion if size of scrollpane changed
+        textScroller.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+
+            private boolean scrollAtStart = false;
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+
+                if (!scrollAtStart) {
+                    scrollAtStart = true;
+                    SwingWorker thread = new SwingWorker() {
+
+                        @Override
+                        public Object construct() {
+                            int start = textScroller.getVerticalScrollBar().getMaximum();
+                            int second = 0;
+                            int i = 0;
+                            do {
+                                try {
+
+                                    Thread.sleep(150);
+                                    second = textScroller.getVerticalScrollBar().getMaximum();
+                                    if (start == second) {
+                                        ++i;
+                                    } else {
+                                        scrollToBottom();
+                                        getTranscriptWindow().repaint();
+                                    }
+                                    start = second;
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            } while (i < 5);
+                            return null;
+                        }
+                    };
+                    thread.start();
+                }
+            }
+        });
+        
 
         // Speed up scrolling. It was way too slow.
         textScroller.getVerticalScrollBar().setBlockIncrement(200);
@@ -570,6 +618,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         try {
             JScrollBar scrollBar = textScroller.getVerticalScrollBar();
             scrollBar.setValue(scrollBar.getMaximum());
+
         }
         catch (Exception e) {
             Log.error(e);
