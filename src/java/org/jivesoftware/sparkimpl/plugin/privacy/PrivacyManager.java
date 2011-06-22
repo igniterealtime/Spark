@@ -52,7 +52,7 @@ public class PrivacyManager {
     private PrivacyListManager privacyManager;
     private PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
     private Set<SparkPrivacyListListener> _listListeners = new HashSet<SparkPrivacyListListener>();
-    private boolean _active = false;;
+    private boolean _active = false;
 
     /**
      * Creating PrivacyListManager instance
@@ -63,7 +63,7 @@ public class PrivacyManager {
             Log.error("Privacy plugin: Connection not initialized.");
         }
 
-        checkIfPrivacyIsSupported(conn);
+       _active = checkIfPrivacyIsSupported(conn);
     
         if (_active)
         {
@@ -91,25 +91,24 @@ public class PrivacyManager {
     }
 
     
-    private void checkIfPrivacyIsSupported(XMPPConnection conn)
-    {
+    private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
         ServiceDiscoveryManager servDisc = new ServiceDiscoveryManager(conn);
         DiscoverInfo info = null;
         try {
             info = servDisc.discoverInfo(conn.getHost());
         } catch (XMPPException e) {
-            //We could not query the server
+            // We could not query the server
+            return false;
         }
-        
-        for(Iterator<Feature> i = info.getFeatures(); i.hasNext();)
-        {
+
+        for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {
             String s = i.next().getVar();
-            if (s.contains("jabber:iq:privacy"))
-            {
-                _active = true;
+            if (s.contains("jabber:iq:privacy")) {
+                return true;
             }
 
         }
+        return false;
     }
     
     private void initializePrivacyLists()
