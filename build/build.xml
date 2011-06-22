@@ -391,9 +391,18 @@
 				<fileset dir="./src/plugins/otr/" includes="*/build.xml" />
 		</subant>
 		
-		<subant target="">
+		<!--<subant target="">
 					<fileset dir="./src/plugins/reversi/" includes="*/build.xml" />
+		</subant> 
+        
+        <subant target="">
+					<fileset dir="./src/plugins/tictactoe/" includes="*/build.xml" />
 		</subant>
+        
+        <subant target="">
+					<fileset dir="./src/plugins/battleships/" includes="*/build.xml" />
+		</subant>
+        -->
 
 
 		<copy todir="${plugins}">
