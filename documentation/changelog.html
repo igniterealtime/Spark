@@ -174,127 +174,1857 @@ hr {
     <h1>Spark Changelog</h1>
 </div>
 <div class="navigation">
-    <a href="README.html">Readme</a>|<a href="changelog.html">Changelog</a>|<a href="LICENSE.html">License</a>
+    <a href="README.html">Readme</a>|<a href="changelog.html"><strong>Changelog</strong></a>|<a href="LICENSE.html">License</a>
 </div>
 
 <div id="pageBody">
-<h2>2.6.1 -- <span style="font-weight: normal;">June 22th, 2011</span></h2>
-<h3> New Features </h3>
+<h2>2.6.1  all resolved issues in Spark and Smack -- <span style="font-weight: normal;">June 22nd, 2011</span></h2>
+
+Highlights: 
 <ul>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-548'>SPARK-548</a>] - Animated GIFs as Avatars</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-884'>SPARK-884</a>] - OTR support for chat</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-948'>SPARK-948</a>] - Bring window to front doesnt steal focus on java1.7 anymore</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-984'>SPARK-984</a>] - Should be an option to disable username color randomizer in MUC</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1254'>SPARK-1254</a>] - Select Spellchecker Language in Chatwindow</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1277'>SPARK-1277</a>] - Installer should include Java 1.6.0 (build 10) or higher</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1278'>SPARK-1278</a>] - Allow Nimbus Skinning </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1303'>SPARK-1303</a>] - Preferences: Automatically join Groupchat (muc) on invite</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1323'>SPARK-1323</a>] - Allow larger VCard Images</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1334'>SPARK-1334</a>] - Add the login server as STUN server to spark.properties</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1335'>SPARK-1335</a>] - Spark should save received broadcast messages in the chat history</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1343'>SPARK-1343</a>] - Broadcast window covers whole screen if message is longer than {1*10^x , x∈R&gt;5} characters</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1345'>SPARK-1345</a>] - removed ugly Look&Feels from selection menu</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1346'>SPARK-1346</a>] - PluginLoader should get a &lt;minJava&gt;1.x.x_xx&lt;/minJava&gt; tag</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1347'>SPARK-1347</a>] - apple plugin needs configurable behaviour</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1348'>SPARK-1348</a>] - Make possible to set Join on startup from other interface</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1352'>SPARK-1352</a>] - Prevent messages from the server to be stored in Client history</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1354'>SPARK-1354</a>] - Force 32 bit execution on Mac Plattfom</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1358'>SPARK-1358</a>] - Reduce Filetransfer size in corporate environments</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1359'>SPARK-1359</a>] - Plugin Blacklist</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1369'>SPARK-1369</a>] - When debugger enabled should be able to send raw packets somehow</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1379'>SPARK-1379</a>] - Support for XEP-0147</li>
+	<li>File transfer bug resolved</li>
+	<li>Standard Mac Look and Feel on that very plattform</li>
+	<li>OTR (off the record) encryption for chat</li>
+	<li>I18n updates</li>
+	<li>New notification mechanism (Roar)</li>
+	<li>Clean up and enhancements for look and feel</li>
+</ul>	
+
+
+    
+<h3>        Bug fixes (35 bugs + 3 SMACK related)
+</h3>
+<ul>
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SMACK-338'>SMACK-338</a>] -         IBB filetransfer doesn&#39;t work as expected
+</li>
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SMACK-273'>SMACK-273</a>] -         Bug in RoomListenerMultiplexor.java
+</li>
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SMACK-329'>SMACK-329</a>] -         XHTMLText uses improper format for br tag
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-791'>SPARK-791</a>] -         Vcard cache not expiring 
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1067'>SPARK-1067</a>] -         System Look and Feel option should be using system theme highlighting colors
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1080'>SPARK-1080</a>] -         IzPack uninstaller doesnt remove Spark entries from Programs and Features list
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1095'>SPARK-1095</a>] -         Nested groups are not sorted by name
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1164'>SPARK-1164</a>] -         Chat window doesnt scroll to bottom when opened
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1177'>SPARK-1177</a>] -         Memory leak ChatRoom
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1198'>SPARK-1198</a>] -         Spark has no button for Send Files or Capture in message window on MAC OS X
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1200'>SPARK-1200</a>] -         Context menu doesn&#39;t show up in chat input area on Windows 7
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1207'>SPARK-1207</a>] -         Linux version of Spark quits when doing logout
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1253'>SPARK-1253</a>] -         Transport icons disappear after saving preferences
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1274'>SPARK-1274</a>] -         Reverse alphabetical sorting of participants in the group chat
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1275'>SPARK-1275</a>] -         contact add loses connection when no username provided
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1280'>SPARK-1280</a>] -         Crtl-Backspace doe not work in Chat Windows
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1281'>SPARK-1281</a>] -         Spark doesn&#39;t goes online after auto away when using Remote Desktop connection
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1283'>SPARK-1283</a>] -         File transfer between 2.5.8 and 2.6.0_12222 is broken
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1294'>SPARK-1294</a>] -         Spark 2.6 RC2 No Phone Call Button
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1324'>SPARK-1324</a>] -         SparkToaster showing avatars in real size
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1325'>SPARK-1325</a>] -         Spark File Transfer. Let spark find the right IP
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1331'>SPARK-1331</a>] -         Spark-&gt;Preferences-&gt;Appearance: Null Pointer exception when no emoticon set is available
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1336'>SPARK-1336</a>] -         NPE In getContactGroupByJID
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1338'>SPARK-1338</a>] -         Spark 12384 is not starting with old profile
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1340'>SPARK-1340</a>] -         Spark login profile picker doesn&#39;t show profiles with same names but different servers
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1350'>SPARK-1350</a>] -         File transfer and windows network path
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1351'>SPARK-1351</a>] -         Remove plugins does not remove plugins
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1357'>SPARK-1357</a>] -         When in fullscreen mode and switching to smaller screen, spark doesnt rezise to fit smaller screen
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1364'>SPARK-1364</a>] -         Investigate the Spark automatic update from the site issue
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1366'>SPARK-1366</a>] -         Review padlock icon usage
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1373'>SPARK-1373</a>] -         Bring Reversi back, please!
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1375'>SPARK-1375</a>] -         Context Menue in roster dows not allow a broadcast to the selected user
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1376'>SPARK-1376</a>] -         Fix the &quot;Check for new version&quot; Function
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1383'>SPARK-1383</a>] -         Login screen shows disabled fields.
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1385'>SPARK-1385</a>] -         Format Bug in Transcript
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1387'>SPARK-1387</a>] -         Reversi is not starting
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1388'>SPARK-1388</a>] -         Typo in spark i18n - avtivate
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1389'>SPARK-1389</a>] -         History is diplayed twice
+</li>
+</ul>
+    
+<h3>        New Features, Improvements, Tasks (55 issues)
+</h3>
+<ul>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-548'>SPARK-548</a>] -         Add support for animated gifs as avatars
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-884'>SPARK-884</a>] -         OTR support for chat
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1277'>SPARK-1277</a>] -         Installer should include Java 1.6.0 (build 10) or higher
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1278'>SPARK-1278</a>] -         Allow Nimbus Skinning 
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1303'>SPARK-1303</a>] -         Preferences: Automatically join Groupchat (muc) on invite
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1323'>SPARK-1323</a>] -         Allow larger VCard Images
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1342'>SPARK-1342</a>] -         MotD opens in Fullscreen since Spark 2.6.0 update
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1344'>SPARK-1344</a>] -         Add some more plugins to 2.6.1
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1345'>SPARK-1345</a>] -         Reduce the delivered skins to the usable ones
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1352'>SPARK-1352</a>] -         Prevent messages from the server to be stored in Client history
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1354'>SPARK-1354</a>] -         Force 32 bit execution on Mac Plattfom
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1359'>SPARK-1359</a>] -         Plugin Blacklist
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1367'>SPARK-1367</a>] -         Speelchecker default Language
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1369'>SPARK-1369</a>] -         When debugger enabled should be able to send raw packets somehow
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1379'>SPARK-1379</a>] -         Support for XEP-0147
+</li>
+
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-948'>SPARK-948</a>] -         Bring window to front shouldnt steal focus
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-984'>SPARK-984</a>] -         Should be an option to disable username color randomizer in MUC
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1218'>SPARK-1218</a>] -         Make Room Configuration dialog translatable
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1220'>SPARK-1220</a>] -         Create FlashWindow.dll 64-bit version
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1235'>SPARK-1235</a>] -         Add context menu to Ctrl-F, Ctrl-E, Ctrl-T dialogs
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1254'>SPARK-1254</a>] -         Select Spellchecker Language in Chatwindow
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1316'>SPARK-1316</a>] -         Privacy Plugin needs refactoring
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1332'>SPARK-1332</a>] -         Make possible to translate hardcoded strings
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1333'>SPARK-1333</a>] -         Update Lithuanian translation
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1334'>SPARK-1334</a>] -         Add the login server as STUN server to spark.properties
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1335'>SPARK-1335</a>] -         Spark should save received broadcast messages in the chat history
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1341'>SPARK-1341</a>] -         Profile picker button should have a button design (with a border)
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1343'>SPARK-1343</a>] -         Broadcast window covers whole screen if message is longer than {1*10^x , x?R&gt;5} characters
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1346'>SPARK-1346</a>] -         PluginLoader should get a &lt;minJava&gt;1.x.x_xx&lt;/minJava&gt; tag
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1347'>SPARK-1347</a>] -         apple plugin needs configurable behaviour
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1348'>SPARK-1348</a>] -         Make possible to set Join on startup from other interface
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1349'>SPARK-1349</a>] -         Option to disable translator plugin
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1361'>SPARK-1361</a>] -         If History has more than 5000 Messages it takes forever to load
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1372'>SPARK-1372</a>] -         Clicking the [X] in the contact subscription request should be the same as &quot;Decline&quot;
+</li>
+
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1230'>SPARK-1230</a>] -         Masterticket: Translations
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1298'>SPARK-1298</a>] -         Clean Up Spark UI
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1322'>SPARK-1322</a>] -         Rename Debian package
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1360'>SPARK-1360</a>] -         Check FMJ lib for revision
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1368'>SPARK-1368</a>] -         Check Spark 2.6.1 on W7 without admin rights
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1380'>SPARK-1380</a>] -         Exchange of the Spark Spash Screen
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1384'>SPARK-1384</a>] -         Change XMPP Ressource String
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1386'>SPARK-1386</a>] -         Privacy Plugin shouldn&#39;t load if not supported
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1390'>SPARK-1390</a>] -         Remove games from the release
+</li>
+
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-804'>SPARK-804</a>] -         MSN Offline users in roster
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-854'>SPARK-854</a>] -         reconect hangs within &quot;Reconnecting ...&quot;
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1167'>SPARK-1167</a>] -         New chat window steals focus when Spark receives new message 
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1265'>SPARK-1265</a>] -         Fix tabs stacking direction and tabs size with multirow tabbar
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1290'>SPARK-1290</a>] -         Redesign &quot;Invisible&quot; Button
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1304'>SPARK-1304</a>] -         Allow to hide the  conference tab in the Spark screen
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1337'>SPARK-1337</a>] -         Create Button to login with other Profiles in LoginDialog
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1353'>SPARK-1353</a>] -         JTattoo Render Error
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1358'>SPARK-1358</a>] -         Add features to default.properties FILE_TRANSFER_WARNING_SIZE and FILE_TRANSFER_MAXIMUM_SIZE
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1370'>SPARK-1370</a>] -         W7 64 Bit: Plugin&#39;s are missing
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1371'>SPARK-1371</a>] -         Add tooltip to button in chat window
+</li>
+<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1374'>SPARK-1374</a>] -         Spark freezes on close
+</li>
+
+</ul>    
+
+
+
+
+<h2>2.6.0  all resolved issues in Spark and Smack -- <span style="font-weight: normal;">May 6th, 2011</span></h2>
+
+Highlights: 
+<ul>
+	<li>Large parts of the code were licenced as Apache 2.0</li>
+	<li>Commercial packages were removed in favour of open source solutions</li>
+	<li>Updated Smack library to 3.2</li>
+	<li>Fixes for roster management and reconnection mechanisms</li>
+	<li>Reworked look and feel</li>
+	<li>New skinning library</li>
+	<li>I18n updates</li>
+	<li>Clean error log after startup</li>
+	<li>Support for privacy mode</li>
+	<li>Spark does not call hard coded fallback servers for STUN services anymore</li>
+	<li>Major feature updates for conference rooms</li>
+	<li>More preferences</li>
+	<li>Ability to set default data in ini files for corporate customizing </li>
+	
+	
+</ul>
+<h3>New Features & Improvements (more than 190 issues)</h3>
+<ul>
+
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-137">SMACK-137</a>] - File
+  Transfer Settings</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-156">SMACK-156</a>] - Add
+  the ability to register for roster events before logging in</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-175">SMACK-175</a>] - fix
+  UNSUBsCRIPTION_PENDING in RosterPacket</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-235">SMACK-235</a>] - Improve
+  performance of Roster class</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-240">SMACK-240</a>] - Update
+  Jingle implementation to newest version</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-241">SMACK-241</a>] - Update
+  Base64 implementation to match Openfire's</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-244">SMACK-244</a>] - Update
+  JSTUN to 0.7.2</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-245">SMACK-245</a>] - Update
+  Jingle implementation to newest version</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-246">SMACK-246</a>] - Improve
+  Jingle logging using commons-logging</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-247">SMACK-247</a>] - Keep
+  Jingle compliant with on-going protocol development.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-254">SMACK-254</a>] - Offer
+  an alternative to loading the Roster on login</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-261">SMACK-261</a>] - Minor
+  Jingle cleanup to better support Jingle in Spark</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-277">SMACK-277</a>] - Update
+  XMLUnit to the latest version</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-282">SMACK-282</a>] - Support
+  SASL-related error conditions.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-285">SMACK-285</a>] - Add
+  support for Nicks</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-289">SMACK-289</a>] - There
+  is no way of retrieving items from a pubsub node when the user has multiple
+  subscriptions.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-294">SMACK-294</a>] - Handle
+  empty roster groups and no goups in the same way</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-295">SMACK-295</a>] - Fire
+  reconnectionSuccessful event when session is established</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-297">SMACK-297</a>] - add
+  configuration for local Socks5 proxy</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-298">SMACK-298</a>] - Respond
+  to all incoming Socks5 bytestream requests</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-299">SMACK-299</a>] - Improve
+  accepting of Socks5 bytestream requests</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-300">SMACK-300</a>] - improve
+  local Socks5 proxy implemetation</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-301">SMACK-301</a>] - support
+  for bytestream packets to query Socks5 proxy for network address</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-302">SMACK-302</a>] - Improve
+  establishing of Socks5 bytestreams</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-303">SMACK-303</a>] - integrate
+  of the extracted Socks5 bytestream API in file transfer API</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-304">SMACK-304</a>] - Extend
+  the IQ API to create empty IQ results and IQ error response packets</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-307">SMACK-307</a>] - Improve
+  Message Parser Robustness and Message Body I18N</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-309">SMACK-309</a>] - Fully
+  implement XEP-0047 In-Band Bytestreams</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-310">SMACK-310</a>] - Add
+  Support for Localized Message Subjects</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-317">SMACK-317</a>] - PrivacyItem
+  class changes</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-142">SMACK-142</a>] - Add
+  support for Kerberos/NTLM</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-210">SMACK-210</a>] - Support
+  MD5 SASL</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-226">SMACK-226</a>] - Need
+  to add in http/socks proxy support to XMLConnection.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-242">SMACK-242</a>] - Add
+  support for JEP-50: ad-hoc commands</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-251">SMACK-251</a>] - Add
+  support for XEP-0163: Personal Eventing Protocol</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-255">SMACK-255</a>] - Add
+  ability to set mime type for avatar</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-256">SMACK-256</a>] - Add
+  support for new sophisticated TLS mechanisms including SmartCard and Apple's
+  KeychainStore</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-272">SMACK-272</a>] - Add
+  support for pubsub (XEP-0060)</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-296">SMACK-296</a>] - Add
+  support for XEP-0224: Attention</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-319">SMACK-319</a>] - Add
+  common interfaces for SOCKS5 Bytestreams and In-Band Bytestreams</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-279">SMACK-279</a>] - SMACK-187
+  Create a abstract connection class to allow other implementations connecting
+  to a XMPP server.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-280">SMACK-280</a>] - SMACK-187
+  The authentification should use the Connection#sendPacket method and work
+  transparent with packets and packet listeners.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-281">SMACK-281</a>] - SMACK-187
+  Move IQ and stream error parsing from PacketReader which depends on the
+  connection type to PacketParserUtils.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-259">SMACK-259</a>] - Update
+  XPP library to latest version</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-283">SMACK-283</a>] - Investigate
+  why Jingle is connecting to stun.xten.net</li>
+
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1321">SPARK-1321</a>] - Update Smack to final release
+  3.2</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1319">SPARK-1319</a>] - Review Tray Icon of Spark on
+  Windows</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1318">SPARK-1318</a>] - STUN fallback in error log</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1317">SPARK-1317</a>] - Privacy Plugin causes error log
+  entry at startup</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1312">SPARK-1312</a>] - Load plugins before Login page
+  and workspace are initialized</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1308">SPARK-1308</a>] - JTattoo menubar decoration</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1307">SPARK-1307</a>] - Update build.xml to support Ant
+  1.8</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1300">SPARK-1300</a>] - Remove Buttons from Spark</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1293">SPARK-1293</a>] - Include JGoodies as LaF</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1103">SPARK-1103</a>] - Add an option to register with
+  conference room</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1091">SPARK-1091</a>] - Create an installer for Mac OS X</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1060">SPARK-1060</a>] - Spark should remember
+  Preferences window (and others) position on the screen</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1050">SPARK-1050</a>] - Create a horizontal scrollbar in
+  the emoticons picker for large emoticons packages</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1037">SPARK-1037</a>] - Timing issue prevents contact
+  list from updating correctly</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1035">SPARK-1035</a>] - Add ability to have an invisible
+  presence</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-764">SPARK-764</a>] - Auto-reconnect does not send
+  available presence or ask for roster</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-744">SPARK-744</a>] - Spark fails to login after
+  restore from Hibernation</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-726">SPARK-726</a>] - Spark needs to use the users
+  presence prior to reconnect.</li> 
+<li> [<a
+  href="http://issues.igniterealtime.org/browse/SPARK-533">SPARK-533</a>] - Buzz feature improvements</li> 
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-915">SPARK-915</a>] - Tab
+  completion of conference room nicknames</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1105">SPARK-1105</a>] - Spark
+  should indicate different permissions in MUC with additional icons or colors</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1187">SPARK-1187</a>] - Auto
+  tab completion in Spark</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1261">SPARK-1261</a>] - Default
+  properties should be stored visible in the Spark bin directory</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1264">SPARK-1264</a>] - Show
+  Transports in tab</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1090">SPARK-1090</a>] - Spark
+  should show time stamps in the full history</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1175">SPARK-1175</a>] - label.message
+  shows &amp; in most translations</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1222">SPARK-1222</a>] - [Patch
+  ready to commit] Update Lithuanian translation</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1259">SPARK-1259</a>] - Add
+  to i18n new strings in Codecs menu</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1124">SPARK-1124</a>] - Chat
+  window is not flashing when receiving new message</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1009">SPARK-1009</a>] - Make gateway icons more
+  transparent to fit with new theme</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1010">SPARK-1010</a>] - On toast popup from a MUC show
+  the nickname of whoever said the comment</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1012">SPARK-1012</a>] - Update Jingle implementation to
+  latest in Smack</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1024">SPARK-1024</a>] - Add finish translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1025">SPARK-1025</a>] - Make rename global and not
+  limited to just the contact list</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1032">SPARK-1032</a>] - Improve the downloading class</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1036">SPARK-1036</a>] - Refactor JinglePlugin to
+  correctly utilize the latest Smack/Jingle library</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1040">SPARK-1040</a>] - Need to release a new SmackLib
+  that includes part of the changes needed to make Jingle work in Spark</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1043">SPARK-1043</a>] - Should automatically set Away
+  status when Desktop is locked</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1044">SPARK-1044</a>] - Replace spellchecker with new
+  multi-language spellchecker</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1047">SPARK-1047</a>] - Improve support of transparent
+  avatars</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1054">SPARK-1054</a>] - Swedish translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1065">SPARK-1065</a>] - Change Library from JMF to FMJ</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1070">SPARK-1070</a>] - Spark should have a faster
+  reaction on mouse movements when changing status</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1077">SPARK-1077</a>] - Add localization support for
+  hardcoded strings in the GUI</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1086">SPARK-1086</a>] - Change the title of the
+  broadcast message sent from the server</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1090">SPARK-1090</a>] - Spark should show time stamps in
+  the full history</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1093">SPARK-1093</a>] - Add Expand/Collapse all Groups
+  to shared groups</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1102">SPARK-1102</a>] - Updated Russion translation for
+  spark &amp; spellchecker plugin</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1107">SPARK-1107</a>] - Updated Chinese translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1115">SPARK-1115</a>] - Update build.properties with
+  external resources information</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1119">SPARK-1119</a>] - Spark should parse /me in toast
+  popup</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1120">SPARK-1120</a>] - Spark should show who has
+  changed room's topic</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1121">SPARK-1121</a>] - Should be a way to copy URL
+  without selecting the whole URL text</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1123">SPARK-1123</a>] - Linux system tray improvements</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1125">SPARK-1125</a>] - Make deb package compatible with
+  Ubuntu 9.10</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1127">SPARK-1127</a>] - Correction of lithuanian
+  translation</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1128">SPARK-1128</a>] - Add a divider between recent
+  conversation and current conversation in a chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1136">SPARK-1136</a>] - Add i18n file to FastPath plugin</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1137">SPARK-1137</a>] - Improve latencies in softphone
+  DTMF tone soundings</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1139">SPARK-1139</a>] - Improved linux startup.sh</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1142">SPARK-1142</a>] - Replace synthetica with
+  substance</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1145">SPARK-1145</a>] - Add Korean language</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1156">SPARK-1156</a>] - Remove double happy emoticon in
+  default set</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1157">SPARK-1157</a>] - Cleaned up resource bundle for
+  Spark</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1159">SPARK-1159</a>] - improve error logging</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1174">SPARK-1174</a>] - Korean translation update</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1178">SPARK-1178</a>] - Update turkish translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1184">SPARK-1184</a>] - Make Spark search for a profile
+  in old profile location</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1190">SPARK-1190</a>] - &quot;Alert when user is
+  available&quot; should open a new chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1208">SPARK-1208</a>] - Change the default file transfer
+  save path</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1220">SPARK-1220</a>] - Create FlashWindow.dll 64-bit
+  version</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1247">SPARK-1247</a>] - Fix naming of the new setting
+  about showing muc roles icons</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1259">SPARK-1259</a>] - Add to i18n new strings in
+  Codecs menu</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-229">SPARK-229</a>] - Combine username and server into
+  a single field</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-251">SPARK-251</a>] - Conference button in one-to-one
+  Chat Does Not Show Feedback to the User</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-254">SPARK-254</a>] - Chat History needs to be
+  seperated into two files.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-372">SPARK-372</a>] - change &quot;Force Old SSL&quot;
+  to &quot;Force TLS&quot; within the advanced options</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-373">SPARK-373</a>] - move SysTray code into a plugin</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-375">SPARK-375</a>] - allow to select the language
+  during installation or later</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-38">SPARK-38</a>] - Add support for configuring the
+  list of owners, admins, ban list and members list</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-389">SPARK-389</a>] - MUC, direct chat: chat history
+  uses room name and not user name</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-412">SPARK-412</a>] - improve &quot;Refresh&quot; in
+  &quot;Browse Conference Rooms&quot; window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-413">SPARK-413</a>] - improve display of buttons in
+  &quot;Browse Conference Rooms&quot;</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-431">SPARK-431</a>] - add &quot;Save / Apply&quot; and
+  a &quot;Cancel&quot; button to Preferences Dialog</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-496">SPARK-496</a>] - Add preference to change look
+  and feel</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-671">SPARK-671</a>] - hide &quot;show chat
+  history&quot; button if chat history is disabled</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-677">SPARK-677</a>] - Hide Offline Users option in the
+  roster</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-678">SPARK-678</a>] - Alphabetize offline users in the
+  roster</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-700">SPARK-700</a>] - Add an option to turn off
+  Spark's update-checking feature</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-849">SPARK-849</a>] - &quot;[ ] Enable Emotions&quot;
+  should disable more</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-87">SPARK-87</a>] - Add ability to view users VCard
+  in Group Chat.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-912">SPARK-912</a>] - Localization improvements w/
+  bonus other improvements</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-930">SPARK-930</a>] - Offline contacts in broadcast
+  window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-933">SPARK-933</a>] - Should show avatars in roster
+  instead of transport icons</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-934">SPARK-934</a>] - SysTray icon behaviour on click,
+  double click</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-940">SPARK-940</a>] - Startup registry entry and
+  Preferences setting issue</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-954">SPARK-954</a>] - Need an option to disable
+  showing previous conversation in chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-959">SPARK-959</a>] - Broadcast dialog input field
+  should do text wrapping</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-963">SPARK-963</a>] - Should be an option to switch to
+  24h time format in chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-970">SPARK-970</a>] - Improve highliting of tabs</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-975">SPARK-975</a>] - Add an option to delete entries
+  in Tasks permanently</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-980">SPARK-980</a>] - Add an option to disable vcard
+  popups</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-993">SPARK-993</a>] - Improve the GUI</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1011">SPARK-1011</a>] - When someone says my name in an
+  MUC, show a custom toast popup if enabled</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1018">SPARK-1018</a>] - Add options to expand and
+  collapse all groups together</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1049">SPARK-1049</a>] - Turkish Language Pack</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1052">SPARK-1052</a>] - Create a new ant target to make
+  an IzPack and RPM Installer</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1057">SPARK-1057</a>] - Add an option to suppress
+  join/leave messages in the group chat</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1072">SPARK-1072</a>] - Add an option to make chat
+  window always stay on top</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1076">SPARK-1076</a>] - Add lithuanian translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1078">SPARK-1078</a>] - Add Lithuanian Spelling option</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1105">SPARK-1105</a>] - Spark should indicate different
+  permissions in MUC with additional icons or colors</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1108">SPARK-1108</a>] - Spark Kirghiz translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1110">SPARK-1110</a>] - Jingle and Flashing plugin
+  Chinese (CHN) translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1135">SPARK-1135</a>] - Add Korean translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1141">SPARK-1141</a>] - Allow to disable the add contact
+  feature</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1143">SPARK-1143</a>] - Add Plugin Dependencies</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1146">SPARK-1146</a>] - Fastpath Brasilian translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1147">SPARK-1147</a>] - Phonebook for SIPClient</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1148">SPARK-1148</a>] - Support Speex and iLBC Codec</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1149">SPARK-1149</a>] - Allow to disable and reorder sip
+  codecs</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1187">SPARK-1187</a>] - Auto tab completion in Spark</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1201">SPARK-1201</a>] - Create a plugin to add Send
+  button to chat input area</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1246">SPARK-1246</a>] - Publish smack.packet.PrivacyItem
+  class setOrder() for RC2</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1250">SPARK-1250</a>] - Scroll Bar does not scroll for a
+  window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1261">SPARK-1261</a>] - Default properties should be
+  stored visible in the Spark bin directory</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-409">SPARK-409</a>] - option to disable the password
+  change fields</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-448">SPARK-448</a>] - show offline users in their
+  group and not in offline group</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-467">SPARK-467</a>] - Persist search information when
+  doing user searches on multiple search services.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-640">SPARK-640</a>] - File Transfer detection with
+  disabling if necessary</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-724">SPARK-724</a>] - Reorder tabs in chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-730">SPARK-730</a>] - Skin: Need to key account login
+  from users Enterprise License.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-736">SPARK-736</a>] - Set Spark away when workstation
+  is locked.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-739">SPARK-739</a>] - Need to add a turkish
+  translation to Spark.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-799">SPARK-799</a>] - Server is editable on failed
+  login</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-801">SPARK-801</a>] - Add a SpellChecker in other
+  languages</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-877">SPARK-877</a>] - Add a Re-Detect Audio Devices to
+  SparkPhone</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-896">SPARK-896</a>] - Spark chat logs should be
+  searchable</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-915">SPARK-915</a>] - Tab completion of conference
+  room nicknames</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-928">SPARK-928</a>] - Hide Offline group option</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-943">SPARK-943</a>] - Add an option to read and copy
+  contact's status message</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-947">SPARK-947</a>] - Add QQ transport support?</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-961">SPARK-961</a>] - Option to leave nickname blank
+  by default in add contact window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-971">SPARK-971</a>] - System Tray notification about
+  incoming messages</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-972">SPARK-972</a>] - Typing Notification in System
+  Tray</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-991">SPARK-991</a>] - Group Chat Highlighting</li>
 
 </ul>
 
-<h3>Bug Fixes</h3>
+
+
+<h3>Bug Fixes (more than 250 issues)</h3>
 <ul>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-791'>SPARK-791</a>] - Vcard cache not expiring</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1067'>SPARK-1067</a>] - System Look and Feel option should be using system theme highlighting colors</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1080'>SPARK-1080</a>] - IzPack uninstaller doesnt remove Spark entries from Programs and Features list</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1095'>SPARK-1095</a>] - Nested groups are not sorted by name</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1200'>SPARK-1200</a>] - Context menu doesn&#39;t show up in chat input area on Windows 7</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1207'>SPARK-1207</a>] - Linux version of Spark quits when doing logout</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1235'>SPARK-1235</a>] -  fixed some issues with CTRL-F,E and T dialogs</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1253'>SPARK-1253</a>] - Transport icons disappear after saving preferences</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1274'>SPARK-1274</a>] - Reverse alphabetical sorting of participants in the group chat</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1275'>SPARK-1275</a>] - contact add loses connection when no username provided</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1280'>SPARK-1280</a>] - Crtl-Backspace doe not work in Chat Windows</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1281'>SPARK-1281</a>] - Spark doesn&#39;t goes online after auto away when using Remote Desktop connection</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1283'>SPARK-1283</a>] - File transfer between 2.5.8 and 2.6.0_12222 is broken</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1294'>SPARK-1294</a>] - Spark 2.6 RC2 No Phone Call Button</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1324'>SPARK-1324</a>] - SparkToaster showing avatars in real size</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1325'>SPARK-1325</a>] - Spark File Transfer. Let spark find the right IP</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1331'>SPARK-1331</a>] - Spark-&gt;Preferences-&gt;Appearance: Null Pointer exception when no emoticon set is available</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1336'>SPARK-1336</a>] - NPE In getContactGroupByJID</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1338'>SPARK-1338</a>] - Spark 12384 is not starting with old profile</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1340'>SPARK-1340</a>] - Spark login profile picker doesn&#39;t show profiles with same names but different servers</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1350'>SPARK-1350</a>] - File transfer and windows network path</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1351'>SPARK-1351</a>] - Remove plugins does not remove plugins</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1357'>SPARK-1357</a>] - When in fullscreen mode and switching to smaller screen, spark doesnt rezise to fit smaller screen</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1374'>SPARK-1374</a>] - Spark freezes on close</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1376'>SPARK-1376</a>] - Fixed the "Check for new Version"</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1385'>SPARK-1385</a>] - Format Bug in Transcript</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-330">SMACK-330</a>] - Added missing node attribute in the item element for pubsub.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-325">SMACK-325</a>] - Reconnection Manager can be running twice</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-334">SMACK-334</a>] - Error in form for FileTransferNegotiator</li>
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-163">SMACK-163</a>] - Fix NPE in RoomInfo when subject has not value</li> 
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-207">SMACK-207</a>] - Parsing of
+  messages may disconnect Smack/Spark</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-225">SMACK-225</a>] - Improper
+  handeling of DNS SRV records</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-232">SMACK-232</a>] - Better
+  handling of Roster error</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-236">SMACK-236</a>] - Rename
+  stanza error &quot;unexpected-condition&quot; to
+  &quot;unexpected-request&quot;</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-243">SMACK-243</a>] - Packet
+  with wrong date format makes Smack to disconnect</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-258">SMACK-258</a>] - Fix
+  disconnection issue when parsing SASL success that contains a payload</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-260">SMACK-260</a>] - error
+  presence packets when server is down</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-264">SMACK-264</a>] - fix
+  for NPE in SASLMechanism.java</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-269">SMACK-269</a>] - Smack
+  3.1.0 creates a new chat for every incoming message</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-271">SMACK-271</a>] - Deadlock
+  in XMPPConnection while login and parsing stream features</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-275">SMACK-275</a>] - Patch:
+  Fix for broken SASL DIGEST-MD5 implementation</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-288">SMACK-288</a>] - The
+  parsing of the result for a LeafNode.getItems() call is incorrect. It creates
+  a DefaultPacketExtension instead of an Item for every other item in the
+  result.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-290">SMACK-290</a>] - Deadlock
+  while getting Roster before it's initialized</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-291">SMACK-291</a>] - RosterGroup
+  modifications should depend on roster push</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-293">SMACK-293</a>] - Support
+  optional roster subscription attribute</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-305">SMACK-305</a>] - RosterEntry#getGroups
+  causing a roster reload</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-308">SMACK-308</a>] - Multiple
+  errors in pubsub GetItemsRequest</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-312">SMACK-312</a>] - Only
+  fire RosterListener#entriesUpdated for RosterEntries that changed</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-313">SMACK-313</a>] - Pubsub
+  library doesn't allow the packet id to be specified.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-316">SMACK-316</a>] - Smack
+  FromMatchesFilter behaves wrong with chats with similar names</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-321">SMACK-321</a>] - Usage
+  of SimpleDateFormat is not threadsafe</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-327">SMACK-327</a>] - getFeatures()
+  method on DiscoverInfo is improperly set to be package protected instead of
+  public</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-328">SMACK-328</a>] - Number
+  format exception while parsing dates.</li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SMACK-332">SMACK-332</a>] - Smack
+  3.2.0b2 shows wrong version in Smack Dubugger Window</li>
+
+<li>[<a
+  href="http://issues.igniterealtime.org/browse/SPARK-1320">SPARK-1320</a>] - Errors in
+  privacy plugin i18n string</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1315">SPARK-1315</a>] - Spark
+  cannot find spark.jar to load different languages</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1310">SPARK-1310</a>] - Local
+  users are loading slowly</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1309">SPARK-1309</a>] - Colorsettings
+  are possibly outdated if profile not cleaned regularly and colors.tab is
+  deactivated</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1305">SPARK-1305</a>] - No
+  rooms are shown in room browser</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1295">SPARK-1295</a>] - Left
+  menu panel in Preferences gets squeezed</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1294">SPARK-1294</a>] - Spark
+  2.6 RC2 No Phone Call Button</li>
+  
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-743">SPARK-743</a>] - Changes
+  in the user.home directory</li>
+
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1130">SPARK-1130</a>] - Spark
+  behaves wrong with chats with similar names</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1270">SPARK-1270</a>] -  	Name Completion on Shared Rosters without Vcards causes NPE</li>
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1268">SPARK-1268</a>] -  	Cursor changes to hand after sending a message</li>
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1267">SPARK-1267</a>] -  	Set a default size for Preferences window for new profiles</li>
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1183">SPARK-1183</a>] -  	Spellchecker is not working normally</li>
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1161">SPARK-1161</a>] -  	Set a default minimum size of a tab</li>
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1068">SPARK-1068</a>] -  	Spark is not reacting to outside keyboard events when setting the auto Away status </li>
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1209">SPARK-1209</a>] - Agent
+  names are missing in Fastpath Online Agents tab</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1260">SPARK-1260</a>] - Search
+  Dialog error</li>
+
+
+<li>[<a href="http://issues.igniterealtime.org/browse/SPARK-1262">SPARK-1262</a>] - BUG:
+  spark_2_6_0_12103 : spark download folder not working</li>
+
+
+<li>[<a href='http://www.igniterealtime.org/issues/browse/SPARK-618'>SPARK-618</a>] - Fixed multiple message issue with Broadcast.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1004">SPARK-1004</a>] - if a username is too long then
+  it gets cut off</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1016">SPARK-1016</a>] - Spark should preserve custom
+  status between automatic changes of presence</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1019">SPARK-1019</a>] - Spark IRC support passing wrong
+  variable for nickname</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-102">SPARK-102</a>] - Changing temp conf room name to
+  permanent name leads to odd behavior</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1020">SPARK-1020</a>] - is part of SPARK-1228
+    Spark shows wrong popup upon receiving group chat invitation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1022">SPARK-1022</a>] - Linux Tray Icon not appearing</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1023">SPARK-1023</a>] - Add remove button to call
+  history</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1027">SPARK-1027</a>] - Prevent duplicate conferences</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1028">SPARK-1028</a>] - Spark is still showing null
+  avatars/display pictures</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1029">SPARK-1029</a>] - Clicking the information button
+  will send the chat text field</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1034">SPARK-1034</a>] - Spark 2.6.0b2 Does not display
+  the entire preference window.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1038">SPARK-1038</a>] - Spark does not currently build
+  on OS X</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1039">SPARK-1039</a>] - Fastpath does not compile
+  against latest Smack</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1041">SPARK-1041</a>] - Update Spanish translation</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1046">SPARK-1046</a>] - Log out with reason not work on
+  other langauges</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1048">SPARK-1048</a>] - Correct accuracy of screenshot</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1055">SPARK-1055</a>] - is part of SPARK-1224
+    Make an option to supress the reconnection popup</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1056">SPARK-1056</a>] - Save Spark window positions on
+  non-primary screen</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1059">SPARK-1059</a>] - Show a toast popup when
+  &quot;Alert when available&quot; is selected</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1061">SPARK-1061</a>] - Show new messages in systemtray
+  option is not working</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1063">SPARK-1063</a>] - Spark is not reacting to
+  keyboard events when setting the auto Away status</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1064">SPARK-1064</a>] - Scratchpad (Tasks) Dialog has
+  graphical errors</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1069">SPARK-1069</a>] - Spark continuos flashing
+  continues to flash after the chat window gets focus</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1081">SPARK-1081</a>] - Spark is now showing
+  APPLICATION_NAME in the tooltip</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1082">SPARK-1082</a>] - Spark is showing 2 systray icons
+  on 64-bit Windows 7</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1083">SPARK-1083</a>] - Fix gateway icons toolbar
+  initialization</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1085">SPARK-1085</a>] - Add Fastpath plugin to a Spark
+  build</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1089">SPARK-1089</a>] - Spark should show 24h time
+  stamps in a previous conversation history</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1092">SPARK-1092</a>] - Spark is not showing Canned
+  responses stored on the server and cant create new ones</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1096">SPARK-1096</a>] - Custom status messages should be
+  sorted by name</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1097">SPARK-1097</a>] - Delete the obsolete Available
+  translation string from the i18n file</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1099">SPARK-1099</a>] - Spark is showing received
+  message twice in MUC private chat</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1101">SPARK-1101</a>] - Fix typos in Russian translation
+  file</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1109">SPARK-1109</a>] - incorrect charset in method
+  MediaPreferencePanel.scanDevices on Windows 2000(CHN)</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1111">SPARK-1111</a>] - Recent conversation is still
+  showing after history cleaning with not english GUI language</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1112">SPARK-1112</a>] - Minor visual issues with history
+  cleaning</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1116">SPARK-1116</a>] - Private chat history in MUC is
+  not saving</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1117">SPARK-1117</a>] - Can't change priority field of a
+  custom status</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1118">SPARK-1118</a>] - Not possible to resize text
+  input area in the chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1122">SPARK-1122</a>] - Spark is not sending typing
+  notifications</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1124">SPARK-1124</a>] - is part of SPARK-1228
+    Chat window is not flashing when receiving new message</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1126">SPARK-1126</a>] - Chat window doesnt appear upon
+  receiving new message</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1129">SPARK-1129</a>] - Idle Enabled shouldn't override
+  a custom Away status</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1130">SPARK-1130</a>] - Spark behaves wrong with chats
+  with similar names</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1131">SPARK-1131</a>] - Log out stopped working in the
+  latest SVN</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1132">SPARK-1132</a>] - Couldn't Get all contact items
+  from ContactList</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1133">SPARK-1133</a>] - Contact list issue</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1138">SPARK-1138</a>] - Softphone panel not redisplaying
+  after close</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1140">SPARK-1140</a>] - Change to Apache 2.0 license</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1144">SPARK-1144</a>] - Ant buildscript should not check
+  for explicit Ant version numbers</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1151">SPARK-1151</a>] - Taskbar Flashing and
+  Spellchecker tabs not available in Preferences</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1152">SPARK-1152</a>] - Startup.sh doesn't work on
+  Ubuntu 10.04</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1153">SPARK-1153</a>] - Wrong contacts count on
+  reconnect</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1154">SPARK-1154</a>] - Linux version doesn't have Log
+  out option</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1155">SPARK-1155</a>] - Empty messages in Group Chat</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1158">SPARK-1158</a>] - Group title doesn't updates
+  after moving ContactItem from one group to another</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1163">SPARK-1163</a>] - Spark displays wrong error when
+  nickname change is forbidden</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1164">SPARK-1164</a>] - Chat window is not positioning
+  at the last history message when opening window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1166">SPARK-1166</a>] - Spark is not showing a progress
+  of file transfer</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1168">SPARK-1168</a>] - Offline users are shown on login
+  when option is set to not to show them</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1169">SPARK-1169</a>] - is part of SPARK-1229
+    Spark shows offline roster after reconnecting</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1171">SPARK-1171</a>] - Chat window is not drawn
+  correctly when opened on a primary monitor</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1172">SPARK-1172</a>] - Flashing and Spellchecker
+  options are absent in Preferences</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1173">SPARK-1173</a>] - Reconnection with new and
+  different IP fails after network loss</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1180">SPARK-1180</a>] - Fix the placement of the
+  Bookmarks menu</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1182">SPARK-1182</a>] - File path for a URL bookmark is
+  not working</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1186">SPARK-1186</a>] - Ctrl + W not working as expected
+  in chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1189">SPARK-1189</a>] - Spark systray menu is overlapped
+  by vertical taskbar</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1194">SPARK-1194</a>] - Move/copy contact item to new
+  group don't check item into new group offline contacts</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1196">SPARK-1196</a>] - is part of SPARK-1223
+    Spellchecker Bug: Java AWT-EventQueue-1 - null pointer exception</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1206">SPARK-1206</a>] - is part of SPARK-1228
+    New chat window is not opened while receiving offline messages on login</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1211">SPARK-1211</a>] - Spark doesn't show room in the
+  rooms list</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1212">SPARK-1212</a>] - Shouldn't be able to search for
+  yourself and add yourself to a roster</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1213">SPARK-1213</a>] - Spark duplicates rooms in the
+  conference browser when hitting Refresh button fast</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1216">SPARK-1216</a>] - Upgrade Smack in Trunk to Smack
+  3.2 beta 2</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1217">SPARK-1217</a>] - Locales prevent Plugins from
+  loading</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1219">SPARK-1219</a>] - is part of SPARK-1230
+    Polish translation</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1221">SPARK-1221</a>] - is part of SPARK-1223
+    Bookmark Plugin causes error in error log</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1225">SPARK-1225</a>] - is part of SPARK-1223
+    Warning Log4J: No appenders could be found for logger</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1226">SPARK-1226</a>] - is part of SPARK-1223
+    SIP Codec causes error on load</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1227">SPARK-1227</a>] - is part of SPARK-1223
+    [Patch] Remove sound driver report from error log</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1229">SPARK-1229</a>] - Masterticket: Roster Management</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1231">SPARK-1231</a>] - Wrong time on loading history
+  messages in conferences</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1233">SPARK-1233</a>] - [Patch ready to commit] Mouse
+  Click on Avatar in VCard Preview opens another VCard Preview</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1237">SPARK-1237</a>] - Remove stun.xten.net as fixed
+  URL for STUN fall back from Jingle. This should be set in spark.properties</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1240">SPARK-1240</a>] - Spark is not saving &quot;Show
+  empty groups&quot; setting between restarts</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1241">SPARK-1241</a>] - is part of SPARK-1223
+    UiThreadingViolationException when loading Flashing Plugin</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1242">SPARK-1242</a>] - Group disappears after a rename.</li>
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1248">SPARK-1248</a>] - is part of SPARK-1223
+    ArrayIndexOutOfBoundsException in
+  javax.swing.plaf.basic.BasicListUI.updateLayoutState</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1249">SPARK-1249</a>] - is part of SPARK-902
+    item-not-found(404) in PrivacyManager</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1251">SPARK-1251</a>] - is part of SPARK-902
+    PrivacyPlugin causes NullPointerE. when clicking on &quot;block
+  contact&quot;</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1252">SPARK-1252</a>] - is part of SPARK-902
+    PrivcyPlugin No rightclick menu on ContactGroups</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1255">SPARK-1255</a>] - Translator plugin is not working</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-1256">SPARK-1256</a>] - Remove &amp; from Check for
+  updates menu entry</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-158">SPARK-158</a>] - Unable to open files after file
+  transfer.</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-210">SPARK-210</a>] - Kicked out user gets incomplete
+  message, and upon re-entry, doesn't see other room participants</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-237">SPARK-237</a>] - Add debug mode to allow for full
+  debugging capabilities on startup.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-24">SPARK-24</a>] - Memory does not decrease after
+  closing chat window.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-261">SPARK-261</a>] - Paste in ChatWindow does not
+  work as expected.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-278">SPARK-278</a>] - URL parser issues</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-284">SPARK-284</a>] - Same Alt-? hotkeys set for
+  different options on the same menu</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-286">SPARK-286</a>] - unicode display bug / window
+  title</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-311">SPARK-311</a>] - File Transfer Not Possible
+  Unless User Is in Contact List</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-340">SPARK-340</a>] - is part of SPARK-1229
+    Duplicate text entries appear when reconnecting Spark</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-349">SPARK-349</a>] - MUC / Create Room: fix strange
+  behaviour</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-381">SPARK-381</a>] - Users with European characters
+  in their JID can not login</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-404">SPARK-404</a>] - Chat history should be saved on
+  a timer and on shutdown.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-421">SPARK-421</a>] - Add new file transfer within
+  HTML Viewer.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-423">SPARK-423</a>] - Need a default Spark Theme for
+  the Chat Window themes.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-455">SPARK-455</a>] - Auto away status does not work
+  in LInux version of Spark</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-458">SPARK-458</a>] - Add support for 64 bit machines</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-475">SPARK-475</a>] - Spark 2.0.8 custom skin w/
+  wildfire spark version set, always thinks there's a newer version</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-547">SPARK-547</a>] - Decrease screenshot memory usage</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-570">SPARK-570</a>] - display all received chat
+  messages</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-572">SPARK-572</a>] - Custom status messages under
+  &quot;On Phone&quot; status now show as phone icon.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-575">SPARK-575</a>] - Spark does not un-escape
+  usernames properly</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-581">SPARK-581</a>] - Fix cut and paste issue in Chat
+  Window.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-586">SPARK-586</a>] - remove top-left JMC window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-608">SPARK-608</a>] - Updated Spark to use latest
+  workgroup api.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-619">SPARK-619</a>] - On Linux a user does not come
+  back from the &quot;Away due to idle&quot; to &quot;Available&quot;</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-624">SPARK-624</a>] - ChatRoomNotFoundException
+  receiving a broadcast</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-625">SPARK-625</a>] - Fixes for Jingle on Linux</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-627">SPARK-627</a>] - Fixes for SIP on Debian</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-631">SPARK-631</a>] - Fix layout for long names in
+  roster</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-632">SPARK-632</a>] - Small &quot;Join Conference
+  Room&quot; windows in Linux and Vista</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-637">SPARK-637</a>] - BUZZ highlight chat tab</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-64">SPARK-64</a>] - some animated avatars don't work</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-657">SPARK-657</a>] - Improvements for Private Chats
+  from a Conference Room</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-667">SPARK-667</a>] - Spark should only transform
+  first /me</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-690">SPARK-690</a>] - JMF cannot find formats on VISTA</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-692">SPARK-692</a>] - multiple bugs with 64-bit OS on
+  LInux</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-696">SPARK-696</a>] - Roster gets out of order over
+  time</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-697">SPARK-697</a>] - Unable to load plugin
+  TranslatorPlugin</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-699">SPARK-699</a>] - Spark is sending multiple,
+  duplicate, inconsistent Disco Info responses</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-706">SPARK-706</a>] - Usernames need to be escaped
+  when looking up profiles.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-708">SPARK-708</a>] - Need to remove any network calls
+  when opening a chat room.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-71">SPARK-71</a>] - Custom status messages should be
+  available in system tray</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-710">SPARK-710</a>] - Right-click on URL link inside
+  transcript window causes browser to be invoked.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-712">SPARK-712</a>] - Groupchat List can become
+  corrupted.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-713">SPARK-713</a>] - URLs with commas break before
+  first comma</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-715">SPARK-715</a>] - Login screen uses password from
+  memory if it exists and not the login field.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-720">SPARK-720</a>] - Communication end is not
+  interpreted</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-721">SPARK-721</a>] - Rejecting a SIP call in Spark
+  does not reject the hard phone call</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-734">SPARK-734</a>] - Error: Couldn't find per display
+  information - JDK 1.6 on Linux</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-741">SPARK-741</a>] - Incorrect list of people in the
+  group chat</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-749">SPARK-749</a>] - Ctrl+F does not sort user names</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-750">SPARK-750</a>] - chat history not saved</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-756">SPARK-756</a>] - Users Leave and Rejoin Groupchat
+  Causes Them to Not Appear in User List</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-762">SPARK-762</a>] - Can Receive Multiple Invitations
+  To The Same Room</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-765">SPARK-765</a>] - Messages without type attribute
+  are displayed twice (broadcasts)</li>
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-769">SPARK-769</a>] - is part of SPARK-1229
+    Autoreconnect does not always complete the &quot;session
+  establishment&quot; and does not request users' presence</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-772">SPARK-772</a>] - registration / JID escaping</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-776">SPARK-776</a>] - Remove systray icon after close</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-777">SPARK-777</a>] - is part of SPARK-1229
+    Hidden Empty Groups do not become visible</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-780">SPARK-780</a>] - is part of SPARK-1224
+    Cannot load contacts on reconnection</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-788">SPARK-788</a>] - Some avatars are not correctly
+  displayed</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-789">SPARK-789</a>] - Some text not internationalized</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-806">SPARK-806</a>] - Chat text box does not have a
+  scroll when the text to send is large</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-814">SPARK-814</a>] - is part of SPARK-1155
+    Empty Conversations in Group Chat</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-815">SPARK-815</a>] - Local time is not completed in
+  the Client Version</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-816">SPARK-816</a>] - The google talk emoticon: \m/ is
+  not translated to gif</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-824">SPARK-824</a>] - Group Chat Messages from blocked
+  users are displayed in the Toast Popup</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-835">SPARK-835</a>] - Update translations inside Spark</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-841">SPARK-841</a>] - Spark does not notify a user
+  when they are removed from the room.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-848">SPARK-848</a>] - Jabber:IQ:Time not showing up on
+  request.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-861">SPARK-861</a>] - Spark skinning windows installer
+  requires MSVCR71.dll</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-872">SPARK-872</a>] - Skinned spark does not handle
+  xmpp: addresses</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-878">SPARK-878</a>] - Linux idle plugin not properly
+  handling coming back from idle</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-879">SPARK-879</a>] - Double contacts appear in
+  roster.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-883">SPARK-883</a>] - Control+T window shows no data</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-886">SPARK-886</a>] - Reconnection logic not working
+  properly</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-889">SPARK-889</a>] - New tab/window focus does not
+  cause focus to be in typing area of window</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-892">SPARK-892</a>] - is part of SPARK-1224
+    Spark should automatically reconnect you to chatrooms after a reconnection</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-897">SPARK-897</a>] - PARK-874 still seems to be
+  occuring</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-898">SPARK-898</a>] - org/jivesoftware/spark/ui/RetryPanel.java
+  uses non-standard Smack</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-901">SPARK-901</a>] - Fix JVM crash when using Jingle
+  on the Mac OS X</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-903">SPARK-903</a>] - Removing a bookmark doesn't
+  remove it from the bookmarks menu in os x, maybe others</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-906">SPARK-906</a>] - Spark's build should unpack
+  .pack'd files at build time, not at first startup</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-908">SPARK-908</a>] - Messages sent by pressing the
+  View Profile Icon</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-909">SPARK-909</a>] - Spark Crashes after ending a
+  Muted Call</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-910">SPARK-910</a>] - Some avatars are not displayed</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-913">SPARK-913</a>] - Settings not always being saved
+  after changes made</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-914">SPARK-914</a>] - Spark does not handle messages
+  with subjects very well</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-917">SPARK-917</a>] - Spark Phone is not Unregistering
+  on Spark Logout</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-921">SPARK-921</a>] - Sometimes Spark can't change to
+  Available automatically</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-922">SPARK-922</a>] - is part of SPARK-1228
+    Broadcast window resizing should be fixed</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-923">SPARK-923</a>] - Fix room topic change tooltip</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-924">SPARK-924</a>] - Fix incoming message
+  notification tooltip showing wrong presence status</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-925">SPARK-925</a>] - Should receive offline
+  broadcasts after logging in</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-926">SPARK-926</a>] - Custom status editing no longer
+  working in trunk</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-937">SPARK-937</a>] - Wrong notification popup upon
+  receiving a file</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-941">SPARK-941</a>] - Pressing Cancel in &quot;Log out
+  with reason&quot; window shouldnt log out</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-944">SPARK-944</a>] - After language change should be
+  &quot;Exit now?&quot;, not &quot;Restart now?&quot;</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-950">SPARK-950</a>] - Spark is not showing /&quot;
+  chars in chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-952">SPARK-952</a>] - Links will not open from chat
+  windows under Linux</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-960">SPARK-960</a>] - Spark does not remember group
+  state.</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-962">SPARK-962</a>] - Spark gets confused when
+  multiple conference services are available</li>
+
+
+  <li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-969">SPARK-969</a>] - When someone performs a file
+  transfer or non-message related event, the last message before it is shown in
+  growl notifications</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-978">SPARK-978</a>] - Buzz delay should not reset
+  after closing chat window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-988">SPARK-988</a>] - DoS (disconnect of other
+  clients)</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-990">SPARK-990</a>] - View Downloads doesn't pop-up
+  Downloads window</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-994">SPARK-994</a>] - Bookmarks menu is not refreshing
+  immediately</li>
+
+
+<li>[<a  href="http://issues.igniterealtime.org/browse/SPARK-997">SPARK-997</a>] - An error occurs when enetering
+  no Gateway username</li>
+
 </ul>
 
-<h2>2.6.0 -- <span style="font-weight: normal;">May 6th, 2011</span></h2>
-<h3>New Features</h3>
-<ul>
-<li>Customizable Look and Feel</li>
-<li>Customizable Colors</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-915'>SPARK-915</a>] - ctrl-Space completion of conference room nicknames</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1035'>SPARK-1035</a>] - Add ability to have an invisible presence</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1103'>SPARK-1103</a>] - Add an option to register with conference room</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1105'>SPARK-1105</a>] - Spark indicates different permissions in MUC with additional icons</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1202'>SPARK-1202</a>] - Numerical message notification in Mac OS X </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1208'>SPARK-1208</a>] - changed default filetransfer save path</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1210'>SPARK-1210</a>] - Emphasize rooms that user don't have access to in the rooms list</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1285'>SPARK-1285</a>] - ServerMessage display reworked</li>
-<li>and many more...</li>
-</ul>
-<h3>Bug Fixes</h3>
-<ul>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-772'>SPARK-772</a>] - registration / JID escaping</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-777'>SPARK-777</a>] - Hidden Empty Groups do not become visible </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-824'>SPARK-824</a>] - Group Chat Messages from blocked users are displayed in the Toast Popup</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-892'>SPARK-892</a>] - automatically reconnect to chatrooms after a reconnection</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-994'>SPARK-994</a>] - Bookmarks menu is not refreshing immediately</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1020'>SPARK-1020</a>] - Spark shows wrong popup upon receiving group chat invitation </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1068'>SPARK-1068</a>] - Spark is not reacting to outside keyboard events when setting the auto Away status</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1069'>SPARK-1069</a>] - Spark continuos flashing continues to flash after the chat window gets focus</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1112'>SPARK-1112</a>] - Minor visual issues with history cleaning</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1116'>SPARK-1116</a>] - Private chat history in MUC was not displayed, but now is add checkstyle to check the Sun Code Conventions</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1121'>SPARK-1121</a>] - Should be a way to copy URL without selecting the whole URL text </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1153'>SPARK-1153</a>] - Wrong contacts count on reconnect</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1161'>SPARK-1161</a>] - Set a default minimum size of a tab</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1161'>SPARK-1161</a>] - added a gap between presence, user and close button  </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1172'>SPARK-1172</a>] - Flashing and spellchecker reworked</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1183'>SPARK-1183</a>] - Spellchecker is not working normally</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1183'>SPARK-1183</a>] - Updated to newest jmyspellto fix Windows 7 issues</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1190'>SPARK-1190</a>] - Alert when user is available should open a new chat window </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1190'>SPARK-1190</a>] - show Toaster/bring window to Front when enabled in preference menu</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1209'>SPARK-1209</a>] - Agent names are missing in Fastpath Online Agents tab</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1213'>SPARK-1213</a>] - Spark duplicates rooms in the conference browser when hitting Refresh button fast</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1229'>SPARK-1229</a>] - RosterManagement Fixes, contacts presence after reconnection</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/Spark-1233'>SPARK-1233</a>] - Mouse Click on Avatar in VCard Preview opens another VCard Preview</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1240'>SPARK-1240</a>] - saves if contactlist should show empty groups</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1241'>SPARK-1241</a>] - UiCreation in dispatch thread</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1242'>SPARK-1242</a>] - Group disappears after a rename.</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1244'>SPARK-1244</a>] - MacOSX 10.6 support</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1249'>SPARK-1249</a>] - Privacy Plugin fixes</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1250'>SPARK-1250</a>] - Scroll Bar behaviour</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1251'>SPARK-1251</a>] - Privacy Plugin fixes</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1252'>SPARK-1252</a>] - Privacy Plugin fixes</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1256'>SPARK-1256</a>] - removed & from check for updates menuentry and added KeyListener</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1257'>SPARK-1257</a>] - Look and Feel Changes </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1258'>SPARK-1258</a>] - Skin customization/default value setting </li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1266'>SPARK-1266</a>] - Fix Spark offline systray icon</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1268'>SPARK-1268</a>] - Cursor changes to hand after sending a message</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1273'>SPARK-1273</a>] - Option "Stay on Top" is not stored in preferences</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1280'>SPARK-1280</a>] - Crtl-Backspace doe not work in Chat Windows</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1286'>SPARK-1286</a>] - could not open chatframe from search dialog, when there is no contactitem for this contact</li>
-<li>[<a href='http://issues.igniterealtime.org/browse/SPARK-1295'>SPARK-1295</a>] - Left menu panel in Preferences gets squeezed</li>
-</ul>
-
+	
+	
+	
 <h2>2.5.8 -- <span style="font-weight: normal;">November 14th, 2007</span></h2>
 <h3>New Features</h3>
 <ul>
@@ -892,7 +2622,7 @@ hr {
 </ul>
 
 <div class="footer">
-    Copyright &copy; Jive Software, 2006-2011
+    Copyright &copy; Jive Software, 2006-2007
 </div>
 
 
