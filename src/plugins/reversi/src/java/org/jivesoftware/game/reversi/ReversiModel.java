@@ -265,8 +265,13 @@ public class ReversiModel {
         // Traverse vertically, horizontally, and diagonally to flip pieces.
 
         // Going left horizontally.
-        if (position%8 != 0) {
-            for (int i=position-1; i%8!=0; i--) {
+
+  			boolean edge;
+  			
+        if (position%8 > 1) {
+    				edge = false;
+            for (int i=position-1; !edge; i--) {
+            		if (i % 8 == 0) edge = true;
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -285,8 +290,10 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Going right horizontally.
-        if (position%8 != 7) {
-            for (int i=position+1; i%8!=7; i++) {
+        if (position%8 < 6) {
+        		edge = false;
+            for (int i=position+1; !edge; i++) {
+            		if (i % 8 == 7) edge = true;
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -305,8 +312,8 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Going up vertically.
-        if (position/8 >= 2) {
-            for (int i=position-8; (i/8)>=2; i-=8) {
+        if (position > 15) {
+            for (int i=position-8; i >= 0; i-=8) {
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -325,8 +332,8 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Going down vertically.
-        if (position/8 <= 7) {
-            for (int i=position+8; i/8<=7; i+=8) {
+        if (position < 47) {
+            for (int i=position+8; i <= 65; i+=8) {
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -345,8 +352,10 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal up-left
-        if (position/8 >= 2 && position%8 != 0)  {
-            for (int i=position-9; i/8>=2 && i%8!=0; i-=9) {
+        if (position > 15 && position%8 > 1)  {
+        		edge = false;
+            for (int i=position-9; !edge; i-=9) {
+            		if (i < 8 || i%8==0) edge = true;
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -365,8 +374,10 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal up-right
-        if (position/8 >= 2 && position%8 != 7)  {
-            for (int i=position-7; i/8>=2 && i%8!=7; i-=7) {
+        if (position > 15 && position%8 < 6)  {
+        		edge = false;
+            for (int i=position-7; !edge; i-=7) {
+            		if (i < 8 || i%8==7) edge = true;
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -385,8 +396,10 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal down-left
-        if (position/8 <= 7 && position%8 != 0)  {
-            for (int i=position+7; i/8<=7 && i%8!=0; i+=7) {
+        if (position < 47 && position%8 > 1)  {
+          edge = false;
+          for (int i=position+7; !edge; i+=7) {
+            		if (i < 8 || i%8==7) edge = true;
                 if (board[i] == BLANK) {
                     break;
                 }
@@ -405,8 +418,10 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal down-right
-        if (position/8 <= 7 && position%8 != 7)  {
-            for (int i=position+9; i/8<=7 && i%8!=7; i+=9) {
+        if (position < 47 && position%8 < 6)  {
+        		edge = false;
+            for (int i=position+9; !edge; i+=9) {
+            		if (i > 55 || i%8==7) edge=true;
                 if (board[i] == BLANK) {
                     break;
                 }
