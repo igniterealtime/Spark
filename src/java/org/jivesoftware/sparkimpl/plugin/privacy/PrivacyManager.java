@@ -100,14 +100,14 @@ public class PrivacyManager {
             // We could not query the server
             return false;
         }
-
-        for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {
-            String s = i.next().getVar();
-            if (s.contains("jabber:iq:privacy")) {
-                return true;
+        if (info != null) {
+            for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {
+                String s = i.next().getVar();
+                if (s.contains("jabber:iq:privacy")) {
+                    return true;
+                }
             }
-
-        }
+        } 
         return false;
     }
     
