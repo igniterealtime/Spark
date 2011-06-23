@@ -116,6 +116,7 @@ exit 0
 /usr/share/spark/plugins/fastpath.jar
 /usr/share/spark/plugins/roar.jar
 /usr/share/spark/plugins/otrplug.jar
+/usr/share/spark/plugins/tictactoe.jar
 %dir /usr/share/spark/resources/
 /usr/share/spark/resources/Info.plist
 /usr/share/spark/resources/jniwrap.dll
