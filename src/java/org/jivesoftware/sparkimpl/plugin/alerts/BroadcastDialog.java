@@ -20,13 +20,12 @@
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,11 +37,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -192,7 +189,6 @@ public class BroadcastDialog extends JPanel {
      * Displays the broadcast dialog.
      */
     public void invokeDialog() {
-        final JOptionPane pane;
         final JDialog dlg;
 
         TitlePanel titlePanel;
@@ -206,37 +202,26 @@ public class BroadcastDialog extends JPanel {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("ok"), Res.getString("close")};
-        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
-        mainPanel.add(pane, BorderLayout.CENTER);
-
-        final JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("broadcast"));
-
+        JButton okButton = new JButton(Res.getString("ok"));
+        JButton closeButton = new JButton(Res.getString("close"));
         
+        mainPanel.add(this,BorderLayout.CENTER);
         
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonpanel.add(okButton);
+        buttonpanel.add(closeButton);
         
+        mainPanel.add(buttonpanel,BorderLayout.SOUTH);
+
+        dlg = new JDialog(SparkManager.getMainWindow(), Res.getString("broadcast"));
+        dlg.setContentPane(mainPanel);
         dlg.pack();
         dlg.setSize(800, 600);
         dlg.setResizable(false);
-        dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
         
-        
-        // Go through all the damn Components to find the OK-Button
-        // This is necessary due to
-        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4230329
-        // and
-        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4235583
-        JRootPane rootPane = (JRootPane) dlg.getComponent(0);
-        JLayeredPane layerdpane = (JLayeredPane) rootPane.getComponent(1);
-        JPanel panel = (JPanel) layerdpane.getComponent(1);
-        JOptionPane optionpane = (JOptionPane) panel.getComponent(1);
-        JPanel buttonpanel = (JPanel) optionpane.getComponent(1);
-        JButton okbutton = (JButton) buttonpanel.getComponent(0);
         // Add listener
-        okbutton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -247,25 +232,13 @@ public class BroadcastDialog extends JPanel {
 	    }
 	});
 
-
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if(!dlg.isVisible()){
-                    return;
-                }
-
-                if (Res.getString("close").equals(value)) {
-                    dlg.setVisible(false);
-                }
-                else {
-                  // Nothing, this is handled by the action 
-                  // listener of okbutton, to ensure mutliple clicks
-                }
-            }
-        };
-
-        pane.addPropertyChangeListener(changeListener);
+        closeButton.addActionListener(new ActionListener() {
+	    
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		dlg.setVisible(false);
+	    }
+	});
 
         dlg.setVisible(true);
         dlg.toFront();
