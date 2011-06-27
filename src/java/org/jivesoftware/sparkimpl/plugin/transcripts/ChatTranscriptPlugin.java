@@ -440,7 +440,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
                         window.setText(builder.toString());
                         builder.replace(0, builder.length(), "");
-                        transcript.release();
+
                     }
                 };
 
