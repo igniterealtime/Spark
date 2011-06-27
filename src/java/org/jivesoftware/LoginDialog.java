@@ -718,10 +718,17 @@ public final class LoginDialog {
                         // new ChangeLogDialog().showDialog();
                     }
                     else {
-                        savePasswordBox.setEnabled(true);
-                        autoLoginBox.setEnabled(true);
-                        enableComponents(true);
-                        setProgressBarVisible(false);
+                        EventQueue.invokeLater(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                savePasswordBox.setEnabled(true);
+                                autoLoginBox.setEnabled(true);
+                                enableComponents(true);
+                                setProgressBarVisible(false);
+                            }
+                        });
+                        
                     }
                     return loginSuccessfull;
                 }
