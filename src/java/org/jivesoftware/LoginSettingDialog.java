@@ -112,9 +112,12 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
 
 	tabbedPane.addTab(Res.getString("tab.general"), generalPanel);
-	tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
-	tabbedPane.addTab(Res.getString("tab.sso"), ssoPanel);
-	tabbedPane.addTab(Res.getString("tab.pki"), pkiPanel);
+	if (!Default.getBoolean(Default.PROXY_DISABLED))
+	    tabbedPane.addTab(Res.getString("tab.proxy"), proxyPanel);
+	if (!Default.getBoolean(Default.SSO_DISABLED))
+	    tabbedPane.addTab(Res.getString("tab.sso"), ssoPanel);
+	if (!Default.getBoolean(Default.PKI_DISABLED))
+	    tabbedPane.addTab(Res.getString("tab.pki"), pkiPanel);
 
 	// Construct main panel w/ layout.
 	final JPanel mainPanel = new JPanel();

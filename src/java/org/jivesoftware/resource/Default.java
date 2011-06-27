@@ -45,6 +45,7 @@ public class Default {
     public static final String SHORT_NAME = "SHORT_NAME";
     public static final String LOGIN_DIALOG_BACKGROUND_IMAGE = "LOGIN_DIALOG_BACKGROUND_IMAGE";
     public static final String HOST_NAME = "HOST_NAME";
+    public static final String HOST_NAME_CHANGE_DISABLED = "HOST_NAME_CHANGE_DISABLED";
     public static final String SHOW_POWERED_BY = "SHOW_POWERED_BY";
     public static final String TOP_BOTTOM_BACKGROUND_IMAGE = "TOP_BOTTOM_BACKGROUND_IMAGE";
     public static final String BRANDED_IMAGE = "BRANDED_IMAGE";
@@ -59,6 +60,8 @@ public class Default {
     public static final String PROXY_HOST = "PROXY_HOST";
     public static final String PROXY_PORT = "PROXY_PORT";
     public static final String ACCOUNT_DISABLED = "ACCOUNT_DISABLED";
+    public static final String PASSWORD_RESET_ENABLED = "PASSWORD_RESET_ENABLED";
+    public static final String PASSWORD_RESET_URL = "PASSWORD_RESET_URL";
     public static final String ADD_CONTACT_DISABLED = "ADD_CONTACT_DISABLED";
     public static final String CHANGE_PASSWORD_DISABLED = "CHANGE_PASSWORD_DISABLED";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
@@ -69,6 +72,9 @@ public class Default {
     public static final String INSTALL_PLUGINS_DISABLED = "INSTALL_PLUGINS_DISABLED";
     public static final String DEINSTALL_PLUGINS_DISABLED = "DEINSTALL_PLUGINS_DISABLED";
     public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
+    public static final String SSO_DISABLED = "SSO_DISABLED";
+    public static final String PROXY_DISABLED = "PROXY_DISABLED";
+    public static final String PKI_DISABLED = "PKI_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
     public static final String BROADCAST_IN_CHATWINDOW = "BROADCAST_IN_CHATWINDOW";
     public static final String MENUBAR_TEXT = "MENUBAR_TEXT";

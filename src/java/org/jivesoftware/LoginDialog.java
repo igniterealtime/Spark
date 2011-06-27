@@ -96,6 +96,7 @@ import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -233,6 +234,7 @@ public final class LoginDialog {
         private final RolloverButton quitButton = new RolloverButton();
 
         private final RolloverButton createAccountButton = new RolloverButton();
+        private final RolloverButton passwordResetButton = new RolloverButton();
 
         private final JLabel progressBar = new JLabel();
 
@@ -259,7 +261,8 @@ public final class LoginDialog {
             ResourceUtils.resButton(autoLoginBox, Res.getString("checkbox.auto.login"));
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
             ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
-
+            ResourceUtils.resButton(passwordResetButton, Res.getString("label.passwordreset"));
+            
             savePasswordBox.setOpaque(false);
             autoLoginBox.setOpaque(false);
             setLayout(GRIDBAGLAYOUT);
@@ -345,6 +348,24 @@ public final class LoginDialog {
                 buttonPanel.add(createAccountButton,
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+            }
+            
+            if (Default.getBoolean(Default.PASSWORD_RESET_ENABLED)) {
+                buttonPanel.add(passwordResetButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+                passwordResetButton.addActionListener(new ActionListener() {
+                    final String url = Default.getString(Default.PASSWORD_RESET_URL);
+                    private static final long serialVersionUID = 2680369963282231348L;
+
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        try {
+
+                            BrowserLauncher.openURL(url);
+                        } catch (Exception e) {
+                            Log.error("Unable to load password " +
+                            		"reset.", e);
+                        }
+                    }
+                });
             }
             
             if(!Default.getBoolean(Default.ADVANCED_DISABLED)){
@@ -480,10 +501,12 @@ public final class LoginDialog {
             createAccountButton.addActionListener(this);
 
             final String lockedDownURL = Default.getString(Default.HOST_NAME);
-            if (ModelUtil.hasLength(lockedDownURL)) {
-                serverField.setEnabled(false);
+            if (ModelUtil.hasLength(lockedDownURL)) {       
                 serverField.setText(lockedDownURL);
             }
+            if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED"))
+                serverField.setEnabled(false);
+            
 
 
         }

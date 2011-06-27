@@ -175,9 +175,9 @@ public class PluginViewer extends JPanel implements Plugin {
     private void loadDeactivatedPlugins() {
 	deactivatedPanel.setLayout(new VerticalFlowLayout(
 		VerticalFlowLayout.TOP, 0, 0, true, false));
-
+	if (!Default.getBoolean(Default.DEINSTALL_PLUGINS_DISABLED)) {
 	tabbedPane.addTab(Res.getString("tab.deactivated.plugins"), new JScrollPane(deactivatedPanel));
-
+	}
 	for (final String s : _deactivatedPlugins) {
 	    PublicPlugin plg = new PublicPlugin();
 	    plg.setName(s);
