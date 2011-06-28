@@ -136,12 +136,13 @@ public class CheckUpdates {
             post.addParameter("os", "linux");
         }
 
-        // Check to see if the beta should be included.
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
-        boolean isBetaCheckingEnabled = pref.isBetaCheckingEnabled();
-        if (isBetaCheckingEnabled) {
-            post.addParameter("beta", "true");
-        }
+//        Properties isBetaCheckingEnabled is now used to indicate if updates are allowed
+//        // Check to see if the beta should be included.
+//        LocalPreferences pref = SettingsManager.getLocalPreferences();
+//        boolean isBetaCheckingEnabled = pref.isBetaCheckingEnabled();
+//        if (isBetaCheckingEnabled) {
+//            post.addParameter("beta", "true");
+//        }
 
 
         Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
@@ -402,11 +403,16 @@ public class CheckUpdates {
 
 
         if (periodOrLonger || explicit || sparkPluginInstalled) {
+            
+            if (!explicit && !localPreferences.isBetaCheckingEnabled())
+            {
+                return;
+            }
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);
             SettingsManager.saveSettings();
-
+            
             final SparkVersion serverVersion = newBuildAvailable();
             if (serverVersion == null) {
                 UPDATING = false;
