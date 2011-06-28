@@ -54,6 +54,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -807,82 +809,77 @@ public class ChatManager implements MessageEventNotificationListener {
 
     /**
      * Handles XMPP URI Mappings.
-     *
-     * @param arguments the arguments passed into Spark.
+     * 
+     * @param arguments
+     *            the arguments passed into Spark.
      */
     public void handleURIMapping(String arguments) {
-        if(arguments == null){
-            return;
-        }
-        
-        if (arguments.indexOf("xmpp") == -1) {
-            return;
-        }
+	if (arguments == null) {
+	    return;
+	}
+	
+	URI uri = null;
+	try {
+	    uri = new URI(arguments);
+	} catch (URISyntaxException e) {
+	    Log.error("error parsing uri: "+arguments,e);
+	    return;
+	}
+	if (!"xmpp".equalsIgnoreCase(uri.getScheme())) {
+	    return;
+	}
 
-        if (arguments.indexOf(UriManager.uritypes.message.getXML()) != -1) {
-            try {
-                _uriManager.handleMessage(arguments);
-            }
-            catch (Exception e) {
-                Log.error("error with ?message URI",e);
-            }
-        }
-        else if (arguments.indexOf(UriManager.uritypes.join.getXML()) != -1) {
-            try {
-                _uriManager.handleConference(arguments);
-            }
-            catch (Exception e) {
-                Log.error("error with ?join URI",e);
-            }
-        }
-        else if (arguments.contains(UriManager.uritypes.subscribe.getXML())) {
+	String query = uri.getQuery();
+	if (query == null) {
+	    // No query string, so assume the URI is xmpp:JID
+	    String jid = _uriManager.retrieveJID(uri);
+
+	    UserManager userManager = SparkManager.getUserManager();
+	    String nickname = userManager.getUserNicknameFromJID(jid);
+	    if (nickname == null) {
+		nickname = jid;
+	    }
+
+	    ChatManager chatManager = SparkManager.getChatManager();
+	    ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname,
+		    nickname);
+	    chatManager.getChatContainer().activateChatRoom(chatRoom);
+	} else if (query.startsWith(UriManager.uritypes.message.getXML())) {
 	    try {
-		_uriManager.handleSubscribe(arguments);
+		_uriManager.handleMessage(uri);
+	    } catch (Exception e) {
+		Log.error("error with ?message URI", e);
+	    }
+	} else if (query.startsWith(UriManager.uritypes.join.getXML())) {
+	    try {
+		_uriManager.handleConference(uri);
+	    } catch (Exception e) {
+		Log.error("error with ?join URI", e);
+	    }
+	} else if (query.startsWith(UriManager.uritypes.subscribe.getXML())) {
+	    try {
+		_uriManager.handleSubscribe(uri);
 	    } catch (Exception e) {
 		Log.error("error with ?subscribe URI", e);
 	    }
-	} 
-        else if (arguments.contains(UriManager.uritypes.unsubscribe.getXML())) {
+	} else if (query.startsWith(UriManager.uritypes.unsubscribe.getXML())) {
 	    try {
-		_uriManager.handleUnsubscribe(arguments);
+		_uriManager.handleUnsubscribe(uri);
 	    } catch (Exception e) {
-		Log.error("error with ?subscribe URI", e);
+		Log.error("error with ?unsubscribe URI", e);
+	    }
+	} else if (query.startsWith(UriManager.uritypes.roster.getXML())) {
+	    try {
+		_uriManager.handleRoster(uri);
+	    } catch (Exception e) {
+		Log.error("error with ?roster URI", e);
+	    }
+	} else if (query.startsWith(UriManager.uritypes.remove.getXML())) {
+	    try {
+		_uriManager.handleRemove(uri);
+	    } catch (Exception e) {
+		Log.error("error with ?remove URI", e);
 	    }
 	}
-        else if(arguments.contains(UriManager.uritypes.roster.getXML()))
-        {
-	    try {
-		_uriManager.handleRoster(arguments);
-	    } catch (Exception e) {
-		Log.error("error with ?subscribe URI", e);
-	    }
-        }
-        else if (arguments.contains(UriManager.uritypes.remove.getXML()))
-        {
-	    try {
-		_uriManager.handleRemove(arguments);
-	    } catch (Exception e) {
-		Log.error("error with ?subscribe URI", e);
-	    }
-        }
-        else if (arguments.indexOf("?") == -1) {
-            // Then use the direct jid
-            int index = arguments.indexOf(":");
-            if (index != -1) {
-                String jid = arguments.substring(index + 1);
-
-                UserManager userManager = SparkManager.getUserManager();
-                String nickname = userManager.getUserNicknameFromJID(jid);
-                if (nickname == null) {
-                    nickname = jid;
-                }
-
-                ChatManager chatManager = SparkManager.getChatManager();
-                ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-                chatManager.getChatContainer().activateChatRoom(chatRoom);
-            }
-        }
-
     }
-
 }

@@ -19,6 +19,8 @@
  */
 package org.jivesoftware.spark.uri;
 
+import java.net.URI;
+
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -42,12 +44,12 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 public class UriManager {
 
     public enum uritypes {
-	message("?message"),
-	join("?join"), 
-	unsubscribe("?unsubscribe"),
-	subscribe("?subscribe"),
-	roster("?roster"),
-	remove("?remove");
+	message("message"),
+	join("join"),
+	unsubscribe("unsubscribe"),
+	subscribe("subscribe"),
+	roster("roster"),
+	remove("remove");
 
 	private String _xml;
 
@@ -62,24 +64,23 @@ public class UriManager {
     /**
      * handles the ?message URI
      * 
-     * @param uriMapping
-     *            the uri mapping string.
+     * @param uri
+     *            the decoded uri
      */
-    public void handleMessage(String uriMapping) {
+    public void handleMessage(URI uri) {
 
-	int bodyIndex = uriMapping.indexOf("body=");
+	String query = uri.getQuery();
+	int bodyIndex = query.indexOf("body=");
 
-	String jid = retrieveJID(uriMapping, uritypes.message);//uriMapping.substring(index + 5, messageIndex);
+	String jid = retrieveJID(uri);
 	String body = null;
 
 	// Find body
 	if (bodyIndex != -1) {
-	    body = uriMapping.substring(bodyIndex + 5);
+	    body = query.substring(bodyIndex + 5);
 	}
 
 	body = org.jivesoftware.spark.util.StringUtils.unescapeFromXML(body);
-	body = org.jivesoftware.spark.util.StringUtils
-		.replace(body, "%20", " ");
 
 	UserManager userManager = SparkManager.getUserManager();
 	String nickname = userManager.getUserNicknameFromJID(jid);
@@ -101,39 +102,41 @@ public class UriManager {
     /**
      * Handles the ?join URI
      * 
-     * @param uriMapping
-     *            the uri mapping.
+     * @param uri
+     *            the decoded uri
      * @throws Exception
      *             thrown if the conference cannot be joined.
      */
-    public void handleConference(String uriMapping) throws Exception {
-	String jid = retrieveJID(uriMapping, uritypes.join);
-
-	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid,null);
+    public void handleConference(URI uri) throws Exception {
+	String jid = retrieveJID(uri);
+	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid, null);
     }
 
     /**
      * Handles the ?subscribe URI
-     * @param uriMapping
+     * 
+     * @param uri
+     *            the decoded uri
      * @throws Exception
      */
-    public void handleSubscribe(String uriMapping) throws Exception {
+    public void handleSubscribe(URI uri) throws Exception {
 	// xmpp:romeo@montague.net?subscribe
 	// Send contact add request
-	String jid = retrieveJID(uriMapping, uritypes.subscribe);
+	String jid = retrieveJID(uri);
 
 	Presence response = new Presence(Presence.Type.subscribe);
 	response.setTo(jid);
 	SparkManager.getConnection().sendPacket(response);
-
     }
-    
+
     /**
      * Handles the ?unsubscribe URI
-     * @param arguments
+     * 
+     * @param uri
+     *            the decoded uri
      */
-    public void handleUnsubscribe(String arguments) {
-	String jid = retrieveJID(arguments, uritypes.unsubscribe);
+    public void handleUnsubscribe(URI uri) {
+	String jid = retrieveJID(uri);
 
 	Presence response = new Presence(Presence.Type.unsubscribe);
 	response.setTo(jid);
@@ -144,36 +147,35 @@ public class UriManager {
      * Handles the ?roster URI<br>
      * with name= and group=
      * 
-     * @param arguments
+     * @param uri
+     *            the decoded uri
      * @throws Exception
      */
-    public void handleRoster(String arguments) throws Exception {
+    public void handleRoster(URI uri) throws Exception {
 	// xmpp:romeo@montague.net?roster
 	// xmpp:romeo@montague.net?roster;name=Romeo%20Montague
 	// xmpp:romeo@montague.net?roster;group=Friends
 	// xmpp:romeo@montague.net?roster;name=Romeo%20Montague;group=Friends
-	String jid = retrieveJID(arguments, uritypes.roster);
+	String jid = retrieveJID(uri);
 
 	String name = "";
-
-	if (arguments.contains("name=")) {
+	String query = uri.getQuery();
+	if (query.contains("name=")) {
 	    StringBuffer buf = new StringBuffer();
-	    int x = arguments.indexOf("name=") + 5;
-	    while (x < arguments.length() && arguments.charAt(x) != ';') {
-		buf.append(arguments.charAt(x));
+	    int x = query.indexOf("name=") + 5;
+	    while (x < query.length() && query.charAt(x) != ';') {
+		buf.append(query.charAt(x));
 		x++;
 	    }
-	    name = buf.toString().replace("%20", " ");
 	}
 	String group = "";
-	if (arguments.contains("group=")) {
+	if (query.contains("group=")) {
 	    StringBuffer buf = new StringBuffer();
-	    int x = arguments.indexOf("group=") + 6;
-	    while (x < arguments.length() && arguments.charAt(x) != ';') {
-		buf.append(arguments.charAt(x));
+	    int x = query.indexOf("group=") + 6;
+	    while (x < query.length() && query.charAt(x) != ';') {
+		buf.append(query.charAt(x));
 		x++;
 	    }
-	    group = buf.toString().replace("%20", " ");
 	}
 
 	Roster roster = SparkManager.getConnection().getRoster();
@@ -200,29 +202,40 @@ public class UriManager {
 
     /**
      * Handles the ?remove URI
-     * @param arguments
+     * 
+     * @param uri
+     *            the decoded uri
      * @throws Exception
      */
-    public void handleRemove(String arguments) throws Exception {
-	//xmpp:romeo@montague.net?remove
-	
-	String jid = retrieveJID(arguments, uritypes.remove);
+    public void handleRemove(URI uri) throws Exception {
+	// xmpp:romeo@montague.net?remove
+
+	String jid = retrieveJID(uri);
 	Roster roster = SparkManager.getConnection().getRoster();
 	RosterEntry entry = roster.getEntry(jid);
 	roster.removeEntry(entry);
-
     }
+
     /**
-     * Parses Jid from xmpp:romeo@montague.net?xyxyx
-     * @param stanza, the complete stanza
-     * @param mapping, the uri type
+     * Gets JID from URI. Returns the full jid including resource
+     * 
+     * @param uri
+     *            the URI
      * @return romeo@montague.net
      */
-    private String retrieveJID(String stanza, uritypes mapping)
-    {
-	int xmpp = stanza.indexOf("xmpp:") + 5;
-	int cmd = stanza.indexOf(mapping.getXML());
-	return stanza.substring(xmpp, cmd);
+    public String retrieveJID(URI uri) {
+	StringBuilder sb = new StringBuilder(32);
+	String user = uri.getUserInfo();
+	if (user != null) {
+	    sb.append(user);
+	    sb.append('@');
+	}
+	sb.append(uri.getHost());
+	// Resource contains the leading /
+	String resource = uri.getPath();
+	if (resource != null && resource != "") {
+	    sb.append(resource);
+	}
+	return sb.toString();
     }
-    
 }
