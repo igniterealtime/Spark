@@ -399,7 +399,7 @@ public class ReversiModel {
         if (position < 47 && position%8 > 1)  {
           edge = false;
           for (int i=position+7; !edge; i+=7) {
-            		if (i < 8 || i%8==7) edge = true;
+            		if (i > 55 || i%8==0) edge = true;
                 if (board[i] == BLANK) {
                     break;
                 }
