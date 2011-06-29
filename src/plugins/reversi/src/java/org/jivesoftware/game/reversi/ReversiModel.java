@@ -332,7 +332,7 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Going down vertically.
-        if (position < 47) {
+        if (position < 48) {
             for (int i=position+8; i <= 65; i+=8) {
                 if (board[i] == BLANK) {
                     break;
@@ -396,7 +396,7 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal down-left
-        if (position < 47 && position%8 > 1)  {
+        if (position < 48 && position%8 > 1)  {
           edge = false;
           for (int i=position+7; !edge; i+=7) {
             		if (i > 55 || i%8==0) edge = true;
@@ -418,7 +418,7 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal down-right
-        if (position < 47 && position%8 < 6)  {
+        if (position < 48 && position%8 < 6)  {
         		edge = false;
             for (int i=position+9; !edge; i+=9) {
             		if (i > 55 || i%8==7) edge=true;
