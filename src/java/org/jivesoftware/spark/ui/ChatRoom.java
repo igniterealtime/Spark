@@ -22,6 +22,7 @@ package org.jivesoftware.spark.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -616,8 +617,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindow.setCaretPosition(lengthOfChat);
 
         try {
-            JScrollBar scrollBar = textScroller.getVerticalScrollBar();
-            scrollBar.setValue(scrollBar.getMaximum());
+            final JScrollBar scrollBar = textScroller.getVerticalScrollBar();
+            EventQueue.invokeLater(new Runnable() {
+                
+                @Override
+                public void run() {
+                    scrollBar.setValue(scrollBar.getMaximum());        
+                }
+            });
+            
 
         }
         catch (Exception e) {
