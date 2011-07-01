@@ -233,7 +233,7 @@ public class UriManager {
 	sb.append(uri.getHost());
 	// Resource contains the leading /
 	String resource = uri.getPath();
-	if (resource != null && resource != "") {
+	if (resource != null && resource.length() > 0 && !resource.equals("/")) {
 	    sb.append(resource);
 	}
 	return sb.toString();

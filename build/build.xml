@@ -25,7 +25,7 @@
 	<property name="version.minor" value="6"/>
 	<property name="version.revision" value="3"/>
 
-	<property name="version.extra" value="12550"/>
+	<property name="version.extra" value="12555"/>
 
 	<!--
 	<loadfile property="version.extra" srcFile="./.svn/entries">
