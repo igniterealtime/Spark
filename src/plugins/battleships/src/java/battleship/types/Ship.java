@@ -102,4 +102,28 @@ public enum Ship {
 	Image img = getImage().getImage();
 	return new ImageIcon(img.getScaledInstance(w, h, hints));
     }
+    
+    /**
+     * Returns the next Bigger Ship<br>
+     * 2 -> 3.1 -> 3.2 -> 4 -> 5 -> 2.....
+     * 
+     * @return
+     */
+    public Ship increment() {
+
+        switch (this) {
+        case TWO:
+            return THREE;
+        case THREE:
+            return THREE2;
+        case THREE2:
+            return FOUR;
+        case FOUR:
+            return FIVE;
+        case FIVE:
+            return TWO;
+        }
+
+        return TWO;
+    }
 }

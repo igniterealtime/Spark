@@ -20,7 +20,6 @@
 package battleship.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,16 +30,15 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatRoom;
 
-import battleship.BsRes;
+import battleship.listener.ShipPlacementListener;
 import battleship.logic.GameBoard;
+import battleship.observer.Observeable;
+import battleship.observer.Observer;
 import battleship.packets.MoveAnswerPacket;
 import battleship.packets.MovePacket;
 
-public class GUI extends JPanel {
+public class GUI extends JPanel implements Observer{
 
     private static final long serialVersionUID = -7538765009749015196L;
 
@@ -51,6 +49,8 @@ public class GUI extends JPanel {
     private XMPPConnection _connection;
     private int _gameID;
     private GameBoard _gameboard;
+    
+    private ShipPlacementListener _splistener;
 
     public GUI(boolean imStarting, JFrame owner, XMPPConnection connection, int gameID) {
 	setLayout(new BorderLayout());
@@ -102,6 +102,12 @@ public class GUI extends JPanel {
 	}, new PacketExtensionFilter(MovePacket.ELEMENT_NAME,
 		MovePacket.NAMESPACE));
 
+	// Start placing of the Ships
+        _splistener = new ShipPlacementListener(_display, _gameboard, _myfield);
+        _splistener.addObserver(this);
+        
+        _myfield.initiateShipPlacement(_splistener);
+	
     }
     
     
@@ -117,6 +123,15 @@ public class GUI extends JPanel {
 	
 	
 	return answer;
+    }
+
+
+    @Override
+    public void update(Observeable obs) {
+        //TODO Initial ship placement is done
+        // Start with normal moves
+       obs.removeObserver(this);
+        
     }
 
 }

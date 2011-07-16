@@ -30,23 +30,44 @@ public class Display extends JPanel {
     private static final long serialVersionUID = 2343499579008942774L;
 
     private JLabel[] _labels;
+    private JLabel _textlabel;
 
     public Display() {
-	setLayout(new GridLayout(5, 1));
+        setLayout(new GridLayout(6, 1));
 
-	_labels = new JLabel[5];
+        _textlabel = new JLabel("");
+        _labels = new JLabel[5];
+        
 
-	_labels[0] = new JLabel(Ship.TWO.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
-	_labels[1] = new JLabel(Ship.THREE.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
-	_labels[2] = new JLabel(Ship.THREE.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
-	_labels[3] = new JLabel(Ship.FOUR.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
-	_labels[4] = new JLabel(Ship.FIVE.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
-	
-	for(JLabel l : _labels)
-	{
-	    add(l);
-	}
+        _labels[0] = new JLabel(Ship.TWO.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
+        _labels[1] = new JLabel(Ship.THREE.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
+        _labels[2] = new JLabel(Ship.THREE.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
+        _labels[3] = new JLabel(Ship.FOUR.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
+        _labels[4] = new JLabel(Ship.FIVE.getScaledInstance(100, 50, Image.SCALE_SMOOTH));
+
+        add(_textlabel);
+        
+        for (JLabel l : _labels) {
+            add(l);
+        }
 
     }
+
+    /**
+     * Returns the X's ships Label
+     * 
+     * @return
+     */
+    public JLabel getLabel(int x) {
+        return _labels[x];
+    }
+    
+    public void setMessage(String text)
+    {
+        _textlabel.setText(text);
+        this.repaint();
+        this.revalidate();
+    }
+
 
 }

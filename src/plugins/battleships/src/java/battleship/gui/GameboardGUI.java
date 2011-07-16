@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import battleship.listener.ShipPlacementListener;
 import battleship.types.Types;
 
 public class GameboardGUI extends JPanel{
@@ -51,13 +52,13 @@ public class GameboardGUI extends JPanel{
 	
 	_labels = new JLabel[10][10];
 	
-	for(JLabel[] ll : _labels)
+	for(int x =0 ; x<10;x++)
 	{
-	    for(JLabel l : ll)
+	    for(int y=0 ;y < 10; y++)
 	    {
-		l = new JLabel();
-		l.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-		add(l);
+	        _labels[x][y] = new JLabel("empty");
+	        _labels[x][y].setBorder(BorderFactory.createLineBorder(Color.lightGray));
+                add(_labels[x][y]);
 	    }
 	}
 	
@@ -67,6 +68,7 @@ public class GameboardGUI extends JPanel{
     
     public void setField(int x, int y, Types t)
     {
+        System.out.println("setting field"+x+","+y);
 	_labels[x][y].setIcon(t.getImage());
 	repaint();
 	revalidate();
@@ -85,6 +87,22 @@ public class GameboardGUI extends JPanel{
     }
     
     
+    public void initiateShipPlacement(ShipPlacementListener spl)
+    {
+        for(int x =0 ; x<10;x++)
+        {
+            for(int y=0 ;y < 10; y++)
+            {
+               _labels[x][y].addMouseListener(spl);
+            }
+        }
+        
+    }
+    
+    public JLabel[][] getLabels()
+    {
+        return _labels;
+    }
     
   
 
