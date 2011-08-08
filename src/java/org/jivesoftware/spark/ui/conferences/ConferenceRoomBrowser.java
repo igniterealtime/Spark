@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,12 +128,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     /**
      * Creates a new instance of ConferenceRooms.
-     * 
+     *
      * @param conferences
      *            the conference ui.
      * @param serviceName
      *            the name of the conference service.
-     * 
+     *
      */
     public ConferenceRoomBrowser(BookmarksUI conferences,
 	    final String serviceName) {
@@ -340,14 +340,17 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
 
         // Check to see what type of room this is.
+        boolean persistent = false;
         try {
             final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
-            if (!roomInfo.isPersistent()) {
-                JOptionPane.showMessageDialog(dlg, Res.getString("message.bookmark.temporary.room.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            persistent = roomInfo.isPersistent();
         } catch (Exception e) {
             // Do not return
+            Log.error("This room does not exist. Probably this room was temporary and was closed");
+        }
+        if (!persistent) {
+             JOptionPane.showMessageDialog(dlg, Res.getString("message.bookmark.temporary.room.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+             return;
         }
 
         Tree serviceTree = conferences.getTree();
@@ -650,7 +653,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 popupMenu.add(roomInfoAction);
                 final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
                 autoJoin.addActionListener(new ActionListener() {
-                    
+
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
@@ -658,10 +661,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                         conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
                     }
                 });
-                
-                
+
+
                 if (selectedRow != -1) {
-                   
+
                     for (BookmarkedConference bookmark :conferences.getBookmarks())
                     {
                         if (roomName.equals(bookmark.getName()))
@@ -669,12 +672,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                             autoJoin.setSelected(bookmark.isAutoJoin());
                             popupMenu.add(autoJoin);
                         }
-                        
+
                     }
-                    
-                    
+
+
                 }
-               
+
                 popupMenu.show(roomsTable, e.getX(), e.getY());
             }
         }
@@ -711,7 +714,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     /**
      * Returns a Collection of all rooms in the specified Conference Service.
-     * 
+     *
      * @param serviceName
      *            the name of the conference service.
      * @return a Collection of all rooms in the Conference service.
@@ -766,8 +769,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 		// new DataFormDialog(groupChat, form);
 		groupChat.sendConfigurationForm(form);
-		addRoomToTable(groupChat.getRoom(),
-			StringUtils.parseName(groupChat.getRoom()), 1);
+		//There is no point adding a temporary room to table. The room is automatically destroyed when the group chat window is closed
+        final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(),groupChat.getRoom());
+        if (roomInfo.isPersistent()) {
+            addRoomToTable(groupChat.getRoom(),
+                    StringUtils.parseName(groupChat.getRoom()), 1);
+        }
 	    } catch (XMPPException e1) {
 		Log.error("Error creating new room.", e1);
 		JOptionPane
@@ -781,7 +788,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     /**
      * Adds a room to the room table.
-     * 
+     *
      * @param jid
      *            the jid of the conference room.
      * @param roomName
@@ -837,7 +844,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     /**
      * Returns true if the room specified is bookmarked.
-     * 
+     *
      * @param roomJID
      *            the jid of the room to check.
      * @return true if the room is bookmarked.
@@ -857,7 +864,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     /**
      * Returns true if the room is password protected or Members only
-     * 
+     *
      * @param roomjid
      * @return
      */
@@ -881,7 +888,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     /**
      * Toggles the bookmark room button depending on it's state.
-     * 
+     *
      * @param addBookmark
      *            true if the button should display itself as bookmarkable :)
      */
