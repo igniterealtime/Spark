@@ -53,6 +53,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.FormField.Option;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -145,10 +146,20 @@ public class DataFormDialog extends JPanel {
                 }
                 else if (type.equals(FormField.TYPE_LIST_MULTI)) {
                     CheckBoxList checkBoxList = new CheckBoxList();
+                    Iterator<Option> options = field.getOptions();
+                    Option option = null;
+                    String optionLabel = null;
+                    String optionValue = null;
                     Iterator<?> i = field.getValues();
+                    List<String> values = new ArrayList<String>();
                     while (i.hasNext()) {
-                        String value = (String)i.next();
-                        checkBoxList.addCheckBox(new JCheckBox(value), value);
+                        values.add((String)i.next());
+                    }
+                    while (options.hasNext()) {
+                        option = options.next();
+                        optionLabel = option.getLabel();
+                        optionValue = option.getValue();
+                        checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
                     }
                     addField(label, checkBoxList, variable);
                 }
