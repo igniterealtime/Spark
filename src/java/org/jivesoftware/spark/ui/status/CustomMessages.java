@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.status;
 
 import java.awt.BorderLayout;
@@ -104,16 +104,16 @@ public class CustomMessages {
         if (list == null) {
             list = new ArrayList<CustomStatusItem>();
         }
-        
+
         // Sort Custom Messages
         Collections.sort( list, new Comparator<CustomStatusItem>()
         {
         	public int compare( final CustomStatusItem a, final CustomStatusItem b )
-        	{        		
+        	{
         		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
         	}
         } );
-        
+
         return list;
     }
 
@@ -151,7 +151,7 @@ public class CustomMessages {
             node.setAllowsChildren(true);
 
             while (cMessages.hasNext()) {
-                CustomStatusItem csi = (CustomStatusItem)cMessages.next();
+                CustomStatusItem csi = cMessages.next();
                 if (csi.getType().equals(item.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
@@ -247,9 +247,11 @@ public class CustomMessages {
 
 						public void actionPerformed(ActionEvent actionEvent) {
                             List<CustomStatusItem> list = new ArrayList<CustomStatusItem>();
+                            //Refresh customItems list
+                            List<CustomStatusItem> customItems = load();
                             Iterator<CustomStatusItem> iter = customItems.iterator();
                             while (iter.hasNext()) {
-                                CustomStatusItem item = (CustomStatusItem)iter.next();
+                                CustomStatusItem item = iter.next();
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
 
                                 }
@@ -376,10 +378,10 @@ public class CustomMessages {
                 final StatusItem statusItem = statusIterator.next();
                 if (!PresenceManager.isOnPhone(statusItem.getPresence())) {
 	                ImageIcon icon = (ImageIcon)statusItem.getIcon();
-	
+
 	                ImageIcon newIcon = new ImageIcon(icon.getImage());
 	                newIcon.setDescription(statusItem.getText());
-	
+
 	                typeBox.addItem(newIcon);
                 }
             }
