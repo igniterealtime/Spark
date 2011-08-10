@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
@@ -34,11 +35,14 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -66,7 +70,9 @@ import java.util.List;
 final class InvitationDialog extends JPanel {
     private static final long serialVersionUID = -8588678602429200581L;
     private JLabel roomsLabel = new JLabel();
-    private JTextField roomsField = new JTextField();
+    private JComponent roomsField = new JTextField();
+    private JTextField textRoomsField;
+    private JComboBox comboRoomsField;
 
     private JLabel messageLabel = new JLabel();
     private JTextField messageField = new JTextField();
@@ -81,7 +87,28 @@ final class InvitationDialog extends JPanel {
 
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
 
-    public InvitationDialog() {
+    public InvitationDialog(boolean adhoc) {
+        if (adhoc) {
+            roomsField = new JTextField();
+            textRoomsField = (JTextField) roomsField;
+        } else {
+            roomsField = new JComboBox();
+            comboRoomsField = (JComboBox) roomsField;
+            comboRoomsField.setEditable(true);
+            comboRoomsField.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // get selected bookmark and persist it:
+                    BookmarkedConference bookmarkedConf = null;
+                    Object bookmarkedConfItem = comboRoomsField.getSelectedItem();
+                    if (bookmarkedConfItem instanceof ConferenceItem) {
+                        bookmarkedConf = ((ConferenceItem) bookmarkedConfItem).getBookmarkedConf();
+                        SettingsManager.getLocalPreferences().setDefaultBookmarkedConf(bookmarkedConf.getJid());
+                        SettingsManager.saveSettings();
+                    }
+                }
+            });
+        }
         setLayout(gridBagLayout1);
 
         add(roomsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -185,8 +212,54 @@ final class InvitationDialog extends JPanel {
 
     }
 
-    public void inviteUsersToRoom(final String serviceName, String roomName, Collection<String> jids) {
-        roomsField.setText(roomName);
+    private void fillRoomsUI(Collection<BookmarkedConference> rooms, String adHocRoomName) {
+        if (textRoomsField != null) {
+            textRoomsField.setText(adHocRoomName);
+        }
+        if (comboRoomsField != null) {
+            // comboRoomsField.setSelectedIndex(-1);
+            ConferenceItem bookmarkedConf = null;
+            final String bookmarkedConfJid = SettingsManager.getLocalPreferences().getDefaultBookmarkedConf();
+
+            for (BookmarkedConference room : rooms) {
+                final ConferenceItem ci = new ConferenceItem(room);
+                if (bookmarkedConfJid != null && bookmarkedConfJid.equalsIgnoreCase(ci.getBookmarkedConf().getJid())) {
+                    bookmarkedConf = ci;
+                }
+                comboRoomsField.addItem(ci);
+            }
+            if (bookmarkedConf != null) {
+                comboRoomsField.setSelectedItem(bookmarkedConf);
+            }
+        }
+    }
+
+    private String getSelectedRoomName() {
+        String roomTitle = null;
+
+        if (textRoomsField != null) {
+            roomTitle = textRoomsField.getText();
+        }
+        if (comboRoomsField != null) {
+            roomTitle = comboRoomsField.getSelectedItem().toString();
+        }
+
+        return roomTitle;
+    }
+
+    private BookmarkedConference getSelectedBookmarkedConference() {
+        BookmarkedConference bookmarkedConf = null;
+        if (comboRoomsField != null) {
+            Object bookmarkedConfItem = comboRoomsField.getSelectedItem();
+            if (bookmarkedConfItem instanceof ConferenceItem) {
+                bookmarkedConf = ((ConferenceItem) bookmarkedConfItem).getBookmarkedConf();
+            }
+        }
+        return bookmarkedConf;
+    }
+
+    public void inviteUsersToRoom(final String serviceName, Collection<BookmarkedConference> rooms, String adHocRoomName, Collection<String> jids) {
+        fillRoomsUI(rooms, adHocRoomName);
 
 
         JFrame parent = SparkManager.getChatManager().getChatContainer().getChatFrame();
@@ -240,7 +313,8 @@ final class InvitationDialog extends JPanel {
                     dlg.dispose();
                 }
                 else if (Res.getString("invite").equals(value)) {
-                    final String roomTitle = roomsField.getText();
+                    final String roomTitle = getSelectedRoomName();
+                    final BookmarkedConference selectedBookmarkedConf = getSelectedBookmarkedConference();
                     int size = invitedUserList.getModel().getSize();
 
                     if (size == 0) {
@@ -306,7 +380,14 @@ final class InvitationDialog extends JPanel {
 
                             public void finished() {
                                 try {
-                                    ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle, jidList);
+                                    if (selectedBookmarkedConf == null) {
+                                        ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle,
+                                                jidList);
+                                    } else {
+                                        ConferenceUtils.joinConferenceOnSeperateThread(
+                                                selectedBookmarkedConf.getName(), selectedBookmarkedConf.getJid(),
+                                                selectedBookmarkedConf.getPassword(), messageText, jidList);
+                                    }
                                 }
                                 catch (XMPPException e2) {
                                     JOptionPane.showMessageDialog(pane, ConferenceUtils.getReason(e2), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

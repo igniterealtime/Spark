@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -120,11 +120,11 @@ public final class GroupChatRoom extends ChatRoom {
 	    .isShowJoinLeaveMessagesEnabled();
     private boolean isMucHighlightingNameEnabled = pref.isMucHighNameEnabled();
     private boolean isMucHighlightingTextEnabled = pref.isMucHighTextEnabled();
-    
+
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
-     * 
+     *
      * @param chat
      *            the MultiUserChat to create a GroupChatRoom from.
      */
@@ -171,7 +171,7 @@ public final class GroupChatRoom extends ChatRoom {
 
 	// Add ContextMenuListener
 	getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
-	  
+
 
 	    public void poppingUp(Object component, JPopupMenu popup) {
 		popup.addSeparator();
@@ -180,7 +180,7 @@ public final class GroupChatRoom extends ChatRoom {
 
 		    public void actionPerformed(ActionEvent actionEvent) {
 			ConferenceUtils.inviteUsersToRoom(conferenceService,
-				getRoomname(), null);
+				getRoomname(), null, false);
 		    }
 		};
 
@@ -301,13 +301,13 @@ public final class GroupChatRoom extends ChatRoom {
 	GroupChatRoomTransferHandler transferHandler = new GroupChatRoomTransferHandler(
 		this);
 	getTranscriptWindow().setTransferHandler(transferHandler);
-	
+
 	addRoomConfigureButtons(this);
     }
 
     /**
      * Sets the title to use on the tab describing the Conference room.
-     * 
+     *
      * @param tabTitle
      *            the title to use on the tab.
      */
@@ -344,7 +344,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Determines the background color to use for messages.
-     * 
+     *
      * @param nickname
      *            Nickname associated with message.
      * @param body
@@ -375,7 +375,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Sends a message.
-     * 
+     *
      * @param message
      *            - the message to send.
      */
@@ -427,7 +427,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Sends a message.
-     * 
+     *
      * @param message
      *            - the message to send.
      */
@@ -469,7 +469,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Return name of the room specified when the room was created.
-     * 
+     *
      * @return the roomname.
      */
     public String getRoomname() {
@@ -478,7 +478,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Retrieve the nickname of the user in this groupchat.
-     * 
+     *
      * @return the nickname of the agent in this groupchat
      */
     public String getNickname() {
@@ -487,7 +487,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Sets the icon to use on the tab.
-     * 
+     *
      * @param tabIcon
      *            the icon to use on the tab.
      */
@@ -497,7 +497,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Return the Icon that should be used in the tab of this GroupChat Pane.
-     * 
+     *
      * @return the Icon to use in tab.
      */
     public Icon getTabIcon() {
@@ -506,7 +506,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Return the title that should be used in the tab.
-     * 
+     *
      * @return the title to be used on the tab.
      */
     public String getTabTitle() {
@@ -515,7 +515,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Return the title of this room.
-     * 
+     *
      * @return the title of this room.
      */
     public String getRoomTitle() {
@@ -524,7 +524,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Return the type of chat we are in.
-     * 
+     *
      * @return the type of chat we are in.
      */
     public Message.Type getChatType() {
@@ -582,7 +582,7 @@ public final class GroupChatRoom extends ChatRoom {
     /**
      * If true, will display all presence messages. Set to false to turn off
      * presence notifications.
-     * 
+     *
      * @param showMessages
      *            true to display presence messages, otherwise false.
      */
@@ -593,7 +593,7 @@ public final class GroupChatRoom extends ChatRoom {
     /**
      * Returns whether or not this ChatRoom is active. To be active means to
      * have the agent still engaged in a conversation with a customer.
-     * 
+     *
      * @return true if the ChatRoom is active.
      */
     public boolean isActive() {
@@ -602,7 +602,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Returns the number of participants in this room.
-     * 
+     *
      * @return the number of participants in this room.
      */
     public int getParticipantCount() {
@@ -614,7 +614,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Implementation of processPacket to handle muc related packets.
-     * 
+     *
      * @param packet
      *            the packet.
      */
@@ -643,7 +643,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Handle all MUC related packets.
-     * 
+     *
      * @param packet
      *            the packet.
      */
@@ -759,7 +759,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Handle all presence packets being sent to this Group Chat Room.
-     * 
+     *
      * @param packet
      *            the presence packet.
      */
@@ -823,7 +823,7 @@ public final class GroupChatRoom extends ChatRoom {
      */
     private void setupListeners() {
 	chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
-	    
+
 	    public void kicked(String participant, String actor, String reason) {
 		String nickname = StringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.kicked.from.room",
@@ -965,7 +965,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Inserts a notification message within the TranscriptWindow.
-     * 
+     *
      * @param text
      *            the text to insert.
      */
@@ -995,7 +995,7 @@ public final class GroupChatRoom extends ChatRoom {
     /**
      * Returns the user format (e.g.
      * darkcave@macbeth.shakespeare.lit/thirdwitch) of each user in the room.
-     * 
+     *
      * @return the user format (e.g.
      *         darkcave@macbeth.shakespeare.lit/thirdwitch) of each user in the
      *         room.
@@ -1027,7 +1027,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Returns a MultiUserChat object associated with this room.
-     * 
+     *
      * @return the <code>MultiUserChat</code> object associated with this room.
      */
     public MultiUserChat getMultiUserChat() {
@@ -1036,7 +1036,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Returns the conference service associated with this Conference Chat.
-     * 
+     *
      * @return the conference service associated with this Conference Chat.
      */
     public String getConferenceService() {
@@ -1047,7 +1047,7 @@ public final class GroupChatRoom extends ChatRoom {
      * Adds a user to the blocked user list. Blocked users is NOT a MUC related
      * item, but rather used by the client to not display messages from certain
      * people.
-     * 
+     *
      * @param usersJID
      *            the room jid of the user
      *            (ex.spark@conference.jivesoftware.com/Dan)
@@ -1058,7 +1058,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Removes a user from the blocked user list.
-     * 
+     *
      * @param usersJID
      *            the jid of the user (ex.
      *            spark@conference.jivesoftware.com/Dan)
@@ -1069,7 +1069,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Returns true if the user is in the blocked user list.
-     * 
+     *
      * @param usersJID
      *            the jid of the user (ex.
      *            spark@conference.jivesoftware.com/Dan)
@@ -1082,7 +1082,7 @@ public final class GroupChatRoom extends ChatRoom {
     /**
      * Specifies whether to use typing notifications or not. By default, group
      * chat rooms will NOT use typing notifications.
-     * 
+     *
      * @param sendAndReceiveTypingNotifications
      *            true to use typing notifications.
      */
@@ -1107,7 +1107,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Invite a user to this conference room.
-     * 
+     *
      * @param jid
      *            the jid of the user to invite.
      * @param message
@@ -1182,7 +1182,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * The current SendField has been updated somehow.
-     * 
+     *
      * @param e
      *            - the DocumentEvent to respond to.
      */
@@ -1216,7 +1216,7 @@ public final class GroupChatRoom extends ChatRoom {
     /**
      * Returns the GroupChatParticpantList which displays all users within a
      * conference room.
-     * 
+     *
      * @return the GroupChatParticipantList.
      */
     public GroupChatParticipantList getConferenceRoomInfo() {
@@ -1246,7 +1246,7 @@ public final class GroupChatRoom extends ChatRoom {
     /**
      * Sets the Password for this GroupChat if available, to rejoin the chat
      * after a reconnection without prompting the user
-     * 
+     *
      * @param password
      */
     public void setPassword(String password) {
@@ -1262,7 +1262,7 @@ public final class GroupChatRoom extends ChatRoom {
 	final String roomDesc = tabTitle;
 	isActive = false;
 	EventQueue.invokeLater(new Runnable() {
-	    
+
 	    @Override
 	    public void run() {
 		ConferenceUtils.joinConferenceOnSeperateThread(roomDesc, roomJID, password);
@@ -1327,7 +1327,7 @@ public final class GroupChatRoom extends ChatRoom {
 
     /**
      * Returns the descriptive panel at the top of the room.
-     * 
+     *
      * @return the SubjectPanel.
      */
     public SubjectPanel getSubjectPanel() {
@@ -1335,7 +1335,7 @@ public final class GroupChatRoom extends ChatRoom {
     }
 
     /**
-     * Returns the Color to use 
+     * Returns the Color to use
      * Use Color.blue for yourself
      * @param nickname
      * @return
@@ -1358,7 +1358,7 @@ public final class GroupChatRoom extends ChatRoom {
 	}
     }
 
-    
+
     /**
      * Adds the Settings and Subject Button to the right Toolbar
      * @param room
@@ -1368,11 +1368,11 @@ public final class GroupChatRoom extends ChatRoom {
 	RolloverButton settings = new RolloverButton(
 		SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
 	settings.setToolTipText(Res.getString("title.configure.room"));
-	
+
 	RolloverButton thema = new RolloverButton(
 		SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
 	thema.setToolTipText(Res.getString("menuitem.change.subject"));
-	
+
 	RolloverButton register = new RolloverButton(
 		SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
 	register.setToolTipText(Res.getString("button.register").replace("&",""));
@@ -1422,7 +1422,7 @@ public final class GroupChatRoom extends ChatRoom {
 		}
 	    }
 	});
-	
+
 	register.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {

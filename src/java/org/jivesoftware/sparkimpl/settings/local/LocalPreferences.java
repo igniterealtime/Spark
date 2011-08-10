@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,7 +58,7 @@ public class LocalPreferences {
 
 	/**
 	 * Returns the XMPP Port to communicate on.
-	 * 
+	 *
 	 * @return the XMPP Port to communicate on. Default is 5222.
 	 */
 	public int getXmppPort() {
@@ -67,7 +67,7 @@ public class LocalPreferences {
 
 	/**
 	 * Sets the XMPP Port to communicate on.
-	 * 
+	 *
 	 * @param xmppPort
 	 *            the XMPP Port to communicate on. Default is 5222.
 	 */
@@ -77,7 +77,7 @@ public class LocalPreferences {
 
 	/**
 	 * Return the smack timeout for requests. Default is 5 seconds.
-	 * 
+	 *
 	 * @return the smack timeout for requests.
 	 */
 	public int getTimeOut() {
@@ -87,7 +87,7 @@ public class LocalPreferences {
 	/**
 	 * Sets the smack timeout for requests. The default is 5 seconds, but you
 	 * may wish to increase this number for low bandwidth users.
-	 * 
+	 *
 	 * @param timeOut
 	 *            the smack timeout.
 	 */
@@ -97,7 +97,7 @@ public class LocalPreferences {
 
 	/**
 	 * Returns the encoded password.
-	 * 
+	 *
 	 * @return the encoded password.
 	 */
 //	public String getPassword() {
@@ -106,14 +106,14 @@ public class LocalPreferences {
 
 	/**
 	 * Sets the encoded password.
-	 * 
+	 *
 	 * @param password
 	 *            the encoded password.
 	 */
 //	public void setPassword(String password) {
 //		props.setProperty("password", password);
 //	}
-	
+
 	/**
 	 * returns the password for an encrypted jid
 	 * @param barejid
@@ -123,30 +123,30 @@ public class LocalPreferences {
 	{
 	    try {
 		String pw = "password"+Encryptor.encrypt(barejid);
-		return Encryptor.decrypt(props.getProperty(pw)); 	
+		return Encryptor.decrypt(props.getProperty(pw));
 	    } catch(Exception e){
-		return null; 
-	    }      
+		return null;
+	    }
 	}
-	
+
 	/**
 	 * Sets the password for barejid<br>
 	 * both will be encrypted
 	 * @param barejid
 	 * @param password
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void setPasswordForUser(String barejid, String password) throws Exception
 	{
 	    String user = "password"+Encryptor.encrypt(barejid);
 	    String pw = Encryptor.encrypt(password);
-	    props.setProperty(user, pw);  
+	    props.setProperty(user, pw);
 	}
 
 	/**
 	 * Return true if the IDLE feature is on. The IDLE feature allows to monitor
 	 * computer activity and set presence accordingly.
-	 * 
+	 *
 	 * @return true if IDLE is on.
 	 */
 	public boolean isIdleOn() {
@@ -156,7 +156,7 @@ public class LocalPreferences {
 	/**
 	 * Set the IDLE feature on or off. The IDLE feature allows to monitor
 	 * computer activity and set presence accordingly.
-	 * 
+	 *
 	 * @param idleOn
 	 *            true to turn idle on.
 	 */
@@ -170,7 +170,7 @@ public class LocalPreferences {
 	public String getIdleMessage(){
 	    return props.getProperty("idleOnMessage",Res.getString("status.away"));
 	}
-	
+
 	/**
 	 * Sets the idle Message when going automatically away
 	 * @param message
@@ -182,7 +182,7 @@ public class LocalPreferences {
 	/**
 	 * Returns the number of minutes to set to unavailable if the computer has
 	 * no activity.
-	 * 
+	 *
 	 * @return the number of minutes before checking for IDLE computer.
 	 */
 	public int getIdleTime() {
@@ -192,7 +192,7 @@ public class LocalPreferences {
 	/**
 	 * Set the number of minutes to set to unavailable if the computer has no
 	 * activity.
-	 * 
+	 *
 	 * @param secondIdleTime
 	 *            the number of minutes.
 	 */
@@ -202,7 +202,7 @@ public class LocalPreferences {
 
 	/**
 	 * Return true if Auto Login is on.
-	 * 
+	 *
 	 * @return true if Auto Login is on.
 	 */
 	public boolean isAutoLogin() {
@@ -213,7 +213,7 @@ public class LocalPreferences {
 	/**
 	 * Turn on or off Auto Login. Auto Login allows a user to login to the
 	 * system without inputting their signing information.
-	 * 
+	 *
 	 * @param autoLogin
 	 *            true if Auto Login should be on.
 	 */
@@ -223,7 +223,7 @@ public class LocalPreferences {
 
 	/**
 	 * Return true if the password should be encoded and persisted.
-	 * 
+	 *
 	 * @return true if the password is encoded and persisted.
 	 */
 	public boolean isSavePassword() {
@@ -234,7 +234,7 @@ public class LocalPreferences {
 	/**
 	 * Set to true to encode and save password. You would use this if you wish
 	 * to not always input ones password.
-	 * 
+	 *
 	 * @param savePassword
 	 *            true if the password should be saved.
 	 */
@@ -244,7 +244,7 @@ public class LocalPreferences {
 
 	/**
 	 * Returns the last used Username
-	 * 
+	 *
 	 * @return the username of the agent.
 	 */
 	public String getLastUsername() {
@@ -253,7 +253,7 @@ public class LocalPreferences {
 
 	/**
 	 * Sets the Agents username.
-	 * 
+	 *
 	 * @param username
 	 *            the agents username.
 	 */
@@ -263,7 +263,7 @@ public class LocalPreferences {
 
 	/**
 	 * Returns the last Server accessed.
-	 * 
+	 *
 	 * @return the last Server accessed.
 	 */
 	public String getServer() {
@@ -272,7 +272,7 @@ public class LocalPreferences {
 
 	/**
 	 * Sets the last Server accessed.
-	 * 
+	 *
 	 * @param server
 	 *            the last Server accessed.
 	 */
@@ -282,7 +282,7 @@ public class LocalPreferences {
 
 	/**
 	 * Return true if this is a fresh install.
-	 * 
+	 *
 	 * @return true if a fresh install.
 	 */
 	public boolean isNewInstall() {
@@ -291,7 +291,7 @@ public class LocalPreferences {
 
 	/**
 	 * Set if this is a fresh install.
-	 * 
+	 *
 	 * @param newInstall
 	 *            true if this is a fresh install.
 	 */
@@ -301,7 +301,7 @@ public class LocalPreferences {
 
 	/**
 	 * Returns true to use SSL.
-	 * 
+	 *
 	 * @return true if we should connect via SSL.
 	 */
 	public boolean isSSL() {
@@ -310,14 +310,14 @@ public class LocalPreferences {
 
 	/**
 	 * Sets if the agent should use SSL for connecting.
-	 * 
+	 *
 	 * @param ssl
 	 *            true if we should be using SSL.
 	 */
 	public void setSSL(boolean ssl) {
 		props.setProperty("sslEnabled", Boolean.toString(ssl));
 	}
-	
+
 	/**
 	 * Returns the Download Directory, doesnt return <code>null</code>
 	 * @return {@link String}
@@ -451,13 +451,13 @@ public class LocalPreferences {
 		setBoolean("hostAndPort", configured);
 	}
 
-        public String getResource() {  
+        public String getResource() {
             if (props.getProperty("resource", "spark").equals("spark"))
             {
-                setResource("Spark "+JiveInfo.getVersion()); 
+                setResource("Spark "+JiveInfo.getVersion());
                 return "Spark "+JiveInfo.getVersion();
             }
-            
+
         return props.getProperty("resource", "Spark "+JiveInfo.getVersion());
     }
 
@@ -604,7 +604,7 @@ public class LocalPreferences {
 	public boolean getStartOnStartup() {
 		return getBoolean("startOnStartup", false);
 	}
-	
+
 	/**
 	 * Sets the Reconnection display type</p>
 	 * 0 = ReconnectPanel </p>
@@ -617,9 +617,9 @@ public class LocalPreferences {
 	}
 
         /**
-         * Sets the Reconnection display type</p> 
-         * 0 = ReconnectPanel </p> 
-         * 1 = Reconnect as Group </p> 
+         * Sets the Reconnection display type</p>
+         * 0 = ReconnectPanel </p>
+         * 1 = Reconnect as Group </p>
          * 2 = Reconnect as Icon</p>
          * @return
          */
@@ -714,12 +714,12 @@ public class LocalPreferences {
 	public boolean areEmoticonsEnabled() {
 		return getBoolean("emoticonsEnabled", true);
 	}
-	
+
 	public void setLookAndFeel(String laf)
 	{
 	    setString("LookAndFeel",laf);
 	}
-	
+
     public String getLookAndFeel() {
 	String defaultstring = "";
 	try {
@@ -749,11 +749,11 @@ public class LocalPreferences {
 	public boolean isMucHighTextEnabled() {
 		return getBoolean("isMucHighTextOn", false);
 	}
-	
+
 	public boolean isMucRandomColors(){
 	    return getBoolean("isMucRandomColors", true);
 	}
-	
+
 	public void setMucRandomColors(boolean value){
 	    setBoolean("isMucRandomColors", value);
 	}
@@ -761,15 +761,15 @@ public class LocalPreferences {
 	public boolean isMucHighToastEnabled() {
 		return getBoolean("isMucHighToastOn", false);
 	}
-	
+
 	public boolean isShowingRoleIcons() {
 	    return getBoolean("isShowingRoleIcons",false);
 	}
-	
+
 	public boolean isShowJoinLeaveMessagesEnabled() {
 	    return getBoolean("isShowJoinLeaveMessagesOn", true);
 	}
-	
+
 	public void setShowJoinLeaveMessagesEnabled(boolean enabled) {
 	    setBoolean("isShowJoinLeaveMessagesOn", enabled);
 	}
@@ -785,7 +785,7 @@ public class LocalPreferences {
 	public void setMuchHighToastEnabled(boolean setMucPHigh) {
 	    setBoolean("isMucHighToastOn", setMucPHigh);
 	}
-	
+
 	public void setShowRoleIconInsteadStatusIcon(boolean roleicons){
 		setBoolean("isShowingRoleIcons",roleicons);
 	}
@@ -933,7 +933,7 @@ public class LocalPreferences {
 	public boolean areAvatarsVisible() {
 		return getBoolean("showAvatar", false);
 	}
-	
+
 	public void setVCardsVisible(boolean visible) {
 		setBoolean("showVCards", visible);
 	}
@@ -945,49 +945,49 @@ public class LocalPreferences {
 	public void setAudioDevice(String device) {
 		 props.setProperty("audioDevice", device);
 	}
-	
+
 	public String getAudioDevice() {
 		return props.getProperty("audioDevice","javasound://");
 	}
-	
+
 	public void setVideoDevice(String device) {
 		 props.setProperty("videoDevice", device);
 	}
-	
+
 	public String getVideoDevice() {
 		return props.getProperty("videoDevice",null);
 	}
-	
+
 	public boolean isMainWindowAlwaysOnTop() {
 		return getBoolean("MainWindowAlwaysOnTop", false);
 	}
-	
+
 	public void setMainWindowAlwaysOnTop(boolean onTop) {
 		setBoolean("MainWindowAlwaysOnTop", onTop);
 	}
-	
+
 	public boolean isChatWindowAlwaysOnTop() {
 		return getBoolean("ChatWindowAlwaysOnTop", false);
 	}
-	
+
 	public void setChatWindowAlwaysOnTop(boolean onTop) {
 		setBoolean("ChatWindowAlwaysOnTop", onTop);
 	}
-		
+
 	public String getSelectedCodecs() {
 		return getString("SelectedCodecs", null);
 	}
-	
+
 	public String getStunFallbackHost()
 	{
 	    return getString("stunFallbackHost", "");
 	}
-	
+
 	public int getStunFallbackPort()
 	{
 	    return getInt("stunFallbackPort", 3478);
 	}
-	
+
 	public void setStunFallbackHost(String host) {
 	    setString("stunFallbackHost", host);
 	}
@@ -995,39 +995,39 @@ public class LocalPreferences {
 	public void setStunFallbackPort(int port) {
 	    setInt("stunFallbackPort", port);
 	}
-	
+
 	public boolean getShowTransportTab()
 	{
 	    return getBoolean("useTabForTransport", false);
 	}
-	
+
 	public void setShowTransportTab(boolean value)
 	{
 	    setBoolean("useTabForTransport", value);
 	}
-	
+
 	public boolean isShowConferenceTab()
 	{
 	    return getBoolean("useTabForConference", true);
 	}
-	
+
 	public void setShowConferenceTab(boolean value)
 	{
 	    setBoolean("useTabForConference", value);
-	}	
-	
+	}
+
 	public String getAvailableCodecs() {
 		return getString("AvailableCodecs", null);
 	}
-	
+
 	public void setSelectedCodecs(String value) {
 		setString("SelectedCodecs", value);
 	}
-	
+
 	public void setAvailableCodecs(String value) {
 		setString("AvailableCodecs", value);
 	}
-	
+
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean
 				.toString(defaultValue)));
@@ -1045,11 +1045,11 @@ public class LocalPreferences {
 	private void setInt(String property, int value) {
 		props.setProperty(property, Integer.toString(value));
 	}
-	
+
 	private String getString(String property, String defaultValue) {
 		return props.getProperty(property, defaultValue);
 	}
-	
+
 	private void setString(String property, String value) {
 		props.setProperty(property, value);
 	}
@@ -1062,7 +1062,15 @@ public class LocalPreferences {
 	setBoolean("autoAcceptMucInvite", autoAcceptMuc);
 
     }
-    
+
+    public String getDefaultBookmarkedConf() {
+        return props.getProperty("defaultBookmarkedConf");
+    }
+
+    public void setDefaultBookmarkedConf(String bookmarkedConferenceJid) {
+        setString("defaultBookmarkedConf",bookmarkedConferenceJid);
+    }
+
     /**
      * Returns the Maximum visible amount of History entries
      * Default is 5000
@@ -1076,24 +1084,24 @@ public class LocalPreferences {
 	}
 	return x;
     }
-    
+
     public List<String> getDeactivatedPlugins()
     {
 	String plugs = getString("deactivatedPlugins", "");
 	ArrayList<String> liste = new ArrayList<String>();
-	
+
 	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
-	
+
 	while(tokenz.hasMoreTokens())
 	{
 	    String x = tokenz.nextToken();
-	    liste.add(x);	    
+	    liste.add(x);
 	}
 	return liste;
     }
-    
+
     public void setDeactivatedPlugins(List<String> list) {
-	
+
 	// [hallo, hallo, hallo, hallo, hallo]
 	// =
 	// hallo,hallo,hallo,hallo,hallo

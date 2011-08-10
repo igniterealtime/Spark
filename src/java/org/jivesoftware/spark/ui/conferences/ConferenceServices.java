@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import java.awt.Frame;
@@ -45,6 +45,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bookmark.BookmarkManager;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
@@ -91,7 +92,7 @@ public class ConferenceServices implements InvitationListener {
             addPopupListeners();
 
             // Add Join Conference Button to ActionMenu
-            
+
               final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
             JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
             actionsMenu.add(actionMenuItem,1);
@@ -133,7 +134,7 @@ public class ConferenceServices implements InvitationListener {
     private void addInvitationListener() {
 	MultiUserChat.addInvitationListener(SparkManager.getConnection(),this);
     }
-    
+
     /**
      * Persists bookmarked data, if any.
      */
@@ -150,8 +151,7 @@ public class ConferenceServices implements InvitationListener {
 
             public Object construct() {
                 try {
-                    BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
-                    return manager.getBookmarkedConferences();
+                    return ConferenceUtils.retrieveBookmarkedConferences();
                 }
                 catch (XMPPException e) {
                     Log.error(e);
@@ -292,8 +292,39 @@ public class ConferenceServices implements InvitationListener {
 
         String serviceName = getDefaultServiceName();
         if (ModelUtil.hasLength(serviceName)) {
-            ConferenceUtils.inviteUsersToRoom(serviceName, roomName, jids);
+            ConferenceUtils.inviteUsersToRoom(serviceName, roomName, jids, true);
         }
+    }
+
+    private BookmarkedConference getDefaultBookmark() {
+        BookmarkedConference bookmarkedConference = null;
+        try {
+            Collection<BookmarkedConference> bookmarkedConfs = ConferenceUtils.retrieveBookmarkedConferences();
+            String implicitBookmarkedJID = SettingsManager.getLocalPreferences().getDefaultBookmarkedConf();
+            if (bookmarkedConfs != null && !bookmarkedConfs.isEmpty()) {
+
+                // check if the "default" bookmarked conference is still in the bookmarks list:
+                if (implicitBookmarkedJID != null && implicitBookmarkedJID.trim().length() > 0) {
+                    for (BookmarkedConference bc : bookmarkedConfs) {
+                        if (implicitBookmarkedJID.equalsIgnoreCase(bc.getJid())) {
+                            bookmarkedConference = bc;
+                            break;
+                        }
+                    }
+                }
+                // if no match was found, or no "default" bookmark could be retrieved-use the
+                // first bookmark:
+                if (bookmarkedConference == null) {
+                    bookmarkedConference = bookmarkedConfs.iterator().next();
+                }
+            }
+            return bookmarkedConference;
+        } catch (XMPPException ex) {
+            Log.warning("No default bookmark");
+            // no bookmark can be retrieved;
+        }
+        return null;
+
     }
 
     /**
@@ -354,7 +385,15 @@ public class ConferenceServices implements InvitationListener {
 
                     public void finished() {
                         try {
-                            ConferenceUtils.createPrivateConference(serviceName, Res.getString("message.please.join.in.conference"), roomName, jids);
+                            BookmarkedConference selectedBookmarkedConf = getDefaultBookmark();
+                            if (selectedBookmarkedConf == null) {
+                                ConferenceUtils.createPrivateConference(serviceName,
+                                        Res.getString("message.please.join.in.conference"), roomName, jids);
+                            } else {
+                                ConferenceUtils.joinConferenceOnSeperateThread(selectedBookmarkedConf.getName(),
+                                        selectedBookmarkedConf.getJid(), selectedBookmarkedConf.getPassword(),
+                                        Res.getString("message.please.join.in.conference"), jids);
+                            }
                         }
                         catch (XMPPException e1) {
                             JOptionPane.showMessageDialog(chatRoom, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
@@ -450,7 +489,7 @@ public class ConferenceServices implements InvitationListener {
 	});
 
     }
-    
+
     private void showToaster(String message, String title, GroupChatRoom groupChatRoom) {
 	if (_localPreferences.getShowToasterPopup()) {
 	    SparkToaster toaster = new SparkToaster();

@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import java.awt.Component;
@@ -37,6 +37,8 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.bookmark.BookmarkManager;
+import org.jivesoftware.smackx.bookmark.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
@@ -121,6 +123,9 @@ public class ConferenceUtils {
         return creationDate;
     }
 
+    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
+        joinConferenceOnSeperateThread(roomName, roomJID, password, null, null);
+    }
 
     /**
      * Joins a conference room using another thread. This allows for a smoother opening of rooms.
@@ -129,7 +134,7 @@ public class ConferenceUtils {
      * @param roomJID  the jid of the room.
      * @param password the rooms password if required.
      */
-    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
+    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String message, final Collection<String> jids) {
         ChatManager chatManager = SparkManager.getChatManager();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
@@ -144,8 +149,9 @@ public class ConferenceUtils {
             if (!muc.isJoined()) {
                 joinRoom(muc, nickname, password);
             }
-            
+
             chatManager.getChatContainer().activateChatRoom(chatRoom);
+            invite(groupChat, chatRoom, jids, message);
             return;
         }
         catch (ChatRoomNotFoundException e) {
@@ -221,6 +227,7 @@ public class ConferenceUtils {
                         }
                     }
                 }
+                invite(groupChat, room, jids, message);
                 return "ok";
             }
 
@@ -241,6 +248,16 @@ public class ConferenceUtils {
         };
 
         startChat.start();
+    }
+
+    private static void invite(MultiUserChat groupChat, GroupChatRoom room, Collection<String> jids, String message) {
+        if (jids != null && message != null) {
+            for (String jid : jids) {
+                groupChat.invite(jid, message);
+                room.getTranscriptWindow().insertNotificationMessage(
+                        Res.getString("message.waiting.for.user.to.join", jid), ChatManager.NOTIFICATION_COLOR);
+            }
+        }
     }
 
     /**
@@ -325,9 +342,21 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(String serviceName, String roomName, Collection<String> jids) {
-        InvitationDialog inviteDialog = new InvitationDialog();
-        inviteDialog.inviteUsersToRoom(serviceName, roomName, jids);
+    public static void inviteUsersToRoom(String serviceName, String roomName, Collection<String> jids, boolean randomName) {
+        Collection<BookmarkedConference> rooms = null;
+        try {
+            rooms = retrieveBookmarkedConferences();
+        } catch (Exception ex) {
+            Log.error(ex);
+        }
+        boolean useTextField = !randomName || (rooms == null || rooms.size() == 0);
+        InvitationDialog inviteDialog = new InvitationDialog(useTextField);
+        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
+    }
+
+    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException {
+        BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+        return manager.getBookmarkedConferences();
     }
 
     /**
@@ -631,23 +660,23 @@ public class ConferenceUtils {
         }
 
     }
-    
+
     final static List<String> unclosableChatRooms = new ArrayList<String>();
 	public synchronized static void addUnclosableChatRoom(String jid) {
 		unclosableChatRooms.add(jid);
 	}
-	
+
 	public static boolean isChatRoomClosable(Component c) {
 		if(c instanceof GroupChatRoom ) {
 			GroupChatRoom groupChatRoom = (GroupChatRoom) c;
     		String roomName = groupChatRoom.getChatRoom().getRoomname();
-    		                        		
+
     		if(unclosableChatRooms.contains(roomName)){
     			return false;
-    		}			
+    		}
 		}
 		return true;
-		
+
 	}
 
 

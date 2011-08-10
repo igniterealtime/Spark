@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import java.awt.Color;
@@ -117,7 +117,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	private DiscoverInfo roomInformation;
 
 	private List<JLabel> users = new ArrayList<JLabel>();
-	
+
 	private HashMap<String,String> usersandRoles = new HashMap<String,String>();
 
 	/**
@@ -342,7 +342,7 @@ public final class GroupChatParticipantList extends JPanel implements
 
     private void addParticipant(final String participantJID, Presence presence) {
 	// Remove reference to invitees
-	
+
 	for (String displayName : invitees.keySet()) {
 	    String jid = SparkManager.getUserManager().getJIDFromDisplayName(
 		    displayName);
@@ -357,12 +357,12 @@ public final class GroupChatParticipantList extends JPanel implements
 	}
 
 	String nickname = StringUtils.parseResource(participantJID);
-	
+
 	String affiliation  = parseRoleFromPacket(presence)[0];
 	String userRole = parseRoleFromPacket(presence)[1];
-	
+
 	usersandRoles.put(participantJID, affiliation+","+userRole);
-	
+
 	Icon icon = null;
 	if (_localPreferences.isShowingRoleIcons()) {
 	    icon = getIconForRole(userRole, affiliation);
@@ -384,7 +384,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	    }
 	}
     }
-	
+
     /**
      * Parses the Affiliation and Role from the Presence packet
      * @param p
@@ -611,7 +611,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-	
+
     private void grantMember(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
@@ -633,7 +633,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-	
+
     private void grantAdmin(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
@@ -654,7 +654,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-    
+
     private void grantOwner(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
@@ -675,12 +675,12 @@ public final class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-	
+
 
 	/**
 	 * Let's make sure that the panel doesn't strech past the scrollpane view
 	 * pane.
-	 * 
+	 *
 	 * @return the preferred dimension
 	 */
 	public Dimension getPreferredSize() {
@@ -708,12 +708,12 @@ public final class GroupChatParticipantList extends JPanel implements
 	    final boolean iamAdmin = SparkManager.getUserManager().isAdmin(
 		    groupChatRoom, chat.getNickname());
 	    final boolean iamOwner = SparkManager.getUserManager().isOwner(groupChatRoom, chat.getNickname());
-	    
+
 	    final boolean iamAdminOrOwner = iamAdmin || iamOwner;
-	    
+
 	    final boolean iamModerator = SparkManager.getUserManager()
 		    .isModerator(groupChatRoom, chat.getNickname());
-	    
+
 	    final boolean userIsMember = SparkManager.getUserManager().isMember(occupant);
 
 	    final boolean userIsAdmin = userManager.isAdmin(groupChatRoom, occupant.getNick());
@@ -923,11 +923,11 @@ public final class GroupChatParticipantList extends JPanel implements
 	    if (iamAdminOrOwner && !userIsModerator && !selectedMyself) {
 		popup.add(banAction);
 	    }
-	    
-	    
+
+
 	    JMenu affiliationMenu = new JMenu(Res.getString("menuitem.affiliation"));
 	    affiliationMenu.setIcon(SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE));
-	    
+
 	    Action memberAction = new AbstractAction() {
 		private static final long serialVersionUID = -2528887841227305432L;
 
@@ -953,7 +953,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		memberAction.putValue(Action.NAME,Res.getString("menuitem.revoke.member"));
 		affiliationMenu.add(memberAction);
 	    }
-	    
+
 
 	    Action moderatorAction = new AbstractAction() {
 		private static final long serialVersionUID = 8162535640460764896L;
@@ -971,7 +971,7 @@ public final class GroupChatParticipantList extends JPanel implements
 
 	    moderatorAction.putValue(Action.SMALL_ICON,
 		    SparkRes.getImageIcon(SparkRes.STAR_MODERATOR));
-	        
+
 	    if (iamAdminOrOwner && !userIsModerator && !userIsAdmin && !userIsOwner) {
 		moderatorAction.putValue(Action.NAME,
 			Res.getString("menuitem.grant.moderator"));
@@ -981,7 +981,7 @@ public final class GroupChatParticipantList extends JPanel implements
 			Res.getString("menuitem.revoke.moderator"));
 		affiliationMenu.add(moderatorAction);
 	    }
-	        
+
 	    Action adminAction = new AbstractAction() {
 		private static final long serialVersionUID = 3672121864443182872L;
 
@@ -993,7 +993,7 @@ public final class GroupChatParticipantList extends JPanel implements
 			revokeAdmin(selectedUser);
 		    }
 		    Collections.sort(users, labelComp);
-	    	
+
 	        }
 	    };
 	    adminAction.putValue(Action.SMALL_ICON,
@@ -1010,8 +1010,8 @@ public final class GroupChatParticipantList extends JPanel implements
 			Res.getString("menuitem.revoke.admin"));
 		affiliationMenu.add(adminAction);
 	    }
-	    
-	    
+
+
 	    Action ownerAction = new AbstractAction() {
 		private static final long serialVersionUID = 3672121864443182872L;
 
@@ -1023,12 +1023,12 @@ public final class GroupChatParticipantList extends JPanel implements
 			revokeOwner(selectedUser);
 		    }
 		    Collections.sort(users, labelComp);
-	    	
+
 	        }
 	    };
 	    ownerAction.putValue(Action.SMALL_ICON,
 		    SparkRes.getImageIcon(SparkRes.STAR_OWNER));
-	    
+
 	    if( iamOwner && !userIsOwner)
 	    {
 		ownerAction.putValue(Action.NAME,
@@ -1044,7 +1044,7 @@ public final class GroupChatParticipantList extends JPanel implements
 
 	    if(affiliationMenu.getItemCount()>0)
 		popup.add(affiliationMenu);
-	    
+
 
 	    // Handle Unbanning of users.
 	    Action unbanAction = new AbstractAction() {
@@ -1067,7 +1067,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		}
 
 		while (bannedUsers != null && bannedUsers.hasNext()) {
-		    Affiliate bannedUser = (Affiliate) bannedUsers.next();
+		    Affiliate bannedUser = bannedUsers.next();
 		    ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
 		    JMenuItem bannedItem = new JMenuItem(bannedUser.getJid(),
 			    icon);
@@ -1087,7 +1087,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	    public void actionPerformed(ActionEvent actionEvent) {
 		ConferenceUtils.inviteUsersToRoom(
 			groupChatRoom.getConferenceService(),
-			groupChatRoom.getRoomname(), null);
+			groupChatRoom.getRoomname(), null, false);
 	    }
 	};
 
@@ -1120,7 +1120,7 @@ public final class GroupChatParticipantList extends JPanel implements
 
 	/**
 	 * Removes a user from the participant list based on their displayed name.
-	 * 
+	 *
 	 * @param displayName
 	 *            the users displayed name to remove.
 	 */
@@ -1148,7 +1148,7 @@ public final class GroupChatParticipantList extends JPanel implements
 
 	/**
 	 * Adds a new user to the participant list.
-	 * 
+	 *
 	 * @param userIcon
 	 *            the icon to use initially.
 	 * @param nickname
@@ -1205,7 +1205,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		// append Room-JID to UserLabel
 		String jid1 = chat.getRoom() + "/" + item1.getText();
 		String jid2 = chat.getRoom() + "/" + item2.getText();
-		
+
 		user1 = getCompareValue(jid1);
 		user2 = getCompareValue(jid2);
 
@@ -1228,7 +1228,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	    return result;
 	}
     };
-    
+
     /**
      * check if we have an affiliation to this room<br>
      * and map it to an integer<br>
@@ -1286,7 +1286,7 @@ public final class GroupChatParticipantList extends JPanel implements
 	/**
 	 * The <code>JLabelIconRenderer</code> is the an implementation of
 	 * ListCellRenderer to add icons w/ associated text in JComboBox and JList.
-	 * 
+	 *
 	 * @author Derek DeMoro
 	 */
 	public class ParticipantRenderer extends JLabel implements ListCellRenderer {
