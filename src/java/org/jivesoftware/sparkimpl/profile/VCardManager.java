@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -624,9 +624,9 @@ public class VCardManager {
      * @param vcard the users vcard.
      */
     private void persistVCard(String jid, VCard vcard) {
-        if (jid == null || vcard == null) {
+        if (jid == null || jid.trim().isEmpty() || vcard == null) {
         	return;
-        } 
+        }
         String fileName = Base64.encodeBytes(jid.getBytes());
 
         byte[] bytes = vcard.getAvatar();
@@ -677,9 +677,9 @@ public class VCardManager {
      * @return the VCard if found, otherwise null.
      */
     private VCard loadFromFileSystem(String jid) {
-    	if (jid == null) {
+    	if (jid == null || jid.trim().isEmpty()) {
     		return null;
-    	}     	
+    	}
         // Unescape JID
         String fileName = Base64.encodeBytes(jid.getBytes());
 
