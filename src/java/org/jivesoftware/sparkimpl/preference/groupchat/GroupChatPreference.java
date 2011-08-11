@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,7 +76,8 @@ public class GroupChatPreference implements Preference {
                 boolean showroleicons 		= localPreferences.isShowingRoleIcons();
                 boolean autoAcceptMucInvite	= localPreferences.isAutoAcceptMucInvite();
                 boolean randomColors 		= localPreferences.isMucRandomColors();
-                
+                boolean inviteToBookmark    = !localPreferences.isUseAdHocRoom();
+
                 panel.setMucHighNameEnabled(highlightMyName);
                 panel.setMucHighTextEnabled(highlightMyText);
                 panel.setMuchHighToastEnabled(highlightPopName);
@@ -84,6 +85,7 @@ public class GroupChatPreference implements Preference {
                 panel.setShowRoleIconInsteadStatusIcon(showroleicons);
                 panel.setAutoAcceptMuc(autoAcceptMucInvite);
                 panel.setRandomColors(randomColors);
+                panel.setInviteToBookmark(inviteToBookmark);
             }
         };
 
@@ -101,6 +103,7 @@ public class GroupChatPreference implements Preference {
         pref.setShowRoleIconInsteadStatusIcon(panel.isShowingRoleIcons());
         pref.setAutoAcceptMucInvite(panel.isAutoAcceptMuc());
         pref.setMucRandomColors(panel.isRandomColors());
+        pref.setUseAdHocRoom(!panel.isInviteToBookmark());
         SettingsManager.saveSettings();
     }
 
@@ -128,6 +131,6 @@ public class GroupChatPreference implements Preference {
     public void shutdown() {
         commit();
     }
-    
+
 }
 
