@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,8 @@
 
 package org.jivesoftware.sparkimpl.settings;
 
+import org.jivesoftware.resource.Default;
+
 public class JiveInfo {
 
     private JiveInfo() {
@@ -27,14 +29,14 @@ public class JiveInfo {
     }
 
     public static String getVersion() {
-        return "2.6.3";
+        return Default.getString(Default.APPLICATION_VERSION);
     }
 
     /*
      * This should be used for an actual
      * build number, rather than duplicating
      * getVersion(); i propose to use the
-     * SVN revision number of the build 
+     * SVN revision number of the build
      */
     public static String getBuildNumber() {
         return "12555";

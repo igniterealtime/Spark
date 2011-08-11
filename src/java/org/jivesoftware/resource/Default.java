@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,7 @@ public class Default {
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
     public static final String APPLICATION_NAME = "APPLICATION_NAME";
     public static final String SHORT_NAME = "SHORT_NAME";
+    public static final String APPLICATION_VERSION = "APPLICATION_VERSION";
     public static final String LOGIN_DIALOG_BACKGROUND_IMAGE = "LOGIN_DIALOG_BACKGROUND_IMAGE";
     public static final String HOST_NAME = "HOST_NAME";
     public static final String HOST_NAME_CHANGE_DISABLED = "HOST_NAME_CHANGE_DISABLED";
@@ -102,7 +103,7 @@ public class Default {
     public static String getString(String propertyName) {
         return prb.getString(propertyName);
     }
-    
+
     public static boolean getBoolean(String propertyName) {
 	return getString(propertyName).replace(" ","").equals("true");
     }
@@ -151,7 +152,7 @@ public class Default {
         }
         return null;
     }
-    
+
     /**
      * Returns a Collection of Plugins on the Blacklist<br>
      * Containing the Name and also if specified the entrypoint-class
@@ -177,7 +178,7 @@ public class Default {
 	return list;
 
     }
-    
+
     /**
      * Returns all Keys stored in the default.properties file
      * @return {@link Enumeration}<{@link String}>

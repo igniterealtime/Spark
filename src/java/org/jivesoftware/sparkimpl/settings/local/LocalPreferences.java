@@ -479,11 +479,11 @@ public class LocalPreferences {
         public String getResource() {
             if (props.getProperty("resource", "spark").equals("spark"))
             {
-                setResource("Spark "+JiveInfo.getVersion());
-                return "Spark "+JiveInfo.getVersion();
+                setResource(Default.getString(Default.SHORT_NAME) + " " + JiveInfo.getVersion());
+                return Default.getString(Default.SHORT_NAME) + " " + JiveInfo.getVersion();
             }
 
-        return props.getProperty("resource", "Spark "+JiveInfo.getVersion());
+        return props.getProperty("resource", Default.getString(Default.SHORT_NAME) + " " + JiveInfo.getVersion());
     }
 
 	public void setResource(String resource) {
