@@ -163,6 +163,31 @@ public class LocalPreferences {
 	public void setIdleOn(boolean idleOn) {
 		props.setProperty("idleOn", Boolean.toString(idleOn));
 	}
+
+	/**
+	 * Returns true if it is wanted that a new ad hoc room to be created every time Actions/Start conference room is chosen,
+	 * or, from a chat window - invite to group chat room icon is pressed.
+	 * Returns false if it is wanted that the bookmarked room (if any) to be opened every time Actions/Start conference room is chosen,
+	 * or, from a chat window - invite to group chat room icon is pressed.
+	 * @param adHocRoom
+	 * @return
+	 */
+	public boolean isUseAdHocRoom() {
+	    return getBoolean("useAdHocRoom", true);
+	}
+
+    /**
+     * Set useAdHocRoom on or off. When disabled, if there is at least one bookmark room, that
+     * room will be used in Actions/Start conference room Invitation Dialog (instead of creating an ad-hoc room)
+     * If there is more than one bookmark room, you can select the bookmarked room that you want to be used
+     * Also, when invite to join group chat room will be sent from the chat window, the bookmark room will automatically
+     * be opened.
+     * @param adHocRoom
+     * @return
+     */
+	public void setUseAdHocRoom(boolean adHocRoom) {
+	    setBoolean("useAdHocRoom", adHocRoom);
+	}
 	/**
 	 * Returns the Idle Message to Display when going automatically away
 	 * @return

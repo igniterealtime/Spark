@@ -385,7 +385,7 @@ public class ConferenceServices implements InvitationListener {
 
                     public void finished() {
                         try {
-                            BookmarkedConference selectedBookmarkedConf = getDefaultBookmark();
+                            BookmarkedConference selectedBookmarkedConf = _localPreferences.isUseAdHocRoom() ? null : getDefaultBookmark();
                             if (selectedBookmarkedConf == null) {
                                 ConferenceUtils.createPrivateConference(serviceName,
                                         Res.getString("message.please.join.in.conference"), roomName, jids);

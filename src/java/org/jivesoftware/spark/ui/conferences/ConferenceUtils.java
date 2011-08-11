@@ -343,13 +343,17 @@ public class ConferenceUtils {
      * @param jids        a collection of the users to invite.
      */
     public static void inviteUsersToRoom(String serviceName, String roomName, Collection<String> jids, boolean randomName) {
+        final LocalPreferences pref = SettingsManager.getLocalPreferences();
+        boolean useTextField = pref.isUseAdHocRoom();
         Collection<BookmarkedConference> rooms = null;
-        try {
-            rooms = retrieveBookmarkedConferences();
-        } catch (Exception ex) {
-            Log.error(ex);
+        if (!useTextField) {
+            try {
+                rooms = retrieveBookmarkedConferences();
+            } catch (Exception ex) {
+                Log.error(ex);
+            }
+            useTextField = !randomName || (rooms == null || rooms.size() == 0);
         }
-        boolean useTextField = !randomName || (rooms == null || rooms.size() == 0);
         InvitationDialog inviteDialog = new InvitationDialog(useTextField);
         inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
     }
