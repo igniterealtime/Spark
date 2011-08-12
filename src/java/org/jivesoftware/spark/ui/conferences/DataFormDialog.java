@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import java.awt.BorderLayout;
@@ -54,7 +54,10 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.FormField.Option;
+import org.jivesoftware.smackx.bookmark.BookmarkManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -252,6 +255,11 @@ public class DataFormDialog extends JPanel {
 
         try {
             chat.sendConfigurationForm(submitForm);
+            RoomInfo info = MultiUserChat.getRoomInfo(SparkManager.getConnection(), chat.getRoom());
+            //remove bookmark if any for non persistent room
+            if (!info.isPersistent()) {
+                BookmarkManager.getBookmarkManager(SparkManager.getConnection()).removeBookmarkedConference(info.getRoom());
+            }
         }
         catch (XMPPException e) {
             Log.error(e);

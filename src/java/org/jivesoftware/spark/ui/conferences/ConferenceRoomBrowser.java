@@ -769,12 +769,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 		// new DataFormDialog(groupChat, form);
 		groupChat.sendConfigurationForm(form);
-		//There is no point adding a temporary room to table. The room is automatically destroyed when the group chat window is closed
-        final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(),groupChat.getRoom());
-        if (roomInfo.isPersistent()) {
-            addRoomToTable(groupChat.getRoom(),
-                    StringUtils.parseName(groupChat.getRoom()), 1);
-        }
+        addRoomToTable(groupChat.getRoom(), StringUtils.parseName(groupChat.getRoom()), 1);
 	    } catch (XMPPException e1) {
 		Log.error("Error creating new room.", e1);
 		JOptionPane
