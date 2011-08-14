@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ public class LayoutSettings {
     private int chatFrameY;
     private int chatFrameWidth;
     private int chatFrameHeight;
-    
+
     private int preferencesFrameX;
     private int preferencesFrameY;
     private int preferencesFrameWidth;
@@ -59,7 +59,7 @@ public class LayoutSettings {
     public int getMainWindowWidth() {
 	if (mainWindowWidth < 100) {
 	    mainWindowWidth = 100;
-	} else if (mainWindowHeight > Toolkit.getDefaultToolkit()
+	} else if (mainWindowWidth > Toolkit.getDefaultToolkit()
 		.getScreenSize().width) {
 	    mainWindowWidth = Toolkit.getDefaultToolkit().getScreenSize().width - 50;
 	}
