@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +33,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
@@ -50,6 +53,7 @@ import org.dom4j.io.SAXReader;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.spark.PluginRes.ResourceType;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PluginClassLoader;
@@ -120,7 +124,7 @@ public class PluginManager implements MainWindowListener {
         if (!PLUGINS_DIRECTORY.exists()) {
             PLUGINS_DIRECTORY.mkdirs();
         }
-        
+
         _blacklistPlugins = Default.getPluginBlacklist();
     }
 
@@ -156,17 +160,17 @@ public class PluginManager implements MainWindowListener {
 
         PLUGINS_DIRECTORY = newPlugins;
     }
-    
+
     /**
      * Deletes Plugins in pathtosearch that have a different md5-hash than
      * its correspondant in install\spark\plugins\
-     * @param pathtosearch 
+     * @param pathtosearch
      */
     public void deleteOldPlugins(File pathtosearch) {
-	
+
 	String installPath = Spark.getBinDirectory().getParentFile()
 		+ File.separator + "plugins" + File.separator;
-	
+
 	List<File> installerFiles = Arrays.asList(new File(installPath)
 		.listFiles());
 
@@ -185,16 +189,16 @@ public class PluginManager implements MainWindowListener {
 			    if (installerFiles.contains(f)) {
 				String oldfile = StringUtils.getMD5Checksum(jarFile.getAbsolutePath());
 				String newfile = StringUtils.getMD5Checksum(f.getAbsolutePath());
-				
+
 				Log.debug(f.getAbsolutePath() + "   " + jarFile.getAbsolutePath());
 				Log.debug(newfile + " " + oldfile + " equal:" + oldfile.equals(newfile));
-				
+
 				if (!oldfile.equals(newfile)) {
 				    Log.debug("deleting: "+ file.getAbsolutePath() + "," + jarFile.getAbsolutePath());
 				    uninstall(file);
 				    jarFile.delete();
 				}
-				
+
 			    }
 
 			} catch (Exception e) {
@@ -252,6 +256,8 @@ public class PluginManager implements MainWindowListener {
                 loadPublicPlugin(pluginXML.getParentFile());
             }
         }
+
+        loadPluginResources();
     }
 
     /**
@@ -261,7 +267,7 @@ public class PluginManager implements MainWindowListener {
      * @return the new Plugin model for the Public Plugin.
      */
     private Plugin loadPublicPlugin(File pluginDir) {
-		
+
         File pluginFile = new File(pluginDir, "plugin.xml");
         SAXReader saxReader = new SAXReader();
         Document pluginXML = null;
@@ -281,7 +287,7 @@ public class PluginManager implements MainWindowListener {
             String clazz = null;
             String name;
             String minVersion;
-            
+
             try {
 
                 name = plugin1.selectSingleNode("name").getText();
@@ -290,11 +296,11 @@ public class PluginManager implements MainWindowListener {
 		try {
 		    String lower = name.replaceAll("[^0-9a-zA-Z]","").toLowerCase();
 		    // Dont load the plugin if its on the Blacklist
-		    if(_blacklistPlugins.contains(lower) || _blacklistPlugins.contains(clazz) 
+		    if(_blacklistPlugins.contains(lower) || _blacklistPlugins.contains(clazz)
 			    || SettingsManager.getLocalPreferences().getDeactivatedPlugins().contains(name))
 		    {
 			return null;
-		    }    
+		    }
 		} catch (Exception e) {
 		    // Whatever^^
 		    return null;
@@ -309,19 +315,19 @@ public class PluginManager implements MainWindowListener {
 
                     if (!ok) {
                         return null;
-                    }                  
+                    }
                 }
                 catch (Exception e) {
                     Log.error("Unable to load plugin " + name + " due to missing <minSparkVersion>-Tag in plugin.xml.");
                     return null;
                 }
-                
+
                 // Check for minimum Java version
-                try {       
+                try {
                   String javaversion = plugin1.selectSingleNode("java").getText().replaceAll("[^0-9]", "");
                   javaversion = javaversion == null? "0" : javaversion;
                   int jv = Integer.parseInt(attachMissingZero(javaversion));
-                  
+
                   String myversion = System.getProperty("java.version").replaceAll("[^0-9]", "");
                   int mv = Integer.parseInt(attachMissingZero(myversion));
 
@@ -333,13 +339,13 @@ public class PluginManager implements MainWindowListener {
                 	    " you have "+ System.getProperty("java.version"));
                       return null;
                   }
-                  
+
                 }
                 catch (NullPointerException e) {
                     Log.warning("Plugin "+name+" has no <java>-Tag, consider getting a newer Version");
                 }
-                
-                // set dependencies 
+
+                // set dependencies
                 try {
                    List<? extends Node> dependencies = plugin1.selectNodes("depends/plugin");
                    for (Node depend1 : dependencies) {
@@ -353,7 +359,7 @@ public class PluginManager implements MainWindowListener {
                 catch (Exception e) {
                	 e.printStackTrace();
                 }
-                
+
 
                 // Do operating system check.
                 boolean operatingSystemOK = isOperatingSystemOK(plugin1);
@@ -407,7 +413,7 @@ public class PluginManager implements MainWindowListener {
 
         return pluginClass;
     }
-    
+
     private String attachMissingZero(String value)
     {
 	while(value.length()<5)
@@ -454,18 +460,45 @@ public class PluginManager implements MainWindowListener {
          			}
           		});
 
-               
+
         }
     }
 
     private void updateClasspath() {
         try {
             classLoader = new PluginClassLoader(getParentClassLoader(), PLUGINS_DIRECTORY);
+            PluginRes.setClassLoader(classLoader);
         }
         catch (MalformedURLException e) {
             Log.error("Error updating classpath.", e);
         }
         Thread.currentThread().setContextClassLoader(classLoader);
+    }
+
+    private void loadPluginResources(String resourceName, ResourceType type) {
+        try {
+            PropertyResourceBundle prbPlugin = (PropertyResourceBundle) ResourceBundle.getBundle(resourceName,
+                    Locale.getDefault(), classLoader);
+            for (String key : prbPlugin.keySet()) {
+                PluginRes.putRes(key, prbPlugin.getString(key), type);
+            }
+        } catch (Exception ex) {
+            Log.debug(resourceName + "is not overwritten in plugin ");
+        }
+    }
+
+    /**
+     * Loads property resources from spark.properties, default.properties, spark_i18n.properties (properly localized)
+     * located in plugin jar, if any
+     * In case the plugin contains preferences.properties, plugin specific defaults will be loaded instead of spark defaults for preferences
+     * This method is called right after all plugins are loaded, specifically after plugins class
+     * loader is initialized and plugins jars are loaded in classpath
+     */
+    private void loadPluginResources() {
+        loadPluginResources("spark", ResourceType.SPARK);
+        loadPluginResources("default", ResourceType.DEFAULT);
+        loadPluginResources("preferences", ResourceType.PREFERENCES);
+        loadPluginResources("spark_i18n", ResourceType.I18N);
     }
 
     /**
@@ -530,28 +563,28 @@ public class PluginManager implements MainWindowListener {
 		{
       	int j = 0;
 			boolean dependsfound = false;
-			
+
       	// Dependency check
       	for (int i = 0; i< publicPlugins.size(); i++) {
       		// if dependencies are available, check these
-      		if(((PublicPlugin)publicPlugins.get(i)).getDependency().size()>0) {
-      			List<PluginDependency> dependencies = ((PublicPlugin)publicPlugins.get(i)).getDependency();
-      			
+      		if((publicPlugins.get(i)).getDependency().size()>0) {
+      			List<PluginDependency> dependencies = (publicPlugins.get(i)).getDependency();
+
       			// go trough all dependencies
       			for( PluginDependency dependency : dependencies) {
       				j = 0;
       				dependsfound = false;
       				// look for the specific plugin
       				for(PublicPlugin plugin1 :publicPlugins) {
-      					
-      					if(plugin1.getName()!= null 
+
+      					if(plugin1.getName()!= null
       						&& plugin1.getName().equals(dependency.getName()))	{
       						// if the version is compatible then reorder
       						if(dependency.compareVersion(plugin1.getVersion())){
       							dependsfound = true;
       							// when depended Plugin hadn't been installed yet
       							if(j>i){
-      								
+
       								// find the position of plugins-List because it has more entries
       								int counter = 0, x = 0, z = 0;
       								for(Plugin plug : plugins) {
@@ -568,10 +601,10 @@ public class PluginManager implements MainWindowListener {
       								// change the order
       								publicPlugins.add(i, publicPlugins.get(j));
       								publicPlugins.remove(j+1);
-      								
+
       								plugins.add(z, plugins.get(x));
       								plugins.remove(x+1);
-      							
+
       								// start again, to check the other dependencies
       								i--;
       							}
@@ -586,8 +619,8 @@ public class PluginManager implements MainWindowListener {
       				}
       				// if the depended Plugin wasn't found, then show error
       				if(!dependsfound) {
-      					Log.error("Depended Plugin " + dependency.getName() + " is missing for the Plugin " + ((PublicPlugin)publicPlugins.get(i)).getName());
-      					
+      					Log.error("Depended Plugin " + dependency.getName() + " is missing for the Plugin " + (publicPlugins.get(i)).getName());
+
       					// find the posiion of plugins-List because it has more entries
       					int counter = 0;
 							for(Plugin plug : plugins) {
@@ -606,7 +639,7 @@ public class PluginManager implements MainWindowListener {
       			}
       		}
       	}
-      	
+
 			EventQueue.invokeLater(new Runnable() {
 			      public void run() {
 			          for (Plugin plugin1 : plugins) {
@@ -623,16 +656,16 @@ public class PluginManager implements MainWindowListener {
 			              Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
 			          }
 			          //We need to wait for all plugins to be initialized to determine if we need to display tabs or not
-			          //because plugins also can add tabs (not spark only: transport or conference tab) 
+			          //because plugins also can add tabs (not spark only: transport or conference tab)
 			          //When there is no tab added by plugins or spark (transport or conference tab) we will
-			          //clean the workspace and display the contact list without tabs			          
+			          //clean the workspace and display the contact list without tabs
 			          SparkTabbedPane workspacePane = SparkManager.getWorkspace().getWorkspacePane();
 			          JPanel contactListPanel = workspacePane.getContactListPanel();
 			          int tabNumber = workspacePane.getTabCount();
 			          if (tabNumber == 1) {
 			        	  workspacePane.removeAll();
 			        	  workspacePane.add(contactListPanel);
-			          }			        	  			          
+			          }
 			      }
 			  });
 		}

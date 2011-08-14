@@ -23,6 +23,7 @@ package org.jivesoftware.sparkimpl.settings.local;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.SparkManager;
 import java.io.File;
 import java.util.ArrayList;
@@ -173,7 +174,8 @@ public class LocalPreferences {
 	 * @return
 	 */
 	public boolean isUseAdHocRoom() {
-	    return getBoolean("useAdHocRoom", true);
+	    String adhoc = PluginRes.getPreferenceRes("useAdHocRoom");
+	    return getBoolean("useAdHocRoom", adhoc != null ? new Boolean(adhoc) : true);
 	}
 
     /**
@@ -563,7 +565,8 @@ public class LocalPreferences {
 	}
 
 	public boolean isTypingNotificationShown() {
-		return getBoolean("showTypingNotification", false);
+	    String showTypingNotification = PluginRes.getPreferenceRes("showTypingNotification");
+	    return getBoolean("showTypingNotification", showTypingNotification != null ? new Boolean(showTypingNotification) : false);
 	}
 
 	public void setSystemTrayNotificationEnabled(boolean shown) {
@@ -571,7 +574,8 @@ public class LocalPreferences {
 	}
 
 	public boolean isSystemTrayNotificationEnabled() {
-		return getBoolean("SystemTrayNotificationEnabled", false);
+	    String SystemTrayNotificationEnabled = PluginRes.getPreferenceRes("SystemTrayNotificationEnabled");
+	    return getBoolean("SystemTrayNotificationEnabled", SystemTrayNotificationEnabled != null ? new Boolean(SystemTrayNotificationEnabled) : false);
 	}
 
 	public void setTypingNotificationOn(boolean shown) {
@@ -611,7 +615,8 @@ public class LocalPreferences {
 	}
 
 	public boolean getShowToasterPopup() {
-		return getBoolean("toasterPopup", false);
+	    String toasterPopup = PluginRes.getPreferenceRes("toasterPopup");
+	    return getBoolean("toasterPopup", toasterPopup != null ? new Boolean(toasterPopup) : false);
 	}
 
 	public void setWindowTakesFocus(boolean focus) {
@@ -681,7 +686,8 @@ public class LocalPreferences {
 	}
 
 	public boolean isOfflineNotificationsOn() {
-		return getBoolean("notifyOnOffline", false);
+	    String notifyOnOffline = PluginRes.getPreferenceRes("notifyOnOffline");
+	    return getBoolean("notifyOnOffline", notifyOnOffline != null ? new Boolean(notifyOnOffline) : false);
 	}
 
 	public void setOnlineNotifications(boolean notify) {
@@ -689,7 +695,8 @@ public class LocalPreferences {
 	}
 
 	public boolean isOnlineNotificationsOn() {
-		return getBoolean("notifyOnOnline", false);
+	    String notifyOnOnline = PluginRes.getPreferenceRes("notifyOnOnline");
+	    return getBoolean("notifyOnOnline", notifyOnOnline != null ? new Boolean(notifyOnOnline) : false);
 	}
 
 	public void setDockingEnabled(boolean dockingEnabled) {

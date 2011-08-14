@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.resource;
 
+import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.text.MessageFormat;
@@ -45,7 +46,8 @@ public class Res {
 
     public static String getString(String propertyName) {
         try {
-            return prb.getString(propertyName);
+            String pluginString = PluginRes.getI18nRes(propertyName);
+            return pluginString != null ? pluginString : prb.getString(propertyName);
         }
         catch (Exception e) {
             Log.error(e);
@@ -55,7 +57,8 @@ public class Res {
     }
 
     public static String getString(String propertyName, Object... obj) {
-        String str = prb.getString(propertyName);
+        String pluginString = PluginRes.getI18nRes(propertyName);
+        String str = pluginString != null ? pluginString : prb.getString(propertyName);
         if (str == null) {
             return propertyName;
         }

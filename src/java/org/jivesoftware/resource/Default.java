@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.resource;
 
+import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.ImageIcon;
@@ -101,7 +102,8 @@ public class Default {
     }
 
     public static String getString(String propertyName) {
-        return prb.getString(propertyName);
+        String pluginString = PluginRes.getDefaultRes(propertyName);
+        return pluginString != null ? pluginString : prb.getString(propertyName);
     }
 
     public static boolean getBoolean(String propertyName) {
@@ -123,8 +125,7 @@ public class Default {
 
         // Otherwise, load and add to cache.
         try {
-            final String iconURI = getString(imageName);
-            final URL imageURL = cl.getResource(iconURI);
+            final URL imageURL = getURL(imageName);
 
             final ImageIcon icon = new ImageIcon(imageURL);
             cache.put(imageName, icon);
@@ -137,15 +138,15 @@ public class Default {
     }
 
     public static URL getURL(String propertyName) {
-        return cl.getResource(getString(propertyName));
+    	URL pluginUrl = PluginRes.getDefaultURL(propertyName);
+        return pluginUrl != null ? pluginUrl : cl.getResource(getString(propertyName));
     }
 
 
     public static URL getURLWithoutException(String propertyName) {
         // Otherwise, load and add to cache.
         try {
-            final String iconURI = getString(propertyName);
-            return cl.getResource(iconURI);
+            return getURL(propertyName);
         }
         catch (Exception ex) {
             Log.debug(propertyName + " not found.");
