@@ -73,12 +73,14 @@ public class SearchService extends JPanel {
         ResourceUtils.resLabel(findLabel, findField, Res.getString("label.find"));
 
         // add(findLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        if (Spark.isMac()) {
-            add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 30), 0, 0));
-        }
-        else {
-            add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        boolean hide = Default.getBoolean(Default.HIDE_PERSON_SEARCH_FIELD);
+        if (!hide) {
+        	if (Spark.isMac()) {
+        		add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 30), 0, 0));
+        	}
+        	else {
+        		add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        	}
         }
 
         // Check for secure connection
@@ -86,13 +88,15 @@ public class SearchService extends JPanel {
             final JLabel lockLabel = new JLabel();
             lockLabel.setHorizontalTextPosition(JLabel.LEFT);
             lockLabel.setIcon(SparkRes.getImageIcon(SparkRes.LOCK_16x16));
-            if (Spark.isMac()) {
-                add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
+            if (!hide) {
+            	if (Spark.isMac()) {
+            		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
 
-            }
-            else {
-                add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+            	}
+            	else {
+            		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
 
+            	}
             }
             lockLabel.setToolTipText(Res.getString("message.spark.secure"));
         }

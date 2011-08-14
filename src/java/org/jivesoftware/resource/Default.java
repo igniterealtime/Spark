@@ -82,6 +82,8 @@ public class Default {
     public static final String MENUBAR_TEXT = "MENUBAR_TEXT";
     public static final String FILE_TRANSFER_WARNING_SIZE = "FILE_TRANSFER_WARNING_SIZE";
     public static final String FILE_TRANSFER_MAXIMUM_SIZE = "FILE_TRANSFER_MAXIMUM_SIZE";
+    public static final String TABS_PLACEMENT_TOP = "TABS_PLACEMENT_TOP";
+    public static final String HIDE_PERSON_SEARCH_FIELD = "HIDE_PERSON_SEARCH_FIELD";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

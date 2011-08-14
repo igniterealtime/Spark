@@ -38,6 +38,7 @@ import javax.swing.SwingUtilities;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketFilter;
@@ -161,7 +162,8 @@ public class Workspace extends JPanel implements PacketListener {
 	   
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
-        workspacePane = new SparkTabbedPane(JTabbedPane.BOTTOM);
+	    boolean top = Default.getBoolean(Default.TABS_PLACEMENT_TOP);    
+        workspacePane = new SparkTabbedPane(top ? JTabbedPane.TOP : JTabbedPane.BOTTOM);
         workspacePane.setBorder(BorderFactory.createEmptyBorder());
         // Add Panels.
         cardLayout = new CardLayout();
