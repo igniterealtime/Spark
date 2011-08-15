@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,6 +49,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 
+import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -92,7 +93,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     private JMenuItem preferenceMenuItem;
     private JCheckBoxMenuItem alwaysOnTopItem;
-    
+
     private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
     private final JMenuItem sparkforumItem = new JMenuItem();
 
@@ -118,14 +119,14 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Synchronize on LOCK to ensure that we don't end up creating
         // two singletons.
 
-   	 
+
         synchronized (LOCK) {
             if (null == singleton) {
             	MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
-            	singleton = controller;         		
+            	singleton = controller;
             }
         }
-        return singleton;   	 
+        return singleton;
     }
 
 
@@ -137,12 +138,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @param icon  the icon used in the frame.
      */
     private MainWindow(String title, ImageIcon icon) {
-   	 
- 	   
+
+
         // Initialize and dock the menus
         buildMenu();
-        
-        
+
+
 
         // Add Workspace Container
         getContentPane().setLayout(new BorderLayout());
@@ -163,8 +164,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         setTitle(title);
         setIconImage(icon.getImage());
-        
-	   	
+
+
 
         // Setup WindowListener to be the proxy to the actual window listener
         // which cannot normally be used outside of the Window component because
@@ -288,7 +289,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Close application.
         if(!Default.getBoolean("DISABLE_EXIT"))
             System.exit(1);
-        
+
     }
 
     /**
@@ -306,7 +307,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
                 SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
         }
-        
+
         if (status != null || !sendStatus)
         {
 	        // Notify all MainWindowListeners
@@ -314,7 +315,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	            // Set auto-login to false;
 	            SettingsManager.getLocalPreferences().setAutoLogin(false);
 	            SettingsManager.saveSettings();
-	
+
 	            fireWindowShutdown();
 	            setVisible(false);
 	        }
@@ -340,51 +341,48 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 con.disconnect();
             }
         }
+	restartApplication();
+    }
 
-        try {
-            String command = "";
-            if (Spark.isWindows()) {
-                String sparkExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\" + Default.getString(Default.SHORT_NAME) + ".exe";
-                String starterExe = Spark.getBinDirectory().getParentFile().getCanonicalPath() + "\\starter.exe";
-
-                command = starterExe + " \"" + sparkExe + "\"";
-            }
-            else if (Spark.isLinux()) {
-        	File f =  Spark.getBinDirectory().getParentFile() ;
-        	String[] list = f.list();
-        	boolean contains =false;
-        	for(String s : list)
-        	{
-        	    if (s.equals("spark"))
-        	    {
-        		contains=true;
-        		return;
-        	    }
-        	}
-        	if(contains){
-            	command = Spark.getBinDirectory().getParentFile().getCanonicalPath() + File.separator + "spark";
-        	}
-        	else{
-        	    command = Spark.getBinDirectory().getCanonicalPath() + File.separator + "spark";  
-        	}
-            }
-            else if (Spark.isMac()) {
-                command = "open -a Spark";
-            }
-            Runtime.getRuntime().exec(command);
+    public boolean  restartApplication() {
+        String javaBin = System.getProperty("java.home") +
+			File.separatorChar+"bin"+File.separatorChar+"java";
+        File jarFile;
+        try{
+            jarFile = new File(Startup.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch(Exception e) {
+            Log.error("Cannot get jar file containing the startup class", e);
+            return false;
         }
-        catch (IOException e) {
-            Log.error("Error starting Spark", e);
+        if ( !jarFile.getName().endsWith(".jar") ) {
+            Log.error("The startup class is not packaged in a jar file");
+		return false;
         }
-
-        System.exit(1);
+        String parent = jarFile.getParent();
+        File classpathDir = new File(parent);
+        String[] files = classpathDir.list();
+        StringBuilder classpath = new StringBuilder();
+        for (String file : files) {
+		if (file.endsWith(".jar")) {
+			classpath.append(parent + File.separatorChar + file + File.pathSeparatorChar );
+		}
+        }
+        String  toExec[] = new String[] { javaBin, "-cp", classpath.toString(), "org.jivesoftware.launcher.Startup"};
+        try{
+            Runtime.getRuntime().exec( toExec );
+        } catch(Exception e) {
+		Log.error("Cannot start the client", e);
+            return false;
+        }
+        System.exit(0);
+        return true;
     }
 
     /**
      * Setup the Main Toolbar with File, Tools and Help.
      */
     private void buildMenu() {
-   	 
+
         // setup file menu
         final JMenuItem exitMenuItem = new JMenuItem();
 
@@ -409,7 +407,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         preferenceMenuItem.addActionListener(this);
         connectMenu.add(preferenceMenuItem);
 
-        
+
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
         alwaysOnTopItem.addActionListener(new ActionListener() {
@@ -426,17 +424,17 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 	}
                 }
         });
-        
+
         if (SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop())
         {
         	alwaysOnTopItem.setSelected(true);
         	this.setAlwaysOnTop(true);
         }
         connectMenu.add(alwaysOnTopItem);
-        
+
         if(!Default.getBoolean("DISABLE_EXIT"))
             connectMenu.addSeparator();
-        
+
         //EventQueue.invokeLater(new Runnable() {
    	   //	public void run() {
 
@@ -465,16 +463,16 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (!Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(exitMenuItem);
         }
-        
-        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));    
+
+        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
-        updateMenu.addActionListener(new ActionListener() {    
+        updateMenu.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		checkForUpdates(true);
-		
+
 	    }
-	});         
+	});
 
         // Add Error Dialog Viewer
         final Action viewErrors = new AbstractAction() {
@@ -494,13 +492,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         viewErrors.putValue(Action.NAME, Res.getString("menuitem.view.logs"));
 
         final Action viewHelpGuideAction = new AbstractAction() {
-            
+
             	final String url = Default.getString(Default.HELP_USER_GUIDE);
 			private static final long serialVersionUID = 2680369963282231348L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    
+
                     BrowserLauncher.openURL(url);
                 }
                 catch (Exception e) {
@@ -520,7 +518,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	if (!Default.getBoolean("HELP_FORUM_DISABLED")) {
 	    helpMenu.add(sparkforumItem);
 	}
-        
+
         // Build Help Menu
 	if(!Default.getBoolean(Default.DISABLE_UPDATES)){
 	    helpMenu.add(updateMenu);
@@ -581,19 +579,19 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
 	    TaskEngine.getInstance().schedule(task, 60000);
 	}
-	
+
 	if(SettingsManager.getLocalPreferences().isDebuggerEnabled())
 	{
 	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.TRAY_IMAGE));
 	    rawPackets.setText("Send Packets");
-	    rawPackets.addActionListener(new ActionListener() { 
+	    rawPackets.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	    		new RawPacketSender();
-	    	
+
 	        }
 	    });
-	    
+
 	    connectMenu.add(rawPackets,2);
 	}
 
