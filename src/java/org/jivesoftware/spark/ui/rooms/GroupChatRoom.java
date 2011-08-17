@@ -369,7 +369,7 @@ public final class GroupChatRoom extends ChatRoom {
 			.matcher(body).find())) {
 	    return new Color(255, 255, 153);
 	} else {
-	    return Color.white;
+	    return new Color(0,0,0,0);
 	}
     }
 
@@ -1343,7 +1343,7 @@ public final class GroupChatRoom extends ChatRoom {
     public Color getColor(String nickname) {
 
 	if (nickname.equals(this.getNickname())) {
-	    return Color.BLUE;
+	    return ChatManager.TO_COLOR;
 	} else {
 	    if (pref.isMucRandomColors()) {
 		int index = 0;
@@ -1353,7 +1353,7 @@ public final class GroupChatRoom extends ChatRoom {
 
 		return ChatManager.COLORS[index % ChatManager.COLORS.length];
 	    } else {
-		return Color.red;
+		return ChatManager.FROM_COLOR;
 	    }
 	}
     }

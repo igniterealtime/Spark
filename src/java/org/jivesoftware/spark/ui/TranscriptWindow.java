@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui;
 
 import org.jdesktop.swingx.calendar.DateUtils;
@@ -83,7 +83,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
     private Font defaultFont;
 
     private Date lastPost;
-    
+
     /**
      * Creates a default instance of <code>TranscriptWindow</code>.
      */
@@ -150,7 +150,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
     public void insertMessage(String nickname, Message message, Color foreground) {
         insertMessage(nickname, message, foreground, Color.white);
     }
-   
+
     /**
      * Create and insert a message from the current user.
      *
@@ -259,7 +259,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             doc.insertString(doc.getLength(), "", styles);
 
             // Reset Styles for message
-            StyleConstants.setBackground(styles, Color.white);
+            StyleConstants.setBackground(styles, new Color(0,0,0,0));
             StyleConstants.setBold(styles, false);
             StyleConstants.setForeground(styles, foregroundColor);
             setText(message);
@@ -325,7 +325,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         StyleConstants.setFontSize(styles, defaultFont.getSize());
 
         if (pref.isTimeDisplayedInChat()) {
-      	  
+
             final SimpleDateFormat formatter = new SimpleDateFormat(pref.getTimeFormat());
             final String date = formatter.format(insertDate);
 
@@ -518,17 +518,17 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 			private static final long serialVersionUID = -5664307353522844588L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-            	
+
             	String user = null;
             	try {
             		ChatManager manager = SparkManager.getChatManager();
             		ChatRoom room = manager.getChatContainer().getActiveChatRoom();
             		user = room.getRoomname();
-            		
+
 				} catch (ChatRoomNotFoundException e) {
 					e.printStackTrace();
 				}
-				
+
                 int ok = JOptionPane.showConfirmDialog((TranscriptWindow)object,
                     Res.getString("delete.permanently"), Res.getString("delete.log.permanently"),
                     JOptionPane.YES_NO_OPTION,

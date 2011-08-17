@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,11 +59,11 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * @version 1.0, 11/17/2005
  */
 public final class Spark {
-    
-    
+
+
 
     private static String USER_SPARK_HOME;
-	    
+
 
 
     public static String ARGUMENTS;
@@ -90,7 +90,7 @@ public final class Spark {
 	} else {
 	    USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
 	}
-	
+
         String current = System.getProperty("java.library.path");
         String classPath = System.getProperty("java.class.path");
 
@@ -103,51 +103,51 @@ public final class Spark {
         buf.append(";");
 
     	SparkCompatibility sparkCompat = new SparkCompatibility();
-    	try { 
+    	try {
     		// Absolute paths to a collection of files or directories to skip
 			Collection<String> skipFiles = new HashSet<String>();
-			skipFiles.add(new File(USER_SPARK_HOME, "/plugins").getAbsolutePath());  
-			
+			skipFiles.add(new File(USER_SPARK_HOME, "/plugins").getAbsolutePath());
+
     		sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);
     	} catch (IOException e) {
-    		// Do nothing 
+    		// Do nothing
     	}
-        	
+
         RESOURCE_DIRECTORY = new File(USER_SPARK_HOME, "/resources").getAbsoluteFile();
         if(!RESOURCE_DIRECTORY.exists()){
-        	
+
         	RESOURCE_DIRECTORY.mkdirs();
         }
         BIN_DIRECTORY = new File(USER_SPARK_HOME, "/bin").getAbsoluteFile();
         if(!BIN_DIRECTORY.exists()){
-        	
+
         	BIN_DIRECTORY.mkdirs();
         }
         LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
         if (!LOG_DIRECTORY.exists()){
-        	
+
         	LOG_DIRECTORY.mkdirs();
         }
         USER_DIRECTORY = new File(USER_SPARK_HOME, "/user").getAbsoluteFile();
         if(!USER_DIRECTORY.exists()){
-        	
+
         	USER_DIRECTORY.mkdirs();
         }
         PLUGIN_DIRECTORY = new File(USER_SPARK_HOME, "/plugins").getAbsoluteFile();
         if(!PLUGIN_DIRECTORY.exists()){
-        	
+
         	PLUGIN_DIRECTORY.mkdirs();
         }
         XTRA_DIRECTORY = new File(USER_SPARK_HOME, "/xtra").getAbsoluteFile();
         if(!XTRA_DIRECTORY.exists()){
-        	
+
         	XTRA_DIRECTORY.mkdirs();
         	// TODO implement copyEmoticonFiles();
         }
 
         final String workingDirectory = System.getProperty("appdir");
         if (workingDirectory == null) {
-            
+
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists()) {
                 JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
@@ -163,10 +163,10 @@ public final class Spark {
             BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
             File emoticons = new File(XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
             if(!emoticons.exists()){
-            	
+
             	//Copy emoticon files from install directory to the spark user home directory
             }
-            
+
             LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
             try {
@@ -202,11 +202,17 @@ public final class Spark {
                 new Spark();
             }
         });
-        
+
         //load plugins before Workspace initialization to avoid any UI delays
         //during plugin rendering
         final PluginManager pluginManager = PluginManager.getInstance();
         pluginManager.loadPlugins();
+
+        installBaseUIProperties();
+
+        if (Default.getBoolean("CHANGE_COLORS_DISABLED")) {
+            ColorSettingManager.restoreDefault();
+        }
 
         try {
 	        EventQueue.invokeAndWait(new Runnable(){
@@ -238,14 +244,14 @@ public final class Spark {
 	return result;
 
     }
-    
+
     /**
      * Handles the Loading of the Look And Feel
      */
     private void loadLookAndFeel() {
 	final LocalPreferences preferences = SettingsManager.getLocalPreferences();
 	final String laf = getLookandFeel(preferences);
-       
+
 	try {
 	    if (laf.toLowerCase().contains("substance")) {
 		EventQueue.invokeLater(new Runnable() {
@@ -269,7 +275,7 @@ public final class Spark {
 			JDialog.setDefaultLookAndFeelDecorated(true);
 		    }
 		    UIManager.setLookAndFeel(laf);
-		    
+
 
 		} catch (Exception e) {
 		    e.printStackTrace();
@@ -278,7 +284,7 @@ public final class Spark {
 	} catch (Exception e) {
 	    Log.error(e);
 	}
-	
+
 	if (laf.contains("jtattoo")) {
 	    Properties props = new Properties();
 	    String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? ""
@@ -291,11 +297,6 @@ public final class Spark {
 	    } catch (Exception e) {
 		Log.error("Error Setting JTattoo ", e);
 	    }
-	}
-	installBaseUIProperties();
-	
-	if (Default.getBoolean("CHANGE_COLORS_DISABLED")) {
-	    ColorSettingManager.restoreDefault();
 	}
     }
 
@@ -457,7 +458,7 @@ public final class Spark {
     public static boolean disableUpdatesOnCustom() {
 	return Default.getBoolean("DISABLE_UPDATES");
     }
-    
+
 	public static void setApplicationFont(Font f) {
 		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 		for (Object ui_property: defaults.keySet()) {
@@ -475,16 +476,16 @@ public final class Spark {
         UIManager.put("ContactItem.border", BorderFactory.createLineBorder(Color.white));
         //UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
         //UIManager.put("Label.font", new Font("Dialog", Font.PLAIN, 11));
-    	
+
         ColorSettings colorsettings = ColorSettingManager.getColorSettings();
-        
+
         for(String property : colorsettings.getKeys())
         {
-            Color c = colorsettings.getColorFromProperty(property);           
+            Color c = colorsettings.getColorFromProperty(property);
             UIManager.put(property, c);
         }
-        
-  
+
+
     }
 
     /**
@@ -510,14 +511,14 @@ public final class Spark {
         //TODO emoticondirectory anpassen
         File EMOTICON_DIRECTORY = new File("D:/workspace/Spark 2.6 beta/src","xtra/emoticons");
         File[] files = EMOTICON_DIRECTORY.listFiles();
-        
-        
+
+
         for (File file : files) {
             if (file.isFile()) {
-                
+
                // Copy over
                File newFile = new File(newEmoticonDir, file.getName());
-                
+
             }
         }
     }*/
