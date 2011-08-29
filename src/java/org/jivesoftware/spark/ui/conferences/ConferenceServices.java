@@ -146,8 +146,6 @@ public class ConferenceServices implements InvitationListener {
      * Load all bookmarked data.
      */
     public void loadConferenceBookmarks() {
-        final Workspace workspace = SparkManager.getWorkspace();
-        final boolean useTab = _localPreferences.isShowConferenceTab();
         final SwingWorker bookmarkLoader = new SwingWorker() {
 
             public Object construct() {
@@ -162,13 +160,21 @@ public class ConferenceServices implements InvitationListener {
 
             public void finished() {
                 bookmarksUI.loadUI();
-                if (useTab) {
-                	workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookmarksUI);
-                }
+                addBookmarksUI();
             }
         };
 
         bookmarkLoader.start();
+    }
+
+    protected void addBookmarksUI() {
+        final Workspace workspace = SparkManager.getWorkspace();
+        final boolean useTab = _localPreferences.isShowConferenceTab();
+
+        if (useTab) {
+            workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"),
+                    SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookmarksUI);
+        }
     }
 
     private void addChatRoomListener() {

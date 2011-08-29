@@ -206,8 +206,7 @@ public class ContactInfoWindow extends JPanel {
         window.setLocation(actualX, actualY);
     }
 
-    public void setContactItem(ContactItem contactItem) {
-        this.contactItem = contactItem;
+    public void customizeUI(ContactItem contactItem) {
         if (contactItem == null) {
             return;
         }
@@ -272,6 +271,11 @@ public class ContactInfoWindow extends JPanel {
         }
 
         titleLabel.setText(title);
+    }
+
+    public void setContactItem(ContactItem contactItem) {
+        this.contactItem = contactItem;
+        customizeUI(this.contactItem);
     }
 
     public ContactItem getContactItem() {

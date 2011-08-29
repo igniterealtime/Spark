@@ -39,6 +39,9 @@ import javax.swing.JPanel;
  *
  * @author Derek DeMoro
  */
+/**
+ *
+ */
 public class CollapsiblePane extends JPanel {
 
 	private static final long serialVersionUID = -6770924580102536726L;
@@ -134,6 +137,10 @@ public class CollapsiblePane extends JPanel {
 
     public BaseCollapsibleTitlePane getTitlePane() {
         return titlePane;
+    }
+
+    protected void setTitlePane(BaseCollapsibleTitlePane titlePane) {
+        this.titlePane = titlePane;
     }
 
     public boolean isCollapsed() {

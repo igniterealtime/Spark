@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,6 +118,9 @@ public class LoginDialog {
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
     private ArrayList<String> _usernames = new ArrayList<String>();
+    private String loginUsername;
+    private String loginPassword;
+    private String loginServer;
 
     /**
      * Empty Constructor
@@ -149,7 +152,7 @@ public class LoginDialog {
             Log.error(e);
         }
 
-        
+
         // Construct Dialog
     	 EventQueue.invokeLater(new Runnable() {
    		 public void run() {
@@ -210,7 +213,7 @@ public class LoginDialog {
    		 }
    	 });
 
- 
+
     }
 
     //This method can be overwritten by subclasses to provide additional validations
@@ -257,7 +260,7 @@ public class LoginDialog {
         private JLabel accountNameLabel = new JLabel();
         private JLabel serverNameLabel = new JLabel();
         private JLabel ssoServerLabel = new JLabel();
-        
+
         private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
 
@@ -268,7 +271,7 @@ public class LoginDialog {
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
             ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
             ResourceUtils.resButton(passwordResetButton, Res.getString("label.passwordreset"));
-            
+
             savePasswordBox.setOpaque(false);
             autoLoginBox.setOpaque(false);
             setLayout(GRIDBAGLAYOUT);
@@ -289,7 +292,7 @@ public class LoginDialog {
 
             accountNameLabel.setForeground(new Color(106, 127, 146));
             serverNameLabel.setForeground(new Color(106, 127, 146));
-            
+
             otherUsers.setFocusable(false);
 
 
@@ -304,7 +307,7 @@ public class LoginDialog {
             add(otherUsers, new GridBagConstraints(3, 0, 1, 1,
                             0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                             new Insets(5, 0, 0, 0), 0, 0));
-            
+
             add(accountLabel,
                     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -355,7 +358,7 @@ public class LoginDialog {
                         new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
             }
-            
+
             if (Default.getBoolean(Default.PASSWORD_RESET_ENABLED)) {
                 buttonPanel.add(passwordResetButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
                 passwordResetButton.addActionListener(new ActionListener() {
@@ -373,7 +376,7 @@ public class LoginDialog {
                     }
                 });
             }
-            
+
             if(!Default.getBoolean(Default.ADVANCED_DISABLED)){
             buttonPanel.add(advancedButton,
                     new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
@@ -411,11 +414,11 @@ public class LoginDialog {
             quitButton.addActionListener(this);
             loginButton.addActionListener(this);
             advancedButton.addActionListener(this);
-            
+
             otherUsers.addMouseListener(new MouseAdapter() {
         	@Override
         	public void mouseClicked(MouseEvent e) {
-        	   getPopup().show(otherUsers, e.getX(), e.getY()); 
+        	   getPopup().show(otherUsers, e.getX(), e.getY());
         	}
 	    });
 
@@ -438,10 +441,10 @@ public class LoginDialog {
             // Load previous instances
             String userProp = localPref.getLastUsername();
             String serverProp = localPref.getServer();
-            
+
            File file = new File(Spark.getSparkUserHome(), "/user/");
            File[] userprofiles = file.listFiles();
-           
+
 	    for (File f : userprofiles) {
 
 		if (f.getName().contains("@")) {
@@ -452,7 +455,7 @@ public class LoginDialog {
 		}
 
 	    }
-           
+
 
             if (userProp != null) {
                 usernameField.setText(StringUtils.unescapeNode(userProp));
@@ -464,7 +467,7 @@ public class LoginDialog {
 
             // Check Settings
             if (localPref.isSavePassword()) {
-        	
+
                 String encryptedPassword = localPref.getPasswordForUser(getBareJid());
                 if (encryptedPassword != null) {
                     passwordField.setText(encryptedPassword);
@@ -507,12 +510,12 @@ public class LoginDialog {
             createAccountButton.addActionListener(this);
 
             final String lockedDownURL = Default.getString(Default.HOST_NAME);
-            if (ModelUtil.hasLength(lockedDownURL)) {       
+            if (ModelUtil.hasLength(lockedDownURL)) {
                 serverField.setText(lockedDownURL);
             }
             if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED"))
                 serverField.setEnabled(false);
-            
+
 
 
         }
@@ -525,7 +528,7 @@ public class LoginDialog {
         private String getUsername() {
             return StringUtils.escapeNode(usernameField.getText().trim());
         }
-        
+
         /**
          * Returns the resulting bareJID from username and server
          * @return
@@ -595,24 +598,24 @@ public class LoginDialog {
                 }
             }
         }
-        
+
         private JPopupMenu getPopup()
         {
             JPopupMenu popup = new JPopupMenu();
 	    for(final String key : _usernames)
 	    {
-		
+
 		JMenuItem menu = new JMenuItem(key);
-		
+
 		final String username = key.split("@")[0];
 		final String host = key.split("@")[1];
 		menu.addActionListener(new ActionListener() {
-		    
+
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
 			usernameField.setText(username);
 			serverField.setText(host);
-			
+
 			try {
 			    passwordField.setText(localPref.getPasswordForUser(getBareJid()));
 			    if(passwordField.getPassword().length<1) {
@@ -623,10 +626,10 @@ public class LoginDialog {
 			    }
 			} catch (Exception e1) {
 			}
-			
+
 		    }
 		});
-		
+
 		popup.add(menu);
 	    }
 	    return popup;
@@ -658,7 +661,7 @@ public class LoginDialog {
          */
         private void validateDialog() {
             loginButton.setEnabled(
-                    ModelUtil.hasLength(getUsername()) && 
+                    ModelUtil.hasLength(getUsername()) &&
                     ( ModelUtil.hasLength(getPassword()) || localPref.isSSOEnabled() ) &&
                     ModelUtil.hasLength(getServerName())   );
         }
@@ -732,7 +735,9 @@ public class LoginDialog {
         private void validateLogin() {
             final SwingWorker loginValidationThread = new SwingWorker() {
                 public Object construct() {
-
+                    setLoginUsername(getUsername());
+                    setLoginPassword(getPassword());
+                    setLoginServer(getServerName());
                     boolean loginSuccessfull = beforeLoginValidations() && login();
                     if (loginSuccessfull) {
                         progressBar.setText(Res.getString("message.connecting.please.wait"));
@@ -748,7 +753,7 @@ public class LoginDialog {
                     }
                     else {
                         EventQueue.invokeLater(new Runnable() {
-                            
+
                             @Override
                             public void run() {
                                 savePasswordBox.setEnabled(true);
@@ -757,7 +762,7 @@ public class LoginDialog {
                                 setProgressBarVisible(false);
                             }
                         });
-                        
+
                     }
                     return loginSuccessfull;
                 }
@@ -860,7 +865,7 @@ public class LoginDialog {
                     System.setProperty("java.security.krb5.realm",princRealm);
                     System.setProperty("java.security.krb5.kdc",ssoKdc);
                 } else {
-                    //Assume "file" method.  We don't have to do anything special, 
+                    //Assume "file" method.  We don't have to do anything special,
                     //java takes care of it for us. Unset the props if they are set
                     System.clearProperty("java.security.krb5.realm");
                     System.clearProperty("java.security.krb5.kdc");
@@ -904,7 +909,7 @@ public class LoginDialog {
          */
         private boolean login() {
             final SessionManager sessionManager = SparkManager.getSessionManager();
-            
+
             boolean hasErrors = false;
             String errorMessage = null;
 
@@ -958,11 +963,11 @@ public class LoginDialog {
 
 
                     }
-                    
+
                     config.setReconnectionAllowed(true);
                     config.setRosterLoadedAtLogin(true);
                     config.setSendPresence(false);
-                    
+
                     if (localPref.isPKIEnabled()) {
                         SASLAuthentication.supportSASLMechanism("EXTERNAL");
                         config.setKeystoreType(localPref.getPKIStore());
@@ -982,7 +987,7 @@ public class LoginDialog {
                         }
                     }
 
-                    if (config != null) {                        
+                    if (config != null) {
                         boolean compressionEnabled = localPref.isCompressionEnabled();
                         config.setCompressionEnabled(compressionEnabled);
                         connection = new XMPPConnection(config,this);
@@ -991,8 +996,8 @@ public class LoginDialog {
                             config.setTruststorePassword(localPref.getTrustStorePassword());
                         }
                     }
-                    
-                    //If we want to use the debug version of smack, we have to check if 
+
+                    //If we want to use the debug version of smack, we have to check if
                     //we are on the dispatch thread because smack will create an UI
 		    if (localPref.isDebuggerEnabled()) {
 			if (EventQueue.isDispatchThread()) {
@@ -1015,21 +1020,20 @@ public class LoginDialog {
 			connection.connect();
 		    }
 
-                    String resource = localPref.getResource();                 
-
-                    connection.login(getUsername(), getPassword(),
+                    String resource = localPref.getResource();
+                    connection.login(getLoginUsername(), getLoginPassword(),
                 	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource));
 
                     sessionManager.setServerAddress(connection.getServiceName());
-                    sessionManager.initializeSession(connection, getUsername(), getPassword());
+                    sessionManager.initializeSession(connection, getLoginUsername(), getLoginPassword());
                     sessionManager.setJID(connection.getUser());
                 }
                 catch (Exception xee) {
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
-                    }                     
+                    }
                     if (xee instanceof XMPPException) {
-                  	  
+
                        XMPPException xe = (XMPPException)xee;
                        final XMPPError error = xe.getXMPPError();
                        int errorCode = 0;
@@ -1058,9 +1062,9 @@ public class LoginDialog {
                     hasErrors = true;
                 }
             }
-            
+
             if (hasErrors) {
-            	
+
             	final String finalerrorMessage = errorMessage;
                EventQueue.invokeLater(new Runnable() {
 
@@ -1069,7 +1073,7 @@ public class LoginDialog {
      					{
      							progressBar.setVisible(false);
      							//progressBar.setIndeterminate(false);
-     	                
+
      							// Show error dialog
      							if (loginDialog.isVisible()) {
      								if (!localPref.isSSOEnabled()) {
@@ -1082,10 +1086,10 @@ public class LoginDialog {
      	                        //useSSO(false);
      	                        //localPref.setSSOEnabled(false);
      								}
-     							}   						
+     							}
      						}
-     				}); 
-            	
+     				});
+
                 setEnabled(true);
                 return false;
             }
@@ -1094,7 +1098,7 @@ public class LoginDialog {
             connection.addConnectionListener(SparkManager.getSessionManager());
 
             // Persist information
-            localPref.setLastUsername(getUsername());
+            localPref.setLastUsername(getLoginUsername());
 
             // Check to see if the password should be saved.
             if (savePasswordBox.isSelected()) {
@@ -1125,7 +1129,7 @@ public class LoginDialog {
             for (Callback callback : callbacks) {
                 if (callback instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) callback;
-                    ncb.setName(getUsername());
+                    ncb.setName(getLoginUsername());
                 } else if (callback instanceof PasswordCallback) {
                     PasswordCallback pcb = (PasswordCallback) callback;
                     pcb.setPassword(getPassword().toCharArray());
@@ -1154,7 +1158,7 @@ public class LoginDialog {
 			EventQueue.invokeLater(new Runnable() {
 			 	public void run() {
 			      final MainWindow mainWindow = MainWindow.getInstance();
-			      
+
 
 			      /*
 			      if (tray != null) {
@@ -1360,7 +1364,7 @@ public class LoginDialog {
 
                 String savePassword = plugin.selectSingleNode("savePassword").getText();
                 localPref.setSavePassword(Boolean.parseBoolean(savePassword));
-                
+
                 String password = plugin.selectSingleNode("password").getText();
                 localPref.setPasswordForUser(username+"@"+server, password);
 
@@ -1385,7 +1389,7 @@ public class LoginDialog {
             env.put("java.naming.factory.initial","com.sun.jndi.dns.DnsContextFactory");
             DirContext context = new InitialDirContext(env);
             Attributes dnsLookup = context.getAttributes("_kerberos._udp."+realm, new String[]{"SRV"});
-    
+
             ArrayList<Integer> priorities = new ArrayList<Integer>();
             HashMap<Integer,List<String>> records = new HashMap<Integer,List<String>>();
             for (Enumeration<?> e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
@@ -1408,12 +1412,38 @@ public class LoginDialog {
             }
             Collections.sort(priorities);
             List<String> l = records.get(priorities.get(0));
-            String toprec = (String)l.get(0);
+            String toprec = l.get(0);
             String [] sRecParts = toprec.split(" ");
             return sRecParts[3];
         } catch (NamingException e){
             return "";
         }
     }
+
+    protected String getLoginUsername() {
+        return loginUsername;
+    }
+
+    protected void setLoginUsername(String loginUsername) {
+        this.loginUsername = loginUsername;
+    }
+
+    protected String getLoginPassword() {
+        return loginPassword;
+    }
+
+    protected void setLoginPassword(String loginPassword) {
+        this.loginPassword = loginPassword;
+    }
+
+    protected String getLoginServer() {
+        return loginServer;
+    }
+
+    protected void setLoginServer(String loginServer) {
+        this.loginServer = loginServer;
+    }
+
+
 
 }

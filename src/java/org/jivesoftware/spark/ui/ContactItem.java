@@ -223,7 +223,7 @@ public class ContactItem extends JPanel {
 	 * alias first. If that's not set, the nickname will be used instead. If
 	 * that's not set either, the JID of the user will be used.
 	 */
-    private void setDisplayName() {
+    protected void setDisplayName() {
     	final String displayName = getDisplayName();
 
         int nickLength = displayName.length();
@@ -609,6 +609,22 @@ public class ContactItem extends JPanel {
 
     protected String getFullyQualifiedJID() {
         return fullyQualifiedJID;
+    }
+
+    protected void setDisplayNameLabel(JLabel displayNameLabel) {
+        this.displayNameLabel = displayNameLabel;
+    }
+
+    protected void setDescriptionLabel(JLabel descriptionLabel) {
+        this.descriptionLabel = descriptionLabel;
+    }
+
+    protected JLabel getSpecialImageLabel() {
+        return specialImageLabel;
+    }
+
+    protected void setSpecialImageLabel(JLabel specialImageLabel) {
+        this.specialImageLabel = specialImageLabel;
     }
 
 

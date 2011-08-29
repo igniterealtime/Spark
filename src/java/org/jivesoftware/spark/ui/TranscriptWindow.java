@@ -570,4 +570,22 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
     public boolean handleDefaultAction(MouseEvent e) {
         return false;
     }
+
+    protected SimpleDateFormat getNotificationDateFormatter() {
+        return notificationDateFormatter;
+    }
+
+    protected Date getLastPost() {
+        return lastPost;
+    }
+
+    protected void setLastPost(Date lastPost) {
+        this.lastPost = lastPost;
+    }
+
+    protected void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+
 }

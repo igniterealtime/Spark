@@ -673,6 +673,24 @@ public class ThemePanel extends JPanel {
         return _lookandfeelpreview;
     }
 
+    protected JCheckBox getUseTabsForConference() {
+        return _useTabsForConference;
+    }
+
+    protected JCheckBox getShowAvatarsBox() {
+        return showAvatarsBox;
+    }
+
+    protected JLabel getAvatarSizeLabel() {
+        return avatarSizeLabel;
+    }
+
+    protected JComboBox getAvatarSizeField() {
+        return avatarSizeField;
+    }
+
+
+
 
 
 }
