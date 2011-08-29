@@ -198,7 +198,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
 
-            StyleConstants.setForeground(styles, Color.black);
+            StyleConstants.setForeground(styles, getMessageColor());
             setText(body);
             insertText("\n");
         }
@@ -230,13 +230,17 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             // Reset Styles for message
             StyleConstants.setBold(styles, false);
 
-            StyleConstants.setForeground(styles, Color.black);
+            StyleConstants.setForeground(styles, getMessageColor());
             setText(message);
             insertText("\n");
         }
         catch (BadLocationException e) {
             Log.error("Error message.", e);
         }
+    }
+
+    protected Color getMessageColor() {
+        return Color.BLACK;
     }
 
 

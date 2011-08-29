@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui;
 
 import java.awt.BorderLayout;
@@ -79,6 +79,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -98,7 +99,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final ChatToolBar toolbar;
     private final JScrollPane textScroller;
     private final JPanel bottomPanel;
-    
+
     private final JPanel editorWrapperBar;
     private final JPanel editorBarRight;
     private final JPanel editorBarLeft;
@@ -130,7 +131,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     protected ChatRoom() {
         chatPanel = new JPanel(new GridBagLayout());
-        transcriptWindow = new TranscriptWindow();
+        transcriptWindow = UIComponentRegistry.createTranscriptWindow();
         splitPane = new JSplitPane();
         packetIDList = new ArrayList<String>();
         notificationLabel = new JLabel();
@@ -139,7 +140,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         messageListeners = new ArrayList<MessageListener>();
         transcript = new ArrayList<Message>();
-        
+
         editorWrapperBar = new JPanel(new BorderLayout());
         editorBarLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
         editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
@@ -147,13 +148,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
         fileDropListeners = new ArrayList<FileDropListener>();
 
-   
-        
-        
-        
+
+
+
+
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-        	
+
         	if(e.getClickCount()!=2){
                 getChatInputEditor().requestFocus();
         	}
@@ -195,7 +196,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
-               
+
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
 
@@ -215,16 +216,16 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().setTransferHandler(transferHandler);
         getChatInputEditor().setTransferHandler(transferHandler);
 
-        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        addToolbar();
 
         // Add Connection Listener
         SparkManager.getConnection().addConnectionListener(this);
 
         // Add Focus Listener
         addFocusListener(this);
-        
+
         scrollToBottom();
-        
+
     }
 
     // Setup base layout.
@@ -245,7 +246,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         verticalSplit.setTopComponent(splitPane);
 
         textScroller.setAutoscrolls(true);
-        
+
         // For the first 5*150ms we wait for transcript to load and move
         // scrollpane to max postion if size of scrollpane changed
         textScroller.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
@@ -287,7 +288,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
             }
         });
-        
+
 
         // Speed up scrolling. It was way too slow.
         textScroller.getVerticalScrollBar().setBlockIncrement(200);
@@ -299,7 +300,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
-        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
+        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.BOTH, getChatPanelInsets(), 0, 0));
 
         // Add Chat Panel to Split Pane
         splitPane.setLeftComponent(chatPanel);
@@ -312,8 +314,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 15));
-        bottomPanel.add(editorWrapperBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST,
+                GridBagConstraints.BOTH, getChatAreaInsets(), 0, 15));
+        bottomPanel.add(editorWrapperBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST,
+                GridBagConstraints.HORIZONTAL, getEditorWrapperInsets(), 0, 0));
 
         // Set bottom panel border
         bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(197, 213, 230)));
@@ -332,7 +336,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Add Key Listener to Send Field
         chatEditorKeyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                checkForEnter(e);        
+                checkForEnter(e);
             }
         };
 
@@ -347,7 +351,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 closeChatRoom();
             }
         });
-        
+
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SPACE"), "handleCompletion");
         getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
     			private static final long serialVersionUID = 1L;
@@ -356,18 +360,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 // handle name completion.
                 try {
 		    handleNickNameCompletion();
-		} catch (ChatRoomNotFoundException e) {  
+		} catch (ChatRoomNotFoundException e) {
 		   Log.error("ctlr-space nickname find", e);
 		}
             }
         });
-    
-        
-        
+
+
+
 	_isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
 	_alwaysOnTopItem = new RolloverButton();
 	if (_isAlwaysOnTopActive) {
-	    
+
 	    _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
 	} else {
 	    _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
@@ -381,7 +385,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 		_chatFrame.setWindowAlwaysOnTop(true);
                 		_isAlwaysOnTopActive = true;
                 		 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
-          
+
                 	}
                 	else
                 	{
@@ -392,9 +396,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 	}
                 }
         });
-        
- 
-        this.getRoomControllerBar().add(_alwaysOnTopItem);
+
+
+        editorBarRight.add(_alwaysOnTopItem);
     }
 
 
@@ -402,7 +406,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Handles the Nickname Completion dialog, when Pressing CTRL + SPACE<br>
      * it searches for matches in the current GroupchatList and also in the
      * Roster
-     * 
+     *
      * @throws ChatRoomNotFoundException
      *             when for some reason the GroupChatRoom cannot be found, this
      *             should <u>not</u> happen, since we retrieve it from the
@@ -419,13 +423,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 		name = name.substring(name.lastIndexOf(" ") + 1);
 	    }
 	}
-	
+
 	Collection<String> groupchatlist = new ArrayList<String>();
 	Collection<RosterEntry> rosterlist = SparkManager.getConnection().getRoster().getEntries();
-	
+
 	if(SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom)
 	{
-	    groupchatlist  =((GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom()).getParticipants();   
+	    groupchatlist  =((GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom()).getParticipants();
 	}
 	String newname = null;
 	ArrayList<String> namelist = new ArrayList<String>();
@@ -484,7 +488,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 		    });
 
 	    }
-	    popup.show((Component) SparkManager.getChatManager()
+	    popup.show(SparkManager.getChatManager()
 		    .getChatContainer(), getChatInputEditor().getCaret()
 		    .getMagicCaretPosition().x, SparkManager.getChatManager()
 		    .getChatContainer().getHeight() - 20);
@@ -545,7 +549,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void insertMessage(Message message) {
         // Fire Message Filters
-        
+
         SparkManager.getChatManager().filterIncomingMessage(this, message);
 
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(this, message);
@@ -553,7 +557,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         addToTranscript(message, true);
 
         fireMessageReceived(message);
-        
+
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
     }
 
@@ -571,9 +575,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(message.getTo());
         newMessage.setFrom(message.getFrom());
         newMessage.setBody(message.getBody());
-        
-        
-        
+
+
+
         newMessage.setProperty("date", new Date());
 
         transcript.add(newMessage);
@@ -619,13 +623,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         try {
             final JScrollBar scrollBar = textScroller.getVerticalScrollBar();
             EventQueue.invokeLater(new Runnable() {
-                
+
                 @Override
                 public void run() {
-                    scrollBar.setValue(scrollBar.getMaximum());        
+                    scrollBar.setValue(scrollBar.getMaximum());
                 }
             });
-            
+
 
         }
         catch (Exception e) {
@@ -706,8 +710,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             sendMessage();
             getChatInputEditor().setText("");
             getChatInputEditor().setCaretPosition(0);
-            
-            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);   
+
+            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
         }
         else if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))) {
             final Document document = getChatInputEditor().getDocument();
@@ -868,7 +872,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatAreaButton.getButton().removeActionListener(this);
         bottomPanel.remove(chatAreaButton);
         _chatFrame.removeWindowToFrontListener(this);
-        
+
     }
 
     /**
@@ -971,6 +975,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return toolbar;
     }
 
+    protected void addToolbar() {
+        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+    }
+
 
     public void insertUpdate(DocumentEvent e) {
         // Meant to be overriden
@@ -1034,7 +1042,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
             }
 
-            GraphicUtils.makeSameSize((JComponent[])buttons.toArray(new JComponent[buttons.size()]));
+            GraphicUtils.makeSameSize(buttons.toArray(new JComponent[buttons.size()]));
         }
 
         /**
@@ -1126,11 +1134,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public JPanel getEditorBar() {
         return editorBarLeft;
     }
-    
+
     /**
      * Returns the panel next to the editor bar<br>
      * for use with system buttons, like room controlling or toggle stay-on-top
-     * 
+     *
      * @return
      */
     public JPanel getRoomControllerBar() {
@@ -1251,19 +1259,82 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     public void reconnectionFailed(Exception e) {
     }
-    
-    
+
+
     public void updateStatus(boolean active)
     {
 	_alwaysOnTopItem.setSelected(active);
     }
-    
+
     public void registeredToFrame(ChatFrame chatframe)
     {
 	this._chatFrame = chatframe;
 	_chatFrame.addWindowToFronListener(this);
     }
-    
+
+    protected JPanel getEditorWrapperBar() {
+        return editorWrapperBar;
+    }
+
+    protected JPanel getEditorBarRight() {
+        return editorBarRight;
+    }
+
+    protected JPanel getEditorBarLeft() {
+        return editorBarLeft;
+    }
+
+    protected JScrollPane getTextScroller() {
+        return textScroller;
+    }
+
+    protected Insets getChatPanelInsets() {
+        return new Insets(0, 5, 0, 5);
+    }
+
+    protected Insets getChatAreaInsets() {
+        return new Insets(0, 5, 5, 5);
+    }
+
+    protected Insets getEditorWrapperInsets() {
+        return new Insets(0, 5, 0, 5);
+    }
+
+    public void addChatRoomComponent(JComponent component) {
+        editorBarLeft.add(component);
+    }
+
+    public void addChatRoomButton(ChatRoomButton button) {
+        addChatRoomButton(button, false);
+    }
+
+    public void addChatRoomButton(ChatRoomButton button, boolean forceRepaint) {
+        toolbar.addChatRoomButton(button);
+        if (forceRepaint) {
+            toolbar.invalidate();
+            toolbar.repaint();
+        }
+    }
+
+    public void showToolbar() {
+        toolbar.setVisible(true);
+    }
+
+    public void hideToolbar() {
+        toolbar.setVisible(false);
+    }
+
+    public void addEditorComponent(JComponent component) {
+        editorBarLeft.add(component);
+    }
+
+    public void removeEditorComponent(JComponent component) {
+        editorBarLeft.remove(component);
+    }
+
+    public void addControllerButton(RolloverButton button) {
+        editorBarRight.add(button, 0);
+    }
 }
 
 

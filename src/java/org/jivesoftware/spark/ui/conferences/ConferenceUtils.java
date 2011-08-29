@@ -51,6 +51,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -159,7 +160,7 @@ public class ConferenceUtils {
         }
 
 
-        final GroupChatRoom room = new GroupChatRoom(groupChat);
+        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
         room.setTabTitle(roomName);
         room.setPassword(password);
 
@@ -399,7 +400,7 @@ public class ConferenceUtils {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
 
-        final GroupChatRoom room = new GroupChatRoom(multiUserChat);
+        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(multiUserChat);
         try {
             // Attempt to create room.
             multiUserChat.create(pref.getNickname());
@@ -510,7 +511,7 @@ public class ConferenceUtils {
         final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
 
 
-        final GroupChatRoom room = new GroupChatRoom(groupChat);
+        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
         room.setTabTitle(roomName);
 
 
@@ -595,7 +596,7 @@ public class ConferenceUtils {
     }
 
     public static void enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password) {
-        final GroupChatRoom room = new GroupChatRoom(groupChat);
+        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
         room.setTabTitle(tabTitle);
 
         final List<String> errors = new ArrayList<String>();

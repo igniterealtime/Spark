@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -171,7 +171,7 @@ public class PhonePlugin implements Plugin {
                     }
 
                     if (phoneEnabled) {
-                        room.getToolBar().addChatRoomButton(callButton);
+                        room.addChatRoomButton(callButton);
                         callButton.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
                                 callJID(chatRoom.getParticipantJID());

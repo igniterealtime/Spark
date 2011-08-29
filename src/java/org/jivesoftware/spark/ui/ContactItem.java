@@ -121,6 +121,7 @@ public class ContactItem extends JPanel {
 		displayNameLabel = new JLabel();
 		descriptionLabel = new JLabel();
 		imageLabel = new JLabel();
+		specialImageLabel = new JLabel();
 		sideIcon = new JLabel();
 		if (avatarsShowing) {
 			sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));

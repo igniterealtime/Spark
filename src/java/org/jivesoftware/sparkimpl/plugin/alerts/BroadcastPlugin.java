@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,7 +125,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 String selectedUser = "";
                 Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
                 if (selectedUsersIterator.hasNext()) {
-                    ContactItem contactItem = (ContactItem)selectedUsersIterator.next();
+                    ContactItem contactItem = selectedUsersIterator.next();
                     selectedUser = contactItem.getJID();
                 }
 
@@ -144,7 +144,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 }
             }
         });
-        
+
 
 
         // Add send to selected users.
@@ -216,7 +216,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
                     boolean broadcast = message.getProperty("broadcast") != null;
 
-                    if ((broadcast || message.getType() == Message.Type.normal 
+                    if ((broadcast || message.getType() == Message.Type.normal
                 	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
                         showAlert((Message)packet);
                     }
@@ -240,7 +240,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      * Show Server Alert.
      *
      * @param message the message to show.
-     * @param type 
+     * @param type
      */
     private void showAlert(Message message) {
 	Type type = message.getType();
@@ -269,9 +269,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         p.setLayout(new BorderLayout());
         p.add(window, BorderLayout.CENTER);
         p.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-        
+
         // Count the number of linebreaks <br> and \n
-        
+
         String s = message.getBody();
         s = s.replace("<br/>", "\n");
         s = s.replace("<br>", "\n");
@@ -301,7 +301,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
     /**
      * Handles Broadcasts made from a user to another user
-     * 
+     *
      * @param message
      *            the message
      * @param type
@@ -323,21 +323,21 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	    chatRoom = new ChatRoomImpl(jid, nickname, nickname);
 	    SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
 	}
-	
+
 	Message m = new Message();
 	m.setBody(message.getBody());
 	m.setTo(message.getTo());
-	
+
 	String name = StringUtils.parseName(message.getFrom());
-	
+
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	m.setFrom(name +" "+broadcasttype);
-	
+
 	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
 	chatRoom.addToTranscript(m,true);
 	broadcastRooms.add(chatRoom);
-	
-	
+
+
 	LocalPreferences pref = SettingsManager.getLocalPreferences();
 	if (pref.getShowToasterPopup()) {
 	    SparkToaster toaster = new SparkToaster();
@@ -422,7 +422,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
         return false;
     }
-    
+
     /**
      * Displays the Serverbroadcast like all other messages
      * in its on chatcontainer with transcript history
@@ -443,7 +443,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
            String windowtitle = message.getSubject()!=null ? message.getSubject() : Res.getString("administrator");
            chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), windowtitle);
            chatRoom.getBottomPanel().setVisible(false);
-           chatRoom.getToolBar().setVisible(false);
+           chatRoom.hideToolbar();
            SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
         }
 
@@ -451,7 +451,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         chatRoom.getTranscriptWindow().insertNotificationMessage(message.getBody(), ChatManager.NOTIFICATION_COLOR);
         broadcastRooms.add(chatRoom);
     }
-    
+
     /**
      * Displays a Serverbroadcast within a JFrame<br>
      * Messages can contain html-tags
@@ -482,7 +482,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 		alert.dispose();
 	    }
 	});
-	
+
 	alert.add(icon,new GridBagConstraints(0,0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
 	alert.add(alertlabel, new GridBagConstraints(1,0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
 	alert.add(close, new GridBagConstraints(1,1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));

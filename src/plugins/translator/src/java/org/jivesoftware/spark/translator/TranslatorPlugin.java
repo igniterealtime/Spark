@@ -65,7 +65,7 @@ public class TranslatorPlugin implements Plugin {
                         }
                     });
 
-                    roomImpl.getEditorBar().add(translatorBox);
+                    roomImpl.addChatRoomComponent(translatorBox);
 
                     // do the translation for outgoing messages.
                     final MessageEventListener messageListener = new MessageEventListener() {

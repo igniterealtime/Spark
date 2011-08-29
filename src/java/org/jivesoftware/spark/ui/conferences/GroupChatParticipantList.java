@@ -90,7 +90,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * The <code>RoomInfo</code> class is used to display all room information, such
  * as agents and room information.
  */
-public final class GroupChatParticipantList extends JPanel implements
+public class GroupChatParticipantList extends JPanel implements
 		ChatRoomListener {
 
     	private static final long serialVersionUID = 3809155443119207342L;
@@ -340,7 +340,7 @@ public final class GroupChatParticipantList extends JPanel implements
 		return icon;
 	}
 
-    private void addParticipant(final String participantJID, Presence presence) {
+    protected void addParticipant(final String participantJID, Presence presence) {
 	// Remove reference to invitees
 
 	for (String displayName : invitees.keySet()) {

@@ -66,6 +66,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -348,10 +349,10 @@ public class ConferenceServices implements InvitationListener {
         public void decorate() {
 
             // Add Conference Invite Button.
-            inviteButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
+            inviteButton = UIComponentRegistry.getButtonFactory().createInviteConferenceButton();
             inviteButton.setToolTipText(Res.getString("title.invite.to.conference"));
 
-            chatRoom.getToolBar().addChatRoomButton(inviteButton);
+            chatRoom.addChatRoomButton(inviteButton);
 
             inviteButton.addActionListener(this);
         }
@@ -435,7 +436,7 @@ public class ConferenceServices implements InvitationListener {
 
 		if (_localPreferences.isAutoAcceptMucInvite()) {
 		    ConferenceUtils.enterRoomOnSameThread(StringUtils.parseName(room), room, password);
-		    GroupChatRoom chat = new GroupChatRoom(new MultiUserChat(SparkManager.getConnection(), room));
+		    GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(new MultiUserChat(SparkManager.getConnection(), room));
 
 		    showToaster(message, title, chat);
 		    return;
@@ -461,7 +462,7 @@ public class ConferenceServices implements InvitationListener {
 		    // Create the Group Chat Room
 		    final MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), room);
 
-		    GroupChatRoom groupChatRoom = new GroupChatRoom(chat);
+		    GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(chat);
 
 		    showToaster(message, title, groupChatRoom);
 

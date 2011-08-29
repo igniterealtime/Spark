@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import org.jivesoftware.resource.Res;
@@ -35,6 +36,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 
 /**
  * Adds a simple buzz operation button the each newly created ChatRoom.
@@ -44,29 +46,29 @@ import org.jivesoftware.spark.util.TaskEngine;
 public class BuzzRoomDecorator implements ActionListener {
 
     private ChatRoom chatRoom;
-    private RolloverButton buzzButton;
+    private JButton buzzButton;
 
-    
+
     public BuzzRoomDecorator(ChatRoom chatRoom) {
 	this.chatRoom = chatRoom;
 
-	buzzButton = new RolloverButton(
-		SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
+	buzzButton = UIComponentRegistry.getButtonFactory().createBuzzButton();
 	buzzButton.setToolTipText(Res
 		.getString("message.buzz.alert.notification"));
 	buzzButton.addActionListener(this);
 
-	final JLabel dividerLabel = new JLabel(
-		SparkRes.getImageIcon("DIVIDER_IMAGE"));
-	chatRoom.getEditorBar().add(dividerLabel);
-	chatRoom.getEditorBar().add(buzzButton);
+	final JLabel dividerLabel = UIComponentRegistry.getButtonFactory().createDivider();
+	if (dividerLabel != null) {
+	    chatRoom.addEditorComponent(dividerLabel);
+	}
+	chatRoom.addEditorComponent(buzzButton);
     }
 
     public void addBuzzButton(BuzzRoomDecorator buzzer)
     {
     	final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
-    	chatRoom.getEditorBar().add(dividerLabel);
-    	chatRoom.getEditorBar().add(buzzer.buzzButton);
+    	chatRoom.addEditorComponent(dividerLabel);
+    	chatRoom.addEditorComponent(buzzer.buzzButton);
     }
 
     public void actionPerformed(ActionEvent e) {

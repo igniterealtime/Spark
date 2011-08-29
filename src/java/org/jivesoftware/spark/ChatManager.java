@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,6 +48,7 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -108,7 +109,7 @@ public class ChatManager implements MessageEventNotificationListener {
     private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
 
     private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
-    
+
     private UriManager _uriManager = new UriManager();
 
 
@@ -137,7 +138,7 @@ public class ChatManager implements MessageEventNotificationListener {
      * Create a new instance of ChatManager.
      */
     private ChatManager() {
-        chatContainer = new ChatContainer();
+        chatContainer = UIComponentRegistry.createChatContainer();
 
         // Add a Message Handler
         SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
@@ -227,7 +228,7 @@ public class ChatManager implements MessageEventNotificationListener {
             chatRoom = getChatContainer().getChatRoom(userJID);
         }
         catch (ChatRoomNotFoundException e) {
-            chatRoom = new ChatRoomImpl(userJID, nickname, title);
+            chatRoom = UIComponentRegistry.createChatRoom(userJID, nickname, title);
             getChatContainer().addChatRoom(chatRoom);
         }
 
@@ -251,10 +252,10 @@ public class ChatManager implements MessageEventNotificationListener {
             ContactItem item = contactList.getContactItemByJID(jid);
             if (item != null) {
                 String nickname = item.getDisplayName();
-                chatRoom = new ChatRoomImpl(jid, nickname, nickname);
+                chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, nickname);
             }
             else {
-                chatRoom = new ChatRoomImpl(jid, jid, jid);
+                chatRoom = UIComponentRegistry.createChatRoom(jid, jid, jid);
             }
 
 
@@ -274,7 +275,7 @@ public class ChatManager implements MessageEventNotificationListener {
     public ChatRoom createConferenceRoom(String roomName, String serviceName) {
         final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomName + "@" + serviceName);
 
-        final GroupChatRoom room = new GroupChatRoom(chatRoom);
+        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(chatRoom);
 
         try {
             LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -329,7 +330,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
             public void finished() {
                 if (chatRoom == null) {
-                    chatRoom = new ChatRoomImpl(jid, nickname, nickname);
+                    chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, nickname);
                     chatManager.getChatContainer().addChatRoom(chatRoom);
                 }
                 chatManager.getChatContainer().activateChatRoom(chatRoom);
@@ -444,7 +445,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
         // Notify MessageFilters.
         while (filters.hasNext()) {
-            ((MessageFilter)filters.next()).filterIncoming(room, message);
+            (filters.next()).filterIncoming(room, message);
         }
     }
 
@@ -809,7 +810,7 @@ public class ChatManager implements MessageEventNotificationListener {
 
     /**
      * Handles XMPP URI Mappings.
-     * 
+     *
      * @param arguments
      *            the arguments passed into Spark.
      */
@@ -817,7 +818,7 @@ public class ChatManager implements MessageEventNotificationListener {
 	if (arguments == null) {
 	    return;
 	}
-	
+
 	URI uri = null;
 	try {
 	    uri = new URI(arguments);

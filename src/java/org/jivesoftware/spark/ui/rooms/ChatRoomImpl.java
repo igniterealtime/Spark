@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.rooms;
 
 import java.awt.Color;
@@ -85,7 +85,7 @@ public class ChatRoomImpl extends ChatRoom {
     private String tabTitle;
     private String participantJID;
     private String participantNickname;
-    
+
     private final Color TRANSPARENT_COLOR = new Color(0,0,0,0);
 
     private Presence presence;
@@ -111,6 +111,10 @@ public class ChatRoomImpl extends ChatRoom {
     private ChatRoomButton addToRosterButton;
     private VCardPanel vcardPanel;
 
+    public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
+        this(participantJID, participantNickname, title, true);
+    }
+
     /**
      * Constructs a 1-to-1 ChatRoom.
      *
@@ -118,7 +122,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @param participantNickname the nickname of the participant.
      * @param title               the title of the room.
      */
-    public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
+    public ChatRoomImpl(final String participantJID, String participantNickname, String title, boolean initUi) {
         this.active = true;
         this.participantJID = participantJID;
         this.participantNickname = participantNickname;
@@ -155,25 +159,25 @@ public class ChatRoomImpl extends ChatRoom {
 
         tabIcon = PresenceManager.getIconFromPresence(presence);
 
-        // Create toolbar buttons.
-        infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
-        infoButton.setToolTipText(Res.getString("message.view.information.about.this.user"));
-
-        // Create basic toolbar.
-        getToolBar().addChatRoomButton(infoButton);
+        if (initUi) {
+            // Create toolbar buttons.
+            infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
+            infoButton.setToolTipText(Res.getString("message.view.information.about.this.user"));
+            // Create basic toolbar.
+            addChatRoomButton(infoButton);
+            // Show VCard.
+            infoButton.addActionListener(this);
+        }
 
         // If the user is not in the roster, then allow user to add them.
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
         if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
             if(!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
-            	getToolBar().addChatRoomButton(addToRosterButton);
+            	addChatRoomButton(addToRosterButton);
             }
             addToRosterButton.addActionListener(this);
         }
-
-        // Show VCard.
-        infoButton.addActionListener(this);
 
         // If this is a private chat from a group chat room, do not show toolbar.
         if (StringUtils.parseResource(participantJID).equals(participantNickname)) {
@@ -209,9 +213,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         super.closeChatRoom();
 
-        // Remove info listener
-        infoButton.removeActionListener(this);
-        addToRosterButton.removeActionListener(this);
+        removeListeners();
 
         // Send a cancel notification event on closing if listening.
         if (!sendNotification) {
@@ -230,8 +232,14 @@ public class ChatRoomImpl extends ChatRoom {
         }
         active = false;
         vcardPanel = null;
-        
+
         this.removeAll();
+    }
+
+    protected void removeListeners() {
+        // Remove info listener
+        infoButton.removeActionListener(this);
+        addToRosterButton.removeActionListener(this);
     }
 
     public void sendMessage() {
@@ -357,10 +365,10 @@ public class ChatRoomImpl extends ChatRoom {
 
     /**
      * Returns the Bare-Participant JID
-     * 
+     *
      * <b> user@server.com </b> <br>
      * for retrieving the full Jid use ChatRoomImpl.getJID()
-     * 
+     *
      * @return
      */
     public String getParticipantJID() {
@@ -408,8 +416,8 @@ public class ChatRoomImpl extends ChatRoom {
                 }
                 else if (packet instanceof Message) {
                     lastActivity = System.currentTimeMillis();
-                 
-                    
+
+
                     // Do something with the incoming packet here.
                     final Message message = (Message)packet;
                     fireReceivingIncomingMessage(message);
@@ -644,7 +652,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
 
-    private void loadHistory() {
+    protected void loadHistory() {
         // Add VCard Panel
         vcardPanel = new VCardPanel(participantJID);
         getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
@@ -654,11 +662,11 @@ public class ChatRoomImpl extends ChatRoom {
         if (!localPreferences.isChatHistoryEnabled()) {
             return;
         }
-        
+
         if (!localPreferences.isPrevChatHistoryEnabled()) {
         	return;
         }
-        
+
         final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getParticipantJID());
         final String personalNickname = SparkManager.getUserManager().getNickname();
 
@@ -668,7 +676,7 @@ public class ChatRoomImpl extends ChatRoom {
             if (nickname.equals(message.getFrom())) {
                 String otherJID = StringUtils.parseBareAddress(message.getFrom());
                 String myJID = SparkManager.getSessionManager().getBareAddress();
-                
+
                 if (otherJID.equals(myJID)) {
                     nickname = personalNickname;
                 }

@@ -81,6 +81,7 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -88,7 +89,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
  */
-public final class GroupChatRoom extends ChatRoom {
+public class GroupChatRoom extends ChatRoom {
     private static final long serialVersionUID = 4469579438292227006L;
 
     private MultiUserChat chat;
@@ -148,7 +149,7 @@ public final class GroupChatRoom extends ChatRoom {
 	tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
 
 	// Room Information
-	roomInfo = new GroupChatParticipantList();
+	roomInfo = UIComponentRegistry.createGroupChatParticipantList();
 	getSplitPane().setRightComponent(roomInfo.getGUI());
 
 	roomInfo.setChatRoom(this);
@@ -1377,11 +1378,9 @@ public final class GroupChatRoom extends ChatRoom {
 		SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
 	register.setToolTipText(Res.getString("button.register").replace("&",""));
 
-	JPanel bar = room.getRoomControllerBar();
-
-	bar.add(settings,0);
-	bar.add(thema,0);
-	bar.add(register,0);
+	room.addControllerButton(settings);
+    room.addControllerButton(thema);
+    room.addControllerButton(register);
 
 	settings.addActionListener(new AbstractAction() {
 	    private static final long serialVersionUID = 6780230647854132857L;

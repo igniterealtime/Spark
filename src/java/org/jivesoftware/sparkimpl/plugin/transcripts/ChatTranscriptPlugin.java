@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,6 +77,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -93,7 +94,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final SimpleDateFormat messageDateFormatter;
     private HashMap<ChatRoom,Message> lastMessage = new HashMap<ChatRoom,Message>();
     private JDialog Frame;
-    
+
     /**
      * Register the listeners for transcript persistence.
      */
@@ -118,7 +119,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         viewHistoryAction.putValue(Action.NAME, Res.getString("menuitem.view.contact.history"));
         viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
-        
+
         final Action showStatusMessageAction = new AbstractAction() {
 			private static final long serialVersionUID = -5000370836304286019L;
 
@@ -201,14 +202,14 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
-        
+
         final String jid = room.getRoomname();
-      
+
         File transcriptFile = ChatTranscripts.getTranscriptFile(jid);
         if (!transcriptFile.exists()) {
             return;
         }
-       
+
         if (room instanceof ChatRoomImpl) {
             new ChatRoomDecorator(room);
         }
@@ -238,7 +239,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         int count = 0;
         int i = 0;
     	if (lastMessage.get(room) != null)
-    	{            		
+    	{
     		count = transcripts.indexOf(lastMessage.get(room)) + 1;
     	}
         for (Message message : transcripts) {
@@ -263,7 +264,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         ChatTranscripts.appendToTranscript(jid, transcript);
-       
+
     }
 
     public void chatRoomActivated(ChatRoom room) {
@@ -281,7 +282,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public void uninstall() {
         // Do nothing.
     }
-   
+
     private void showHistory(final String jid) {
 
         SwingWorker transcriptLoader = new SwingWorker() {
@@ -297,16 +298,16 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 // add search text input
                 final JPanel topPanel = new BackgroundPanel();
                 topPanel.setLayout(new GridBagLayout());
-                
+
                 final VCardPanel vacardPanel = new VCardPanel(jid);
                 final JTextField searchField = new JTextField(25);
                 searchField.setText(Res.getString("message.search.for.history"));
                 searchField.setToolTipText(Res.getString("message.search.for.history"));
                 searchField.setForeground((Color) UIManager.get("TextField.lightforeground"));
-                
+
                 topPanel.add(vacardPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(1, 5, 1, 1), 0, 0));
                 topPanel.add(searchField, new GridBagConstraints(1, 0, GridBagConstraints.REMAINDER, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(1, 1, 6, 1), 0, 0));
-                
+
                 mainPanel.add(topPanel, BorderLayout.NORTH);
 
                 final JEditorPane window = new JEditorPane();
@@ -338,28 +339,28 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 final TimerTask transcriptTask = new TimerTask() {
                     public void run() {
                         ChatTranscript transcript = (ChatTranscript)get();
-                        
+
                         // reduce the size of our transcript to the last 5000Messages
                         // This will prevent JavaOutOfHeap Errors
                         ArrayList<HistoryMessage> toobig = (ArrayList<HistoryMessage>) transcript.getMessage(null);
-                        
+
                         // Get the Maximum size from settingsfile
                         int maxsize = SettingsManager.getLocalPreferences().getMaximumHistory();
                         if (toobig.size() > maxsize)
                         {
                             transcript = new ChatTranscript();
-                            
+
                             for(int i = toobig.size()-1; i>=toobig.size()-maxsize;--i)
                             {
                         	transcript.addHistoryMessage(toobig.get(i));
                             }
                         }
-                        
+
                         final List<HistoryMessage> list = transcript.getMessage(
                 		Res.getString("message.search.for.history").equals(searchField.getText())
                 			? null : searchField.getText());
 
-                        
+
                         final String personalNickname = SparkManager.getUserManager().getNickname();
                         Date lastPost = null;
                         String lastPerson = null;
@@ -388,8 +389,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
                             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
-                           
-                            
+
+
                             int diff = 0;
 			    if (DateUtils.getDaysDiff(lastPostTime, message
 				    .getDate().getTime()) != 0) {
@@ -404,7 +405,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                             if (diff != 0) {
                                 if (initialized) {
                                     builder.append("<tr><td><br></td></tr>");
-                                }                               
+                                }
                                 builder.append("<tr><td colspan=2><font size=4 color=gray><b><u>").append(notificationDateFormatter.format(message.getDate())).append("</u></b></font></td></tr>");
                                 lastPerson = null;
                                 initialized = true;
@@ -444,9 +445,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     }
                 };
 
-                searchField.addKeyListener(new KeyListener() {			
+                searchField.addKeyListener(new KeyListener() {
         			@Override
-        			public void keyTyped(KeyEvent e) {				
+        			public void keyTyped(KeyEvent e) {
         			}
         			@Override
         			public void keyReleased(KeyEvent e) {
@@ -457,7 +458,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         			}
         			@Override
         			public void keyPressed(KeyEvent e) {
-        				
+
         			}
         		});
                 searchField.addFocusListener(new FocusListener() {
@@ -471,9 +472,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                     	searchField.setText(Res.getString("message.search.for.history"));
                     }
                 });
-                
+
                 TaskEngine.getInstance().schedule(transcriptTask, 10);
-                
+
                 frame.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
                         window.setText("");
@@ -488,20 +489,20 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 });
             }
         };
-        
-        
+
+
 
         transcriptLoader.start();
     }
 
-    private void showStatusMessage(ContactItem item) 
+    private void showStatusMessage(ContactItem item)
     {
    	 Frame = new JDialog();
    	 Frame.setTitle(item.getDisplayName() + " - Status");
    	 JPanel pane = new JPanel();
    	 JTextArea textArea = new JTextArea(5, 30);
    	 JButton btn_close = new JButton(Res.getString("button.close"));
-   	 
+
    	 btn_close.addActionListener(new ActionListener()
 	    {
 	      public void actionPerformed(ActionEvent e)
@@ -512,23 +513,23 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
    	 textArea.setLineWrap(true);
    	 textArea.setWrapStyleWord(true);
-   	
+
    	 pane.add(new JScrollPane(textArea));
    	 Frame.setLayout(new BorderLayout());
    	 Frame.add(pane, BorderLayout.CENTER);
    	 Frame.add(btn_close, BorderLayout.SOUTH);
-   	 
+
    	 textArea.setEditable(false);
    	 textArea.setText(item.getStatus());
-   	
+
    	 Frame.setLocationRelativeTo(SparkManager.getMainWindow());
    	 Frame.setBounds(Frame.getX() - 175, Frame.getY() - 75, 350, 150);
    	 Frame.setSize(350, 150);
    	 Frame.setResizable(false);
    	 Frame.setVisible(true);
     }
-    
-    
+
+
     /**
      * Sort HistoryMessages by date.
      */
@@ -564,8 +565,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             if (!localPreferences.isChatHistoryEnabled()) {
                 return;
             }
-            chatHistoryButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE));
-            chatRoom.getToolBar().addChatRoomButton(chatHistoryButton);
+            chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
+            chatRoom.addChatRoomButton(chatHistoryButton);
             chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
             chatHistoryButton.addActionListener(this);
         }

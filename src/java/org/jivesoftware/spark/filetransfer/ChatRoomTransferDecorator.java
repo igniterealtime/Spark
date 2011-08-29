@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.FileDropListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.Component;
@@ -61,14 +62,14 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
         chatRoom.addClosingListener(this);
 
 
-        sendFileButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24));
+        sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
         sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
 
-        chatRoom.getToolBar().addChatRoomButton(sendFileButton);
+        chatRoom.addChatRoomButton(sendFileButton);
 
-        sendScreenShotButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PHOTO_IMAGE));
+        sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
         sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
-        chatRoom.getToolBar().addChatRoomButton(sendScreenShotButton);
+        chatRoom.addChatRoomButton(sendScreenShotButton);
 
         sendFileButton.addActionListener(this);
         sendScreenShotButton.addActionListener(this);

@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,7 +84,7 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 
 			// Add Emoticon button
 			final RolloverButton emoticonPicker;
-			
+
 			final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
 			final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
 			URL smileURL = emoticonManager.getEmoticonURL(smileEmoticon);
@@ -92,7 +92,7 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 
 			emoticonPicker = new RolloverButton(icon);
 
-			room.getEditorBar().add(emoticonPicker);
+			room.addEditorComponent(emoticonPicker);
 
 			emoticonPicker.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
@@ -127,7 +127,7 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 
 			room.addClosingListener(new ChatRoomClosingListener() {
 				public void closing() {
-					room.getEditorBar().remove(emoticonPicker);
+					room.removeEditorComponent(emoticonPicker);
 				}
 			});
 		}

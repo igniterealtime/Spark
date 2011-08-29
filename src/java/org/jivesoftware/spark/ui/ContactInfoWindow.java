@@ -183,28 +183,27 @@ public class ContactInfoWindow extends JPanel {
         Point listLocation = group.getList().getLocationOnScreen();
 
         int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
-
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        if ((int)screenSize.getWidth() - getPreferredSize().getWidth() >= x) {
-            int y = (int)listLocation.getY() + (int)point.getY();
-            y = y - 5;
-            setWindowLocation(x, y);
-            if (!window.isVisible()) {
-                window.setVisible(true);
-            }
-        }
-        else {
-            int y = (int)listLocation.getY() + (int)point.getY();
-            y = y - 5;
-            setWindowLocation((int)mainWindowLocation.getX() - (int)getPreferredSize().getWidth(), y);
-            if (!window.isVisible()) {
-                window.setVisible(true);
-            }
+        int y = (int) listLocation.getY() + (int) point.getY();
+        setWindowLocation(x, y);
+        if (!window.isVisible()) {
+            window.setVisible(true);
         }
     }
 
-    protected void setWindowLocation(int x, int y) {
-	window.setLocation(x, y);
+    public void setWindowLocation(int x, int y) {
+        Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int actualX = x;
+        int actualY = y - 5;
+        if ((int) screenSize.getWidth() - getPreferredSize().getWidth() < x) {
+            actualX = (int) mainWindowLocation.getX() - (int) getPreferredSize().getWidth();
+        }
+
+        // keep this away from bottom edge
+        if (actualY + getHeight() > screenSize.height - 64) {
+            actualY -= actualY + getHeight() - screenSize.height + 64;
+        }
+        window.setLocation(actualX, actualY);
     }
 
     public void setContactItem(ContactItem contactItem) {

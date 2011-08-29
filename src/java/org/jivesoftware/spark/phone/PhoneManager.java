@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -137,10 +137,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
                 public void finished() {
                     if (!actions.isEmpty()) {
-                        room.getToolBar().addChatRoomButton(dialButton);
-                        room.getToolBar().invalidate();
-                        room.getToolBar().validate();
-                        room.getToolBar().repaint();
+                        room.addChatRoomButton(dialButton, true);
                     }
                 }
             };

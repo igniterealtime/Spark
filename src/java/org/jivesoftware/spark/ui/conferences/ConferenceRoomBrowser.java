@@ -79,6 +79,7 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -740,7 +741,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 	    // Join Room
 	    try {
-		GroupChatRoom room = new GroupChatRoom(groupChat);
+		GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
 
 		groupChat.create(pref.getNickname());
 		chatManager.getChatContainer().addChatRoom(room);

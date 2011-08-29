@@ -443,7 +443,7 @@ public class SparkTabbedPane extends JPanel {
 	public Dimension getPreferredSize() {
 	    Dimension dim = super.getPreferredSize();
 
-	    if (closeEnabled && titleLabel.getText().length() < 6
+	    if (closeEnabled && titleLabel.getText() != null && titleLabel.getText().length() < 6
 		    && dim.getWidth() < 80) {
 		return new Dimension(80, dim.height);
 
