@@ -32,6 +32,7 @@ import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.PreferenceListener;
@@ -236,7 +237,7 @@ public class ContactListAssistantPlugin implements Plugin {
      * @param move         true if the ContactItem should be moved, otherwise false.
      */
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item, final boolean move) {
-        ContactItem newContact = new ContactItem(item.getAlias(), item.getNickname(), item.getJID());
+        ContactItem newContact = UIComponentRegistry.createContactItem(item.getAlias(), item.getNickname(), item.getJID());
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());

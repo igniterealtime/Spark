@@ -55,6 +55,7 @@ import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -103,13 +104,14 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 
-public final class ContactList extends JPanel implements ActionListener,
+public class ContactList extends JPanel implements ActionListener,
 	ContactGroupListener, Plugin, RosterListener, ConnectionListener {
 
     private static final long serialVersionUID = -4391111935248627078L;
@@ -170,8 +172,9 @@ public final class ContactList extends JPanel implements ActionListener,
     public ContactList() {
         // Load Local Preferences
         localPreferences = SettingsManager.getLocalPreferences();
-        
-        offlineGroup = new ContactGroup(Res.getString("group.offline"));
+
+        offlineGroup = UIComponentRegistry.createContactGroup(Res.getString("group.offline"));
+
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
         addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
@@ -276,6 +279,7 @@ public final class ContactList extends JPanel implements ActionListener,
 
         // Get command panel and add View Online/Offline, Add Contact
 //        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+
 //        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel(); 
 //
 //
@@ -488,12 +492,14 @@ public final class ContactList extends JPanel implements ActionListener,
                     // If we are reconnecting we have to check if we are on the
                     // dispatch thread
                     if (EventQueue.isDispatchThread()) {
-                        changeContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+
+                        changeContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                         contactGroup.addContactItem(changeContactItem);
                         changeContactItem.setAvailable(true);
                         changeContactItem.setPresence(presence);                        
                         changeContactItem.updateAvatarInSideIcon();
                         changeContactItem.showUserComingOnline();                       
+
                         //contactItem.updatePresenceIcon(contactItem.getPresence());
                         toggleGroupVisibility(contactGroup.getGroupName(), true);
                         //contactGroup.fireContactGroupUpdated();
@@ -523,7 +529,7 @@ public final class ContactList extends JPanel implements ActionListener,
                             @Override
                             public void run() {
 
-                                ContactItem changeContact = new ContactItem(entry.getName(), null,entry.getUser());
+                                ContactItem changeContact = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                                 staticContactGroup.addContactItem(changeContact);
                                 changeContact.setPresence(staticItemPrecense);
                                 changeContact.setAvailable(true);
@@ -549,7 +555,7 @@ public final class ContactList extends JPanel implements ActionListener,
                 // dispatch thread
                 if (EventQueue.isDispatchThread()) {
 
-                    contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                    contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                     ContactGroup unfiledGrp = getUnfiledGroup();
                     unfiledGrp.addContactItem(contactItem);
                     contactItem.setPresence(presence);
@@ -567,10 +573,9 @@ public final class ContactList extends JPanel implements ActionListener,
 
                         @Override
                         public void run() {
-                            contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                            contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                             ContactGroup unfiledGrp = getUnfiledGroup();
                             
-
                             contactItem.setPresence(staticItemPrecense);
                             contactItem.setAvailable(true);
                             unfiledGrp.addContactItem(contactItem);
@@ -607,7 +612,7 @@ public final class ContactList extends JPanel implements ActionListener,
         	if(group.getName() == null || group.getName() == ""){
         		for(RosterEntry entry : group.getEntries()){
         			
-        			ContactItem buildContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+				ContactItem buildContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                     moveToOffline(buildContactItem);
         		}
         	}else{
@@ -623,13 +628,13 @@ public final class ContactList extends JPanel implements ActionListener,
 	            	user = entry.getUser();
 	            	// in case of connection lost, the creation must be done in eventqueue
 	            	if(EventQueue.isDispatchThread()) {
-	            		contactItem = new ContactItem(entry.getName(), null, entry.getUser());
+				contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
 	            	}
 	            	else {
 	            		try {
 	            			EventQueue.invokeAndWait(new Runnable(){
 	            				public void run() {
-	            					contactItem = new ContactItem(name, null, user);
+							contactItem = UIComponentRegistry.createContactItem(name, null, user);
 	            				}
 	            			});
 	            		} catch(Exception ex) {
@@ -660,7 +665,7 @@ public final class ContactList extends JPanel implements ActionListener,
         if (EventQueue.isDispatchThread()) {
             // Add Unfiled Group
             for (RosterEntry entry : roster.getUnfiledEntries()) {
-                ContactItem moveToOfflineContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+                ContactItem moveToOfflineContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                 moveToOffline(moveToOfflineContactItem);
             }
         }
@@ -672,7 +677,7 @@ public final class ContactList extends JPanel implements ActionListener,
 				@Override
 				public void run() {
 		            for (RosterEntry entry : roster.getUnfiledEntries()) {
-		                ContactItem moveToOfflineContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+		                ContactItem moveToOfflineContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
 		                moveToOffline(moveToOfflineContactItem);
 		            }
 				}
@@ -709,7 +714,7 @@ public final class ContactList extends JPanel implements ActionListener,
      * @param entry the <code>RosterEntry</code> of the the user.
      */
     private void addUser(RosterEntry entry) {
-        ContactItem newContactItem = new ContactItem(entry.getName(), null, entry.getUser());
+        ContactItem newContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
 
         if (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from) {
             // Ignore, since the new user is pending to be added.
@@ -794,7 +799,7 @@ public final class ContactList extends JPanel implements ActionListener,
                                 ContactGroup contactGroup = addContactGroup(group.getName());
                                 contactGroup.setVisible(false);
                                 contactGroup = getContactGroup(group.getName());
-                                ContactItem contactItem = new ContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
+                                ContactItem contactItem = UIComponentRegistry.createContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
                                 contactGroup.addContactItem(contactItem);
                                 Presence presence = PresenceManager.getPresence(jid);
                                 contactItem.setPresence(presence);
@@ -810,7 +815,7 @@ public final class ContactList extends JPanel implements ActionListener,
                                 }
                                 // Check to see if this entry is new to a pre-existing group.
                                 if (item == null) {
-                                    item = new ContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
+                                    item = UIComponentRegistry.createContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
                                     Presence presence = PresenceManager.getPresence(jid);
                                     item.setPresence(presence);
                                     if (presence.isAvailable()) {
@@ -1057,7 +1062,7 @@ public final class ContactList extends JPanel implements ActionListener,
 
 
             if (newContactGroup == null) {
-                newContactGroup = new ContactGroup(group);
+		newContactGroup = UIComponentRegistry.createContactGroup(group);
 
                 String realGroupName = buf.toString();
                 if (realGroupName.endsWith("::")) {
@@ -1513,7 +1518,9 @@ public final class ContactList extends JPanel implements ActionListener,
         });
 
         // popup.add(inviteFirstAcceptor);
-        popup.show(group, e.getX(), e.getY());
+System.out.println("hello");
+//        popup.show(group, e.getX(), e.getY());
+
         activeGroup = group;
     }
 
@@ -1861,7 +1868,7 @@ public final class ContactList extends JPanel implements ActionListener,
                         final Roster roster = SparkManager.getConnection().getRoster();
                         RosterEntry entry = roster.getEntry(jid);
                         if (entry != null) {
-                            item = new ContactItem(entry.getName(), null, jid);
+                            item = UIComponentRegistry.createContactItem(entry.getName(), null, jid);
                             moveToOffline(item);
                             offlineGroup.fireContactGroupUpdated();
                         }
@@ -2522,14 +2529,14 @@ public final class ContactList extends JPanel implements ActionListener,
         if (unfiledGroup == null) {
             // Add Unfiled Group
         	if(EventQueue.isDispatchThread()) {
-        		unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+			unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
                 addContactGroup(unfiledGroup);
         	}
         	else {
         		try {
 	        		EventQueue.invokeAndWait(new Runnable(){
 	        			public void run() {
-	        				unfiledGroup = new ContactGroup(Res.getString("unfiled"));
+						unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
 	        	            addContactGroup(unfiledGroup);
 	        			}
 	        		});
@@ -2549,5 +2556,12 @@ public final class ContactList extends JPanel implements ActionListener,
             return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
         }
     };
+    public void showAddContact(String contact)
+    {
+	addContactMenu.doClick();
+    };
     
+    public ContactItem getActiveItem() {
+	return activeItem;
+    }
 }

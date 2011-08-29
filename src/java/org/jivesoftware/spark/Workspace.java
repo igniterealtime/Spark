@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,6 +63,7 @@ import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin;
 import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
@@ -91,7 +92,7 @@ public class Workspace extends JPanel implements PacketListener {
 	private static final long serialVersionUID = 7076407890063933765L;
 	private SparkTabbedPane workspacePane;
     private StatusBar statusBox;
-    
+
     private ContactList contactList;
     private ConferenceServices conferences;
     private GatewayPlugin gatewayPlugin;
@@ -144,35 +145,35 @@ public class Workspace extends JPanel implements PacketListener {
 	                    // Leave ChatRoom
 	                    container.leaveChatRoom(chatRoom);
 	                }
-	
+
 	                conferences.shutdown();
 	                gatewayPlugin.shutdown();
 	                bookmarkPlugin.shutdown();
 	                broadcastPlugin.shutdown();
 	            }
-	
+
 	            public void mainWindowActivated() {
-	
+
 	            }
-	
+
 	            public void mainWindowDeactivated() {
-	
+
 	            }
 	        });
-	   
+
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
-	    boolean top = Default.getBoolean(Default.TABS_PLACEMENT_TOP);    
-        workspacePane = new SparkTabbedPane(top ? JTabbedPane.TOP : JTabbedPane.BOTTOM);
+	    boolean top = Default.getBoolean(Default.TABS_PLACEMENT_TOP);
+        workspacePane = UIComponentRegistry.createWorkspaceTabPanel(top ? JTabbedPane.TOP : JTabbedPane.BOTTOM);
         workspacePane.setBorder(BorderFactory.createEmptyBorder());
         // Add Panels.
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
         cardPanel.setOpaque(false);
         cardPanel.add(WORKSPACE_PANE, this);
-        
-        statusBox = new StatusBar();
-        
+
+        statusBox = UIComponentRegistry.createStatusBar();
+
         // Build default workspace
         this.setLayout(new GridBagLayout());
         add(workspacePane, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -200,8 +201,8 @@ public class Workspace extends JPanel implements PacketListener {
         new Enterprise();
 
         // Initialize Contact List
-        contactList = new ContactList();
-        conferences = new ConferenceServices();
+        contactList = UIComponentRegistry.createContactList();
+        conferences = UIComponentRegistry.createConferenceServices();
 
         // Init contact list.
         contactList.initialize();
@@ -244,7 +245,7 @@ public class Workspace extends JPanel implements PacketListener {
         SparkManager.getSessionManager().getConnection().addPacketListener(workspacePresenceListener, new PacketTypeFilter(Presence.class));
 
         // Send Available status
-        final Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
+        final Presence presence = statusBox.getPresence();
         SparkManager.getSessionManager().changePresence(presence);
 
         // Until we have better plugin management, will init after presence updates.
@@ -268,6 +269,7 @@ public class Workspace extends JPanel implements PacketListener {
         TaskEngine.getInstance().schedule(new TimerTask() {
             public void run() {
                 final PluginManager pluginManager = PluginManager.getInstance();
+
                 SparkManager.getMainWindow().addMainWindowListener(pluginManager);
                 pluginManager.initializePlugins();
 

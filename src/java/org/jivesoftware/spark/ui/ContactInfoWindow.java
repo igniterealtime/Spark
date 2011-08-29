@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui;
 
 import java.awt.Color;
@@ -91,34 +91,39 @@ public class ContactInfoWindow extends JPanel {
         return singleton;
     }
 
-    private ContactInfoWindow() {
-   	 
+	protected ContactInfoWindow() {
+		this(true);
+	}
+
+    protected ContactInfoWindow(boolean populate) {
+
         setLayout(new GridBagLayout());
-       
+
         setBackground(Color.white);
-
-        add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-        add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
-        add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
-        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
-        add(titleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-        add(fullJIDLabel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
-
-
-        nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
-        statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        statusLabel.setForeground(Color.gray);
-        statusLabel.setLineWrap(true);
-        statusLabel.setWrapStyleWord(true);
-        statusLabel.setEditable(false);
-        statusLabel.setBorder(null);
-        fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        fullJIDLabel.setForeground(Color.gray);
-        titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
-        titleLabel.setForeground(Color.gray);
+        if (populate) {
+		add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+		add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
+		add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
+		add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
+		add(titleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+		add(fullJIDLabel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
 
-        fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
+		nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+		statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+		statusLabel.setForeground(Color.gray);
+		statusLabel.setLineWrap(true);
+		statusLabel.setWrapStyleWord(true);
+		statusLabel.setEditable(false);
+		statusLabel.setBorder(null);
+		fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+		fullJIDLabel.setForeground(Color.gray);
+		titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+		titleLabel.setForeground(Color.gray);
+
+
+		fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
+        }
 
         setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 
@@ -183,7 +188,7 @@ public class ContactInfoWindow extends JPanel {
         if ((int)screenSize.getWidth() - getPreferredSize().getWidth() >= x) {
             int y = (int)listLocation.getY() + (int)point.getY();
             y = y - 5;
-            window.setLocation(x, y);
+            setWindowLocation(x, y);
             if (!window.isVisible()) {
                 window.setVisible(true);
             }
@@ -191,11 +196,15 @@ public class ContactInfoWindow extends JPanel {
         else {
             int y = (int)listLocation.getY() + (int)point.getY();
             y = y - 5;
-            window.setLocation((int)mainWindowLocation.getX() - (int)getPreferredSize().getWidth(), y);
+            setWindowLocation((int)mainWindowLocation.getX() - (int)getPreferredSize().getWidth(), y);
             if (!window.isVisible()) {
                 window.setVisible(true);
             }
         }
+    }
+
+    protected void setWindowLocation(int x, int y) {
+	window.setLocation(x, y);
     }
 
     public void setContactItem(ContactItem contactItem) {
@@ -308,7 +317,23 @@ public class ContactInfoWindow extends JPanel {
         if (close) {
             window.setVisible(false);
             contactItem = null;
+            hideWindow();
         }
     }
+
+    protected void hideWindow() {
+        window.setVisible(false);
+        contactItem = null;
+    }
+
+    protected JWindow getWindow() {
+        return window;
+    }
+
+    protected static Object getLock() {
+        return LOCK;
+    }
+
+
 
 }

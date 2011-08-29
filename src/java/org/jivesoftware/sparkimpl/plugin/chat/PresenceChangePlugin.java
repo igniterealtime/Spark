@@ -212,4 +212,21 @@ public class PresenceChangePlugin implements Plugin {
     public void uninstall() {
         // Do nothing.
     }
+
+    public void addWatch(String user){
+	String bareAddress = StringUtils.parseBareAddress(user);
+	sparkContacts.add(bareAddress);
+    }
+
+    public void removeWatch(String user){
+	String bareAddress = StringUtils.parseBareAddress(user);
+	sparkContacts.remove(bareAddress);
+    }
+
+    public boolean getWatched(String user)
+    {
+	String bareAddress = StringUtils.parseBareAddress(user);
+	return sparkContacts.contains(bareAddress)
+;    }
+
 }

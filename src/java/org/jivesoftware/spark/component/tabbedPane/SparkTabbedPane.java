@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,12 +92,12 @@ public class SparkTabbedPane extends JPanel {
 
 	public SparkTabbedPane() {
 		this(JTabbedPane.TOP);
-	}	
-	
+	}
+
         /**
          * Returns the Contactlistpanel<br>
          * might be <code>null</code>, because the {@link ContactList} sets itself here
-         * 
+         *
          * @return
          */
         public JPanel getContactListPanel() {
@@ -108,11 +108,14 @@ public class SparkTabbedPane extends JPanel {
 		this.contactListPanel = contactListPanel;
 	}
 
+	public SparkTabbedPane(final Integer type) {
+		this(type.intValue());
+	}
 	public SparkTabbedPane(final int type) {
-	   	
-		pane = new JTabbedPane(type);
+
+		pane = buildTabbedPane(type);
 		pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
-		
+
 		setLayout(new BorderLayout());
 		add(pane);
 		ChangeListener changeListener = new ChangeListener() {
@@ -125,12 +128,12 @@ public class SparkTabbedPane extends JPanel {
 			}
 		};
 		pane.addChangeListener(changeListener);
-		
+
 		closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
 		closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_DARK_X_IMAGE);
 
 	}
-	
+
 	public SparkTab getTabContainingComponent(Component component) {
 		for (Component comp : pane.getComponents()) {
 			if (comp instanceof SparkTab) {
@@ -152,7 +155,7 @@ public class SparkTabbedPane extends JPanel {
 
 		TabPanel tabpanel = new TabPanel(sparktab, title, icon);
 		pane.addTab(null, null, sparktab, tip);
-		
+
 		pane.setTabComponentAt(pane.getTabCount() - 1, tabpanel);
 		fireTabAdded(sparktab, component, getTabPosition(sparktab));
 
@@ -220,18 +223,18 @@ public class SparkTabbedPane extends JPanel {
 			panel.setTitleColor((Color) UIManager.get("Chat.inactiveTabColor"));
 		    }
 		}
-		    
+
 	    } catch (ChatRoomNotFoundException e) {
 		//Do nothing
 	    }
-	   
+
 	}
-	
-	
-	
-	    
+
+
+
+
 	}
-	
+
 	public void setTitleBoldAt(int index, boolean bold) {
 		Component com = pane.getTabComponentAt(index);
 		if (com instanceof TabPanel) {
@@ -320,11 +323,11 @@ public class SparkTabbedPane extends JPanel {
 		listeners.remove(listener);
 	}
 
-	public void fireTabAdded(SparkTab tab, Component component, int index) {
+	protected void fireTabAdded(SparkTab tab, Component component, int index) {
 		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
-			((SparkTabbedPaneListener) list.next()).tabAdded(tab, component,
+			(list.next()).tabAdded(tab, component,
 					index);
 		}
 	}
@@ -340,25 +343,25 @@ public class SparkTabbedPane extends JPanel {
 		}
 	}
 
-	public void fireTabRemoved(SparkTab tab, Component component, int index) {
+	protected void fireTabRemoved(SparkTab tab, Component component, int index) {
 		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
-			((SparkTabbedPaneListener) list.next()).tabRemoved(tab, component,
+			(list.next()).tabRemoved(tab, component,
 					index);
 		}
 	}
 
-	public void fireTabSelected(SparkTab tab, Component component, int index) {
+	protected void fireTabSelected(SparkTab tab, Component component, int index) {
 		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
-			((SparkTabbedPaneListener) list.next()).tabSelected(tab, component,
+			(list.next()).tabSelected(tab, component,
 					index);
 		}
 	}
 
-	public void allTabsClosed() {
+	protected void allTabsClosed() {
 		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
 				.listIterator());
 		while (list.hasNext()) {
@@ -507,7 +510,7 @@ public class SparkTabbedPane extends JPanel {
 
 			@Override
 			public void dragEnter(DragSourceDragEvent event) {
-				event.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);				
+				event.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
 			}
 
 			@Override
@@ -518,7 +521,7 @@ public class SparkTabbedPane extends JPanel {
 
 			@Override
 			public void dropActionChanged(DragSourceDragEvent event) {}
-			
+
 		};
 
 	    final Transferable t = new Transferable() {
@@ -540,9 +543,9 @@ public class SparkTabbedPane extends JPanel {
 			public boolean isDataFlavorSupported(DataFlavor flavor) {
 				return flavor.getHumanPresentableName().equals(NAME);
 			}
-	    	
+
 	    };
-	    
+
 	    final DragGestureListener dgl = new DragGestureListener() {
 
 			@Override
@@ -556,7 +559,7 @@ public class SparkTabbedPane extends JPanel {
 			}
 
 	    };
-	    
+
 	    final DropTargetListener dtl = new DropTargetListener() {
 
 			@Override
@@ -576,14 +579,14 @@ public class SparkTabbedPane extends JPanel {
 
 			@Override
 			public void dropActionChanged(DropTargetDragEvent event) {}
-	    	
+
 	    };
-		
+
 	    new DropTarget(pane, DnDConstants.ACTION_COPY_OR_MOVE, dtl, true);
 	    new DragSource().createDefaultDragGestureRecognizer(pane, DnDConstants.ACTION_COPY_OR_MOVE, dgl);
 	}
-	
-	
+
+
 	private void moveTab(int prev, int next) {
 		if (next < 0 || prev == next) {
 			return;
@@ -604,7 +607,7 @@ public class SparkTabbedPane extends JPanel {
 
 		pane.setTabComponentAt(tgtindex, tab);
 	}
-	
+
 	private int getTargetTabIndex(Point point) {
 		Point tabPt = SwingUtilities.convertPoint(pane, point, pane);
 		boolean isTB = pane.getTabPlacement()==JTabbedPane.TOP || pane.getTabPlacement()==JTabbedPane.BOTTOM;
@@ -620,5 +623,12 @@ public class SparkTabbedPane extends JPanel {
 		return   r.contains(tabPt)?getTabCount():-1;
 	}
 
+	protected JTabbedPane buildTabbedPane(final int type) {
+		return new JTabbedPane(type);
+	}
+
+	protected JTabbedPane getTabbedPane() {
+	    return pane;
+	}
 
 }

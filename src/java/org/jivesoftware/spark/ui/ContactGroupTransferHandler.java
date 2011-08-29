@@ -19,6 +19,7 @@
  */ 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
@@ -26,6 +27,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.DefaultListModel;
@@ -204,7 +206,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item) {
-        ContactItem newContact = new ContactItem(item.getAlias(), item.getNickname(), item.getJID());
+        ContactItem newContact = UIComponentRegistry.createContactItem(Res.getString("group.empty"), null, null);
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());

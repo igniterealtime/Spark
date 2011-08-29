@@ -48,7 +48,7 @@ import javax.swing.UIManager;
  *
  * @author Derek DeMoro
  */
-public class CollapsibleTitlePane extends JPanel {
+public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
 	private static final long serialVersionUID = 2528585101535037612L;
 	private JLabel titleLabel;
     private JLabel iconLabel;
@@ -214,7 +214,8 @@ public class CollapsibleTitlePane extends JPanel {
         return subPane;
     }
 
-    protected void setSubPane(boolean subPane) {
+    @Override
+    public void setSubPane(boolean subPane) {
         this.subPane = subPane;
         setCollapsed(isCollapsed());
     }

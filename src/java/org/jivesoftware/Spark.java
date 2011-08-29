@@ -45,6 +45,7 @@ import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.ui.themes.ColorSettingManager;
 import org.jivesoftware.spark.ui.themes.ColorSettings;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -217,7 +218,7 @@ public final class Spark {
         try {
 	        EventQueue.invokeAndWait(new Runnable(){
 	        	public void run() {
-	        		final LoginDialog dialog = new LoginDialog();
+				final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
 	        		dialog.invoke(new JFrame());
 	        	}
 	        });

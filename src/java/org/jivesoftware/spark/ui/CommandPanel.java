@@ -33,18 +33,23 @@ public class CommandPanel extends JPanel {
 	private static final long serialVersionUID = -720715661649067658L;
 	//private final Image backgroundImage;
 
-    public CommandPanel() {
-        if (Spark.isWindows()) {
-            setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        }
-        else {
-            setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        }
+	public CommandPanel() {
+		this(true);
+	}
+
+    public CommandPanel(boolean doLayout) {
+	if (doLayout) {
+		if (Spark.isWindows()) {
+			setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		}
+		else {
+			setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		}
 
       setOpaque(false);
       
        // backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
-
+	}
      //   setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, new Color(197, 213, 230)));
     }
 

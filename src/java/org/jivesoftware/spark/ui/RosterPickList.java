@@ -29,6 +29,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.*;
@@ -75,7 +76,7 @@ public class RosterPickList extends JPanel {
         for (RosterEntry entry : roster.getEntries()) {
             Presence presence = PresenceManager.getPresence(entry.getUser());
             if (presence.isAvailable()) {
-                ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
+                ContactItem item = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                 item.setPresence(presence);
                 userList.add(item);
             }

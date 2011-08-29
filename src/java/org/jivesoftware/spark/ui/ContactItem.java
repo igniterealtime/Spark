@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui;
 
 import java.awt.Color;
@@ -61,12 +61,12 @@ public class ContactItem extends JPanel {
 
 	private static final long serialVersionUID = 1514044406550293152L;
 	private JLabel imageLabel;
-	private JLabel specialImageLabel;
     private JLabel displayNameLabel;
     private JLabel descriptionLabel;
     private String nickname;
     private String alias;
-    private String fullyQualifiedJID;
+    private final String fullyQualifiedJID;
+	private JLabel specialImageLabel;
     private Icon icon;
 
     private String status;
@@ -88,6 +88,10 @@ public class ContactItem extends JPanel {
 
     private boolean avatarsShowing;
 
+	public ContactItem(String alias, String nickname, String fullyQualifiedJID) {
+		this(alias, nickname, fullyQualifiedJID, true);
+	}
+
     /**
      * Creates a new instance of a contact.
      *
@@ -95,7 +99,7 @@ public class ContactItem extends JPanel {
      * @param nickname          the nickname of the contact.
      * @param fullyQualifiedJID the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
      */
-    public ContactItem(String alias, String nickname, String fullyQualifiedJID) {
+    public ContactItem(String alias, String nickname, String fullyQualifiedJID, boolean initUi) {
         setLayout(new GridBagLayout());
 
         // Set Default Font
@@ -109,41 +113,41 @@ public class ContactItem extends JPanel {
 
         contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
 
-        displayNameLabel = new JLabel();
-        descriptionLabel = new JLabel();
-        imageLabel = new JLabel();
-        specialImageLabel = new JLabel();
-        sideIcon = new JLabel();
-        if (avatarsShowing) {
-            sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
-            sideIcon.setMaximumSize(new Dimension(iconSize, iconSize));
-            sideIcon.setPreferredSize(new Dimension(iconSize, iconSize));
-        }
-
-        displayNameLabel.setHorizontalTextPosition(JLabel.LEFT);
-        displayNameLabel.setHorizontalAlignment(JLabel.LEFT);
-        //displayNameLabel.setText(nickname);
-
-
-        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
-        descriptionLabel.setForeground((Color)UIManager.get("ContactItemDescription.foreground"));
-        descriptionLabel.setHorizontalTextPosition(JLabel.LEFT);
-        descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
-
-
-        this.setOpaque(true);
-
-        add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 0), 0, 0));
-        add(displayNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-        add(descriptionLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
-        add(specialImageLabel, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-        add(sideIcon, new GridBagConstraints(4, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-
         this.alias = alias;
         this.nickname = nickname;
         this.fullyQualifiedJID = fullyQualifiedJID;
-        
-        setDisplayName();
+
+        if (initUi) {
+		displayNameLabel = new JLabel();
+		descriptionLabel = new JLabel();
+		imageLabel = new JLabel();
+		sideIcon = new JLabel();
+		if (avatarsShowing) {
+			sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
+			sideIcon.setMaximumSize(new Dimension(iconSize, iconSize));
+			sideIcon.setPreferredSize(new Dimension(iconSize, iconSize));
+		}
+
+		displayNameLabel.setHorizontalTextPosition(JLabel.LEFT);
+		displayNameLabel.setHorizontalAlignment(JLabel.LEFT);
+		//displayNameLabel.setText(nickname);
+
+
+		descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
+		descriptionLabel.setForeground((Color)UIManager.get("ContactItemDescription.foreground"));
+		descriptionLabel.setHorizontalTextPosition(JLabel.LEFT);
+		descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
+
+
+		this.setOpaque(true);
+
+		add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 0), 0, 0));
+		add(displayNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+		add(descriptionLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
+		add(sideIcon, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+
+		setDisplayName();
+        }
     }
 
 	/**
@@ -151,7 +155,7 @@ public class ContactItem extends JPanel {
 	 * If an alias has been set, this alias will be returned. If no alias has
 	 * been set, the nickname will be returned. If that hasn't been set either,
 	 * the JID will be returned.
-	 * 
+	 *
 	 * @return a name suitable to be displayed
 	 */
     public String getDisplayName() {
@@ -163,7 +167,7 @@ public class ContactItem extends JPanel {
 		} else {
 			displayName = getJID();
 		}
-		
+
 		if (displayName != null) {
 		return displayName;
 		} else {
@@ -174,13 +178,13 @@ public class ContactItem extends JPanel {
     /**
 	 * Returns the nickname of the contact. Note that for typical user-interface
 	 * related tasks, you probably should use {@link #getDisplayName()} instead.
-	 * 
+	 *
 	 * @return the contact nickname.
 	 */
 	public String getNickname() {
 		return nickname;
 	}
-	
+
     /**
      * Sets the nickname of the contact.
      *
@@ -196,15 +200,15 @@ public class ContactItem extends JPanel {
     /**
 	 * Returns the alias of the contact. Note that for typical user-interface
 	 * related tasks, you probably should use {@link #getDisplayName()} instead.
-	 * 
+	 *
 	 * @return the contact alias.
 	 */
 	public String getAlias() {
 		return alias;
 	}
-    
+
     /**
-     * Sets the alias of the contact. 
+     * Sets the alias of the contact.
      *
      * @param alias the contact alias.
      */
@@ -220,19 +224,19 @@ public class ContactItem extends JPanel {
 	 */
     private void setDisplayName() {
     	final String displayName = getDisplayName();
-    	
+
         int nickLength = displayName.length();
-        
+
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         int windowWidth = settings.getMainWindowWidth();
-        
+
         if (nickLength > windowWidth) {
             displayNameLabel.setText(StringUtils.unescapeNode(displayName).substring(0, windowWidth) + "...");
         } else {
             displayNameLabel.setText(StringUtils.unescapeNode(displayName));
-        }    	
+        }
     }
-    
+
     /**
      * Returns the fully qualified JID of the contact. (If available). Otherwise will
      * return the bare jid.
@@ -493,7 +497,7 @@ public class ContactItem extends JPanel {
 
         if (PresenceManager.isOnPhone(presence)) {
             statusIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
-            setIcon(statusIcon);  
+            setIcon(statusIcon);
         }
 
         // Always change nickname label to black.
@@ -537,7 +541,7 @@ public class ContactItem extends JPanel {
     }
 
     /**
-     * The icon should only be used to display avatars in contact list. if you want to add an icon 
+     * The icon should only be used to display avatars in contact list. if you want to add an icon
      * to indicated that this contact is a transport e.g you should use setSpecialIcon()
      *
      * @param icon the icon to use.
@@ -545,8 +549,8 @@ public class ContactItem extends JPanel {
     public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
     }
-    
-    
+
+
     /**
      * The icon to use to show extra information about this contact. An example would be to
      * represent that this user is from a 3rd party transport.
@@ -596,6 +600,14 @@ public class ContactItem extends JPanel {
         catch (MalformedURLException e) {
             Log.error(e);
         }
+    }
+
+    protected JLabel getDisplayNameLabel() {
+        return displayNameLabel;
+    }
+
+    protected String getFullyQualifiedJID() {
+        return fullyQualifiedJID;
     }
 
 

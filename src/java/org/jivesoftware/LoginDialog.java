@@ -112,7 +112,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
  * for login in registered users into the Spark Server.
  */
-public final class LoginDialog {
+public class LoginDialog {
     private JFrame loginDialog;
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
@@ -211,6 +211,12 @@ public final class LoginDialog {
    	 });
 
  
+    }
+
+    //This method can be overwritten by subclasses to provide additional validations
+    //(such as certificate download functionality when connecting)
+    protected boolean beforeLoginValidations() {
+	return true;
     }
 
     /**
@@ -727,7 +733,7 @@ public final class LoginDialog {
             final SwingWorker loginValidationThread = new SwingWorker() {
                 public Object construct() {
 
-                    boolean loginSuccessfull = login();
+                    boolean loginSuccessfull = beforeLoginValidations() && login();
                     if (loginSuccessfull) {
                         progressBar.setText(Res.getString("message.connecting.please.wait"));
 

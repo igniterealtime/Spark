@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.themes;
 
 import java.awt.Dimension;
@@ -111,15 +111,15 @@ public class ThemePanel extends JPanel {
      * Construct UI
      */
     public ThemePanel() {
-	
+
 	_themepanel = this;
-        _themepanel.setLayout(new GridBagLayout());  
-        
+        _themepanel.setLayout(new GridBagLayout());
+
         LookAndFeelInfo[]  ui = UIManager.getInstalledLookAndFeels();
-        
-       
+
+
         Vector<String> lafname = new Vector<String>();
-        
+
         for(int i=0;i<ui.length;i++)
         {
             _lookandfeelname.add(ui[i].getClassName());
@@ -168,7 +168,7 @@ public class ThemePanel extends JPanel {
 		"org.jvnet.substance.skin.SubstanceSaharaLookAndFeel",
 		//"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
 		};
-    	
+
 	for (String s : nonSystemLookAndFeels) {
 	    _lookandfeelname.add(s);
 	    s = s.replace("LookAndFeel", "");
@@ -182,22 +182,22 @@ public class ThemePanel extends JPanel {
 	    }
 	    lafname.add(s);
 	}
-	
-        
+
+
         _lookandfeel = new JComboBox(lafname);
-        
+
         if (Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)){
             _lookandfeel.setEnabled(false);
         }
         _lookandfeelLabel = new JLabel(Res.getString("lookandfeel.select"));
         _lookandfeelpreview = new JButton(Res.getString("lookandfeel.change.now"));
-        
+
         _lookandfeel.addActionListener(new ActionListener() {
-	    
+
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// Disable button for java.LaF's and for Synthetica 
-		
+		// Disable button for java.LaF's and for Synthetica
+
 		if (_lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length) {
 		    _lookandfeelpreview.setEnabled(false);
 		    _lookandfeelpreview
@@ -217,7 +217,7 @@ public class ThemePanel extends JPanel {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		
+
 		SwingWorker worker = new SwingWorker() {
 		    @Override
 		    public Object construct() {
@@ -232,9 +232,9 @@ public class ThemePanel extends JPanel {
 			} catch (Exception e) {
 			//WTF, i dont care
 			}
-		
+
 			SwingUtilities.updateComponentTreeUI(_themepanel);
-			SwingUtilities.updateComponentTreeUI(_themepanel.getParent());	
+			SwingUtilities.updateComponentTreeUI(_themepanel.getParent());
 			SwingUtilities.updateComponentTreeUI(SparkManager.getMainWindow());
 			SwingUtilities.updateComponentTreeUI(SparkManager.getChatManager().getChatContainer());
 			JFrame.setDefaultLookAndFeelDecorated(true);
@@ -245,25 +245,25 @@ public class ThemePanel extends JPanel {
 
 		    }
 		};
-		worker.start();		
+		worker.start();
 	    }
 	});
-        
-        
+
+
 	    _useTabsForTransports = new JCheckBox("");
 	    _useTabsForConference = new JCheckBox("");
-	
-	
+
+
         JLabel messageStyleLabel = new JLabel();
         messageStyleBox = new JComboBox();
 
-       
+
         emoticonspanel = new EmoticonPanel(10);
         emoticonscrollpane = new JScrollPane(emoticonspanel);
         emoticonscrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        
-        
+
+
         emoticonBox = new JComboBox();
 
         emoticonCheckBox = new JCheckBox();
@@ -284,16 +284,16 @@ public class ThemePanel extends JPanel {
 
         chatRoomFontField = new JTextField();
         chatRoomFontLabel = new JLabel();
-        
-        
+
+
 
 	String[] r = { Res.getString("checkbox.reconnect.panel.big"),
 		Res.getString("checkbox.reconnect.panel.small"),
 		Res.getString("checkbox.reconnect.panel.icon") };
 	_showReconnectBox = new JComboBox(r);
-	
+
 	_showReconnectBox.setSelectedIndex(pref.getReconnectPanelType());
-	
+
 	_showReconnectBox.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if(_showReconnectBox.getSelectedIndex()!=-1)
@@ -301,8 +301,8 @@ public class ThemePanel extends JPanel {
 	    }
 	});
 
-	
-        
+
+
         showVCards = new JCheckBox();
 
         // Set ResourceUtils
@@ -341,7 +341,7 @@ public class ThemePanel extends JPanel {
         add(_lookandfeel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
         add(_lookandfeelpreview, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        
+
         add(chatRoomFontLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -353,23 +353,23 @@ public class ThemePanel extends JPanel {
         add(_useTabsForTransports, new GridBagConstraints(0, 10, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(_useTabsForConference, new GridBagConstraints(0, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
-        
+
         JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnet.info"));
         add(reconnectionlabel, new GridBagConstraints(0, 12, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	add(_showReconnectBox, new GridBagConstraints(1, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
-        
-        // Activate live one.
-        
 
- 
+        // Activate live one.
+
+
+
         _useTabsForTransports.setSelected(pref.getShowTransportTab());
         _useTabsForTransports.addActionListener(new ActionListener() {
-	    
+
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		SettingsManager.getLocalPreferences().setShowTransportTab(_useTabsForTransports.isSelected());
-		
+
 	    }
 	});
 		_useTabsForConference.setSelected(pref.isShowConferenceTab());
@@ -381,8 +381,18 @@ public class ThemePanel extends JPanel {
 						_useTabsForConference.isSelected());
 
 			}
-		});        
-        
+		});
+
+        _useTabsForConference.setSelected(pref.isShowConferenceTab());
+        _useTabsForConference.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		SettingsManager.getLocalPreferences().setShowConferenceTab(_useTabsForConference.isSelected());
+
+	    }
+	});
+
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null)
         {
@@ -411,13 +421,13 @@ public class ThemePanel extends JPanel {
         showSelectedEmoticon();
 
         emoticonCheckBox.setSelected(pref.areEmoticonsEnabled());
-                
+
         _lookandfeel.setSelectedIndex(_lookandfeelname.indexOf(pref.getLookAndFeel()));
 
         showVCards.setSelected(pref.areVCardsVisible());
-        
+
         showAvatarsBox.setSelected(pref.areAvatarsVisible());
-       
+
 
         if (pref.getContactListIconSize() == 16) {
             avatarSizeField.setSelectedIndex(0);
@@ -443,7 +453,7 @@ public class ThemePanel extends JPanel {
             Log.error(e);
         }
     }
-    
+
     /**
      * Displays the active emoticon pack.
      */
@@ -456,7 +466,7 @@ public class ThemePanel extends JPanel {
 	    emoticonspanel = new EmoticonPanel(1);
 	    JLabel label = new JLabel(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 	    emoticonspanel.add(label);
-	}	
+	}
 	else if (i < 25) {
 	    emoticonspanel = new EmoticonPanel(i);
 	} else {
@@ -469,8 +479,8 @@ public class ThemePanel extends JPanel {
 	   emoticonspanel.add(label);
 	}
 
-	int rows= Math.min(((EmoticonPanel)emoticonspanel).getNumRows()*45, 300);	
-	emoticonscrollpane.setPreferredSize(new Dimension(300,rows));	
+	int rows= Math.min(((EmoticonPanel)emoticonspanel).getNumRows()*45, 300);
+	emoticonscrollpane.setPreferredSize(new Dimension(300,rows));
 	emoticonscrollpane.setViewportView(emoticonspanel);
 	this.revalidate();
     }
@@ -592,25 +602,25 @@ public class ThemePanel extends JPanel {
     public boolean areAvatarsVisible(){
         return showAvatarsBox.isSelected();
     }
-    
+
     public boolean areVCardsVisible(){
        return showVCards.isSelected();
    }
-    
+
     /**
      * Returns the LookAndFeel with package origin <br>
      * for example:
      * <code>com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</code>
-     * 
+     *
      * @return {@link String}
      */
     public String getLookAndFeel() {
 	return _lookandfeelname.get(_lookandfeel.getSelectedIndex());
     }
-    
+
     /**
      * Return 0,1,2
-     * 
+     *
      * @return
      */
     public int getReconnectPanelType() {
@@ -619,40 +629,52 @@ public class ThemePanel extends JPanel {
 
     /**
      * set 0,1,2
-     * 
+     *
      * @param reconnect
      */
     public void setShowReconnectPanel(int reconnect) {
 	_showReconnectBox.setSelectedIndex(reconnect);
     }
-    
+
     /**
      * Tries to set the Menubar String for JTatto LaFs, doesnt work on Substance
      * @param s, the class of the LookandFeel
      */
     private void setJTattooBar(String classname) {
-	
+
 	if (classname.contains("jtattoo")) {
 	    try {
 		Properties props = new Properties();
-		
+
 		String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? ""
 			: Default.getString(Default.MENUBAR_TEXT);
-		
+
 		props.put("logoString", menubar);
-		
+
 		Class<?> c = ClassLoader.getSystemClassLoader().loadClass(classname);
 		Method m = c.getMethod("setCurrentTheme", Properties.class);
-		
+
 		m.invoke(c.newInstance(), props);
 	    } catch (Exception e) {
 		Log.error("Error Setting JTattoo ", e);
 	    }
 	}
     }
-    
-    
-    
+
+    protected JLabel getLookandfeelLabel() {
+        return _lookandfeelLabel;
+    }
+
+    protected JComboBox getLookandfeel() {
+        return _lookandfeel;
+    }
+
+    protected JButton getLookandfeelpreview() {
+        return _lookandfeelpreview;
+    }
+
+
+
 }
 
 // Maybe Sometime well get a Synthetica License

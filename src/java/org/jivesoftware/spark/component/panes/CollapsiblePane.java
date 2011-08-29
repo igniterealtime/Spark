@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 public class CollapsiblePane extends JPanel {
 
 	private static final long serialVersionUID = -6770924580102536726L;
-	private CollapsibleTitlePane titlePane;
+	private BaseCollapsibleTitlePane titlePane;
     private JPanel mainPanel;
 
     private List<CollapsiblePaneListener> listeners = new ArrayList<CollapsiblePaneListener>();
@@ -88,7 +88,7 @@ public class CollapsiblePane extends JPanel {
     public void setTitle(String title) {
         titlePane.setTitle(title);
     }
-    
+
     public void setIcon(Icon icon) {
         titlePane.setIcon(icon);
     }
@@ -120,19 +120,19 @@ public class CollapsiblePane extends JPanel {
     private void firePaneExpanded() {
         final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator(listeners.listIterator());
         while (iter.hasNext()) {
-            ((CollapsiblePaneListener)iter.next()).paneExpanded();
+            (iter.next()).paneExpanded();
         }
     }
 
     private void firePaneCollapsed() {
         final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator(listeners.listIterator());
         while (iter.hasNext()) {
-            ((CollapsiblePaneListener)iter.next()).paneCollapsed();
+            (iter.next()).paneCollapsed();
         }
     }
 
 
-    public CollapsibleTitlePane getTitlePane() {
+    public BaseCollapsibleTitlePane getTitlePane() {
         return titlePane;
     }
 

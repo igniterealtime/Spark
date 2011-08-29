@@ -27,6 +27,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 
 /**
  * Holds the AppearanceTab and the ColorTab
@@ -44,7 +45,7 @@ public class MainThemePanel extends JPanel {
     {
 
 	setLayout(new VerticalFlowLayout());
-	_themepanel = new ThemePanel();
+	_themepanel = UIComponentRegistry.createThemePanel();
 	_colorpanel = new ColorPreferencePanel();
 	
 	JTabbedPane tabs = new JTabbedPane();

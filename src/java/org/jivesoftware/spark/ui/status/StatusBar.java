@@ -2,7 +2,7 @@
  * $RCSfile: ,v $
  * $Revision: $
  * $Date: $
- * 
+ *
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.status;
 
 import java.awt.Dimension;
@@ -75,6 +75,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 
 //TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel implements VCardListener {
@@ -86,26 +87,33 @@ public class StatusBar extends JPanel implements VCardListener {
     private JLabel descriptiveLabel = new JLabel();
     private JLabel nicknameLabel = new JLabel();
     private StatusPanel statusPanel = new StatusPanel();
-    
+
     private CommandPanel commandPanel ;
     private Image backgroundImage;
+    private Runnable changePresenceRunnable;
 
     private Presence currentPresence;
 
-    public StatusBar() {
+	public StatusBar() {
+		this(true);
+	}
 
-        setLayout(new GridBagLayout());
+    public StatusBar(boolean doLayout) {
+		commandPanel = UIComponentRegistry.createCommandPanel();
+	if (doLayout) {
+		setLayout(new GridBagLayout());
 
-        backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
+		backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
 
-        ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);
-        if (brandedImage != null && brandedImage.getIconWidth() > 1) {
-            final JLabel brandedLabel = new JLabel(brandedImage);
-            add(brandedLabel, new GridBagConstraints(3, 0, 1, 3, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-        }
-        commandPanel = new CommandPanel();
-       
+
+		ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);
+		if (brandedImage != null && brandedImage.getIconWidth() > 1) {
+			final JLabel brandedLabel = new JLabel(brandedImage);
+			add(brandedLabel, new GridBagConstraints(3, 0, 1, 3, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+		}
+
+
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2, 8, 2, 2), 0, 0));
 
         add(nicknameLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 12, 0, 0), 0, 0));
@@ -113,12 +121,12 @@ public class StatusBar extends JPanel implements VCardListener {
         add(commandPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
         nicknameLabel.setToolTipText(SparkManager.getConnection().getUser());
         nicknameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
-
+        setStatus(Res.getString("status.online"));
+	}
 
         buildStatusItemList();
- 
 
-        setStatus(Res.getString("status.online"));
+
         currentPresence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
 
 
@@ -126,7 +134,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
         SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
             public void presenceChanged(Presence presence) {
-        	presence.setStatus(StringUtils.modifyWildcards(presence.getStatus()));      	
+        	presence.setStatus(StringUtils.modifyWildcards(presence.getStatus()));
                 changeAvailability(presence);
             }
         });
@@ -150,7 +158,6 @@ public class StatusBar extends JPanel implements VCardListener {
             }
         });
 
-
         final TimerTask task = new SwingTimerTask() {
             public void doRun() {
                 SparkManager.getVCardManager().addVCardListener(SparkManager.getWorkspace().getStatusBar());
@@ -158,12 +165,18 @@ public class StatusBar extends JPanel implements VCardListener {
         };
 
         TaskEngine.getInstance().schedule(task, 3000);
+		changePresenceRunnable = new Runnable() {
+			@Override
+			public void run() {
+				updatePresence();
+			}
+		};
 
 
     }
 
     public void setAvatar(Icon icon) {
-        Image image = ImageCombiner.iconToImage(icon);       
+        Image image = ImageCombiner.iconToImage(icon);
         if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
             imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
         } else {
@@ -177,7 +190,7 @@ public class StatusBar extends JPanel implements VCardListener {
     {
 	return commandPanel;
     }
-    
+
     public void setNickname(String nickname) {
         nicknameLabel.setText(nickname);
     }
@@ -191,6 +204,14 @@ public class StatusBar extends JPanel implements VCardListener {
         statusPanel.setStatus(status);
     }
 
+	protected void updatePresence() {
+		setStatus(currentPresence.getStatus());
+		final Icon icon = PresenceManager.getIconFromPresence(currentPresence);
+		if (icon != null) {
+			statusPanel.setIcon(icon);
+		}
+	}
+
     public void showPopup(MouseEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
@@ -198,12 +219,12 @@ public class StatusBar extends JPanel implements VCardListener {
         if (custom == null) {
             custom = new ArrayList<CustomStatusItem>();
         }
-        
+
         // Sort Custom Messages
         Collections.sort( custom, new Comparator<CustomStatusItem>()
         {
         	public int compare( final CustomStatusItem a, final CustomStatusItem b )
-        	{        		
+        	{
         		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
         	}
         } );
@@ -266,7 +287,7 @@ public class StatusBar extends JPanel implements VCardListener {
                     String type = customItem.getType();
                     if (type.equals(statusItem.getText())) {
                         // Add Child Menu
-                        Action action = new AbstractAction() {                            
+                        Action action = new AbstractAction() {
 							private static final long serialVersionUID = -1264239704492879742L;
 
 							public void actionPerformed(ActionEvent actionEvent) {
@@ -312,7 +333,7 @@ public class StatusBar extends JPanel implements VCardListener {
             }
         }
 
-        
+
         //Add privacy menu
         if (PrivacyManager.getInstance().isPrivacyActive()) {
             JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
@@ -351,7 +372,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
             popup.add(privMenu);
         }
-        
+
         // Add change message
         final JMenuItem changeStatusMenu = new JMenuItem(Res.getString("menuitem.set.status.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
         popup.addSeparator();
@@ -376,8 +397,13 @@ public class StatusBar extends JPanel implements VCardListener {
         editMessagesAction.putValue(Action.NAME, Res.getString("menuitem.edit.status.message"));
         popup.add(editMessagesAction);
 
-        popup.show(statusPanel, 0, statusPanel.getHeight());
+        final JPanel panel = getStatusPanel();
+        popup.show(panel, 0, panel.getHeight());
     }
+
+	protected JPanel getStatusPanel() {
+		return statusPanel;
+	}
 
     public void changeAvailability(final Presence presence) {
         if (!presence.isAvailable()) {
@@ -393,18 +419,7 @@ public class StatusBar extends JPanel implements VCardListener {
             return;
         }
 
-        final Runnable changePresenceRunnable = new Runnable() {
-            public void run() {
-
-                currentPresence = presence;
-
-                setStatus(presence.getStatus());
-                Icon icon = PresenceManager.getIconFromPresence(presence);
-                if (icon != null) {
-                    statusPanel.setIcon(icon);
-                }
-            }
-        };
+        currentPresence = presence;
 
         SwingUtilities.invokeLater(changePresenceRunnable);
     }
@@ -429,22 +444,22 @@ public class StatusBar extends JPanel implements VCardListener {
     public Collection<StatusItem> getStatusList() {
         return statusList;
     }
-    
+
     public Collection<CustomStatusItem> getCustomStatusList()
     {
     	List<CustomStatusItem> custom = CustomMessages.load();
     	if (custom == null)
     		custom = new ArrayList<CustomStatusItem>();
-    	
+
     	// Sort Custom Messages
         Collections.sort( custom, new Comparator<CustomStatusItem>()
         {
         	public int compare( final CustomStatusItem a, final CustomStatusItem b )
-        	{        		
+        	{
         		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
         	}
         } );
-    	
+
     	return custom;
     }
 
@@ -476,14 +491,14 @@ public class StatusBar extends JPanel implements VCardListener {
         final Runnable loadVCard = new Runnable() {
             public void run() {
                 VCard vcard = SparkManager.getVCardManager().getVCard();
-                updatVCardInformation(vcard);
+                updateVCardInformation(vcard);
             }
         };
 
         TaskEngine.getInstance().submit(loadVCard);
     }
 
-    private void updatVCardInformation(final VCard vCard) {
+    protected void updateVCardInformation(final VCard vCard) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (vCard.getError() == null) {
@@ -644,6 +659,16 @@ public class StatusBar extends JPanel implements VCardListener {
 
 
     public void vcardChanged(VCard vcard) {
-        updatVCardInformation(vcard);
+        updateVCardInformation(vcard);
     }
+
+    protected Runnable getChangePresenceRunnable() {
+        return changePresenceRunnable;
+    }
+
+    protected Presence getCurrentPresence() {
+        return currentPresence;
+    }
+
+
 }

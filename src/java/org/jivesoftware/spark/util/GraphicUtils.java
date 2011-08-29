@@ -846,6 +846,38 @@ public final class GraphicUtils {
 	return bi;
     }
 
+	/**
+	 * Scale an image to fit in a square of the given size, preserving aspect
+	 * ratio.
+	 *
+	 * @param icon
+	 * @param newSize
+	 * @return
+	 */
+	public static ImageIcon fitToSquare(ImageIcon icon, int newSize) {
+		if (newSize <= 0) {
+			return icon;
+		}
+
+		final int oldWidth = icon.getIconWidth();
+		final int oldHeight = icon.getIconHeight();
+		int newWidth;
+		int newHeight;
+
+		if (oldHeight >= oldWidth) {
+			newWidth = (int) ((float) oldWidth * newSize / oldHeight);
+			newHeight = newSize;
+		} else {
+			newWidth = newSize;
+			newHeight = (int) ((float) oldHeight * newSize / oldWidth);
+		}
+
+		final Image img = icon.getImage().getScaledInstance(newWidth,
+				newHeight, Image.SCALE_SMOOTH);
+
+		return new ImageIcon(img);
+	}
+
     // public static void centerWindowOnScreen(Runnable runnable) {
     // // This method is never used
     //
