@@ -341,37 +341,86 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 con.disconnect();
             }
         }
-	restartApplication();
+        if (!restartApplicationWithScript()) {
+            restartApplicationWithJava();
+        }
     }
-
-    public boolean  restartApplication() {
-        String javaBin = System.getProperty("java.home") +
-			File.separatorChar+"bin"+File.separatorChar+"java";
+    
+    private File getLibDirectory() throws IOException {
         File jarFile;
         try{
             jarFile = new File(Startup.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         } catch(Exception e) {
             Log.error("Cannot get jar file containing the startup class", e);
-            return false;
+            return null;
         }
         if ( !jarFile.getName().endsWith(".jar") ) {
             Log.error("The startup class is not packaged in a jar file");
-		return false;
+            return null;
         }
-        String parent = jarFile.getParent();
-        File classpathDir = new File(parent);
-        String[] files = classpathDir.list();
+        File libDir = jarFile.getParentFile();
+        return libDir;
+    }
+    
+    private String getClasspath() throws IOException {
+        File libDir = getLibDirectory();
+        String libPath = libDir.getCanonicalPath();
+        String[] files = libDir.list();
         StringBuilder classpath = new StringBuilder();
         for (String file : files) {
-		if (file.endsWith(".jar")) {
-			classpath.append(parent + File.separatorChar + file + File.pathSeparatorChar );
-		}
+            if (file.endsWith(".jar")) {
+                classpath.append(libPath + File.separatorChar + file + File.pathSeparatorChar);
+            }
         }
-        String  toExec[] = new String[] { javaBin, "-cp", classpath.toString(), "org.jivesoftware.launcher.Startup"};
-        try{
-            Runtime.getRuntime().exec( toExec );
-        } catch(Exception e) {
-		Log.error("Cannot start the client", e);
+        return classpath.toString();
+    }
+
+    private String getCommandPath() throws IOException{        
+        return getLibDirectory().getParentFile().getCanonicalPath();
+    }
+    
+    public boolean restartApplicationWithScript() {
+        String command = null;
+        try {
+            if (Spark.isWindows()) {
+                String sparkExe = getCommandPath() + File.separator + Default.getString(Default.SHORT_NAME) + ".exe";
+                if (!new File(sparkExe).exists()) {
+                    Log.warning("Client EXE file does not exist");
+                    return false;
+                }
+                String starterExe = getCommandPath() + File.separator + "starter.exe";
+                if (!new File(starterExe).exists()) {
+                    Log.warning("Starter EXE file does not exist");
+                    return false;
+                }
+                command = starterExe + " \"" + sparkExe + "\""; 
+            } else if (Spark.isLinux()) {
+                command = getCommandPath() + File.separator + Default.getString(Default.SHORT_NAME);
+                if (!new File(command).exists()) {
+                    Log.warning("Client startup script does not exist");
+                    return false;
+                }
+            } else if (Spark.isMac()) {
+                command = "open -a " + Default.getString(Default.SHORT_NAME);
+            }
+
+            Runtime.getRuntime().exec(command);
+            System.exit(0);
+            return true;
+        } catch (IOException e) {
+            Log.error("Error trying to restart application with script", e);
+            return false;
+        }
+    }
+    
+    public boolean restartApplicationWithJava() {
+        String javaBin = System.getProperty("java.home") + File.separatorChar + "bin" + File.separatorChar + "java";
+        try {
+            String toExec[] = new String[] {
+                    javaBin, "-cp", getClasspath(), "org.jivesoftware.launcher.Startup"};
+            Runtime.getRuntime().exec(toExec);
+        } catch (Exception e) {
+            Log.error("Error trying to restart application with java", e);
             return false;
         }
         System.exit(0);
