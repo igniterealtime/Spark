@@ -333,7 +333,7 @@ public class GroupChatParticipantList extends JPanel implements
 		invitees.put(displayName, message);
 	}
 
-	private ImageIcon getImageIcon(String participantJID) {
+	protected ImageIcon getImageIcon(String participantJID) {
 		String displayName = StringUtils.parseResource(participantJID);
 		ImageIcon icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
 		icon.setDescription(displayName);
@@ -390,7 +390,7 @@ public class GroupChatParticipantList extends JPanel implements
      * @param p
      * @return String[] ,[0]=affiliation , [1]=role
      */
-    private String[] parseRoleFromPacket(Presence p) {
+    protected String[] parseRoleFromPacket(Presence p) {
 	String affi = "";
 	String role = "";
 
@@ -476,7 +476,7 @@ public class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-	private boolean exists(String nickname) {
+	protected boolean exists(String nickname) {
 		for (int i = 0; i < model.getSize(); i++) {
 			final JLabel userLabel = (JLabel) model.getElementAt(i);
 			if (userLabel.getText().equals(nickname)) {
@@ -486,7 +486,7 @@ public class GroupChatParticipantList extends JPanel implements
 		return false;
 	}
 
-	private String getSelectedUser() {
+	protected String getSelectedUser() {
 		JLabel label = (JLabel) participantsList.getSelectedValue();
 		if (label != null) {
 			return label.getText();
@@ -495,7 +495,7 @@ public class GroupChatParticipantList extends JPanel implements
 		return null;
 	}
 
-	private void startChat(ChatRoom groupChat, String groupJID) {
+	protected void startChat(ChatRoom groupChat, String groupJID) {
 		String userNickname = StringUtils.parseResource(groupJID);
 		String roomTitle = userNickname + " - "
 				+ StringUtils.parseName(groupChat.getRoomname());
@@ -542,7 +542,7 @@ public class GroupChatParticipantList extends JPanel implements
 		return this;
 	}
 
-	private void kickUser(String nickname) {
+	protected void kickUser(String nickname) {
 		try {
 			chat.kickParticipant(nickname, Res
 					.getString("message.you.have.been.kicked"));
@@ -552,7 +552,7 @@ public class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-	private void banUser(String displayName) {
+	protected void banUser(String displayName) {
 		try {
 			Occupant occupant = chat.getOccupant(userMap.get(displayName));
 			if (occupant != null) {
@@ -567,7 +567,7 @@ public class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-	private void unbanUser(String jid) {
+	protected void unbanUser(String jid) {
 		try {
 			chat.grantMembership(jid);
 		} catch (XMPPException e) {
@@ -576,7 +576,7 @@ public class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-	private void grantVoice(String nickname) {
+	protected void grantVoice(String nickname) {
 		try {
 			chat.grantVoice(nickname);
 		} catch (XMPPException e) {
@@ -585,7 +585,7 @@ public class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-	private void revokeVoice(String nickname) {
+	protected void revokeVoice(String nickname) {
 		try {
 			chat.revokeVoice(nickname);
 		} catch (XMPPException e) {
@@ -594,7 +594,7 @@ public class GroupChatParticipantList extends JPanel implements
 		}
 	}
 
-    private void grantModerator(String nickname) {
+	protected void grantModerator(String nickname) {
 	try {
 	    chat.grantModerator(nickname);
 	} catch (XMPPException e) {
@@ -603,7 +603,7 @@ public class GroupChatParticipantList extends JPanel implements
 	}
     }
 
-    private void revokeModerator(String nickname) {
+	protected void revokeModerator(String nickname) {
 	try {
 	    chat.revokeModerator(nickname);
 	} catch (XMPPException e) {
@@ -612,7 +612,7 @@ public class GroupChatParticipantList extends JPanel implements
 	}
     }
 
-    private void grantMember(String nickname) {
+	protected void grantMember(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = StringUtils.parseBareAddress(o.getJid());
@@ -623,7 +623,7 @@ public class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-    private void revokeMember(String nickname) {
+	protected void revokeMember(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = StringUtils.parseBareAddress(o.getJid());
@@ -634,7 +634,7 @@ public class GroupChatParticipantList extends JPanel implements
 	}
     }
 
-    private void grantAdmin(String nickname) {
+	protected void grantAdmin(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = StringUtils.parseBareAddress(o.getJid());
@@ -644,7 +644,7 @@ public class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-    private void revokeAdmin(String nickname) {
+	protected void revokeAdmin(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = StringUtils.parseBareAddress(o.getJid());
@@ -655,7 +655,7 @@ public class GroupChatParticipantList extends JPanel implements
 	}
     }
 
-    private void grantOwner(String nickname) {
+	protected void grantOwner(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = StringUtils.parseBareAddress(o.getJid());
@@ -665,7 +665,7 @@ public class GroupChatParticipantList extends JPanel implements
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-    private void revokeOwner(String nickname) {
+	protected void revokeOwner(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = StringUtils.parseBareAddress(o.getJid());
@@ -689,7 +689,7 @@ public class GroupChatParticipantList extends JPanel implements
 		return size;
 	}
 
-    private void checkPopup(MouseEvent evt) {
+	protected void checkPopup(MouseEvent evt) {
 	Point p = evt.getPoint();
 	final int index = participantsList.locationToIndex(p);
 
@@ -1315,5 +1315,59 @@ public class GroupChatParticipantList extends JPanel implements
 			return this;
 		}
 	}
+	
+    protected GroupChatRoom getGroupChatRoom() {
+        return groupChatRoom;
+    }
+
+    protected ImageTitlePanel getAgentInfoPanel() {
+        return agentInfoPanel;
+    }
+
+    protected MultiUserChat getChat() {
+        return chat;
+    }
+
+    protected Map<String, String> getUserMap() {
+        return userMap;
+    }
+
+    protected DefaultListModel getModel() {
+        return model;
+    }
+
+    protected JXList getParticipantsList() {
+
+        return participantsList;
+
+    }
+
+    protected PacketListener getListener() {
+        return listener;
+    }
+
+    protected Map<String, String> getInvitees() {
+        return invitees;
+    }
+
+    protected boolean isAllowNicknameChange() {
+        return allowNicknameChange;
+    }
+
+    protected DiscoverInfo getRoomInformation() {
+        return roomInformation;
+    }
+
+    protected List<JLabel> getUsers() {
+        return users;
+    }
+
+    protected HashMap<String, String> getUsersandRoles() {
+        return usersandRoles;
+    }
+
+    protected Comparator<JLabel> getLabelComp() {
+        return labelComp;
+    }
 }
 

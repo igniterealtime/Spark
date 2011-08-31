@@ -221,6 +221,11 @@ public class LoginDialog {
     protected boolean beforeLoginValidations() {
 	return true;
     }
+    
+    protected void afterLogin() {
+        // Does noting by default - but can be overwritten by subclasses to provide additional
+        // settings
+    }    
 
     /**
      * Define Login Panel implementation.
@@ -740,6 +745,7 @@ public class LoginDialog {
                     setLoginServer(getServerName());
                     boolean loginSuccessfull = beforeLoginValidations() && login();
                     if (loginSuccessfull) {
+                        afterLogin();
                         progressBar.setText(Res.getString("message.connecting.please.wait"));
 
                         // Startup Spark
@@ -1443,7 +1449,10 @@ public class LoginDialog {
     protected void setLoginServer(String loginServer) {
         this.loginServer = loginServer;
     }
-
+    
+    protected ArrayList<String> getUsernames() {
+        return _usernames;
+    }
 
 
 }
