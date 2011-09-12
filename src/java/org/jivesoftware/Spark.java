@@ -462,10 +462,12 @@ public final class Spark {
 
 	public static void setApplicationFont(Font f) {
 		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-		for (Object ui_property: defaults.keySet()) {
-			if (ui_property.toString().endsWith(".font")) {
-				UIManager.put(ui_property, f);
-			}
+		synchronized(defaults) {
+		    for (Object ui_property: defaults.keySet()) {
+		        if (ui_property.toString().endsWith(".font")) {
+		            UIManager.put(ui_property, f);
+		        }
+		    }
 		}
 	}
 

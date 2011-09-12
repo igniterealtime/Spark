@@ -200,6 +200,16 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             }
         }
     }
+    /**
+     * setText is a core JTextPane method that can beused to inject a different Document type
+     * for instance HTMLDocument (setText("<HTML></HTML>")
+     * We should keep the functionality - it is useful when we want to inject a different Document type
+     * instead of StyleDocument 
+     * @param content
+     */
+    public void setInitialContent(String content) {
+        super.setText(content);
+    } 
     
    
     /**

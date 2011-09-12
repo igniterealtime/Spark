@@ -367,7 +367,9 @@ public class EmoticonManager {
 	 */
 	public Emoticon getEmoticon(String packName, String key) {
 		final Collection<Emoticon> emoticons = emoticonMap.get(packName);
-
+		if (emoticons == null) {
+		    return null;
+		}
 		for (Emoticon emoticon : emoticons) {
 			for (String string : emoticon.getEquivalants()) {
 				if (key.equals(string)) {
