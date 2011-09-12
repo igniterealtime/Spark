@@ -426,14 +426,14 @@ public final class Spark {
      */
     public static String getUserConf() {
         if (isLinux()) {
-            return ".Spark";
+            return Default.getString(Default.USER_DIRECTORY_LINUX);
         }
         else if(isMac())
         {
-            return "Library/Application Support/Spark";
+            return Default.getString(Default.USER_DIRECTORY_MAC);
         }
         else
-        return "Spark";
+            return Default.getString(Default.USER_DIRECTORY_WINDOWS);
     }
 
 

@@ -84,6 +84,9 @@ public class Default {
     public static final String FILE_TRANSFER_MAXIMUM_SIZE = "FILE_TRANSFER_MAXIMUM_SIZE";
     public static final String TABS_PLACEMENT_TOP = "TABS_PLACEMENT_TOP";
     public static final String HIDE_PERSON_SEARCH_FIELD = "HIDE_PERSON_SEARCH_FIELD";
+    public static final String USER_DIRECTORY_WINDOWS = "USER_DIRECTORY_WINDOWS";
+    public static final String USER_DIRECTORY_LINUX = "USER_DIRECTORY_LINUX";
+    public static final String USER_DIRECTORY_MAC = "USER_DIRECTORY_MAC";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
