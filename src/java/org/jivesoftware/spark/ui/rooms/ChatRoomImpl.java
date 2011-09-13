@@ -281,7 +281,12 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public void sendMessage(Message message) {
         lastActivity = System.currentTimeMillis();
-
+        //Before sending message, let's add our full jid for full verification
+        //Set message attributes before insertMessage is called - this is useful when transcript window is extended
+        //more information will be available to be displayed for the chat area Document
+        message.setType(Message.Type.chat);
+        message.setTo(participantJID);
+        message.setFrom(SparkManager.getSessionManager().getJID());
         try {
             getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR, TRANSPARENT_COLOR);
             getChatInputEditor().selectAll();
@@ -293,11 +298,6 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
-
-        // Before sending message, let's add our full jid for full verification
-        message.setType(Message.Type.chat);
-        message.setTo(participantJID);
-        message.setFrom(SparkManager.getSessionManager().getJID());
 
         // Notify users that message has been sent
         fireMessageSent(message);
