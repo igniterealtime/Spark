@@ -303,7 +303,7 @@ public class ConferenceServices implements InvitationListener {
         }
     }
 
-    private BookmarkedConference getDefaultBookmark() {
+    protected BookmarkedConference getDefaultBookmark() {
         BookmarkedConference bookmarkedConference = null;
         try {
             Collection<BookmarkedConference> bookmarkedConfs = ConferenceUtils.retrieveBookmarkedConferences();
