@@ -92,7 +92,7 @@ public class PrivacyManager {
 
     
     private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
-        ServiceDiscoveryManager servDisc = new ServiceDiscoveryManager(conn);
+        ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
         DiscoverInfo info = null;
         try {
             info = servDisc.discoverInfo(conn.getHost());
