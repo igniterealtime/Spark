@@ -80,7 +80,7 @@ public class RolloverButton extends JButton {
     /**
      * Decorates the button with the approriate UI configurations.
      */
-    private void decorate() {
+    protected void decorate() {
         setBorderPainted(false);
         setOpaque(true);
 

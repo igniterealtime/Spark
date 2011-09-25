@@ -1366,17 +1366,9 @@ public class GroupChatRoom extends ChatRoom {
      */
     private void addRoomConfigureButtons(GroupChatRoom room) {
 
-	RolloverButton settings = new RolloverButton(
-		SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
-	settings.setToolTipText(Res.getString("title.configure.room"));
-
-	RolloverButton thema = new RolloverButton(
-		SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
-	thema.setToolTipText(Res.getString("menuitem.change.subject"));
-
-	RolloverButton register = new RolloverButton(
-		SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
-	register.setToolTipText(Res.getString("button.register").replace("&",""));
+    RolloverButton settings = UIComponentRegistry.getButtonFactory().createSettingsButton();
+    RolloverButton thema = UIComponentRegistry.getButtonFactory().createTemaButton();
+    RolloverButton register = UIComponentRegistry.getButtonFactory().createRegisterButton();
 
 	room.addControllerButton(settings);
     room.addControllerButton(thema);

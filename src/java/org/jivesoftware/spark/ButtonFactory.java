@@ -24,6 +24,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -75,4 +76,35 @@ public class ButtonFactory {
 	public JLabel createDivider() {
 		return new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
 	}
+	
+    public RolloverButton createSettingsButton() {
+        RolloverButton settings = new RolloverButton(SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+        settings.setToolTipText(Res.getString("title.configure.room"));
+        return settings;
+    }
+
+    public RolloverButton createTemaButton() {
+        RolloverButton thema = new RolloverButton(SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+        thema.setToolTipText(Res.getString("menuitem.change.subject"));
+        return thema;
+    }
+
+    public RolloverButton createRegisterButton() {
+        RolloverButton register = new RolloverButton(SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
+        register.setToolTipText(Res.getString("button.register").replace("&", ""));
+        return register;
+    }
+
+    public RolloverButton createAlwaysOnTop(boolean isAlwaysOnTopActive) {
+        RolloverButton alwaysOnTopItem = new RolloverButton();
+        if (isAlwaysOnTopActive) {
+            alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+        } else {
+            alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+        }
+
+        alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
+        return alwaysOnTopItem;
+
+    }
 }

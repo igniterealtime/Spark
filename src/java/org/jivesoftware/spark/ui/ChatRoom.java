@@ -366,17 +366,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
-
-
-	_isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
-	_alwaysOnTopItem = new RolloverButton();
-	if (_isAlwaysOnTopActive) {
-
-	    _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
-	} else {
-	    _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
-	}
-	_alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
+	    _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
+	    _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
+	    
         _alwaysOnTopItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
                 	if (!_isAlwaysOnTopActive)
