@@ -60,6 +60,9 @@ public class NotificationAlertUI extends JPanel {
     private boolean available;
 
     final JLabel topLabel = new JLabel();
+    
+    private static final int AVATAR_HEIGHT = 64;
+    private static final int AVATAR_WIDTH = 64;
 
     public NotificationAlertUI(String jid, boolean available, Presence presence) {
         setLayout(new GridBagLayout());
@@ -200,7 +203,7 @@ public class NotificationAlertUI extends JPanel {
         if (avatarBytes != null) {
             try {
                 ImageIcon avatarIcon = new ImageIcon(avatarBytes);
-                avatarLabel.setIcon(avatarIcon);
+                avatarLabel.setIcon(GraphicUtils.scale(avatarIcon, AVATAR_HEIGHT, AVATAR_WIDTH));
             }
             catch (Exception e) {
                 // no issue
