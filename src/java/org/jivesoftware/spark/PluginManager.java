@@ -259,6 +259,19 @@ public class PluginManager implements MainWindowListener {
 
         loadPluginResources();
     }
+    
+	private boolean hasDependencies(File pluginFile) {
+		SAXReader saxReader = new SAXReader();
+		Document pluginXML = null;
+		try {
+			pluginXML = saxReader.read(pluginFile);
+			List<? extends Node> dependencies = pluginXML.selectNodes("plugin/depends/plugin");
+			return dependencies != null && dependencies.size() > 0 ? true : false;
+		} catch (DocumentException e) {
+			Log.error(e);
+			return false;
+		}
+	}    
 
     /**
      * Loads public plugins.
@@ -763,35 +776,52 @@ public class PluginManager implements MainWindowListener {
         }
     }
 
-    private void loadPublicPlugins() {
-        // First, expand all plugins that have yet to be expanded.
-        expandNewPlugins();
+	private void loadPublicPlugins() {
+		// First, expand all plugins that have yet to be expanded.
+		expandNewPlugins();
 
+		File[] files = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return dir.isDirectory();
+			}
+		});
 
-        File[] files = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return dir.isDirectory();
-            }
-        });
+		// Do nothing if no jar or zip files were found
+		if (files == null) {
+			return;
+		}
+		//Make sure to load first the plugins with no dependencies
+		//If a plugin with dependencies gets loaded before one of dependencies, 
+		//class not found exception may be thrown if a dependency class is used during plugin creation
+		List<File> dependencies = new ArrayList<File>();
+		List<File> nodependencies = new ArrayList<File>();
+		for (File file : files) {
+			File pluginXML = new File(file, "plugin.xml");
+			if (pluginXML.exists()) {
+				if (hasDependencies(pluginXML)) {
+					dependencies.add(file);
+				} else {
+					nodependencies.add(file);
+				}
+			}
+		}
 
-        // Do nothing if no jar or zip files were found
-        if (files == null) {
-            return;
-        }
-
-        for (File file : files) {
-            File pluginXML = new File(file, "plugin.xml");
-            if (pluginXML.exists()) {
-                try {
-                    classLoader.addPlugin(file);
-                    loadPublicPlugin(file);
-                }
-                catch (Throwable e) {
-                    Log.error("Unable to load dirs", e);
-                }
-            }
-        }
-    }
+		try {
+			for (File file : nodependencies) {
+				loadPlugin(classLoader, file);
+			}
+			for(File file : dependencies) {
+				loadPlugin(classLoader, file);
+			}
+		} catch (Throwable e) {
+			Log.error("Unable to load dirs", e);
+		}
+	}
+	
+	private void loadPlugin(PluginClassLoader classLoader, File file) throws MalformedURLException {
+		classLoader.addPlugin(file);
+		loadPublicPlugin(file);
+	}
 
     /**
      * Adds and installs a new plugin into Spark.
