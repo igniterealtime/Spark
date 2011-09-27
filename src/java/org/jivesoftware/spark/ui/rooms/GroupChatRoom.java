@@ -756,6 +756,8 @@ public class GroupChatRoom extends ChatRoom {
 			ChatManager.ERROR_COLOR);
 	    }
 	}
+	//Scroll To bottom every time a message is received
+	scrollToBottom();
     }
 
     /**

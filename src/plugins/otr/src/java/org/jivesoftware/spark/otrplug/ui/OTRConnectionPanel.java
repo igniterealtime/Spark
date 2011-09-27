@@ -111,16 +111,8 @@ public class OTRConnectionPanel {
         _conPanel.add(_label, new GridBagConstraints(1, 0, 1, 1, 0.7, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 15, 0, 0), 0, 0));
         _conPanel.add(_retry, new GridBagConstraints(2, 0, 1, 1, 2.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
 
-        Style style = _doc.addStyle("OTRStyle", null);
-        StyleConstants.setComponent(style, _conPanel);
-
-        try {
-            _doc.insertString(_doc.getLength(), "ignored text", style);
-            _doc.insertString(_doc.getLength(), "\n", null);
-        } catch (BadLocationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        _transcriptWindow.addComponent(_conPanel);
+        _chatRoom.scrollToBottom();
     }
 
     /**
