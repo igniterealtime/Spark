@@ -372,7 +372,7 @@ public class ConferenceUtils {
      */
     public static boolean isPasswordRequired(String roomJID) {
         // Check to see if the room is password protected
-        ServiceDiscoveryManager discover = new ServiceDiscoveryManager(SparkManager.getConnection());
+    	ServiceDiscoveryManager discover = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
 
         try {
