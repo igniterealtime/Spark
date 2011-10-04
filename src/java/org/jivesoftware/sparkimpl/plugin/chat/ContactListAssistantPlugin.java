@@ -81,6 +81,9 @@ public class ContactListAssistantPlugin implements Plugin {
                         if (group.isUnfiledGroup() || group.isOfflineGroup()) {
                             continue;
                         }
+                        if (isContactItemInGroup(contactItems, group)) {
+                        	continue;
+                        }
                         final Action moveAction = new AbstractAction() {
 			    private static final long serialVersionUID = 6542011870221162331L;
 
@@ -172,6 +175,17 @@ public class ContactListAssistantPlugin implements Plugin {
             }
         });
     }
+    
+	private boolean isContactItemInGroup(Collection<ContactItem> contactItems, ContactGroup group) {
+		boolean contactInGroup = false;
+		for (ContactItem ci : contactItems) {
+			if (group.getContactItemByJID(ci.getJID(), true) != null) {
+				contactInGroup = true;
+				break;
+			}
+		}
+		return contactInGroup;
+	}
 
     /**
      * Moves a collection of <code>ContactItem</code>s to the specified group.
@@ -181,7 +195,12 @@ public class ContactListAssistantPlugin implements Plugin {
      */
     private void moveItems(Collection<ContactItem> contactItems, String groupName) {
         final ContactGroup contactGroup = getContactGroup(groupName);
+        ContactGroup oldGroup = null;
         for (ContactItem contactItem : contactItems) {
+        	oldGroup = getContactGroup(contactItem.getGroupName());
+        	if (oldGroup.isSharedGroup()) {
+        		continue;
+        	}
             addContactItem(contactGroup, contactItem, true);
         }
     }
