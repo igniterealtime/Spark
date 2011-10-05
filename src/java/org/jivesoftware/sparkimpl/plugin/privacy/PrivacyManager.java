@@ -34,6 +34,7 @@ import org.jivesoftware.smack.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverInfo.Feature;
@@ -95,7 +96,8 @@ public class PrivacyManager {
         ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
         DiscoverInfo info = null;
         try {
-            info = servDisc.discoverInfo(conn.getHost());
+        	String xmppHost = DNSUtil.resolveXMPPDomain(conn.getServiceName()).getHost();
+            info = servDisc.discoverInfo(xmppHost);
         } catch (XMPPException e) {
             // We could not query the server
             return false;
