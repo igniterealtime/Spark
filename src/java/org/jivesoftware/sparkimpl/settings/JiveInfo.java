@@ -27,6 +27,10 @@ public class JiveInfo {
     private JiveInfo() {
 
     }
+    
+    public static String getName() {
+    	return Default.getString(Default.APPLICATION_NAME);
+    }
 
     public static String getVersion() {
         return Default.getString(Default.APPLICATION_VERSION);

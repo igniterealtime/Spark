@@ -61,7 +61,7 @@ public class JabberVersion implements Plugin {
                 if (iq instanceof Version && iq.getType() == IQ.Type.GET) {
                     // Send Version
                     Version version = new Version();
-                    version.setName("Spark IM Client");
+                    version.setName(JiveInfo.getName());
 
                     version.setOs(JiveInfo.getOS());
                     version.setVersion(JiveInfo.getVersion());
