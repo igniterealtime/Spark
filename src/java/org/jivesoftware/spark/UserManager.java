@@ -101,6 +101,27 @@ public class UserManager {
 
         return username;
     }
+    
+    public String getNickname(String fullJID) {
+    	String vcardNickname = null;
+        VCard vCard = SparkManager.getVCardManager().getVCard(fullJID);
+        if (vCard != null && vCard.getError() == null) {
+            String firstName = vCard.getFirstName();
+            String lastName = vCard.getLastName();
+            String nickname = vCard.getNickName();
+            if (ModelUtil.hasLength(nickname)) {
+                vcardNickname = nickname;
+            }
+            else if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
+                vcardNickname = firstName + " " + lastName;
+            }
+            else if (ModelUtil.hasLength(firstName)) {
+                vcardNickname = firstName;
+            }
+        }
+        
+        return vcardNickname;
+    }
 
 
     /**

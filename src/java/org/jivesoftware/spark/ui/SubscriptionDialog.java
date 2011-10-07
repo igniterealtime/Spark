@@ -188,9 +188,11 @@ public class SubscriptionDialog {
 
         // Add Message Label
         mainPanel.add(messageLabel, new GridBagConstraints(0, 0, 6, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-
-
-        String username = StringUtils.parseName(UserManager.unescapeJID(jid));
+        
+        UserManager userManager = SparkManager.getUserManager();
+        
+        String username = userManager.getNickname(userManager.getFullJID(jid));
+        username = username == null ? StringUtils.parseName(UserManager.unescapeJID(jid)) : username;
         usernameLabelValue.setText(UserManager.unescapeJID(jid));
         nicknameField.setText(username);
 

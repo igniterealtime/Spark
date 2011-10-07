@@ -231,21 +231,7 @@ public class RosterDialog implements ActionListener {
                         fullJID = fullJID + "@" + SparkManager.getConnection().getServiceName();
                     }
 
-                    VCard vCard = SparkManager.getVCardManager().getVCard(fullJID);
-                    if (vCard != null && vCard.getError() == null) {
-                        String firstName = vCard.getFirstName();
-                        String lastName = vCard.getLastName();
-                        String nickname = vCard.getNickName();
-                        if (ModelUtil.hasLength(nickname)) {
-                            vcardNickname = nickname;
-                        }
-                        else if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                            vcardNickname = firstName + " " + lastName;
-                        }
-                        else if (ModelUtil.hasLength(firstName)) {
-                            vcardNickname = firstName;
-                        }
-                    }
+                    vcardNickname = SparkManager.getUserManager().getNickname(fullJID);
                 }
 
                 String nickname = nicknameField.getText();
