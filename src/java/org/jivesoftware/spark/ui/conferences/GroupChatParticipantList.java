@@ -501,9 +501,10 @@ public class GroupChatParticipantList extends JPanel implements
 		String jid = StringUtils.parseBareAddress(fullJid);
 		String nicknameOfUser = SparkManager.getUserManager().getNickname(jid);
 		nicknameOfUser = nicknameOfUser == null ? StringUtils.parseName(jid) : nicknameOfUser;
-		String nickname = groupChat.getNickname();
+		String currentJid = SparkManager.getSessionManager().getBareAddress();
 
-		if (nicknameOfUser.equals(nickname)) {
+		//you cannot chat with yourself
+		if (jid.equals(currentJid)) {
 			return;
 		}
 
