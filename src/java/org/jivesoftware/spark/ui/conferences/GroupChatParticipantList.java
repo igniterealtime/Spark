@@ -82,6 +82,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -495,12 +496,11 @@ public class GroupChatParticipantList extends JPanel implements
 		return null;
 	}
 
-	protected void startChat(ChatRoom groupChat, String groupJID) {
-		String userNickname = StringUtils.parseResource(groupJID);
-		String roomTitle = userNickname + " - "
-				+ StringUtils.parseName(groupChat.getRoomname());
-
-		String nicknameOfUser = StringUtils.parseResource(groupJID);
+	protected void startChat(GroupChatRoom groupChat, String groupJID) {		
+		String fullJid = groupChat.getMultiUserChat().getOccupant(groupJID).getJid();
+		String jid = StringUtils.parseBareAddress(fullJid);
+		String nicknameOfUser = SparkManager.getUserManager().getNickname(jid);
+		nicknameOfUser = nicknameOfUser == null ? StringUtils.parseName(jid) : nicknameOfUser;
 		String nickname = groupChat.getNickname();
 
 		if (nicknameOfUser.equals(nickname)) {
@@ -509,12 +509,12 @@ public class GroupChatParticipantList extends JPanel implements
 
 		ChatRoom chatRoom;
 		try {
-			chatRoom = chatManager.getChatContainer().getChatRoom(groupJID);
+			chatRoom = chatManager.getChatContainer().getChatRoom(jid);
 		} catch (ChatRoomNotFoundException e) {
 			Log.debug("Could not find chat room - " + groupJID);
 
 			// Create new room
-			chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, roomTitle);
+			chatRoom = UIComponentRegistry.createChatRoom(jid, nicknameOfUser, nicknameOfUser);
 			chatManager.getChatContainer().addChatRoom(chatRoom);
 		}
 
