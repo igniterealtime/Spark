@@ -59,10 +59,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
@@ -306,11 +302,7 @@ public class SparkTransferManager {
         }
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
-        transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);
-        
-        // The image must first be wrapped in a style
-        Style style = doc.addStyle("StyleName", null);
+        transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);        
 
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer();
         receivingMessageUI.acceptFileTransfer(request);
@@ -320,17 +312,8 @@ public class SparkTransferManager {
                 receivingMessageUI.cancelTransfer();
             }
         });
-
-        StyleConstants.setComponent(style, receivingMessageUI);
-
-        // Insert the image at the end of the text
-        try {
-            doc.insertString(doc.getLength(), "ignored text", style);
-            doc.insertString(doc.getLength(), "\n", null);
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
+        
+        transcriptWindow.addComponent(receivingMessageUI);
 
         chatRoom.increaseUnreadMessageCount();
 
@@ -606,10 +589,6 @@ public class SparkTransferManager {
 
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        StyledDocument doc = (StyledDocument)transcriptWindow.getDocument();
-
-        // The image must first be wrapped in a style
-        Style style = doc.addStyle("StyleName", null);
 
         SendFileTransfer sendingUI = new SendFileTransfer();
         try {
@@ -651,16 +630,8 @@ public class SparkTransferManager {
         catch (NullPointerException e) {
             Log.error(e);
         }
-        StyleConstants.setComponent(style, sendingUI);
 
-        // Insert the image at the end of the text
-        try {
-            doc.insertString(doc.getLength(), "ignored text", style);
-            doc.insertString(doc.getLength(), "\n", null);
-        }
-        catch (BadLocationException e) {
-            Log.error(e);
-        }
+        transcriptWindow.addComponent(sendingUI);
 
         chatRoom.scrollToBottom();
         return chatRoom;
