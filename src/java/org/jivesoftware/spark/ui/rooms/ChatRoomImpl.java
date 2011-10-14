@@ -218,7 +218,11 @@ public class ChatRoomImpl extends ChatRoom {
         // Send a cancel notification event on closing if listening.
         if (!sendNotification) {
             // send cancel
-            SparkManager.getMessageEventManager().sendCancelledNotification(getParticipantJID(), threadID);
+        	try {
+        		SparkManager.getMessageEventManager().sendCancelledNotification(getParticipantJID(), threadID);
+        	} catch (Exception e) {
+        		Log.error("Cancel notification cannot be sent ", e);
+        	}
 
             sendNotification = true;
         }
