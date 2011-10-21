@@ -1637,8 +1637,16 @@ public class ContactList extends JPanel implements ActionListener,
 			private static final long serialVersionUID = -4884230635430933060L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), item.getJID());
+	            try {
+					String client = "";
+					if (item.getPresence().getType() != Presence.Type.unavailable) {
+						client = item.getPresence().getFrom();
+						if ((client != null) && (client.lastIndexOf("/") != -1)) {
+							client = client.substring(client.lastIndexOf("/"));
+						} else client = "/";
+					}
+	
+	                LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), item.getJID()+client);
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
@@ -1653,7 +1661,7 @@ public class ContactList extends JPanel implements ActionListener,
         lastActivityAction.putValue(Action.NAME, Res.getString("menuitem.view.last.activity"));
         lastActivityAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_STOPWATCH));
 
-        if (contactGroup == offlineGroup) {
+        if (contactGroup == offlineGroup || item.getPresence().isAway() || (item.getPresence().getType() == Presence.Type.unavailable) || (item.getPresence().getType() == null)) {
             popup.add(lastActivityAction);
         }
 

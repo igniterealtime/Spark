@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spark.ui;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,12 +44,18 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.packet.LastActivity;
+import org.jivesoftware.smackx.LastActivityManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
@@ -221,6 +228,44 @@ public class ContactInfoWindow extends JPanel {
             else {
                 status = Res.getString("online");
             }
+        }
+        if (status.equals(Res.getString("offline")) || contactItem.getPresence().isAway()) {
+        	//If user is offline or away, try to see last activity
+	        try {
+				String client = "";
+				if (!status.equals(Res.getString("offline"))) {
+					//If user is away (not offline), last activity request is sent to client
+					client = contactItem.getPresence().getFrom();
+					if ((client != null) && (client.lastIndexOf("/") != -1)) {
+						client = client.substring(client.lastIndexOf("/"));
+					} else client = "/";
+				}
+	
+	            LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), contactItem.getJID()+client);
+	
+	            long idleTime = (activity.getIdleTime() * 1000);
+	
+	            if (idleTime > 0) {
+	                if (status.equals(Res.getString("offline"))) {
+		                SimpleDateFormat format = new SimpleDateFormat("M/d/yy");
+		                Date l = new Date();
+		                String curDay = format.format(l);
+		                l.setTime(l.getTime() - idleTime);
+		                //If idleTime is within today show the time, otherwise, show the day, date, and time
+		                if (curDay.equals(format.format(l))) {
+		                    format = new SimpleDateFormat("h:mm a");
+		                } else {
+		                    format = new SimpleDateFormat("EEE M/d/yy h:mm a");
+		                }
+	                	status += (" since " + format.format(l));
+	                } else if (contactItem.getPresence().isAway()) {
+	                    status += "\n";
+	                    String time = ModelUtil.getTimeFromLong(idleTime);
+	                    status += Res.getString("message.idle.for", time);
+	                }
+	            }
+	        } catch (Exception e1) {
+	        }
         }
         statusLabel.setText(status);
 
