@@ -954,19 +954,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * Adds an internal popup listesner.
      */
     private void addPopupWindow() {
-        final Timer timer = new Timer(500, new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                canShowPopup = true;
-            }
-        });
-
         contactItemList.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent mouseEvent) {
-                timer.start();
+            public void mouseEntered(MouseEvent mouseEvent) {               
+            	canShowPopup = true;
             }
 
-            public void mouseExited(MouseEvent mouseEvent) {
-                timer.stop();
+            public void mouseExited(MouseEvent mouseEvent) {               
                 canShowPopup = false;
                 UIComponentRegistry.getContactInfoWindow().dispose();
             }
