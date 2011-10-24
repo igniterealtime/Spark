@@ -77,7 +77,6 @@ public class SparkTabbedPane extends JPanel {
 	private Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;
 	private int dragTabIndex = -1;
-	private JPanel contactListPanel;
 
 	/**
 	 * The default Hand cursor.
@@ -92,20 +91,6 @@ public class SparkTabbedPane extends JPanel {
 
 	public SparkTabbedPane() {
 		this(JTabbedPane.TOP);
-	}
-
-        /**
-         * Returns the Contactlistpanel<br>
-         * might be <code>null</code>, because the {@link ContactList} sets itself here
-         *
-         * @return
-         */
-        public JPanel getContactListPanel() {
-            return contactListPanel;
-        }
-
-	public void setContactListPanel(JPanel contactListPanel) {
-		this.contactListPanel = contactListPanel;
 	}
 
 	public SparkTabbedPane(final Integer type) {

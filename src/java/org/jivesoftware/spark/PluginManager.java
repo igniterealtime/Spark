@@ -668,17 +668,6 @@ public class PluginManager implements MainWindowListener {
 			              long end = System.currentTimeMillis();
 			              Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
 			          }
-			          //We need to wait for all plugins to be initialized to determine if we need to display tabs or not
-			          //because plugins also can add tabs (not spark only: transport or conference tab)
-			          //When there is no tab added by plugins or spark (transport or conference tab) we will
-			          //clean the workspace and display the contact list without tabs
-			          SparkTabbedPane workspacePane = SparkManager.getWorkspace().getWorkspacePane();
-			          JPanel contactListPanel = workspacePane.getContactListPanel();
-			          int tabNumber = workspacePane.getTabCount();
-			          if (tabNumber == 1) {
-			        	  workspacePane.removeAll();
-			        	  workspacePane.add(contactListPanel);
-			          }
 			      }
 			  });
 		}
