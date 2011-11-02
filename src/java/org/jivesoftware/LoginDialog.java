@@ -219,7 +219,7 @@ public class LoginDialog {
     //This method can be overwritten by subclasses to provide additional validations
     //(such as certificate download functionality when connecting)
     protected boolean beforeLoginValidations() {
-	return true;
+    	return true;
     }
     
     protected void afterLogin() {
@@ -227,6 +227,75 @@ public class LoginDialog {
         // settings
     }    
 
+    protected ConnectionConfiguration retrieveConnectionConfiguration() {
+        int port = localPref.getXmppPort();
+
+        int checkForPort = loginServer.indexOf(":");
+        if (checkForPort != -1) {
+            String portString = loginServer.substring(checkForPort + 1);
+            if (ModelUtil.hasLength(portString)) {
+                // Set new port.
+                port = Integer.valueOf(portString);
+            }
+        }
+
+        boolean useSSL = localPref.isSSL();
+        boolean hostPortConfigured = localPref.isHostAndPortConfigured();
+
+        ConnectionConfiguration config = null;
+
+        if (useSSL) {
+            if (!hostPortConfigured) {
+                config = new ConnectionConfiguration(loginServer, 5223);
+                config.setSocketFactory(new DummySSLSocketFactory());
+            }
+            else {
+                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
+                config.setSocketFactory(new DummySSLSocketFactory());
+            }
+        }
+        else {
+            if (!hostPortConfigured) {
+                config = new ConnectionConfiguration(loginServer);
+            }
+            else {
+                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
+            }
+
+
+        }
+        config.setReconnectionAllowed(true);
+        config.setRosterLoadedAtLogin(true);
+        config.setSendPresence(false);
+
+        if (localPref.isPKIEnabled()) {
+            SASLAuthentication.supportSASLMechanism("EXTERNAL");
+            config.setKeystoreType(localPref.getPKIStore());
+            if(localPref.getPKIStore().equals("PKCS11")) {
+                config.setPKCS11Library(localPref.getPKCS11Library());
+            }
+            else if(localPref.getPKIStore().equals("JKS")) {
+                config.setKeystoreType("JKS");
+                config.setKeystorePath(localPref.getJKSPath());
+
+            }
+            else if(localPref.getPKIStore().equals("X509")) {
+                //do something
+            }
+            else if(localPref.getPKIStore().equals("Apple")) {
+                config.setKeystoreType("Apple");
+            }
+        }
+
+        boolean compressionEnabled = localPref.isCompressionEnabled();
+        config.setCompressionEnabled(compressionEnabled);            
+        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
+        	config.setTruststorePath(localPref.getTrustStorePath());
+        	config.setTruststorePassword(localPref.getTrustStorePassword());
+        }
+        return config;
+    }
+    
     /**
      * Define Login Panel implementation.
      */
@@ -933,76 +1002,8 @@ public class LoginDialog {
 
                 // Get connection
                 try {
-                    int port = localPref.getXmppPort();
-
-                    int checkForPort = serverName.indexOf(":");
-                    if (checkForPort != -1) {
-                        String portString = serverName.substring(checkForPort + 1);
-                        if (ModelUtil.hasLength(portString)) {
-                            // Set new port.
-                            port = Integer.valueOf(portString);
-                        }
-                    }
-
-                    boolean useSSL = localPref.isSSL();
-                    boolean hostPortConfigured = localPref.isHostAndPortConfigured();
-
-                    ConnectionConfiguration config;
-
-                    if (useSSL) {
-                        if (!hostPortConfigured) {
-                            config = new ConnectionConfiguration(serverName, 5223);
-                            config.setSocketFactory(new DummySSLSocketFactory());
-                        }
-                        else {
-                            config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
-                            config.setSocketFactory(new DummySSLSocketFactory());
-                        }
-                    }
-                    else {
-                        if (!hostPortConfigured) {
-                            config = new ConnectionConfiguration(serverName);
-                        }
-                        else {
-                            config = new ConnectionConfiguration(localPref.getXmppHost(), port, serverName);
-                        }
-
-
-                    }
-
-                    config.setReconnectionAllowed(true);
-                    config.setRosterLoadedAtLogin(true);
-                    config.setSendPresence(false);
-
-                    if (localPref.isPKIEnabled()) {
-                        SASLAuthentication.supportSASLMechanism("EXTERNAL");
-                        config.setKeystoreType(localPref.getPKIStore());
-                        if(localPref.getPKIStore().equals("PKCS11")) {
-                            config.setPKCS11Library(localPref.getPKCS11Library());
-                        }
-                        else if(localPref.getPKIStore().equals("JKS")) {
-                            config.setKeystoreType("JKS");
-                            config.setKeystorePath(localPref.getJKSPath());
-
-                        }
-                        else if(localPref.getPKIStore().equals("X509")) {
-                            //do something
-                        }
-                        else if(localPref.getPKIStore().equals("Apple")) {
-                            config.setKeystoreType("Apple");
-                        }
-                    }
-
-                    if (config != null) {
-                        boolean compressionEnabled = localPref.isCompressionEnabled();
-                        config.setCompressionEnabled(compressionEnabled);
-                        connection = new XMPPConnection(config,this);
-                        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
-                            config.setTruststorePath(localPref.getTrustStorePath());
-                            config.setTruststorePassword(localPref.getTrustStorePassword());
-                        }
-                    }
-
+                	ConnectionConfiguration config = retrieveConnectionConfiguration();
+                    connection = new XMPPConnection(config,this);
                     //If we want to use the debug version of smack, we have to check if
                     //we are on the dispatch thread because smack will create an UI
 		    if (localPref.isDebuggerEnabled()) {
