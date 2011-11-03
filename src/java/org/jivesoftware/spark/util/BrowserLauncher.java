@@ -20,6 +20,7 @@
 package org.jivesoftware.spark.util;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.net.URI;
 
 public class BrowserLauncher {
@@ -31,9 +32,16 @@ public class BrowserLauncher {
 				url = url.replace(" ", "%20");
 			}
 			Desktop.getDesktop().browse(new URI(url));
-
 		} else {
-			Desktop.getDesktop().browse(new URI("http://" + url));
+			File f = new File(url);
+			if (f.exists() && Desktop.isDesktopSupported()){
+				try {
+					Desktop.getDesktop().open(f);
+				} catch (Exception ex){
+					if (!url.toLowerCase().startsWith("//")) url = "//" + url;
+					Desktop.getDesktop().browse(new URI("http:" + url));
+				}
+			}
 		}
 	}
 }
