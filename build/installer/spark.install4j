@@ -411,7 +411,7 @@
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
     </win32>
-    <<unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.7.0_01" manualJREEntry="false">
+    <unixArchive name="Unix Archive" id="13" mediaFileName="" installDir="${compiler:APP_SHORT_NAME}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.7.0_01" manualJREEntry="false">
       <excludedLaunchers />
       <excludedComponents />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
