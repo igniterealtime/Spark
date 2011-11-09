@@ -42,8 +42,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -55,11 +53,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -88,6 +87,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private LocalPreferences preferences;
 
     private ContactList contactList =  Workspace.getInstance().getContactList();
+    
+    private Timer timer = new Timer();
+    
+    private DisplayWindowTask timerTask = null;
 
     /**
      * Create a new ContactGroup.
@@ -613,7 +616,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
             o = model.getElementAt(loc);
             if (!(o instanceof ContactItem)) {
-		UIComponentRegistry.getContactInfoWindow().dispose();
+            	UIComponentRegistry.getContactInfoWindow().dispose();
                 return;
             }
         }
@@ -957,6 +960,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
+            	timerTask = new DisplayWindowTask(mouseEvent, System.currentTimeMillis());            
+            	timer.schedule(timerTask, 100, 100);
             }
 
             public void mouseExited(MouseEvent mouseEvent) {               
@@ -969,7 +974,45 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseMotionListener(motionListener);
     }
 
+    private class DisplayWindowTask extends TimerTask {
+        private MouseEvent event;
+		private long lastMouseMoveNotificationTime = 0;
+		private boolean popupOnTheScreen = false;
+        
+		public DisplayWindowTask(MouseEvent e, long mouseMoveTime) {
+			event = e;
+			lastMouseMoveNotificationTime = mouseMoveTime; 
+		}	
 
+		@Override
+		public void run() {		
+			if (canShowPopup) {
+				if (System.currentTimeMillis() - lastMouseMoveNotificationTime > 500 && !popupOnTheScreen) {
+					displayWindow(event);
+					popupOnTheScreen = true;					
+				}
+			} else {
+				cancel();		
+			}
+		}
+		
+        public void setEvent(MouseEvent event) {
+			this.event = event;
+		}
+            	
+		public void setLastMouseMoveNotificationTime(long lastMouseMoveNotificationTime) {
+			this.lastMouseMoveNotificationTime = lastMouseMoveNotificationTime;			
+		}		
+
+		public void setPopupOnTheScreen(boolean popupChanged) {
+			this.popupOnTheScreen = popupChanged;
+		}
+
+		public boolean isPopupOnTheScreen() {
+			return popupOnTheScreen;
+		}		
+    }
+    
     private class ListMotionListener extends MouseMotionAdapter {
 
         public void mouseMoved(MouseEvent e) {
@@ -980,8 +1023,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             if (e == null) {
                 return;
             }
-
-            displayWindow(e);
+            timerTask.setEvent(e);
+            timerTask.setLastMouseMoveNotificationTime(System.currentTimeMillis());            
+            if (needToChangePopup(e) && timerTask.isPopupOnTheScreen()) {
+            	UIComponentRegistry.getContactInfoWindow().dispose();            	
+            	timerTask.setPopupOnTheScreen(false);
+            }
         }
     }
 
@@ -991,8 +1038,16 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param e the mouseEvent that triggered this event.
      */
     private void displayWindow(MouseEvent e) {
-   	 if(preferences.areVCardsVisible())
-		UIComponentRegistry.getContactInfoWindow().display(this, e);
+    	if(preferences.areVCardsVisible()) {
+    		UIComponentRegistry.getContactInfoWindow().display(this, e);
+    	}
+    }
+    
+    private boolean needToChangePopup(MouseEvent e) {
+    	ContactInfoWindow contact = UIComponentRegistry.getContactInfoWindow();
+        int loc = getList().locationToIndex(e.getPoint());
+        ContactItem item = (ContactItem)getList().getModel().getElementAt(loc);
+        return item == null || contact == null || contact.getContactItem() == null ? true : !contact.getContactItem().getJID().equals(item.getJID());
     }
 
     protected DefaultListModel getModel() {
