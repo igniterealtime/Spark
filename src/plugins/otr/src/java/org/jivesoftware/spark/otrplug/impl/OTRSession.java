@@ -17,6 +17,7 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.MessageEventListener;
 
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.util.UIComponentRegistry;
 
 import net.java.otr4j.OtrEngineHost;
 import net.java.otr4j.OtrEngineImpl;
@@ -41,7 +42,7 @@ public class OTRSession {
     private SessionID _mySession;
     private OtrEngineImpl _engine;
     private OTRManager _manager = OTRManager.getInstance();
-    final ChatRoomButton _otrButton = new ChatRoomButton();
+    final ChatRoomButton _otrButton = UIComponentRegistry.getButtonFactory().createOtrButton();
     private OTRConnectionPanel _conPanel;
     private MessageEventListener _msgEvnt;
     private boolean _OtrEnabled = false;

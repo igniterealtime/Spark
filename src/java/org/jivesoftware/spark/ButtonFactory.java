@@ -107,4 +107,8 @@ public class ButtonFactory {
         return alwaysOnTopItem;
 
     }
+    
+    public ChatRoomButton createOtrButton() {
+    	return new ChatRoomButton();
+    }    
 }
