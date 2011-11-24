@@ -71,6 +71,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.ChatState;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
@@ -125,6 +126,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private ChatFrame _chatFrame;
     private RolloverButton _alwaysOnTopItem;
     private boolean _isAlwaysOnTopActive;
+    private JComponent chatStatePanel;
 
     /**
      * Initializes the base layout and base background color.
@@ -147,10 +149,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         editorWrapperBar.add(editorBarLeft, BorderLayout.WEST);
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
         fileDropListeners = new ArrayList<FileDropListener>();
-
-
-
-
 
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -1327,6 +1325,25 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void addControllerButton(RolloverButton button) {
         editorBarRight.add(button, 0);
     }
+    
+    public void notifyChatStateChange(ChatState state) {
+    	if (chatStatePanel != null) {
+    		getEditorWrapperBar().remove(chatStatePanel);
+    	}
+    	chatStatePanel = createChatStatePanel(state);   	
+    	getEditorWrapperBar().add(chatStatePanel, BorderLayout.SOUTH);
+    	getEditorWrapperBar().revalidate();
+    	getEditorWrapperBar().repaint();
+    }    
+
+    protected JComponent createChatStatePanel(ChatState state) {
+    	return new ChatStatePanel(state);
+    }
+
+	public JComponent getChatStatePanel() {
+		return chatStatePanel;
+	}
+    
 }
 
 

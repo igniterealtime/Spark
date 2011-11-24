@@ -170,8 +170,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             public void doRun() {
                 try {
                     //chatFrame.requestFocus();
-                    ChatRoom chatRoom = getActiveChatRoom();
-                    chatRoom.requestFocusInWindow();
+                    ChatRoom chatRoom = getActiveChatRoom();                    
                     chatRoom.getChatInputEditor().requestFocusInWindow();
                     updateActiveTab();
                   

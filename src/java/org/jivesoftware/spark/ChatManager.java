@@ -20,10 +20,16 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManagerListener;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.ChatStateListener;
+import org.jivesoftware.smackx.ChatStateManager;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.MessageEventManager;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
@@ -74,7 +80,7 @@ import javax.swing.UIManager;
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
  * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
  */
-public class ChatManager implements MessageEventNotificationListener {
+public class ChatManager implements ChatManagerListener {
 
     private static ChatManager singleton;
     private static final Object LOCK = new Object();
@@ -112,6 +118,11 @@ public class ChatManager implements MessageEventNotificationListener {
 
     private UriManager _uriManager = new UriManager();
 
+    /**
+     * The listener instance that we use to track chat states according to
+     * XEP-0085;
+     */
+    private SmackChatStateListener smackChatStateListener = null;    
 
     /**
      * Returns the singleton instance of <CODE>ChatManager</CODE>,
@@ -138,10 +149,7 @@ public class ChatManager implements MessageEventNotificationListener {
      * Create a new instance of ChatManager.
      */
     private ChatManager() {
-        chatContainer = UIComponentRegistry.createChatContainer();
-
-        // Add a Message Handler
-        SparkManager.getMessageEventManager().addMessageEventNotificationListener(this);
+        chatContainer = UIComponentRegistry.createChatContainer();        
         // Add message event request listener
         MessageEventRequestListener messageEventRequestListener =
             new ChatMessageEventRequestListener();
@@ -150,6 +158,8 @@ public class ChatManager implements MessageEventNotificationListener {
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
+        // Add a Message Handler        
+        SparkManager.getConnection().getChatManager().addChatListener(this);
     }
 
 
@@ -437,7 +447,7 @@ public class ChatManager implements MessageEventNotificationListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator<MessageFilter> filters = chatManager.getMessageFilters().iterator();
         try {
-            cancelledNotification(message.getFrom(), "");
+            pausingNotification(message.getFrom());
         }
         catch (Exception e) {
             Log.error(e);
@@ -596,16 +606,7 @@ public class ChatManager implements MessageEventNotificationListener {
         return null;
     }
 
-    // Implemenation of MessageEventListener
-
-    public void deliveredNotification(String from, String packetID) {
-
-    }
-
-    public void displayedNotification(String from, String packetID) {
-    }
-
-    public void composingNotification(final String from, String packetID) {
+    public void composingNotification(final String from) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 final ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -629,11 +630,7 @@ public class ChatManager implements MessageEventNotificationListener {
         });
     }
 
-
-    public void offlineNotification(String from, String packetID) {
-    }
-
-    public void cancelledNotification(final String from, String packetID) {
+    public void pausingNotification(final String from) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -883,4 +880,51 @@ public class ChatManager implements MessageEventNotificationListener {
 	    }
 	}
     }
+
+	@Override
+	public void chatCreated(Chat chat, boolean isLocal) {
+        if(smackChatStateListener == null) {
+            smackChatStateListener = new SmackChatStateListener();
+        }        
+        chat.addMessageListener(smackChatStateListener);		
+	}
+	
+    /**
+     * The listener that we use to track chat state notifications according
+     * to XEP-0085.
+     */
+    private class SmackChatStateListener implements ChatStateListener {
+        /**
+         * Called by smack when the state of a chat changes.
+         *
+         * @param chat the chat that is concerned by this event.
+         * @param state the new state of the chat.
+         */
+    	@Override
+        public void stateChanged(Chat chat, ChatState state) {
+    		String participant = chat.getParticipant();
+            if (ChatState.composing.equals(state)) {
+                composingNotification(participant);
+            } else if (ChatState.paused.equals(state)) {
+            	pausingNotification(participant);            	
+            } else if (ChatState.inactive.equals(state)) {
+            	pausingNotification(participant);
+            }
+            else if (ChatState.gone.equals(state)) {
+            	pausingNotification(participant);
+            }
+            try {
+            	ChatRoom chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(participant));
+            	chatRoom.notifyChatStateChange(state);
+            } catch (Exception ex) {
+            	Log.error("Cannot notify chat state change: "+state, ex);
+            }
+            
+        }
+
+		@Override
+		public void processMessage(Chat arg0, Message arg1) {			
+			// TODO Auto-generated method stub			
+		}
+    }    	
 }

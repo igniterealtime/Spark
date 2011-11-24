@@ -92,6 +92,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -1103,6 +1104,8 @@ public class LoginDialog {
 
             // Since the connection and workgroup are valid. Add a ConnectionListener
             connection.addConnectionListener(SparkManager.getSessionManager());
+            //Initialize chat state notification mechanism in smack
+            ChatStateManager.getInstance(SparkManager.getConnection());
 
             // Persist information
             localPref.setLastUsername(getLoginUsername());
