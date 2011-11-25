@@ -447,7 +447,7 @@ public class ChatManager implements ChatManagerListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator<MessageFilter> filters = chatManager.getMessageFilters().iterator();
         try {
-            pausingNotification(message.getFrom());
+            cancelledNotification(message.getFrom());
         }
         catch (Exception e) {
             Log.error(e);
@@ -630,7 +630,7 @@ public class ChatManager implements ChatManagerListener {
         });
     }
 
-    public void pausingNotification(final String from) {
+    public void cancelledNotification(final String from) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -906,18 +906,20 @@ public class ChatManager implements ChatManagerListener {
             if (ChatState.composing.equals(state)) {
                 composingNotification(participant);
             } else if (ChatState.paused.equals(state)) {
-            	pausingNotification(participant);            	
+            	cancelledNotification(participant);            	
             } else if (ChatState.inactive.equals(state)) {
-            	pausingNotification(participant);
+            	cancelledNotification(participant);
             }
             else if (ChatState.gone.equals(state)) {
-            	pausingNotification(participant);
+            	cancelledNotification(participant);
             }
             try {
             	ChatRoom chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(participant));
-            	chatRoom.notifyChatStateChange(state);
+            	if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+            		((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
+            	}
             } catch (Exception ex) {
-            	Log.error("Cannot notify chat state change: "+state, ex);
+            	//Do nothing - this may be thrown when chat room is not found
             }
             
         }

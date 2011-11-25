@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spark.ui.rooms;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
@@ -63,6 +65,7 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
+import org.jivesoftware.spark.ui.ChatStatePanel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.MessageEventListener;
@@ -123,7 +126,9 @@ public class ChatRoomImpl extends ChatRoom {
     
     private long pauseTimePeriod = 2000;
     private long inactiveTimePeriod = 120000;
-    private long goneTimePeriod = 600000;    
+    private long goneTimePeriod = 600000;
+    
+    private JComponent chatStatePanel;    
 
     public ChatRoomImpl(final String participantJID, String participantNickname, String title) {
         this(participantJID, participantNickname, title, true);
@@ -802,6 +807,17 @@ public class ChatRoomImpl extends ChatRoom {
 		return typingTimerTask;
 	}
 	
+    public void notifyChatStateChange(ChatState state) {
+    	if (chatStatePanel != null) {
+    		getEditorWrapperBar().remove(chatStatePanel);
+    	}
+    	
+    	chatStatePanel = new ChatStatePanel(state, getParticipantNickname());   	
+    	getEditorWrapperBar().add(chatStatePanel, BorderLayout.SOUTH);
+    	getEditorWrapperBar().revalidate();
+    	getEditorWrapperBar().repaint();
+    }	
+	
 	private class ChatStateFocusListener extends FocusAdapter {
 
 		@Override
@@ -810,13 +826,11 @@ public class ChatRoomImpl extends ChatRoom {
 				activateChatStateNotificationSystem();
 			}
 		}
-
 		@Override
 		public void focusLost(FocusEvent e) {
 			if(e.getComponent().equals(getChatInputEditor())) {
 				inactivateChatStateNotificationSystem();	
 			}
-		}
-		
+		}		
 	}
 }
