@@ -723,18 +723,17 @@ public class GroupChatRoom extends ChatRoom {
 			.getFrom());
 		String roomTitle = userNickname + " - "
 			+ StringUtils.parseName(getRoomname());
-
-		// Create new room
-		chatRoom = new ChatRoomImpl(message.getFrom(), userNickname,
-			roomTitle);
-		SparkManager.getChatManager().getChatContainer()
-			.addChatRoom(chatRoom);
-
-		SparkManager.getChatManager().getChatContainer()
-			.activateChatRoom(chatRoom);
-
+		
 		// Check to see if this is a message notification.
 		if (message.getBody() != null) {
+			// Create new room
+			chatRoom = new ChatRoomImpl(message.getFrom(), userNickname,
+				roomTitle);
+			SparkManager.getChatManager().getChatContainer()
+				.addChatRoom(chatRoom);
+
+			SparkManager.getChatManager().getChatContainer()
+				.activateChatRoom(chatRoom);			
 		    chatRoom.insertMessage(message);
 		}
 	    }

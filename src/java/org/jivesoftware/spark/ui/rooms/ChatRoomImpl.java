@@ -111,7 +111,7 @@ public class ChatRoomImpl extends ChatRoom {
     private ChatState lastNotificationSent = null;
 
     private TimerTask typingTimerTask;
-    private boolean sendTypingNotification;
+    private boolean sendChatStateNotification = false;
     private String threadID;
 
     private long lastActivity;
@@ -213,7 +213,7 @@ public class ChatRoomImpl extends ChatRoom {
     protected void createChatStateTimerTask() {
     	typingTimerTask = new TimerTask() {
             public void run() {                
-                if (!sendTypingNotification) {
+                if (!sendChatStateNotification) {
                     return;
                 }
                 long now = System.currentTimeMillis();
@@ -387,7 +387,7 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
-        
+    	sendChatStateNotification = true;
         activateChatStateNotificationSystem();         
     }
 
@@ -561,7 +561,7 @@ public class ChatRoomImpl extends ChatRoom {
     public void insertUpdate(DocumentEvent e) {
         checkForText(e);
 
-        if (!sendTypingNotification) {
+        if (!sendChatStateNotification) {
             return;
         }
         startNotificationSendingTime = System.currentTimeMillis();
@@ -678,8 +678,8 @@ public class ChatRoomImpl extends ChatRoom {
         return presence;
     }
 
-    public void setSendTypingNotification(boolean isSendTypingNotification) {
-        this.sendTypingNotification = isSendTypingNotification;
+    public void setSendChatStateNotification(boolean isSendChatStateNotification) {
+        this.sendChatStateNotification = isSendChatStateNotification;
     }
 
 
@@ -823,7 +823,9 @@ public class ChatRoomImpl extends ChatRoom {
 		@Override
 		public void focusGained(FocusEvent e) {
 			if(e.getComponent().equals(getChatInputEditor())) {
-				activateChatStateNotificationSystem();
+				if (sendChatStateNotification) {
+					activateChatStateNotificationSystem();
+				}
 			}
 		}
 		@Override

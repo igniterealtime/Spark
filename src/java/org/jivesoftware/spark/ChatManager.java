@@ -22,18 +22,13 @@ package org.jivesoftware.spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManagerListener;
-import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ChatState;
 import org.jivesoftware.smackx.ChatStateListener;
-import org.jivesoftware.smackx.ChatStateManager;
 import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.MessageEventNotificationListener;
-import org.jivesoftware.smackx.MessageEventRequestListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
@@ -150,11 +145,6 @@ public class ChatManager implements ChatManagerListener {
      */
     private ChatManager() {
         chatContainer = UIComponentRegistry.createChatContainer();        
-        // Add message event request listener
-        MessageEventRequestListener messageEventRequestListener =
-            new ChatMessageEventRequestListener();
-        SparkManager.getMessageEventManager().
-            addMessageEventRequestListener(messageEventRequestListener);
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
@@ -447,7 +437,7 @@ public class ChatManager implements ChatManagerListener {
         final ChatManager chatManager = SparkManager.getChatManager();
         Iterator<MessageFilter> filters = chatManager.getMessageFilters().iterator();
         try {
-            cancelledNotification(message.getFrom());
+            cancelledNotification(message.getFrom(), ChatState.paused);
         }
         catch (Exception e) {
             Log.error(e);
@@ -614,23 +604,22 @@ public class ChatManager implements ChatManagerListener {
                 ChatRoom chatRoom;
                 try {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
-                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {                    	
                         typingNotificationList.add(chatRoom);
                         // Notify Decorators
                         notifySparkTabHandlers(chatRoom);
+                        ((ChatRoomImpl)chatRoom).notifyChatStateChange(ChatState.composing);
                     }
                 }
                 catch (ChatRoomNotFoundException e) {
                     // Do nothing
                 }
-
-
                 contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
             }
         });
     }
 
-    public void cancelledNotification(final String from) {
+    public void cancelledNotification(final String from, final ChatState state) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -640,17 +629,15 @@ public class ChatManager implements ChatManagerListener {
                     chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
                         typingNotificationList.remove(chatRoom);
-
                         // Notify Decorators
                         notifySparkTabHandlers(chatRoom);
+                        ((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
                     }
                 }
                 catch (ChatRoomNotFoundException e) {
                     // Do nothing
                 }
-
                 contactList.useDefaults(from);
-
             }
         });
     }
@@ -693,39 +680,6 @@ public class ChatManager implements ChatManagerListener {
     public boolean isStaleRoom(ChatRoom chatRoom) {
         // Check if room is stale
         return chatContainer.getStaleChatRooms().contains(chatRoom);
-    }
-
-
-    /**
-     * Internal implementation of the MessageEventRequestListener.
-     */
-    private class ChatMessageEventRequestListener implements MessageEventRequestListener {
-        public void deliveredNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-        }
-
-        public void displayedNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-        }
-
-        public void composingNotificationRequested(final String from, String packetID, MessageEventManager messageEventManager) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    ChatRoom chatRoom;
-                    try {
-                        chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
-                    }
-                    catch (ChatRoomNotFoundException e) {
-                        return;
-                    }
-                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        ((ChatRoomImpl)chatRoom).setSendTypingNotification(true);
-                    }
-                }
-            });
-        }
-
-        public void offlineNotificationRequested(String from, String packetID, MessageEventManager messageEventManager) {
-            // The XMPP server should take care of this request. Do nothing.
-        }
     }
 
     /**
@@ -905,21 +859,8 @@ public class ChatManager implements ChatManagerListener {
     		String participant = chat.getParticipant();
             if (ChatState.composing.equals(state)) {
                 composingNotification(participant);
-            } else if (ChatState.paused.equals(state)) {
-            	cancelledNotification(participant);            	
-            } else if (ChatState.inactive.equals(state)) {
-            	cancelledNotification(participant);
-            }
-            else if (ChatState.gone.equals(state)) {
-            	cancelledNotification(participant);
-            }
-            try {
-            	ChatRoom chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(participant));
-            	if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-            		((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
-            	}
-            } catch (Exception ex) {
-            	//Do nothing - this may be thrown when chat room is not found
+            } else {
+            	cancelledNotification(participant, state);
             }
             
         }

@@ -39,8 +39,11 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.ChatState;
 import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
@@ -52,9 +55,10 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.smack.ChatManagerListener;
+import org.jivesoftware.smackx.ChatStateListener;
 
-public class SysTrayPlugin implements Plugin, NativeHandler,
-	MessageEventNotificationListener {
+public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
     private JPopupMenu popupMenu = new JPopupMenu();
 
     private JMenuItem openMenu;
@@ -92,8 +96,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
 
 	    SystemTray tray = SystemTray.getSystemTray();
 	    SparkManager.getNativeManager().addNativeHandler(this);
-	    SparkManager.getMessageEventManager()
-		    .addMessageEventNotificationListener(this);
+	    //XEP-0085 suport (replaces the obsolete XEP-0022)
+	    SparkManager.getConnection().getChatManager().addChatListener(this);
 
 	    if (Spark.isLinux()) {
 		newMessageIcon = SparkRes
@@ -424,52 +428,51 @@ public class SysTrayPlugin implements Plugin, NativeHandler,
     // Info on new Messages
     @Override
     public void flashWindow(Window window) {
-	if (pref.isSystemTrayNotificationEnabled()) {
-	    trayIcon.setImage(newMessageIcon.getImage());
-	}
+    	if (pref.isSystemTrayNotificationEnabled()) {
+    		trayIcon.setImage(newMessageIcon.getImage());
+    	}
     }
 
     @Override
     public void flashWindowStopWhenFocused(Window window) {
-	trayIcon.setImage(availableIcon.getImage());
+    	trayIcon.setImage(availableIcon.getImage());
     }
 
     @Override
     public boolean handleNotification() {
-	return true;
+    	return true;
     }
 
     @Override
     public void stopFlashing(Window window) {
-	trayIcon.setImage(availableIcon.getImage());
+    	trayIcon.setImage(availableIcon.getImage());
     }
 
     // For Typing
-    @Override
-    public void cancelledNotification(String from, String packetID) {
-	trayIcon.setImage(availableIcon.getImage());
-    }
+	@Override
+	public void processMessage(Chat arg0, Message arg1) {
+		// Do nothing - stateChanged is in charge
+		
+	}	
 
-    @Override
-    public void composingNotification(String from, String packetID) {
-	if (pref.isTypingNotificationShown()) {
-	    trayIcon.setImage(typingIcon.getImage());
+	@Override
+	public void stateChanged(Chat chat, ChatState state) {		
+        if (ChatState.composing.equals(state)) {
+        	changeSysTrayIcon();
+        } else {
+        	trayIcon.setImage(availableIcon.getImage());            	
+        }
 	}
-    }
 
-    @Override
-    public void deliveredNotification(String from, String packetID) {
-	// Nothing
-    }
-
-    @Override
-    public void displayedNotification(String from, String packetID) {
-	// Nothing
-    }
-
-    @Override
-    public void offlineNotification(String from, String packetID) {
-	// Nothing
-    }
+	@Override
+	public void chatCreated(Chat chat, boolean isLocal) {
+		chat.addMessageListener(this);		
+	}
+	
+	private void changeSysTrayIcon() {
+    	if (pref.isTypingNotificationShown()) {
+    		trayIcon.setImage(typingIcon.getImage());
+    	}
+	}
 
 }
