@@ -1518,7 +1518,7 @@ public class ContactList extends JPanel implements ActionListener,
         });
 
         // popup.add(inviteFirstAcceptor);
-//        popup.show(group, e.getX(), e.getY());
+        popup.show(group, e.getX(), e.getY());
 
         activeGroup = group;
     }

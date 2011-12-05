@@ -83,6 +83,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final ListMotionListener motionListener = new ListMotionListener();
 
     private boolean canShowPopup;
+    
+    private boolean mouseDragged = false;
 
     private LocalPreferences preferences;
 
@@ -977,7 +979,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private class DisplayWindowTask extends TimerTask {
         private MouseEvent event;
 		private long lastMouseMoveNotificationTime = 0;
-		private boolean popupOnTheScreen = false;
+		private boolean newPopupShown = false;
         
 		public DisplayWindowTask(MouseEvent e, long mouseMoveTime) {
 			event = e;
@@ -987,9 +989,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 		@Override
 		public void run() {		
 			if (canShowPopup) {
-				if (System.currentTimeMillis() - lastMouseMoveNotificationTime > 500 && !popupOnTheScreen) {
+				if (System.currentTimeMillis() - lastMouseMoveNotificationTime > 500 && !newPopupShown && !mouseDragged) {
 					displayWindow(event);
-					popupOnTheScreen = true;					
+					newPopupShown = true;					
 				}
 			} else {
 				cancel();		
@@ -1004,17 +1006,18 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 			this.lastMouseMoveNotificationTime = lastMouseMoveNotificationTime;			
 		}		
 
-		public void setPopupOnTheScreen(boolean popupChanged) {
-			this.popupOnTheScreen = popupChanged;
+		public void setNewPopupShown(boolean popupChanged) {
+			this.newPopupShown = popupChanged;
 		}
 
-		public boolean isPopupOnTheScreen() {
-			return popupOnTheScreen;
+		public boolean isNewPopupShown() {
+			return newPopupShown;
 		}		
     }
     
     private class ListMotionListener extends MouseMotionAdapter {
-
+    	
+    	@Override
         public void mouseMoved(MouseEvent e) {
             if (!canShowPopup) {
                 return;
@@ -1025,12 +1028,22 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
             timerTask.setEvent(e);
             timerTask.setLastMouseMoveNotificationTime(System.currentTimeMillis());            
-            if (needToChangePopup(e) && timerTask.isPopupOnTheScreen()) {
+            if (needToChangePopup(e) && timerTask.isNewPopupShown()) {
             	UIComponentRegistry.getContactInfoWindow().dispose();            	
-            	timerTask.setPopupOnTheScreen(false);
+            	timerTask.setNewPopupShown(false);            	
             }
+            mouseDragged = false;
         }
+    	
+    	@Override
+    	public void mouseDragged(MouseEvent e) {
+    		if(timerTask.isNewPopupShown()) {
+    	    	UIComponentRegistry.getContactInfoWindow().dispose();    	    	
+    		}
+    		mouseDragged = true;
+    	}
     }
+    
 
     /**
      * Displays the <code>ContactInfoWindow</code>.
