@@ -108,8 +108,12 @@ public class PresenceManager {
      * @return the users presence.
      */
     public static Presence getPresence(String jid) {
-        final Roster roster = SparkManager.getConnection().getRoster();
-        return roster.getPresence(jid);
+		if (jid!= null && jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+			return SparkManager.getWorkspace().getStatusBar().getPresence();
+		} else {
+			final Roster roster = SparkManager.getConnection().getRoster();
+			return roster.getPresence(jid);
+		}
     }
 
     /**

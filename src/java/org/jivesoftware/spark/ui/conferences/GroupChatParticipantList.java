@@ -211,16 +211,8 @@ public class GroupChatParticipantList extends JPanel implements
 			userMap.put(displayName, userid);			
 
 			if (p.getType() == Presence.Type.available) {
-				String jid = PresenceManager.getJidFromMUCPresence(p);
-				Presence realJidPresence = null;
-				if (jid != null) {
-					if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
-						realJidPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-					} else {
-						realJidPresence = PresenceManager.getPresence(jid);
-					}
-				}
-			    addParticipant(userid, realJidPresence != null ? realJidPresence : p);
+				String jid = PresenceManager.getJidFromMUCPresence(p);				
+			    addParticipant(userid, p, jid);
 			    agentInfoPanel.setVisible(true);
 			} else {
 			    removeUser(displayName);
@@ -347,9 +339,9 @@ public class GroupChatParticipantList extends JPanel implements
 		ImageIcon icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
 		icon.setDescription(displayName);
 		return icon;
-	}
+	}	
 
-    protected void addParticipant(final String participantJID, Presence presence) {
+    protected void addParticipant(final String participantJID, Presence presence, String userJID) {
 	// Remove reference to invitees
 
 	for (String displayName : invitees.keySet()) {
@@ -376,7 +368,8 @@ public class GroupChatParticipantList extends JPanel implements
 	if (_localPreferences.isShowingRoleIcons()) {
 	    icon = getIconForRole(userRole, affiliation);
 	} else {
-	    icon = PresenceManager.getIconFromPresence(presence);
+		Presence jidPresence = PresenceManager.getPresence(userJID);
+	    icon = PresenceManager.getIconFromPresence(jidPresence);
 	    if (icon == null) {
 		icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
 	    }
