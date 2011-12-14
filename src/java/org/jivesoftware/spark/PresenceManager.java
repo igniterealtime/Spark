@@ -22,11 +22,15 @@ package org.jivesoftware.spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.MUCUser;
 
 import javax.swing.Icon;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -119,6 +123,19 @@ public class PresenceManager {
         Presence presence = roster.getPresence(jid);
         return presence.getFrom();
     }
+    
+	public static String getJidFromMUCPresence(Presence presence) {		
+		Collection<PacketExtension> extensions = presence.getExtensions();
+		for (PacketExtension pe : extensions) {
+			if (pe instanceof MUCUser) {
+				final MUCUser mucUser = (MUCUser) pe;
+				String fullJid = mucUser.getItem().getJid();
+				String userJid = StringUtils.parseBareAddress(fullJid);
+				return userJid;
+			}
+		}
+		return null;
+	}    
 
     /**
      * Returns the icon associated with a users presence.

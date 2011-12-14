@@ -208,10 +208,19 @@ public class GroupChatParticipantList extends JPanel implements
 			final String userid = p.getFrom();
 
 			String displayName = StringUtils.parseResource(userid);
-			userMap.put(displayName, userid);
+			userMap.put(displayName, userid);			
 
 			if (p.getType() == Presence.Type.available) {
-			    addParticipant(userid, p);
+				String jid = PresenceManager.getJidFromMUCPresence(p);
+				Presence realJidPresence = null;
+				if (jid != null) {
+					if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+						realJidPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+					} else {
+						realJidPresence = PresenceManager.getPresence(jid);
+					}
+				}
+			    addParticipant(userid, realJidPresence != null ? realJidPresence : p);
 			    agentInfoPanel.setVisible(true);
 			} else {
 			    removeUser(displayName);
