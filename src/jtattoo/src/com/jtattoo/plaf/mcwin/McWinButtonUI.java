@@ -22,7 +22,9 @@ public class McWinButtonUI extends BaseButtonUI {
     }
 
     protected void paintBackground(Graphics g, AbstractButton b) {
-
+        if (b.getParent() instanceof JToolBar) {
+            b.setContentAreaFilled(true);
+        }
         if (!b.isContentAreaFilled() || (b.getParent() instanceof JMenuBar)) {
             return;
         }
@@ -30,12 +32,13 @@ public class McWinButtonUI extends BaseButtonUI {
         int width = b.getWidth();
         int height = b.getHeight();
 
-        if (!(b.isBorderPainted() && (b.getBorder() instanceof UIResource)) || (b.getParent() instanceof JToolBar)) {
+        if (!(b.isBorderPainted() && (b.getBorder() instanceof UIResource)) 
+                || (b.getParent() instanceof JToolBar)) {
             super.paintBackground(g, b);
             if ((b.getParent() instanceof JToolBar)) {
                 g.setColor(Color.lightGray);
                 g.drawRect(0, 0, width - 2, height - 1);
-                g.setColor(Color.white);
+                g.setColor(AbstractLookAndFeel.getTheme().getToolbarBackgroundColor());
                 g.drawLine(width - 1, 0, width - 1, height - 1);
             }
             return;
@@ -46,23 +49,48 @@ public class McWinButtonUI extends BaseButtonUI {
         Composite composite = g2D.getComposite();
         Object savedRenderingHint = g2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
         g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if (((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().equals(""))) {
-            Color[] colors = null;
+        if (McWinLookAndFeel.getTheme().doDrawSquareButtons()
+                || (((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().length() == 0))) {
+            Color[] backColors = null;
             if (b.getBackground() instanceof ColorUIResource) {
                 if (!model.isEnabled()) {
-                    colors = McWinLookAndFeel.getTheme().getDisabledColors();
-                } else if (model.isRollover() && !(model.isPressed() && model.isArmed())) {
-                    colors = McWinLookAndFeel.getTheme().getRolloverColors();
+                    backColors = McWinLookAndFeel.getTheme().getDisabledColors();
+                } else if (model.isPressed() && model.isArmed()) {
+                    backColors = new Color[] { McWinLookAndFeel.getTheme().getBackgroundColor() };
+                } else if (model.isRollover()) {
+                    backColors = McWinLookAndFeel.getTheme().getRolloverColors();
+                } else if (b.equals(b.getRootPane().getDefaultButton())) {
+                    if (JTattooUtilities.isFrameActive(b)) {
+                        if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
+                            backColors = McWinLookAndFeel.getTheme().getFocusColors();
+                        } else {
+                            if (McWinLookAndFeel.getTheme().isBrightMode()) {
+                                backColors = new Color[McWinLookAndFeel.getTheme().getSelectedColors().length];
+                                for (int i = 0; i < backColors.length; i++) {
+                                    backColors[i] = ColorHelper.brighter(McWinLookAndFeel.getTheme().getSelectedColors()[i], 30);
+                                }
+                            } else {
+                                backColors = McWinLookAndFeel.getTheme().getSelectedColors();
+                            }
+                        }
+                    } else {
+                        backColors = McWinLookAndFeel.getTheme().getButtonColors();
+                    }
                 } else {
-                    colors = McWinLookAndFeel.getTheme().getButtonColors();
+                    if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
+                        backColors = McWinLookAndFeel.getTheme().getFocusColors();
+                    } else {
+                        backColors = McWinLookAndFeel.getTheme().getButtonColors();
+                    }
                 }
             } else {
-                colors = ColorHelper.createColorArr(ColorHelper.brighter(b.getBackground(), 20), ColorHelper.darker(b.getBackground(), 20), 20);
+                backColors = ColorHelper.createColorArr(ColorHelper.brighter(b.getBackground(), 20), ColorHelper.darker(b.getBackground(), 20), 20);
             }
-            JTattooUtilities.fillHorGradient(g, colors, 0, 0, width - 1, height - 1);
-            g2D.setColor(Color.lightGray);
+            JTattooUtilities.fillHorGradient(g, backColors, 0, 0, width - 1, height - 1);
+            Color frameColor = backColors[backColors.length / 2];
+            g2D.setColor(ColorHelper.darker(frameColor, 25));
             g2D.drawRect(0, 0, width - 1, height - 1);
-            AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
+            AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
             g2D.setComposite(alpha);
             g2D.setColor(Color.white);
             g2D.drawRect(1, 1, width - 3, height - 3);
@@ -120,8 +148,9 @@ public class McWinButtonUI extends BaseButtonUI {
         Graphics2D g2D = (Graphics2D) g;
         int width = b.getWidth();
         int height = b.getHeight();
-        if (!b.isContentAreaFilled()
-                || ((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().equals(""))) {
+        if (McWinLookAndFeel.getTheme().doDrawSquareButtons()
+                || !b.isContentAreaFilled()
+                || ((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().length() == 0)) {
             g.setColor(AbstractLookAndFeel.getFocusColor());
             BasicGraphicsUtils.drawDashedRect(g, 4, 3, width - 8, height - 6);
         } else {
@@ -133,6 +162,7 @@ public class McWinButtonUI extends BaseButtonUI {
             g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRenderingHint);
         }
     }
+
 }
 
 

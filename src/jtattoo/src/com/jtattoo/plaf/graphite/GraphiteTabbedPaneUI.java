@@ -40,10 +40,8 @@ public class GraphiteTabbedPaneUI extends BaseTabbedPaneUI {
     protected Color getHiBorderColor(int tabIndex) {
         if (tabIndex == tabPane.getSelectedIndex()) {
             return ColorHelper.brighter(AbstractLookAndFeel.getControlColorLight(), 10);
-            //return ColorHelper.darker(super.getHiBorderColor(tabIndex), 40);
         } else {
             return ColorHelper.brighter(AbstractLookAndFeel.getButtonColorLight(), 10);
-            //return super.getHiBorderColor(tabIndex);
         }
     }
 
@@ -120,10 +118,10 @@ public class GraphiteTabbedPaneUI extends BaseTabbedPaneUI {
                 JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
 
             } else { // tab disabled
-                g.setColor(tabPane.getBackgroundAt(tabIndex).brighter());
+                g.setColor(Color.white);
+                JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x + 1, textRect.y + metrics.getAscent() + 1);
+                g.setColor(AbstractLookAndFeel.getDisabledForegroundColor());
                 JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
-                g.setColor(tabPane.getBackgroundAt(tabIndex).darker());
-                JTattooUtilities.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x - 1, textRect.y + metrics.getAscent() - 1);
             }
         }
     }

@@ -112,6 +112,7 @@ public class MintDefaultTheme extends AbstractTheme {
                     new Color(204, 212, 208),
                     new Color(160, 164, 162),};
         TAB_COLORS = ColorHelper.createColorArr(buttonColorLight, buttonColorDark, 20);
+        CHECKBOX_COLORS = TAB_COLORS;
         COL_HEADER_COLORS = ColorHelper.createColorArr(buttonColorLight, buttonColorDark, 20);
         TRACK_COLORS = ColorHelper.createColorArr(new Color(238, 238, 238), Color.white, 20);
         THUMB_COLORS = DEFAULT_COLORS;

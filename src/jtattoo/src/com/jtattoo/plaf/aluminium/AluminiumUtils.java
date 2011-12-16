@@ -24,7 +24,7 @@ public class AluminiumUtils {
             g2D.fillRect(0, 0, c.getWidth(), c.getHeight());
             g2D.setPaint(null);
         } else {
-            g.setColor(AbstractLookAndFeel.getBackgroundColor());
+            g.setColor(c.getBackground());
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
     }

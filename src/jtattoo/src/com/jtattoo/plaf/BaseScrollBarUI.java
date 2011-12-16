@@ -62,7 +62,7 @@ public class BaseScrollBarUI extends BasicScrollBarUI {
     }
 
     protected Color[] getThumbColors() {
-        if (isRollover) {
+        if (isRollover || isDragging) {
             return AbstractLookAndFeel.getTheme().getRolloverColors();
         } else if (!JTattooUtilities.isActive(scrollbar)) {
             return AbstractLookAndFeel.getTheme().getInActiveColors();

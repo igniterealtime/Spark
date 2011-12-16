@@ -27,27 +27,42 @@ public class McWinTabbedPaneUI extends BaseTabbedPaneUI {
     }
 
     protected Color[] getContentBorderColors(int tabPlacement) {
-        if (tabPlacement == TOP || tabPlacement == LEFT) {
+        Color controlColorLight = AbstractLookAndFeel.getTheme().getControlColorLight();
+        if (!controlColorLight.equals(new ColorUIResource(106, 150, 192))) {
+            controlColorLight = ColorHelper.brighter(controlColorLight, 6);
+            Color controlColorDark = AbstractLookAndFeel.getTheme().getControlColorDark();
             if (sepColors == null) {
-                int len = AbstractLookAndFeel.getTheme().getDefaultColors().length;
                 sepColors = new Color[5];
-                sepColors[0] = AbstractLookAndFeel.getTheme().getDefaultColors()[0];
-                sepColors[1] = AbstractLookAndFeel.getTheme().getDefaultColors()[len - 6];
-                sepColors[2] = AbstractLookAndFeel.getTheme().getDefaultColors()[2];
-                sepColors[3] = AbstractLookAndFeel.getTheme().getDefaultColors()[1];
-                sepColors[4] = AbstractLookAndFeel.getTheme().getDefaultColors()[0];
+                sepColors[0] = controlColorDark;
+                sepColors[1] = controlColorLight;
+                sepColors[2] = controlColorLight;
+                sepColors[3] = controlColorLight;
+                sepColors[4] = controlColorDark;
             }
             return sepColors;
         } else {
-            if (altSepColors == null) {
-                altSepColors = new Color[5];
-                altSepColors[0] = AbstractLookAndFeel.getTheme().getDefaultColors()[9];
-                altSepColors[1] = AbstractLookAndFeel.getTheme().getDefaultColors()[8];
-                altSepColors[2] = AbstractLookAndFeel.getTheme().getDefaultColors()[7];
-                altSepColors[3] = AbstractLookAndFeel.getTheme().getDefaultColors()[6];
-                altSepColors[4] = AbstractLookAndFeel.getTheme().getDefaultColors()[0];
+            if (tabPlacement == TOP || tabPlacement == LEFT) {
+                if (sepColors == null) {
+                    int len = AbstractLookAndFeel.getTheme().getDefaultColors().length;
+                    sepColors = new Color[5];
+                    sepColors[0] = AbstractLookAndFeel.getTheme().getDefaultColors()[0];
+                    sepColors[1] = AbstractLookAndFeel.getTheme().getDefaultColors()[len - 6];
+                    sepColors[2] = AbstractLookAndFeel.getTheme().getDefaultColors()[2];
+                    sepColors[3] = AbstractLookAndFeel.getTheme().getDefaultColors()[1];
+                    sepColors[4] = AbstractLookAndFeel.getTheme().getDefaultColors()[0];
+                }
+                return sepColors;
+            } else {
+                if (altSepColors == null) {
+                    altSepColors = new Color[5];
+                    altSepColors[0] = AbstractLookAndFeel.getTheme().getDefaultColors()[9];
+                    altSepColors[1] = AbstractLookAndFeel.getTheme().getDefaultColors()[8];
+                    altSepColors[2] = AbstractLookAndFeel.getTheme().getDefaultColors()[7];
+                    altSepColors[3] = AbstractLookAndFeel.getTheme().getDefaultColors()[6];
+                    altSepColors[4] = AbstractLookAndFeel.getTheme().getDefaultColors()[0];
+                }
+                return altSepColors;
             }
-            return altSepColors;
         }
     }
 

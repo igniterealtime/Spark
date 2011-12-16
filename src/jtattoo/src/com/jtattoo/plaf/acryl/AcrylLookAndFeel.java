@@ -59,19 +59,16 @@ public class AcrylLookAndFeel extends AbstractLookAndFeel {
 
         greenProps.setProperty("backgroundColor", "232 229 222");
         greenProps.setProperty("alterBackgroundColor", "220 216 205");
-//        greenProps.setProperty("frameColor", "24 58 39");
         greenProps.setProperty("frameColor", "28 64 43");
         greenProps.setProperty("selectionBackgroundColor", "54 126 85");
         greenProps.setProperty("menuSelectionBackgroundColor", "54 126 85");
         greenProps.setProperty("controlColorLight", "64 149 100");
-//        greenProps.setProperty("controlColorDark", "40 94 63");
         greenProps.setProperty("controlColorDark", "48 112 75");
         greenProps.setProperty("rolloverColor", "255 213 113");
         greenProps.setProperty("rolloverColorLight", "255 213 113");
         greenProps.setProperty("rolloverColorDark", "240 168 0");
         greenProps.setProperty("windowTitleBackgroundColor", "64 149 100");
         greenProps.setProperty("windowTitleColorLight", "64 149 100");
-//        greenProps.setProperty("windowTitleColorDark", "40 94 63");
         greenProps.setProperty("windowTitleColorDark", "48 112 75");
         greenProps.setProperty("windowBorderColor", "40 94 63");
         greenProps.setProperty("windowInactiveTitleBackgroundColor", "77 179 120");
@@ -124,7 +121,6 @@ public class AcrylLookAndFeel extends AbstractLookAndFeel {
         redProps.setProperty("windowTitleForegroundColor", "255 255 255");
         redProps.setProperty("windowTitleBackgroundColor", "160 0 0");
         redProps.setProperty("windowTitleColorLight", "230 12 12");
-//        redProps.setProperty("windowTitleColorDark", "160 0 0");
         redProps.setProperty("windowTitleColorDark", "190 0 0");
         redProps.setProperty("windowBorderColor", "160 0 0");
         redProps.setProperty("windowInactiveTitleForegroundColor", "255 255 255");

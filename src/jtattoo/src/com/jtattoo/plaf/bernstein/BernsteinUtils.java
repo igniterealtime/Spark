@@ -36,7 +36,7 @@ public class BernsteinUtils {
                 y += IMAGE_HEIGHT;
             }
         } else {
-            g.setColor(AbstractLookAndFeel.getBackgroundColor());
+            g.setColor(c.getBackground());
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
 

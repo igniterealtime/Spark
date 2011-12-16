@@ -63,7 +63,16 @@ public class HiFiComboBoxUI extends BaseComboBoxUI {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     }
 }

@@ -18,7 +18,15 @@ public class McWinSplitPaneDivider extends BaseSplitPaneDivider {
     }
 
     public void paint(Graphics g) {
-        McWinUtils.fillComponent(g, this);
-        paintComponents(g);
+        if (McWinLookAndFeel.getTheme().isBrightMode()) {
+            centerOneTouchButtons = true;
+            doLayout();
+            super.paint(g);
+        } else {
+            centerOneTouchButtons = false;
+            doLayout();
+            McWinUtils.fillComponent(g, this);
+            paintComponents(g);
+        }
     }
 }

@@ -22,10 +22,10 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
      * reduced the time it took paint to run.  Obviously, this
      * method can't be re-entered.
      */
-    private static Dimension size = new Dimension();
-    private static Rectangle viewRect = new Rectangle();
-    private static Rectangle iconRect = new Rectangle();
-    private static Rectangle textRect = new Rectangle();
+    protected static Dimension size = new Dimension();
+    protected static Rectangle viewRect = new Rectangle();
+    protected static Rectangle iconRect = new Rectangle();
+    protected static Rectangle textRect = new Rectangle();
 
     public static ComponentUI createUI(JComponent c) {
         if (radioButtonUI == null) {
@@ -127,7 +127,11 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
         if (ico != null) {
             ico.paintIcon(c, g, iconRect.x, iconRect.y - 1);
         } else {
-            getDefaultIcon().paintIcon(c, g, iconRect.x, iconRect.y - 1);
+            if (b.getIcon() != null) {
+                b.getIcon().paintIcon(c, g, iconRect.x, iconRect.y - 1);
+            } else {
+                getDefaultIcon().paintIcon(c, g, iconRect.x, iconRect.y - 1);
+            }
         }
     }
 

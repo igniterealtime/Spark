@@ -192,8 +192,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class FocusFrameBorder
 
     public static class TextFieldBorder extends AbstractBorder implements UIResource {
@@ -206,8 +215,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class TextFieldBorder
 
     public static class SpinnerBorder extends AbstractBorder implements UIResource {
@@ -220,8 +238,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class SpinnerBorder
 
     public static class ComboBoxBorder extends AbstractBorder implements UIResource {
@@ -234,8 +261,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class ComboBoxBorder
 
     public static class TableHeaderBorder extends AbstractBorder implements UIResource {
@@ -249,10 +285,18 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
-    } // class TableHeaderBorder
 
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
+    } // class TableHeaderBorder
 
     public static class ScrollPaneBorder extends AbstractBorder implements UIResource {
 
@@ -274,11 +318,21 @@ public class BaseBorders {
 
         public Insets getBorderInsets(Component c) {
             if (tableBorder) {
-                return tableInsets;
+                return new Insets(tableInsets.top, tableInsets.left, tableInsets.bottom, tableInsets.right);
             } else {
-                return insets;
+                return new Insets(insets.top, insets.left, insets.bottom, insets.right);
             }
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets ins = getBorderInsets(c);
+            borderInsets.left = ins.left;
+            borderInsets.top = ins.top;
+            borderInsets.right = ins.right;
+            borderInsets.bottom = ins.bottom;
+            return borderInsets;
+        }
+
     } // class ScrollPaneBorder
 
     public static class PopupMenuBorder extends AbstractBorder implements UIResource {
@@ -341,11 +395,21 @@ public class BaseBorders {
 
         public Insets getBorderInsets(Component c) {
             if (hasLogo()) {
-                return logoInsets;
+                return new Insets(logoInsets.top, logoInsets.left, logoInsets.bottom, logoInsets.right);
             } else {
-                return insets;
+                return new Insets(insets.top, insets.left, insets.bottom, insets.right);
             }
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets ins = getBorderInsets(c);
+            borderInsets.left = ins.left;
+            borderInsets.top = ins.top;
+            borderInsets.right = ins.right;
+            borderInsets.bottom = ins.bottom;
+            return borderInsets;
+        }
+
     } // class PopupMenuBorder
 
     public static class PopupMenuShadowBorder extends PopupMenuBorder {
@@ -428,8 +492,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class MenuItemBorder
 
     public static class ToolBarBorder extends AbstractBorder implements UIResource, SwingConstants {
@@ -454,8 +527,8 @@ public class BaseBorders {
                     g.drawLine(x + 4, y + 4, x + 4, h - 5);
                     g.drawLine(x + 7, y + 3, x + 7, h - 4);
                     g.drawLine(x + 10, y + 4, x + 10, h - 5);
-                } else // vertical
-                {
+                } else {
+                    // vertical
                     g.setColor(Color.white);
                     g.drawLine(x + 3, y + 3, w - 4, y + 3);
                     g.drawLine(x + 3, y + 6, w - 4, y + 6);
@@ -491,6 +564,16 @@ public class BaseBorders {
             }
             return insets;
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets insets = getBorderInsets(c);
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class ToolBarBorder
 
     public static class ToolButtonBorder implements Border, UIResource {
@@ -513,7 +596,15 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -535,8 +626,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class PaletteBorder
 
     public static class BaseInternalFrameBorder extends AbstractBorder implements UIResource {
@@ -630,11 +730,21 @@ public class BaseBorders {
 
         public Insets getBorderInsets(Component c) {
             if (isResizable(c)) {
-                return insets;
+                return new Insets(insets.top, insets.left, insets.bottom, insets.right);
             } else {
-                return paletteInsets;
+                return new Insets(paletteInsets.top, paletteInsets.left, paletteInsets.bottom, paletteInsets.right);
             }
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets ins = getBorderInsets(c);
+            borderInsets.left = ins.left;
+            borderInsets.top = ins.top;
+            borderInsets.right = ins.right;
+            borderInsets.bottom = ins.bottom;
+            return borderInsets;
+        }
+
     } // class BaseInternalFrameBorder
 
     public static class Down3DBorder extends AbstractBorder implements UIResource {
@@ -647,7 +757,17 @@ public class BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class Down3DBorder
+    
 } // class BaseBorders

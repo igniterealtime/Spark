@@ -48,18 +48,33 @@ public class McWinBorders extends BaseBorders {
         return internalFrameBorder;
     }
 
+    public static Border getTabbedPaneBorder() {
+        return null;
+    }
+
     //------------------------------------------------------------------------------------
     // Implementation of border classes
     //------------------------------------------------------------------------------------
     public static class ButtonBorder implements Border, UIResource {
 
-        private static final Insets insets = new Insets(2, 12, 2, 12);
-
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            if (McWinLookAndFeel.getTheme().doDrawSquareButtons()) {
+                return new Insets(3, 4, 3, 4);
+            } else {
+                return new Insets(2, 12, 2, 12);
+            }
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets insets = getBorderInsets(c);
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -69,30 +84,31 @@ public class McWinBorders extends BaseBorders {
 
     public static class RolloverToolButtonBorder implements Border, UIResource {
 
-        private static final Insets insets = new Insets(1, 1, 1, 1);
-        private static final Color HICOLOR = new Color(192, 192, 192);
-        private static final Color LOCOLOR = new Color(164, 164, 164);
-        private static final Color ROLLOVER_HICOLOR = new Color(144, 225, 181);
-        private static final Color ROLLOVER_LOCOLOR = new Color(124, 195, 160);
-
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             AbstractButton button = (AbstractButton) c;
             ButtonModel model = button.getModel();
+            Color frameColor = ColorHelper.brighter(AbstractLookAndFeel.getTheme().getFrameColor(), 40);
             if ((model.isPressed() && model.isArmed()) || model.isSelected()) {
-                JTattooUtilities.draw3DBorder(g, LOCOLOR, HICOLOR, x, y, w - 1, h);
+                frameColor = ColorHelper.brighter(AbstractLookAndFeel.getTheme().getFrameColor(), 20);
             } else if (model.isRollover()) {
-                JTattooUtilities.draw3DBorder(g, ROLLOVER_HICOLOR, ROLLOVER_LOCOLOR, x, y, w - 1, h);
-            } else {
-                g.setColor(Color.lightGray);
-                g.drawRect(x, y, w - 2, h - 1);
+                frameColor = AbstractLookAndFeel.getTheme().getRolloverColor();
             }
-            g.setColor(Color.white);
+            g.setColor(frameColor);
+            g.drawRect(x, y, w - 2, h - 1);
+            g.setColor(AbstractLookAndFeel.getTheme().getToolbarBackgroundColor());
             g.drawLine(w - 1, 0, w - 1, h - 1);
-
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(1, 1, 1, 1);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.top = 1;
+            borderInsets.left = 1;
+            borderInsets.bottom = 1;
+            borderInsets.right = 1;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -115,7 +131,7 @@ public class McWinBorders extends BaseBorders {
                 borderColor = McWinLookAndFeel.getWindowTitleColorDark();
             }
             if (!resizable) {
-                Insets insets = getBorderInsets(c);
+                Insets borderInsets = getBorderInsets(c);
                 g.setColor(frameColor);
                 g.drawRect(x, y, w - 1, h - 1);
                 if (active) {
@@ -123,13 +139,13 @@ public class McWinBorders extends BaseBorders {
                 } else {
                     g.setColor(McWinLookAndFeel.getWindowInactiveTitleColorDark());
                 }
-                for (int i = 1; i < insets.left; i++) {
+                for (int i = 1; i < borderInsets.left; i++) {
                     g.drawRect(i, i, w - (2 * i) - 1, h - (2 * i) - 1);
                 }
                 g.setColor(ColorHelper.brighter(frameColor, 20));
-                g.drawLine(insets.left - 1, y + th + insets.top, insets.left - 1, y + h - insets.bottom);
-                g.drawLine(w - insets.right, y + th + insets.top, w - insets.right, y + h - insets.bottom);
-                g.drawLine(insets.left - 1, y + h - insets.bottom, w - insets.right, y + h - insets.bottom);
+                g.drawLine(borderInsets.left - 1, y + th + borderInsets.top, borderInsets.left - 1, y + h - borderInsets.bottom);
+                g.drawLine(w - borderInsets.right, y + th + borderInsets.top, w - borderInsets.right, y + h - borderInsets.bottom);
+                g.drawLine(borderInsets.left - 1, y + h - borderInsets.bottom, w - borderInsets.right, y + h - borderInsets.bottom);
                 return;
             }
             g.setColor(titleColor);

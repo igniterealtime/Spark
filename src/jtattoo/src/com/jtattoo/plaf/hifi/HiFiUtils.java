@@ -30,7 +30,7 @@ public class HiFiUtils {
                 y += 3;
             }
         } else {
-            g.setColor(AbstractLookAndFeel.getBackgroundColor());
+            g.setColor(c.getBackground());
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
     }

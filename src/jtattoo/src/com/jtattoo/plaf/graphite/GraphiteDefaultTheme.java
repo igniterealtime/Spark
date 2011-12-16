@@ -113,6 +113,7 @@ public class GraphiteDefaultTheme extends AbstractTheme {
     public void setUpColorArrs() {
         super.setUpColorArrs();
         BUTTON_COLORS = ColorHelper.createColorArr(buttonColorLight, buttonColorDark, 24);
+        CHECKBOX_COLORS = BUTTON_COLORS;
         DEFAULT_COLORS = ColorHelper.createColorArr(controlColorLight, controlColorDark, 24);
         HIDEFAULT_COLORS = new Color[20];
         for (int i = 0; i < 20; i++) {

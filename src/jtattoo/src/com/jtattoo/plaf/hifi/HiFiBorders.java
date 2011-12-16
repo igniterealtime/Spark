@@ -111,7 +111,15 @@ public class HiFiBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -146,7 +154,15 @@ public class HiFiBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -165,7 +181,15 @@ public class HiFiBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -184,7 +208,15 @@ public class HiFiBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -192,38 +224,6 @@ public class HiFiBorders extends BaseBorders {
         }
     } // class TabbedPaneBorder
 
-//-------------------------------------------------------------------------------------------------    
-//    public static class InternalFrameBorder extends BaseInternalFrameBorder {
-//        
-//        public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
-//            boolean active = isActive(c);
-//            boolean resizable = isResizable(c);
-//            Color frameColor = AbstractLookAndFeel.getFrameColor();
-//            Color borderColor = AbstractLookAndFeel.getWindowInactiveBorderColor();
-//            if (active)
-//                borderColor = AbstractLookAndFeel.getWindowBorderColor();
-//            Color cHi = ColorHelper.brighter(frameColor, 30);
-//            Color cLo = frameColor;
-//            if (!resizable) {
-//                JTattooUtilities.draw3DBorder(g, cHi, cLo, x, y, w, h);
-//                g.setColor(borderColor);
-//                for (int i = 1; i < dw; i++)
-//                    g.drawRect(i, i, w - (2 * i) - 1, h - (2 * i) - 1);
-//            }
-//            else {
-//                g.setColor(borderColor);
-//                g.fillRect(0, 0, w - 1, dw);
-//                g.fillRect(0, h - dw, w - 1, dw);
-//                g.fillRect(0, dw, dw, h - dw);
-//                g.fillRect(w - dw, dw, dw, h - dw);
-//                g.setColor(cLo);
-//                g.drawRect(x, y, w - 1, h - 1);
-//                cLo = ColorHelper.darker(borderColor, 20);
-//                JTattooUtilities.draw3DBorder(g, cHi, cLo, x + 1, y + 1, w - 2, h - 2);
-//            }
-//        }
-//        
-//    } // class InternalFrameBorder
 //-------------------------------------------------------------------------------------------------    
     public static class InternalFrameBorder extends BaseInternalFrameBorder {
 
@@ -269,30 +269,19 @@ public class HiFiBorders extends BaseBorders {
 
     public static class ToolBarBorder extends AbstractBorder implements UIResource, SwingConstants {
 
+        private static final LazyImageIcon HOR_RUBBER_ICON = new LazyImageIcon("hifi/icons/HorRubber.gif");
+        private static final LazyImageIcon VER_RUBBER_ICON = new LazyImageIcon("hifi/icons/VerRubber.gif");
+
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             if (((JToolBar) c).isFloatable()) {
                 if (((JToolBar) c).getOrientation() == HORIZONTAL) {
-                    if (!JTattooUtilities.isLeftToRight(c)) {
-                        x += w - 15;
-                    }
-                    g.setColor(Color.gray);
-                    g.drawLine(x + 3, y + 4, x + 3, h - 5);
-                    g.drawLine(x + 6, y + 3, x + 6, h - 4);
-                    g.drawLine(x + 9, y + 4, x + 9, h - 5);
-                    g.setColor(Color.black);
-                    g.drawLine(x + 4, y + 4, x + 4, h - 5);
-                    g.drawLine(x + 7, y + 3, x + 7, h - 4);
-                    g.drawLine(x + 10, y + 4, x + 10, h - 5);
-                } else // vertical
-                {
-                    g.setColor(Color.gray);
-                    g.drawLine(x + 3, y + 3, w - 4, y + 3);
-                    g.drawLine(x + 3, y + 6, w - 4, y + 6);
-                    g.drawLine(x + 3, y + 9, w - 4, y + 9);
-                    g.setColor(Color.black);
-                    g.drawLine(x + 3, y + 4, w - 4, y + 4);
-                    g.drawLine(x + 3, y + 7, w - 4, y + 7);
-                    g.drawLine(x + 3, y + 10, w - 4, y + 10);
+                    int x1 = 4;
+                    int y1 = (h - HOR_RUBBER_ICON.getIconHeight()) / 2;
+                    HOR_RUBBER_ICON.paintIcon(c, g, x1, y1);
+                } else {
+                    int x1 = (w - VER_RUBBER_ICON.getIconWidth()) / 2 + 2;
+                    int y1 = 4;
+                    VER_RUBBER_ICON.paintIcon(c, g, x1, y1);
                 }
             }
         }
@@ -319,6 +308,17 @@ public class HiFiBorders extends BaseBorders {
             }
             return insets;
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets insets = getBorderInsets(c);
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class ToolBarBorder
+
 } // class HiFiBorders
 

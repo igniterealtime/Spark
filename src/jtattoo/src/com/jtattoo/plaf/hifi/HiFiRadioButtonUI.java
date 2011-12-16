@@ -44,7 +44,7 @@ public class HiFiRadioButtonUI extends BaseRadioButtonUI {
             FontMetrics fm = g.getFontMetrics();
             if (model.isEnabled()) {
                 Color fc = b.getForeground();
-                if (ColorHelper.getGrayValue(fc) > 128) {
+                if (AbstractLookAndFeel.getTheme().isTextShadowOn() && ColorHelper.getGrayValue(fc) > 128) {
                     g.setColor(Color.black);
                     JTattooUtilities.drawStringUnderlineCharAt(c, g, text, mnemIndex, textRect.x + 1, textRect.y + 1 + fm.getAscent());
                 }

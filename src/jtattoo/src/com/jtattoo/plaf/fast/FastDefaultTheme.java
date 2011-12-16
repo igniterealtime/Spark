@@ -73,6 +73,7 @@ public class FastDefaultTheme extends AbstractTheme {
 
         BUTTON_COLORS = ColorHelper.createColorArr(buttonBackgroundColor, buttonBackgroundColor, 2);
         COL_HEADER_COLORS = ColorHelper.createColorArr(new Color(248, 248, 248), new Color(248, 248, 248), 2);
+        CHECKBOX_COLORS = COL_HEADER_COLORS;
 
         TAB_COLORS = DEFAULT_COLORS;
     }

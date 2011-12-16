@@ -14,7 +14,7 @@ import com.jtattoo.plaf.*;
 /**
  * @author Michael Hagen
  */
-public class McWinMenuBarUI extends BasicMenuBarUI {
+public class McWinMenuBarUI extends BaseMenuBarUI {
 
     private static final Color shadowColors[] = ColorHelper.createColorArr(Color.white, new Color(240, 240, 240), 8);
 
@@ -31,6 +31,10 @@ public class McWinMenuBarUI extends BasicMenuBarUI {
     }
 
     public void paint(Graphics g, JComponent c) {
-        McWinUtils.fillComponent(g, c, shadowColors);
+        if (AbstractLookAndFeel.getTheme().isBackgroundPatternOn()) {
+            McWinUtils.fillComponent(g, c, shadowColors);
+        } else {
+            super.paint(g, c);
+        }
     }
 }

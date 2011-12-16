@@ -18,6 +18,7 @@ import javax.swing.plaf.basic.BasicFormattedTextFieldUI;
 public class BaseFormattedTextFieldUI extends BasicFormattedTextFieldUI {
 
     private Border orgBorder = null;
+    private FocusListener focusListener = null;
 
     public static ComponentUI createUI(JComponent c) {
         return new BaseFormattedTextFieldUI();
@@ -27,37 +28,47 @@ public class BaseFormattedTextFieldUI extends BasicFormattedTextFieldUI {
         super.installListeners();
 
         if (AbstractLookAndFeel.getTheme().doShowFocusFrame()) {
-            getComponent().addFocusListener(new FocusListener() {
+            focusListener = new FocusListener() {
 
                 public void focusGained(FocusEvent e) {
                     if (getComponent() != null) {
                         orgBorder = getComponent().getBorder();
                         LookAndFeel laf = UIManager.getLookAndFeel();
-                        if (laf instanceof AbstractLookAndFeel) {
+                        if (laf instanceof AbstractLookAndFeel && orgBorder instanceof UIResource) {
                             Border focusBorder = ((AbstractLookAndFeel)laf).getBorderFactory().getFocusFrameBorder();
                             getComponent().setBorder(focusBorder);
                         }
+                        getComponent().invalidate();
+                        getComponent().repaint();
                     }
                 }
 
                 public void focusLost(FocusEvent e) {
                     if (getComponent() != null) {
                         getComponent().setBorder(orgBorder);
+                        getComponent().invalidate();
+                        getComponent().repaint();
                     }
                 }
-            });
+            };
+            getComponent().addFocusListener(focusListener);
         }
     }
 
+    protected void uninstallListeners() {
+        getComponent().removeFocusListener(focusListener);
+        focusListener = null;
+        super.uninstallListeners();
+    }
+
     protected void paintBackground(Graphics g) {
-        Color orgBackgroundColor = getComponent().getBackground();
+        g.setColor(getComponent().getBackground());
         if (AbstractLookAndFeel.getTheme().doShowFocusFrame()) {
             if (getComponent().hasFocus() && getComponent().isEditable()) {
-                getComponent().setBackground(AbstractLookAndFeel.getTheme().getFocusBackgroundColor());
+                g.setColor(AbstractLookAndFeel.getTheme().getFocusBackgroundColor());
             }
         }
-        super.paintBackground(g);
-        getComponent().setBackground(orgBackgroundColor);
+        g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
     }
 
     protected void paintSafely(Graphics g) {

@@ -69,7 +69,7 @@ public class SmartBorders extends BaseBorders {
         private static final Color defaultColorMed = new Color(212, 224, 243);
         private static final Color defaultColorLo = new Color(200, 215, 240);
 
-        private static final Insets borderInsets = new Insets(3, 6, 3, 6);
+        private static final Insets insets = new Insets(3, 6, 3, 6);
 
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             AbstractButton button = (AbstractButton) c;
@@ -103,6 +103,14 @@ public class SmartBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
             return borderInsets;
         }
 
@@ -134,7 +142,15 @@ public class SmartBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -192,12 +208,21 @@ public class SmartBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
             return true;
         }
+
     } // class RolloverToolButtonBorder
 
     public static class InternalFrameBorder extends BaseInternalFrameBorder {
@@ -321,8 +346,18 @@ public class SmartBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class PaletteBorder
+
 } // class SmartBorders
 

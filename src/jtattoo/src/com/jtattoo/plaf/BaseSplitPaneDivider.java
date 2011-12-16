@@ -14,7 +14,7 @@ import javax.swing.plaf.basic.*;
  */
 public class BaseSplitPaneDivider extends BasicSplitPaneDivider {
 
-    private boolean centerOneTouchButtons = true;
+    protected boolean centerOneTouchButtons = true;
 
     public BaseSplitPaneDivider(BasicSplitPaneUI ui) {
         super(ui);

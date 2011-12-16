@@ -75,10 +75,18 @@ public class AeroBorders extends BaseBorders {
             g2D.setComposite(composite);
         }
         
-        public Insets getBorderInsets(Component c) { 
-            return insets;
+        public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
-        
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
         public boolean isBorderOpaque() { 
             return true;
         }
@@ -86,6 +94,7 @@ public class AeroBorders extends BaseBorders {
     } // class ButtonBorder
     
     public static class RolloverToolButtonBorder implements Border, UIResource {
+
         private static final Insets insets = new Insets(1, 1, 1, 1);
         
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
@@ -118,10 +127,18 @@ public class AeroBorders extends BaseBorders {
             }
         }
         
-        public Insets getBorderInsets(Component c) { 
-            return insets;
+        public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
-        
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
         public boolean isBorderOpaque() { 
             return true;
         }
@@ -272,6 +289,7 @@ public class AeroBorders extends BaseBorders {
             g.setColor(cl);
             g.drawLine(x + w - trackWidth, y + h - 4, x + w - 4, y + h - 4);
         } //paintBorder
+
     } // class InternalFrameBorder
         
 } // class AeroBorders

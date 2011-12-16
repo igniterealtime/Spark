@@ -99,6 +99,7 @@ public class SmartDefaultTheme extends AbstractTheme {
 
         BUTTON_COLORS = ColorHelper.createColorArr(buttonColorLight, buttonColorDark, 20);
         TAB_COLORS = ColorHelper.createColorArr(Color.white, backgroundColor, 20);
+        CHECKBOX_COLORS = TAB_COLORS;
         COL_HEADER_COLORS = MENUBAR_COLORS;
         TRACK_COLORS = ColorHelper.createColorArr(backgroundColor, Color.white, 16);
         THUMB_COLORS = DEFAULT_COLORS;

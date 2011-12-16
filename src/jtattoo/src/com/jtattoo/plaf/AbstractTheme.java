@@ -46,6 +46,7 @@ public abstract class AbstractTheme extends MetalTheme {
     protected static boolean backgroundPattern = true;
     protected static boolean brightMode = false;
     protected static boolean showFocusFrame = false;
+    protected static boolean drawSquareButtons = false;
 
     protected static boolean menuOpaque = true;
     protected static float menuAlpha = 0.9f;
@@ -137,6 +138,7 @@ public abstract class AbstractTheme extends MetalTheme {
     protected static Color TOOLBAR_COLORS[] = null;
     protected static Color MENUBAR_COLORS[] = null;
     protected static Color BUTTON_COLORS[] = null;
+    protected static Color CHECKBOX_COLORS[] = null;
     protected static Color TAB_COLORS[] = null;
     protected static Color COL_HEADER_COLORS[] = null;
     protected static Color TRACK_COLORS[] = null;
@@ -173,6 +175,7 @@ public abstract class AbstractTheme extends MetalTheme {
         backgroundPattern = true;
         brightMode = false;
         showFocusFrame = false;
+        drawSquareButtons = false;
         menuOpaque = true;
         menuAlpha = 0.9f;
         logoString = "JTattoo";
@@ -275,6 +278,7 @@ public abstract class AbstractTheme extends MetalTheme {
         TOOLBAR_COLORS = ColorHelper.createColorArr(toolbarColorLight, toolbarColorDark, 20);
         MENUBAR_COLORS = ColorHelper.createColorArr(menuColorLight, menuColorDark, 20);
         BUTTON_COLORS = ColorHelper.createColorArr(buttonColorLight, buttonColorDark, 20);
+        CHECKBOX_COLORS = DEFAULT_COLORS;
         TAB_COLORS = DEFAULT_COLORS;
         COL_HEADER_COLORS = DEFAULT_COLORS;
         TRACK_COLORS = ColorHelper.createColorArr(new Color(220, 220, 220), Color.white, 20);
@@ -326,6 +330,9 @@ public abstract class AbstractTheme extends MetalTheme {
             }
             if (props.getProperty("showFocusFrame") != null) {
                 showFocusFrame = props.getProperty("showFocusFrame").trim().equalsIgnoreCase("on");
+            }
+            if (props.getProperty("drawSquareButtons") != null) {
+                drawSquareButtons = props.getProperty("drawSquareButtons").trim().equalsIgnoreCase("on");
             }
             if (props.getProperty("menuOpaque") != null) {
                 menuOpaque = props.getProperty("menuOpaque").trim().equalsIgnoreCase("on");
@@ -824,6 +831,10 @@ public abstract class AbstractTheme extends MetalTheme {
         return showFocusFrame;
     }
 
+    public boolean doDrawSquareButtons() {
+        return drawSquareButtons;
+    }
+
     public boolean isMenuOpaque() {
         return menuOpaque;
     }
@@ -1150,6 +1161,10 @@ public abstract class AbstractTheme extends MetalTheme {
 
     public Color[] getButtonColors() {
         return BUTTON_COLORS;
+    }
+
+    public Color[] getCheckBoxColors() {
+        return CHECKBOX_COLORS;
     }
 
     public Color[] getTabColors() {

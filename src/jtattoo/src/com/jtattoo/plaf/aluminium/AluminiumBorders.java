@@ -53,15 +53,25 @@ public class AluminiumBorders extends BaseBorders {
     //------------------------------------------------------------------------------------
     public static class ButtonBorder implements Border, UIResource {
 
-        private static final Insets insets = new Insets(2, 12, 2, 12);
-
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            if (AluminiumLookAndFeel.getTheme().doDrawSquareButtons()) {
+                return new Insets(3, 4, 3, 4);
+            } else {
+                return new Insets(2, 12, 2, 12);
+            }
         }
 
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets insets = getBorderInsets(c);
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
         public boolean isBorderOpaque() {
             return false;
         }
@@ -101,7 +111,15 @@ public class AluminiumBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -158,6 +176,7 @@ public class AluminiumBorders extends BaseBorders {
             g.drawLine(1, 1, w - 3, 1);
             g.drawLine(1, 1, 1, h - 2);
         }
-    }
+    } // class InternalFrameBorder
+
 } // class AluminiumBorders
 

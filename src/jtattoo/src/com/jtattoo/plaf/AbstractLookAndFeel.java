@@ -272,6 +272,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "ScrollBar.allowsAbsolutePositioning", Boolean.TRUE,
             // ScrollPane
             "ScrollPane.border", scrollPaneBorder,
+
             // Tabbed Pane
             "TabbedPane.boder", tabbedPaneBorder,
             "TabbedPane.background", getControlBackgroundColor(),
@@ -297,6 +298,8 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
             "Table.scrollPaneBorder", tableScrollPaneBorder,
             "Table.foreground", getInputForegroundColor(),
             "Table.background", getInputBackgroundColor(),
+//            "Table.selectionForeground", getSelectionForegroundColor(),
+//            "Table.selectionBackground", getSelectionBackgroundColor(),
             "Table.gridColor", getGridColor(),
             "TableHeader.foreground", getControlForegroundColor(),
             "TableHeader.background", getBackgroundColor(),

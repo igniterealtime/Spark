@@ -51,21 +51,29 @@ public class BaseToggleButtonUI extends BasicToggleButtonUI {
         Color colors[] = null;
         if (b.isEnabled()) {
             if (b.getBackground() instanceof ColorUIResource) {
-                if (model.isRollover()) {
+                if (model.isPressed() && model.isArmed()) {
+                    colors = AbstractLookAndFeel.getTheme().getPressedColors();
+                } else  if (model.isRollover()) {
                     if (model.isSelected()) {
                         colors = rolloverPressedColors;
                     } else {
                         colors = AbstractLookAndFeel.getTheme().getRolloverColors();
                     }
-                } else if ((model.isPressed() && model.isArmed()) || model.isSelected()) {
+                } else if (model.isSelected()) {
                     colors = AbstractLookAndFeel.getTheme().getPressedColors();
                 } else {
-                    colors = AbstractLookAndFeel.getTheme().getButtonColors();
+                    if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
+                        colors = AbstractLookAndFeel.getTheme().getFocusColors();
+                    } else {
+                        colors = AbstractLookAndFeel.getTheme().getButtonColors();
+                    }
                 }
             } else {
-                if (model.isRollover()) {
+                if (model.isPressed() && model.isArmed()) {
+                    colors = ColorHelper.createColorArr(b.getBackground(), ColorHelper.darker(b.getBackground(), 50), 20);
+                } else  if (model.isRollover()) {
                     colors = ColorHelper.createColorArr(ColorHelper.brighter(b.getBackground(), 80), ColorHelper.brighter(b.getBackground(), 20), 20);
-                } else if (model.isPressed() && model.isArmed() || model.isSelected()) {
+                } else if (model.isSelected()) {
                     colors = ColorHelper.createColorArr(b.getBackground(), ColorHelper.darker(b.getBackground(), 50), 20);
                 } else {
                     colors = ColorHelper.createColorArr(ColorHelper.brighter(b.getBackground(), 40), ColorHelper.darker(b.getBackground(), 20), 20);

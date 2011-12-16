@@ -44,7 +44,7 @@
 		<copy todir="${dest.bin.dir}">
 			<fileset 
         dir="${jtattoo.src.dir}" 
-        includes="**/*.gif,**/*.jpg,**/*.GIF,**/*.JPG"
+        includes="**/*.gif,**/*.jpg,**/*.GIF,**/*.JPG,**/*.png,**/*.PNG"
       />
 		</copy>
 	</target>

@@ -40,7 +40,7 @@ public class AcrylScrollBarUI extends BaseScrollBarUI {
         if (!JTattooUtilities.isActive(scrollbar)) {
             frameColor = ColorHelper.brighter(frameColor, 80);
         }
-        if (isRollover) {
+        if (isRollover || isDragging) {
             frameColor = AbstractLookAndFeel.getTheme().getRolloverColorDark();
         }
 

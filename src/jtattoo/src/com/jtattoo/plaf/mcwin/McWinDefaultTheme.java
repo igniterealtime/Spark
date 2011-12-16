@@ -47,11 +47,14 @@ public class McWinDefaultTheme extends AbstractTheme {
         controlColorLight = new ColorUIResource(106, 150, 192);
         controlColorDark = lightGray;
 
-        rolloverColor = new ColorUIResource(212, 224, 243);
-        rolloverColorLight = new ColorUIResource(106, 192, 150);
-        rolloverColorDark = lightGray;
+//        rolloverColor = new ColorUIResource(212, 224, 243);
+//        rolloverColorLight = new ColorUIResource(106, 192, 150);
+//        rolloverColorDark = lightGray;
+        rolloverColor = new ColorUIResource(164, 217, 190);
+        rolloverColorLight = new ColorUIResource(182, 224, 203);
+        rolloverColorDark = new ColorUIResource(106, 192, 150);
 
-        windowTitleBackgroundColor = new ColorUIResource(212, 224, 243);//new ColorUIResource(242, 246, 255);
+        windowTitleBackgroundColor = new ColorUIResource(212, 224, 243);
         windowTitleColorLight = new ColorUIResource(231, 235, 248);
         windowTitleColorDark = new ColorUIResource(193, 211, 236);
         windowBorderColor = new ColorUIResource(154, 168, 182);
@@ -63,6 +66,8 @@ public class McWinDefaultTheme extends AbstractTheme {
 
         menuBackgroundColor = white;
         menuSelectionBackgroundColor = selectionBackgroundColor;
+
+        toolbarBackgroundColor = white;
 
         tabAreaBackgroundColor = backgroundColor;
         desktopColor = new ColorUIResource(80, 120, 180);
@@ -106,7 +111,7 @@ public class McWinDefaultTheme extends AbstractTheme {
                 DEFAULT_COLORS[i] = color2[i - 5];
             }
         }
-        if (rolloverColorLight.equals(new ColorUIResource(106, 192, 150))) {
+        if (rolloverColorDark.equals(new ColorUIResource(106, 192, 150))) {
             ROLLOVER_COLORS = new Color[]{
                         new Color(106, 192, 150),
                         new Color(154, 209, 190),
@@ -140,7 +145,6 @@ public class McWinDefaultTheme extends AbstractTheme {
                 ROLLOVER_COLORS[i] = color2[i - 5];
             }
         }
-
 
         HIDEFAULT_COLORS = new Color[]{
                     new Color(250, 250, 250),
@@ -193,11 +197,7 @@ public class McWinDefaultTheme extends AbstractTheme {
             THUMB_COLORS = DEFAULT_COLORS;
         }
         TRACK_COLORS = ColorHelper.createColorArr(new Color(220, 220, 220), Color.white, 20);
-        if (isBrightMode()) {
-            SLIDER_COLORS = HIDEFAULT_COLORS;
-        } else {
-            SLIDER_COLORS = DEFAULT_COLORS;
-        }
+        SLIDER_COLORS = DEFAULT_COLORS;
         PROGRESSBAR_COLORS = DEFAULT_COLORS;
     }
 }

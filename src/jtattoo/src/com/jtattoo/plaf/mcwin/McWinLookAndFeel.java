@@ -7,6 +7,7 @@ package com.jtattoo.plaf.mcwin;
 import java.util.*;
 import javax.swing.*;
 import com.jtattoo.plaf.*;
+import javax.swing.plaf.InsetsUIResource;
 
 /**
  * @author Michael Hagen
@@ -21,6 +22,10 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
     private static final Properties smallFontProps = new Properties();
     private static final Properties largeFontProps = new Properties();
     private static final Properties giantFontProps = new Properties();
+    private static final Properties modernProps = new Properties();
+    private static final Properties modernSmallFontProps = new Properties();
+    private static final Properties modernLargeFontProps = new Properties();
+    private static final Properties modernGiantFontProps = new Properties();
     private static final Properties pinkProps = new Properties();
     private static final Properties pinkSmallFontProps = new Properties();
     private static final Properties pinkLargeFontProps = new Properties();
@@ -48,6 +53,31 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
         giantFontProps.setProperty("windowTitleFont", "Dialog 18");
         giantFontProps.setProperty("subTextFont", "Dialog 16");
 
+        modernProps.setProperty("brightMode", "on");
+        modernProps.setProperty("menuOpaque", "on");
+        modernProps.setProperty("backgroundPattern", "off");
+        modernProps.setProperty("drawSquareButtons", "on");
+        modernProps.setProperty("windowTitleForegroundColor", "54 68 84");
+        modernProps.setProperty("windowTitleColorLight", "201 210 220");
+        modernProps.setProperty("windowTitleColorDark", "170 185 202");
+        modernProps.setProperty("windowBorderColor", "150 168 188");
+        modernProps.setProperty("windowInactiveTitleForegroundColor", "67 84 103");
+        modernProps.setProperty("windowInactiveTitleColorLight", "218 224 231");
+        modernProps.setProperty("windowInactiveTitleColorDark", "194 205 216");
+        modernProps.setProperty("windowInactiveBorderColor", "172 186 202");
+        modernProps.setProperty("backgroundColor", "220 226 233");
+        modernProps.setProperty("selectionBackgroundColor", "200 215 240");
+        modernProps.setProperty("rolloverColor", "208 208 145");
+        modernProps.setProperty("rolloverColorLight", "248 248 184");
+        modernProps.setProperty("rolloverColorDark", "220 220 172");
+        modernProps.setProperty("controlColorLight", "194 204 216");
+        modernProps.setProperty("controlColorDark", "160 177 197");
+        modernProps.setProperty("menuBackgroundColor", "242 244 247");
+        modernProps.setProperty("menuColorLight", "242 244 247");
+        modernProps.setProperty("menuColorDark", "220 226 233");
+        modernProps.setProperty("menuSelectionBackgroundColor", "220 220 172");
+        modernProps.setProperty("toolbarBackgroundColor", "220 226 233");
+
         pinkProps.setProperty("backgroundColorLight", "248 244 248");
         pinkProps.setProperty("backgroundColorDark", "255 255 255");
         pinkProps.setProperty("focusCellColor", "160 120 160");
@@ -72,21 +102,32 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
         while (iter.hasNext()) {
             key = (String) iter.next();
             value = smallFontProps.getProperty(key);
+            modernSmallFontProps.setProperty(key, value);
             pinkSmallFontProps.setProperty(key, value);
         }
         iter = largeFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();
             value = largeFontProps.getProperty(key);
+            modernLargeFontProps.setProperty(key, value);
             pinkLargeFontProps.setProperty(key, value);
         }
         iter = giantFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();
             value = giantFontProps.getProperty(key);
+            modernGiantFontProps.setProperty(key, value);
             pinkGiantFontProps.setProperty(key, value);
         }
 
+        iter = modernProps.keySet().iterator();
+        while (iter.hasNext()) {
+            key = (String) iter.next();
+            value = modernProps.getProperty(key);
+            modernSmallFontProps.setProperty(key, value);
+            modernLargeFontProps.setProperty(key, value);
+            modernGiantFontProps.setProperty(key, value);
+        }
         iter = pinkProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();
@@ -96,11 +137,15 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
             pinkGiantFontProps.setProperty(key, value);
         }
 
-
         themesList.add("Default");
         themesList.add("Small-Font");
         themesList.add("Large-Font");
         themesList.add("Giant-Font");
+
+        themesList.add("Modern");
+        themesList.add("Modern-Small-Font");
+        themesList.add("Modern-Large-Font");
+        themesList.add("Modern-Giant-Font");
 
         themesList.add("Pink");
         themesList.add("Pink-Small-Font");
@@ -111,6 +156,11 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
         themesMap.put("Small-Font", smallFontProps);
         themesMap.put("Large-Font", largeFontProps);
         themesMap.put("Giant-Font", giantFontProps);
+
+        themesMap.put("Modern", modernProps);
+        themesMap.put("Modern-Small-Font", modernSmallFontProps);
+        themesMap.put("Modern-Large-Font", modernLargeFontProps);
+        themesMap.put("Modern-Giant-Font", modernGiantFontProps);
 
         themesMap.put("Pink", pinkProps);
         themesMap.put("Pink-Small-Font", pinkSmallFontProps);
@@ -242,5 +292,6 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
     protected void initComponentDefaults(UIDefaults table) {
         super.initComponentDefaults(table);
         table.put("SplitPane.centerOneTouchButtons", Boolean.FALSE);
+        table.put("TabbedPane.tabAreaInsets", new InsetsUIResource(5, 5, 6, 5));
     }
 }

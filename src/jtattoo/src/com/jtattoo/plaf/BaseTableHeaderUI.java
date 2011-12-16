@@ -1,29 +1,63 @@
 /*
- * Copyright 2005 MH-Software-Entwicklung. All rights reserved.
+ * Copyright 2011 MH-Software-Entwicklung. All rights reserved.
  * Use is subject to license terms.
  */
 package com.jtattoo.plaf;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.plaf.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.Enumeration;
+import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTableHeaderUI;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
- * @author  Michael Hagen
+ * @author Michael Hagen
  */
 public class BaseTableHeaderUI extends BasicTableHeaderUI {
 
+    private TableCellRenderer originalHeaderRenderer;
     protected MouseAdapter myMouseAdapter = null;
     protected MouseMotionAdapter myMouseMotionAdapter = null;
     protected int rolloverCol = -1;
 
-    public static ComponentUI createUI(JComponent c) {
+    public static ComponentUI createUI(JComponent h) {
         return new BaseTableHeaderUI();
+    }
+
+    public void installUI(JComponent c) {
+        super.installUI(c);
+        originalHeaderRenderer = header.getDefaultRenderer();
+        if ((originalHeaderRenderer != null)
+                && "sun.swing.table.DefaultTableCellHeaderRenderer".equals(originalHeaderRenderer.getClass().getName())) {
+            header.setDefaultRenderer(new BaseDefaultHeaderRenderer());
+        }
+    }
+
+    public void uninstallUI(JComponent c) {
+        if (header.getDefaultRenderer() instanceof BaseDefaultHeaderRenderer) {
+            header.setDefaultRenderer(originalHeaderRenderer);
+        }
+        super.uninstallUI(c);
     }
 
     public void installListeners() {
@@ -31,57 +65,74 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
         myMouseAdapter = new MouseAdapter() {
 
             public void mouseReleased(MouseEvent e) {
-                if (!header.getReorderingAllowed()) {
-                    return;
+                boolean sortingAllowed = false;
+                if (JTattooUtilities.getJavaVersion() >= 1.6) {
+                    sortingAllowed = header.getTable().getRowSorter() != null;
                 }
-                if (header.getBounds().contains(e.getPoint())) {
-                    rolloverCol = header.getColumnModel().getColumnIndexAtX(e.getX());
-                    header.repaint();
-                } else {
-                    rolloverCol = -1;
-                    header.repaint();
+                if (sortingAllowed || header.getReorderingAllowed()) {
+                    if (header.getBounds().contains(e.getPoint())) {
+                        int oldRolloverCol = rolloverCol;
+                        rolloverCol = header.getColumnModel().getColumnIndexAtX(e.getX());
+                        updateRolloverColumn(oldRolloverCol, rolloverCol);
+                    } else {
+                        int oldRolloverCol = rolloverCol;
+                        rolloverCol = -1;
+                        updateRolloverColumn(oldRolloverCol, rolloverCol);
+                    }
                 }
             }
 
             public void mouseEntered(MouseEvent e) {
-                if (!header.getReorderingAllowed()) {
-                    return;
+                boolean sortingAllowed = false;
+                if (JTattooUtilities.getJavaVersion() >= 1.6) {
+                    sortingAllowed = header.getTable().getRowSorter() != null;
                 }
-                rolloverCol = header.getColumnModel().getColumnIndexAtX(e.getX());
-                header.repaint();
+                if (sortingAllowed || header.getReorderingAllowed()) {
+                    int oldRolloverCol = rolloverCol;
+                    rolloverCol = header.getColumnModel().getColumnIndexAtX(e.getX());
+                    updateRolloverColumn(oldRolloverCol, rolloverCol);
+                }
             }
 
             public void mouseExited(MouseEvent e) {
-                if (!header.getReorderingAllowed()) {
-                    return;
+                boolean sortingAllowed = false;
+                if (JTattooUtilities.getJavaVersion() >= 1.6) {
+                    sortingAllowed = header.getTable().getRowSorter() != null;
                 }
-                rolloverCol = -1;
-                header.repaint();
+                if (sortingAllowed || header.getReorderingAllowed()) {
+                    int oldRolloverCol = rolloverCol;
+                    rolloverCol = -1;
+                    updateRolloverColumn(oldRolloverCol, rolloverCol);
+                }
             }
         };
         myMouseMotionAdapter = new MouseMotionAdapter() {
 
             public void mouseMoved(MouseEvent e) {
-                if (!header.getReorderingAllowed()) {
-                    return;
+                boolean sortingAllowed = false;
+                if (JTattooUtilities.getJavaVersion() >= 1.6) {
+                    sortingAllowed = header.getTable().getRowSorter() != null;
                 }
-                if (header.getDraggedColumn() == null) {
-                    rolloverCol = header.getColumnModel().getColumnIndexAtX(e.getX());
-                    header.repaint();
+                if (sortingAllowed || header.getReorderingAllowed()) {
+                    if (header.getDraggedColumn() == null) {
+                        int oldRolloverCol = rolloverCol;
+                        rolloverCol = header.getColumnModel().getColumnIndexAtX(e.getX());
+                        updateRolloverColumn(oldRolloverCol, rolloverCol);
+                    }
                 }
             }
 
             public void mouseDragged(MouseEvent e) {
-                if (!header.getReorderingAllowed()) {
-                    return;
+                boolean sortingAllowed = false;
+                if (JTattooUtilities.getJavaVersion() >= 1.6) {
+                    sortingAllowed = header.getTable().getRowSorter() != null;
                 }
-                if (header.getDraggedColumn() != null) {
-                    try {
+                if (sortingAllowed || header.getReorderingAllowed()) {
+                    if (header.getDraggedColumn() != null && header.getDraggedColumn().getIdentifier() != null) {
                         rolloverCol = header.getColumnModel().getColumnIndex(header.getDraggedColumn().getIdentifier());
-                    } catch (Exception ex) {
+                    } else if (header.getResizingColumn() != null) {
+                        rolloverCol = -1;
                     }
-                } else if (header.getResizingColumn() != null) {
-                    rolloverCol = -1;
                 }
             }
         };
@@ -95,47 +146,59 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
         super.uninstallListeners();
     }
 
+    protected boolean drawAllwaysActive() {
+        return false;
+    }
+
+    protected boolean drawRolloverBar() {
+        return false;
+    }
+
+    protected Component getHeaderRenderer(int col) {
+        TableColumn tabCol = header.getColumnModel().getColumn(col);
+        TableCellRenderer renderer = tabCol.getHeaderRenderer();
+        if (renderer == null) {
+            renderer = header.getDefaultRenderer();
+        }
+        return renderer.getTableCellRendererComponent(header.getTable(), tabCol.getHeaderValue(), false, false, -1, col);
+    }
+
     private int getHeaderHeight() {
         int height = 0;
-        boolean accomodatedDefault = false;
+	boolean accomodatedDefault = false;
         TableColumnModel columnModel = header.getColumnModel();
         for (int column = 0; column < columnModel.getColumnCount(); column++) {
-            TableColumn aColumn = columnModel.getColumn(column);
-            // Configuring the header renderer to calculate its preferred size is expensive.
-            // Optimise this by assuming the default renderer always has the same height.
-            if (aColumn.getHeaderRenderer() != null || !accomodatedDefault) {
-                Component comp = getHeaderRenderer(column);
-                int rendererHeight = comp.getPreferredSize().height;
-                height = Math.max(height, rendererHeight);
-                // If the header value is empty (== "") in the
-                // first column (and this column is set up
-                // to use the default renderer) we will
-                // return zero from this routine and the header
-                // will disappear altogether. Avoiding the calculation
-                // of the preferred size is such a performance win for
-                // most applications that we will continue to
-                // use this cheaper calculation, handling these
-                // issues as `edge cases'.
-                if (rendererHeight > 0) {
-                    accomodatedDefault = true;
+	    TableColumn aColumn = columnModel.getColumn(column);
+            boolean isDefault = (aColumn.getHeaderRenderer() == null);
+
+            if (!isDefault || !accomodatedDefault) {
+		Component comp = getHeaderRenderer(column);
+		int rendererHeight = comp.getPreferredSize().height;
+		height = Math.max(height, rendererHeight);
+
+                // Configuring the header renderer to calculate its preferred size
+                // is expensive. Optimise this by assuming the default renderer
+                // always has the same height as the first non-zero height that
+                // it returns for a non-null/non-empty value.
+                if (isDefault && rendererHeight > 0) {
+                    Object headerValue = aColumn.getHeaderValue();
+                    if (headerValue != null) {
+                        headerValue = headerValue.toString();
+
+                        if (headerValue != null && !headerValue.equals("")) {
+                            accomodatedDefault = true;
+                        }
+                    }
                 }
-            }
+	    }
         }
         return height + 2;
     }
 
-    private Dimension createHeaderSize(long width) {
-        // None of the callers include the intercell spacing, do it here.
-        if (width > Integer.MAX_VALUE) {
-            width = Integer.MAX_VALUE;
-        }
-        return new Dimension((int) width, getHeaderHeight());
-    }
-
     /**
-     * Return the preferred size of the header. The preferred height is the 
-     * maximum of the preferred heights of all of the components provided 
-     * by the header renderers. The preferred width is the sum of the 
+     * Return the preferred size of the header. The preferred height is the
+     * maximum of the preferred heights of all of the components provided
+     * by the header renderers. The preferred width is the sum of the
      * preferred widths of each column (plus inter-cell spacing).
      */
     public Dimension getPreferredSize(JComponent c) {
@@ -145,7 +208,19 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
             TableColumn aColumn = (TableColumn) enumeration.nextElement();
             width = width + aColumn.getPreferredWidth();
         }
-        return createHeaderSize(width);
+        if (width > Integer.MAX_VALUE) {
+            width = Integer.MAX_VALUE;
+        }
+        return new Dimension((int) width, getHeaderHeight());
+    }
+
+    protected void updateRolloverColumn(int oldColumn, int newColumn) {
+        header.repaint(header.getHeaderRect(oldColumn));
+        header.repaint(header.getHeaderRect(newColumn));
+    }
+
+    protected void rolloverColumnUpdated(int oldColumn, int newColumn) {
+        // Empty to avoid multiple paints
     }
 
     public void paint(Graphics g, JComponent c) {
@@ -215,21 +290,6 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
         rendererPane.removeAll();
     }
 
-    private Component getHeaderRenderer(int col) {
-        TableColumn tabCol = header.getColumnModel().getColumn(col);
-        TableCellRenderer renderer = tabCol.getHeaderRenderer();
-        if (renderer == null) {
-            renderer = header.getDefaultRenderer();
-        }
-        return renderer.getTableCellRendererComponent(header.getTable(), tabCol.getHeaderValue(), false, false, -1, col);
-    }
-
-    protected void paintCell(Graphics g, Rectangle cellRect, int col) {
-        Component component = getHeaderRenderer(col);
-        paintBackground(g, cellRect, col);
-        rendererPane.paintComponent(g, component, header, cellRect.x, cellRect.y, cellRect.width, cellRect.height, true);
-    }
-
     protected void paintBackground(Graphics g, Rectangle cellRect, int col) {
         Component component = getHeaderRenderer(col);
         int x = cellRect.x;
@@ -245,6 +305,14 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
         }
     }
 
+    protected void paintCell(Graphics g, Rectangle cellRect, int col) {
+        Component component = getHeaderRenderer(col);
+        if (!(component instanceof BaseDefaultHeaderRenderer)) {
+            paintBackground(g, cellRect, col);
+        }
+        rendererPane.paintComponent(g, component, header, cellRect.x, cellRect.y, cellRect.width, cellRect.height, true);
+    }
+
     private int viewIndexForColumn(TableColumn aColumn) {
         TableColumnModel cm = header.getColumnModel();
         for (int column = 0; column < cm.getColumnCount(); column++) {
@@ -253,5 +321,90 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
             }
         }
         return -1;
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
+// inner classes
+//----------------------------------------------------------------------------------------------------------------------
+    private class BaseDefaultHeaderRenderer extends DefaultTableCellRenderer {
+
+        public BaseDefaultHeaderRenderer() {
+            super();
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            return new MyRenderComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
+
+    private class MyRenderComponent extends JLabel {
+
+        private JTable table = null;
+        private int col = 0;
+        private int gv = 0;
+
+        public MyRenderComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+            super();
+            this.table = table;
+            this.col = col;
+            if (value != null) {
+                setText(value.toString());
+            } else {
+                setText("");
+            }
+            setOpaque(false);
+            setForeground(UIManager.getColor("TableHeader.foreground"));
+            setHorizontalAlignment(JLabel.CENTER);
+            setHorizontalTextPosition(SwingConstants.LEADING);
+            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            if (JTattooUtilities.getJavaVersion() >= 1.6) {
+                RowSorter rowSorter = table == null ? null : table.getRowSorter();
+                List keyList = rowSorter == null ? null : rowSorter.getSortKeys();
+                if ((keyList != null) && (keyList.size() > 0)) {
+                    RowSorter.SortKey sortKey = (RowSorter.SortKey) keyList.get(0);
+                    if (sortKey.getColumn() == table.convertColumnIndexToModel(col)) {
+                        AbstractIconFactory iconFactory = ((AbstractLookAndFeel) UIManager.getLookAndFeel()).getIconFactory();
+                        if (sortKey.getSortOrder().equals(SortOrder.ASCENDING)) {
+                            setIcon(iconFactory.getUpArrowIcon());
+                        } else if (sortKey.getSortOrder().equals(SortOrder.DESCENDING)) {
+                            setIcon(iconFactory.getDownArrowIcon());
+                        }
+                    }
+                }
+            }
+            gv = ColorHelper.getGrayValue(AbstractLookAndFeel.getTheme().getRolloverColor());
+        }
+
+        protected void paintBackground(Graphics g) {
+            int draggedColumn = -1;
+            if (header.getDraggedColumn() != null) {
+                draggedColumn = header.getColumnModel().getColumnIndex(header.getDraggedColumn().getIdentifier());
+            }
+            if (table.isEnabled() && (col == rolloverCol || col == draggedColumn)) {
+                JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getRolloverColors(), 0, 0, getWidth(), getHeight());
+                if (drawRolloverBar()) {
+                    g.setColor(AbstractLookAndFeel.getFocusColor());
+                    g.drawLine(0, 0, getWidth() - 1, 0);
+                    g.drawLine(0, 1, getWidth() - 1, 1);
+                    g.drawLine(0, 2, getWidth() - 1, 2);
+                }
+            } else if (drawAllwaysActive() || JTattooUtilities.isFrameActive(header)) {
+                JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getColHeaderColors(), 0, 0, getWidth(), getHeight());
+            } else {
+                JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getInActiveColors(), 0, 0, getWidth(), getHeight());
+            }
+        }
+
+        public void paint(Graphics g) {
+            paintBackground(g);
+            if (rolloverCol == col) {
+                if (gv > 128) {
+                    setForeground(Color.black);
+                } else {
+                    setForeground(Color.white);
+                }
+            }
+            super.paint(g);
+        }
     }
 }

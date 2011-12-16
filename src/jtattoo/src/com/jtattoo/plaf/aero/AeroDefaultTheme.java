@@ -77,19 +77,23 @@ public class AeroDefaultTheme extends AbstractTheme {
         super.setUpColorArrs();
         Color color1[] = ColorHelper.createColorArr(controlColorLight, controlColorDark, 6);
         Color color2[] = ColorHelper.createColorArr(ColorHelper.brighter(controlColorDark, 10), controlColorLight, 15);
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++) {
             DEFAULT_COLORS[i] = color1[i];
-        for (int i = 5; i < 20; i++)
+        }
+        for (int i = 5; i < 20; i++) {
             DEFAULT_COLORS[i] = color2[i - 5];
-        for (int i = 0; i < 20; i++)
+        }
+        for (int i = 0; i < 20; i++) {
             HIDEFAULT_COLORS[i] = ColorHelper.brighter(DEFAULT_COLORS[i], 60);
+        }
         
         ROLLOVER_COLORS = HIDEFAULT_COLORS;
         ACTIVE_COLORS = DEFAULT_COLORS;
         
         PRESSED_COLORS = new Color[20];
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; i++) {
             PRESSED_COLORS[i] = ColorHelper.brighter(DEFAULT_COLORS[i], 40);
+        }
 
         DISABLED_COLORS = ColorHelper.createColorArr(new Color(240,240,240), new Color(220, 220, 220), 20);
         
@@ -97,7 +101,6 @@ public class AeroDefaultTheme extends AbstractTheme {
         for (int i = 0; i < 20; i++)
             WINDOW_TITLE_COLORS[i] = ColorHelper.brighter(DEFAULT_COLORS[i], 20);
         
-//        WINDOW_INACTIVE_TITLE_COLORS = ColorHelper.createColorArr(windowInactiveTitleColorLight, windowInactiveTitleColorDark, 20);
         MENUBAR_COLORS = ColorHelper.createColorArr(menuColorLight, menuColorDark, 20);
         TOOLBAR_COLORS = ColorHelper.createColorArr(toolbarColorLight, toolbarColorDark, 20);
         
@@ -124,10 +127,12 @@ public class AeroDefaultTheme extends AbstractTheme {
             new Color(254, 254, 254),
             new Color(255, 255, 255),
         };
+        CHECKBOX_COLORS = BUTTON_COLORS;
         
         SELECTED_COLORS = new Color[20];
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; i++) {
             SELECTED_COLORS[i] = ColorHelper.brighter(DEFAULT_COLORS[i], 40);
+        }
         TAB_COLORS = BUTTON_COLORS;
         COL_HEADER_COLORS = BUTTON_COLORS;
         THUMB_COLORS = SELECTED_COLORS;

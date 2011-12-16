@@ -41,7 +41,7 @@ public class AluminiumDefaultTheme extends AbstractTheme {
         focusColor = new ColorUIResource(255, 128, 96);
         focusCellColor = focusColor;
 
-        rolloverColor = new ColorUIResource(128, 138, 79);
+        rolloverColor = new ColorUIResource(196, 203, 163);
         rolloverColorLight = new ColorUIResource(220, 224, 201);
         rolloverColorDark = new ColorUIResource(196, 203, 163);
 

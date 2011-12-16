@@ -31,16 +31,6 @@ public class HiFiScrollBarUI extends BaseScrollBarUI {
         return new HiFiScrollButton(orientation, scrollBarWidth);
     }
 
-    protected Color[] getThumbColors() {
-        if (isRollover && !isDragging) {
-            return AbstractLookAndFeel.getTheme().getRolloverColors();
-        } else if (!JTattooUtilities.isActive(scrollbar)) {
-            return AbstractLookAndFeel.getTheme().getInActiveColors();
-        } else {
-            return AbstractLookAndFeel.getTheme().getThumbColors();
-        }
-    }
-
     protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
         if (!c.isEnabled()) {
             return;
@@ -74,8 +64,8 @@ public class HiFiScrollBarUI extends BaseScrollBarUI {
                 g.drawLine(dx, dy, dx + dw, dy);
                 dy++;
             }
-        } else // HORIZONTAL
-        {
+        } else {
+            // HORIZONTAL
             JTattooUtilities.fillHorGradient(g, colors, 1, 1, width - 1, height - 1);
             int dx = width / 2 - 3;
             int dy = 5;

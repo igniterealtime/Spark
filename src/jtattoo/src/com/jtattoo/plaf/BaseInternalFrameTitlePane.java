@@ -222,6 +222,9 @@ public class BaseInternalFrameTitlePane extends BasicInternalFrameTitlePane impl
         }
     }
 
+//------------------------------------------------------------------------------
+// inner classes
+//------------------------------------------------------------------------------
     class BaseTitlePaneLayout extends TitlePaneLayout {
 
         public void addLayoutComponent(String name, Component c) {

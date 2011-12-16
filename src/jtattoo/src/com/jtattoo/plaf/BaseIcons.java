@@ -69,28 +69,28 @@ public class BaseIcons {
     // OptionPane
     public static Icon getOptionPaneErrorIcon() {
         if (optionPaneErrorIcon == null) {
-            optionPaneErrorIcon = new LazyImageIcon("icons/Error.gif");
+            optionPaneErrorIcon = new LazyImageIcon("icons/Error.png");
         }
         return optionPaneErrorIcon;
     }
 
     public static Icon getOptionPaneWarningIcon() {
         if (optionPaneWarningIcon == null) {
-            optionPaneWarningIcon = new LazyImageIcon("icons/Warning.gif");
+            optionPaneWarningIcon = new LazyImageIcon("icons/Warning.png");
         }
         return optionPaneWarningIcon;
     }
 
     public static Icon getOptionPaneInformationIcon() {
         if (optionPaneInformationIcon == null) {
-            optionPaneInformationIcon = new LazyImageIcon("icons/Inform.gif");
+            optionPaneInformationIcon = new LazyImageIcon("icons/Information.png");
         }
         return optionPaneInformationIcon;
     }
 
     public static Icon getOptionPaneQuestionIcon() {
         if (optionPaneQuestionIcon == null) {
-            optionPaneQuestionIcon = new LazyImageIcon("icons/Question.gif");
+            optionPaneQuestionIcon = new LazyImageIcon("icons/Question.png");
         }
         return optionPaneQuestionIcon;
     }
@@ -356,8 +356,8 @@ public class BaseIcons {
         private static Icon checkIconDisabled = new LazyImageIcon("icons/CheckSymbolDisabled.gif");
         private static Icon checkPressedIcon = new LazyImageIcon("icons/CheckPressedSymbol.gif");
 
-        private static final int WIDTH = 10;
-        private static final int HEIGHT = 10;
+        private static final int WIDTH = 15;
+        private static final int HEIGHT = 15;
 
         public void paintIcon(Component c, Graphics g, int x, int y) {
             if (!JTattooUtilities.isLeftToRight(c)) {
@@ -383,7 +383,7 @@ public class BaseIcons {
                         if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
                             JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getFocusColors(), x, y, WIDTH, HEIGHT);
                         } else {
-                            JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getColHeaderColors(), x, y, WIDTH, HEIGHT);
+                            JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getCheckBoxColors(), x, y, WIDTH, HEIGHT);
                         }
                         if (!model.isPressed()) {
                             g.setColor(Color.white);
@@ -403,8 +403,9 @@ public class BaseIcons {
                         g.drawRect(x, y, WIDTH, HEIGHT);
                     }
                 } else {
-                    g.setColor(AbstractLookAndFeel.getDisabledBackgroundColor());
-                    g.fillRect(x, y, WIDTH, HEIGHT);
+//                    g.setColor(AbstractLookAndFeel.getDisabledBackgroundColor());
+//                    g.fillRect(x, y, WIDTH, HEIGHT);
+                    JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getDisabledColors(), x, y, WIDTH, HEIGHT);
                     g.setColor(ColorHelper.brighter(AbstractLookAndFeel.getFrameColor(), 40));
                     g.drawRect(x, y, WIDTH, HEIGHT);
                 }
@@ -453,14 +454,20 @@ public class BaseIcons {
                 g.setColor(MENU_ITEM_BACKGROUND);
                 g.fillRect(x, y, WIDTH, HEIGHT);
             } else {
-                if (b.isEnabled() && b.isRolloverEnabled() && model.isRollover()) {
-                    JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getRolloverColors(), x, y, WIDTH, HEIGHT);
-                } else {
-                    if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
-                        JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getFocusColors(), x, y, WIDTH, HEIGHT);
+                if (b.isEnabled()) {
+                    if (b.isRolloverEnabled() && model.isRollover()) {
+                        JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getRolloverColors(), x, y, WIDTH, HEIGHT);
                     } else {
-                        JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getColHeaderColors(), x, y, WIDTH, HEIGHT);
+                        if (AbstractLookAndFeel.getTheme().doShowFocusFrame() && b.hasFocus()) {
+                            JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getFocusColors(), x, y, WIDTH, HEIGHT);
+                        } else {
+                            JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getCheckBoxColors(), x, y, WIDTH, HEIGHT);
+                        }
                     }
+                } else {
+//                    g.setColor(AbstractLookAndFeel.getDisabledBackgroundColor());
+//                    g.fillRect(x, y, WIDTH, HEIGHT);
+                    JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getDisabledColors(), x, y, WIDTH, HEIGHT);
                 }
             }
             g2D.setClip(savedClip);
@@ -650,7 +657,7 @@ public class BaseIcons {
                 }
             }
             int lw = (w / 12);
-            int dx = (w / 5) + 2;
+            int dx = (w / 5) + 1;
             int dy = (h / 5) + 2;
 
             Stroke stroke = g2D.getStroke();
@@ -721,77 +728,61 @@ public class BaseIcons {
             g.translate(insets.left, insets.top);
             int w = c.getWidth() - insets.left - insets.right;
             int h = c.getHeight() - insets.top - insets.bottom;
-            int m = Math.min(w, h);
-            int d = 10;
-            int lw = 1;
-            if (m < 14) {
-                d = 7;
-            } else if (m < 18) {
-                d = 9;
-            } else if (m < 22) {
-                d = 11;
-            } else if (m < 26) {
-                d = 13;
-            } else {
-                d = 15;
-            }
 
-            w = Math.min(w, h);
-            h = Math.min(w, h);
-            w -= d;
-            h -= d;
-            x += (d / 4) + 1;
-            y += (d / 4);
+            int lw = (h > 22) ? 2 : 1;
+            int delta = w / 4;
+
+            w = Math.min(w, h) - 6;
+            h = w;
+            
+            int x1 = 3;
+            int y1 = 3;
+            int w1 = w - delta;
+            int h1 = h - delta;
+
+            int x2 = delta + 2;
+            int y2 = delta + 2;
+            int w2 = w - delta;
+            int h2 = h - delta;
 
             boolean active = JTattooUtilities.isActive((JComponent) c);
-            Color color = foregroundColor;
+            Color ic = foregroundColor;
+            Color sc = shadowColor;
             if (!active) {
-                color = inactiveForegroundColor;
+                ic = inactiveForegroundColor;
+                if (sc != null) {
+                    sc = inactiveShadowColor;
+                }
             }
             if (c instanceof AbstractButton) {
                 if (((AbstractButton) c).getModel().isRollover() && (rolloverColor != null)) {
-                    color = rolloverColor;
+                    ic = rolloverColor;
                 }
             }
+
             Stroke stroke = g2D.getStroke();
             g2D.setStroke(new BasicStroke(lw, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             Shape clipShape = g.getClip();
             Area clipArea = new Area(clipShape);
-            int xc = x + (d / 2) - 2;
-            int yc = x + Math.max((d / 2) - 2, 2 * lw + 1);
-            clipArea.subtract(new Area(new Rectangle2D.Double(xc, yc, w, h)));
+            clipArea.subtract(new Area(new Rectangle2D.Double(x2, y2, w2, h2)));
             g2D.setClip(clipArea);
-            if (shadowColor != null) {
-                if (!active) {
-                    g2D.setColor(inactiveShadowColor);
-                } else {
-                    g2D.setColor(shadowColor);
-                }
-                g2D.drawRect(x + 1, y + 1, w, h);
-                g2D.drawLine(x + 1, y + lw + 1, x + w + 1, y + lw + 1);
-            }
-            g2D.setColor(color);
-            g2D.drawRect(x, y, w, h);
-            g2D.drawLine(x, y + lw, x + w, y + lw);
+            paintRect(g2D, x1, y1, w1, h1, lw, ic, sc);
             g2D.setClip(clipShape);
-
-            x += (d / 2) - 2;
-            y += Math.max((d / 2) - 2, 2 * lw + 1);
-            if (shadowColor != null) {
-                if (!active) {
-                    g2D.setColor(inactiveShadowColor);
-                } else {
-                    g2D.setColor(shadowColor);
-                }
-                g2D.drawRect(x + 1, y + 1, w, h);
-                g2D.drawLine(x + 1, y + lw + 1, x + w + 1, y + lw + 1);
-            }
-            g2D.setColor(color);
-            g2D.drawRect(x, y, w, h);
-            g2D.drawLine(x, y + lw, x + w, y + lw);
-
+            paintRect(g2D, x2, y2, w2, h2, lw, ic, sc);
             g2D.setStroke(stroke);
             g.translate(-insets.left, -insets.top);
+        }
+
+        private void paintRect(Graphics2D g2D, int x, int y, int w, int h, int lw, Color iconColor, Color shadowColor) {
+            if (shadowColor != null) {
+                g2D.setColor(shadowColor);
+                g2D.drawRect(x + 1, y + 1, w, h);
+                g2D.drawLine(x + 1, y + lw + 1, x + w + 1, y + lw + 1);
+            }
+            g2D.setColor(iconColor);
+            g2D.drawRect(x, y, w, h);
+            g2D.drawLine(x, y + lw, x + w, y + lw);
+
         }
     }
 

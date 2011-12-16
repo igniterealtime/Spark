@@ -42,7 +42,11 @@ public class McWinComboBoxUI extends BaseComboBoxUI {
                 } else if (getModel().isRollover()) {
                     JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getRolloverColors(), 0, 0, size.width, size.height);
                 } else if (JTattooUtilities.isActive(this)) {
-                    JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getDefaultColors(), 0, 0, size.width, size.height);
+                    if (AbstractLookAndFeel.getTheme().isBrightMode()) {
+                        JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getButtonColors(), 0, 0, size.width, size.height);
+                    } else {
+                        JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getDefaultColors(), 0, 0, size.width, size.height);
+                    }
                 } else {
                     JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getInActiveColors(), 0, 0, size.width, size.height);
                 }

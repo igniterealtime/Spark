@@ -17,9 +17,27 @@ import java.io.Serializable;
  */
 public class McWinIcons extends BaseIcons {
 
-    private static final Color foreColor = new Color(32, 32, 32);
-    private static final Color shadowColor = new Color(240, 240, 240);
-    private static final Color rolloverColor = new Color(164, 0, 0);
+    private static Icon PEARL_RED_24x24 = new LazyImageIcon("mcwin/icons/pearl_red_24x24.png");
+    private static Icon PEARL_YELLOW_24x24 = new LazyImageIcon("mcwin/icons/pearl_yellow_24x24.png");
+    private static Icon PEARL_GREEN_24x24 = new LazyImageIcon("mcwin/icons/pearl_green_24x24.png");
+    private static Icon PEARL_GREY_24x24 = new LazyImageIcon("mcwin/icons/pearl_grey_24x24.png");
+    private static Icon PEARL_RED_28x28 = new LazyImageIcon("mcwin/icons/pearl_red_28x28.png");
+    private static Icon PEARL_YELLOW_28x28 = new LazyImageIcon("mcwin/icons/pearl_yellow_28x28.png");
+    private static Icon PEARL_GREEN_28x28 = new LazyImageIcon("mcwin/icons/pearl_green_28x28.png");
+    private static Icon PEARL_GREY_28x28 = new LazyImageIcon("mcwin/icons/pearl_grey_28x28.png");
+    private static Icon PEARL_RED_32x32 = new LazyImageIcon("mcwin/icons/pearl_red_32x32.png");
+    private static Icon PEARL_YELLOW_32x32 = new LazyImageIcon("mcwin/icons/pearl_yellow_32x32.png");
+    private static Icon PEARL_GREEN_32x32 = new LazyImageIcon("mcwin/icons/pearl_green_32x32.png");
+    private static Icon PEARL_GREY_32x32 = new LazyImageIcon("mcwin/icons/pearl_grey_32x32.png");
+    private static Icon ICONIZER_10x10 = new LazyImageIcon("mcwin/icons/iconizer_10x10.png");
+    private static Icon ICONIZER_12x12 = new LazyImageIcon("mcwin/icons/iconizer_12x12.png");
+    private static Icon MINIMIZER_10x10 = new LazyImageIcon("mcwin/icons/minimizer_10x10.png");
+    private static Icon MINIMIZER_12x12 = new LazyImageIcon("mcwin/icons/minimizer_12x12.png");
+    private static Icon MAXIMIZER_10x10 = new LazyImageIcon("mcwin/icons/maximizer_10x10.png");
+    private static Icon MAXIMIZER_12x12 = new LazyImageIcon("mcwin/icons/maximizer_12x12.png");
+    private static Icon CLOSER_10x10 = new LazyImageIcon("mcwin/icons/closer_10x10.png");
+    private static Icon CLOSER_12x12 = new LazyImageIcon("mcwin/icons/closer_12x12.png");
+
     private static Icon iconIcon = null;
     private static Icon maxIcon = null;
     private static Icon minIcon = null;
@@ -31,44 +49,28 @@ public class McWinIcons extends BaseIcons {
 
     public static Icon getIconIcon() {
         if (iconIcon == null) {
-            iconIcon = new TitleButtonIcon(
-                    new LazyImageIcon("mcwin/icons/pearl_green.gif"),
-                    new LazyImageIcon("mcwin/icons/iconizer.gif"),
-                    new LazyImageIcon("mcwin/icons/pearl_white.gif"),
-                    new LazyImageIcon("mcwin/icons/iconizer_inactive.gif"));
+            iconIcon = new IconIcon();
         }
         return iconIcon;
     }
 
     public static Icon getMinIcon() {
         if (minIcon == null) {
-            minIcon = new TitleButtonIcon(
-                    new LazyImageIcon("mcwin/icons/pearl_orange.gif"),
-                    new LazyImageIcon("mcwin/icons/minimizer.gif"),
-                    new LazyImageIcon("mcwin/icons/pearl_white.gif"),
-                    new LazyImageIcon("mcwin/icons/minimizer_inactive.gif"));
+            minIcon = new MinIcon();
         }
         return minIcon;
     }
 
     public static Icon getMaxIcon() {
         if (maxIcon == null) {
-            maxIcon = new TitleButtonIcon(
-                    new LazyImageIcon("mcwin/icons/pearl_orange.gif"),
-                    new LazyImageIcon("mcwin/icons/maximizer.gif"),
-                    new LazyImageIcon("mcwin/icons/pearl_white.gif"),
-                    new LazyImageIcon("mcwin/icons/maximizer_inactive.gif"));
+            maxIcon = new MaxIcon();
         }
         return maxIcon;
     }
 
     public static Icon getCloseIcon() {
         if (closeIcon == null) {
-            closeIcon = new TitleButtonIcon(
-                    new LazyImageIcon("mcwin/icons/pearl_red.gif"),
-                    new LazyImageIcon("mcwin/icons/closer.gif"),
-                    new LazyImageIcon("mcwin/icons/pearl_white.gif"),
-                    new LazyImageIcon("mcwin/icons/closer_inactive.gif"));
+            closeIcon = new CloseIcon();
         }
         return closeIcon;
     }
@@ -116,49 +118,194 @@ public class McWinIcons extends BaseIcons {
     }
 
 //--------------------------------------------------------------------------------------------------------
-    private static class TitleButtonIcon implements Icon, UIResource {
-
-        private Icon icon = null;
-        private Icon rolloverIcon = null;
-        private Icon inactiveIcon = null;
-        private Icon inactiveRolloverIcon = null;
-
-        public TitleButtonIcon(Icon icon,
-                Icon rolloverIcon,
-                Icon inactiveIcon,
-                Icon inactiveRolloverIcon) {
-            this.icon = icon;
-            this.rolloverIcon = rolloverIcon;
-            this.inactiveIcon = inactiveIcon;
-            this.inactiveRolloverIcon = inactiveRolloverIcon;
-        }
+    private static class IconIcon implements Icon, UIResource {
 
         public void paintIcon(Component c, Graphics g, int x, int y) {
             AbstractButton btn = (AbstractButton) c;
             ButtonModel model = btn.getModel();
-            Icon ico = icon;
-            if (JTattooUtilities.isActive(btn)) {
-                if (model.isRollover()) {
-                    ico = rolloverIcon;
+            int w = c.getWidth();
+            int h = c.getHeight();
+            Icon iconizerIcon = null;
+            Icon pearlIcon = null;
+            if (w <= 18) {
+                iconizerIcon = ICONIZER_10x10;
+                pearlIcon = PEARL_GREEN_24x24;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_24x24;
+                }
+            } else if (w <= 22) {
+                iconizerIcon = ICONIZER_12x12;
+                pearlIcon = PEARL_GREEN_28x28;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_28x28;
                 }
             } else {
-                if (model.isRollover()) {
-                    ico = inactiveRolloverIcon;
-                } else {
-                    ico = inactiveIcon;
+                iconizerIcon = ICONIZER_12x12;
+                pearlIcon = PEARL_GREEN_32x32;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_32x32;
                 }
             }
-            ico.paintIcon(c, g, x, y);
-        }
-
-        public int getIconWidth() {
-            return icon.getIconWidth();
+            x = (w - pearlIcon.getIconWidth()) / 2;
+            y = (h - pearlIcon.getIconHeight()) / 2;
+            pearlIcon.paintIcon(c, g, x, y);
+            if (model.isRollover()) {
+                x = ((w - iconizerIcon.getIconWidth()) / 2) + (w % 2);
+                y = ((h - iconizerIcon.getIconHeight()) / 2) + (h % 2);
+                iconizerIcon.paintIcon(c, g, x, y);
+            }
         }
 
         public int getIconHeight() {
-            return icon.getIconHeight();
+            return 24;
+        }
+
+        public int getIconWidth() {
+            return 24;
         }
     }
+
+    private static class MinIcon implements Icon, UIResource {
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            AbstractButton btn = (AbstractButton) c;
+            ButtonModel model = btn.getModel();
+            int w = c.getWidth();
+            int h = c.getHeight();
+            Icon minimizerIcon = null;
+            Icon pearlIcon = null;
+            if (w <= 18) {
+                minimizerIcon = MINIMIZER_10x10;
+                pearlIcon = PEARL_YELLOW_24x24;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_24x24;
+                }
+            } else if (w <= 22) {
+                minimizerIcon = MINIMIZER_12x12;
+                pearlIcon = PEARL_YELLOW_28x28;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_28x28;
+                }
+            } else {
+                minimizerIcon = MINIMIZER_12x12;
+                pearlIcon = PEARL_YELLOW_32x32;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_32x32;
+                }
+            }
+            x = (w - pearlIcon.getIconWidth()) / 2;
+            y = (h - pearlIcon.getIconHeight()) / 2;
+            pearlIcon.paintIcon(c, g, x, y);
+            if (model.isRollover()) {
+                x = ((w - minimizerIcon.getIconWidth()) / 2) + (w % 2);
+                y = ((h - minimizerIcon.getIconHeight()) / 2) + (h % 2);
+                minimizerIcon.paintIcon(c, g, x, y);
+            }
+        }
+
+        public int getIconHeight() {
+            return 24;
+        }
+
+        public int getIconWidth() {
+            return 24;
+        }
+    }
+
+    private static class MaxIcon implements Icon, UIResource {
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            AbstractButton btn = (AbstractButton) c;
+            ButtonModel model = btn.getModel();
+            int w = c.getWidth();
+            int h = c.getHeight();
+            Icon maximizerIcon = null;
+            Icon pearlIcon = null;
+            if (w <= 18) {
+                maximizerIcon = MAXIMIZER_10x10;
+                pearlIcon = PEARL_YELLOW_24x24;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_24x24;
+                }
+            } else if (w <= 22) {
+                maximizerIcon = MAXIMIZER_12x12;
+                pearlIcon = PEARL_YELLOW_28x28;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_28x28;
+                }
+            } else {
+                maximizerIcon = MAXIMIZER_12x12;
+                pearlIcon = PEARL_YELLOW_32x32;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_32x32;
+                }
+            }
+            x = (w - pearlIcon.getIconWidth()) / 2;
+            y = (h - pearlIcon.getIconHeight()) / 2;
+            pearlIcon.paintIcon(c, g, x, y);
+            if (model.isRollover()) {
+                x = ((w - maximizerIcon.getIconWidth()) / 2) + (w % 2);
+                y = ((h - maximizerIcon.getIconHeight()) / 2) + (h % 2);
+                maximizerIcon.paintIcon(c, g, x, y);
+            }
+        }
+
+        public int getIconHeight() {
+            return 24;
+        }
+
+        public int getIconWidth() {
+            return 24;
+        }
+    }
+
+    private static class CloseIcon implements Icon, UIResource {
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            AbstractButton btn = (AbstractButton) c;
+            ButtonModel model = btn.getModel();
+            int w = c.getWidth();
+            int h = c.getHeight();
+            Icon closerIcon = null;
+            Icon pearlIcon = null;
+            if (w <= 18) {
+                closerIcon = CLOSER_10x10;
+                pearlIcon = PEARL_RED_24x24;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_24x24;
+                }
+            } else if (w <= 22) {
+                closerIcon = CLOSER_12x12;
+                pearlIcon = PEARL_RED_28x28;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_28x28;
+                }
+            } else {
+                closerIcon = CLOSER_12x12;
+                pearlIcon = PEARL_RED_32x32;
+                if (!JTattooUtilities.isActive(btn)) {
+                    pearlIcon = PEARL_GREY_32x32;
+                }
+            }
+            x = (w - pearlIcon.getIconWidth()) / 2;
+            y = (h - pearlIcon.getIconHeight()) / 2;
+            pearlIcon.paintIcon(c, g, x, y);
+            if (model.isRollover()) {
+                x = ((w - closerIcon.getIconWidth()) / 2) + (w % 2);
+                y = ((h - closerIcon.getIconHeight()) / 2) + (h % 2);
+                closerIcon.paintIcon(c, g, x, y);
+            }
+        }
+
+        public int getIconHeight() {
+            return 24;
+        }
+
+        public int getIconWidth() {
+            return 24;
+        }
+    }
+
 
 //--------------------------------------------------------------------------------------------------------
     private static class CheckBoxIcon implements Icon, UIResource, Serializable {
@@ -307,7 +454,11 @@ public class McWinIcons extends BaseIcons {
             if (isRollover) {
                 colors = AbstractLookAndFeel.getTheme().getRolloverColors();
             } else {
-                colors = AbstractLookAndFeel.getTheme().getSelectedColors();
+                if (McWinLookAndFeel.getTheme().isBrightMode()) {
+                    colors = AbstractLookAndFeel.getTheme().getButtonColors();
+                } else {
+                    colors = AbstractLookAndFeel.getTheme().getSelectedColors();
+                }
             }
 
             Shape savedClip = g2D.getClip();

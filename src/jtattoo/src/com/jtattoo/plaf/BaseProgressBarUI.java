@@ -5,6 +5,8 @@
 package com.jtattoo.plaf;
 
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.*;
 import javax.swing.plaf.*;
 import javax.swing.plaf.basic.*;
@@ -14,6 +16,8 @@ import javax.swing.plaf.basic.*;
  */
 public class BaseProgressBarUI extends BasicProgressBarUI {
 
+    protected PropertyChangeListener propertyChangeListener;
+
     public static ComponentUI createUI(JComponent c) {
         return new BaseProgressBarUI();
     }
@@ -21,6 +25,41 @@ public class BaseProgressBarUI extends BasicProgressBarUI {
     public void installUI(JComponent c) {
         super.installUI(c);
         c.setBorder(UIManager.getBorder("ProgressBar.border"));
+        propertyChangeListener = new PropertyChangeHandler();
+        c.addPropertyChangeListener(propertyChangeListener);
+    }
+
+    public void uninstallUI(JComponent c) {
+        c.removePropertyChangeListener(propertyChangeListener);
+        super.uninstallUI(c);
+    }
+
+    protected void installDefaults() {
+        super.installDefaults();
+    }
+
+    /**
+     * The "selectionForeground" is the color of the text when it is painted
+     * over a filled area of the progress bar.
+     */
+    protected Color getSelectionForeground() {
+        Object selectionForeground = progressBar.getClientProperty("selectionForeground");
+        if (selectionForeground instanceof Color) {
+            return (Color)selectionForeground;
+        }
+	return super.getSelectionForeground();
+    }
+
+    /**
+     * The "selectionBackground" is the color of the text when it is painted
+     * over an unfilled area of the progress bar.
+     */
+    protected Color getSelectionBackground() {
+        Object selectionBackground = progressBar.getClientProperty("selectionBackground");
+        if (selectionBackground instanceof Color) {
+            return (Color)selectionBackground;
+        }
+	return super.getSelectionBackground();
     }
 
     protected void paintIndeterminate(Graphics g, JComponent c) {
@@ -34,12 +73,18 @@ public class BaseProgressBarUI extends BasicProgressBarUI {
         int barRectHeight = progressBar.getHeight() - (b.top + b.bottom);
 
         Color colors[] = null;
-        if (!JTattooUtilities.isActive(c)) {
-            colors = AbstractLookAndFeel.getTheme().getInActiveColors();
-        } else if (c.isEnabled()) {
-            colors = AbstractLookAndFeel.getTheme().getProgressBarColors();
+        if (progressBar.getForeground() instanceof UIResource) {
+            if (!JTattooUtilities.isActive(c)) {
+                colors = AbstractLookAndFeel.getTheme().getInActiveColors();
+            } else if (c.isEnabled()) {
+                colors = AbstractLookAndFeel.getTheme().getProgressBarColors();
+            } else {
+                colors = AbstractLookAndFeel.getTheme().getDisabledColors();
+            }
         } else {
-            colors = AbstractLookAndFeel.getTheme().getDisabledColors();
+            Color hiColor = ColorHelper.brighter(progressBar.getForeground(), 40);
+            Color loColor = ColorHelper.darker(progressBar.getForeground(), 20);
+            colors = ColorHelper.createColorArr(hiColor, loColor, 20);
         }
 
         Color cHi = ColorHelper.darker(colors[colors.length - 1], 5);
@@ -84,12 +129,18 @@ public class BaseProgressBarUI extends BasicProgressBarUI {
         // amount of progress to draw
         int amountFull = getAmountFull(b, w, h);
         Color colors[] = null;
-        if (!JTattooUtilities.isActive(c)) {
-            colors = AbstractLookAndFeel.getTheme().getInActiveColors();
-        } else if (c.isEnabled()) {
-            colors = AbstractLookAndFeel.getTheme().getProgressBarColors();
+        if (progressBar.getForeground() instanceof UIResource) {
+            if (!JTattooUtilities.isActive(c)) {
+                colors = AbstractLookAndFeel.getTheme().getInActiveColors();
+            } else if (c.isEnabled()) {
+                colors = AbstractLookAndFeel.getTheme().getProgressBarColors();
+            } else {
+                colors = AbstractLookAndFeel.getTheme().getDisabledColors();
+            }
         } else {
-            colors = AbstractLookAndFeel.getTheme().getDisabledColors();
+            Color hiColor = ColorHelper.brighter(progressBar.getForeground(), 40);
+            Color loColor = ColorHelper.darker(progressBar.getForeground(), 20);
+            colors = ColorHelper.createColorArr(hiColor, loColor, 20);
         }
         Color cHi = ColorHelper.darker(colors[colors.length - 1], 5);
         Color cLo = ColorHelper.darker(colors[colors.length - 1], 10);
@@ -129,6 +180,20 @@ public class BaseProgressBarUI extends BasicProgressBarUI {
             }
         } else {
             paintDeterminate(g, c);
+        }
+    }
+
+//-----------------------------------------------------------------------------------------------
+    protected class PropertyChangeHandler implements PropertyChangeListener {
+
+        public void propertyChange(PropertyChangeEvent e) {
+            if ("selectionForeground".equals(e.getPropertyName()) && (e.getNewValue() instanceof Color)) {
+                progressBar.invalidate();
+                progressBar.repaint();
+            } else if ("selectionBackground".equals(e.getPropertyName()) && (e.getNewValue() instanceof Color)) {
+                progressBar.invalidate();
+                progressBar.repaint();
+            }
         }
     }
 }

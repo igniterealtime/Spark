@@ -79,7 +79,7 @@ public class GraphiteBorders extends BaseBorders {
         private static final Color defaultColorHi = new Color(220, 230, 245);
         private static final Color defaultColorMed = new Color(212, 224, 243);
         private static final Color defaultColorLo = new Color(200, 215, 240);
-        private static final Insets borderInsets = new Insets(3, 8, 3, 8);
+        private static final Insets insets = new Insets(3, 8, 3, 8);
 
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             Graphics2D g2D = (Graphics2D) g;
@@ -119,6 +119,14 @@ public class GraphiteBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
             return borderInsets;
         }
 
@@ -129,7 +137,7 @@ public class GraphiteBorders extends BaseBorders {
     
     public static class ToggleButtonBorder implements Border, UIResource {
 
-        private static final Insets borderInsets = new Insets(3, 6, 4, 6);
+        private static final Insets insets = new Insets(3, 6, 4, 6);
 
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             Graphics2D g2D = (Graphics2D) g;
@@ -147,6 +155,14 @@ public class GraphiteBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
             return borderInsets;
         }
 
@@ -156,6 +172,7 @@ public class GraphiteBorders extends BaseBorders {
     } // class ToggleButtonBorder
 
     public static class RolloverToolButtonBorder implements Border, UIResource {
+
         private static final Insets insets = new Insets(1, 1, 1, 1);
         
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
@@ -188,11 +205,22 @@ public class GraphiteBorders extends BaseBorders {
             }
         }
         
-        public Insets getBorderInsets(Component c)
-        { return insets; }
+        public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
         
-        public boolean isBorderOpaque()
-        { return true; }
+        public boolean isBorderOpaque() { 
+            return true;
+        }
         
     } // class RolloverToolButtonBorder
 
@@ -220,11 +248,21 @@ public class GraphiteBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class MenuItemBorder
 
     public static class PopupMenuBorder extends AbstractBorder implements UIResource {
+
         protected static final Font logoFont = new Font("Dialog", Font.BOLD, 12);
         protected Insets logoInsets = new Insets(2, 18, 1, 1);
         protected Insets insets = new Insets(2, 1, 1, 1);
@@ -264,7 +302,6 @@ public class GraphiteBorders extends BaseBorders {
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             int dx = getBorderInsets(c).left - 1;
             Color logoColor = AbstractLookAndFeel.getMenuSelectionBackgroundColor();
-            Color menuColor = AbstractLookAndFeel.getMenuBackgroundColor();
             Color borderColor = ColorHelper.darker(AbstractLookAndFeel.getMenuSelectionBackgroundColor(), 20);
             g.setColor(logoColor);
             g.fillRect(x, y, dx, h);
@@ -289,11 +326,21 @@ public class GraphiteBorders extends BaseBorders {
 
         public Insets getBorderInsets(Component c) {
             if (hasLogo()) {
-                return logoInsets;
+                return new Insets(logoInsets.top, logoInsets.left, logoInsets.bottom, logoInsets.right);
             } else {
-                return insets;
+                return new Insets(insets.top, insets.left, insets.bottom, insets.right);
             }
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets ins = getBorderInsets(c);
+            borderInsets.left = ins.left;
+            borderInsets.top = ins.top;
+            borderInsets.right = ins.right;
+            borderInsets.bottom = ins.bottom;
+            return borderInsets;
+        }
+
     } // class PopupMenuBorder
 
     public static class InternalFrameBorder extends BaseInternalFrameBorder {
@@ -302,7 +349,15 @@ public class GraphiteBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {

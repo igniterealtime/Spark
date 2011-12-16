@@ -105,7 +105,7 @@ public class LunaBorders extends BaseBorders {
         private static final Color defaultColorMed = new Color(212, 224, 243);
         private static final Color defaultColorLo = new Color(200, 215, 240);
 
-        private static final Insets borderInsets = new Insets(3, 6, 3, 6);
+        private static final Insets insets = new Insets(3, 6, 3, 6);
 
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             AbstractButton button = (AbstractButton) c;
@@ -140,6 +140,14 @@ public class LunaBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
             return borderInsets;
         }
 
@@ -176,7 +184,15 @@ public class LunaBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -230,7 +246,15 @@ public class LunaBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
+        }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
         }
 
         public boolean isBorderOpaque() {
@@ -251,8 +275,17 @@ public class LunaBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class ComboBoxBorder
 
     public static class TextFieldBorder extends AbstractBorder implements UIResource {
@@ -268,8 +301,17 @@ public class LunaBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class TextFieldBorder
 
     public static class ScrollPaneBorder extends AbstractBorder implements UIResource {
@@ -294,11 +336,21 @@ public class LunaBorders extends BaseBorders {
 
         public Insets getBorderInsets(Component c) {
             if (tableBorder) {
-                return tableInsets;
+                return new Insets(tableInsets.top, tableInsets.left, tableInsets.bottom, tableInsets.right);
             } else {
-                return insets;
+                return new Insets(insets.top, insets.left, insets.bottom, insets.right);
             }
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            Insets ins = getBorderInsets(c);
+            borderInsets.left = ins.left;
+            borderInsets.top = ins.top;
+            borderInsets.right = ins.right;
+            borderInsets.bottom = ins.bottom;
+            return borderInsets;
+        }
+
     } // class ScrollPaneBorder
 
     public static class InternalFrameBorder extends BaseInternalFrameBorder {
@@ -353,8 +405,18 @@ public class LunaBorders extends BaseBorders {
         }
 
         public Insets getBorderInsets(Component c) {
-            return insets;
+            return new Insets(insets.top, insets.left, insets.bottom, insets.right);
         }
+
+        public Insets getBorderInsets(Component c, Insets borderInsets) {
+            borderInsets.left = insets.left;
+            borderInsets.top = insets.top;
+            borderInsets.right = insets.right;
+            borderInsets.bottom = insets.bottom;
+            return borderInsets;
+        }
+
     } // class TableHeaderBorder
+
 } // class LunaBorders
 

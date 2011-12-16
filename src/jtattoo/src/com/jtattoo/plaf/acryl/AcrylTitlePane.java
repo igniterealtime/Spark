@@ -122,15 +122,21 @@ public class AcrylTitlePane extends BaseTitlePane {
 
             int x = leftToRight ? spacing : w - buttonWidth - spacing;
             int y = Math.max(0, ((h - buttonHeight) / 2) - 1);
+            int cpx = 0;
+            int cpy = 0;
+            int cpw = getWidth();
+            int cph = getHeight();
 
             if (menuBar != null) {
                 int mw = menuBar.getPreferredSize().width;
                 int mh = menuBar.getPreferredSize().height;
                 if (leftToRight) {
+                    cpx = 4 + mw;
                     menuBar.setBounds(2, (h - mh) / 2, mw, mh);
                 } else {
                     menuBar.setBounds(getWidth() - mw, (h - mh) / 2, mw, mh);
                 }
+                cpw -= 4 + mw;
             }
 
             x = leftToRight ? w - spacing : 0;
@@ -160,6 +166,22 @@ public class AcrylTitlePane extends BaseTitlePane {
                 }
             }
             buttonsWidth = leftToRight ? w - x : x;
+            if (customTitlePanel != null) {
+                if (!leftToRight) {
+                    cpx += buttonsWidth;
+                }
+                cpw -= buttonsWidth;
+                Graphics g = getGraphics();
+                if (g != null) {
+                    FontMetrics fm = g.getFontMetrics();
+                    int tw = SwingUtilities.computeStringWidth(fm, JTattooUtilities.getClippedText(getTitle(), fm, cpw));
+                    if (leftToRight) {
+                        cpx += tw;
+                    }
+                    cpw -= tw;
+                }
+                customTitlePanel.setBounds(cpx, cpy, cpw, cph);
+            }
         }
     }
 }

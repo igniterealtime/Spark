@@ -38,13 +38,16 @@ public class AluminiumButtonUI extends BaseButtonUI {
         Composite composite = g2D.getComposite();
         Object savedRenderingHint = g2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
         g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if (((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().equals(""))) {
+        if (AluminiumLookAndFeel.getTheme().doDrawSquareButtons()
+            || (((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().length() == 0))) {
             Color[] colors = null;
             if (b.getBackground() instanceof ColorUIResource) {
                 if (!model.isEnabled()) {
                     colors = AluminiumLookAndFeel.getTheme().getDisabledColors();
                 } else if (model.isRollover()) {
                     colors = AluminiumLookAndFeel.getTheme().getRolloverColors();
+                } else if (b.equals(b.getRootPane().getDefaultButton())) {
+                    colors = AluminiumLookAndFeel.getTheme().getSelectedColors();
                 } else {
                     colors = AluminiumLookAndFeel.getTheme().getButtonColors();
                 }
@@ -78,6 +81,8 @@ public class AluminiumButtonUI extends BaseButtonUI {
                     colors = AluminiumLookAndFeel.getTheme().getDisabledColors();
                 } else if (model.isRollover()) {
                     colors = AluminiumLookAndFeel.getTheme().getRolloverColors();
+                } else if (b.equals(b.getRootPane().getDefaultButton())) {
+                    colors = AluminiumLookAndFeel.getTheme().getSelectedColors();
                 } else {
                     colors = AluminiumLookAndFeel.getTheme().getButtonColors();
                 }
@@ -114,8 +119,9 @@ public class AluminiumButtonUI extends BaseButtonUI {
         Graphics2D g2D = (Graphics2D) g;
         int width = b.getWidth();
         int height = b.getHeight();
-        if (!b.isContentAreaFilled()
-                || ((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().equals(""))) {
+        if (AluminiumLookAndFeel.getTheme().doDrawSquareButtons()
+                || !b.isContentAreaFilled()
+                || ((width < 64) || (height < 16)) && ((b.getText() == null) || b.getText().length() == 0)) {
             g.setColor(AbstractLookAndFeel.getFocusColor());
             BasicGraphicsUtils.drawDashedRect(g, 4, 3, width - 8, height - 6);
         } else {

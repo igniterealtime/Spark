@@ -327,12 +327,8 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
         super.propertyChange(e);
 
         String propertyName = e.getPropertyName();
-        if (propertyName == null) {
-            return;
-        }
-
         JRootPane root = (JRootPane) e.getSource();
-        if (propertyName.equals("windowDecorationStyle")) {
+        if ("windowDecorationStyle".equals(propertyName)) {
             int style = DecorationHelper.getWindowDecorationStyle(root);
 
             // This is potentially more than needs to be done,
@@ -343,7 +339,21 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
             if (style != NONE) {
                 installClientDecorations(root);
             }
-        } else if (propertyName.equals("ancestor")) {
+            if (window instanceof Frame) {
+                Frame frame = (Frame)window;
+                if (frame != null) {
+                    GraphicsConfiguration gc = frame.getGraphicsConfiguration();
+                    Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+                    Rectangle screenBounds = gc.getBounds();
+                    int x = Math.max(0, screenInsets.left);
+                    int y = Math.max(0, screenInsets.top);
+                    int w = screenBounds.width - (screenInsets.left + screenInsets.right);
+                    int h = screenBounds.height - (screenInsets.top + screenInsets.bottom);
+                    // Keep taskbar visible
+                    frame.setMaximizedBounds(new Rectangle(x, y, w, h));
+                }
+            }
+        } else if ("ancestor".equals(propertyName)) {
             uninstallWindowListeners(root);
             if (DecorationHelper.getWindowDecorationStyle(root) != NONE) {
                 installWindowListeners(root, root.getParent());

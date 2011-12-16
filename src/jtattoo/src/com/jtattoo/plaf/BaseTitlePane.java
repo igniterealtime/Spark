@@ -38,6 +38,7 @@ public class BaseTitlePane extends JComponent {
     protected Action restoreAction;
     protected Action maximizeAction;
     protected JMenuBar menuBar;
+    protected JPanel customTitlePanel;
     protected JButton iconifyButton;
     protected JButton maxButton;
     protected JButton closeButton;
@@ -148,8 +149,10 @@ public class BaseTitlePane extends JComponent {
         if (getWindowDecorationStyle() == BaseRootPaneUI.FRAME) {
             createActions();
             createMenuBar();
+            createCustomizedTitlePanel();
             createButtons();
             add(menuBar);
+            add(customTitlePanel);
             add(iconifyButton);
             add(maxButton);
             add(closeButton);
@@ -199,6 +202,35 @@ public class BaseTitlePane extends JComponent {
 
             menuBar.add(menu);
         }
+    }
+
+    public void createCustomizedTitlePanel() {
+        customTitlePanel = new JPanel();
+        customTitlePanel.setOpaque(false);
+    }
+
+    public void setCustomizedTitlePanel(JPanel panel) {
+        remove(customTitlePanel);
+        if (panel != null) {
+            customTitlePanel = panel;
+        } else {
+            remove(customTitlePanel);
+            customTitlePanel = new JPanel();
+            customTitlePanel.setOpaque(false);
+        }
+        add(customTitlePanel);
+        revalidate();
+        repaint();
+    }
+
+    public void createButtons() {
+        iconifyButton = new BaseTitleButton(iconifyAction, ICONIFY, iconifyIcon, 1.0f);
+        maxButton = new BaseTitleButton(restoreAction, MAXIMIZE, maximizeIcon, 1.0f);
+        closeButton = new BaseTitleButton(closeAction, CLOSE, closeIcon, 1.0f);
+    }
+
+    public LayoutManager createLayout() {
+        return new TitlePaneLayout();
     }
 
     protected void close() {
@@ -265,16 +297,6 @@ public class BaseTitlePane extends JComponent {
             }
         }
         return defaultValue;
-    }
-
-    public void createButtons() {
-        iconifyButton = new BaseTitleButton(iconifyAction, ICONIFY, iconifyIcon, 1.0f);
-        maxButton = new BaseTitleButton(restoreAction, MAXIMIZE, maximizeIcon, 1.0f);
-        closeButton = new BaseTitleButton(closeAction, CLOSE, closeIcon, 1.0f);
-    }
-
-    public LayoutManager createLayout() {
-        return new TitlePaneLayout();
     }
 
     protected void setActive(boolean flag) {
@@ -582,16 +604,22 @@ public class BaseTitlePane extends JComponent {
             int x = leftToRight ? spacing : w - buttonWidth - spacing;
             int y = Math.max(0, ((h - buttonHeight) / 2) - 1);
 
+            int cpx = 0;
+            int cpy = 0;
+            int cpw = getWidth();
+            int cph = getHeight();
+
             if (menuBar != null) {
                 int mw = menuBar.getPreferredSize().width;
                 int mh = menuBar.getPreferredSize().height;
                 if (leftToRight) {
+                    cpx = 4 + mw;
                     menuBar.setBounds(2, (h - mh) / 2, mw, mh);
                 } else {
                     menuBar.setBounds(getWidth() - mw, (h - mh) / 2, mw, mh);
                 }
+                cpw -= 4 + mw;
             }
-
             x = leftToRight ? w - spacing : 0;
             if (closeButton != null) {
                 x += leftToRight ? -buttonWidth : spacing;
@@ -619,6 +647,24 @@ public class BaseTitlePane extends JComponent {
                 }
             }
             buttonsWidth = leftToRight ? w - x : x;
+           
+            if (customTitlePanel != null) {
+                if (!leftToRight) {
+                    cpx += buttonsWidth;
+                }
+                cpw -= buttonsWidth;
+                Graphics g = getGraphics();
+                if (g != null) {
+                    FontMetrics fm = g.getFontMetrics();
+                    int tw = SwingUtilities.computeStringWidth(fm, JTattooUtilities.getClippedText(getTitle(), fm, cpw));
+                    if (leftToRight) {
+                        cpx += tw;
+                    }
+                    cpw -= tw;
+                }
+                customTitlePanel.setBounds(cpx, cpy, cpw, cph);
+            }
+
         }
     }
 

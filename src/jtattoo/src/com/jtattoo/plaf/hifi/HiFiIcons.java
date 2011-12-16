@@ -22,10 +22,6 @@ public class HiFiIcons extends BaseIcons {
     private static Icon closeIcon = null;
     private static Icon radioButtonIcon = null;
     private static Icon checkBoxIcon = null;
-    private static Icon optionPaneErrorIcon = null;
-    private static Icon optionPaneWarningIcon = null;
-    private static Icon optionPaneInformationIcon = null;
-    private static Icon optionPaneQuestionIcon = null;
     private static Icon treeOpenIcon = null;
     private static Icon treeClosedIcon = null;
     private static Icon upArrowIcon = null;
@@ -95,34 +91,6 @@ public class HiFiIcons extends BaseIcons {
             checkBoxIcon = new CheckBoxIcon();
         }
         return checkBoxIcon;
-    }
-
-    public static Icon getOptionPaneErrorIcon() {
-        if (optionPaneErrorIcon == null) {
-            optionPaneErrorIcon = new LazyImageIcon("hifi/icons/Error.gif");
-        }
-        return optionPaneErrorIcon;
-    }
-
-    public static Icon getOptionPaneWarningIcon() {
-        if (optionPaneWarningIcon == null) {
-            optionPaneWarningIcon = new LazyImageIcon("hifi/icons/Warning.gif");
-        }
-        return optionPaneWarningIcon;
-    }
-
-    public static Icon getOptionPaneInformationIcon() {
-        if (optionPaneInformationIcon == null) {
-            optionPaneInformationIcon = new OptionPaneIcon(new LazyImageIcon("hifi/icons/Inform.gif"));
-        }
-        return optionPaneInformationIcon;
-    }
-
-    public static Icon getOptionPaneQuestionIcon() {
-        if (optionPaneQuestionIcon == null) {
-            optionPaneQuestionIcon = new OptionPaneIcon(new LazyImageIcon("hifi/icons/Question.gif"));
-        }
-        return optionPaneQuestionIcon;
     }
 
     public static Icon getTreeControlIcon(boolean isCollapsed) {
@@ -241,7 +209,6 @@ public class HiFiIcons extends BaseIcons {
             ButtonModel model = cb.getModel();
             Graphics2D g2D = (Graphics2D) g;
 
-            boolean isEnabled = cb.isEnabled();
             boolean isRollover = cb.isRolloverEnabled() && model.isRollover();
             Color colors[] = null;
             if (cb.isEnabled()) {
@@ -307,7 +274,6 @@ public class HiFiIcons extends BaseIcons {
         private static Icon radioIcon = new LazyImageIcon("hifi/icons/RadioSymbol.gif");
         private static Icon baseRadioIcon = new LazyImageIcon("icons/RadioSymbol.gif");
         private static final Color hiColor = new Color(164, 164, 164);
-        private static final Color lowColor = new Color(16, 16, 16);
         private final int WIDTH = 16;
         private final int HEIGHT = 16;
 
@@ -368,57 +334,6 @@ public class HiFiIcons extends BaseIcons {
 
         public int getIconWidth() {
             return WIDTH + 4;
-        }
-
-        public int getIconHeight() {
-            return HEIGHT;
-        }
-    }
-
-    private static class OptionPaneIcon implements Icon, UIResource, Serializable {
-
-        private Icon symbol = null;
-        private Color c1 = new Color(224, 224, 224);
-        private Color c2 = Color.lightGray;
-        private final int WIDTH = 34;
-        private final int HEIGHT = 34;
-
-        public OptionPaneIcon(Icon icon) {
-            symbol = icon;
-        }
-
-        public OptionPaneIcon(Icon icon, Color c1, Color c2) {
-            symbol = icon;
-            this.c1 = c1;
-            this.c2 = c2;
-        }
-
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            g.translate(x, y);
-            int d = WIDTH - 3;
-            Graphics2D g2D = (Graphics2D) g;
-            Object savedRederingHint = g2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-            g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            Composite composite = g2D.getComposite();
-            AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
-            g2D.setComposite(alpha);
-            g2D.setColor(Color.black);
-            g2D.fillOval(1, 1, d + 2, d + 2);
-            g2D.fillOval(1, 1, d + 1, d + 1);
-            g2D.setComposite(composite);
-            g2D.setPaint(new GradientPaint(0, 0, c1, d, d, c2));
-            g.fillOval(0, 0, d + 1, d + 1);
-            g2D.setPaint(null);
-            g2D.setColor(new Color(211, 221, 238));
-            g2D.drawOval(0, 0, d, d);
-            g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedRederingHint);
-            int xi = ((WIDTH - symbol.getIconWidth()) / 2) - 1;
-            int yi = ((HEIGHT - symbol.getIconHeight()) / 2) - 1;
-            symbol.paintIcon(c, g, xi, yi);
-        }
-
-        public int getIconWidth() {
-            return WIDTH;
         }
 
         public int getIconHeight() {

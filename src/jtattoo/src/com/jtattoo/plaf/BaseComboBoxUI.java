@@ -17,7 +17,8 @@ import javax.swing.border.*;
 
 public class BaseComboBoxUI extends BasicComboBoxUI {
 
-    protected PropertyChangeListener propertyChangeListener;
+    private PropertyChangeListener propertyChangeListener = null;
+    private FocusListener focusListener = null;
     private Border orgBorder = null;
     private Color orgBackgroundColor = null;
 
@@ -41,7 +42,7 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
         comboBox.addPropertyChangeListener(propertyChangeListener);
 
         if (AbstractLookAndFeel.getTheme().doShowFocusFrame()) {
-            comboBox.addFocusListener(new FocusListener() {
+            focusListener = new FocusListener() {
 
                 public void focusGained(FocusEvent e) {
                     if (comboBox != null) {
@@ -49,9 +50,11 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
                         orgBackgroundColor = comboBox.getBackground();
                         LookAndFeel laf = UIManager.getLookAndFeel();
                         if (laf instanceof AbstractLookAndFeel) {
-                            Border focusBorder = ((AbstractLookAndFeel)laf).getBorderFactory().getFocusFrameBorder();
+                            if (orgBorder instanceof UIResource) {
+                                Border focusBorder = ((AbstractLookAndFeel)laf).getBorderFactory().getFocusFrameBorder();
+                                comboBox.setBorder(focusBorder);
+                            }
                             Color backgroundColor = AbstractLookAndFeel.getTheme().getFocusBackgroundColor();
-                            comboBox.setBorder(focusBorder);
                             comboBox.setBackground(backgroundColor);
                         }
                     }
@@ -63,13 +66,16 @@ public class BaseComboBoxUI extends BasicComboBoxUI {
                         comboBox.setBackground(orgBackgroundColor);
                     }
                 }
-            });
+            };
+            comboBox.addFocusListener(focusListener);
         }
     }
 
     protected void uninstallListeners() {
         comboBox.removePropertyChangeListener(propertyChangeListener);
+        comboBox.removeFocusListener(focusListener);
         propertyChangeListener = null;
+        focusListener = null;
         super.uninstallListeners();
     }
 
