@@ -88,9 +88,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private LocalPreferences preferences;
 
-    private ContactList contactList =  Workspace.getInstance().getContactList();
-    
-    private Timer timer = new Timer();
+    private ContactList contactList =  Workspace.getInstance().getContactList();    
     
     private DisplayWindowTask timerTask = null;
 
@@ -963,7 +961,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
             	timerTask = new DisplayWindowTask(mouseEvent, System.currentTimeMillis());            
-            	timer.schedule(timerTask, 100, 100);
+            	new Timer().schedule(timerTask, 100, 100);
             }
 
             public void mouseExited(MouseEvent mouseEvent) {               
