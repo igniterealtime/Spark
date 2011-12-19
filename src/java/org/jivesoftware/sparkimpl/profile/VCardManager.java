@@ -326,27 +326,35 @@ public class VCardManager {
      */
     public VCard getVCard() {
         if (!vcardLoaded) {
-            try {
-                personalVCard.load(SparkManager.getConnection());
-
-                // If VCard is loaded, then save the avatar to the personal folder.
-                byte[] bytes = personalVCard.getAvatar();
-                if (bytes != null && bytes.length > 0) {
-                    ImageIcon icon = new ImageIcon(bytes);
-                    icon = VCardManager.scale(icon);
-                    if (icon != null && icon.getIconWidth() != -1) {
-                        BufferedImage image = GraphicUtils.convert(icon.getImage());
-                        ImageIO.write(image, "PNG", imageFile);
-                    }
-                }
-            }
-            catch (Exception e) {
-                Log.error(e);
-            }
+        	reloadPersonalVCard();
             vcardLoaded = true;
         }
         return personalVCard;
     }
+    
+    /**
+     * Loads the vcard for this Spark user     
+     * @return this users VCard.
+     */    
+	public void reloadPersonalVCard() {
+		try {
+			personalVCard.load(SparkManager.getConnection());
+			// If VCard is loaded, then save the avatar to the personal folder.
+			byte[] bytes = personalVCard.getAvatar();
+			if (bytes != null && bytes.length > 0) {
+				ImageIcon icon = new ImageIcon(bytes);
+				icon = VCardManager.scale(icon);
+				if (icon != null && icon.getIconWidth() != -1) {
+					BufferedImage image = GraphicUtils.convert(icon.getImage());
+					ImageIO.write(image, "PNG", imageFile);
+				}
+			}
+		}
+		catch (Exception e) {
+			personalVCard.setError(new XMPPError(XMPPError.Condition.conflict));
+			Log.error(e);
+		}
+	}
 
     /**
      * Returns the Avatar in the form of an <code>ImageIcon</code>.
