@@ -636,6 +636,12 @@ public class VCardManager {
         	return;
         }
         String fileName = Base64.encodeBytes(jid.getBytes());
+        // remove tab
+        fileName   = fileName.replaceAll("\t", "");
+        // remove new line (Unix)
+        fileName          = fileName.replaceAll("\n", "");
+        // remove new line (Windows)
+        fileName          = fileName.replaceAll("\r", "");
 
         byte[] bytes = vcard.getAvatar();
         if (bytes != null && bytes.length > 0) {
