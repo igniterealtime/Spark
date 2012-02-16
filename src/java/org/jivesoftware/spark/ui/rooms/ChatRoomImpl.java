@@ -326,7 +326,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Set the body of the message using typedMessage and remove control
         // characters
-     	text = text.replaceAll("[\\u0001-\\u0008,\\u000B-\\u001F]", "");
+     	text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
      	message.setBody(text);
 
         // IF there is no body, just return and do nothing

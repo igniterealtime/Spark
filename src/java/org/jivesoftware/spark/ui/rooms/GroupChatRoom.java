@@ -1024,7 +1024,7 @@ public class GroupChatRoom extends ChatRoom {
 	Message message = new Message();
 	// Set the body of the message using typedMessage and remove control
 	// characters
-	text = text.replaceAll("[\\u0001-\\u0008,\\u000B-\\u001F]", "");
+	text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
 	message.setBody(text);
 
 	sendMessage(message);
