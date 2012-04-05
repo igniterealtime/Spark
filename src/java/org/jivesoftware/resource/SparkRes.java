@@ -331,6 +331,7 @@ public class SparkRes {
     public static final String YAHOO_TRANSPORT_INACTIVE_IMAGE = "YAHOO_TRANSPORT_INACTIVE_IMAGE";
     public static final String YELLOW_BALL = "YELLOW_BALL";
     public static final String YELLOW_FLAG_16x16 = "YELLOW_FLAG_16x16";
+    public static final String EXECUTABLE_NAME = "EXECUTABLE_NAME";
 
     
     static ClassLoader cl = SparkRes.class.getClassLoader();

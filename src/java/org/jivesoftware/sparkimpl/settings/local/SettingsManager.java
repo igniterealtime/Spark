@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.WinRegistry;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -93,7 +94,7 @@ public class SettingsManager {
         		if (Spark.isWindows())
         		{
         			String PROGDIR = Spark.getBinDirectory().getParent();
-        			File file = new File(PROGDIR + "\\" + "Spark.exe");
+        			File file = new File(PROGDIR + "\\" + SparkRes.getString(SparkRes.EXECUTABLE_NAME));
         			if (file.exists())
         			{
 		        		WinRegistry.createKey(
@@ -102,7 +103,7 @@ public class SettingsManager {
         				WinRegistry.writeStringValue(
         					WinRegistry.HKEY_CURRENT_USER, 
         					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
-        					"Spark", 
+        					SparkRes.getString(SparkRes.APP_NAME), 
         					file.getAbsolutePath());
         			}
         		}        	
@@ -120,13 +121,13 @@ public class SettingsManager {
             		String run = WinRegistry.readString(
             				WinRegistry.HKEY_CURRENT_USER, 
             				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
-            				"Spark");
+            				SparkRes.getString(SparkRes.APP_NAME));
             		if (run != null)
             		{
 	            		WinRegistry.deleteValue(
 	            	          WinRegistry.HKEY_CURRENT_USER, 
 	            	          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
-	            	          "Spark");
+	            	          SparkRes.getString(SparkRes.APP_NAME));
             		}
             	}
             	catch (Exception e) {
