@@ -359,9 +359,8 @@ public class ContactItem extends JPanel {
 
                 if (!hashExists(hash)) {
                     updateAvatar();
+                    updateAvatarInSideIcon();
                 }
-
-                updateAvatarInSideIcon();
             }
         }
 
