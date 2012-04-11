@@ -32,7 +32,6 @@ import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -61,78 +60,80 @@ public class TaskNotification {
     }
 
     private void notifyUser() {
-   	 EventQueue.invokeLater(new Runnable() {
+    	
+    	TimerTask newTask = new TimerTask() {
+			
+			@Override
+			public void run() {
+ 	 		     final JPanel mainPanel = new JPanel();
+ 	 	        mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
+ 	 	        mainPanel.setBackground(Color.white);
 
- 			@Override
- 			public void run() {
- 		      final JPanel mainPanel = new JPanel();
- 	        mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
- 	        mainPanel.setBackground(Color.white);
-
- 	        long now = System.currentTimeMillis();
- 	        Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
- 	        Iterator<Task> taskIter = tasks.getTasks().iterator();
+ 	 	        long now = System.currentTimeMillis();
+ 	 	        Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
+ 	 	        Iterator<Task> taskIter = tasks.getTasks().iterator();
 
 
- 	        final JPanel titlePanel = new JPanel(new BorderLayout()) {
- 		    private static final long serialVersionUID = -8871487137643685431L;
+ 	 	        final JPanel titlePanel = new JPanel(new BorderLayout()) {
+ 	 		    private static final long serialVersionUID = -8871487137643685431L;
 
- 		    public void paintComponent(Graphics g) {
- 	                Color startColor = Color.white;
- 	                Color endColor = new Color(198, 211, 247);
+ 	 		    public void paintComponent(Graphics g) {
+ 	 	                Color startColor = Color.white;
+ 	 	                Color endColor = new Color(198, 211, 247);
 
- 	                Graphics2D g2 = (Graphics2D)g;
+ 	 	                Graphics2D g2 = (Graphics2D)g;
 
- 	                int w = getWidth();
- 	                int h = getHeight();
+ 	 	                int w = getWidth();
+ 	 	                int h = getHeight();
 
- 	                GradientPaint gradient = new GradientPaint(0, 0, startColor, w, h, endColor, true);
- 	                g2.setPaint(gradient);
- 	                g2.fillRect(0, 0, w, h);
- 	            }
+ 	 	                GradientPaint gradient = new GradientPaint(0, 0, startColor, w, h, endColor, true);
+ 	 	                g2.setPaint(gradient);
+ 	 	                g2.fillRect(0, 0, w, h);
+ 	 	            }
 
- 	        };
- 	        final JLabel taskLabel = new JLabel("Due   ");
- 	        taskLabel.setFont(taskLabel.getFont().deriveFont(Font.BOLD));
- 	        titlePanel.add(taskLabel, BorderLayout.EAST);
- 	        mainPanel.add(titlePanel);
+ 	 	        };
+ 	 	        final JLabel taskLabel = new JLabel("Due   ");
+ 	 	        taskLabel.setFont(taskLabel.getFont().deriveFont(Font.BOLD));
+ 	 	        titlePanel.add(taskLabel, BorderLayout.EAST);
+ 	 	        mainPanel.add(titlePanel);
 
- 	        boolean hasItems = false;
- 	        while (taskIter.hasNext()) {
- 	            Task task = (Task)taskIter.next();
- 	            if (task.isCompleted()) {
- 	                continue;
- 	            }
+ 	 	        boolean hasItems = false;
+ 	 	        while (taskIter.hasNext()) {
+ 	 	            Task task = (Task)taskIter.next();
+ 	 	            if (task.isCompleted()) {
+ 	 	                continue;
+ 	 	            }
 
- 	            long dueDate = task.getDueDate();
- 	            if (dueDate != -1) {
- 	                if (now > dueDate) {
- 	                    final JPanel item = new JPanel(new BorderLayout());
- 	                    item.setOpaque(false);
- 	                    JLabel label = new JLabel(task.getTitle());
- 	                    item.add(label, BorderLayout.CENTER);
+ 	 	            long dueDate = task.getDueDate();
+ 	 	            if (dueDate != -1) {
+ 	 	                if (now > dueDate) {
+ 	 	                    final JPanel item = new JPanel(new BorderLayout());
+ 	 	                    item.setOpaque(false);
+ 	 	                    JLabel label = new JLabel(task.getTitle());
+ 	 	                    item.add(label, BorderLayout.CENTER);
 
- 	                    JLabel dueItem = new JLabel(formatter.format(new Date(task.getDueDate())));
- 	                    item.add(dueItem, BorderLayout.EAST);
- 	                    mainPanel.add(item);
- 	                    hasItems = true;
- 	                }
- 	            }
- 	        }
+ 	 	                    JLabel dueItem = new JLabel(formatter.format(new Date(task.getDueDate())));
+ 	 	                    item.add(dueItem, BorderLayout.EAST);
+ 	 	                    mainPanel.add(item);
+ 	 	                    hasItems = true;
+ 	 	                }
+ 	 	            }
+ 	 	        }
 
- 	        if (hasItems) {
- 	            SparkToaster toaster = new SparkToaster();
- 	            toaster.setDisplayTime(30000);
- 	            toaster.setToasterHeight(175);
- 	            toaster.setToasterWidth(300);
+ 	 	        if (hasItems) {
+ 	 	            SparkToaster toaster = new SparkToaster();
+ 	 	            toaster.setDisplayTime(30000);
+ 	 	            toaster.setToasterHeight(175);
+ 	 	            toaster.setToasterWidth(300);
 
- 	            toaster.setBorder(BorderFactory.createBevelBorder(0));
- 	            JScrollPane pane = new JScrollPane(mainPanel);
- 	            pane.getViewport().setBackground(Color.white);
- 	            toaster.showToaster(Res.getString("title.task.notification"), pane);
- 	        }			
- 			}
-   	 });
-  
+ 	 	            toaster.setBorder(BorderFactory.createBevelBorder(0));
+ 	 	            JScrollPane pane = new JScrollPane(mainPanel);
+ 	 	            pane.getViewport().setBackground(Color.white);
+ 	 	            toaster.showToaster(Res.getString("title.task.notification"), pane);
+ 	 	        }			
+			}
+		};
+    	TaskEngine.getInstance().schedule(newTask, 500);
+    	
     }
 }
