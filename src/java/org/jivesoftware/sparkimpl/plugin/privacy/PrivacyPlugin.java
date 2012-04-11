@@ -19,10 +19,10 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.TimerTask;
 
 
 import javax.swing.JMenuItem;
@@ -37,8 +37,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
@@ -54,46 +53,19 @@ public class PrivacyPlugin implements Plugin {
     @Override
     public void initialize() {
         PrivacyManager.getInstance(); // Initiating PrivacyLists
-        SwingWorker thread = new SwingWorker() {
-            @Override
-            public Object construct() {
-                try {
-                    // Let's try and avoid any timing issues with the
-                    // PrivacyManager presence.
-                    Thread.sleep(5000);
-                } catch (Exception e) {
-                    Log.error(e);
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public void finished() {
-                Boolean privacyListExist = (Boolean) get();
-                if (!privacyListExist) {
-                    return;
-                }
-                if (!EventQueue.isDispatchThread()) {
-                    try {
-                        EventQueue.invokeAndWait(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                addMenuItemToContactItems();
-
-                            }
-                        });
-                    } catch (Exception ex) {
-                        Log.error(ex);
-                    }
-                } else {
-                    addMenuItemToContactItems();
-                }
-            }
-        };
-        thread.start();
-
+        
+        
+        TimerTask thread = new TimerTask() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+	               Boolean privacyListExist = true;
+	                if (!privacyListExist) {
+	                    return;
+	                }
+			}
+		};
+		TaskEngine.getInstance().schedule(thread, 5000);
     }
 
     @Override
