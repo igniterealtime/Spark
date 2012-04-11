@@ -19,12 +19,44 @@
  */
 package org.jivesoftware.sparkimpl.profile;
 
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PacketInterceptor;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
@@ -48,33 +80,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 /**
  * VCardManager handles all VCard loading/caching within Spark.
  *
@@ -84,8 +89,10 @@ public class VCardManager {
 
     private VCard personalVCard;
 
-    private Map<String, VCard> vcards = new HashMap<String, VCard>();
+    private Map<String, VCard> vcards = Collections.synchronizedMap(new HashMap<String, VCard>());
 
+    private Set<String> delayedContacts = Collections.synchronizedSet(new HashSet<String>());
+    
     private boolean vcardLoaded;
 
     private File imageFile;
@@ -97,10 +104,12 @@ public class VCardManager {
     final MXParser parser;
 
     private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
-
+    
     private File contactsDir;
 
     private List<VCardListener> listeners = new ArrayList<VCardListener>();
+
+	private List<String> writingQueue = Collections.synchronizedList(new ArrayList<String>());
 
     /**
      * Initialize VCardManager.
@@ -173,12 +182,12 @@ public class VCardManager {
      * Listens for new VCards to lookup in a queue.
      */
     private void startQueueListener() {
-        final Runnable queueListener = new Runnable() {
+    	final Runnable queueListener = new Runnable() {
             public void run() {
                 while (true) {
                     try {
-                        String jid = queue.take();
-                        reloadVCard(jid);
+                       String jid = queue.take();
+                       reloadVCard(jid);
                     }
                     catch (InterruptedException e) {
                         e.printStackTrace();
@@ -189,6 +198,28 @@ public class VCardManager {
         };
 
         TaskEngine.getInstance().submit(queueListener);
+        
+        PacketFilter filter = new PacketTypeFilter(VCard.class);
+        PacketListener myListener = new PacketListener() {
+			@Override
+			public void processPacket(Packet packet) {
+				if (packet instanceof VCard)
+				{
+					VCard VCardpacket = (VCard)packet;
+					String jid = VCardpacket.getFrom();
+					if (VCardpacket.getType().equals(IQ.Type.RESULT) && jid != null && delayedContacts.contains(jid))
+					{
+						delayedContacts.remove(jid);
+						addVCard(jid, VCardpacket);
+						persistVCard(jid, VCardpacket);
+					}
+					
+				}
+			}
+		};
+        	
+		SparkManager.getConnection().addPacketListener(myListener, filter);
+
     }
 
     /**
@@ -200,6 +231,7 @@ public class VCardManager {
         if (!queue.contains(jid)) {
             queue.add(jid);
         }
+
     }
 
     /**
@@ -275,7 +307,7 @@ public class VCardManager {
             }
 
             public void finished() {
-                if (vcard.getError() != null || vcard == null) {
+                if (vcard == null) {
                     // Show vcard not found
                     JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
                 }
@@ -372,25 +404,29 @@ public class VCardManager {
         return null;
     }
 
-    /**
-     * Returns the VCard. Will first look in VCard cache and only do a network
-     * operation if no vcard is found.
-     *
-     * @param jid the users jid.
-     * @return the VCard.
-     */
+	/**
+	 * Returns the VCard. Will first look in VCard cache. You will receive a
+	 * dummy vcard, if there is no vCard for specified jid in cache. Same as
+	 * getVCard(jid, true)
+	 * 
+	 * @param jid
+	 *            the users jid.
+	 * @return the VCard.
+	 */
     public VCard getVCard(String jid) {
         return getVCard(jid, true);
     }
 
-    /**
-     * Loads the vCard from memory. If no vCard is found in memory,
-     * will add it to a loading queue for future loading. Users of this method
-     * should only use it if the correct vCard is not important the first time around.
-     *
-     * @param jid the users jid.
-     * @return the users VCard or an empty VCard.
-     */
+	/**
+	 * Loads the vCard from memory. If no vCard is found in memory, will add it
+	 * to a loading queue for future loading. Users of this method should only
+	 * use it if the correct vCard is not important the first time around. You
+	 * will get a dummy vCard if there is currently no vCard in memory.
+	 * 
+	 * @param jid
+	 *            the users jid.
+	 * @return the users VCard or an empty VCard.
+	 */
     public VCard getVCardFromMemory(String jid) {
         // Check in memory first.
         if (vcards.containsKey(jid)) {
@@ -405,69 +441,65 @@ public class VCardManager {
             // Create temp vcard.
             vcard = new VCard();
             vcard.setJabberId(jid);
+        } else {
+        	//System.out.println(jid+"  HDD ---------->");
         }
+        
 
         return vcard;
     }
 
-    /**
-     * Returns the VCard.
-     *
-     * @param jid      the users jid.
-     * @param useCache true to check in cache, otherwise false will do a new network vcard operation.
-     * @return the VCard.
-     */
-    public VCard getVCard(String jid, boolean useCache) {
+	/**
+	 * Returns the VCard. You should always use useChachedVCards. VCardManager
+	 * will keep the VCards up to date. If you wan't to force a network reload
+	 * of the VCard you can set useChachedVCards to false. That means that you
+	 * have to wait for the vcard response. The method will block until the
+	 * result is available or a timeout occurs (like reloadVCard(String jid)).
+	 * If there is no response from server this method a dummy vcard with an
+	 * error. Use getVCard(String jid) to get a dummy VCard if there is
+	 * currently no VCard. If you get a vCard with an error you may wait some
+	 * seconds. Sometimes vCards could not be loaded within smack timeout but we
+	 * are still listening for vCards that are too late. Be patient for some
+	 * seconds and try again, maybe we will get it.
+	 * 
+	 * @param jid
+	 *            the users jid.
+	 * @param useCache
+	 *            true to check in cache and hdd, otherwise false will do a new
+	 *            network vcard operation.
+	 * @return the VCard.
+	 */
+    public VCard getVCard(String jid, boolean useCachedVCards) {
         jid = StringUtils.parseBareAddress(jid);
-        if (!vcards.containsKey(jid) || !useCache) {
-            VCard vcard = new VCard();
-            try {
-                // Check File system first
-                VCard localVCard = loadFromFileSystem(jid);
-                if (localVCard != null) {
-                    localVCard.setJabberId(jid);
-                    vcards.put(jid, localVCard);
-                    return localVCard;
-                }
-
-                // Otherwise retrieve vCard from server and persist back out.
-                vcard.load(SparkManager.getConnection(), jid);
-                vcard.setJabberId(jid);
-                if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
-                {
-                	// update nickname.
-                    	//if the conract isn't on your list
-            		ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-            		if (item!= null)item.setNickname(vcard.getNickName());
-                	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
-                }
-                vcards.put(jid, vcard);
-            }
-            catch (XMPPException e) {
-                vcard.setJabberId(jid);
-                //Log.warning("Unable to load vcard for " + jid, e);
-                vcard.setError(new XMPPError(XMPPError.Condition.conflict));
-                vcards.put(jid, vcard);
-            }
-            // Persist XML
-            persistVCard(jid, vcard);
-
+        if (useCachedVCards)
+        {
+        	return getVCardFromMemory(jid);
+            
+        } else {
+        	return reloadVCard(jid);
         }
-        return vcards.get(jid);
     }
 
-    /**
-     * Forces a reload of a <code>VCard</code>.
-     *
-     * @param jid the jid of the user.
-     * @return the new VCard.
-     */
+
+	/**
+	 * Forces a reload of a <code>VCard</code>. To load a VCard you should use
+	 * getVCard(String jid) instead. This method will perform a network lookup
+	 * which could take some time. If you're having problems with request
+	 * timeout you should also use getVCard(String jid). Use addToQueue(String
+	 * jid) if you want VCardManager to update the VCard by the given jid. The
+	 * method will block until the result is available or a timeout occurs.
+	 * 
+	 * @param jid
+	 *            the jid of the user.
+	 * 
+	 * @return the new network vCard or a vCard with an error 
+	 */
     public VCard reloadVCard(String jid) {
         jid = StringUtils.parseBareAddress(jid);
         VCard vcard = new VCard();
         try {
+        	vcard.setJabberId(jid);
             vcard.load(SparkManager.getConnection(), jid);
-            vcard.setJabberId(jid);
             if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
             {
             	// update nickname.
@@ -475,19 +507,27 @@ public class VCardManager {
             	item.setNickname(vcard.getNickName());
             	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
             }
-            vcards.put(jid, vcard);
+            addVCard(jid, vcard);
+            persistVCard(jid, vcard);
         }
         catch (XMPPException e) {
-            vcard.setError(new XMPPError(XMPPError.Condition.conflict));
-            vcards.put(jid, vcard);
+        	////System.out.println(jid+" Fehler in reloadVCard ----> null");
+        	vcard.setError(new XMPPError(XMPPError.Condition.request_timeout));
+        	vcard.setJabberId(jid);
+        	delayedContacts.add(jid);
+        	return vcard;
+        	//We dont want cards with error
+           // vcard.setError(new XMPPError(XMPPError.Condition.request_timeout));
+           //addVCard(jid, vcard);
         }
 
         // Persist XML
-        persistVCard(jid, vcard);
+        
 
-        return vcards.get(jid);
+        return vcard;
     }
 
+    
     /**
      * Adds a new vCard to the cache.
      *
@@ -495,7 +535,14 @@ public class VCardManager {
      * @param vcard the users vcard to cache.
      */
     public void addVCard(String jid, VCard vcard) {
+        if (vcard == null)
+        	return; 
         vcard.setJabberId(jid);
+        if (vcards.containsKey(jid) && vcards.get(jid).getError() == null && vcard.getError()!= null)
+        {
+        	return;
+        	
+        }
         vcards.put(jid, vcard);
     }
 
@@ -607,7 +654,7 @@ public class VCardManager {
     }
 
     public URL getAvatarURL(String jid) {
-        VCard vcard = getVCard(jid, true);
+        VCard vcard = getVCard(jid);
         if (vcard != null) {
             String hash = vcard.getAvatarHash();
             if (!ModelUtil.hasLength(hash)) {
@@ -624,6 +671,26 @@ public class VCardManager {
         }
         return null;
     }
+    
+	/**
+	 * Get URL for avatar from vcard. If there is no vcard available we will try
+	 * to get it from the server and return null.
+	 * 
+	 * @param jid
+	 *            the users jid
+	 * @return the vcard if there is already one, otherwise null and we try to
+	 *         load vcard in background
+	 * 
+	 */
+	public URL getAvatarURLIfAvailable(String jid) {
+		if (getVCard(jid) != null) {
+			return getAvatarURL(jid);
+		} else {
+			addToQueue(jid);
+			return null;
+		}
+	}
+    
 
     /**
      * Persist vCard information out for caching.
@@ -635,6 +702,8 @@ public class VCardManager {
         if (jid == null || jid.trim().isEmpty() || vcard == null) {
         	return;
         }
+        
+        
         String fileName = Base64.encodeBytes(jid.getBytes());
         // remove tab
         fileName   = fileName.replaceAll("\t", "");
@@ -657,7 +726,16 @@ public class VCardManager {
                         Log.warning("Unable to write out avatar for " + jid);
                     }
                     else {
-                        ImageIO.write(image, "PNG", avatarFile);
+                    	
+						if (writingQueue.contains(jid)) {
+							writeAvatarSync(image, avatarFile);
+						} else {
+							writingQueue.add(jid);
+							ImageIO.write(image, "PNG", avatarFile);
+							writingQueue.remove(jid);
+						}
+                    	
+                    	
                     }
                 }
             }
@@ -684,7 +762,11 @@ public class VCardManager {
         }
     }
 
-    /**
+    private synchronized void writeAvatarSync(BufferedImage image, File avatarFile) throws IOException {
+    	ImageIO.write(image, "PNG", avatarFile);
+	}
+
+	/**
      * Attempts to load
      *
      * @param jid the jid of the user.
@@ -694,9 +776,17 @@ public class VCardManager {
     	if (jid == null || jid.trim().isEmpty()) {
     		return null;
     	}
+    	
         // Unescape JID
         String fileName = Base64.encodeBytes(jid.getBytes());
 
+        // remove tab
+        fileName   = fileName.replaceAll("\t", "");
+        // remove new line (Unix)
+        fileName          = fileName.replaceAll("\n", "");
+        // remove new line (Windows)
+        fileName          = fileName.replaceAll("\r", "");
+        
         final File vcardFile = new File(vcardStorageDirectory, fileName);
         if (!vcardFile.exists()) {
             return null;
@@ -704,7 +794,6 @@ public class VCardManager {
 
         try {
             // Otherwise load from file system.
-
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
@@ -723,8 +812,7 @@ public class VCardManager {
                 }
             }
 
-            vcard.setJabberId(jid);
-            vcards.put(jid, vcard);
+            addVCard(jid, vcard);
             return vcard;
         }
         catch (Exception e) {
@@ -736,12 +824,12 @@ public class VCardManager {
 
 
     /**
-     * Add <code>VCardListener</code>.
+     * Add <code>VCardListener</code>. Listens to the personalVCard.
      *
      * @param listener the listener to add.
      */
     public void addVCardListener(VCardListener listener) {
-        listeners.add(listener);
+        listeners.add(listener); 
     }
 
     /**

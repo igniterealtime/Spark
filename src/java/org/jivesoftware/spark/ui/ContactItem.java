@@ -351,7 +351,7 @@ public class ContactItem extends JPanel {
         final PacketExtension packetExtension = presence.getExtension("x", "vcard-temp:x:update");
 
         // Handle vCard update packet.
-        if (packetExtension != null) {
+        if (packetExtension != null && packetExtension instanceof DefaultPacketExtension) {
             DefaultPacketExtension o = (DefaultPacketExtension)packetExtension;
             String hash = o.getValue("photo");
             if (hash != null) {
@@ -364,6 +364,7 @@ public class ContactItem extends JPanel {
             }
         }
 
+        
         updatePresenceIcon(presence);
     }
 
@@ -396,14 +397,14 @@ public class ContactItem extends JPanel {
             }
         }
 
-        return SparkManager.getVCardManager().getAvatarURL(getJID());
+        return SparkManager.getVCardManager().getAvatarURLIfAvailable(getJID());
     }
 
     /**
      * Persists the avatar locally based on the new hash.
      */
     private void updateAvatar() {
-        SparkManager.getVCardManager().addToQueue(getJID());
+    	SparkManager.getVCardManager().addToQueue(getJID());
     }
 
     public String toString() {
@@ -584,24 +585,22 @@ public class ContactItem extends JPanel {
     /**
      * Update avatar icon.
      */
-    public void updateAvatarInSideIcon() {
-        try {
-            final URL url = getAvatarURL();
-            if (url != null) {
-                if (!avatarsShowing) {
-                    setSideIcon(null);
-                }
-                else {
-                    ImageIcon icon = new ImageIcon(url);
-                    icon = GraphicUtils.scale(icon, iconSize, iconSize);
-                    setSideIcon(icon);
-                }
-            }
-        }
-        catch (MalformedURLException e) {
-            Log.error(e);
-        }
-    }
+	public void updateAvatarInSideIcon() {
+		try {
+			final URL url = getAvatarURL();
+			if (url != null) {
+				if (!avatarsShowing) {
+					setSideIcon(null);
+				} else {
+					ImageIcon icon = new ImageIcon(url);
+					icon = GraphicUtils.scale(icon, iconSize, iconSize);
+					setSideIcon(icon);
+				}
+			}
+		} catch (MalformedURLException e) {
+			Log.error(e);
+		}
+	}
 
     protected JLabel getDisplayNameLabel() {
         return displayNameLabel;
