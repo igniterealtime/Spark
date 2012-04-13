@@ -270,14 +270,12 @@ public class SubscriptionDialog {
             dialog.setVisible(true);
         }
         else if (!SparkManager.getMainWindow().isVisible() || !SparkManager.getMainWindow().isFocused()) {
-            dialog.dispose();
             if (Spark.isWindows()) {
-                dialog.setFocusableWindowState(false);
+                dialog.setFocusable(false);
                 dialog.setState(Frame.ICONIFIED);
             }
-            dialog.setVisible(true);
-            dialog.setFocusableWindowState(true);
             SparkManager.getNativeManager().flashWindowStopOnFocus(dialog);
+            dialog.setVisible(true);
         }
     }
 
