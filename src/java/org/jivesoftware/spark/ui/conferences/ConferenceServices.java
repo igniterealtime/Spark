@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -66,6 +67,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
@@ -146,25 +148,27 @@ public class ConferenceServices implements InvitationListener {
      * Load all bookmarked data.
      */
     public void loadConferenceBookmarks() {
-        final SwingWorker bookmarkLoader = new SwingWorker() {
+    	final TimerTask bookmarkLoader = new TimerTask(){
 
-            public Object construct() {
-                try {
-                    return ConferenceUtils.retrieveBookmarkedConferences();
-                }
-                catch (XMPPException e) {
-                    Log.error(e);
-                }
-                return true;
-            }
+			@Override
+			public void run() {
+				Collection<BookmarkedConference> bc = null;
 
-            public void finished() {
-                bookmarksUI.loadUI();
-                addBookmarksUI();
-            }
-        };
-
-        bookmarkLoader.start();
+				while (bc == null) {
+					try {
+						BookmarkManager manager = BookmarkManager
+								.getBookmarkManager(SparkManager.getConnection());
+						bc = manager.getBookmarkedConferences();
+					} catch (XMPPException error) {
+						Log.error(error);
+					}
+				}
+              bookmarksUI.loadUI();
+              addBookmarksUI();
+			}
+    		
+    	};
+    	TaskEngine.getInstance().schedule(bookmarkLoader, 500);
     }
 
     protected void addBookmarksUI() {

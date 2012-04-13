@@ -70,7 +70,6 @@ import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
@@ -190,19 +189,22 @@ public class BookmarksUI extends JPanel {
         catch (XMPPException e) {
             Log.error(e);
         }
-
-        final TimerTask bookmarkTask = new SwingTimerTask() {
+        
+        final TimerTask bookmarkTask = new TimerTask() {
             @Override
-            public void doRun() {
-                try {
-                    setBookmarks(manager.getBookmarkedConferences());
-                }
-                catch (XMPPException error) {
-                    Log.error(error);
-                }
+            public void run() {
+                Collection<BookmarkedConference> bc = null;
+        		while(bc == null){
+        			try {
+        				bc = manager.getBookmarkedConferences();
+        			}catch (XMPPException error) {
+                        Log.error(error);
+                    }
+        		}
+                setBookmarks(bc);
             }
         };
-
+        
         TaskEngine.getInstance().schedule(bookmarkTask, 5000);
     }
 
