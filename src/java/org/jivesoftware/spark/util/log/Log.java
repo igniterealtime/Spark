@@ -24,6 +24,7 @@ import org.jivesoftware.Spark;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -70,7 +71,22 @@ public class Log {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Adds a handler to the error logger
+     * @param h the handler to add
+     */
+    public synchronized static void addErrorHandler(Handler  h){
+    	ERROR_LOGGER.addHandler(h);
+    }
+    
+    /**
+     * Adds a handler to the error logger
+     * @param h the handler to add
+     */
+    public synchronized static void addWarningHandler(Handler  h){
+    	WARNING_LOGGER.addHandler(h);
+    }
+    
     /**
      * Logs all error messages to default error logger.
      *
