@@ -102,7 +102,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
 
     /**
-     * Creates the ChatRooms to hold all ChatRooms.
+     * Creates the ChatContainer to hold all ChatRooms.
      */
     public ChatContainer() {
         // Assign location

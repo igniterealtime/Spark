@@ -270,12 +270,15 @@ public class ChatRoomImpl extends ChatRoom {
     
     private void sendChatState(ChatState state) {
     	Connection connection = SparkManager.getConnection();
-       	Chat chat = connection.getChatManager().createChat(getParticipantJID(), null);
-        try {
-        	ChatStateManager.getInstance(connection).setCurrentState(state, chat);
-        	lastNotificationSent = state;
-		} catch (XMPPException e) {
-			Log.error("Cannot send "+ state +" chat notification");
+    	boolean connected = connection.isConnected();
+		if (connected) {
+			Chat chat = connection.getChatManager().createChat(getParticipantJID(), null);
+			try {
+				ChatStateManager.getInstance(connection).setCurrentState(state, chat);
+				lastNotificationSent = state;
+			} catch (XMPPException e) {
+				Log.error("Cannot send " + state + " chat notification");
+			}
 		}
     }
 
@@ -326,9 +329,9 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Set the body of the message using typedMessage and remove control
         // characters
-     	text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
-     	message.setBody(text);
-
+        text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
+        message.setBody(text);
+        
         // IF there is no body, just return and do nothing
         if (!ModelUtil.hasLength(text)) {
             return;
