@@ -252,9 +252,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 		    @Override
 		    public void mouseClicked(MouseEvent event) {
-
 			if (event.getButton() == MouseEvent.BUTTON1
-				&& event.getClickCount() == 1) {
+				&& event.getClickCount()%2==0) {
 			    
 
 			    if (SparkManager.getMainWindow().isVisible()) {
