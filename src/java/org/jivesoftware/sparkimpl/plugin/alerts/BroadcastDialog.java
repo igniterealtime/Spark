@@ -89,16 +89,18 @@ public class BroadcastDialog extends JPanel {
         CheckNode groupNode = new CheckNode(groupName);
         groupNodes.add(groupNode);
         rosterNode.add(groupNode);
+        List<String> onlineJIDs = new ArrayList<String>();
         //ContactGroup groupp;
         for(ContactGroup group : contactList.getContactGroups())
 	        for (ContactItem item : group.getContactItems()) 
 	        {
-	      	  if(item.isAvailable())
+	      	  if(item.isAvailable() && !onlineJIDs.contains(item.getJID()))
 	      	  {
 	           CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
 	           itemNode.setAssociatedObject(item.getJID());
 	           groupNode.add(itemNode);
 	           nodes.add(itemNode);
+	           onlineJIDs.add(item.getJID());
 	      	  }
 	        }
 	        
