@@ -79,6 +79,7 @@ public class LocalPreference implements Preference {
         preferences.setStartedHidden(panel.startInSystemTray());
         preferences.setStartOnStartup(panel.startOnStartup());
         preferences.setIdleMessage(panel.getIdleMessage());
+        preferences.setUsingSingleTrayClick(panel.useSingleClickInTray());
 
         return preferences;
     }

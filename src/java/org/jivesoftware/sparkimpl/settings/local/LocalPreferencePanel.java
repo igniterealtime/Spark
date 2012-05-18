@@ -57,7 +57,8 @@ public class LocalPreferencePanel extends JPanel {
     private JCheckBox _idleBox = new JCheckBox();
     private JCheckBox _launchOnStartupBox = new JCheckBox();
     private JCheckBox _startMinimizedBox = new JCheckBox();
-
+    private JCheckBox _useSingleTrayClick = new JCheckBox();
+    
 
     /**
      * Construct Local Preference UI.
@@ -73,6 +74,7 @@ public class LocalPreferencePanel extends JPanel {
 	_autoLoginBox.setSelected(preferences.isAutoLogin());
 	_savePasswordBox.setSelected(preferences.isSavePassword());
 	_startMinimizedBox.setSelected(preferences.isStartedHidden());
+	_useSingleTrayClick.setSelected(preferences.isUsingSingleTrayClick());
 	
 	_idleStatusText = new JTextField(preferences.getIdleMessage());
 
@@ -128,6 +130,8 @@ public class LocalPreferencePanel extends JPanel {
 		Res.getString("checkbox.launch.on.startup"));
 	ResourceUtils.resButton(_startMinimizedBox,
 		Res.getString("checkbox.start.in.tray"));
+	ResourceUtils.resButton(_useSingleTrayClick,
+			Res.getString("checkbox.click.single.tray"));
 	
 	inputPanel.add(_portLabel,    new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 	inputPanel.add(_portField,    new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 0, 0));
@@ -155,7 +159,8 @@ public class LocalPreferencePanel extends JPanel {
 	}
 
 	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 8, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(new JLabel(), new GridBagConstraints(0, 9, 2, 1, 1.0,1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_useSingleTrayClick, new GridBagConstraints(0, 9, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(new JLabel(), new GridBagConstraints(0, 10, 2, 1, 1.0,1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,new Insets(5, 5, 5, 5), 50, 0));
 	
 	
 	add(inputPanel);
@@ -284,6 +289,14 @@ public class LocalPreferencePanel extends JPanel {
 	return _startMinimizedBox.isSelected();
     }
 
+    public void useSingleClickInTray(boolean clickInTray) {
+	_useSingleTrayClick.setSelected(clickInTray);
+    }
+
+    public boolean useSingleClickInTray() {
+	return _useSingleTrayClick.isSelected();
+    }
+    
     public boolean startOnStartup() {
 	return _launchOnStartupBox.isSelected();
     }

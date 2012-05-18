@@ -500,6 +500,14 @@ public class LocalPreferences {
 		setBoolean("startHidden", startedHidden);
 	}
 
+	public boolean isUsingSingleTrayClick() {
+		return getBoolean("useSingleTrayClick", true);
+	}
+
+	public void setUsingSingleTrayClick(boolean useSingle) {
+		setBoolean("useSingleTrayClick", useSingle);
+	}
+	
 	public boolean isTimeDisplayedInChat() {
 		return getBoolean("timeDisplayed", true);
 	}

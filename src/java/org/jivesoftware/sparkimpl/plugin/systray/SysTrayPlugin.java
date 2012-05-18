@@ -48,6 +48,7 @@ import org.jivesoftware.smackx.MessageEventNotificationListener;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
@@ -250,41 +251,52 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 		trayIcon.addMouseListener(new MouseListener() {
 
-		    @Override
-		    public void mouseClicked(MouseEvent event) {
-			if (event.getButton() == MouseEvent.BUTTON1
-				&& event.getClickCount()%2==0) {
-			    
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				// if we are using double click on tray icon
+				if (   (!pref.isUsingSingleTrayClick()
+						&& event.getButton() == MouseEvent.BUTTON1
+						&& event.getClickCount() % 2 == 0) 
+						||
+						// if we using single click on tray icon
+						(pref.isUsingSingleTrayClick()
+						&& event.getButton() == MouseEvent.BUTTON1
+						&& event.getClickCount() == 1)) {
 
-			    if (SparkManager.getMainWindow().isVisible()) {
-				SparkManager.getMainWindow().setVisible(false);
-			    } else {
-				SparkManager.getMainWindow().setVisible(true);
-				SparkManager.getMainWindow().toFront();
-			    }
-			} else if (event.getButton() == MouseEvent.BUTTON1) {
-			    SparkManager.getMainWindow().toFront();
-			    // SparkManager.getMainWindow().requestFocus();
-			} else if (event.getButton() == MouseEvent.BUTTON3) {
-			   
-			    if (popupMenu.isVisible()) {
-				popupMenu.setVisible(false);
-			    } else {
+					// bring the mainwindow to front
+					if (SparkManager.getMainWindow().isVisible()) {
+						SparkManager.getMainWindow().setVisible(false);
+					} else {
+						SparkManager.getMainWindow().setVisible(true);
+						SparkManager.getMainWindow().toFront();
+					}		
+					
+				} else if (event.getButton() == MouseEvent.BUTTON1) {
+					SparkManager.getMainWindow().toFront();
+					// SparkManager.getMainWindow().requestFocus();
+				} else if (event.getButton() == MouseEvent.BUTTON3) {
 
-				double x = MouseInfo.getPointerInfo().getLocation().getX();
-				double y = MouseInfo.getPointerInfo().getLocation().getY();
+					if (popupMenu.isVisible()) {
+						popupMenu.setVisible(false);
+					} else {
 
-				if (Spark.isMac()) {
-				    popupMenu.setLocation((int) x, (int) y);
-				} else {
-				    popupMenu.setLocation(event.getX(), event.getY());
+						double x = MouseInfo.getPointerInfo()
+								.getLocation().getX();
+						double y = MouseInfo.getPointerInfo()
+								.getLocation().getY();
+
+						if (Spark.isMac()) {
+							popupMenu.setLocation((int) x, (int) y);
+						} else {
+							popupMenu.setLocation(event.getX(),
+									event.getY());
+						}
+
+						popupMenu.setInvoker(popupMenu);
+						popupMenu.setVisible(true);
+					}
 				}
-				
-				popupMenu.setInvoker(popupMenu);
-				popupMenu.setVisible(true);
-			    }
 			}
-		    }
 
 		    @Override
 		    public void mouseEntered(MouseEvent event) {
