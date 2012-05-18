@@ -85,6 +85,19 @@ public final class Spark {
 
     }
 
+    private static synchronized File initializeDirectory(File directoryHome, String directoryName){
+    	File targetDir = new File(directoryHome, directoryName).getAbsoluteFile();
+        if(!targetDir.exists()){
+        	targetDir.mkdirs();
+        }
+        return targetDir;
+    }
+    
+    
+    private static synchronized File initializeDirectory(String directoryName){
+    	return initializeDirectory(new File(USER_SPARK_HOME), directoryName);
+    }
+    
     public void startup() {
 	if (System.getenv("APPDATA") != null && !System.getenv("APPDATA").equals("")) {
 	    USER_SPARK_HOME = System.getenv("APPDATA") + "/" + getUserConf();
@@ -107,46 +120,23 @@ public final class Spark {
     	try {
     		// Absolute paths to a collection of files or directories to skip
 			Collection<String> skipFiles = new HashSet<String>();
-			skipFiles.add(new File(USER_SPARK_HOME, "/plugins").getAbsolutePath());
+			skipFiles.add(new File(USER_SPARK_HOME, "plugins").getAbsolutePath());
 
     		sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);
     	} catch (IOException e) {
     		// Do nothing
     	}
 
-        RESOURCE_DIRECTORY = new File(USER_SPARK_HOME, "/resources").getAbsoluteFile();
-        if(!RESOURCE_DIRECTORY.exists()){
-
-        	RESOURCE_DIRECTORY.mkdirs();
-        }
-        BIN_DIRECTORY = new File(USER_SPARK_HOME, "/bin").getAbsoluteFile();
-        if(!BIN_DIRECTORY.exists()){
-
-        	BIN_DIRECTORY.mkdirs();
-        }
-        LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
-        if (!LOG_DIRECTORY.exists()){
-
-        	LOG_DIRECTORY.mkdirs();
-        }
-        USER_DIRECTORY = new File(USER_SPARK_HOME, "/user").getAbsoluteFile();
-        if(!USER_DIRECTORY.exists()){
-
-        	USER_DIRECTORY.mkdirs();
-        }
-        PLUGIN_DIRECTORY = new File(USER_SPARK_HOME, "/plugins").getAbsoluteFile();
-        if(!PLUGIN_DIRECTORY.exists()){
-
-        	PLUGIN_DIRECTORY.mkdirs();
-        }
-        XTRA_DIRECTORY = new File(USER_SPARK_HOME, "/xtra").getAbsoluteFile();
-        if(!XTRA_DIRECTORY.exists()){
-
-        	XTRA_DIRECTORY.mkdirs();
-        	// TODO implement copyEmoticonFiles();
-        }
-
+    	
+    	RESOURCE_DIRECTORY = initializeDirectory("resources");
+    	BIN_DIRECTORY = initializeDirectory("bin");
+    	LOG_DIRECTORY = initializeDirectory("logs");
+    	USER_DIRECTORY = initializeDirectory("user");
+    	PLUGIN_DIRECTORY = initializeDirectory("plugins");
+    	XTRA_DIRECTORY = initializeDirectory("xtra");
+    	// TODO implement copyEmoticonFiles();
         final String workingDirectory = System.getProperty("appdir");
+        
         if (workingDirectory == null) {
 
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists()) {
@@ -159,16 +149,16 @@ public final class Spark {
         else {
             // This is the installed executable.
             File workingDir = new File(workingDirectory);
-
-            RESOURCE_DIRECTORY = new File(workingDir, "resources").getAbsoluteFile();
-            BIN_DIRECTORY = new File(workingDir, "bin").getAbsoluteFile();
+            RESOURCE_DIRECTORY = initializeDirectory(workingDir, "resources");
+            BIN_DIRECTORY = initializeDirectory(workingDir, "bin");
             File emoticons = new File(XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
             if(!emoticons.exists()){
 
             	//Copy emoticon files from install directory to the spark user home directory
             }
-
-            LOG_DIRECTORY = new File(USER_SPARK_HOME, "/logs").getAbsoluteFile();
+            
+            LOG_DIRECTORY = initializeDirectory("logs");
+            LOG_DIRECTORY = new File(USER_SPARK_HOME, "logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
             try {
                 buf.append(RESOURCE_DIRECTORY.getCanonicalPath()).append(";");
@@ -385,7 +375,8 @@ public final class Spark {
      * @return the bin directory.
      */
     public static File getBinDirectory() {
-        return BIN_DIRECTORY;
+    	if (BIN_DIRECTORY == null ) BIN_DIRECTORY = initializeDirectory("bin");
+    	return BIN_DIRECTORY;
     }
 
     /**
@@ -396,6 +387,7 @@ public final class Spark {
      * @return the resource directory.
      */
     public static File getResourceDirectory() {
+    	if (RESOURCE_DIRECTORY == null ) RESOURCE_DIRECTORY = initializeDirectory("resources");
         return RESOURCE_DIRECTORY;
     }
 
@@ -405,6 +397,7 @@ public final class Spark {
      * @return the log directory.
      */
     public static File getLogDirectory() {
+    	if (LOG_DIRECTORY == null )LOG_DIRECTORY = initializeDirectory("logs");
         return LOG_DIRECTORY;
     }
 
