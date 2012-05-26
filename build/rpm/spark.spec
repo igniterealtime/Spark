@@ -87,7 +87,7 @@ exit 0
 /usr/share/spark/lib/smackx.jar
 /usr/share/spark/lib/spark.jar
 /usr/share/spark/lib/startup.jar
-/usr/share/spark/lib/swingx.jar
+/usr/share/spark/lib/swingx-all-1.6.3.jar
 /usr/share/spark/lib/systeminfo.jar
 /usr/share/spark/lib/xpp.jar
 /usr/share/spark/lib/xstream.jar

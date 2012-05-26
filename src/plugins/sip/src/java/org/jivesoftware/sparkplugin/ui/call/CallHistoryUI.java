@@ -47,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.RowFilter;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -54,9 +55,6 @@ import javax.swing.event.ListSelectionListener;
 import net.java.sipmack.softphone.SoftPhoneManager;
 
 import org.jdesktop.swingx.JXList;
-import org.jdesktop.swingx.decorator.Filter;
-import org.jdesktop.swingx.decorator.FilterPipeline;
-import org.jdesktop.swingx.decorator.PatternFilter;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -203,12 +201,12 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
                 }
             }
         });
-
-        list.setFilterEnabled(true);
-        Filter[] filterArray = { 
-            new PatternFilter("\\Q" + CallLog.Type.dialed.toString() + "",0,0)
-        };
-        list.setFilters(new FilterPipeline(filterArray));
+        List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+        filters.add(RowFilter.regexFilter(CallLog.Type.dialed.toString(), 1));
+        filters.add(RowFilter.regexFilter(CallLog.Type.dialed.toString(), 2));
+        filters.add(RowFilter.regexFilter(CallLog.Type.dialed.toString(), 3));
+        RowFilter<Object,Object> af = RowFilter.orFilter(filters);
+        list.setRowFilter(af);           
 
         tabs.addTab(PhoneRes.getIString("phone.dialed"), null, new JScrollPane(list), PhoneRes.getIString("phone.dialedcalls"));
     }
@@ -227,12 +225,12 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
         });
 
-        list.setFilterEnabled(true);
-        Filter[] filterArray = { 
-            new PatternFilter("\\Q" + CallLog.Type.received.toString() +  "\\E",0,0)
-        };
-        
-        list.setFilters(new FilterPipeline(filterArray));
+        List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+        filters.add(RowFilter.regexFilter(CallLog.Type.received.toString(), 1));
+        filters.add(RowFilter.regexFilter(CallLog.Type.received.toString(), 2));
+        filters.add(RowFilter.regexFilter(CallLog.Type.received.toString(), 3));
+        RowFilter<Object,Object> af = RowFilter.orFilter(filters);
+        list.setRowFilter(af);
 
         tabs.addTab(PhoneRes.getIString("phone.received"), null, new JScrollPane(list), PhoneRes.getIString("phone.receivedcalls"));
     }
@@ -251,12 +249,12 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
         });
 
-        list.setFilterEnabled(true);
-        Filter[] filterArray = { 
-            new PatternFilter("\\Q" + CallLog.Type.missed.toString() + "\\E",0,0)
-        };
-        
-        list.setFilters(new FilterPipeline(filterArray));
+        List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+        filters.add(RowFilter.regexFilter(CallLog.Type.missed.toString(), 1));
+        filters.add(RowFilter.regexFilter(CallLog.Type.missed.toString(), 2));
+        filters.add(RowFilter.regexFilter(CallLog.Type.missed.toString(), 3));
+        RowFilter<Object,Object> af = RowFilter.orFilter(filters);
+        list.setRowFilter(af);
 
         tabs.addTab(PhoneRes.getIString("phone.missed"), null, new JScrollPane(list), PhoneRes.getIString("phone.missedcalls"));
     }

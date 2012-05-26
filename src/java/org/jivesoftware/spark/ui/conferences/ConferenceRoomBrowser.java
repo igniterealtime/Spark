@@ -238,17 +238,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         public void keyReleased(KeyEvent e) {
             JTextField textField = (JTextField)e.getSource();
             String text = textField.getText();
-            //RowFilter rowFilter = RowFilter.regexFilter(text, 1);
-            //sorter.setRowFilter(rowFilter);
-            //sorter.setRowFilter(RowFilter.regexFilter(text));
             List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
             filters.add(RowFilter.regexFilter(text, 1));
             filters.add(RowFilter.regexFilter(text, 2));
             filters.add(RowFilter.regexFilter(text, 3));
             RowFilter<Object,Object> af = RowFilter.orFilter(filters);
-            sorter.setRowFilter(af); 
-            roomsTable.revalidate();
-            roomsTable.repaint();
+            sorter.setRowFilter(af);
         }
     });                   
 	joinRoomButton.addActionListener(new ActionListener() {
