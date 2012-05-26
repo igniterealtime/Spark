@@ -19,11 +19,7 @@
  */
 package org.jivesoftware.spark.ui.conferences;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -38,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -50,11 +47,16 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -126,6 +128,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     private boolean partialDiscovery = false;
 
     private JPopupMenu popup;
+    
+    private JLabel labelFilter;
+    private JTextField txtFilter;
+    
+    final TableRowSorter<TableModel> sorter;
 
     /**
      * Creates a new instance of ConferenceRooms.
@@ -174,6 +181,20 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	Hauptpanel.add(toolbar, BorderLayout.WEST);
 	Hauptpanel.add(pane_hiddenButtons, BorderLayout.EAST);
 	this.add(Hauptpanel, BorderLayout.NORTH);
+        
+    labelFilter = new JLabel(SparkRes.getString(SparkRes.FILTER_LABEL));
+    txtFilter = new JTextField(20);       
+    txtFilter.setMinimumSize(new Dimension(50,20));
+        
+    //add fields for filter
+    final JPanel Filterpanel = new JPanel(new BorderLayout());
+	JPanel toolbarFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	toolbarFilter.add(labelFilter);
+	toolbarFilter.add(txtFilter);
+
+	Filterpanel.add(toolbarFilter);
+	this.add(Filterpanel,BorderLayout.SOUTH);
+        
 
 	createButton.addActionListener(this);
 	createItem.addActionListener(this);
@@ -197,6 +218,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	// Add Group Chat Table
 	roomsTable = new RoomList();
 
+    //build model for roomsTable, ignoring the 1st column              
+    sorter = new TableRowSorter(roomsTable.getModel());
+    roomsTable.setRowSorter(sorter);
+        
 	final JScrollPane pane = new JScrollPane(roomsTable);
 	pane.setBackground(Color.white);
 	pane.setForeground(Color.white);
@@ -207,12 +232,30 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 	chatManager = SparkManager.getChatManager();
 
+        
+    txtFilter.addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyReleased(KeyEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            String text = textField.getText();
+            //RowFilter rowFilter = RowFilter.regexFilter(text, 1);
+            //sorter.setRowFilter(rowFilter);
+            //sorter.setRowFilter(RowFilter.regexFilter(text));
+            List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+            filters.add(RowFilter.regexFilter(text, 1));
+            filters.add(RowFilter.regexFilter(text, 2));
+            filters.add(RowFilter.regexFilter(text, 3));
+            RowFilter<Object,Object> af = RowFilter.orFilter(filters);
+            sorter.setRowFilter(af); 
+            roomsTable.revalidate();
+            roomsTable.repaint();
+        }
+    });                   
 	joinRoomButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent actionEvent) {
 		joinSelectedRoom();
 	    }
 	});
-
 	addRoomButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent actionEvent) {
 		bookmarkRoom(serviceName);
@@ -581,7 +624,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private final class RoomList extends Table {
 	private static final long serialVersionUID = -731280190627042419L;
-
+        
 	public RoomList() {
 	    super(new String[] { " ", Res.getString("title.name"),
 		    Res.getString("title.address"),

@@ -119,6 +119,7 @@ public class SparkRes {
     public static final String FASTPATH_IMAGE_64x64 = "FASTPATH_IMAGE_64x64";
     public static final String FASTPATH_OFFLINE_IMAGE_16x16 = "FASTPATH_OFFLINE_IMAGE_16x16";
     public static final String FASTPATH_OFFLINE_IMAGE_24x24 = "FASTPATH_OFFLINE_IMAGE_24x24";
+    public static final String FILTER_LABEL = "FILTER_LABEL";
     public static final String FIND_IMAGE = "FIND_IMAGE";
     public static final String FIND_TEXT_IMAGE = "FIND_TEXT_IMAGE";
     public static final String FOLDER = "FOLDER";
@@ -362,6 +363,7 @@ public class SparkRes {
     }
 
     public static void main(String args[]) {
+        
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new BorderLayout());
 
