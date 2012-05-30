@@ -25,6 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.*;
+
 import java.util.List;
 
 /**
@@ -75,9 +76,10 @@ public class TransferSettingsPanel extends JPanel {
 
         BlockedTypesPanel() {
             txtBlockedTypes.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
-            txtBlockedTypes.setToolTipText("Enter file extensions you wish to block (eg. '*.doc'), separated by commas");
+            
+            txtBlockedTypes.setToolTipText(TGuardRes.getString("guard.settings.tooltips.blockedtypes"));
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder("Blocked File Extensions"),
+            setBorder(BorderFactory.createCompoundBorder(new TitledBorder(TGuardRes.getString("guard.settings.title.extensions")),
                         new EmptyBorder(2,4,4,4)));
             add(txtBlockedTypes, BorderLayout.CENTER);
         }
@@ -97,10 +99,9 @@ public class TransferSettingsPanel extends JPanel {
 
         BlockedPeoplePanel() {
             txtBlockedPeople.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
-            txtBlockedPeople.setToolTipText("Enter the JID of users from whom you want to block file transfers " +
-                                            "(eg. 'loser@domain.com'), separated by commas");
+            txtBlockedPeople.setToolTipText(TGuardRes.getString("guard.settings.tooltips.blockedperson"));
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder("Blocked Senders"),
+            setBorder(BorderFactory.createCompoundBorder(new TitledBorder(TGuardRes.getString("guard.settings.title.person")),
                         new EmptyBorder(2,4,4,4)));
             add(txtBlockedPeople, BorderLayout.CENTER);
         }
@@ -117,15 +118,15 @@ public class TransferSettingsPanel extends JPanel {
     private class FileSizePanel extends JPanel {
 	private static final long serialVersionUID = -8457074359832858639L;
 	private JSpinner spinMaxSize = new JSpinner();
-        private JCheckBox chkMaxEnabled = new JCheckBox("Limit File Size");
+        private JCheckBox chkMaxEnabled = new JCheckBox(TGuardRes.getString("guard.settings.limitcheck"));
 
         FileSizePanel() {
             setLayout(new VerticalFlowLayout());
-            setBorder(new TitledBorder("File Size"));
+            setBorder(new TitledBorder(TGuardRes.getString("guard.settings.title.filesize")));
             add(chkMaxEnabled);
 
             JPanel pnlSpinner = new JPanel(new GridBagLayout());
-            pnlSpinner.add(new JLabel("Maximum Size in KB:"),
+            pnlSpinner.add(new JLabel(TGuardRes.getString(("guard.settings.label.maxsize"))),
                     new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,2), 0, 0));
             pnlSpinner.add(spinMaxSize,
                     new GridBagConstraints(1, 0, 1, 1, 0.25, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
@@ -165,10 +166,9 @@ public class TransferSettingsPanel extends JPanel {
 
         CannedResponsePanel() {
             txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
-            txtMessage.setToolTipText("Enter a message you would like to send to those whose files are blocked by your " +
-                                      "settings. Leave this space blank if you don't wish to send them a message.");
+            txtMessage.setToolTipText(TGuardRes.getString(("guard.settings.tooltips.textarea")));
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder("Automated Rejection Response"),
+            setBorder(BorderFactory.createCompoundBorder(new TitledBorder(TGuardRes.getString(("guard.settings.title.rejectresponse"))),
                         new EmptyBorder(2,4,4,4)));
             add(txtMessage, BorderLayout.CENTER);
         }

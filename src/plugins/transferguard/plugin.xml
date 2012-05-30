@@ -1,8 +1,8 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Transfer Guard</name>
-    <version>1.0</version>
-    <author>Pete Matern</author>
+    <version>1.0.1</version>
+    <author>Pete Matern, Tim Jentz</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>pete@jivesoftware.com</email>
     <description>Adds the ability to automatically reject file transfers based on preference configuration</description>

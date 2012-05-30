@@ -101,7 +101,7 @@ public class TransferSettingsPreference implements Preference {
      * @return the title of the preference panel for this preference.
      */
     public String getTitle() {
-        return "File Transfer Settings";
+        return TGuardRes.getString("guard.settings.title.settings");
     }
 
     /**

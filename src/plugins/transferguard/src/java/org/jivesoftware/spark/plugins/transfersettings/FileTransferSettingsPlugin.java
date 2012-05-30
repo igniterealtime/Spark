@@ -126,7 +126,7 @@ public class FileTransferSettingsPlugin implements Plugin {
 
 
     /**
-     * Adds a {@link FileTransferListener to allow this plugin to intercept {@link FileTransferRequest}s.
+     * Adds a {@link FileTransferListener} to allow this plugin to intercept {@link FileTransferRequest}s.
      */
     private void addTransferListener() {
 
