@@ -64,6 +64,8 @@ import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
+import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
+import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ByteFormat;
@@ -82,6 +84,7 @@ public class ReceiveFileTransfer extends JPanel {
 
     private TransferButton acceptButton = new TransferButton(Res.getString("accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
     private TransferButton declineButton = new TransferButton(Res.getString("reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
+    private TransferButton pathButton = new TransferButton(Res.getString("message.file.transfer.direrror.setdir"), SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
     private JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
     private TransferButton cancelButton = new TransferButton();
@@ -102,15 +105,18 @@ public class ReceiveFileTransfer extends JPanel {
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         add(acceptButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-
+        add(pathButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        pathButton.setVisible( false );
         add(declineButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         // Decorate Cancel Button
         decorateCancelButton();
 
 
+        pathButton.setForeground(new Color(73, 113, 196));
         acceptButton.setForeground(new Color(73, 113, 196));
         declineButton.setForeground(new Color(73, 113, 196));
+        pathButton.setFont(new Font("Dialog", Font.BOLD, 11));
         declineButton.setFont(new Font("Dialog", Font.BOLD, 11));
         acceptButton.setFont(new Font("Dialog", Font.BOLD, 11));
 
@@ -120,6 +126,17 @@ public class ReceiveFileTransfer extends JPanel {
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
 
+        pathButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                pathButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            }
+
+            public void mouseExited(MouseEvent e) {
+                pathButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+        
         acceptButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 acceptButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -177,14 +194,47 @@ public class ReceiveFileTransfer extends JPanel {
             imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32));
             Log.error(e);
         }
-
-
+        
         acceptButton.addMouseListener(new MouseAdapter() {
 
             public void mousePressed(MouseEvent e) {
-                acceptRequest(request);
-            }
+            	try{
+            		Downloads.checkDownloadDirectory();
+            		acceptRequest(request);
+            	}catch (Exception ex){
+                    // this means there is a problem with the download directory
+            	    request.reject();
+                    
+                    setBackground(new Color(239, 245, 250));
+                    acceptButton.setVisible(false);
+                    declineButton.setVisible(false);
+                    if (Downloads.getDownloadDirectory() == null){
+                        fileLabel.setText(""); 
+                    }else{
+                        ResourceUtils.resLabel( fileLabel, null, Res.getString("label.transfer.download.directory") + 
+                                " " + Downloads.getDownloadDirectory().getAbsolutePath() );      
+                    }
 
+                    // option to set a new path for the file-download
+                    pathButton.setVisible( true );
+                    pathButton.addMouseListener( new MouseAdapter() { 
+                        public void mousePressed(MouseEvent e) {
+                            Preference p = SparkManager.getPreferenceManager().getPreference( 
+                                    new FileTransferPreference().getNamespace() );
+                            // retrieve the filetransfer preferences and show the preference menu
+                            // to the user
+                            SparkManager.getPreferenceManager().showPreferences(p);
+                        }
+                    });
+
+                    titleLabel.setText(ex.getMessage());
+                    titleLabel.setForeground(new Color(65, 139, 179));
+
+                    invalidate();
+                    validate();
+                    repaint();
+            	}
+            }
         });
 
         declineButton.addMouseListener(new MouseAdapter() {
@@ -431,6 +481,7 @@ public class ReceiveFileTransfer extends JPanel {
         remove(acceptButton);
         remove(declineButton);
         remove(progressBar);
+        remove(pathButton);
 
 
         final TransferButton openFileButton = new TransferButton();

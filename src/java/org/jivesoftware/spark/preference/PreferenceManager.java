@@ -85,7 +85,18 @@ public class PreferenceManager {
         });
     }
 
+    /**
+     * <h1>showPreferences</h1>
+     * This will open the Preference-Dialog and select the given preference.
+     *
+     * @param selectedPref the preference you want to select
+     */
+    public void showPreferences(Preference selectedPref) {
+        preferenceDialog = new PreferenceDialog();
 
+        preferenceDialog.invoke(SparkManager.getMainWindow(), new PreferencesPanel(getPreferences(), selectedPref));
+    }
+    
     public void showPreferences() {
         preferenceDialog = new PreferenceDialog();
 

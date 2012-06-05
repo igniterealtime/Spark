@@ -60,7 +60,33 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     private JList list = new JList(listModel);
     private Preference currentPreference;
     
-
+    /**
+     * <h1>Constructor - PreferencesPanel</h1>
+     * This is an option to select the transmitted preference by code
+     * If the given preference is null or not contained in the preference-list,
+     * the first index of the list will be selected.
+     * 
+     * @param preferences the preference list
+     * @param displayPref the preference you want to select
+     */
+    public PreferencesPanel (Iterator<Preference> preferences, Preference displayPref){
+        this(preferences);
+        if ( displayPref != null || listModel.getSize() == 1){
+            // iterate through all preference-ui items
+            for (int i = 0; i < listModel.size(); i++){
+                PreferenceUI p = (PreferenceUI)listModel.get( i );
+                // check if the namespace is the namespace we search for
+                if (p.getPreference().getNamespace() == displayPref.getNamespace()){
+                    // if we've got our target, we can select this item and stop the search
+                    list.setSelectedIndex( i );
+                    break; 
+                }
+            }
+            // if we got a valid target, we trigger the selection changed method
+            if (list.getSelectedIndex() > -1) selectionChanged();
+        }
+    }
+    
     public PreferencesPanel(Iterator<Preference> preferences) {
         this.setLayout(new GridBagLayout());
 
@@ -86,6 +112,29 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         list.setSelectedIndex(0);
     }
 
+    private synchronized void selectionChanged(){
+        PreferenceUI o = (PreferenceUI)list.getSelectedValue();
+        Preference pref = o.getPreference();
+        pref.load();
+
+        JComponent comp = pref.getGUI();
+        flowPanel.removeAll();
+
+        // Create the title panel for this dialog
+        TitlePanel titlePanel = new TitlePanel(pref.getTitle(),
+                pref.getTooltip(),
+                pref.getIcon(),
+                false);
+
+
+        flowPanel.add(comp, BorderLayout.CENTER);
+        flowPanel.add(titlePanel, BorderLayout.NORTH);
+        flowPanel.invalidate();
+        flowPanel.validate();
+        flowPanel.repaint();
+        currentPreference = pref;
+    }
+    
     public void valueChanged(ListSelectionEvent e) {
 
         if (!e.getValueIsAdjusting()) {
@@ -103,27 +152,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                 }
 
             }
-
-            PreferenceUI o = (PreferenceUI)list.getSelectedValue();
-            Preference pref = o.getPreference();
-            pref.load();
-
-            JComponent comp = pref.getGUI();
-            flowPanel.removeAll();
-
-            // Create the title panel for this dialog
-            TitlePanel titlePanel = new TitlePanel(pref.getTitle(),
-                    pref.getTooltip(),
-                    pref.getIcon(),
-                    false);
-
-
-            flowPanel.add(comp, BorderLayout.CENTER);
-            flowPanel.add(titlePanel, BorderLayout.NORTH);
-            flowPanel.invalidate();
-            flowPanel.validate();
-            flowPanel.repaint();
-            currentPreference = pref;
+            selectionChanged();
         }
     }
 
