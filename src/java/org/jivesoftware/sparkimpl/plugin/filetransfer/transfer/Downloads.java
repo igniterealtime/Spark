@@ -51,8 +51,7 @@ public class Downloads {
     public static File getDownloadDirectory() {
 	LocalPreferences pref = SettingsManager.getLocalPreferences();
 	downloadedDir = new File(pref.getDownloadDir());
-//	return downloadedDir;
-	return null;
+	return downloadedDir;
     }
 
     /**
