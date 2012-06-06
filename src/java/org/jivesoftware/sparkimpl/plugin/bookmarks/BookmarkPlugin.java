@@ -65,11 +65,14 @@ public class BookmarkPlugin implements Plugin {
              */
             @Override
             public void finished() {
-                try {
-                    initialize();
-                } catch (Exception e) {
-                    Log.error(e);
-                }
+            	TimerTask startTask = new TimerTask() {
+        			@Override
+        			public void run() {
+        				initialize();
+        			}
+        		};
+           	 
+         		TaskEngine.getInstance().schedule(startTask, 2000);
             }
 
             /**

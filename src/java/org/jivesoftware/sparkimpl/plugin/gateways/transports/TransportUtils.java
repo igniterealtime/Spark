@@ -56,12 +56,15 @@ public class TransportUtils {
 
         final Runnable loadGateways = new Runnable() {
             public void run() {
-                try {
-                    PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
-                    gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
-                }
-                catch (XMPPException e) {
-                    Log.error("Unable to load private data for Gateways", e);
+            	PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+            	gatewayPreferences = null;
+                while (gatewayPreferences == null){
+                	try {
+                        gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
+                    }
+                    catch (XMPPException e) {
+                        Log.error("Unable to load private data for Gateways", e);
+                    }
                 }
             }
         };
@@ -70,7 +73,11 @@ public class TransportUtils {
     }
 
     public static boolean autoJoinService(String serviceName) {
-        return gatewayPreferences.autoLogin(serviceName);
+        if (gatewayPreferences != null) {
+        	return gatewayPreferences.autoLogin(serviceName);
+        }else{
+        	return false;
+        }
     }
 
     public static void setAutoJoin(String serviceName, boolean autoJoin) {

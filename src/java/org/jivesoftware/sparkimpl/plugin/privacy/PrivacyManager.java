@@ -95,12 +95,13 @@ public class PrivacyManager {
     private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
         ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
         DiscoverInfo info = null;
-        try {
-        	String xmppHost = DNSUtil.resolveXMPPDomain(conn.getServiceName()).getHost();
-            info = servDisc.discoverInfo(xmppHost);
-        } catch (XMPPException e) {
-            // We could not query the server
-            return false;
+        while (info == null){
+            try {
+            	String xmppHost = DNSUtil.resolveXMPPDomain(conn.getServiceName()).getHost();
+                info = servDisc.discoverInfo(xmppHost);
+            } catch (XMPPException e) {
+            	// We could not query the server
+            }
         }
         if (info != null) {
             for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {

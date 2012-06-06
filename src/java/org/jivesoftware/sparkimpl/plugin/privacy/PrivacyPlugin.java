@@ -52,20 +52,23 @@ public class PrivacyPlugin implements Plugin {
 
     @Override
     public void initialize() {
-        PrivacyManager.getInstance(); // Initiating PrivacyLists
-        
-        
-        TimerTask thread = new TimerTask() {
+        TimerTask pManagerInstance = new TimerTask() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-	               Boolean privacyListExist = true;
-	                if (!privacyListExist) {
-	                    return;
-	                }
+				PrivacyManager.getInstance(); // Initiating PrivacyLists
+	
+		        TimerTask thread = new TimerTask() {
+					@Override
+					public void run() {
+						addMenuItemToContactItems();
+					}
+				};
+				TaskEngine.getInstance().schedule(thread, 500);
 			}
 		};
-		TaskEngine.getInstance().schedule(thread, 5000);
+		TaskEngine.getInstance().schedule(pManagerInstance, 1000);
+		 
+
     }
 
     @Override
