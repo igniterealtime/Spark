@@ -1030,7 +1030,7 @@ public class LoginDialog {
 
                     String resource = localPref.getResource();
                     connection.login(getLoginUsername(), getLoginPassword(),
-                	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource));
+                	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource).trim());
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getLoginUsername(), getLoginPassword());
