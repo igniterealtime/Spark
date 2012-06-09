@@ -95,14 +95,16 @@ public class PrivacyManager {
     private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
         ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
         DiscoverInfo info = null;
-        while (info == null){
+    	//Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if info not found
+    	//If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example 
+        //while (info == null){
             try {
             	String xmppHost = DNSUtil.resolveXMPPDomain(conn.getServiceName()).getHost();
                 info = servDisc.discoverInfo(xmppHost);
             } catch (XMPPException e) {
             	// We could not query the server
             }
-        }
+        //}
         if (info != null) {
             for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {
                 String s = i.next().getVar();

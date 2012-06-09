@@ -58,14 +58,16 @@ public class TransportUtils {
             public void run() {
             	PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
             	gatewayPreferences = null;
-                while (gatewayPreferences == null){
+            	//Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if preferences not found
+            	//If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example            	
+                //while (gatewayPreferences == null){
                 	try {
                         gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
                     }
                     catch (XMPPException e) {
                         Log.error("Unable to load private data for Gateways", e);
                     }
-                }
+                //}
             }
         };
 
@@ -81,14 +83,18 @@ public class TransportUtils {
     }
 
     public static void setAutoJoin(String serviceName, boolean autoJoin) {
-        gatewayPreferences.addService(serviceName, autoJoin);
-        PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
-        try {
-            pdm.setPrivateData(gatewayPreferences);
-        }
-        catch (XMPPException e) {
-            Log.error(e);
-        }
+    	if (gatewayPreferences != null) {
+    		gatewayPreferences.addService(serviceName, autoJoin);
+    		PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+    		try {
+    			pdm.setPrivateData(gatewayPreferences);
+    		}
+    		catch (XMPPException e) {
+    			Log.error(e);
+    		}
+    	} else {
+    		Log.warning("Cannot set privacy data as gatewayPreferences is NULL");
+    	}
     }
 
     public static Transport getTransport(String serviceName) {
