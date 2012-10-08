@@ -91,6 +91,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private ContactList contactList =  Workspace.getInstance().getContactList();    
     
     private DisplayWindowTask timerTask = null;
+    
+    private Timer timer = new Timer();
 
     /**
      * Create a new ContactGroup.
@@ -960,8 +962,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
-            	timerTask = new DisplayWindowTask(mouseEvent, System.currentTimeMillis());            
-            	new Timer().schedule(timerTask, 100, 100);
+            	timerTask = new DisplayWindowTask(mouseEvent);            
+            	timer.schedule(timerTask, 500, 1000);
             }
 
             public void mouseExited(MouseEvent mouseEvent) {               
@@ -976,33 +978,25 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private class DisplayWindowTask extends TimerTask {
         private MouseEvent event;
-		private long lastMouseMoveNotificationTime = 0;
 		private boolean newPopupShown = false;
         
-		public DisplayWindowTask(MouseEvent e, long mouseMoveTime) {
+		public DisplayWindowTask(MouseEvent e) {
 			event = e;
-			lastMouseMoveNotificationTime = mouseMoveTime; 
 		}	
 
 		@Override
 		public void run() {		
 			if (canShowPopup) {
-				if (System.currentTimeMillis() - lastMouseMoveNotificationTime > 500 && !newPopupShown && !mouseDragged) {
+				if (!newPopupShown && !mouseDragged) {
 					displayWindow(event);
 					newPopupShown = true;					
 				}
-			} else {
-				cancel();		
 			}
 		}
 		
         public void setEvent(MouseEvent event) {
 			this.event = event;
-		}
-            	
-		public void setLastMouseMoveNotificationTime(long lastMouseMoveNotificationTime) {
-			this.lastMouseMoveNotificationTime = lastMouseMoveNotificationTime;			
-		}		
+		}	
 
 		public void setNewPopupShown(boolean popupChanged) {
 			this.newPopupShown = popupChanged;
@@ -1024,8 +1018,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             if (e == null) {
                 return;
             }
-            timerTask.setEvent(e);
-            timerTask.setLastMouseMoveNotificationTime(System.currentTimeMillis());            
+            timerTask.setEvent(e);           
             if (needToChangePopup(e) && timerTask.isNewPopupShown()) {
             	UIComponentRegistry.getContactInfoWindow().dispose();            	
             	timerTask.setNewPopupShown(false);            	
@@ -1069,10 +1062,3 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         return contactItemList;
     }
 }
-
-
-
-
-
-
-
