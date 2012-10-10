@@ -871,7 +871,11 @@ public class ContactList extends JPanel implements ActionListener,
                                 ContactItem itemFound = group.getContactItemByJID(jid);
                                 if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
                                     if (!userGroupSet.contains(group.getGroupName())) {
-                                        removeContactGroup(group);
+                                    	if (group.getContactItems().isEmpty()) {
+                                    		removeContactGroup(group);
+                                    	} else {
+                                    		group.removeContactItem(itemFound);
+                                    	}
                                     }
                                 }
 
