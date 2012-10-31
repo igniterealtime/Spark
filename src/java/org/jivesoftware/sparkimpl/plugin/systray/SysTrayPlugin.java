@@ -31,6 +31,7 @@ import java.awt.event.MouseListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -77,6 +78,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     private ImageIcon newMessageIcon;
     private ImageIcon typingIcon;
     private TrayIcon trayIcon;
+    private boolean newMessage = false;
+    int counter = 0;
 
     @Override
     public boolean canShutDown() {
@@ -441,12 +444,35 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     public void flashWindow(Window window) {
     	if (pref.isSystemTrayNotificationEnabled()) {
     		trayIcon.setImage(newMessageIcon.getImage());
+			if (window instanceof JFrame) {
+				((JFrame) window).setTitle(getCounteredTitle(
+						((JFrame) window).getTitle(), ++counter));
+			}
+			newMessage = true;
     	}
     }
 
+	private String getCounteredTitle(String title, int counter) {
+		String counterTemplate = "[%s] ";
+		String stringCounter = String.format(counterTemplate, counter);
+		if (counter == 1) {
+			return stringCounter + title;
+		} else if (counter > 1) {
+			String existingStringCounter = String.format(counterTemplate,
+					counter - 1);
+			if (title.contains(existingStringCounter)) {
+				return stringCounter
+						+ title.substring(existingStringCounter.length());
+			}
+		}
+		return title;
+	}  
+    
     @Override
     public void flashWindowStopWhenFocused(Window window) {
     	trayIcon.setImage(availableIcon.getImage());
+    	newMessage = false;
+    	counter = 0;
     }
 
     @Override
@@ -457,6 +483,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     @Override
     public void stopFlashing(Window window) {
     	trayIcon.setImage(availableIcon.getImage());
+    	newMessage = false;
+    	counter = 0;
     }
 
     // For Typing
@@ -470,7 +498,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	public void stateChanged(Chat chat, ChatState state) {		
         if (ChatState.composing.equals(state)) {
         	changeSysTrayIcon();
-        } else {
+        } else if (!newMessage){
         	trayIcon.setImage(availableIcon.getImage());            	
         }
 	}

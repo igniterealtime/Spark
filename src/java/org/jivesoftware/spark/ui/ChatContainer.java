@@ -454,7 +454,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     
     private void handleMessageNotification(final ChatRoom chatRoom, boolean customMsg, String customMsgText, String customMsgTitle) {
         ChatRoom activeChatRoom = null;        
-        
+        boolean groupMessageChecked = false;
         try {
             activeChatRoom = getActiveChatRoom();
         }
@@ -470,7 +470,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         } 
         if(chatFrame.isVisible() && chatFrame.getState()== Frame.NORMAL)
         {
-            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);           
+            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+            groupMessageChecked = true;
         }
 
         if (!chatFrame.isVisible() && SparkManager.getMainWindow().isFocusOwner()) {
@@ -478,7 +479,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             chatFrame.setVisible(true);
         }
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
-            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        	if (!groupMessageChecked) {
+        		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        		groupMessageChecked = true;
+        	}
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -487,12 +491,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
-            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        	if (!groupMessageChecked) {
+        		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        		groupMessageChecked = true;
+        	}
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
-            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        	if (!groupMessageChecked) {
+        		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        		groupMessageChecked = true;
+        	}
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -507,16 +517,25 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // If the ContactList is in the tray, we need better notification by flashing
             // the chatframe.
             if (!SparkManager.getMainWindow().isVisible()) {
-                groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+            	if (!groupMessageChecked) {
+            		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+            		groupMessageChecked = true;
+            	}
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
-                groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+            	if (!groupMessageChecked) {
+            		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+            		groupMessageChecked = true;
+            	}
             }
 
             chatFrame.setTitle(chatRoom.getRoomTitle());
         }
         else if (chatRoom != activeChatRoom) {
-            groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        	if (!groupMessageChecked) {
+        		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
+        		groupMessageChecked = true;
+        	}
         }
     }
 
