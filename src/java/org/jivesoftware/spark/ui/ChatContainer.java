@@ -67,6 +67,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
@@ -724,6 +725,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         room.increaseUnreadMessageCount();
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(room);
         fireNotifyOnMessage(room, false, null, null);
+        ChatManager.getInstance().fireMessageReceived(message);
     }
     
     /**

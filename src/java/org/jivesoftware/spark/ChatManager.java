@@ -112,6 +112,8 @@ public class ChatManager implements ChatManagerListener {
     private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
 
     private UriManager _uriManager = new UriManager();
+    
+    private List<ChatMessageHandler> chatMessageHandlers = new ArrayList<ChatMessageHandler> ();
 
     /**
      * The listener instance that we use to track chat states according to
@@ -519,6 +521,14 @@ public class ChatManager implements ChatManagerListener {
     public void addContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.add(handler);
     }
+    
+    public void addChatMessageHandler(ChatMessageHandler handler) {
+    	chatMessageHandlers.add(handler);
+    }
+    
+    public void removeChatMessageHandler(ChatMessageHandler handler) {
+    	chatMessageHandlers.remove(handler);
+    }
 
     /**
      * Removes a <code>ContactItemHandler</code>.
@@ -527,6 +537,12 @@ public class ChatManager implements ChatManagerListener {
      */
     public void removeContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.remove(handler);
+    }
+    
+    public void fireMessageReceived(Message message) {
+    	for (ChatMessageHandler handler : chatMessageHandlers) {
+    		handler.messageReceived(message);
+    	}
     }
 
     /**

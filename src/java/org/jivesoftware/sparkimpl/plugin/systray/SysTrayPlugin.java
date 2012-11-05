@@ -45,11 +45,10 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ChatState;
-import org.jivesoftware.smackx.MessageEventNotificationListener;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
@@ -61,6 +60,7 @@ import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smackx.ChatStateListener;
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
+	private static String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";
     private JPopupMenu popupMenu = new JPopupMenu();
 
     private JMenuItem openMenu;
@@ -79,11 +79,11 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     private ImageIcon typingIcon;
     private TrayIcon trayIcon;
     private boolean newMessage = false;
-    int counter = 0;
+    ChatMessageHandlerImpl chatMessageHandler = new ChatMessageHandlerImpl();
 
     @Override
     public boolean canShutDown() {
-	return true;
+    	return true;
     }
 
     @Override
@@ -100,6 +100,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	    SystemTray tray = SystemTray.getSystemTray();
 	    SparkManager.getNativeManager().addNativeHandler(this);
+	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
 	    //XEP-0085 suport (replaces the obsolete XEP-0022)
 	    SparkManager.getConnection().getChatManager().addChatListener(this);
 
@@ -428,15 +429,16 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
     @Override
     public void shutdown() {
-	if (SystemTray.isSupported()) {
-	    SystemTray tray = SystemTray.getSystemTray();
-	    tray.remove(trayIcon);
-	}
+    	if (SystemTray.isSupported()) {
+    		SystemTray tray = SystemTray.getSystemTray();
+    		tray.remove(trayIcon);
+    	}
+    	ChatManager.getInstance().removeChatMessageHandler(chatMessageHandler);
     }
 
     @Override
     public void uninstall() {
-
+    	ChatManager.getInstance().removeChatMessageHandler(chatMessageHandler);
     }
 
     // Info on new Messages
@@ -446,33 +448,22 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     		trayIcon.setImage(newMessageIcon.getImage());
 			if (window instanceof JFrame) {
 				((JFrame) window).setTitle(getCounteredTitle(
-						((JFrame) window).getTitle(), ++counter));
+						((JFrame) window).getTitle(), chatMessageHandler.getUnreadMessages()));
 			}
 			newMessage = true;
     	}
     }
 
 	private String getCounteredTitle(String title, int counter) {
-		String counterTemplate = "[%s] ";
-		String stringCounter = String.format(counterTemplate, counter);
-		if (counter == 1) {
-			return stringCounter + title;
-		} else if (counter > 1) {
-			String existingStringCounter = String.format(counterTemplate,
-					counter - 1);
-			if (title.contains(existingStringCounter)) {
-				return stringCounter
-						+ title.substring(existingStringCounter.length());
-			}
-		}
-		return title;
+		String stringCounter = String.format("[%s] ", counter);
+		return counter > 0 ? stringCounter + title.replaceFirst(MESSAGE_COUNTER_REG_EXP, "") : title.replaceFirst(MESSAGE_COUNTER_REG_EXP, "");
 	}  
     
     @Override
     public void flashWindowStopWhenFocused(Window window) {
     	trayIcon.setImage(availableIcon.getImage());
     	newMessage = false;
-    	counter = 0;
+    	chatMessageHandler.clearUnreadMessages();
     }
 
     @Override
@@ -484,7 +475,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     public void stopFlashing(Window window) {
     	trayIcon.setImage(availableIcon.getImage());
     	newMessage = false;
-    	counter = 0;
+    	chatMessageHandler.clearUnreadMessages();
     }
 
     // For Typing
@@ -498,8 +489,12 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	public void stateChanged(Chat chat, ChatState state) {		
         if (ChatState.composing.equals(state)) {
         	changeSysTrayIcon();
-        } else if (!newMessage){
-        	trayIcon.setImage(availableIcon.getImage());            	
+        } else {
+        	if (!newMessage)
+        		trayIcon.setImage(availableIcon.getImage());
+        	else {
+        		trayIcon.setImage(newMessageIcon.getImage());
+        	}
         }
 	}
 
