@@ -400,14 +400,18 @@ public class GroupChatParticipantList extends JPanel implements
 	    String[] args = pack.toXML().split(" ");
 
 	    for (String ss : args) {
-		if (ss.contains("affiliation")) {
-		    affi = ss.substring(ss.indexOf("\"") + 1,
-			    ss.lastIndexOf("\""));
-		}
-		if (ss.contains("role")) {
-		    role = ss.substring(ss.indexOf("\"") + 1,
-			    ss.lastIndexOf("\""));
-		}
+	    	int first = ss.indexOf("\"");
+	    	int last = ss.lastIndexOf("\"");
+		    if (ss.contains("affiliation")) {
+		    	if (first >=0 && first < last) {
+		    		affi = ss.substring(first + 1, last);
+		    	}
+		    }
+		    if (ss.contains("role")) {
+			    if (first >=0 && first < last) {
+				    role = ss.substring(first + 1, last);
+			    }
+		    }
 	    }
 	}
 
