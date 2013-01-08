@@ -54,8 +54,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -467,7 +465,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     private void changeOfflineToOnline(String bareJID, final RosterEntry entry, Presence presence) {
         // Move out of offline group. Add to all groups.
-        ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
+        final ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
 
         if (offlineItem == null) {
             return;
@@ -502,7 +500,7 @@ public class ContactList extends JPanel implements ActionListener,
                         changeContactItem.setPresence(presence);                        
                         changeContactItem.updateAvatarInSideIcon();
                         changeContactItem.showUserComingOnline();                       
-
+                        changeContactItem.setSpecialIcon(offlineItem.getSpecialImageLabel().getIcon());
                         //contactItem.updatePresenceIcon(contactItem.getPresence());
                         toggleGroupVisibility(contactGroup.getGroupName(), true);
                         //contactGroup.fireContactGroupUpdated();
@@ -538,6 +536,7 @@ public class ContactList extends JPanel implements ActionListener,
                                 changeContact.setAvailable(true);
                                 changeContact.updateAvatarInSideIcon();
                                 changeContact.showUserComingOnline();
+                                changeContact.setSpecialIcon(offlineItem.getSpecialImageLabel().getIcon());
                                 changeContact.updatePresenceIcon(changeContact.getPresence());
                                 toggleGroupVisibility(staticContactGroup.getGroupName(), true);
                                 staticContactGroup.fireContactGroupUpdated();
