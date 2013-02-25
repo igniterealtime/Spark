@@ -383,10 +383,10 @@
 		<subant target="">
 			<fileset dir="./src/plugins/transferguard/" includes="*/build.xml" />
 		</subant>
-		<subant target="">
+		<!-- <subant target="">
 			<fileset dir="./src/plugins/translator/" includes="*/build.xml" />
 		</subant>
-		
+		-->
 		<subant target="">
 				<fileset dir="./src/plugins/otr/" includes="*/build.xml" />
 		</subant>
