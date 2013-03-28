@@ -51,6 +51,7 @@ public class PresenceManager {
         final Presence phonePresence = new Presence(Presence.Type.available, Res.getString("status.on.phone"), 0, Presence.Mode.away);
         final Presence dndPresence = new Presence(Presence.Type.available, Res.getString("status.do.not.disturb"), 0, Presence.Mode.dnd);
         final Presence extendedAway = new Presence(Presence.Type.available, Res.getString("status.extended.away"), 0, Presence.Mode.xa);
+	final Presence invisible = new Presence(Presence.Type.unavailable, Res.getString("status.invisible"), 0, Presence.Mode.available);
 
         PRESENCES.add(freeToChatPresence);
         PRESENCES.add(availablePresence);
@@ -58,6 +59,7 @@ public class PresenceManager {
         PRESENCES.add(extendedAway);
         PRESENCES.add(phonePresence);
         PRESENCES.add(dndPresence);
+	PRESENCES.add(invisible);
     }
 
     /**
@@ -148,6 +150,10 @@ public class PresenceManager {
      * @return the icon associated with it.
      */
     public static Icon getIconFromPresence(Presence presence) {
+	if (isInvisible(presence)) {
+            return SparkRes.getImageIcon(SparkRes.INVISIBLE);
+        }
+
         // Handle offline presence
         if (!presence.isAvailable()) {
             return SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
@@ -209,5 +215,39 @@ public class PresenceManager {
     		return true;
     	}
     	return false;
+    }
+
+    public static boolean isInvisible(Presence presence) {
+        return presence != null && presence.getType() == Presence.Type.unavailable 
+                && Res.getString("status.invisible").equalsIgnoreCase(presence.getStatus())
+                && Presence.Mode.available == presence.getMode();
+    }
+
+    public static Presence getAvailablePresence() {
+        return PRESENCES.get(1);
+    }
+
+    public static Presence getUnavailablePresence() {
+        return PRESENCES.get(6);
+    }
+
+    public static boolean areEqual(Presence p1, Presence p2) {
+        if (p1 == p2)
+           return true;
+        
+        if (p1 == null || p2 == null)
+            return false;
+        
+       return p1.getType() == p2.getType() && p1.getMode() == p2.getMode()
+               && p1.getStatus().equals(p2.getStatus());
+    }
+
+    public static Presence copy(Presence presence) {
+	if (presence == null)
+		return null;
+	Presence copy = new Presence(presence.getType());
+	copy.setMode(presence.getMode());
+	copy.setStatus(presence.getStatus());
+	return copy;
     }
 }

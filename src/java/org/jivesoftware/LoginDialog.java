@@ -316,6 +316,7 @@ public class LoginDialog {
         private final RolloverButton loginButton = new RolloverButton();
         private final RolloverButton advancedButton = new RolloverButton();
         private final RolloverButton quitButton = new RolloverButton();
+	private final JCheckBox loginAsInvisibleBox = new JCheckBox();
 
         private final RolloverButton createAccountButton = new RolloverButton();
         private final RolloverButton passwordResetButton = new RolloverButton();
@@ -346,9 +347,11 @@ public class LoginDialog {
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
             ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
             ResourceUtils.resButton(passwordResetButton, Res.getString("label.passwordreset"));
+	    ResourceUtils.resButton(loginAsInvisibleBox, Res.getString("checkbox.login.as.invisible"));
 
             savePasswordBox.setOpaque(false);
             autoLoginBox.setOpaque(false);
+	    loginAsInvisibleBox.setOpaque(false);
             setLayout(GRIDBAGLAYOUT);
 
             // Set default visibility
@@ -423,10 +426,14 @@ public class LoginDialog {
             add(autoLoginBox,
                     new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+	    add(loginAsInvisibleBox,
+                    new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
 
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);
             autoLoginBox.addActionListener(this);
+	    loginAsInvisibleBox.addActionListener(this);
 
             if (!Default.getBoolean(Default.ACCOUNT_DISABLED)) {
                 buttonPanel.add(createAccountButton,
@@ -551,10 +558,12 @@ public class LoginDialog {
                 loginButton.setEnabled(true);
             }
             autoLoginBox.setSelected(localPref.isAutoLogin());
+	    loginAsInvisibleBox.setSelected(localPref.isLoginAsInvisible());
             useSSO(localPref.isSSOEnabled());
             if (autoLoginBox.isSelected()) {
                 savePasswordBox.setEnabled(false);
                 autoLoginBox.setEnabled(false);
+		loginAsInvisibleBox.setEnabled(false);
                 validateLogin();
                 return;
             }
@@ -579,6 +588,7 @@ public class LoginDialog {
             if (username != null && server != null && password != null) {
                 savePasswordBox.setEnabled(false);
                 autoLoginBox.setEnabled(false);
+		loginAsInvisibleBox.setEnabled(false);
                 validateLogin();
             }
 
@@ -629,6 +639,15 @@ public class LoginDialog {
          */
         private String getServerName() {
             return serverField.getText().trim();
+        }
+
+	/**
+         * Return whether user wants to login as invisible or not.
+         *
+         * @return the true if user wants to login as invisible.
+         */
+         boolean isLoginAsInvisible() {
+            return loginAsInvisibleBox.isSelected();
         }
 
         /**
@@ -834,6 +853,7 @@ public class LoginDialog {
                             public void run() {
                                 savePasswordBox.setEnabled(true);
                                 autoLoginBox.setEnabled(true);
+				loginAsInvisibleBox.setVisible(true);
                                 enableComponents(true);
                                 setProgressBarVisible(false);
                             }
@@ -860,7 +880,7 @@ public class LoginDialog {
 
         public Dimension getPreferredSize() {
             final Dimension dim = super.getPreferredSize();
-            dim.height = 200;
+            dim.height = 250;
             return dim;
         }
 
@@ -881,6 +901,7 @@ public class LoginDialog {
 
                 autoLoginBox.setVisible(true);
                 serverLabel.setVisible(true);
+		loginAsInvisibleBox.setVisible(true);
 
                 headerLabel.setVisible(true);
 
@@ -963,6 +984,7 @@ public class LoginDialog {
                 passwordLabel.setVisible(true);
                 serverLabel.setVisible(true);
                 serverField.setVisible(true);
+		loginAsInvisibleBox.setVisible(true);
 
                 headerLabel.setVisible(false);
                 accountLabel.setVisible(false);
@@ -988,6 +1010,8 @@ public class LoginDialog {
 
             boolean hasErrors = false;
             String errorMessage = null;
+
+	    localPref.setLoginAsInvisible(loginAsInvisibleBox.isSelected());
 
             // Handle specifyed Workgroup
             String serverName = getServerName();

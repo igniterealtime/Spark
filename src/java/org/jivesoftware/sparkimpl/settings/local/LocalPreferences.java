@@ -249,6 +249,26 @@ public class LocalPreferences {
 	}
 
 	/**
+	 * Return true if Login As Invisible is on.
+	 * 
+	 * @return true if Auto Login is on.
+	 */
+	public boolean isLoginAsInvisible() {
+		return Boolean.parseBoolean(props.getProperty("loginAsInvisibleEnabled",
+				"false"));
+	}
+        
+        /**
+	 * Turn on or off Login As Invisible option.
+	 * 
+	 * @param autoLogin
+	 *            true if Auto Login should be on.
+	 */
+        public void setLoginAsInvisible(boolean loginAsInvisible) {
+            props.setProperty("loginAsInvisibleEnabled", Boolean.toString(loginAsInvisible));
+        }
+
+	/**
 	 * Return true if the password should be encoded and persisted.
 	 *
 	 * @return true if the password is encoded and persisted.

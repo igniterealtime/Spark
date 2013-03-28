@@ -24,6 +24,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,8 @@ import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverInfo.Feature;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.smack.packet.Presence;
 
 
 /**
@@ -49,11 +52,21 @@ public class PrivacyManager {
 
     private static PrivacyManager singleton;
     private static final Object LOCK = new Object();
+
+    // XEP-0126. To help ensure cross-client compatibility, 
+    // it is RECOMMENDED to use the privacy list names "visible" and "invisible" 
+    // for simple global visibility and invisibility respectively. 
+    // It is also RECOMMENDED to use list names of the form "visible-to-GroupName" 
+    // and "invisible-to-JID" for simple lists that implement visibility or invisibility 
+    // with regard to roster groups and JIDs. Obviously list names could become rather complex, 
+    // such as "visible-to-Group1 Group2 Group3".
+    private static final String INVISIBLE_LIST_NAME = "invisible";
     private List<SparkPrivacyList> _privacyLists = new ArrayList<SparkPrivacyList>();
     private PrivacyListManager privacyManager;
     private PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
     private Set<SparkPrivacyListListener> _listListeners = new HashSet<SparkPrivacyListListener>();
     private boolean _active = false;
+    private SparkPrivacyList previousActiveList;
 
     /**
      * Creating PrivacyListManager instance
@@ -125,7 +138,8 @@ public class PrivacyManager {
             {
                SparkPrivacyList sparkList = new SparkPrivacyList(list);
                sparkList.addSparkPrivacyListener(_presenceHandler);
-               _privacyLists.add(sparkList);
+               if (!isListHidden(sparkList))
+                   _privacyLists.add(sparkList);
             }  
         } catch (XMPPException e) {
             Log.error("Could not load PrivacyLists");
@@ -389,5 +403,98 @@ public class PrivacyManager {
         }
     }
     
+    public void changeVisibility(Presence presence) 
+    {
+        if (PresenceManager.isInvisible(presence)) 
+            goToInvisible();
+        else
+            goToVisible();
+    }
+    
+    public void goToInvisible() 
+    {
+        ensureGloballyInvisibleListExists();
+        activateGloballyInvisibleList();
+    }
+    
+    public void goToVisible() 
+    {
+        try {
+            if (!isGloballyInvisibleListActive()) 
+                return;
+            
+            privacyManager.declineActiveList();
+            SparkManager.getConnection().sendPacket(PresenceManager.getAvailablePresence());
+            Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been disabled ");
+            if (previousActiveList != null) {
+                setListAsActive(previousActiveList.getListName());
+                Log.debug("List \"" + previousActiveList.getListName() + "\" has been activated instead. ");
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void activateGloballyInvisibleList() {
+     
+        if (!SparkManager.getConnection().isConnected() || isGloballyInvisibleListActive()) 
+            return;
+        
+        try {
+            previousActiveList = getActiveList();
+            privacyManager.setActiveListName(INVISIBLE_LIST_NAME);
+            SparkManager.getConnection().sendPacket(PresenceManager.getAvailablePresence());
+            Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been activated ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+   
+    public static boolean isListHidden(SparkPrivacyList list) {
+        return list != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(list.getListName());
+    }
+    
+    public boolean isGloballyInvisibleListActive() {
+       try {
+           PrivacyList pl = privacyManager.getActiveList();
+           return pl != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(pl.toString());
+       } catch (Exception e){
+           // it can return item-not-found if there is no active list.
+           // so it is fine to fall here.
+           // e.printStackTrace();
+       }
+       return false;
+    }
+    
+    private PrivacyList ensureGloballyInvisibleListExists() {
+        PrivacyList list = null;
+        try 
+        {
+            list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
+            if (list != null)
+                return list;
+            
+        } catch (XMPPException e1) {
+            Log.debug("Could not find globally invisible list. We need to create one");
+        }
+
+        try {
+            PrivacyItem item = new PrivacyItem(null, false, 1);
+            item.setFilterPresence_out(true);
+
+            List<PrivacyItem> items = Arrays.asList(item);
+            privacyManager.createPrivacyList(INVISIBLE_LIST_NAME, items);
+            list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
+            Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been created ");
+        } 
+        catch (XMPPException e) 
+        {
+            Log.warning("Could not create PrivacyList " + INVISIBLE_LIST_NAME);
+            e.printStackTrace();
+        }
+        
+        return list;
+    }
 
 }

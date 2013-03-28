@@ -70,7 +70,8 @@ import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
-
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 
 /**
  * The inner Container for Spark. The Workspace is the container for all plugins into the Spark
@@ -218,6 +219,13 @@ public class Workspace extends JPanel implements PacketListener {
      * Starts the Loading of all Spark Plugins.
      */
     public void loadPlugins() {
+
+	if (SettingsManager.getLocalPreferences().isLoginAsInvisible()) {
+             PrivacyManager.getInstance().goToInvisible();
+        } else
+            // Send Available status
+            SparkManager.getSessionManager().changePresence(statusBox.getPresence());
+
         // Add presence and message listeners
         // we listen for these to force open a 1-1 peer chat window from other operators if
         // one isn't already open
@@ -243,10 +251,6 @@ public class Workspace extends JPanel implements PacketListener {
         };
 
         SparkManager.getSessionManager().getConnection().addPacketListener(workspacePresenceListener, new PacketTypeFilter(Presence.class));
-
-        // Send Available status
-        final Presence presence = statusBox.getPresence();
-        SparkManager.getSessionManager().changePresence(presence);
 
         // Until we have better plugin management, will init after presence updates.
         gatewayPlugin = new GatewayPlugin();

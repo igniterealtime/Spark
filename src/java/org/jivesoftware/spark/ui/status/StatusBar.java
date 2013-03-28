@@ -76,6 +76,7 @@ import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 //TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel implements VCardListener {
@@ -125,10 +126,13 @@ public class StatusBar extends JPanel implements VCardListener {
 	}
 
         buildStatusItemList();
+        
+        // SPARK-1521, if we log in as invisible, default status should be "Invisible"
+        currentPresence = SettingsManager.getLocalPreferences().isLoginAsInvisible() 
+                ? PresenceManager.getUnavailablePresence() 
+                : PresenceManager.getAvailablePresence();
 
-
-        currentPresence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
-
+	updatePresence();        
 
         //setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
 
@@ -245,7 +249,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
                     SwingWorker worker = new SwingWorker() {
                         public Object construct() {
-                            SparkManager.getSessionManager().changePresence(si.getPresence());
+                            changePresence(si.getPresence());
                             return "ok";
                         }
 
@@ -301,11 +305,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
                                 SwingWorker worker = new SwingWorker() {
                                     public Object construct() {
-                                        Presence oldPresence = si.getPresence();
-                                        Presence presence = copyPresence(oldPresence);
-                                        presence.setStatus(customItem.getStatus());
-                                        presence.setPriority(customItem.getPriority());
-                                        SparkManager.getSessionManager().changePresence(presence);
+                                        changePresence(si.getPresence());
                                         return "ok";
                                     }
 
@@ -334,11 +334,13 @@ public class StatusBar extends JPanel implements VCardListener {
         }
 
 
-        //Add privacy menu
-        if (PrivacyManager.getInstance().isPrivacyActive()) {
+        //SPARK-1521. Add privacy menu if Privacy Manager is active and have any visible lists
+        final PrivacyManager pmanager = PrivacyManager.getInstance();
+        if (pmanager.isPrivacyActive() && pmanager.getPrivacyLists().size() > 0) {
+            
             JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
             privMenu.setIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
-            final PrivacyManager pmanager = PrivacyManager.getInstance();
+            
             for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
                 JMenuItem it = new JMenuItem(plist.getListName());
                 privMenu.add(it);
@@ -406,9 +408,6 @@ public class StatusBar extends JPanel implements VCardListener {
 	}
 
     public void changeAvailability(final Presence presence) {
-        if (!presence.isAvailable()) {
-            return;
-        }
 
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
             PacketExtension pe = presence.getExtension("x", "vcard-temp:x:update");
@@ -670,5 +669,29 @@ public class StatusBar extends JPanel implements VCardListener {
         return currentPresence;
     }
 
+    private void changePresence(Presence presence) {
+        // SPARK-1521. Other clients can see "Invisible" status while we are disappearing.
+        // So we send "Offline" instead of "Invisible" for them.
+        boolean isInvisible = PresenceManager.isInvisible(presence);
+        Presence copyPresence = PresenceManager.copy(presence);
+        if (isInvisible){
+            copyPresence.setStatus(Res.getString("status.offline"));
+        }
+        if (PresenceManager.areEqual(currentPresence, copyPresence)) {
+            return;
+        }
+        // If we go visible then we should send "Available" first.
+        if (!isInvisible)
+            PrivacyManager.getInstance().goToVisible();
+        
+        // Then set the current status.
+        SparkManager.getSessionManager().changePresence(copyPresence);
+        
+        // If we go invisible we should activate the "globally invisible list"
+        // and send "Available" after "Unavailable" presence.
+        if (isInvisible){
+             PrivacyManager.getInstance().goToInvisible();
+        }
+    }
 
 }
