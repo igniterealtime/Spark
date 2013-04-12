@@ -121,7 +121,7 @@ public class GroupChatRoom extends ChatRoom {
 	    .isShowJoinLeaveMessagesEnabled();
     private boolean isMucHighlightingNameEnabled = pref.isMucHighNameEnabled();
     private boolean isMucHighlightingTextEnabled = pref.isMucHighTextEnabled();
-
+    private RolloverButton settings;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -1370,10 +1370,11 @@ public class GroupChatRoom extends ChatRoom {
      */
     private void addRoomConfigureButtons(GroupChatRoom room) {
 
-    RolloverButton settings = UIComponentRegistry.getButtonFactory().createSettingsButton();
+    settings = UIComponentRegistry.getButtonFactory().createSettingsButton();
+    settings.setVisible(false);
     RolloverButton thema = UIComponentRegistry.getButtonFactory().createTemaButton();
     RolloverButton register = UIComponentRegistry.getButtonFactory().createRegisterButton();
-
+    
 	room.addControllerButton(settings);
     room.addControllerButton(thema);
     room.addControllerButton(register);
@@ -1436,6 +1437,13 @@ public class GroupChatRoom extends ChatRoom {
 	    }
 	});
 
+    }
+    
+    public void notifySettingsAccessRight() {
+    	if(SparkManager.getUserManager().isOwner(
+    			(GroupChatRoom) getChatRoom(), chat.getNickname())) {
+    		settings.setVisible(true);
+    	}
     }
 
 }

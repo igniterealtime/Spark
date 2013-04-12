@@ -211,7 +211,12 @@ public class GroupChatParticipantList extends JPanel implements
 			userMap.put(displayName, userid);			
 
 			if (p.getType() == Presence.Type.available) {
-				String jid = PresenceManager.getJidFromMUCPresence(p);				
+				String jid = PresenceManager.getJidFromMUCPresence(p);
+				//if current user is participant and not owner, then do not display the settings button
+				//we have to do it here otherwise ownership information retrieval won't be available
+				if (jid != null && jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+					groupChatRoom.notifySettingsAccessRight();
+				}
 			    addParticipant(userid, p, jid);
 			    agentInfoPanel.setVisible(true);
 			} else {

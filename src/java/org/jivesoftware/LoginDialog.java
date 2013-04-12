@@ -880,7 +880,7 @@ public class LoginDialog {
 
         public Dimension getPreferredSize() {
             final Dimension dim = super.getPreferredSize();
-            dim.height = 250;
+            dim.height = 230;
             return dim;
         }
 
