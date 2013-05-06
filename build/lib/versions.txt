@@ -9,12 +9,12 @@ asm.jar					 			| 3.1		 	 		| BSD				| http://pmd.sf.net
 junit.jar							| 4.8.2					| CPL				| http://www.junit.org
 dist/activation.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html
 dist/asterisk-im-client.jar			| 1.2.0			 		| GPL				| http://igniterealtime.org/
-dist/dom4j.jar						| 2.0.0.a 			 		| BSD				| http://www.dom4j.org/
+dist/dom4j.jar						| 2.0.0.a 		 		| BSD				| http://www.dom4j.org/
 dist/linux/jdic.jar					| ? 			 		| LGPL				| https://jdic.dev.java.net/
 dist/mac/javaSoundStream.fix.jar	| ? 			 		| ?					| ?
-dist/smack.jar						| SVN 11827 			| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
-dist/smackx-debug.jar				| SVN 11827				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
-dist/smackx.jar						| SVN 11827				| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smack.jar						| 3.3.0		 			| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smackx-debug.jar				| 3.3.0					| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
+dist/smackx.jar						| 3.3.0					| Apache			| http://www.igniterealtime.org/projects/smack/index.jsp
 dist/swingx.jar						| ? 			 		| LGPL				| https://swingx.dev.java.net/
 dist/systeminfo.jar					| ? 			 		| LGPL				| https://jdic.dev.java.net/incubator/systeminfo/index.html
 dist/windows/jacob.jar				| 1.14.1 		 		| LGPL				| http://jacob-project.sourceforge.net/
