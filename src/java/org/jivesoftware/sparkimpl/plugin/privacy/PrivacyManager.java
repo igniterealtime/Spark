@@ -19,10 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
-import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyPresenceHandler;
-import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
-import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,15 +30,19 @@ import org.jivesoftware.smack.PrivacyList;
 import org.jivesoftware.smack.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.smack.util.DNSUtil;
+import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverInfo.Feature;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyPresenceHandler;
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
+import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
 
 /**
@@ -112,8 +112,11 @@ public class PrivacyManager {
     	//If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example 
         //while (info == null){
             try {
-            	String xmppHost = DNSUtil.resolveXMPPDomain(conn.getServiceName()).getHost();
-                info = servDisc.discoverInfo(xmppHost);
+            	List<HostAddress> hosts = DNSUtil.resolveXMPPDomain(conn.getServiceName());
+            	if (hosts.size() > 0)
+            	{
+            		info = servDisc.discoverInfo(hosts.get(0).getFQDN());
+            	}
             } catch (XMPPException e) {
             	// We could not query the server
             }
