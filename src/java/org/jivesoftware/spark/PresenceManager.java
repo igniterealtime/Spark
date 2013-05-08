@@ -219,7 +219,8 @@ public class PresenceManager {
 
     public static boolean isInvisible(Presence presence) {
         return presence != null && presence.getType() == Presence.Type.unavailable 
-                && Res.getString("status.invisible").equalsIgnoreCase(presence.getStatus())
+                && (Res.getString("status.invisible").equalsIgnoreCase(presence.getStatus())
+                		|| Res.getString("status.offline").equalsIgnoreCase(presence.getStatus()))
                 && Presence.Mode.available == presence.getMode();
     }
 

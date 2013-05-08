@@ -140,6 +140,18 @@ public class StatusBar extends JPanel implements VCardListener {
             public void presenceChanged(Presence presence) {
         	presence.setStatus(StringUtils.modifyWildcards(presence.getStatus()));
                 changeAvailability(presence);
+                
+                // SPARK-1524: 
+                // after reconnected if we had the 'invisible' presence
+                // we should re-send it 
+                if (PresenceManager.isInvisible(currentPresence)) {
+	                TimerTask task = new SwingTimerTask() {
+	                    public void doRun() {
+	                    	PrivacyManager.getInstance().goToInvisible();
+	                    }
+	                };
+	                TaskEngine.getInstance().schedule(task, 500);
+            	}
             }
         });
 
@@ -408,7 +420,11 @@ public class StatusBar extends JPanel implements VCardListener {
 	}
 
     public void changeAvailability(final Presence presence) {
-
+    	// SPARK-1524: if we were reconnected because of the error
+    	// then we get presence with the mode == null. 
+    	if (presence.getMode() == null)
+    		return;
+    	
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
             PacketExtension pe = presence.getExtension("x", "vcard-temp:x:update");
             if (pe != null) {
