@@ -19,20 +19,20 @@
  */
 package org.jivesoftware.spark.ui;
 
-import org.jdesktop.swingx.calendar.DateUtils;
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
-import org.jivesoftware.spark.ChatManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -49,20 +49,21 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import org.jdesktop.swingx.calendar.DateUtils;
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.history.HistoryWindow;
+import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -561,6 +562,30 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         popup.add(printAction);
 
         popup.add(clearAction);
+        
+        //History window
+        Action viewLogAction = new AbstractAction() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				ChatManager manager = SparkManager.getChatManager();
+				ChatRoom room;
+				try {
+					room = manager.getChatContainer().getActiveChatRoom();
+					HistoryWindow hw = new HistoryWindow(SparkManager.getUserDirectory(), room.getRoomname());
+					hw.showWindow();
+					 
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+
+		};
+		viewLogAction.putValue(Action.NAME, Res.getString("action.viewlog"));
+		popup.add(viewLogAction);
     }
 
     public void poppingDown(JPopupMenu popup) {
