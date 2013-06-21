@@ -317,7 +317,10 @@ public class StatusBar extends JPanel implements VCardListener {
 
                                 SwingWorker worker = new SwingWorker() {
                                     public Object construct() {
-                                        changePresence(si.getPresence());
+                                    	Presence presence = PresenceManager.copy(si.getPresence());
+                                    	presence.setStatus(customItem.getStatus());
+										presence.setPriority(customItem.getPriority());
+                                        changePresence(presence);
                                         return "ok";
                                     }
 
@@ -574,9 +577,9 @@ public class StatusBar extends JPanel implements VCardListener {
         });
 
     }
-
+    
     public static Presence copyPresence(Presence presence) {
-        return new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
+    	return new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
     }
 
     /**
