@@ -79,6 +79,7 @@ public class ChatPreference implements Preference {
                 boolean prevChatHistoryHidden = !localPreferences.isPrevChatHistoryEnabled();
                 boolean tabsOnTop = localPreferences.isTabTopPosition();
                 boolean buzzAllowed = localPreferences.isBuzzEnabled();
+                boolean isChatHistoryAscending = localPreferences.getChatHistoryAscending();
                 panel.setShowTime(showTime);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
@@ -86,6 +87,7 @@ public class ChatPreference implements Preference {
                 panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
                 panel.setTabsOnTop(tabsOnTop);
                 panel.setBuzzEnabled(buzzAllowed);
+                panel.setSortChatHistoryAscending(isChatHistoryAscending);
             }
         };
 
@@ -106,6 +108,7 @@ public class ChatPreference implements Preference {
         pref.setChatLengthDefaultTimeout(panel.getChatTimeoutTime());
         pref.setTabsOnTop(panel.isTabsOnTop());
         pref.setBuzzEnabled(panel.isBuzzEnabled());
+        pref.setChatHistoryAscending(panel.isSortChatHistoryAscending());
 
         SettingsManager.saveSettings();
 

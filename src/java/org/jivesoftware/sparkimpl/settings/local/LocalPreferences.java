@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.lobobrowser.html.domimpl.HTMLElementBuilder.Br;
 
 /**
  * Represents the LocalPreference Model for this system.
@@ -1132,17 +1133,43 @@ public class LocalPreferences {
     }
 
     /**
-     * Returns the Maximum visible amount of History entries
-     * Default is 5000
-     * @return int
+     * This will save if themessage-history should be display the messages<br>
+     * by {@link Date} ascending (<b>true</b>) or descending (<b>false</b>)
+     *
+     * @param dateIsAsc indicates if the date should be displayed ascending or not
      */
-    public int getMaximumHistory() {
-	int x = getInt("maximumHistory", -1);
-	if (x == -1) {
-	    x = 5000;
-	    setInt("maximumHistory", x);
-	}
-	return x;
+    public void setChatHistoryAscending(boolean dateIsAsc){
+        setBoolean("HISTORY_SORT_DATEASC", dateIsAsc);
+    }
+
+    /**
+     * This will return a {@link Boolean} to indicate if the message-history should display <br>
+     * the messages by {@link Date} ascending (<b>true</b>) or descending (<b>false</b>)
+     *
+     * @return an {@link Boolean} that indicates if the message-history should <br> 
+     * be displayed ascending or descending
+     */
+    public boolean getChatHistoryAscending(){
+        return getBoolean("HISTORY_SORT_DATEASC", true);
+    }
+
+    /**
+     * Get the default value for the search period in the
+     * history transcript plugin
+     * @param defaultValue the default value for the period
+     * @return the last value that was set
+     */
+    public String getSearchPeriod(String defaultValue){
+    	return getString("HISTORY_SEARCH_PERIOD", "defaultValue");
+    }
+
+    /**
+     * Get the defaultVaue for the search period in the 
+     * history transcript period
+     * @param value the last value that was set
+     */
+    public void setSearchPeriod(String value){
+    	setString("HISTORY_SEARCH_PERIOD", value);
     }
 
     public List<String> getDeactivatedPlugins()

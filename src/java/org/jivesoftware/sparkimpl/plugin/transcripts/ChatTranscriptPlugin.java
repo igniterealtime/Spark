@@ -20,51 +20,31 @@
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.text.html.HTMLEditorKit;
 
-import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
@@ -72,11 +52,7 @@ import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -94,7 +70,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final SimpleDateFormat messageDateFormatter;
     private HashMap<ChatRoom,Message> lastMessage = new HashMap<ChatRoom,Message>();
     private JDialog Frame;
-
+    private HistoryTranscript transcript = null;
     /**
      * Register the listeners for transcript persistence.
      */
@@ -112,8 +88,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 			public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
                 final String jid = item.getJID();
-
-                showHistory(jid);
+                transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
+                transcript.showHistory(jid);
+                //showHistory(jid);
             }
         };
 
@@ -283,218 +260,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         // Do nothing.
     }
 
-    private void showHistory(final String jid) {
-
-        SwingWorker transcriptLoader = new SwingWorker() {
-            public Object construct() {
-                String bareJID = StringUtils.parseBareAddress(jid);
-                return ChatTranscripts.getChatTranscript(bareJID);
-            }
-
-            public void finished() {
-                final JPanel mainPanel = new BackgroundPanel();
-
-                mainPanel.setLayout(new BorderLayout());
-                // add search text input
-                final JPanel topPanel = new BackgroundPanel();
-                topPanel.setLayout(new GridBagLayout());
-
-                final VCardPanel vacardPanel = new VCardPanel(jid);
-                final JTextField searchField = new JTextField(25);
-                searchField.setText(Res.getString("message.search.for.history"));
-                searchField.setToolTipText(Res.getString("message.search.for.history"));
-                searchField.setForeground((Color) UIManager.get("TextField.lightforeground"));
-
-                topPanel.add(vacardPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(1, 5, 1, 1), 0, 0));
-                topPanel.add(searchField, new GridBagConstraints(1, 0, GridBagConstraints.REMAINDER, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(1, 1, 6, 1), 0, 0));
-
-                mainPanel.add(topPanel, BorderLayout.NORTH);
-
-                final JEditorPane window = new JEditorPane();
-                window.setEditorKit(new HTMLEditorKit());
-                window.setBackground(Color.white);
-                final JScrollPane pane = new JScrollPane(window);
-                pane.getVerticalScrollBar().setBlockIncrement(200);
-                pane.getVerticalScrollBar().setUnitIncrement(20);
-
-                mainPanel.add(pane, BorderLayout.CENTER);
-
-                final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
-                frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16).getImage());
-                frame.getContentPane().setLayout(new BorderLayout());
-
-                frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-                frame.pack();
-                frame.setSize(600, 400);
-                window.setCaretPosition(0);
-                window.requestFocus();
-                GraphicUtils.centerWindowOnScreen(frame);
-                frame.setVisible(true);
-
-                window.setEditable(false);
-
-                final StringBuilder builder = new StringBuilder();
-                builder.append("<html><body><table cellpadding=0 cellspacing=0>");
-
-                final TimerTask transcriptTask = new TimerTask() {
-                    public void run() {
-                        ChatTranscript transcript = (ChatTranscript)get();
-
-                        // reduce the size of our transcript to the last 5000Messages
-                        // This will prevent JavaOutOfHeap Errors
-                        ArrayList<HistoryMessage> toobig = (ArrayList<HistoryMessage>) transcript.getMessage(null);
-
-                        // Get the Maximum size from settingsfile
-                        int maxsize = SettingsManager.getLocalPreferences().getMaximumHistory();
-                        if (toobig.size() > maxsize)
-                        {
-                            transcript = new ChatTranscript();
-
-                            for(int i = toobig.size()-1; i>=toobig.size()-maxsize;--i)
-                            {
-                        	transcript.addHistoryMessage(toobig.get(i));
-                            }
-                        }
-
-                        final List<HistoryMessage> list = transcript.getMessage(
-                		Res.getString("message.search.for.history").equals(searchField.getText())
-                			? null : searchField.getText());
-
-
-                        final String personalNickname = SparkManager.getUserManager().getNickname();
-                        Date lastPost = null;
-                        String lastPerson = null;
-                        boolean initialized = false;
-                        for (HistoryMessage message : list) {
-                            String color = "blue";
-
-                            String from = message.getFrom();
-                            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-                            String body = org.jivesoftware.spark.util.StringUtils.escapeHTMLTags(message.getBody());
-                            if (nickname.equals(message.getFrom())) {
-                                String otherJID = StringUtils.parseBareAddress(message.getFrom());
-                                String myJID = SparkManager.getSessionManager().getBareAddress();
-
-                                if (otherJID.equals(myJID)) {
-                                    nickname = personalNickname;
-                                }
-                                else {
-                                    nickname = StringUtils.parseName(nickname);
-                                }
-                            }
-
-                            if (!StringUtils.parseBareAddress(from).equals(SparkManager.getSessionManager().getBareAddress())) {
-                                color = "red";
-                            }
-
-
-                            long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
-
-
-                            int diff = 0;
-			    if (DateUtils.getDaysDiff(lastPostTime, message
-				    .getDate().getTime()) != 0) {
-				diff = DateUtils.getDaysDiff(lastPostTime,
-					message.getDate().getTime());
-			    } else {
-				diff = DateUtils.getDayOfWeek(lastPostTime)
-					- DateUtils.getDayOfWeek(message
-						.getDate().getTime());
-			    }
-
-                            if (diff != 0) {
-                                if (initialized) {
-                                    builder.append("<tr><td><br></td></tr>");
-                                }
-                                builder.append("<tr><td colspan=2><font size=4 color=gray><b><u>").append(notificationDateFormatter.format(message.getDate())).append("</u></b></font></td></tr>");
-                                lastPerson = null;
-                                initialized = true;
-                            }
-
-                            String value = "[" + messageDateFormatter.format(message.getDate()) + "]&nbsp;&nbsp;  ";
-
-                            boolean newInsertions = lastPerson == null || !lastPerson.equals(nickname);
-                            if (newInsertions) {
-                                builder.append("<tr valign=top><td colspan=2 nowrap>");
-                                builder.append("<font size=4 color='").append(color).append("'><b>");
-                                builder.append(nickname);
-                                builder.append("</b></font>");
-                                builder.append("</td></tr>");
-                            }
-
-                            builder.append("<tr valign=top><td align=left nowrap>");
-                            builder.append(value);
-                            builder.append("</td><td align=left>");
-                            builder.append(body);
-
-                            builder.append("</td></tr>");
-
-                            lastPost = message.getDate();
-                            lastPerson = nickname;
-                        }
-                        builder.append("</table></body></html>");
-
-                        // Handle no history
-                        if (transcript.getMessages().size() == 0) {
-                            builder.append("<b>").append(Res.getString("message.no.history.found")).append("</b>");
-                        }
-
-                        window.setText(builder.toString());
-                        builder.replace(0, builder.length(), "");
-
-                    }
-                };
-
-                searchField.addKeyListener(new KeyListener() {
-        			@Override
-        			public void keyTyped(KeyEvent e) {
-        			}
-        			@Override
-        			public void keyReleased(KeyEvent e) {
-        				if(e.getKeyChar() == KeyEvent.VK_ENTER) {
-        	                TaskEngine.getInstance().schedule(transcriptTask, 10);
-        	                searchField.requestFocus();
-        				}
-        			}
-        			@Override
-        			public void keyPressed(KeyEvent e) {
-
-        			}
-        		});
-                searchField.addFocusListener(new FocusListener() {
-                    public void focusGained(FocusEvent e) {
-                    	searchField.setText("");
-                    	searchField.setForeground((Color) UIManager.get("TextField.foreground"));
-                    }
-
-                    public void focusLost(FocusEvent e) {
-                    	searchField.setForeground((Color) UIManager.get("TextField.lightforeground"));
-                    	searchField.setText(Res.getString("message.search.for.history"));
-                    }
-                });
-
-                TaskEngine.getInstance().schedule(transcriptTask, 10);
-
-                frame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        window.setText("");
-                    }
-                     @Override
-                    public void windowClosed(WindowEvent e) {
-                	frame.removeWindowListener(this);
-                        frame.dispose();
-                        transcriptTask.cancel();
-                        topPanel.remove(vacardPanel);
-                    }
-                });
-            }
-        };
-
-
-
-        transcriptLoader.start();
-    }
-
     private void showStatusMessage(ContactItem item)
     {
    	 Frame = new JDialog();
@@ -582,8 +347,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
-            showHistory(roomImpl.getParticipantJID());
+        	ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
+        	transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
+        	transcript.showHistory(roomImpl.getParticipantJID());
         }
     }
 

@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class ChatTranscript {
 
-    private final List<HistoryMessage> messages = new ArrayList<HistoryMessage>();
+    private List<HistoryMessage> messages = new ArrayList<HistoryMessage>();
 
     /**
      * Add a <code>HistoryMessage</code> to users chat transcript.
@@ -95,4 +95,34 @@ public class ChatTranscript {
     public void release() {
 	messages.clear();
     }
+
+    /**
+     * Set the new List for the chat transcript
+     * @param newList The list with the history messages
+     */
+    public void setList(List<HistoryMessage> newList){
+    	this.messages = newList;
+    }
+
+    /**
+     * Return the size of the message list
+     * @return The size of the message list
+     */
+    public int size(){
+    	return this.messages.size();
+    }
+
+    /**
+     * Return the HistoryMessage by the given index
+     * @param i the index of the history message
+     * @return the history message, null if out of bounds
+     */
+    public HistoryMessage getMessage(int i){
+    	HistoryMessage result = null;
+    	if ((i > -1) && i < messages.size()){
+    		result = messages.get(i);
+    	}
+    	return result;
+    }
+
 }
