@@ -58,8 +58,6 @@ public class HistoryTranscript extends SwingWorker {
 	private Semaphore token = new Semaphore(1);
 	private int pageIndex = 0;
 	private int maxPages = 0;
-	private final String period_oneWeek = "message.search.period.week.one";
-	private final String period_threeWeeks = "message.search.period.week.three";
 	private final String period_oneMonth = "message.search.period.month.one";
 	private final String period_oneYear = "message.search.period.year.one";
 	private final String period_noPeriod = "message.search.period.none";
@@ -325,48 +323,14 @@ public class HistoryTranscript extends SwingWorker {
 			boolean result = false;
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(newDate);
-			cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-			long weekNew = Math.round((double)cal.get(Calendar.WEEK_OF_YEAR));
 			long yearNew = Math.round((double)cal.get(Calendar.YEAR));
 			long monthNew = Math.round((double)cal.get(Calendar.MONTH));	
 
 			cal.setTime(oldDate);
-			cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-			long weekOld = Math.round((double)cal.get(Calendar.WEEK_OF_YEAR));
 			long yearOld = Math.round((double)cal.get(Calendar.YEAR));
 			long monthOld = Math.round((double)cal.get(Calendar.MONTH));
 
-			if(searchPeriod.equals(period_oneWeek)){
-				// for one week, we only check if the weeknumber of the year and the year itself is equal
-				if ((weekOld == weekNew) && (yearOld == yearNew)) result = true;	
-			}else if(searchPeriod.equals(period_threeWeeks)) {	
-				// for three weeks, its a bit more tricky.
-				// first, we set the maximum time of the timeperiod,
-				// which is sunday at 23:59:999 of the old date
-				cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);;
-				cal.set(Calendar.HOUR_OF_DAY, 23);
-				cal.set(Calendar.MINUTE, 59);
-				cal.set(Calendar.SECOND, 59);
-				cal.set(Calendar.MILLISECOND, 999);
-				// then get the maximum time in millies
-				long timeMax = cal.getTime().getTime();
-
-				// then we setting the calendar to the minimum time of the time period,
-				// which is our week -3 and a time of 00:00:000
-				cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-				cal.set(Calendar.WEEK_OF_YEAR, cal.get(Calendar.WEEK_OF_YEAR)-2);
-				cal.set(Calendar.HOUR_OF_DAY, 0);
-				cal.set(Calendar.MINUTE, 0);
-				cal.set(Calendar.SECOND, 0);
-				cal.set(Calendar.MILLISECOND, 0);
-				// then get the minimum time in millies
-				long timeMin = cal.getTime().getTime();
-
-				// the new date should be in the range of the min and max time in milies
-				if ((newDate.getTime() >= timeMin) && (newDate.getTime() <= timeMax)){
-					result = true;
-				}
-			}else if (searchPeriod.equals(period_oneMonth)) { 
+			if (searchPeriod.equals(period_oneMonth)) { 
 				// for one month, we only check if the month and the year is equal
 				if ((monthOld == monthNew) && (yearOld == yearNew)) result = true;
 			}else if (searchPeriod.equals(period_oneYear)) {
