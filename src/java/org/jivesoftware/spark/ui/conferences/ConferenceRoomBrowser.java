@@ -308,6 +308,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
                refreshButton.validate();
                refreshButton.repaint();
+               refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+               refreshItem.validate();
+               refreshItem.repaint();
         }
        };   
        startLoading.start();
@@ -324,6 +327,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
                refreshButton.validate();
                refreshButton.repaint();
+               refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+               refreshItem.validate();
+               refreshItem.repaint();
         }
        };
        stopLoading.start();
