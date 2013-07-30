@@ -33,8 +33,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TimerTask;
 
-import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -53,7 +53,6 @@ import javax.swing.RowFilter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -81,6 +80,7 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -128,10 +128,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     private boolean partialDiscovery = false;
 
     private JPopupMenu popup;
-    
+
     private JLabel labelFilter;
     private JTextField txtFilter;
-    
+
     final TableRowSorter<TableModel> sorter;
 
     /**
@@ -219,9 +219,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	roomsTable = new RoomList();
 
     //build model for roomsTable, ignoring the 1st column              
-    sorter = new TableRowSorter(roomsTable.getModel());
+    sorter = new TableRowSorter<TableModel>(roomsTable.getModel());
     roomsTable.setRowSorter(sorter);
-        
+    
 	final JScrollPane pane = new JScrollPane(roomsTable);
 	pane.setBackground(Color.white);
 	pane.setForeground(Color.white);
@@ -295,77 +295,122 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	addTableListener();
     }
 
+   private void startLoadingImg(){
+       SwingWorker startLoading = new SwingWorker() {
+
+           @Override
+           public Object construct() {
+               return null;
+           }
+           
+           @Override
+        public void finished() {
+               refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+               refreshButton.validate();
+               refreshButton.repaint();
+        }
+       };   
+       startLoading.start();
+   }
+
+   private void stopLoadingImg(){
+       SwingWorker stopLoading = new SwingWorker() {
+
+           @Override
+           public Object construct() {
+               return null;
+           }
+           public void finished() {
+               refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+               refreshButton.validate();
+               refreshButton.repaint();
+        }
+       };
+       stopLoading.start();
+   }
+
+   private void clearTable(){
+       SwingWorker clearTable = new SwingWorker() {
+           
+           @Override
+           public Object construct() {
+               return null;
+           }
+           @Override
+           public void finished() {
+               roomsTable.clearTable();
+           }
+       };
+       clearTable.start();
+   }
+
     private void refreshRoomList(final String serviceName) {
+        startLoadingImg();
+        clearTable();
 
-	SwingWorker worker = new SwingWorker() {
-	    Collection<RoomObject> result;
+        TimerTask refreshTask = new TimerTask() {
+            Collection<HostedRoom> rooms;
 
-	    public synchronized Object construct() {
-		result = getRoomsAndInfo(serviceName);
-		return result;
-	    }
-
-	    public synchronized void finished() {
-		try {
-		    roomsTable.clearTable();
-		    for (Object aResult : result) {
-			RoomObject obj = (RoomObject) aResult;
-			addRoomToTable(obj.getRoomJID(), obj.getRoomName(),
-				obj.getNumberOfOccupants());
-		    }
-		} catch (Exception e) {
-		    Log.error("Unable to retrieve room list and info.", e);
-		}
-	    }
-	};
-
-	worker.start();
-
+            @Override
+            public void run() {
+                try {
+                    rooms = getRoomList(serviceName);
+                    try { 
+                        for (HostedRoom aResult : rooms) {
+                            RoomObject room = getRoomsAndInfo(aResult);
+                            addRoomToTable(room.getRoomJID(), room.getRoomName(),
+                            room.getNumberOfOccupants());
+                        }
+                        stopLoadingImg();
+                    } catch (Exception e) {
+                        Log.error("Unable to retrieve room list and info.", e);
+                    }
+                } catch ( Exception e1 ) {
+                    System.err.println(e1);
+                }
+            }
+        };
+        TaskEngine.getInstance().submit(refreshTask);
     }
 
-    private Collection<RoomObject> getRoomsAndInfo(final String serviceName) {
-	List<RoomObject> roomList = new ArrayList<RoomObject>();
-	boolean stillSearchForOccupants = true;
-	try {
-	    Collection<HostedRoom> result = getRoomList(serviceName);
-	    try {
-		for (Object aResult : result) {
-		    HostedRoom hostedRoom = (HostedRoom) aResult;
-		    String roomName = hostedRoom.getName();
-		    String roomJID = hostedRoom.getJid();
-		    int numberOfOccupants = -1;
-		    if (stillSearchForOccupants) {
-			RoomInfo roomInfo = null;
-			try {
-			    roomInfo = MultiUserChat.getRoomInfo(
-				    SparkManager.getConnection(), roomJID);
-			} catch (Exception e) {
-			    // Nothing to do
-			}
+    private RoomObject getRoomsAndInfo(final HostedRoom room) {
+        boolean stillSearchForOccupants = true;
+        RoomObject result = null;
+        try {
+            try {
+                String roomName = room.getName();
+                String roomJID = room.getJid();
+                int numberOfOccupants = -1;
+                if (stillSearchForOccupants) {
+                RoomInfo roomInfo = null;
+                try {
+                    roomInfo = MultiUserChat.getRoomInfo(
+                        SparkManager.getConnection(), roomJID);
+                } catch (Exception e) {
+                    // Nothing to do
+                }
 
-			if (roomInfo != null) {
-			    numberOfOccupants = roomInfo.getOccupantsCount();
-			    if (numberOfOccupants == -1) {
-				stillSearchForOccupants = false;
-			    }
-			} else {
-			    stillSearchForOccupants = false;
-			}
-		    }
+                if (roomInfo != null) {
+                    numberOfOccupants = roomInfo.getOccupantsCount();
+                    if (numberOfOccupants == -1) {
+                    stillSearchForOccupants = false;
+                    }
+                } else {
+                    stillSearchForOccupants = false;
+                }
+                }
 
-		    RoomObject obj = new RoomObject();
-		    obj.setRoomJID(roomJID);
-		    obj.setRoomName(roomName);
-		    obj.setNumberOfOccupants(numberOfOccupants);
-		    roomList.add(obj);
-		}
-	    } catch (Exception e) {
-		Log.error("Error setting up GroupChatTable", e);
-	    }
-	} catch (Exception e) {
-	    System.err.println(e);
-	}
-	return roomList;
+                result = new RoomObject();
+                result.setRoomJID(roomJID);
+                result.setRoomName(roomName);
+                result.setNumberOfOccupants(numberOfOccupants);
+            } catch (Exception e) {
+                Log.error("Error setting up GroupChatTable", e);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return result;
     }
 
     private void bookmarkRoom(String serviceName) {
@@ -476,150 +521,147 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * Displays the ConferenceRoomBrowser.
      */
     public void invoke() {
-	SwingWorker worker = new SwingWorker() {
-	    Collection<HostedRoom> rooms;
+        startLoadingImg();
+        TimerTask invokeThread = new TimerTask() {
+            Collection<HostedRoom> rooms;
 
-	    public Object construct() {
-		try {
-		    rooms = getRoomList(serviceName);
-		} catch (Exception e) {
-		    Log.error("Unable to retrieve list of rooms.", e);
-		}
+            @Override
+            public void run() {
+                try {
+                    rooms = getRoomList(serviceName);
 
-		return "OK";
-	    }
+                    if (rooms == null) {
+                        JOptionPane.showMessageDialog(conferences,
+                            Res.getString("message.conference.info.error"),
+                            Res.getString("title.error"),
+                            JOptionPane.ERROR_MESSAGE);
+                        if (dlg != null) {
+                        dlg.dispose();
+                        }
+                    }else{
+                        try {
+                            for (HostedRoom room : rooms) {
 
-	    public void finished() {
-		if (rooms == null) {
-		    JOptionPane.showMessageDialog(conferences,
-			    Res.getString("message.conference.info.error"),
-			    Res.getString("title.error"),
-			    JOptionPane.ERROR_MESSAGE);
-		    if (dlg != null) {
-			dlg.dispose();
-		    }
-		}
-		try {
-		    for (HostedRoom room : rooms) {
+                            String roomName = room.getName();
+                            String roomJID = room.getJid();
 
-			String roomName = room.getName();
-			String roomJID = room.getJid();
+                            int numberOfOccupants = -1;
 
-			int numberOfOccupants = -1;
+                            // Need to handle the case where the room info does not
+                            // contain the number of occupants. If that is the case,
+                            // we should not continue to request this info from the
+                            // service.
+                            if (!partialDiscovery) {
+                                RoomInfo roomInfo = null;
+                                try {
+                                roomInfo = MultiUserChat.getRoomInfo(
+                                    SparkManager.getConnection(), roomJID);
+                                } catch (Exception e) {
+                                // Nothing to do
+                                }
 
-			// Need to handle the case where the room info does not
-			// contain the number of occupants. If that is the case,
-			// we should not continue to request this info from the
-			// service.
-			if (!partialDiscovery) {
-			    RoomInfo roomInfo = null;
-			    try {
-				roomInfo = MultiUserChat.getRoomInfo(
-					SparkManager.getConnection(), roomJID);
-			    } catch (Exception e) {
-				// Nothing to do
-			    }
+                                if (roomInfo != null) {
+                                numberOfOccupants = roomInfo
+                                    .getOccupantsCount();
+                                }
+                                if (roomInfo == null || numberOfOccupants == -1) {
+                                partialDiscovery = true;
+                                }
+                            }
+                            addRoomToTable(roomJID, roomName, numberOfOccupants);
+                            }
+                        } catch (Exception e) {
+                            Log.error("Error setting up GroupChatTable", e);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.error("Unable to retrieve list of rooms.", e);
+                }
+                stopLoadingImg();
+            }
+        };
 
-			    if (roomInfo != null) {
-				numberOfOccupants = roomInfo
-					.getOccupantsCount();
-			    }
-			    if (roomInfo == null || numberOfOccupants == -1) {
-				partialDiscovery = true;
-			    }
-			}
+        final JOptionPane pane;
 
-			addRoomToTable(roomJID, roomName, numberOfOccupants);
-		    }
-		} catch (Exception e) {
-		    Log.error("Error setting up GroupChatTable", e);
-		}
-	    }
-	};
+        TitlePanel titlePanel;
 
-	worker.start();
-	// Find Initial Rooms
+        // Create the title panel for this dialog
+        titlePanel = new TitlePanel(
+            Res.getString("title.create.or.bookmark.room"),
+            Res.getString("message.add.favorite.room"),
+            SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
-	final JOptionPane pane;
+        // Construct main panel w/ layout.
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-	TitlePanel titlePanel;
+        // The user should only be able to close this dialog.
+        Object[] options = { Res.getString("close") };
+        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
+            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
-	// Create the title panel for this dialog
-	titlePanel = new TitlePanel(
-		Res.getString("title.create.or.bookmark.room"),
-		Res.getString("message.add.favorite.room"),
-		SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        mainPanel.add(pane, BorderLayout.CENTER);
 
-	// Construct main panel w/ layout.
-	final JPanel mainPanel = new JPanel();
-	mainPanel.setLayout(new BorderLayout());
-	mainPanel.add(titlePanel, BorderLayout.NORTH);
+        final JOptionPane p = new JOptionPane();
 
-	// The user should only be able to close this dialog.
-	Object[] options = { Res.getString("close") };
-	pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
-		JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        dlg = p.createDialog(SparkManager.getMainWindow(),
+            Res.getString("title.browse.room.service", serviceName));
+        dlg.setModal(false);
+        dlg.pack();
+        dlg.addComponentListener(this);
 
-	mainPanel.add(pane, BorderLayout.CENTER);
+        /*
+         * looking up which bundle is used to set the size of the Window (not
+         * using Localpreferences getLanguage() because sometimes language is
+         * not saved in the properties file and so the method only returns an
+         * empty String)
+         */
+        if (Res.getBundle().getLocale().toString().equals("de"))
+            dlg.setSize(700, 400);
+        else
+            dlg.setSize(500, 400);
 
-	final JOptionPane p = new JOptionPane();
+        dlg.setResizable(true);
+        dlg.setContentPane(mainPanel);
+        dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
-	dlg = p.createDialog(SparkManager.getMainWindow(),
-		Res.getString("title.browse.room.service", serviceName));
-	dlg.setModal(false);
-	dlg.pack();
-	dlg.addComponentListener(this);
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+            String value = (String) pane.getValue();
+            if (Res.getString("close").equals(value)) {
+                pane.removePropertyChangeListener(this);
+                dlg.dispose();
+            } else if (Res.getString("close").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+            }
+            }
+        };
 
-	/*
-	 * looking up which bundle is used to set the size of the Window (not
-	 * using Localpreferences getLanguage() because sometimes language is
-	 * not saved in the properties file and so the method only returns an
-	 * empty String)
-	 */
-	if (Res.getBundle().getLocale().toString().equals("de"))
-	    dlg.setSize(700, 400);
-	else
-	    dlg.setSize(500, 400);
+        pane.addPropertyChangeListener(changeListener);
 
-	dlg.setResizable(true);
-	dlg.setContentPane(mainPanel);
-	dlg.setLocationRelativeTo(SparkManager.getMainWindow());
+        dlg.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+            if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                dlg.dispose();
+            }
+            }
+        });
 
-	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent e) {
-		String value = (String) pane.getValue();
-		if (Res.getString("close").equals(value)) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		} else if (Res.getString("close").equals(value)) {
-		    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-		}
-	    }
-	};
+        // will need that, when the window is smaller then the buttons width...
+        setButtonsWidth();
 
-	pane.addPropertyChangeListener(changeListener);
+        showHiddenButtons.setVisible(false);
 
-	dlg.addKeyListener(new KeyAdapter() {
-	    public void keyPressed(KeyEvent e) {
-		if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-		    dlg.dispose();
-		}
-	    }
-	});
-
-	// will need that, when the window is smaller then the buttons width...
-	setButtonsWidth();
-
-	showHiddenButtons.setVisible(false);
-
-	dlg.setVisible(true);
-	dlg.toFront();
-	dlg.requestFocus();
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();  
+        TaskEngine.getInstance().submit(invokeThread);
     }
 
     private final class RoomList extends Table {
 	private static final long serialVersionUID = -731280190627042419L;
-        
+
 	public RoomList() {
 	    super(new String[] { " ", Res.getString("title.name"),
 		    Res.getString("title.address"),
@@ -831,49 +873,60 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      *            the number of occupants in the conference room. If -1 is
      *            specified, the the occupant count will show as n/a.
      */
-    private void addRoomToTable(String jid, String roomName,
-	    int numberOfOccupants) {
+    private void addRoomToTable(final String jid, final String roomName,
+	    final int numberOfOccupants) {
+        SwingWorker addRoomThread = new SwingWorker() {
 
-	JLabel iconLabel = new JLabel();
-	iconLabel.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
-	boolean isbookmark = false;
-	boolean ispassword = false;
+            @Override
+            public Object construct() {
+                JLabel iconLabel = new JLabel();
+                iconLabel.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+                boolean isbookmark = false;
+                boolean ispassword = false;
 
-	ImageIcon bookmarkicon = SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
-	ImageIcon passwordicon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
+                ImageIcon bookmarkicon = SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
+                ImageIcon passwordicon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
 
-	if (isBookmarked(jid)) {
-	    isbookmark = true;
-	    iconLabel.setIcon(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
-	}
-	if (isPasswordProtected(jid)) {
-	    ispassword = true;
-	}
+                if (isBookmarked(jid)) {
+                    isbookmark = true;
+                    iconLabel.setIcon(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
+                }
+                if (isPasswordProtected(jid)) {
+                    ispassword = true;
+                }
 
-	if (isbookmark && ispassword) {
-	    Image img = ImageCombiner.combine(bookmarkicon, passwordicon);
-	    iconLabel.setIcon(new ImageIcon(img));
-	} else if (isbookmark) {
-	    iconLabel.setIcon(bookmarkicon);
-	} else if (ispassword) {
-	    Image img = ImageCombiner.returnTransparentImage(
-		    passwordicon.getIconWidth(), passwordicon.getIconHeight());
+                if (isbookmark && ispassword) {
+                    Image img = ImageCombiner.combine(bookmarkicon, passwordicon);
+                    iconLabel.setIcon(new ImageIcon(img));
+                } else if (isbookmark) {
+                    iconLabel.setIcon(bookmarkicon);
+                } else if (ispassword) {
+                    Image img = ImageCombiner.returnTransparentImage(
+                        passwordicon.getIconWidth(), passwordicon.getIconHeight());
 
-	    Image combined = ImageCombiner.combine(new ImageIcon(img),
-		    passwordicon);
+                    Image combined = ImageCombiner.combine(new ImageIcon(img),
+                        passwordicon);
 
-	    iconLabel.setIcon(new ImageIcon(combined));
-	}
+                    iconLabel.setIcon(new ImageIcon(combined));
+                }
 
-	String occupants = Integer.toString(numberOfOccupants);
-	if (numberOfOccupants == -1) {
-	    occupants = "n/a";
-	}
+                String occupants = Integer.toString(numberOfOccupants);
+                if (numberOfOccupants == -1) {
+                    occupants = "n/a";
+                }
 
-	final Object[] insertRoom = new Object[] { iconLabel, roomName,
-		StringUtils.parseName(jid), occupants };
-	roomsTable.getTableModel().addRow(insertRoom);
-
+                final Object[] insertRoom = new Object[] { iconLabel, roomName,
+                    StringUtils.parseName(jid), occupants };
+                return insertRoom;
+            }
+            
+            @Override
+            public void finished() {
+                Object[] insertRoom = (Object[])get();
+                roomsTable.getTableModel().addRow(insertRoom);
+            }
+        };
+        addRoomThread.start();
     }
 
     /**
