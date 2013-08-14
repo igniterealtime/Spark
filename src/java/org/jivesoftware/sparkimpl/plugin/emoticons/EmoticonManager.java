@@ -137,7 +137,6 @@ public class EmoticonManager {
 					// Check timestamps
 					long installerFile = file.lastModified();
 					long copiedFile = newFile.lastModified();
-
 					if (installerFile > copiedFile) {
 						// Check if File is Zip-File
 						int endIndex = file.getName().indexOf(".zip");
@@ -147,7 +146,7 @@ public class EmoticonManager {
 									endIndex);
 							File unzipFile = new File(newEmoticonDir, unzipURL);
 
-							if (!unzipFile.exists()) {
+							if (!unzipFile.exists() || !checkIfSameFile(file,newFile)) {
 								// Copy over and expand :)
 								URLFileSystem.copy(file.toURI().toURL(),
 										newFile);
@@ -160,9 +159,46 @@ public class EmoticonManager {
 				}
 			}
 		}
-
 		EMOTICON_DIRECTORY = newEmoticonDir;
 	}
+
+	private boolean checkIfSameFile(File oldZip, File newZip){
+        boolean result = true;
+
+        ZipFile oldZipFile = null;
+        ZipFile newZipFile = null;
+	    try {
+	        oldZipFile = new JarFile(oldZip);
+	        newZipFile = new JarFile(newZip);
+            if (oldZipFile.size() == newZipFile.size()){
+                for (Enumeration<?> e = newZipFile.entries(); e.hasMoreElements();) {
+                    JarEntry entry = (JarEntry) e.nextElement();
+                    if (oldZipFile.getEntry(entry.getName()) == null ||
+                            entry.hashCode() != oldZipFile.getEntry(entry.getName()).hashCode()){
+                        result = false;
+                        break;
+                    }
+                }  
+            }else{
+                result = false;
+            }
+        } catch (IOException e) {
+            Log.error(e);
+        }
+        closeFile( newZipFile );
+        closeFile( oldZipFile );
+        return result;
+	}
+
+    private void closeFile( ZipFile zipFile ) {
+        try {
+            if (zipFile != null){
+                zipFile.close();
+            }  
+        } catch (IOException e) {
+            Log.error(e);
+        }
+    }
 
 	/**
 	 * Returns the active emoticon set within Spark.
@@ -491,18 +527,22 @@ public class EmoticonManager {
 	 * @return true if the EmoticonPlist exists in the archive.
 	 */
 	private boolean containsEmoticonPList(File zip) {
-		try {
-			ZipFile zipFile = new JarFile(zip);
+	    ZipFile zipFile = null;
+	    boolean result = false;
+	    try {
+	        zipFile = new JarFile(zip);
 			for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
 				JarEntry entry = (JarEntry) e.nextElement();
 				if (entry.getName().contains("Emoticons.plist")) {
-					return true;
+					result = true;
+					break;
 				}
 			}
 		} catch (IOException e) {
 			Log.error(e);
 		}
-		return false;
+		closeFile(zipFile);
+		return result;
 	}
 
 	/**
