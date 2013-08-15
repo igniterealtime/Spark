@@ -381,6 +381,9 @@
 			<fileset dir="./src/plugins/spelling/" includes="*/build.xml" />
 		</subant>
 		<subant target="">
+			<fileset dir="./src/plugins/roar/" includes="*/build.xml" />
+		</subant>
+		<subant target="">
 			<fileset dir="./src/plugins/transferguard/" includes="*/build.xml" />
 		</subant>
 		<!-- <subant target="">
