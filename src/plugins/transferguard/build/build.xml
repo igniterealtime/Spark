@@ -76,6 +76,11 @@
 
 
         <zip zipfile="${target.dir}/transferguard.jar" basedir="${target.dir}"/>
+    	
+        <copy todir="${spark.home}/src/commercial">
+            <fileset file="${target.dir}/transferguard.jar"/>
+        </copy>
+    	
     </target>
 
 </project>
