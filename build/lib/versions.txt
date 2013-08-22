@@ -30,7 +30,7 @@ dist/js.jar							| 0.98.4				| LGPL				| http://lobobrowser.org
 dist/lobo-pub.jar					| 0.98.4				| LGPL				| http://lobobrowser.org
 dist/lobo.jar						| 0.98.4				| LGPL				| http://lobobrowser.org
 dist/substance.jar					| 6.1					| BSD				| https://github.com/kirillcool
-dist/trident.jar					| 6.1					| BSD				| https://github.com/kirillcool
+dist/trident.jar					| 7.2.1					| BSD				| https://github.com/Insubstantial
 merge/commons-codec.jar				| 1.3			 		| Apache			| http://commons.apache.org/codec/
 merge/commons-httpclient.jar		| ? 			 		| Apache			| http://hc.apache.org/
 merge/commons-logging.jar			| ? 			 		| Apache			| http://commons.apache.org/logging/
