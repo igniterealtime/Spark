@@ -141,6 +141,38 @@ public class ThemePanel extends JPanel {
 		"com.jtattoo.plaf.noire.NoireLookAndFeel", // was disabled
 		"com.jtattoo.plaf.smart.SmartLookAndFeel",
         "com.jtattoo.plaf.texture.TextureLookAndFeel", // new
+
+        // Insubstance (Substance)
+        "org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceCeruleanLookAndFeel", // new
+        "org.pushingpixels.substance.api.skin.SubstanceChallengerDeepLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceCremeCoffeeLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceCremeLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceDustCoffeeLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceEmeraldDuskLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceGeminiLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceGraphiteAquaLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceMagellanLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceMarinerLookAndFeel", // new
+        "org.pushingpixels.substance.api.skin.SubstanceMistAquaLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceMistSilverLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceModerateLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceOfficeBlack2007LookAndFeel", // new
+        "org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceSaharaLookAndFeel",
+        "org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel"   
+
+        /*
 		//Substance
 		//"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
@@ -154,7 +186,7 @@ public class ThemePanel extends JPanel {
 		//"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel",
 		"org.jvnet.substance.api.skin.SubstanceGeminiLookAndFeel",
 		"org.jvnet.substance.api.skin.SubstanceGraphiteAquaLookAndFeel",
-		//"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel",
+		//"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel", // removed from new version
 		//"org.jvnet.substance.api.skin.SubstanceMagellanLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel",
@@ -168,6 +200,7 @@ public class ThemePanel extends JPanel {
 		//"org.jvnet.substance.skin.SubstanceRavenLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceSaharaLookAndFeel",
 		//"org.jvnet.substance.skin.SubstanceTwilightLookAndFeel"
+*/
 		};
 
 	for (String s : nonSystemLookAndFeels) {
