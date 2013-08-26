@@ -128,18 +128,19 @@ public class ThemePanel extends JPanel {
 
 	String[] nonSystemLookAndFeels = {
 		//JTattoo
-		//"com.jtattoo.plaf.acryl.AcrylLookAndFeel",
+		"com.jtattoo.plaf.acryl.AcrylLookAndFeel", // was disabled
 		"com.jtattoo.plaf.aero.AeroLookAndFeel",
 		"com.jtattoo.plaf.aluminium.AluminiumLookAndFeel",
-		//"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel",
+		"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel", // was disabled
 		"com.jtattoo.plaf.fast.FastLookAndFeel",
-		//"com.jtattoo.plaf.graphite.GraphiteLookAndFeel",
-		//"com.jtattoo.plaf.hifi.HiFiLookAndFeel",
+		"com.jtattoo.plaf.graphite.GraphiteLookAndFeel", // was disabled
+		"com.jtattoo.plaf.hifi.HiFiLookAndFeel", // was disabled
 		"com.jtattoo.plaf.luna.LunaLookAndFeel",
 		"com.jtattoo.plaf.mcwin.McWinLookAndFeel",
 		"com.jtattoo.plaf.mint.MintLookAndFeel",
-		//"com.jtattoo.plaf.noire.NoireLookAndFeel",
+		"com.jtattoo.plaf.noire.NoireLookAndFeel", // was disabled
 		"com.jtattoo.plaf.smart.SmartLookAndFeel",
+        "com.jtattoo.plaf.texture.TextureLookAndFeel", // new
 		//Substance
 		//"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
