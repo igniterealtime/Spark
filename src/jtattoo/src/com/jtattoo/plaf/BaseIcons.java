@@ -512,8 +512,8 @@ public class BaseIcons {
         private static Icon checkIcon = new LazyImageIcon("icons/CheckSymbol.gif");
         private static Icon checkIconDisabled = new LazyImageIcon("icons/CheckSymbolDisabled.gif");
         private static Icon checkPressedIcon = new LazyImageIcon("icons/CheckPressedSymbol.gif");
-        private static final int WIDTH = 15;
-        private static final int HEIGHT = 15;
+        private static final int WIDTH = 10;
+        private static final int HEIGHT = 10;
 
         public void paintIcon(Component c, Graphics g, int x, int y) {
             if (!JTattooUtilities.isLeftToRight(c)) {
