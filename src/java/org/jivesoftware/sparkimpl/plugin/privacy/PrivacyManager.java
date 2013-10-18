@@ -106,21 +106,13 @@ public class PrivacyManager {
 
     
     private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
-        ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
+    	ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
         DiscoverInfo info = null;
-    	//Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if info not found
-    	//If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example 
-        //while (info == null){
-            try {
-            	List<HostAddress> hosts = DNSUtil.resolveXMPPDomain(conn.getServiceName());
-            	if (hosts.size() > 0)
-            	{
-            		info = servDisc.discoverInfo(hosts.get(0).getFQDN());
-            	}
-            } catch (XMPPException e) {
+    	try {
+    		info = servDisc.discoverInfo(conn.getServiceName());
+        } catch (XMPPException e) {
             	// We could not query the server
-            }
-        //}
+        }
         if (info != null) {
             for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {
                 String s = i.next().getVar();
@@ -406,22 +398,21 @@ public class PrivacyManager {
         }
     }
     
-    public void changeVisibility(Presence presence) 
-    {
-        if (PresenceManager.isInvisible(presence)) 
-            goToInvisible();
-        else
-            goToVisible();
-    }
-    
     public void goToInvisible() 
     {
+    	if (!_active)
+    		return;
+    	
         ensureGloballyInvisibleListExists();
+        // make it active
         activateGloballyInvisibleList();
     }
     
     public void goToVisible() 
     {
+    	if (!_active)
+    		return;
+    	
         try {
             if (!isGloballyInvisibleListActive()) 
                 return;
@@ -435,12 +426,15 @@ public class PrivacyManager {
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
+        	Log.error("PrivacyManager#goToVisible: " + e.getMessage());
         }
     }
     
     public void activateGloballyInvisibleList() {
-     
+    	if (!_active)
+    		return;
+    	
         if (!SparkManager.getConnection().isConnected() || isGloballyInvisibleListActive()) 
             return;
         
@@ -450,7 +444,8 @@ public class PrivacyManager {
             SparkManager.getConnection().sendPacket(PresenceManager.getAvailablePresence());
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been activated ");
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
+        	Log.error("PrivacyManager#activateGloballyInvisibleList: " + e.getMessage());
         }
     }
    
@@ -459,18 +454,25 @@ public class PrivacyManager {
     }
     
     public boolean isGloballyInvisibleListActive() {
-       try {
-           PrivacyList pl = privacyManager.getActiveList();
-           return pl != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(pl.toString());
-       } catch (Exception e){
+    	if (!_active)
+    		return false; 
+    	
+    	try {
+    		PrivacyList pl = privacyManager.getActiveList();
+    		return pl != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(pl.toString());
+    	} catch (Exception e){
            // it can return item-not-found if there is no active list.
            // so it is fine to fall here.
-           // e.printStackTrace();
+           //e.printStackTrace();
+    		Log.error("PrivacyManager#isGloballyInvisibleListActive: " + e.getMessage());
        }
        return false;
     }
     
     private PrivacyList ensureGloballyInvisibleListExists() {
+    	if (!_active)
+    		return null; 
+    	
         PrivacyList list = null;
         try 
         {
@@ -479,7 +481,7 @@ public class PrivacyManager {
                 return list;
             
         } catch (XMPPException e1) {
-            Log.debug("Could not find globally invisible list. We need to create one");
+            Log.debug("PrivacyManager#ensureGloballyInvisibleListExists: Could not find globally invisible list. We need to create one");
         }
 
         try {
@@ -493,11 +495,10 @@ public class PrivacyManager {
         } 
         catch (XMPPException e) 
         {
-            Log.warning("Could not create PrivacyList " + INVISIBLE_LIST_NAME);
-            e.printStackTrace();
+            Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME);
+            //e.printStackTrace();
         }
         
         return list;
     }
-
 }

@@ -244,11 +244,12 @@ public class PresenceManager {
     }
 
     public static Presence copy(Presence presence) {
-	if (presence == null)
-		return null;
-	Presence copy = new Presence(presence.getType());
-	copy.setMode(presence.getMode());
-	copy.setStatus(presence.getStatus());
-	return copy;
+    	if (presence == null)
+    		return null;
+		Presence copy = new Presence(presence.getType());
+		copy.setMode(presence.getMode());
+		copy.setStatus(presence.getStatus());
+		copy.setPriority(presence.getPriority());
+		return copy;
     }
 }

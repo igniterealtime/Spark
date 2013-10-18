@@ -1487,5 +1487,25 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         return messageCount;
     }
+    
+    public void closeAllGroupChatRooms() {
+        for (ChatRoom chatRoom : new ArrayList<ChatRoom>(chatRoomList)) {
+        	boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
+        	if (isGroup)
+        	{
+	            closeTab(chatRoom);
+	            chatRoom.closeChatRoom();
+        	}
+        }
+    }
+    
+    public boolean hasGroupChatRooms() {
+    	 for (ChatRoom chatRoom : new ArrayList<ChatRoom>(chatRoomList)) {
+         	boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
+         	if (isGroup)
+         		return true;
+         }
+    	 return false;
+    }
 }
 

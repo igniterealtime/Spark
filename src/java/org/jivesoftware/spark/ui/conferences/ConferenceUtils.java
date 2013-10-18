@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
@@ -45,6 +46,7 @@ import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.PasswordDialog;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
@@ -53,6 +55,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -189,6 +192,9 @@ public class ConferenceUtils {
                         }
                         if (groupChatCounter < 10) {
                             try {
+                            	if (!confirmToRevealVisibility())
+                            		return null;
+                            	
                                 if (ModelUtil.hasLength(userPassword)) {
                                     groupChat.join(joinName, userPassword);
                                 }
@@ -238,6 +244,7 @@ public class ConferenceUtils {
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
                 }
                 else if (groupChat.isJoined()) {
+                	changePresenceToAvailableIfInvisible();
                     ChatManager chatManager = SparkManager.getChatManager();
                     chatManager.getChatContainer().addChatRoom(room);
                     chatManager.getChatContainer().activateChatRoom(room);
@@ -270,6 +277,7 @@ public class ConferenceUtils {
     public static void joinConferenceRoom(final String roomName, String roomJID) {
         JoinConferenceRoomDialog joinDialog = new JoinConferenceRoomDialog();
         joinDialog.joinRoom(roomJID, roomName);
+        changePresenceToAvailableIfInvisible();
     }
 
 
@@ -299,6 +307,7 @@ public class ConferenceUtils {
                         else {
                             groupChat.join(joinName);
                         }
+                        changePresenceToAvailableIfInvisible();
                         break;
                     }
                     catch (XMPPException ex) {
@@ -537,6 +546,9 @@ public class ConferenceUtils {
                 }
                 if (groupChatCounter < 10) {
                     try {
+                    	if (!confirmToRevealVisibility())
+                    		return null;
+                    	
                         if (ModelUtil.hasLength(userPassword)) {
                             groupChat.join(joinName, userPassword);
                         }
@@ -585,6 +597,7 @@ public class ConferenceUtils {
             return null;
         }
         else if (groupChat.isJoined()) {
+        	changePresenceToAvailableIfInvisible();
             chatManager.getChatContainer().addChatRoom(room);
             chatManager.getChatContainer().activateChatRoom(room);
         }
@@ -611,6 +624,9 @@ public class ConferenceUtils {
                 }
                 if (groupChatCounter < 10) {
                     try {
+                    	if (!confirmToRevealVisibility())
+                    		return;
+                    	
                         if (ModelUtil.hasLength(password)) {
                             groupChat.join(joinName, password);
                         }
@@ -656,6 +672,7 @@ public class ConferenceUtils {
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Could Not Join Room", JOptionPane.ERROR_MESSAGE);
         }
         else if (groupChat.isJoined()) {
+            changePresenceToAvailableIfInvisible();
             ChatManager chatManager = SparkManager.getChatManager();
             chatManager.getChatContainer().addChatRoom(room);
             chatManager.getChatContainer().activateChatRoom(room);
@@ -684,6 +701,35 @@ public class ConferenceUtils {
 
 	}
 
+	public static boolean confirmToRevealVisibility() {
+		Presence currentPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+		
+		if (!PresenceManager.isInvisible(currentPresence))
+			return true;
+
+		int reply = JOptionPane.showConfirmDialog(null,
+				Res.getString("dialog.confirm.to.reveal.visibility.msg"),
+				Res.getString("dialog.confirm.to.reveal.visibility.title"),
+				JOptionPane.YES_NO_OPTION);
+		return reply == JOptionPane.YES_OPTION;
+	}
+	    
+    /**
+	 * If the current present is 'invisible' then this method change it to
+	 * 'Online'. Decided 'invisibility' is a kind of private thing. So if user
+	 * would like to go to the conference then the user reveal him/herself. i.e.
+	 * if current presence is invisible then we should go to visible. Otherwise
+	 * all 'invisible' users will be shown as 'Offline' on the conference
+	 * participant list which is confusing. This method mostly is used in
+	 * ConferenceUtils. Usually it is called after user is joined to a room.
+	 */
+	public static void changePresenceToAvailableIfInvisible() {
+		Presence currentPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+		if (PresenceManager.isInvisible(currentPresence)) {
+			PrivacyManager.getInstance().goToVisible();
+			SparkManager.getSessionManager().changePresence(PresenceManager.getAvailablePresence());
+		}
+	}
 
 }
 
