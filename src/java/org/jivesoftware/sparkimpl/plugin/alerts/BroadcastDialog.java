@@ -167,11 +167,17 @@ public class BroadcastDialog extends JPanel {
         normalMessageButton.setSelected(true);
         checkTree.expandTree();
 
-        // Iterate through selected users.
-        for (ContactItem item : contactList.getSelectedUsers()) {
-            for (CheckNode node : nodes) {
-                if (node.getAssociatedObject().toString().equals(item.getJID())) {
-                    node.setSelected(true);
+        // get list of selected users
+        java.util.Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
+        // if selected users is 1 or less, 
+        //    don't per-select in dialog window (see SPARK-1088)
+        if (selectedUsers.size() > 1) {
+            // Iterate through selected users.
+            for (ContactItem item : selectedUsers) {
+                for (CheckNode node : nodes) {
+                    if (node.getAssociatedObject().toString().equals(item.getJID())) {
+                        node.setSelected(true);
+                    }
                 }
             }
         }
