@@ -416,18 +416,20 @@ public class ContactList extends JPanel implements ActionListener,
             final ContactGroup group = grpItem;
             final ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
-                int numberOfMillisecondsInTheFuture = 3000;
-                Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
-
                 // Only run through if the users presence was online before.
                 if (item.getPresence().isAvailable()) {
                     item.showUserGoingOfflineOnline();
                     item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                     group.fireContactGroupUpdated();
 
-                    final Timer offlineTimer = new Timer();
-                    offlineTimer.schedule(new TimerTask() {
+                    SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
+                        	//wait for 0.3 seconds to be visible by the user when the contact moves offline
+                        	try {
+								Thread.sleep(300);
+							} catch (InterruptedException e) {
+								Log.error("Cannot sleep for 0.3 seconds");
+							}
                             // Check to see if the user is offline, if so, move them to the offline group.
                             Presence userPresence = PresenceManager.getPresence(bareJID);
                             if (userPresence.isAvailable()) {
@@ -445,7 +447,7 @@ public class ContactList extends JPanel implements ActionListener,
                                 offlineGroup.fireContactGroupUpdated();
                             }
                         }
-                    }, timeToRun);
+                    });
                 }
             } else {
                 final ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
@@ -504,20 +506,15 @@ public class ContactList extends JPanel implements ActionListener,
                         //contactItem.updatePresenceIcon(contactItem.getPresence());
                         toggleGroupVisibility(contactGroup.getGroupName(), true);
                         //contactGroup.fireContactGroupUpdated();
-                        
-                        int numberOfMillisecondsInTheFuture = 5000;
-                        Date timeToRun = new Date(System.currentTimeMillis()
-                                + numberOfMillisecondsInTheFuture);
-                        Timer timer = new Timer();
 
                         final ContactItem staticItem = changeContactItem;
                         final ContactGroup staticGroup = contactGroup;
-                        timer.schedule(new TimerTask() {
-                            public void run() {
+                        SwingUtilities.invokeLater(new Runnable() {
+                        	public void run() {
                                 staticItem.updatePresenceIcon(staticItem.getPresence());
                                 staticGroup.fireContactGroupUpdated();
-                            }
-                        }, timeToRun);
+                        	}
+                        });
 
                     } else {
 

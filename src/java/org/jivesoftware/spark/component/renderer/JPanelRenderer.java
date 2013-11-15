@@ -3,7 +3,7 @@
  * $Revision: $
  * $Date: $
  * 
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2013 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,13 @@ public class JPanelRenderer extends JPanel implements ListCellRenderer {
 
         list.setBackground((Color)UIManager.get("ContactItem.background"));
 
-
+        //Returning the *value* parameter is dangerous for a list where you have add/remove operations because it will cause 
+        //the *value* to accumulate resulting in a memory leak. We should use value only to read information and we should
+        //model here the UI representation of that object. *value* should not be a UI object (JPanel)
+        //We keep it here now unchanged, to make sure we do not break the code as this class is used in other lists besides ContactItemList, 
+        //and we will create a dedicated renderer for ContactItemList (JContactItemRenderer.java)
+        //ContactItemList suffers of add/remove operations because of offline/online presence packets
+        //We should return *this* here
         return panel;
     }
 }
