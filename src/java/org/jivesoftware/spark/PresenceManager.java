@@ -249,6 +249,7 @@ public class PresenceManager {
 	Presence copy = new Presence(presence.getType());
 	copy.setMode(presence.getMode());
 	copy.setStatus(presence.getStatus());
+	copy.setPriority(presence.getPriority());
 	return copy;
     }
 }

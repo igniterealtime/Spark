@@ -219,13 +219,10 @@ public class Workspace extends JPanel implements PacketListener {
      * Starts the Loading of all Spark Plugins.
      */
     public void loadPlugins() {
-
-	if (SettingsManager.getLocalPreferences().isLoginAsInvisible()) {
-             PrivacyManager.getInstance().goToInvisible();
-        } else
-            // Send Available status
-            SparkManager.getSessionManager().changePresence(statusBox.getPresence());
-
+    
+        // Send Available status
+        SparkManager.getSessionManager().changePresence(statusBox.getPresence());
+        
         // Add presence and message listeners
         // we listen for these to force open a 1-1 peer chat window from other operators if
         // one isn't already open
