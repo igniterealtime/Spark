@@ -68,7 +68,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private HashMap<ChatRoom,Message> lastMessage = new HashMap<ChatRoom,Message>();
+    private HashMap<String,Message> lastMessage = new HashMap<String,Message>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
     /**
@@ -215,7 +215,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         ChatTranscript transcript = new ChatTranscript();
         int count = 0;
         int i = 0;
-    	if (lastMessage.get(room) != null)
+    	if (lastMessage.get(jid) != null)
     	{
     		count = transcripts.indexOf(lastMessage.get(room)) + 1;
     	}
@@ -225,7 +225,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             	i++;
         		continue;
         	}
-      	  	lastMessage.put(room,message);
+      	  	lastMessage.put(jid, message);
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());

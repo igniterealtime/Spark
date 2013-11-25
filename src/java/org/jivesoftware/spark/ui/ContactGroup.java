@@ -959,12 +959,25 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
-            	timerTask = new DisplayWindowTask(mouseEvent);            
+            	//make sure the timer is clean
+            	if (timerTask != null) {
+                    //cleanup timer
+                    timerTask.cancel();
+                    timer.purge();
+            	}
+            	//Create new task for toast popup
+            	timerTask = new DisplayWindowTask(mouseEvent);          
             	timer.schedule(timerTask, 500, 1000);
             }
 
             public void mouseExited(MouseEvent mouseEvent) {               
                 canShowPopup = false;
+            	if (timerTask != null) {
+                    //cleanup timer
+                    timerTask.cancel();
+                    timer.purge();
+                    timerTask = null;
+            	}
                 UIComponentRegistry.getContactInfoWindow().dispose();
             }
         });
