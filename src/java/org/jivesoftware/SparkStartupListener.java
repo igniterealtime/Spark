@@ -30,10 +30,9 @@ import org.jivesoftware.spark.SparkManager;
  */
 public class SparkStartupListener implements com.install4j.api.launcher.StartupNotification.Listener {
 
-    public void startupPerformed(String arguments) {
-        final ChatManager chatManager = SparkManager.getChatManager();
-        chatManager.handleURIMapping(arguments);
-    }
-
-
+	public void startupPerformed(String args) {
+		if (args != null && !args.trim().isEmpty()) {
+			SparkManager.getChatManager().handleURIMapping(args);
+		}
+	}
 }
