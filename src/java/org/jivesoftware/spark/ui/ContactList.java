@@ -141,6 +141,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     private List<Presence> initialPresences = new ArrayList<Presence>();
     private final Timer presenceTimer = new Timer();
+    private TimerTask presenceTask = null;
     private final List<FileDropListener> dndListeners = new ArrayList<FileDropListener>();
     private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
     private Properties props;
@@ -1913,8 +1914,12 @@ public class ContactList extends JPanel implements ActionListener,
                     }
 
                     int numberOfMillisecondsInTheFuture = 1000;
-
-                    presenceTimer.schedule(new TimerTask() {
+                    //make sure to cleanup timer and avoid TimerTask accumulation at every presence packet notification
+                    if (presenceTask != null) {
+                    	presenceTask.cancel();
+                    	presenceTimer.purge();
+                    }
+                    presenceTask = new TimerTask() {
                         public void run() {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
@@ -1931,7 +1936,8 @@ public class ContactList extends JPanel implements ActionListener,
                                 }
                             });
                         }
-                    }, numberOfMillisecondsInTheFuture);
+                    };
+                    presenceTimer.schedule(presenceTask, numberOfMillisecondsInTheFuture);
                 }
             }
         };
