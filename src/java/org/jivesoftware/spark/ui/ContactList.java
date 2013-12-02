@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,8 +44,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -63,6 +60,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import org.jivesoftware.MainWindowListener;
@@ -140,8 +138,7 @@ public class ContactList extends JPanel implements ActionListener,
     private final List<ContextMenuListener> contextListeners = new ArrayList<ContextMenuListener>();
 
     private List<Presence> initialPresences = new ArrayList<Presence>();
-    private final Timer presenceTimer = new Timer();
-    private TimerTask presenceTask = null;
+
     private final List<FileDropListener> dndListeners = new ArrayList<FileDropListener>();
     private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
     private Properties props;
@@ -422,15 +419,11 @@ public class ContactList extends JPanel implements ActionListener,
                     item.showUserGoingOfflineOnline();
                     item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                     group.fireContactGroupUpdated();
-
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                        	//wait for 0.3 seconds to be visible by the user when the contact moves offline
-                        	try {
-								Thread.sleep(300);
-							} catch (InterruptedException e) {
-								Log.error("Cannot sleep for 0.3 seconds");
-							}
+                    
+                    ActionListener actionListener = new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
                             // Check to see if the user is offline, if so, move them to the offline group.
                             Presence userPresence = PresenceManager.getPresence(bareJID);
                             if (userPresence.isAvailable()) {
@@ -447,8 +440,11 @@ public class ContactList extends JPanel implements ActionListener,
                                 moveToOffline(item);
                                 offlineGroup.fireContactGroupUpdated();
                             }
-                        }
-                    });
+						}
+					};
+                    Timer timer = new Timer(300, actionListener);
+                    timer.setRepeats(false);
+                    timer.start();
                 }
             } else {
                 final ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
@@ -1914,30 +1910,26 @@ public class ContactList extends JPanel implements ActionListener,
                     }
 
                     int numberOfMillisecondsInTheFuture = 1000;
-                    //make sure to cleanup timer and avoid TimerTask accumulation at every presence packet notification
-                    if (presenceTask != null) {
-                    	presenceTask.cancel();
-                    	presenceTimer.purge();
-                    }
-                    presenceTask = new TimerTask() {
-                        public void run() {
-                            SwingUtilities.invokeLater(new Runnable() {
-                                public void run() {
-                                    for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
-                                        initialPresences.remove(userToUpdate);
-                                        try {
-                                            updateUserPresence(userToUpdate);
-                                        }
-                                        catch (Exception e) {
-                                            Log.error(e);
-                                        }
 
-                                    }
+                    ActionListener presenceTask = new ActionListener() {			
+            			@Override
+            			public void actionPerformed(ActionEvent e) {
+                            for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
+                                initialPresences.remove(userToUpdate);
+                                try {
+                                    updateUserPresence(userToUpdate);
                                 }
-                            });
-                        }
-                    };
-                    presenceTimer.schedule(presenceTask, numberOfMillisecondsInTheFuture);
+                                catch (Exception ex) {
+                                    Log.error(ex);
+                                }
+
+                            }
+            				
+            			}
+            		};
+            		Timer presenceTimer = new Timer(numberOfMillisecondsInTheFuture, presenceTask);                    
+                    presenceTimer.setRepeats(false);
+                    presenceTimer.start();
                 }
             }
         };
