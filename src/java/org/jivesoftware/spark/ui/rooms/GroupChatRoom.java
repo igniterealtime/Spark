@@ -358,7 +358,7 @@ public class GroupChatRoom extends ChatRoom {
 	String myUserName = SparkManager.getSessionManager().getUsername();
 	Pattern usernameMatch = Pattern.compile(myUserName,
 		Pattern.CASE_INSENSITIVE);
-	Pattern nicknameMatch = Pattern.compile(myNickName,
+	Pattern nicknameMatch = Pattern.compile(myNickName == null ? "" : myNickName,
 		Pattern.CASE_INSENSITIVE);
 
 	// Should we even highlight this packet?

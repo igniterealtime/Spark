@@ -90,8 +90,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * The <code>RoomInfo</code> class is used to display all room information, such
  * as agents and room information.
  */
-public class GroupChatParticipantList extends JPanel implements
-		ChatRoomListener {
+public class GroupChatParticipantList extends JPanel {
 
     	private static final long serialVersionUID = 3809155443119207342L;
 	private GroupChatRoom groupChatRoom;
@@ -176,15 +175,13 @@ public class GroupChatParticipantList extends JPanel implements
     public void setChatRoom(final ChatRoom chatRoom) {
 	this.groupChatRoom = (GroupChatRoom) chatRoom;
 
-	chatManager.addChatRoomListener(this);
-
 	chat = groupChatRoom.getMultiUserChat();
 
 	chat.addInvitationRejectionListener(new InvitationRejectionListener() {
 	    public void invitationDeclined(String jid, String message) {
 		String nickname = userManager.getUserNicknameFromJID(jid);
 
-		userHasLeft(chatRoom, nickname);
+		userHasLeft(nickname);
 
 		chatRoom.getTranscriptWindow().insertNotificationMessage(
 			nickname + " has rejected the invitation.",
@@ -293,26 +290,6 @@ public class GroupChatParticipantList extends JPanel implements
 
 			}
 		});
-	}
-
-	public void chatRoomLeft(ChatRoom room) {
-		if (this.groupChatRoom == room) {
-			chatManager.removeChatRoomListener(this);
-			agentInfoPanel.setVisible(false);
-		}
-	}
-
-	public void chatRoomClosed(ChatRoom room) {
-		if (this.groupChatRoom == room) {
-			chatManager.removeChatRoomListener(this);
-			chat.removeParticipantListener(listener);
-		}
-	}
-
-	public void chatRoomActivated(ChatRoom room) {
-	}
-
-	public void userHasJoined(ChatRoom room, String userid) {
 	}
 
 	public void addInvitee(String jid, String message) {
@@ -474,11 +451,7 @@ public class GroupChatParticipantList extends JPanel implements
 	return icon;
     }
 
-	public void userHasLeft(ChatRoom room, String userid) {
-		if (room != groupChatRoom) {
-			return;
-		}
-
+	public void userHasLeft(String userid) {
 		int index = getIndex(userid);
 
 		if (index != -1) {
