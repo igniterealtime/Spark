@@ -217,7 +217,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         int i = 0;
     	if (lastMessage.get(jid) != null)
     	{
-    		count = transcripts.indexOf(lastMessage.get(jid)) + 1;
+    		count = transcripts.indexOf(lastMessage.get(room)) + 1;
     	}
         for (Message message : transcripts) {
         	if (i < count)
