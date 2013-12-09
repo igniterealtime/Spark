@@ -56,11 +56,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * Represent a single contact within the <code>ContactList</code>.
- * 
- * We now have JContactItemRenderer that is meant to paint ContactItem in JList
- * This does not need and should not be be a UI Widget (JPanel) - this should not extend JPanel
- * JContactItemRenderer extends ContactItem because we have all UI built here
- * but in future we should decouple UI from ContactItem and keep it elsewhere (In JContactItemRenderer for example)
  */
 public class ContactItem extends JPanel {
 

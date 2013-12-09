@@ -26,7 +26,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
-import org.jivesoftware.spark.component.renderer.JContactItemRenderer;
+import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.UIComponentRegistry;
@@ -109,7 +109,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         setTitle(getGroupTitle(groupName));
 
         // Use JPanel Renderer
-        contactItemList.setCellRenderer(new JContactItemRenderer());
+        contactItemList.setCellRenderer(new JPanelRenderer());
 
         this.groupName = groupName;
 
@@ -208,6 +208,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     	   }
     	   // Add to offline contacts.
     	   offlineContacts.add(offlineItem);
+
     	   insertOfflineContactItem(offlineItem);
        }
        else {
@@ -231,6 +232,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 		      			 }
 		      			 // Add to offline contacts.
 		      			 offlineContacts.add(offlineItem);
+
 		      			 insertOfflineContactItem(offlineItem);
 		      		 }
 		      	 });
@@ -250,6 +252,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (model.contains(offlineItem)) {
             return;
         }
+
         if (!preferences.isOfflineGroupVisible()) {
             Collections.sort(offlineContacts, itemComparator);
             int index = offlineContacts.indexOf(offlineItem);
