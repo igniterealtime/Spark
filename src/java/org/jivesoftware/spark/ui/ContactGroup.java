@@ -42,8 +42,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -55,11 +53,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -76,8 +75,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private JList contactItemList;
     private boolean sharedGroup;
     private JPanel listPanel;
-    
-    DisplayWindowTask timerTask;
 
     // Used to display no contacts in list.
     private final ContactItem noContacts = UIComponentRegistry.createContactItem(
@@ -91,7 +88,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private LocalPreferences preferences;
 
-    private ContactList contactList =  Workspace.getInstance().getContactList();
+    private ContactList contactList =  Workspace.getInstance().getContactList();    
+    
+    private DisplayWindowTask timerTask = null;
+    
+    private Timer timer = new Timer();
 
     /**
      * Create a new ContactGroup.
@@ -956,21 +957,27 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     private void addPopupWindow() {
         contactItemList.addMouseListener(new MouseAdapter() {
-        	Timer timer = null;
             public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
+            	//make sure the timer is clean
+            	if (timerTask != null) {
+                    //cleanup timer
+                    timerTask.cancel();
+                    timer.purge();
+            	}
             	//Create new task for toast popup
-            	timerTask = new DisplayWindowTask(mouseEvent);  
-            	timer = new Timer(500, timerTask);
-            	timer.setDelay(1000);
-            	timer.start();
+            	timerTask = new DisplayWindowTask(mouseEvent);          
+            	timer.schedule(timerTask, 500, 1000);
             }
 
             public void mouseExited(MouseEvent mouseEvent) {               
-                canShowPopup = false;                
-                timer.stop();
-                timer.removeActionListener(timerTask);
-                timer = null;
+                canShowPopup = false;
+            	if (timerTask != null) {
+                    //cleanup timer
+                    timerTask.cancel();
+                    timer.purge();
+                    timerTask = null;
+            	}
                 UIComponentRegistry.getContactInfoWindow().dispose();
             }
         });
@@ -979,7 +986,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseMotionListener(motionListener);
     }
 
-    private class DisplayWindowTask implements ActionListener {
+    private class DisplayWindowTask extends TimerTask {
         private MouseEvent event;
 		private boolean newPopupShown = false;
         
@@ -988,7 +995,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 		}	
 
 		@Override
-		public void actionPerformed(ActionEvent e) {		
+		public void run() {		
 			if (canShowPopup) {
 				if (!newPopupShown && !mouseDragged) {
 					displayWindow(event);
