@@ -45,8 +45,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -100,6 +98,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
@@ -140,7 +139,6 @@ public class ContactList extends JPanel implements ActionListener,
     private final List<ContextMenuListener> contextListeners = new ArrayList<ContextMenuListener>();
 
     private List<Presence> initialPresences = new ArrayList<Presence>();
-    private final Timer presenceTimer = new Timer();
     private final List<FileDropListener> dndListeners = new ArrayList<FileDropListener>();
     private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
     private Properties props;
@@ -425,9 +423,9 @@ public class ContactList extends JPanel implements ActionListener,
                     item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                     group.fireContactGroupUpdated();
 
-                    final Timer offlineTimer = new Timer();
-                    offlineTimer.schedule(new TimerTask() {
-                        public void run() {
+                    TaskEngine.getInstance().schedule(new SwingTimerTask() {
+                    	@Override
+                        public void doRun() {
                             // Check to see if the user is offline, if so, move them to the offline group.
                             Presence userPresence = PresenceManager.getPresence(bareJID);
                             if (userPresence.isAvailable()) {
@@ -508,12 +506,12 @@ public class ContactList extends JPanel implements ActionListener,
                         int numberOfMillisecondsInTheFuture = 5000;
                         Date timeToRun = new Date(System.currentTimeMillis()
                                 + numberOfMillisecondsInTheFuture);
-                        Timer timer = new Timer();
 
                         final ContactItem staticItem = changeContactItem;
                         final ContactGroup staticGroup = contactGroup;
-                        timer.schedule(new TimerTask() {
-                            public void run() {
+                        TaskEngine.getInstance().schedule(new SwingTimerTask() {
+                            @Override
+                        	public void doRun() {
                                 staticItem.updatePresenceIcon(staticItem.getPresence());
                                 staticGroup.fireContactGroupUpdated();
                             }
@@ -1917,22 +1915,19 @@ public class ContactList extends JPanel implements ActionListener,
 
                     int numberOfMillisecondsInTheFuture = 1000;
 
-                    presenceTimer.schedule(new TimerTask() {
-                        public void run() {
-                            SwingUtilities.invokeLater(new Runnable() {
-                                public void run() {
-                                    for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
-                                        initialPresences.remove(userToUpdate);
-                                        try {
-                                            updateUserPresence(userToUpdate);
-                                        }
-                                        catch (Exception e) {
-                                            Log.error(e);
-                                        }
-
-                                    }
+                    TaskEngine.getInstance().schedule(new SwingTimerTask() {
+                    	@Override
+                        public void doRun() {
+                            for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
+                                initialPresences.remove(userToUpdate);
+                                try {
+                                    updateUserPresence(userToUpdate);
                                 }
-                            });
+                                catch (Exception e) {
+                                    Log.error(e);
+                                }
+
+                            }
                         }
                     }, numberOfMillisecondsInTheFuture);
                 }

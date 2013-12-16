@@ -29,6 +29,8 @@ import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -53,8 +55,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -91,8 +91,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private ContactList contactList =  Workspace.getInstance().getContactList();    
     
     private DisplayWindowTask timerTask = null;
-    
-    private Timer timer = new Timer();
 
     /**
      * Create a new ContactGroup.
@@ -963,10 +961,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
             	timerTask = new DisplayWindowTask(mouseEvent);            
-            	timer.schedule(timerTask, 500, 1000);
+            	TaskEngine.getInstance().schedule(timerTask, 500, 1000);
             }
 
-            public void mouseExited(MouseEvent mouseEvent) {               
+            public void mouseExited(MouseEvent mouseEvent) {
+            	if (timerTask != null) {
+            		TaskEngine.getInstance().cancelScheduledTask(timerTask);
+            	}            	
                 canShowPopup = false;
                 UIComponentRegistry.getContactInfoWindow().dispose();
             }
@@ -976,7 +977,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseMotionListener(motionListener);
     }
 
-    private class DisplayWindowTask extends TimerTask {
+    private class DisplayWindowTask extends SwingTimerTask {
         private MouseEvent event;
 		private boolean newPopupShown = false;
         
@@ -985,7 +986,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 		}	
 
 		@Override
-		public void run() {		
+		public void doRun() {		
 			if (canShowPopup) {
 				if (!newPopupShown && !mouseDragged) {
 					displayWindow(event);

@@ -469,7 +469,8 @@ public class ContactItem extends JPanel {
                 setStatusText(Res.getString("status.pending"));
             }
             else {
-                setIcon(null);
+            	//We should keep the offline bullet (not available) instead of putting icon null.
+            	setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                 setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setAvailable(false);

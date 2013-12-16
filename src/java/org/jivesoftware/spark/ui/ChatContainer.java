@@ -72,6 +72,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
+import org.jivesoftware.spark.ui.conferences.GroupChatRoomListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.SwingTimerTask;
@@ -114,7 +115,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         // Don't allow tabs to shrink and allow scrolling.
 
         enableDragAndDrop();
-        
+        //add Group chat room listener
+        addChatRoomListener(new GroupChatRoomListener());
         addSparkTabbedPaneListener(new SparkTabbedPaneListener() {
             public void tabRemoved(SparkTab tab, Component component, int index) {
                 stateChanged(null);
