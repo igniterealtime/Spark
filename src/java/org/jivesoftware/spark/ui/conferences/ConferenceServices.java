@@ -113,10 +113,7 @@ public class ConferenceServices implements InvitationListener {
                         public void run() {
                             for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
                                 if (room instanceof GroupChatRoom) {
-                                	int priority = presence.getPriority();
-                                	//Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
-                                	priority = (priority < -128 && priority > 128) ? 1 : priority;
-                                	final Presence p = new Presence(presence.getType(), presence.getStatus(), priority, presence.getMode());
+                                    final Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
 
                                     GroupChatRoom groupChatRoom = (GroupChatRoom)room;
                                     String jid = groupChatRoom.getMultiUserChat().getRoom();

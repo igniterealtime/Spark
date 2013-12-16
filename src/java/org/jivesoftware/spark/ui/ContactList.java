@@ -45,6 +45,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -61,7 +63,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import org.jivesoftware.MainWindowListener;
@@ -139,6 +140,7 @@ public class ContactList extends JPanel implements ActionListener,
     private final List<ContextMenuListener> contextListeners = new ArrayList<ContextMenuListener>();
 
     private List<Presence> initialPresences = new ArrayList<Presence>();
+    private final Timer presenceTimer = new Timer();
     private final List<FileDropListener> dndListeners = new ArrayList<FileDropListener>();
     private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
     private Properties props;
@@ -415,6 +417,7 @@ public class ContactList extends JPanel implements ActionListener,
             final ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
                 int numberOfMillisecondsInTheFuture = 3000;
+                Date timeToRun = new Date(System.currentTimeMillis() + numberOfMillisecondsInTheFuture);
 
                 // Only run through if the users presence was online before.
                 if (item.getPresence().isAvailable()) {
@@ -422,9 +425,9 @@ public class ContactList extends JPanel implements ActionListener,
                     item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                     group.fireContactGroupUpdated();
 
-                    ActionListener actionListener = new ActionListener() {	
-                    	@Override
-                    	public void actionPerformed(ActionEvent e) {
+                    final Timer offlineTimer = new Timer();
+                    offlineTimer.schedule(new TimerTask() {
+                        public void run() {
                             // Check to see if the user is offline, if so, move them to the offline group.
                             Presence userPresence = PresenceManager.getPresence(bareJID);
                             if (userPresence.isAvailable()) {
@@ -442,10 +445,7 @@ public class ContactList extends JPanel implements ActionListener,
                                 offlineGroup.fireContactGroupUpdated();
                             }
                         }
-                    };
-                    Timer timer = new Timer(numberOfMillisecondsInTheFuture, actionListener);
-                    timer.setRepeats(false);
-                    timer.start();
+                    }, timeToRun);
                 }
             } else {
                 final ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
@@ -506,18 +506,18 @@ public class ContactList extends JPanel implements ActionListener,
                         //contactGroup.fireContactGroupUpdated();
                         
                         int numberOfMillisecondsInTheFuture = 5000;
+                        Date timeToRun = new Date(System.currentTimeMillis()
+                                + numberOfMillisecondsInTheFuture);
+                        Timer timer = new Timer();
 
                         final ContactItem staticItem = changeContactItem;
                         final ContactGroup staticGroup = contactGroup;
-                        ActionListener presenceTask = new ActionListener() {
-                        	public void actionPerformed(ActionEvent e) {
+                        timer.schedule(new TimerTask() {
+                            public void run() {
                                 staticItem.updatePresenceIcon(staticItem.getPresence());
                                 staticGroup.fireContactGroupUpdated();
                             }
-                        };
-                        Timer timer = new Timer(numberOfMillisecondsInTheFuture, presenceTask);
-                        timer.setRepeats(false);
-                        timer.start();
+                        }, timeToRun);
 
                     } else {
 
@@ -1907,6 +1907,7 @@ public class ContactList extends JPanel implements ActionListener,
                     });
                 }
                 else {
+
                     try {
                         initialPresences.add(presence);
                     }
@@ -1916,24 +1917,24 @@ public class ContactList extends JPanel implements ActionListener,
 
                     int numberOfMillisecondsInTheFuture = 1000;
 
-					ActionListener presenceTask = new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent event) {
-							for (Presence userToUpdate : new ArrayList<Presence>(
-									initialPresences)) {
-								initialPresences.remove(userToUpdate);
-								try {
-									updateUserPresence(userToUpdate);
-								} catch (Exception e) {
-									Log.error(e);
-								}
+                    presenceTimer.schedule(new TimerTask() {
+                        public void run() {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
+                                        initialPresences.remove(userToUpdate);
+                                        try {
+                                            updateUserPresence(userToUpdate);
+                                        }
+                                        catch (Exception e) {
+                                            Log.error(e);
+                                        }
 
-							}
-						}
-					};
-					Timer presenceTimer = new Timer(numberOfMillisecondsInTheFuture, presenceTask);                    
-					presenceTimer.setRepeats(false);
-					presenceTimer.start();
+                                    }
+                                }
+                            });
+                        }
+                    }, numberOfMillisecondsInTheFuture);
                 }
             }
         };
