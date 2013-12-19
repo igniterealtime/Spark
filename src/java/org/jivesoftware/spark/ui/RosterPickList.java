@@ -27,12 +27,13 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.renderer.JPanelRenderer;
+import org.jivesoftware.spark.component.renderer.JContactItemRenderer;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -53,7 +54,7 @@ public class RosterPickList extends JPanel {
     public RosterPickList() {
         setLayout(new GridBagLayout());
 
-        rosterList.setCellRenderer(new JPanelRenderer());
+        rosterList.setCellRenderer(new JContactItemRenderer());
 
         JLabel rosterLabel = new JLabel();
         this.add(rosterLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
