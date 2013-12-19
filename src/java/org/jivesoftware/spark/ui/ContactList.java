@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -1915,19 +1916,22 @@ public class ContactList extends JPanel implements ActionListener,
 
                     int numberOfMillisecondsInTheFuture = 1000;
 
-                    TaskEngine.getInstance().schedule(new SwingTimerTask() {
-                    	@Override
-                        public void doRun() {
-                            for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
-                                initialPresences.remove(userToUpdate);
-                                try {
-                                    updateUserPresence(userToUpdate);
-                                }
-                                catch (Exception e) {
-                                    Log.error(e);
-                                }
-
-                            }
+                    TaskEngine.getInstance().schedule(new TimerTask() {
+						@Override
+                        public void run() {
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+		                            for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
+		                                initialPresences.remove(userToUpdate);
+		                                try {
+		                                    updateUserPresence(userToUpdate);
+		                                }
+		                                catch (Exception e) {
+		                                    Log.error(e);
+		                                }
+		                            }									
+								}
+							});
                         }
                     }, numberOfMillisecondsInTheFuture);
                 }
