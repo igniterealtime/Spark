@@ -627,5 +627,7 @@ public class ContactItem extends JPanel {
         this.specialImageLabel = specialImageLabel;
     }
 
-
+	public JLabel getSideIcon() {
+		return sideIcon;
+	}
 }
