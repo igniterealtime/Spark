@@ -26,7 +26,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
-import org.jivesoftware.spark.component.renderer.JContactItemRenderer;
+import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingTimerTask;
@@ -107,7 +107,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         setTitle(getGroupTitle(groupName));
 
         // Use JPanel Renderer
-        contactItemList.setCellRenderer(new JContactItemRenderer());
+        contactItemList.setCellRenderer(new JPanelRenderer());
 
         this.groupName = groupName;
 
