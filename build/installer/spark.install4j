@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.5" transformSequenceNumber="1">
   <directoryPresets config="../../target/build/lib" />
-  <application name="${compiler:APP_NAME}" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="${compiler:APP_SHORT_NAME}" publisher="${compiler:PUBLISHER}" publisherWeb="${compiler:PUBLISHER_URL}" version="${compiler:VERSION_MAJOR}.${compiler:VERSION_MINOR}.${compiler:VERSION_REVISION}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="false">
+  <application name="${compiler:APP_NAME}" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../../.." mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="${compiler:APP_SHORT_NAME}" publisher="${compiler:PUBLISHER}" publisherWeb="${compiler:PUBLISHER_URL}" version="${compiler:VERSION_MAJOR}.${compiler:VERSION_MINOR}.${compiler:VERSION_REVISION}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.7" javaMaxVersion="1.8" allowBetaVM="false">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -424,7 +424,7 @@
       </exclude>
       <variables />
     </unixArchive>
-    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_${compiler:sys.version}_online" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.5.0_05.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="true">
+    <win32 name="Windows NON-JRE" id="19" mediaFileName="spark_${compiler:sys.version}_online" installDir="Spark" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="2" jreURL="http://www.jivesoftware.org/updater/releases/windows-x86-1.7.0_51.tar.gz" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="true">
       <excludedLaunchers />
       <excludedComponents />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
