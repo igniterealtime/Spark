@@ -35,7 +35,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * It sould be used to transmit and receive audio captured from the Mic.
  * This Class should be automaticly controlled by JingleSession.
  * But you could also use in any VOIP application.
- * For better NAT Traversal support this implementation don�t support only receive or only transmit.
+ * For better NAT Traversal support this implementation don't support only receive or only transmit.
  * To receive you MUST transmit. So the only implemented and functionally methods are startTransmit() and stopTransmit()
  *
  * @author Thiago Camargo
