@@ -6,8 +6,8 @@
     <homePage>http://www.stytrix.de</homePage>
     <email>holger@bergunde.de</email>
     <description>Adds OTR support to Spark</description>
-    <minSparkVersion>2.6.1</minSparkVersion>
-    <java>1.6.0_01</java>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <java>1.7.0</java>
     <class>org.jivesoftware.spark.otrplug.OTRPlugin</class>
     <os>Windows,Linux,Mac</os>
 </plugin>

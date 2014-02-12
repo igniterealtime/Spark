@@ -7,6 +7,6 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <description>Translates instant messages between users using Google Translation Service.</description>
     <email>spark@jivesoftware.com</email>
-    <minSparkVersion>2.6.0</minSparkVersion>
-    <java>1.6.0_00</java>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <java>1.7.0</java>
 </plugin>

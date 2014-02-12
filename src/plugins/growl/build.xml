@@ -32,9 +32,9 @@
         <javac srcdir="${src.dir}"
                destdir="${classes.dir}"
                classpathref="lib.classpath"
-               source="1.6"
+               source="1.7"
                debug="true"
-               target="1.6"/>
+               target="1.7"/>
 
     </target>
 
@@ -60,9 +60,9 @@
 		<javac srcdir="src"
 	        destdir="${target.dir}"
 	        classpathref="lib.classpath"
-	        source="1.6"
+	        source="1.7"
 	        debug="true"
-	        target="1.6"/>
+	        target="1.7"/>
 
 		<javah destdir="src/" class="com.jivesoftware.spark.plugin.growl.GrowlNative" classpath="${target.dir}"/>
 	</target>

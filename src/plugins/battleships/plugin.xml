@@ -6,7 +6,7 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <description>Battleship plugin for Spark</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>
-    <minSparkVersion>2.6.1</minSparkVersion>
+    <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>
-    <java>1.6.0_00</java>
+    <java>1.7.0</java>
 </plugin>

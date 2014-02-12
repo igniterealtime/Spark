@@ -7,7 +7,7 @@
     <email>michael-will@gmx.net</email>
     <description>Flash window on new messages.</description>
     <class>org.jivesoftware.spark.plugin.flashing.FlashingPlugin</class>
-    <minSparkVersion>2.6.0</minSparkVersion>
+    <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows</os>
-    <java>1.6.0_00</java>
+    <java>1.7.0</java>
 </plugin>

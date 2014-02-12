@@ -7,8 +7,8 @@
     <email>michael-will@gmx.net</email>
     <description>Spellchecker Plugin</description>
     <class>org.jivesoftware.spellchecker.SpellcheckerPlugin</class>
-    <minSparkVersion>2.6.0</minSparkVersion>
+    <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows,Mac,Linux</os>
-    <java>1.6.0_00</java>
+    <java>1.7.0</java>
 </plugin>
 

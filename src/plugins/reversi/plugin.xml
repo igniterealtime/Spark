@@ -7,7 +7,7 @@
     <email>plugins@jivesoftware.org</email>
     <description>Multiplayer game of Reversi</description>
     <class>org.jivesoftware.game.reversi.ReversiPlugin</class>
-    <minSparkVersion>2.6.0</minSparkVersion>
-    <java>1.6.0_01</java>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <java>1.7.0</java>
 </plugin>
 
