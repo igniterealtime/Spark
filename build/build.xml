@@ -23,9 +23,14 @@
 	<property file="${basedir}/build/build.properties"/>
 	<property name="version.major" value="2"/>
 	<property name="version.minor" value="7"/>
-	<property name="version.revision" value="0-nightly"/>
+	<property name="version.revision" value="0"/>
 
-	<property name="version.extra" value="12555"/>
+    <!-- Spark Build Number
+    Passed into ant from bamboo via cmd line argument: 
+        -Dbamboo.build=${bamboo.buildkey} 
+    Left blank if omitted.
+    -->
+	<property name="version.extra" value="${bamboo.build}"/>
 
 	<!--
 	<loadfile property="version.extra" srcFile="./.svn/entries">

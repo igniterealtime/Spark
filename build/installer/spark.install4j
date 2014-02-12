@@ -14,7 +14,7 @@
     <variables>
       <variable name="VERSION_MAJOR" value="2" description="" category="" />
       <variable name="VERSION_MINOR" value="7" description="" category="" />
-      <variable name="VERSION_REVISION" value="0-nightly" description="" category="" />
+      <variable name="VERSION_REVISION" value="0" description="" category="" />
       <variable name="APP_NAME" value="Spark" description="" category="" />
       <variable name="APP_SHORT_NAME" value="Spark" description="" category="" />
       <variable name="PUBLISHER" value="Ignite Realtime" description="" category="" />
@@ -46,7 +46,7 @@
   <launchers>
     <launcher name="Spark" id="4" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="../../src/resources/images/message.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
       <executable name="Spark" type="1" iconSet="true" iconFile="../../src/resources/images/spark.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="logs/output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
-        <versionInfo include="true" fileVersion="${compiler:sys.version}" fileDescription="Spark" legalCopyright="Jive Software" internalName="${compiler:PRODUCT_NAME}" productName="" />
+        <versionInfo include="true" fileVersion="${compiler:sys.version}" fileDescription="Spark" legalCopyright="Ignite Realtime" internalName="${compiler:PRODUCT_NAME}" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
         <text>
