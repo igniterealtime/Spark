@@ -22,8 +22,8 @@
 	<!-- Optional add this file to override any of the properties below -->
 	<property file="${basedir}/build/build.properties"/>
 	<property name="version.major" value="2"/>
-	<property name="version.minor" value="6"/>
-	<property name="version.revision" value="3"/>
+	<property name="version.minor" value="7"/>
+	<property name="version.revision" value="0-nightly"/>
 
 	<property name="version.extra" value="12555"/>
 
@@ -97,8 +97,8 @@
 	<property name="installer.app_name" value="Spark"/>
 	<property name="installer.app_short_name" value="Spark"/>
 	<property name="installer.product_name" value="Spark"/>
-	<property name="installer.publisher" value="Jive Software"/>
-	<property name="installer.publisher_url" value="www.jivesoftware.com"/>
+	<property name="installer.publisher" value="Ignite Realtime"/>
+	<property name="installer.publisher_url" value="www.igniterealtime.org"/>
 	<property name="installer.file_prefix" value="${installer.app_short_name}"/>
 	<property name="installer.release_root_path" value="${target.build}"/>
 
@@ -160,14 +160,13 @@
 		<condition property="java.not.ok" value="true">
 			<not>
 				<or>
-					<contains string="${ant.java.version}" substring="1.5"/>
-					<contains string="${ant.java.version}" substring="1.6"/>
 					<contains string="${ant.java.version}" substring="1.7"/>
+                    <contains string="${ant.java.version}" substring="1.8"/>
 				</or>
 			</not>
 		</condition>
 		<fail if="ant.not.ok" message="Must use Ant 1.6.x or higher to build Spark"/>
-		<fail if="java.not.ok" message="Must use JDK 1.6.x or higher to build Spark"/>
+		<fail if="java.not.ok" message="Must use JDK 1.7.x or higher to build Spark"/>
 
 		<!-- Platform-specific initializations -->
 		<condition property="windows">
@@ -254,8 +253,8 @@
 		<!--Compiles the java code from ${src} directory into ${classes} directory-->
 		<javac destdir="${classes}"
                debug="true"
-               source="1.6"
-               target="1.6"
+               source="1.7"
+               target="1.7"
             >
 			<compilerarg value="-Xlint:deprecation" />
 			<classpath>
@@ -319,7 +318,7 @@
 			<manifest>
 				<attribute name="Main-Class"
                            value="org.jivesoftware.launcher.Startup"/>
-				<attribute name="Built-By" value="Jive Software (www.igniterealtime.org)"/>
+				<attribute name="Built-By" value="Ignite Realtime (www.igniterealtime.org)"/>
 			</manifest>
 		</jar>
 
@@ -458,13 +457,13 @@
 	</target>
 
 	<!-- base =================================================================================== -->
-	<target name="base" depends="init" description="Produces Base Jars For Jive Spark">
+	<target name="base" depends="init" description="Produces Base Jars For Spark">
 		<mkdir dir="${targetlib}" />
 		<!-- Make main Messenger jar -->
 		<jar jarfile="${targetlib}/base.jar" index="true">
 			<zipgroupfileset dir="${merge.libs.dir}" includes="*.jar" />
 			<manifest>
-				<attribute name="Built-By" value="Jive Software (www.jivesoftware.com)" />
+				<attribute name="Built-By" value="Ignite Realtime (www.igniterealtime.org)" />
 			</manifest>
 		</jar>
 	</target>
@@ -496,8 +495,8 @@
 		<mkdir dir="${test.classes}" />
 		<javac destdir="${test.classes}"
     	               debug="true"
-    	               source="1.6"
-    	               target="1.6"
+    	               source="1.7"
+    	               target="1.7"
     	       	>
 			<compilerarg value="-Xlint:deprecation" />
 			<classpath>
@@ -703,11 +702,11 @@
                     version="${version.major}.${version.minor}.${version.revision}"
                     build="${version.extra}"
                     infostring="${version.major}.${version.minor}.${version.revision}"
-                    copyright="© Jive Software 2011"
+                    copyright="© Ignite Realtime 2014"
                     aboutmenuname="Spark"
                     bundleid="com.jivesoftware.SparkBundle"
                     developmentregion="English"
-                    jvmversion="1.6+"
+                    jvmversion="1.7+"
 					jvmarchs="i386"
                     smalltabs="true"
                     antialiasedgraphics="true"
@@ -1019,7 +1018,7 @@
 	<target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
 		<taskdef resource="checkstyletask.properties" classpath="build/lib/checkstyle.jar" />
 
-		<checkstyle maxErrors="16000" config="build/checkstyle.xml">
+		<checkstyle maxErrors="16500" config="build/checkstyle.xml">
 			<fileset dir="src/java" includes="**/*.java" />
 			<!-- <formatter type="plain"/> -->
 			<formatter type="xml" toFile="target/checkstyle.xml"/>
