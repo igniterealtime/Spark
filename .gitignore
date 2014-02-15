@@ -1,0 +1,48 @@
+# Spark ignores
+/target
+
+# Java ignores
+*.class
+hs_err_pid*
+
+# Eclipse ignores
+.settings/
+.classpath
+.project
+bin/
+.loadpath
+*.launch
+
+# IntelliJ ignores
+.idea/
+*.ipr
+*.iws
+*.iml
+out/
+
+# Netbeans ignores
+nbproject/
+nbbuild/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Generic ignores
+*~
+*~*
+*.lock
+*.log
+*.swp
+*.out
+*.tmp
+*.bak
+Desktop.ini
+$RECYCLE.BIN/
+Thumbs.db
+ehthumbs.db
+.DS_STORE
+._*
+.Trashes
+.Spotlight-V100
+tmp/
+
