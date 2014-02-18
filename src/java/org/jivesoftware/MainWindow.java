@@ -39,20 +39,25 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
@@ -104,6 +109,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private JToolBar topToolbar = new JToolBar();
 
     private JSplitPane splitPane;
+
+    private JEditorPane aboutBoxPane;
 
     private static MainWindow singleton;
     private static final Object LOCK = new Object();
@@ -743,10 +750,155 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     }
 
     /**
+     * Sets About Box Pane for Spark.
+     */
+    private void setAboutBoxPane() {
+
+        // Get values from default.properties file
+        final String APPLICATION_INFO1 = Default.getString(Default.APPLICATION_INFO1);
+        final String APPLICATION_INFO2 = Default.getString(Default.APPLICATION_INFO2);
+        final String APPLICATION_INFO3 = Default.getString(Default.APPLICATION_INFO3);
+        final String APPLICATION_LICENSE_LINK = Default.getString(Default.APPLICATION_LICENSE_LINK);
+        final String APPLICATION_LICENSE_LINK_TXT = Default.getString(Default.APPLICATION_LICENSE_LINK_TXT);
+        final String APPLICATION_INFO4 = Default.getString(Default.APPLICATION_INFO4);
+        final String APPLICATION_LINK = Default.getString(Default.APPLICATION_LINK);
+        final String APPLICATION_LINK_TXT = Default.getString(Default.APPLICATION_LINK_TXT);
+        final boolean DISPLAY_DEV_INFO = Default.getBoolean(Default.DISPLAY_DEV_INFO);
+        final String SMACK_VERSION = Default.getString(Default.SMACK_VERSION);
+        final String JAVA_VERSION = Default.getString(Default.JAVA_VERSION);
+
+        // Construct About Box text
+        StringBuffer aboutBoxText = new StringBuffer();
+        aboutBoxText.append(
+            Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion());
+
+        // Add APPLICATION_INFO1 if not empty
+        if (!("".equals(APPLICATION_INFO1))) {
+            aboutBoxText.append(
+                "<br/>"
+                + APPLICATION_INFO1);
+        }
+
+        // Add APPLICATION_INFO2 if not empty
+        if (!( "".equals(APPLICATION_INFO2))) {
+            aboutBoxText.append(
+                "<br/>"
+                + APPLICATION_INFO2);
+        }
+
+        // Add APPLICATION_INFO3 if not empty
+        if (!("".equals(APPLICATION_INFO3))) {
+            aboutBoxText.append(
+                "<br/>"
+                + APPLICATION_INFO3);
+        }
+
+        // Add APPLICATION_LICENSE_LINK if not empty
+        if (!( "".equals(APPLICATION_LICENSE_LINK))) {
+            aboutBoxText.append(
+                "<br/>"
+                + "<a href=\"" + APPLICATION_LICENSE_LINK + "\">" + APPLICATION_LICENSE_LINK_TXT + "</a>");
+        }
+
+        // Add APPLICATION_LINK if not empty
+        if (!( "".equals(APPLICATION_LINK))) {
+            aboutBoxText.append(
+                "<br/>"
+                + "<a href=\"" + APPLICATION_LINK + "\">" + APPLICATION_LINK_TXT + "</a>");
+        }
+
+        // Add APPLICATION_INFO4 if not empty
+        if (!( "".equals(APPLICATION_INFO4))) {
+            aboutBoxText.append(
+                "<br/>"
+                + APPLICATION_INFO4);
+        }
+
+        if (DISPLAY_DEV_INFO) {
+            // Add Smack Version # if is empty
+            if ("".equals(SMACK_VERSION)) {
+                aboutBoxText.append(
+                    "<br/>"
+                    + "Smack Version: " + SmackConfiguration.getVersion());
+            }
+
+            // Add Java JRE Version if is empty
+            if ("".equals(JAVA_VERSION)) {
+                aboutBoxText.append(
+                    "<br/>"
+                    + "JRE Version: " + System.getProperty("java.version"));
+            }
+        }
+
+        // copy window style
+        JPanel p = new JPanel();
+        Font font = p.getFont();
+
+        // create some css from the JPanel's font
+        StringBuffer style = new StringBuffer();
+        style.append("font-family:" + font.getFamily() + ";");
+        style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+        style.append("font-size:" + font.getSize() + "pt;");
+
+        StringBuffer text = new StringBuffer();
+        text.append("<html><body style=\"" + style.toString() + "\">" + aboutBoxText.toString() + "</body></html>");
+
+        // assemble html
+        JEditorPane ep = new JEditorPane("text/html", text.toString());
+
+        // handle link events
+        ep.addHyperlinkListener(new HyperlinkListener()
+        {
+            @Override
+            public void hyperlinkUpdate(final javax.swing.event.HyperlinkEvent e)
+            {
+                // if a link is clicked, and it is the APPLICATION_LICENSE_LINK, then load that page
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
+                        && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LICENSE_LINK))) {
+                    try {
+
+                        BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LICENSE_LINK));
+
+                    } catch (Exception f) {
+                        Log.error("There was an error loading the URL", f);
+                    }
+
+                // else if a link is clicked, and it is the APPLICATION_LINK, then load that page
+                } else if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
+                        && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LINK))) {
+                    try {
+
+                        BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LINK));
+
+                    } catch (Exception f) {
+                        Log.error("There was an error loading the URL", f);
+                    }
+                }
+
+            }
+        });
+        ep.setEditable(false);
+        ep.setBackground(p.getBackground());
+        this.aboutBoxPane = ep;
+
+    }
+
+    /**
+     * Returns About Box Pane.
+     * @return JEditorPane About Box
+     */
+    private JEditorPane getAboutBoxPane() {
+        if (null == this.aboutBoxPane) {
+            setAboutBoxPane();
+        }
+        return this.aboutBoxPane;
+    }
+
+    /**
      * Displays the About Box for Spark.
      */
     private static void showAboutBox() {
-        JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion(),
+        JOptionPane.showMessageDialog(SparkManager.getMainWindow(), SparkManager.getMainWindow().getAboutBoxPane(),
             Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.MAIN_IMAGE));
     }
 

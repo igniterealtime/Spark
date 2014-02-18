@@ -43,6 +43,17 @@ public class Default {
 
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
     public static final String APPLICATION_NAME = "APPLICATION_NAME";
+    public static final String APPLICATION_INFO1 = "APPLICATION_INFO1";
+    public static final String APPLICATION_INFO2 = "APPLICATION_INFO2";
+    public static final String APPLICATION_INFO3 = "APPLICATION_INFO3";
+    public static final String APPLICATION_LICENSE_LINK = "APPLICATION_LICENSE_LINK";
+    public static final String APPLICATION_LICENSE_LINK_TXT = "APPLICATION_LICENSE_LINK_TXT";
+    public static final String APPLICATION_INFO4 = "APPLICATION_INFO4";
+    public static final String APPLICATION_LINK = "APPLICATION_LINK";
+    public static final String APPLICATION_LINK_TXT = "APPLICATION_LINK_TXT";
+    public static final String DISPLAY_DEV_INFO = "DISPLAY_DEV_INFO";
+    public static final String SMACK_VERSION = "SMACK_VERSION";
+    public static final String JAVA_VERSION = "JAVA_VERSION";
     public static final String SHORT_NAME = "SHORT_NAME";
     public static final String APPLICATION_VERSION = "APPLICATION_VERSION";
     public static final String LOGIN_DIALOG_BACKGROUND_IMAGE = "LOGIN_DIALOG_BACKGROUND_IMAGE";
