@@ -1,8 +1,8 @@
 <project name="battleship" default="jar" basedir="..">
 
 	<property name="plug.dir" value="${basedir}"/>
-	<property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
-	<property name="plug.lib.dist.dir" value="${plug.lib.dir}/dist"/>
+	<!-- <property name="plug.lib.dir" value="${plug.dir}/build/lib"/> -->
+	<!-- <property name="plug.lib.dist.dir" value="${plug.lib.dir}/dist"/> -->
 
 	<property name="spark.home" value="${basedir}/../../.."/>
 	<property name="spark.target" value="${basedir}/../../../target"/>
@@ -17,7 +17,7 @@
 	<property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
 
 	<path id="lib.classpath">
-		<fileset dir="${plug.lib.dir}" includes="**/*.jar, **/*.zip"/>
+		<!-- <fileset dir="${plug.lib.dir}" includes="**/*.jar, **/*.zip"/> -->
 		<fileset dir="${spark.home}/target/build/lib" includes="**/*.jar, **/*.zip"/>
 		<fileset dir="${spark.home}/target/build/lib/windows" includes="**/*.jar"/>
 	</path>
@@ -50,9 +50,9 @@
 		<mkdir dir="${target.dir}"/>
 		<mkdir dir="${target.lib.dir}"/>
 
-		<copy todir="${target.lib.dir}">
+		<!-- <copy todir="${target.lib.dir}">
 			<fileset file="${plug.lib.dir}/lib" includes="**/*"/>
-		</copy>
+		</copy> -->
 
 		<copy todir="${target.dir}">
 			<fileset file="${plug.dir}/plugin.xml"/>
