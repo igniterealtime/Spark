@@ -41,9 +41,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import net.sf.fmj.media.RegistryDefaults;
-import net.sf.fmj.media.cdp.GlobalCaptureDevicePlugger;
-
+import org.jitsi.impl.neomedia.MediaServiceImpl;
+import org.jitsi.impl.neomedia.device.AudioSystem;
+import org.jitsi.impl.neomedia.device.AudioSystem.DataFlow;
+import org.jitsi.impl.neomedia.device.CaptureDeviceInfo2;
+import org.jitsi.service.configuration.ConfigurationService;
+import org.jitsi.service.libjitsi.LibJitsi;
+import org.jitsi.service.neomedia.MediaService;
+import org.jitsi.service.neomedia.MediaType;
+import org.jitsi.service.neomedia.MediaUseCase;
+import org.jitsi.service.neomedia.device.MediaDevice;
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -51,14 +59,18 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class MediaPreferencePanel  extends JPanel {
 	private static final long serialVersionUID = 8297469864676223072L;
-	private Vector<CaptureDeviceInfo> vectorAudioDevices;
+	private Vector<CaptureDeviceInfo2> vectorAudioDevices;
 	private Vector<CaptureDeviceInfo> vectorVideoDevices;
-	
+	private Vector<AudioSystem> vectorAudioSystem  = new  Vector<AudioSystem>();
+	private Vector<CaptureDeviceInfo2> vectorPlaybackDevices = new  Vector<CaptureDeviceInfo2>();
+
 	private JComboBox audioDevice = new JComboBox();
+	private JComboBox audioSystem = new JComboBox();
+	private JComboBox playbackDevice = new JComboBox();
 	private JComboBox videoDevice = new JComboBox();
 	private JTextField _stunServerInput = new JTextField();
-        private JTextField _stunPortInput = new JTextField();
-	
+    private JTextField _stunPortInput = new JTextField();
+    
     public MediaPreferencePanel() {
 		setLayout(new VerticalFlowLayout());
 		
@@ -67,15 +79,25 @@ public class MediaPreferencePanel  extends JPanel {
 		add(panel);
 			
 		panel.setLayout(new GridBagLayout());
+
+		JLabel lAudioSystem = new JLabel(); // Res.getString("label.audio.device"));
+		panel.add( lAudioSystem, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		panel.add(audioSystem, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+
+		
+		JLabel lPlaybackAudio = new JLabel(); // Res.getString("label.audio.device"));
+		panel.add( lPlaybackAudio, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		panel.add(playbackDevice, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+
 		
 		JLabel lAudio = new JLabel(); // Res.getString("label.audio.device"));
-		panel.add( lAudio, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
-		panel.add(audioDevice, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		panel.add( lAudio, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		panel.add(audioDevice, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 		
 		
 		JLabel lVideo = new JLabel(); // Res.getString("label.video.device"));
-		panel.add( lVideo, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
-        panel.add(videoDevice, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+		panel.add( lVideo, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+        panel.add(videoDevice, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 	
         JButton redetect = new JButton(); // Res.getString("button.re.detect") );
         redetect.addActionListener(new ActionListener() {
@@ -87,11 +109,12 @@ public class MediaPreferencePanel  extends JPanel {
         	
         });
         
-        panel.add(redetect,new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
+        panel.add(redetect,new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
     
         // Setup Mnemonics
         ResourceUtils.resButton(redetect, Res.getString("button.re.detect"));
         ResourceUtils.resLabel(lVideo, videoDevice, Res.getString("label.video.device") + ":");
+        ResourceUtils.resLabel(lPlaybackAudio, playbackDevice, Res.getString("label.audio.device") + ":");
         ResourceUtils.resLabel(lAudio, audioDevice, Res.getString("label.audio.device") + ":");
         
         scanDevices();
@@ -110,27 +133,67 @@ public class MediaPreferencePanel  extends JPanel {
 		return res;
     }
 	
+	
+	
 	@SuppressWarnings("unchecked")
 	public void scanDevices()
 	{
 		// Remove all Items
 		audioDevice.removeAllItems();
 		videoDevice.removeAllItems();
+		playbackDevice.removeAllItems();
+		audioSystem.removeAllItems();
 		
+		vectorPlaybackDevices.removeAllElements();
+		vectorAudioSystem.removeAllElements();
 		// FMJ
-		RegistryDefaults.registerAll(RegistryDefaults.FMJ | RegistryDefaults.FMJ_NATIVE);
-		GlobalCaptureDevicePlugger.addCaptureDevices();
+		System.setProperty(ConfigurationService.PNAME_SC_HOME_DIR_LOCATION, Spark.getUserHome());
+		System.setProperty(ConfigurationService.PNAME_SC_HOME_DIR_NAME, ".");
+		System.setProperty(ConfigurationService.PNAME_SC_CACHE_DIR_LOCATION, Spark.getUserHome());
+		System.setProperty(ConfigurationService.PNAME_SC_LOG_DIR_LOCATION, Spark.getUserHome());
+		
+		LibJitsi.start();
+		
+		MediaType[] mediaTypes = MediaType.values();
+		MediaService mediaService = LibJitsi.getMediaService();
+		for (MediaType mediaType : mediaTypes)
+		{
+			System.err.println("================================");
+			System.err.println("MediaType: " + mediaType);
+			System.out.println(mediaService);		
+		
+			MediaDevice device = mediaService.getDefaultDevice(mediaType, MediaUseCase.CALL);
+			System.out.println(device.getDirection());
+			System.err.println("Device: " + device);
+			System.err.println("================================");
+		}
+
 		
 		vectorAudioDevices = CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR));	
 		for ( CaptureDeviceInfo infoCaptureDevice : vectorAudioDevices)
 		{			     
-			audioDevice.addItem(convertSysString(infoCaptureDevice.getName()));
+			String protocol = infoCaptureDevice.getLocator().getProtocol();
+			audioDevice.addItem("[" + protocol + "]" + convertSysString(infoCaptureDevice.getName()));
 		}
 		
 		vectorVideoDevices = CaptureDeviceManager.getDeviceList(new VideoFormat(VideoFormat.RGB));
 		for (  CaptureDeviceInfo infoCaptureDevice : vectorVideoDevices )
 		{
             videoDevice.addItem(convertSysString(infoCaptureDevice.getName()));		
+		}
+		vectorVideoDevices.add(null);
+		videoDevice.addItem("<None>");	
+		
+		AudioSystem mediaAudioSystem = ((MediaServiceImpl)LibJitsi.getMediaService()).getDeviceConfiguration().getAudioSystem();
+		for (AudioSystem system : mediaAudioSystem.getAudioSystems())
+		{
+			vectorAudioSystem.add(system);
+			audioSystem.addItem(system);
+		}
+		
+		for (CaptureDeviceInfo2 device : mediaAudioSystem.getDevices(DataFlow.PLAYBACK)) {
+			playbackDevice.addItem(convertSysString(device.getName()));
+			vectorPlaybackDevices.add(device);
 		}
 	}
 	
@@ -161,16 +224,60 @@ public class MediaPreferencePanel  extends JPanel {
 	}
 	
 	public void setAudioDevice(String device) {
-		for ( CaptureDeviceInfo infoCaptureDevice : vectorAudioDevices) {
+        AudioSystem audioSystem = ((MediaServiceImpl)LibJitsi.getMediaService()).getDeviceConfiguration().getAudioSystem();
+		for ( CaptureDeviceInfo2 infoCaptureDevice : vectorAudioDevices) {
+			System.out.println(device);
 			if (infoCaptureDevice.getLocator().toExternalForm().equals(device)) {
-				audioDevice.setSelectedItem(infoCaptureDevice.getName());
+				audioDevice.setSelectedIndex(vectorAudioDevices.indexOf(infoCaptureDevice));
+				audioSystem.setDevice(DataFlow.CAPTURE, infoCaptureDevice, true);
 			}
 		}	
 	}
 	
+	public String getPlaybackDevice() {
+		if (playbackDevice.getSelectedIndex() >= 0) {
+			return vectorPlaybackDevices.get(playbackDevice.getSelectedIndex()).getLocator().toExternalForm();
+		}
+		return "";
+	}
+	
+	public void setPlaybackDevice(String device) {
+        AudioSystem audioSystem = ((MediaServiceImpl)LibJitsi.getMediaService()).getDeviceConfiguration().getAudioSystem();
+		for ( CaptureDeviceInfo2 infoCaptureDevice : vectorPlaybackDevices) {
+			if (infoCaptureDevice.getLocator().toExternalForm().equals(device)) {
+				playbackDevice.setSelectedItem(infoCaptureDevice.getName());
+				audioSystem.setDevice(DataFlow.PLAYBACK, infoCaptureDevice, true);
+				audioSystem.setDevice(DataFlow.NOTIFY  , infoCaptureDevice, true);
+			}
+		}	
+	}
+	
+	public String getAudioSystem() {
+		if (audioSystem.getSelectedIndex() >= 0)
+		{			
+			return vectorAudioSystem.get(audioSystem.getSelectedIndex()).getLocatorProtocol();
+		}
+		return null;
+	}
+		
+	public void setAudioSystem(String selectedAudioSystem) {
+		for (AudioSystem system : vectorAudioSystem)
+		{
+			if (system.getLocatorProtocol().equals(selectedAudioSystem))
+			{
+				System.out.println("setAudioSystem:" + system);
+				audioSystem.setSelectedIndex(vectorAudioSystem.indexOf(system));
+				((MediaServiceImpl)LibJitsi.getMediaService()).getDeviceConfiguration().setAudioSystem(system, true);
+			}
+		}
+		System.out.println("AudioSystem:" + ((MediaServiceImpl)LibJitsi.getMediaService()).getDeviceConfiguration().getAudioSystem());
+	}
+	
+	
 	public void setVideoDevice(String device) {
 		for ( CaptureDeviceInfo infoCaptureDevice : vectorVideoDevices) {
-			if (infoCaptureDevice.getLocator().toExternalForm().equals(device)) {
+			if (infoCaptureDevice != null && 
+				infoCaptureDevice.getLocator().toExternalForm().equals(device)) {
 				videoDevice.setSelectedItem(infoCaptureDevice.getName());
 			}
 		}	
@@ -178,6 +285,9 @@ public class MediaPreferencePanel  extends JPanel {
 	
 	public String getVideoDevice() {
 		if (videoDevice.getSelectedIndex() >= 0) {
+			if (vectorVideoDevices.get(videoDevice.getSelectedIndex()) == null) {
+				return "";
+			}
 			return vectorVideoDevices.get(videoDevice.getSelectedIndex()).getLocator().toExternalForm();
 		}
 		return "";

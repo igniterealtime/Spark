@@ -66,8 +66,8 @@ public class PrivacyAddDialogUI extends JPanel {
 
     private JCheckBox _showOffCheckbox = new JCheckBox();
     private static final long serialVersionUID = -7725304880236329893L;
-    private DefaultListModel model = new DefaultListModel();
-    private JList rosterList = new JList(model);
+    private DefaultListModel<ContactItem> model = new DefaultListModel<ContactItem>();
+    private JList<ContactItem> rosterList = new JList<ContactItem>(model);
     private boolean _showGroups = false;
     private List<ContactItem> _userList = new ArrayList<ContactItem>();
     private JCheckBox _blockPIn;

@@ -23,9 +23,9 @@ package net.java.sipmack.media;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import javax.media.format.AudioFormat;
 import javax.media.rtp.ReceiveStreamListener;
 
+import org.jitsi.service.neomedia.format.MediaFormat;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -45,7 +45,7 @@ public class AudioMediaSession {
     private AudioChannel audioChannel;
     private String locator = "javasound://";
     // AudioFormat of the Session
-    private AudioFormat audioFormat;
+    private MediaFormat audioFormat;
     // Local Transport details
     private TransportCandidate local;
     // Remote Transport details
@@ -58,7 +58,7 @@ public class AudioMediaSession {
      * @param remote      The remote information. The candidate that the jmf will be sent to.
      * @param local       The local information. The candidate that will receive the jmf
      */
-    public AudioMediaSession(final AudioFormat audioFormat, final TransportCandidate remote,
+    public AudioMediaSession(final MediaFormat audioFormat, final TransportCandidate remote,
                              final TransportCandidate local) {
         this(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
     }
@@ -70,8 +70,9 @@ public class AudioMediaSession {
      * @param remote      The remote information. The candidate that the jmf will be sent to.
      * @param local       The local information. The candidate that will receive the jmf
      */
-    public AudioMediaSession(final AudioFormat audioFormat, final TransportCandidate remote,
+    public AudioMediaSession(final MediaFormat audioFormat, final TransportCandidate remote,
                              final TransportCandidate local, String locator) {
+   
         this.local = local;
         this.remote = remote;
         this.audioFormat = audioFormat;
@@ -87,7 +88,7 @@ public class AudioMediaSession {
      *
      * @return
      */
-    public AudioFormat getAudioFormat() {
+    public MediaFormat getAudioFormat() {
         return audioFormat;
     }
 
@@ -125,7 +126,6 @@ public class AudioMediaSession {
             localPort = getFreePort();
             remotePort = this.getLocal().getSymmetric().getPort();
 
-            System.out.println(this.getLocal().getConnection() + " " + ip + ": " + localPort + "->" + remotePort);
 
         } else {
             ip = this.getRemote().getIp();
@@ -133,8 +133,10 @@ public class AudioMediaSession {
             localPort = this.getLocal().getPort();
             remotePort = this.getRemote().getPort();
         }
+        System.out.println(this.getLocal().getConnection() + " " + ip + ": " + localPort + "->" + remotePort);
 
-        audioChannel = new AudioChannel(PhoneManager.getMediaLocator(locator), localIp, ip, localPort, remotePort, audioFormat);
+        System.out.println("1----> AudioChannel");
+        audioChannel = new AudioChannel(PhoneManager.getMediaLocator(locator), localIp, ip, localPort,-1,  remotePort, -1, audioFormat);
     }
 
     /**

@@ -680,7 +680,9 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                 		localAudioPort = mediaDescription.getMedia().getMediaPort();
                 	else if (mediaDescription.getMedia().getMediaType().equals("video"))
                 		localVideoPort = mediaDescription.getMedia().getMediaPort();
+
                 }
+                
                 
                 AudioMediaSession audioMediaSession = mediaManager.createAudioMediaSession(call.getRemoteSdpDescription().toString(), localAudioPort);                
                 call.setAudioMediaSession(audioMediaSession);
@@ -719,7 +721,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                     int destPort = ((MediaDescription) (call.getRemoteSdpDescription().getMediaDescriptions(true).get(0))).getMedia().getMediaPort();
                     String destIp = call.getRemoteSdpDescription().getConnection().getAddress();
 
-                    AudioReceiverChannel audioReceiverChannel = mediaManager.createAudioReceiverChannel(localPort, destIp, destPort);
+                    AudioReceiverChannel audioReceiverChannel = mediaManager.createAudioReceiverChannel(localPort, destIp, destPort, (destPort + 1));
                     call.setAudioReceiverChannel(audioReceiverChannel);
 
                     if (audioReceiverChannel != null)
@@ -877,7 +879,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
         }
 
         PhoneManager.setUsingMediaLocator(true);
-
+        
         SessionDescription sdpData = null;
         try {
             sdpData = mediaManager.generateSdpDescription();
