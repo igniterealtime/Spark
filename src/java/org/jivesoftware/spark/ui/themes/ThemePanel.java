@@ -25,6 +25,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -258,25 +260,44 @@ public class ThemePanel extends JPanel {
 
 			return 42;
 		    }
-		    public void finished() {
-			  try {
-			    UIManager.setLookAndFeel(_lookandfeelname.get(_lookandfeel
-			    	    .getSelectedIndex()));
-			    setJTattooBar(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
-			} catch (Exception e) {
-			//WTF, i dont care
-			}
 
-			SwingUtilities.updateComponentTreeUI(_themepanel);
-			SwingUtilities.updateComponentTreeUI(_themepanel.getParent());
-			SwingUtilities.updateComponentTreeUI(SparkManager.getMainWindow());
-			SwingUtilities.updateComponentTreeUI(SparkManager.getChatManager().getChatContainer());
-			JFrame.setDefaultLookAndFeelDecorated(true);
-			JDialog.setDefaultLookAndFeelDecorated(true);
-			_themepanel.invalidate();
-			_themepanel.repaint();
-			_themepanel.validate();
+            private void setNewLaF() {
+                try {
+                    UIManager.setLookAndFeel(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
+                    setJTattooBar(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
+                } catch (Exception e) {
+                    //WTF, i dont care
+                }
+            }
 
+            private void updateAllComponentsLaF(final Window window) {
+                for (Window childWindow : window.getOwnedWindows()) {
+                    updateAllComponentsLaF(childWindow);
+                }
+                SwingUtilities.updateComponentTreeUI(window);
+            }
+
+            @Override
+            public void finished() {
+                // if the current laf is substance, and the new laf is not, we need to refresh all components,
+                //   but since substance is very stubborn, we must restart.
+                if (UIManager.getLookAndFeel().getName().toLowerCase().contains("substance")
+                        && !_lookandfeelname.get(_lookandfeel.getSelectedIndex()).toLowerCase().contains("substance")) { // substance is a PITA!
+                    if (JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(), Res.getString("message.restart.required"),
+                            Res.getString("title.alert"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        setNewLaF();
+                        SettingsManager.getLocalPreferences().setLookAndFeel(getLookAndFeel());
+                        SparkManager.getMainWindow().logout(false);
+                    }
+                } else { // otherwise we're ok to just refresh all components
+                    setNewLaF();
+                    for (Frame frame : Frame.getFrames()) {
+                        updateAllComponentsLaF(frame);
+                    }
+                    JFrame.setDefaultLookAndFeelDecorated(true);
+                    JDialog.setDefaultLookAndFeelDecorated(true);
+                    SettingsManager.getLocalPreferences().setLookAndFeel(getLookAndFeel());
+                }
 		    }
 		};
 		worker.start();
