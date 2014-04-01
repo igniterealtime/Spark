@@ -30,6 +30,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -81,6 +82,8 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
+import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -331,7 +334,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	String name = StringUtils.parseName(message.getFrom());
 
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
-	m.setFrom(name +" "+broadcasttype);
+	//m.setFrom(name +" "+broadcasttype);
+        m.setFrom(nickname +" - "+broadcasttype);
 
 	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
 	chatRoom.addToTranscript(m,true);
@@ -346,6 +350,18 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	    toaster.setTitle(broadcasttype);
 	    toaster.showToaster(message.getBody());
 	}
+
+        SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
+
+        DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+        if (inf == null) {
+            SoundPreference soundPreference = (SoundPreference)SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
+            SoundPreferences preferences = soundPreference.getPreferences();
+            if (preferences.isPlayIncomingSound()) {
+                File incomingFile = new File(preferences.getIncomingSound());
+                SparkManager.getSoundManager().playClip(incomingFile);
+            }
+        }
 
 	chatRoom.addMessageListener(new MessageListener() {
 	    boolean waiting = true;
