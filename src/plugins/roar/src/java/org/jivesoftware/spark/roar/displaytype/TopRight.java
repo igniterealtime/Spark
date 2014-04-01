@@ -9,6 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
@@ -73,6 +74,13 @@ public class TopRight implements RoarDisplayType {
 	    {
 		nickname = StringUtils.parseResource(nickname);
 	    }
+
+        boolean broadcast = message.getProperty("broadcast") != null;
+
+        if ((broadcast || message.getType() == Message.Type.normal
+                || message.getType() == Message.Type.headline) && message.getBody() != null) {
+           nickname = Res.getString("broadcast") + " - " + nickname;
+        }
 
 	    RoarPanel.popupWindow(this, icon, nickname, message.getBody(),
 		    _lastusedXpos, _lastusedYpos, props.getDuration(),
