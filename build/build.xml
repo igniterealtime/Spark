@@ -26,17 +26,17 @@
 	<property name="version.revision" value="0"/>
 
     <!-- Spark Build Number
-    Passed into ant from bamboo via cmd line argument: 
-        -Dbamboo.build=${bamboo.buildkey} 
+    Passed into ant via cmd line argument:
+        -Dbuild.number=<build number>
     Left blank if omitted.
     -->
 	<if>
-        <contains string="${bamboo.build}" substring="bamboo.build"/>
+        <contains string="${build.number}" substring="build.number"/>
         <then>
             <property name="version.extra" value=""/>
         </then>
         <else>
-            <property name="version.extra" value="${bamboo.build}"/>
+            <property name="version.extra" value="${build.number}"/>
         </else>
     </if>
 
