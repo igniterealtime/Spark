@@ -26,11 +26,19 @@
 	<property name="version.revision" value="0"/>
 
     <!-- Spark Build Number
-    Passed into ant from bamboo via cmd line argument: 
-        -Dbamboo.build=${bamboo.buildkey} 
+    Passed into ant via cmd line argument:
+        -Dbuild.number=<build number>
     Left blank if omitted.
     -->
-	<property name="version.extra" value="${bamboo.build}"/>
+	<if>
+        <contains string="${build.number}" substring="build.number"/>
+        <then>
+            <property name="version.extra" value=""/>
+        </then>
+        <else>
+            <property name="version.extra" value="${build.number}"/>
+        </else>
+    </if>
 
 	<!--
 	<loadfile property="version.extra" srcFile="./.svn/entries">
@@ -201,6 +209,19 @@
 		<mkdir dir="${plugins}"/>
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${target.xtra}"/>
+
+        <!-- set APPLICATION_VERSION in default.properties -->
+        <replaceregexp file="${src}/org/jivesoftware/resource/default.properties"
+                       match="APPLICATION_VERSION =.*"
+                       replace="APPLICATION_VERSION = ${version.major}.${version.minor}.${version.revision}"
+                       byline="true">
+        </replaceregexp>
+
+        <!-- set BUILD_NUMBER in default.properties -->
+        <replaceregexp file="${src}/org/jivesoftware/resource/default.properties"
+                       match="BUILD_NUMBER =.*" replace="BUILD_NUMBER = ${version.extra}"
+                       byline="false">
+        </replaceregexp>
 
 	</target>
 

@@ -755,6 +755,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private void setAboutBoxPane() {
 
         // Get values from default.properties file
+        final String BUILD_NUMBER = Default.getString(Default.BUILD_NUMBER);
         final String APPLICATION_INFO1 = Default.getString(Default.APPLICATION_INFO1);
         final String APPLICATION_INFO2 = Default.getString(Default.APPLICATION_INFO2);
         final String APPLICATION_INFO3 = Default.getString(Default.APPLICATION_INFO3);
@@ -771,6 +772,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         StringBuffer aboutBoxText = new StringBuffer();
         aboutBoxText.append(
             Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion());
+
+        // Add BUILD_NUMBER if not empty
+        if (!("".equals(BUILD_NUMBER))) {
+            aboutBoxText.append(
+            "<br/>"
+            + "Build: " + BUILD_NUMBER);
+        }
 
         // Add APPLICATION_INFO1 if not empty
         if (!("".equals(APPLICATION_INFO1))) {
