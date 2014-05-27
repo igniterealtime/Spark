@@ -14,6 +14,8 @@ Combined with the [Openfire] server, [Spark] is the easiest and best alternative
 
 [Spark] - an [Ignite Realtime] community project.
 
+[![Build Status](https://travis-ci.org/igniterealtime/Spark.svg?branch=master)](https://travis-ci.org/igniterealtime/Spark)
+
 -------
 
 [Ignite Realtime] is an Open Source community composed of end-users and developers around the world who 
