@@ -41,121 +41,121 @@ import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import com.sun.awt.AWTUtilities;
 
 public class RoarPanel {
-	public static int WIDTH = 300;
-	public static int HEIGHT = 80;
+    public static int WIDTH = 300;
+    public static int HEIGHT = 80;
 
-	/**
-	 * Creates the WindowGui
-	 * 
-	 * @param icon
-	 * @param head
-	 * @param body
-	 * @param posx
-	 * @param posy
-	 * @param backgroundcolor
-	 * @param headerColor
-	 * @param messageColor
-	 * @return
-	 */
-	private static JWindow createWindow(Icon icon, String head, String body, int posx, int posy, Color backgroundcolor,
-			Color headerColor, Color messageColor) {
+    /**
+     * Creates the WindowGui
+     * 
+     * @param icon
+     * @param head
+     * @param body
+     * @param posx
+     * @param posy
+     * @param backgroundcolor
+     * @param headerColor
+     * @param messageColor
+     * @return
+     */
+    private static JWindow createWindow(Icon icon, String head, String body, int posx, int posy, Color backgroundcolor,
+            Color headerColor, Color messageColor) {
 
-		final JWindow window = new JWindow();
-		JPanel windowpanel = new JPanel(new GridBagLayout());
-		windowpanel.setBackground(backgroundcolor);
+        final JWindow window = new JWindow();
+        JPanel windowpanel = new JPanel(new GridBagLayout());
+        windowpanel.setBackground(backgroundcolor);
 
-		AWTUtilities.setWindowShape(window, new RoundRectangle2D.Float(0, 0, WIDTH, HEIGHT, 20, 20));
-		AWTUtilities.setWindowOpaque(window, true);
+        AWTUtilities.setWindowShape(window, new RoundRectangle2D.Float(0, 0, WIDTH, HEIGHT, 20, 20));
+        AWTUtilities.setWindowOpaque(window, true);
 
-		JLabel text = new JLabel("<HTML>" + body + "</HTML>");
-		text.setForeground(messageColor);
+        JLabel text = new JLabel("<HTML>" + body + "</HTML>");
+        text.setForeground(messageColor);
 
-		JLabel header = new JLabel(head);
-		header.setForeground(headerColor);
-		header.setFont(new Font(header.getFont().getName(), Font.BOLD, header.getFont().getSize() + 2));
+        JLabel header = new JLabel(head);
+        header.setForeground(headerColor);
+        header.setFont(new Font(header.getFont().getName(), Font.BOLD, header.getFont().getSize() + 2));
 
-		windowpanel.add(new JLabel(icon), new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        windowpanel.add(new JLabel(icon), new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER,
+                GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-		windowpanel.add(header, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 0));
-		windowpanel.add(text, new GridBagConstraints(1, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+        windowpanel.add(header, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+                GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 0));
+        windowpanel.add(text, new GridBagConstraints(1, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST,
+                GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
 
-		window.add(windowpanel);
-		window.setSize(WIDTH, HEIGHT);
-		window.setLocation(posx - (WIDTH + 5), posy + 5);
-		window.setAlwaysOnTop(true);
+        window.add(windowpanel);
+        window.setSize(WIDTH, HEIGHT);
+        window.setLocation(posx - (WIDTH + 5), posy + 5);
+        window.setAlwaysOnTop(true);
 
-		return window;
-	}
+        return window;
+    }
 
-	/**
-	 * Fades the window and sets it visible
-	 * 
-	 * @param window
-	 */
-	private static void fadein(JWindow window) {
-		AWTUtilities.setWindowOpacity(window, 0.3f);
-		AWTUtilities.setWindowOpacity(window, 0.5f);
-		AWTUtilities.setWindowOpacity(window, 0.9f);
-		window.setVisible(true);
-	}
+    /**
+     * Fades the window and sets it visible
+     * 
+     * @param window
+     */
+    private static void fadein(JWindow window) {
+        AWTUtilities.setWindowOpacity(window, 0.3f);
+        AWTUtilities.setWindowOpacity(window, 0.5f);
+        AWTUtilities.setWindowOpacity(window, 0.9f);
+        window.setVisible(true);
+    }
 
-	/**
-	 * Creates a popupwindow with specified items, displays it for given time,
-	 * and notifies its owner on closure
-	 * 
-	 * @param owner
-	 *            , the owner of this Panel
-	 * @param icon
-	 *            , the icon to display
-	 * @param head
-	 *            , the header
-	 * @param text
-	 *            , the message body
-	 * @param x
-	 *            , the x locaiton on screen
-	 * @param y
-	 *            , the y location on screen
-	 * @param duration
-	 *            , the display duration
-	 * @param backgroundcolor
-	 *            , the background color
-	 * @param headercolor
-	 *            , the headertext color
-	 * @param textcolor
-	 *            , the messagebody color
-	 */
-	public static void popupWindow(final RoarDisplayType owner, Icon icon, String head, String text, int x, int y,
-			int duration, Color backgroundcolor, Color headercolor, Color textcolor, final Action action) {
+    /**
+     * Creates a popupwindow with specified items, displays it for given time,
+     * and notifies its owner on closure
+     * 
+     * @param owner
+     *            , the owner of this Panel
+     * @param icon
+     *            , the icon to display
+     * @param head
+     *            , the header
+     * @param text
+     *            , the message body
+     * @param x
+     *            , the x locaiton on screen
+     * @param y
+     *            , the y location on screen
+     * @param duration
+     *            , the display duration
+     * @param backgroundcolor
+     *            , the background color
+     * @param headercolor
+     *            , the headertext color
+     * @param textcolor
+     *            , the messagebody color
+     */
+    public static void popupWindow(final RoarDisplayType owner, Icon icon, String head, String text, int x, int y,
+            int duration, Color backgroundcolor, Color headercolor, Color textcolor, final Action action) {
 
-		final JWindow window = createWindow(icon, head, text, x, y, backgroundcolor, headercolor, textcolor);
-		fadein(window);
+        final JWindow window = createWindow(icon, head, text, x, y, backgroundcolor, headercolor, textcolor);
+        fadein(window);
 
-		if (duration > 0) {
-			TimerTask closeTimer = new TimerTask() {
-				public void run() {
-					closePanel(owner, window);
-				}
-			};
-			Timer t = new Timer();
-			t.schedule(closeTimer, duration);
-		}
+        if (duration > 0) {
+            TimerTask closeTimer = new TimerTask() {
+                public void run() {
+                    closePanel(owner, window);
+                }
+            };
+            Timer t = new Timer();
+            t.schedule(closeTimer, duration);
+        }
 
-		window.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				action.actionPerformed(null);
-				closePanel(owner, window);
-			}
-		});
-	}
+        window.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                action.actionPerformed(null);
+                closePanel(owner, window);
+            }
+        });
+    }
 
-	public static void closePanel(RoarDisplayType owner, JWindow window) {
-		if (window != null) {
-			owner.closingRoarPanel(window.getX(), window.getY());
-			window.dispose();
-		}
-	}
+    public static void closePanel(RoarDisplayType owner, JWindow window) {
+        if (window != null) {
+            owner.closingRoarPanel(window.getX(), window.getY());
+            window.dispose();
+        }
+    }
 
 }

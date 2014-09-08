@@ -39,192 +39,192 @@ import org.jivesoftware.spark.roar.displaytype.TopRight;
  * 
  */
 public class RoarProperties {
-	private Properties props;
-	private File configFile;
+    private Properties props;
+    private File configFile;
 
-	public static final String BACKGROUNDCOLOR = "backgroundcolor";
-	public static final String HEADERCOLOR = "headercolor";
-	public static final String TEXTCOLOR = "textcolor";
-	public static final String DURATION = "duration";
-	public static final String ACTIVE = "active";
-	public static final String AMOUNT = "amount";
-	public static final String ROARDISPLAYTYPE = "roardisplaytype";
+    public static final String BACKGROUNDCOLOR = "backgroundcolor";
+    public static final String HEADERCOLOR = "headercolor";
+    public static final String TEXTCOLOR = "textcolor";
+    public static final String DURATION = "duration";
+    public static final String ACTIVE = "active";
+    public static final String AMOUNT = "amount";
+    public static final String ROARDISPLAYTYPE = "roardisplaytype";
 
-	private static final Object LOCK = new Object();
-	private static RoarProperties instance = null;
+    private static final Object LOCK = new Object();
+    private static RoarProperties instance = null;
 
-	/**
-	 * returns the Instance of this Properties file
-	 * 
-	 * @return
-	 */
-	public static RoarProperties getInstance() {
-		synchronized (LOCK) {
-			if (instance == null) {
-				instance = new RoarProperties();
-			}
-			return instance;
-		}
-	}
+    /**
+     * returns the Instance of this Properties file
+     * 
+     * @return
+     */
+    public static RoarProperties getInstance() {
+        synchronized (LOCK) {
+            if (instance == null) {
+                instance = new RoarProperties();
+            }
+            return instance;
+        }
+    }
 
-	private RoarProperties() {
-		this.props = new Properties();
+    private RoarProperties() {
+        this.props = new Properties();
 
-		try {
-			props.load(new FileInputStream(getConfigFile()));
-		} catch (IOException e) {
-			// Can't load ConfigFile
-		}
+        try {
+            props.load(new FileInputStream(getConfigFile()));
+        } catch (IOException e) {
+            // Can't load ConfigFile
+        }
 
-	}
+    }
 
-	private File getConfigFile() {
-		if (configFile == null)
-			configFile = new File(Spark.getSparkUserHome(), "roar.properties");
+    private File getConfigFile() {
+        if (configFile == null)
+            configFile = new File(Spark.getSparkUserHome(), "roar.properties");
 
-		return configFile;
-	}
+        return configFile;
+    }
 
-	public void save() {
-		try {
-			props.store(new FileOutputStream(getConfigFile()), "Storing ROAR properties");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public void save() {
+        try {
+            props.store(new FileOutputStream(getConfigFile()), "Storing ROAR properties");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public boolean getShowingPopups() {
-		return getBoolean(ACTIVE, false);
-	}
+    public boolean getShowingPopups() {
+        return getBoolean(ACTIVE, false);
+    }
 
-	public void setShowingPopups(boolean popups) {
-		setBoolean(ACTIVE, popups);
-	}
+    public void setShowingPopups(boolean popups) {
+        setBoolean(ACTIVE, popups);
+    }
 
-	public Color getBackgroundColor() {
-		return getColor(BACKGROUNDCOLOR, Color.BLACK);
-	}
+    public Color getBackgroundColor() {
+        return getColor(BACKGROUNDCOLOR, Color.BLACK);
+    }
 
-	public void setBackgroundColor(Color c) {
-		setColor(BACKGROUNDCOLOR, c);
-	}
+    public void setBackgroundColor(Color c) {
+        setColor(BACKGROUNDCOLOR, c);
+    }
 
-	public Color getHeaderColor() {
-		return getColor(HEADERCOLOR, Color.RED);
-	}
+    public Color getHeaderColor() {
+        return getColor(HEADERCOLOR, Color.RED);
+    }
 
-	public void setHeaderColor(Color c) {
-		setColor(HEADERCOLOR, c);
-	}
+    public void setHeaderColor(Color c) {
+        setColor(HEADERCOLOR, c);
+    }
 
-	public Color getTextColor() {
-		return getColor(TEXTCOLOR, Color.WHITE);
-	}
+    public Color getTextColor() {
+        return getColor(TEXTCOLOR, Color.WHITE);
+    }
 
-	public void setTextColor(Color c) {
-		setColor(TEXTCOLOR, c);
-	}
+    public void setTextColor(Color c) {
+        setColor(TEXTCOLOR, c);
+    }
 
-	public int getDuration() {
-		int dur = getInt(DURATION);
-		return dur < 0 ? 3000 : getInt(DURATION);
-	}
+    public int getDuration() {
+        int dur = getInt(DURATION);
+        return dur < 0 ? 3000 : getInt(DURATION);
+    }
 
-	public void setDuration(int dur) {
-		setInt(DURATION, dur);
-	}
+    public void setDuration(int dur) {
+        setInt(DURATION, dur);
+    }
 
-	public int getMaximumPopups() {
-		return getInt(AMOUNT);
-	}
+    public int getMaximumPopups() {
+        return getInt(AMOUNT);
+    }
 
-	public void setMaximumPopups(int amount) {
-		setInt(AMOUNT, amount);
-	}
+    public void setMaximumPopups(int amount) {
+        setInt(AMOUNT, amount);
+    }
 
-	public void setDisplayType(String classstring) {
-		props.setProperty(ROARDISPLAYTYPE, classstring);
-	}
+    public void setDisplayType(String classstring) {
+        props.setProperty(ROARDISPLAYTYPE, classstring);
+    }
 
-	public String getDisplayType() {
+    public String getDisplayType() {
 
-		return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
+        return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
 
-	}
+    }
 
-	public RoarDisplayType getDisplayTypeClass() {
+    public RoarDisplayType getDisplayTypeClass() {
 
-		if (getDisplayType().equals(TopRight.getName())) {
-			return new TopRight();
-		} else if (getDisplayType().equals(SparkToasterHandler.getName())) {
-			return new SparkToasterHandler();
-		}
+        if (getDisplayType().equals(TopRight.getName())) {
+            return new TopRight();
+        } else if (getDisplayType().equals(SparkToasterHandler.getName())) {
+            return new SparkToasterHandler();
+        }
 
-		else {
-			return new BottomRight();
-		}
+        else {
+            return new BottomRight();
+        }
 
-	}
+    }
 
-	// ===============================================================================
-	// ===============================================================================
-	// ===============================================================================
-	private boolean getBoolean(String property, boolean defaultValue) {
-		return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
-	}
+    // ===============================================================================
+    // ===============================================================================
+    // ===============================================================================
+    private boolean getBoolean(String property, boolean defaultValue) {
+        return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
+    }
 
-	private void setBoolean(String property, boolean value) {
-		props.setProperty(property, Boolean.toString(value));
-	}
+    private void setBoolean(String property, boolean value) {
+        props.setProperty(property, Boolean.toString(value));
+    }
 
-	private int getInt(String property) {
-		return Integer.parseInt(props.getProperty(property, "0"));
-	}
+    private int getInt(String property) {
+        return Integer.parseInt(props.getProperty(property, "0"));
+    }
 
-	private void setInt(String property, int integer) {
-		props.setProperty(property, "" + integer);
-	}
+    private void setInt(String property, int integer) {
+        props.setProperty(property, "" + integer);
+    }
 
-	private void setColor(String property, Color color) {
-		props.setProperty(property, convertColor(color));
-	}
+    private void setColor(String property, Color color) {
+        props.setProperty(property, convertColor(color));
+    }
 
-	private Color getColor(String property, Color defaultcolor) {
-		try {
-			return convertString(props.getProperty(property));
-		} catch (Exception e) {
-			return defaultcolor;
-		}
+    private Color getColor(String property, Color defaultcolor) {
+        try {
+            return convertString(props.getProperty(property));
+        } catch (Exception e) {
+            return defaultcolor;
+        }
 
-	}
+    }
 
-	public String getProperty(String property) {
-		return props.getProperty(property);
-	}
+    public String getProperty(String property) {
+        return props.getProperty(property);
+    }
 
-	/**
-	 * Converts a {@link String} matching xxx,xxx,xxx to a {@link Color}<br>
-	 * where xxx is a number from 0 to 255
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public static Color convertString(String s) throws Exception {
-		String[] arr = s.split(",");
-		return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));
+    /**
+     * Converts a {@link String} matching xxx,xxx,xxx to a {@link Color}<br>
+     * where xxx is a number from 0 to 255
+     * 
+     * @param s
+     * @return
+     */
+    public static Color convertString(String s) throws Exception {
+        String[] arr = s.split(",");
+        return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));
 
-	}
+    }
 
-	/**
-	 * Converts a {@link Color} to a {@link String} in this format:<br>
-	 * <b>xxx,xxx,xxx</b> <br>
-	 * where xxx is a number from 0 to 255
-	 * 
-	 * @param color
-	 * @return
-	 */
-	public static String convertColor(Color color) {
-		return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
-	}
+    /**
+     * Converts a {@link Color} to a {@link String} in this format:<br>
+     * <b>xxx,xxx,xxx</b> <br>
+     * where xxx is a number from 0 to 255
+     * 
+     * @param color
+     * @return
+     */
+    public static String convertColor(Color color) {
+        return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
+    }
 
 }
