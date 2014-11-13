@@ -49,162 +49,157 @@ public class RoarProperties {
     public static final String ACTIVE = "active";
     public static final String AMOUNT = "amount";
     public static final String ROARDISPLAYTYPE = "roardisplaytype";
-    
-    private static final Object LOCK = new Object();  
+
+    private static final Object LOCK = new Object();
     private static RoarProperties instance = null;
-    
+
     /**
      * returns the Instance of this Properties file
+     * 
      * @return
      */
     public static RoarProperties getInstance() {
-	synchronized (LOCK) {
-	    if (instance == null) {
-		instance = new RoarProperties();
-	    }
-	    return instance;
-	}
+        synchronized (LOCK) {
+            if (instance == null) {
+                instance = new RoarProperties();
+            }
+            return instance;
+        }
     }
 
     private RoarProperties() {
-	this.props = new Properties();
+        this.props = new Properties();
 
-	try {
-	    props.load(new FileInputStream(getConfigFile()));
-	} catch (IOException e) {
-	    // Can't load ConfigFile
-	}
+        try {
+            props.load(new FileInputStream(getConfigFile()));
+        } catch (IOException e) {
+            // Can't load ConfigFile
+        }
 
     }
 
     private File getConfigFile() {
-	if (configFile == null)
-	    configFile = new File(Spark.getSparkUserHome(), "roar.properties");
+        if (configFile == null)
+            configFile = new File(Spark.getSparkUserHome(), "roar.properties");
 
-	return configFile;
+        return configFile;
     }
 
     public void save() {
-	try {
-	    props.store(new FileOutputStream(getConfigFile()),
-		    "Storing ROAR properties");
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+        try {
+            props.store(new FileOutputStream(getConfigFile()), "Storing ROAR properties");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean getShowingPopups() {
-	return getBoolean(ACTIVE, false);
+        return getBoolean(ACTIVE, false);
     }
 
     public void setShowingPopups(boolean popups) {
-	setBoolean(ACTIVE, popups);
+        setBoolean(ACTIVE, popups);
     }
 
     public Color getBackgroundColor() {
-	return getColor(BACKGROUNDCOLOR, Color.BLACK);
+        return getColor(BACKGROUNDCOLOR, Color.BLACK);
     }
 
     public void setBackgroundColor(Color c) {
-	setColor(BACKGROUNDCOLOR, c);
+        setColor(BACKGROUNDCOLOR, c);
     }
 
     public Color getHeaderColor() {
-	return getColor(HEADERCOLOR, Color.RED);
+        return getColor(HEADERCOLOR, Color.RED);
     }
 
     public void setHeaderColor(Color c) {
-	setColor(HEADERCOLOR, c);
+        setColor(HEADERCOLOR, c);
     }
 
     public Color getTextColor() {
-	return getColor(TEXTCOLOR, Color.WHITE);
+        return getColor(TEXTCOLOR, Color.WHITE);
     }
 
     public void setTextColor(Color c) {
-	setColor(TEXTCOLOR, c);
+        setColor(TEXTCOLOR, c);
     }
 
     public int getDuration() {
-
-	return getInt(DURATION) == 0 ? 3000 : getInt(DURATION);
+        int dur = getInt(DURATION);
+        return dur < 0 ? 3000 : getInt(DURATION);
     }
 
     public void setDuration(int dur) {
-	setInt(DURATION, dur);
+        setInt(DURATION, dur);
     }
 
     public int getMaximumPopups() {
-	return getInt(AMOUNT);
+        return getInt(AMOUNT);
     }
 
     public void setMaximumPopups(int amount) {
-	setInt(AMOUNT, amount);
+        setInt(AMOUNT, amount);
     }
-    
-    
-    public void setDisplayType(String classstring)
-    {
-	props.setProperty(ROARDISPLAYTYPE, classstring);
+
+    public void setDisplayType(String classstring) {
+        props.setProperty(ROARDISPLAYTYPE, classstring);
     }
-    
+
     public String getDisplayType() {
 
-	return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
+        return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
 
     }
-    
+
     public RoarDisplayType getDisplayTypeClass() {
 
-	if (getDisplayType().equals(TopRight.getName())) {
-	    return new TopRight();
-	}
-	else if(getDisplayType().equals(SparkToasterHandler.getName()))
-	{
-	    return new SparkToasterHandler();
-	}
-	
-	else {
-	    return new BottomRight();
-	}
-	
+        if (getDisplayType().equals(TopRight.getName())) {
+            return new TopRight();
+        } else if (getDisplayType().equals(SparkToasterHandler.getName())) {
+            return new SparkToasterHandler();
+        }
+
+        else {
+            return new BottomRight();
+        }
+
     }
 
     // ===============================================================================
     // ===============================================================================
     // ===============================================================================
     private boolean getBoolean(String property, boolean defaultValue) {
-	return Boolean.parseBoolean(props.getProperty(property,
-		Boolean.toString(defaultValue)));
+        return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
     private void setBoolean(String property, boolean value) {
-	props.setProperty(property, Boolean.toString(value));
+        props.setProperty(property, Boolean.toString(value));
     }
 
     private int getInt(String property) {
-	return Integer.parseInt(props.getProperty(property, "0"));
+        return Integer.parseInt(props.getProperty(property, "0"));
     }
 
     private void setInt(String property, int integer) {
-	props.setProperty(property, "" + integer);
+        props.setProperty(property, "" + integer);
     }
 
     private void setColor(String property, Color color) {
-	props.setProperty(property, convertColor(color));
+        props.setProperty(property, convertColor(color));
     }
 
     private Color getColor(String property, Color defaultcolor) {
-	try {
-	    return convertString(props.getProperty(property));
-	} catch (Exception e) {
-	    return defaultcolor;
-	}
+        try {
+            return convertString(props.getProperty(property));
+        } catch (Exception e) {
+            return defaultcolor;
+        }
 
     }
 
     public String getProperty(String property) {
-	return props.getProperty(property);
+        return props.getProperty(property);
     }
 
     /**
@@ -215,9 +210,8 @@ public class RoarProperties {
      * @return
      */
     public static Color convertString(String s) throws Exception {
-	String[] arr = s.split(",");
-	return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]),
-		Integer.parseInt(arr[2]));
+        String[] arr = s.split(",");
+        return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));
 
     }
 
@@ -230,7 +224,7 @@ public class RoarProperties {
      * @return
      */
     public static String convertColor(Color color) {
-	return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
+        return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
     }
-    
- }
+
+}
