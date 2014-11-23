@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.systray;
 
-import java.awt.Frame;
 import java.awt.MouseInfo;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -270,11 +269,11 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 					// bring the mainwindow to front
 					if ((SparkManager.getMainWindow().isVisible())
-						&& (SparkManager.getMainWindow().getState() == Frame.NORMAL)) {
+						&& (SparkManager.getMainWindow().getState() == java.awt.Frame.NORMAL)) {
 						SparkManager.getMainWindow().setVisible(false);
 					} else {
 						SparkManager.getMainWindow().setVisible(true);
-						SparkManager.getMainWindow().setState(Frame.NORMAL);
+						SparkManager.getMainWindow().setState(java.awt.Frame.NORMAL);
 						SparkManager.getMainWindow().toFront();
 					}		
 					
