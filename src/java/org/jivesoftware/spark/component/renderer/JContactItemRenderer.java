@@ -49,6 +49,11 @@ public class JContactItemRenderer extends ContactItem implements ListCellRendere
 		setFocusable(false);
 		setNickname(renderItem.getNickname());
 		setAlias(renderItem.getAlias());
+                if (this.getDisplayName().trim().isEmpty()) {
+                    // Fallback hack to show something other than empty string.
+                    // JID can't be set after object creation, so alias is reset.
+                    setAlias(renderItem.getDisplayName());
+                }
 		setIcon(renderItem.getIcon());
 		setStatus(renderItem.getStatus());
 		getNicknameLabel().setFont(renderItem.getNicknameLabel().getFont());

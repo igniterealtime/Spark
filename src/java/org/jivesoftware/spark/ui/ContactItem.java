@@ -162,16 +162,16 @@ public class ContactItem extends JPanel {
 	 */
     public String getDisplayName() {
     	final String displayName;
-		if (alias != null) {
-			displayName = alias;
-		} else if (nickname != null) {
-			displayName = nickname;
+		if (alias != null && !alias.trim().isEmpty()) {
+			displayName = alias.trim();
+		} else if (nickname != null && !nickname.trim().isEmpty()) {
+			displayName = nickname.trim();
 		} else {
 			displayName = getJID();
 		}
 
 		if (displayName != null) {
-		return displayName;
+			return displayName;
 		} else {
 			return ""; // weird, but happens.
 		}
