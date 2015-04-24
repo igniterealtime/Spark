@@ -1,6 +1,6 @@
-spark-messenger (2.6.0) unstable; urgency=medium
+spark-messenger (2.7.0) unstable; urgency=medium
 
-  [ Jive Software ]
+  [ Ignite Realtime Community ]
   * For full changelog, see http://www.igniterealtime.org/builds/spark/docs/latest/changelog.html
 
- -- Michael Will <mw2717@tux>  Wed, 11 May 2011 11:32:51 +0200
+ -- daryl herzmann <admin@ignite>  Fri, 24 Apr 2015 11:32:51 +0200
