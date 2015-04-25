@@ -127,8 +127,8 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
        
         JLabel chatTimeoutLabel = new JLabel();
         ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, Res.getString("label.minutes.before.stale.chat") + ":");
-        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
