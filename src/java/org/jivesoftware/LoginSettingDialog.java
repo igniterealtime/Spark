@@ -61,6 +61,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Properties;
 import java.io.File;
@@ -198,6 +200,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	private JTextField timeOutField = new JTextField();
 	private JLabel resourceLabel = new JLabel();
 	private JTextField resourceField = new JTextField();
+	private JCheckBox useHostnameAsResourceBox = new JCheckBox();
 	private JCheckBox autoLoginBox = new JCheckBox();
 	private JCheckBox useSSLBox = new JCheckBox();
 	private JCheckBox compressionBox = new JCheckBox();
@@ -217,6 +220,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    Res.getString("checkbox.auto.discover.port"));
 	    ResourceUtils.resLabel(resourceLabel, resourceField,
 		    Res.getString("label.resource"));
+	    ResourceUtils.resButton(useHostnameAsResourceBox,
+		    Res.getString("checkbox.use.hostname.as.resource"));
 	    ResourceUtils.resButton(compressionBox,
 		    Res.getString("checkbox.use.compression"));
 	    ResourceUtils.resButton(debuggerBox,
@@ -229,6 +234,10 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    useSSLBox.setSelected(localPreferences.isSSL());
 	    xmppHostField.setText(localPreferences.getXmppHost());
 	    resourceField.setText(localPreferences.getResource());
+
+	    useHostnameAsResourceBox.addActionListener(this);
+	    useHostnameAsResourceBox.setSelected(localPreferences.isUseHostnameAsResource());
+	    updateResource();
 
 	    autoDiscoverBox.addActionListener(this);
 
@@ -270,19 +279,22 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    add(resourceField, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 100, 0));
-	    add(timeOutLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+	    add(useHostnameAsResourceBox, new GridBagConstraints(0, 3, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(timeOutField, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
+	    add(timeOutLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+		    GridBagConstraints.WEST, GridBagConstraints.NONE,
+		    new Insets(5, 5, 5, 5), 0, 0));
+	    add(timeOutField, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 50, 0));
-	    add(useSSLBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0,
+	    add(useSSLBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(compressionBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0,
+	    add(compressionBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(debuggerBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0,
+	    add(debuggerBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
 	}
@@ -298,9 +310,34 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    SettingsManager.saveSettings();
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	/**
+	 * Updates resource settings.
+	 */
+	private void updateResource() {
+	    boolean isSelected = useHostnameAsResourceBox.isSelected();
+	    try {
+		    if (isSelected) {
+			String resource = InetAddress.getLocalHost().getHostName();
+			resourceField.setText(resource);
+		    }
+		    resourceField.setEnabled(!isSelected);
+		} catch (UnknownHostException e) {
+		    JOptionPane
+			.showMessageDialog(optionsDialog,
+			    Res.getString("message.unable.to.use.hostname.as.resource"),
+			    Res.getString("title.error"),
+			    JOptionPane.ERROR_MESSAGE);
+		}
+		//localPreferences.setHostAndPortConfigured(!isSelected);
+		SettingsManager.saveSettings();
+	}
+
+        public void actionPerformed(ActionEvent e) {
 	    if (e.getSource() == autoDiscoverBox) {
 		updateAutoDiscovery();
+	    }
+	    else if (e.getSource() == useHostnameAsResourceBox) {
+		updateResource();
 	    }
 	}
 
@@ -358,6 +395,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    localPreferences.setCompressionEnabled(compressionBox.isSelected());
 	    localPreferences.setDebuggerEnabled(debuggerBox.isSelected());
 	    localPreferences.setResource(resourceField.getText());
+	    localPreferences.setUseHostnameAsResource(useHostnameAsResourceBox.isSelected());
 	    SettingsManager.saveSettings();
 	}
     }

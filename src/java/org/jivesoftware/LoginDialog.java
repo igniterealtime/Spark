@@ -45,6 +45,8 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1053,6 +1055,13 @@ public class LoginDialog {
 		    }
 
                     String resource = localPref.getResource();
+		    if (localPref.isUseHostnameAsResource()) {
+			try {
+			    resource = InetAddress.getLocalHost().getHostName();
+			} catch(UnknownHostException e) {
+			    Log.error("unable to retrieve hostname",e);
+			}
+		    }
                     connection.login(getLoginUsername(), getLoginPassword(),
                 	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource).trim());
 
