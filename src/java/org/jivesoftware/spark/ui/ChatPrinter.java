@@ -245,8 +245,13 @@ public class ChatPrinter implements Printable {
      * @param jedPane the JEditorPane to print.
      */
     public void print(JEditorPane jedPane) {
-        setDocument(jedPane);
-        printDialog();
+        try {
+            jedPane.print();
+        }
+        catch(java.awt.print.PrinterException pe)
+        {
+           System.err.printf("Error: %s!\n",pe.toString());
+        }
     }
 
     /**
