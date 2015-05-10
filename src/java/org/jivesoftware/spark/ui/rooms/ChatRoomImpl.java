@@ -468,6 +468,9 @@ public class ChatRoomImpl extends ChatRoom {
         final Runnable runnable = new Runnable() {
             public void run() {
                 if (packet instanceof Presence) {
+                	
+                	Presence.Type oldType = presence.getType();
+                	
                     presence = (Presence)packet;
 
                     final Presence presence = (Presence)packet;
@@ -478,14 +481,10 @@ public class ChatRoomImpl extends ChatRoom {
                     String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
 
                     if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
-                        if (!isOnline()) {
-                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
-                        }
+                        getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                     }
-                    else if (presence.getType() == Presence.Type.available) {
-                        if (!isOnline()) {
-                            getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
-                        }
+                    else if (oldType == Presence.Type.unavailable && presence.getType() == Presence.Type.available) {
+                        getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                     }
                 }
                 else if (packet instanceof Message) {
