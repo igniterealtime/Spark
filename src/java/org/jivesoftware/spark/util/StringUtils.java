@@ -1325,12 +1325,14 @@ public class StringUtils {
 	    }
 	}
 	if (last == 0) {
-	    return string;
+ 		// Return after escaping <![CDATA]]> end sequence "]]>"
+ 	    return string.replace("]]>", "]]&amp;gt;");
 	}
 	if (i > last) {
 	    out.append(input, last, i - last);
 	}
-	return out.toString();
+ 	// Return after escaping <![CDATA]]> end sequence "]]>"
+ 	return out.toString().replace("]]>", "]]&amp;gt;");
     }
 
     /**
