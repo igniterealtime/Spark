@@ -91,6 +91,8 @@ public class ThemePanel extends JPanel {
     private JCheckBox showVCards;
     private JLabel avatarSizeLabel;
     private JComboBox avatarSizeField;
+    
+    private JCheckBox disableGrayingIdleContacts;
 
     private JLabel _lookandfeelLabel;
     private JComboBox _lookandfeel;
@@ -359,6 +361,8 @@ public class ThemePanel extends JPanel {
 
 
         showVCards = new JCheckBox();
+        
+        disableGrayingIdleContacts = new JCheckBox(Res.getString("checkbox.graying.out"));
 
         // Set ResourceUtils
         ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
@@ -405,13 +409,14 @@ public class ThemePanel extends JPanel {
         add(avatarSizeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(_useTabsForTransports, new GridBagConstraints(0, 10, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(_useTabsForConference, new GridBagConstraints(0, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(disableGrayingIdleContacts, new GridBagConstraints(0, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_useTabsForTransports, new GridBagConstraints(0, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_useTabsForConference, new GridBagConstraints(0, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnet.info"));
-        add(reconnectionlabel, new GridBagConstraints(0, 12, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	add(_showReconnectBox, new GridBagConstraints(1, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(reconnectionlabel, new GridBagConstraints(0, 13, 1, 1,0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	add(_showReconnectBox, new GridBagConstraints(1, 13, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         // Activate live one.
@@ -482,6 +487,8 @@ public class ThemePanel extends JPanel {
         showVCards.setSelected(pref.areVCardsVisible());
 
         showAvatarsBox.setSelected(pref.areAvatarsVisible());
+        
+        disableGrayingIdleContacts.setSelected(pref.isGrayingOutEnabled());
 
 
         if (pref.getContactListIconSize() == 16) {
@@ -565,6 +572,10 @@ public class ThemePanel extends JPanel {
     public boolean areEmoticonsEnabled() {
         return emoticonCheckBox.isSelected();
     }
+    
+    public boolean isGrayingOutEnabled() {
+        return disableGrayingIdleContacts.isSelected();
+     }
 
 
     /**

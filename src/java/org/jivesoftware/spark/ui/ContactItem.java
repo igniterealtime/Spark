@@ -517,8 +517,17 @@ public class ContactItem extends JPanel {
             }
         }
         else if (presence.isAvailable()) {
-            getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, fontSize));
-            getNicknameLabel().setForeground(Color.gray);
+       	  	LocalPreferences pref = SettingsManager.getLocalPreferences();
+       	  	if(pref.isGrayingOutEnabled())
+       	  	{
+       	  		getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, fontSize));
+                getNicknameLabel().setForeground(Color.gray);	
+       	  	}
+       	  	else
+       	  	{
+       	  		getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
+                getNicknameLabel().setForeground(Color.black);
+       	  	}
             if (status != null) {
                 setStatusText(status);
             }
