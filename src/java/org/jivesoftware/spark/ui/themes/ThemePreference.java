@@ -103,6 +103,7 @@ public class ThemePreference implements Preference {
     public void commit() {
         final String pack = panel.getThemePanel().getSelectedEmoticonPack();
         boolean emotEnabled = panel.getThemePanel().areEmoticonsEnabled();
+        boolean grayingOutEnabled = panel.getThemePanel().isGrayingOutEnabled();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if(pack != null){
             pref.setEmoticonPack(pack);
@@ -111,7 +112,8 @@ public class ThemePreference implements Preference {
         pref.setLookAndFeel(panel.getThemePanel().getLookAndFeel());
         pref.setAvatarVisible(panel.getThemePanel().areAvatarsVisible());
         pref.setContactListIconSize(panel.getThemePanel().getContactListIconSize());
-        pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());        
+        pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());
+        pref.setGrayingOutEnabled(grayingOutEnabled);
         pref.setReconnectPanelType(panel.getThemePanel().getReconnectPanelType());
 
         try {

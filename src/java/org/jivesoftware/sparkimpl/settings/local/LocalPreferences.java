@@ -770,6 +770,14 @@ public class LocalPreferences {
 		return getBoolean("emoticonsEnabled", true);
 	}
 
+    public void setGrayingOutEnabled(boolean enabled) {
+        setBoolean("GrayingOut", enabled);
+     }
+ 
+     public boolean isGrayingOutEnabled() {
+        return getBoolean("GrayingOut", true);
+     }
+	
 	public void setLookAndFeel(String laf)
 	{
 	    setString("LookAndFeel",laf);
