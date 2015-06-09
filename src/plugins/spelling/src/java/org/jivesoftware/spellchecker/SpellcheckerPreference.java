@@ -126,6 +126,7 @@ public class SpellcheckerPreference implements Preference {
 	dialog.setSelectedLanguage(preferences.getSpellLanguage());
 	dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
 	dialog.setEnableLanuageSelection(preferences.getLanguageSelectionInChatRoom());
+	dialog.setIgnoreUppercase(preferences.getIgnoreUppercase());
     }
 
     public void shutdown() {
