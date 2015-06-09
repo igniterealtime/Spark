@@ -103,13 +103,13 @@ public class SpellcheckerPreferences {
 	props.setProperty(property, Boolean.toString(value));
     }
     
-    public boolean getIgnoreUppercase()
-    {
+    public void setIgnoreUppercase(boolean enabled) {
+	setBoolean("ignoreUppercase", enabled);
+    }
+    
+    public boolean getIgnoreUppercase() {
 	return getBoolean("ignoreUppercase", false);
     }
     
-    public void setIgnoreUppercase(boolean ignore)
-    {
-	setBoolean("ignoreUppercase",ignore);
-    }
+    
 }
