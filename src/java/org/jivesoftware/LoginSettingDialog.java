@@ -27,6 +27,7 @@ import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -201,6 +202,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	private JLabel resourceLabel = new JLabel();
 	private JTextField resourceField = new JTextField();
 	private JCheckBox useHostnameAsResourceBox = new JCheckBox();
+	private JCheckBox useVersionAsResourceBox = new JCheckBox();
 	private JCheckBox autoLoginBox = new JCheckBox();
 	private JCheckBox useSSLBox = new JCheckBox();
 	private JCheckBox compressionBox = new JCheckBox();
@@ -222,6 +224,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    Res.getString("label.resource"));
 	    ResourceUtils.resButton(useHostnameAsResourceBox,
 		    Res.getString("checkbox.use.hostname.as.resource"));
+	    ResourceUtils.resButton(useVersionAsResourceBox,
+			    Res.getString("checkbox.use.version.as.resource"));
 	    ResourceUtils.resButton(compressionBox,
 		    Res.getString("checkbox.use.compression"));
 	    ResourceUtils.resButton(debuggerBox,
@@ -237,7 +241,11 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
 	    useHostnameAsResourceBox.addActionListener(this);
 	    useHostnameAsResourceBox.setSelected(localPreferences.isUseHostnameAsResource());
-	    updateResource();
+	    updateResourceHostname();
+	    
+	    useVersionAsResourceBox.addActionListener(this);
+	    useVersionAsResourceBox.setSelected(localPreferences.isUseVersionAsResource());
+	    updateResourceVersion();
 
 	    autoDiscoverBox.addActionListener(this);
 
@@ -282,19 +290,22 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    add(useHostnameAsResourceBox, new GridBagConstraints(0, 3, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(timeOutLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+	    add(useVersionAsResourceBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0,
+			    GridBagConstraints.WEST, GridBagConstraints.NONE,
+			    new Insets(5, 5, 5, 5), 0, 0));
+	    add(timeOutLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(timeOutField, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
+	    add(timeOutField, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 50, 0));
-	    add(useSSLBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 1.0,
+	    add(useSSLBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(compressionBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 1.0,
+	    add(compressionBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(debuggerBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 1.0,
+	    add(debuggerBox, new GridBagConstraints(0, 8, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
 	}
@@ -313,7 +324,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	/**
 	 * Updates resource settings.
 	 */
-	private void updateResource() {
+	private void updateResourceHostname() {
 	    boolean isSelected = useHostnameAsResourceBox.isSelected();
 	    try {
 		    if (isSelected) {
@@ -331,13 +342,27 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		//localPreferences.setHostAndPortConfigured(!isSelected);
 		SettingsManager.saveSettings();
 	}
+	
+	private void updateResourceVersion() {
+	    boolean isSelected = useVersionAsResourceBox.isSelected();
+	    if (isSelected) {
+	    String resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
+		resourceField.setText(resource);
+	    }
+		resourceField.setEnabled(!isSelected);
+		//localPreferences.setHostAndPortConfigured(!isSelected);
+		SettingsManager.saveSettings();
+	}
 
         public void actionPerformed(ActionEvent e) {
 	    if (e.getSource() == autoDiscoverBox) {
 		updateAutoDiscovery();
 	    }
 	    else if (e.getSource() == useHostnameAsResourceBox) {
-		updateResource();
+		updateResourceHostname();
+	    }
+	    else if (e.getSource() == useVersionAsResourceBox) {
+	    updateResourceVersion();
 	    }
 	}
 
@@ -396,6 +421,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    localPreferences.setDebuggerEnabled(debuggerBox.isSelected());
 	    localPreferences.setResource(resourceField.getText());
 	    localPreferences.setUseHostnameAsResource(useHostnameAsResourceBox.isSelected());
+	    localPreferences.setUseVersionAsResource(useVersionAsResourceBox.isSelected());
 	    SettingsManager.saveSettings();
 	}
     }
