@@ -1212,5 +1212,13 @@ public class LocalPreferences {
     public void setUseHostnameAsResource(boolean useHostnameAsResource) {
 	setBoolean("useHostnameAsResource", useHostnameAsResource);
     }
+    
+    public boolean isUseVersionAsResource() {
+	return getBoolean("useVersionAsResource", false);
+    }
+
+    public void setUseVersionAsResource(boolean useVersionAsResource) {
+	setBoolean("useVersionAsResource", useVersionAsResource);
+    }    
 
 }
