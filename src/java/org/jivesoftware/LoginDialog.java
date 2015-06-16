@@ -106,6 +106,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -1061,6 +1062,8 @@ public class LoginDialog {
 			} catch(UnknownHostException e) {
 			    Log.error("unable to retrieve hostname",e);
 			}
+		    } else if (localPref.isUseVersionAsResource()) {
+		    	resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
 		    }
                     connection.login(getLoginUsername(), getLoginPassword(),
                 	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource).trim());
