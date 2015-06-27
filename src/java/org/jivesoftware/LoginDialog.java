@@ -1056,12 +1056,20 @@ public class LoginDialog {
 		    }
 
                     String resource = localPref.getResource();
-		    if (localPref.isUseHostnameAsResource()) {
+            if (Default.getBoolean("HOSTNAME_AS_RESOURCE")) {
+            try {
+    			    resource = InetAddress.getLocalHost().getHostName();
+    			} catch(UnknownHostException e) {
+    			    Log.error("unable to retrieve hostname",e);
+    			}
+            } else if (localPref.isUseHostnameAsResource()) {
 			try {
 			    resource = InetAddress.getLocalHost().getHostName();
 			} catch(UnknownHostException e) {
 			    Log.error("unable to retrieve hostname",e);
 			}
+		    } else if (Default.getBoolean("VERSION_AS_RESOURCE")) {
+		    	resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
 		    } else if (localPref.isUseVersionAsResource()) {
 		    	resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
 		    }

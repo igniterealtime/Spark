@@ -99,6 +99,8 @@ public class Default {
     public static final String USER_DIRECTORY_WINDOWS = "USER_DIRECTORY_WINDOWS";
     public static final String USER_DIRECTORY_LINUX = "USER_DIRECTORY_LINUX";
     public static final String USER_DIRECTORY_MAC = "USER_DIRECTORY_MAC";
+    public static final String HOSTNAME_AS_RESOURCE = "HOSTNAME_AS_RESOURCE";
+    public static final String VERSION_AS_RESOURCE = "VERSION_AS_RESOURCE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

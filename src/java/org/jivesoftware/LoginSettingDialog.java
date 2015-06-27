@@ -281,6 +281,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    add(connectionPanel, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.BOTH,
 		    new Insets(5, 5, 5, 5), 0, 0));
+	    if (Default.getBoolean(Default.HOSTNAME_AS_RESOURCE) == Default.getBoolean(Default.VERSION_AS_RESOURCE)) {	    
 	    add(resourceLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 0, 0));
@@ -293,6 +294,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    add(useVersionAsResourceBox, new GridBagConstraints(0, 4, 2, 1, 0.0, 1.0,
 			    GridBagConstraints.WEST, GridBagConstraints.NONE,
 			    new Insets(5, 5, 5, 5), 0, 0));
+	    }
 	    add(timeOutLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.WEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 0, 0));
