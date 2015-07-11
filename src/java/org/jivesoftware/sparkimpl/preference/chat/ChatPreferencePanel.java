@@ -52,8 +52,10 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 8910938026549098719L;
 	private JCheckBox showTimeBox = new JCheckBox();
     private ButtonGroup timeFormat = new ButtonGroup();
-    private JRadioButton format12 = new JRadioButton("12:00 PM", true);
-    private JRadioButton format24 = new JRadioButton("24:00", false);
+    private JRadioButton format12 = new JRadioButton("12:00 PM", false);
+    private JRadioButton format24 = new JRadioButton("24:00", true);
+    private JRadioButton format12s = new JRadioButton("12:00:00 PM", false);
+    private JRadioButton format24s = new JRadioButton("24:00:00", false);
     private JCheckBox groupChatNotificationBox = new JCheckBox();
     private JPanel generalPanel = new JPanel();
     private JPanel chatWindowPanel = new JPanel();
@@ -81,16 +83,27 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private void createUI() {
         setLayout(new VerticalFlowLayout());
         timeFormat.add(format24);
+        timeFormat.add(format24s);
         timeFormat.add(format12);
+        timeFormat.add(format12s);
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         if(pref.getTimeFormat().equals("HH:mm"))
         {
       	  format24.setSelected(true);
         }
+        else if(pref.getTimeFormat().equals("HH:mm:ss"))
+        {
+      	  format24s.setSelected(true);
+        }
+        else if(pref.getTimeFormat().equals("h:mm a"))
+        {
+          format12.setSelected(true);
+        }
         else
         {
-      	  format12.setSelected(true);
+          format12s.setSelected(true);
         }
+        
         // Setup Mnemonics
         ResourceUtils.resButton(showTimeBox, Res.getString("checkbox.show.time.in.chat.window"));
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.change.password.to") + ":");
@@ -116,19 +129,21 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         // Chat Window Panel settings
         chatWindowPanel.add(showTimeBox, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(format24, new GridBagConstraints(1, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(format24s, new GridBagConstraints(1, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));        
         chatWindowPanel.add(format12, new GridBagConstraints(2, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(format12s, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(sortChatHistoryAscending, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(sortChatHistoryAscending, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
        
         JLabel chatTimeoutLabel = new JLabel();
         ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, Res.getString("label.minutes.before.stale.chat") + ":");
-        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -144,11 +159,15 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
       		  {
       			  format12.setEnabled(true);
       			  format24.setEnabled(true);
+      			  format12s.setEnabled(true);
+    			  format24s.setEnabled(true);
       		  }
       		  else
       		  {
       			  format12.setEnabled(false);
       			  format24.setEnabled(false);
+      			  format12s.setEnabled(false);
+      			  format24s.setEnabled(false);
       		  }
       	  }
  	     });
@@ -179,9 +198,17 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
        {
       	 return "HH:mm";
        }
+       else if(format24s.isSelected())
+       {
+    	 return "HH:mm:ss";
+       }
+       else if(format12.isSelected())
+       {
+    	 return "h:mm a";
+       }
        else
        {
-      	 return "h:mm a"; 
+      	 return "h:mm:ss a"; 
        }
     }
 
