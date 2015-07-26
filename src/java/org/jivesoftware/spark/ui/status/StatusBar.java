@@ -299,7 +299,7 @@ public class StatusBar extends JPanel implements VCardListener {
                 for (Object aCustom : custom) {
                     final CustomStatusItem customItem = (CustomStatusItem) aCustom;
                     String type = customItem.getType();
-                    final String customStatus = customItem.getType() + " - " + customItem.getStatus();
+                    final String customStatus = customItem.getStatus();
                     if (type.equals(statusItem.getText())) {
                         // Add Child Menu
                         Action action = new AbstractAction() {
