@@ -30,9 +30,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -106,9 +104,9 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
-			private static final long serialVersionUID = 1797491846835591379L;
+            private static final long serialVersionUID = 1797491846835591379L;
 
-			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 StringSelection stringSelection = new StringSelection(getSelectedText());
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
             }
@@ -264,7 +262,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             doc.insertString(doc.getLength(), "", styles);
 
             // Reset Styles for message
-            StyleConstants.setBackground(styles, new Color(0,0,0,0));
+            StyleConstants.setBackground(styles, new Color(0, 0, 0, 0));
             StyleConstants.setBold(styles, false);
             StyleConstants.setForeground(styles, foregroundColor);
             setText(message);
@@ -395,6 +393,58 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         catch (BadLocationException ex) {
             Log.error("Error message.", ex);
         }
+    }
+
+    /**
+     * Does the actual insertion of text, adhering to the styles
+     * specified during message creation in either the thin or thick client.
+     *
+     * @param text - the text to insert.
+     * @throws BadLocationException if location is not available to insert into.
+     */
+    @Override
+    public void insert(String text) throws BadLocationException {
+        boolean bold = false;
+        boolean italic = false;
+        boolean underlined = false;
+
+        Collection<TranscriptWindowTextProcesser> processers= SparkManager.getChatManager().getTranscriptWindowTextProcessers();
+        if(processers.size()==0){
+            super.insert(text);
+            return;
+        }
+
+        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
+        while (tokenizer.hasMoreTokens()) {
+            String textFound = tokenizer.nextToken();
+            if ((textFound.startsWith("http://") || textFound.startsWith("ftp://")
+                    || textFound.startsWith("https://") || textFound.startsWith("www.")) &&
+                    textFound.indexOf(".") > 1) {
+                insertLink(textFound);
+            }
+            //write by bonashen,support file:/ url
+            else if(textFound.startsWith("file:/")){
+                insertLink(textFound);
+            }
+            else if ( textFound.startsWith("\\\\")  || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
+                insertAddress(textFound);
+            }
+            else if (!insertImage(textFound)) {
+                boolean hasProcessed = false;
+                for(TranscriptWindowTextProcesser processer:processers){
+                    if(processer.isProcessed(this,textFound)){
+                        hasProcessed=true;
+                        break;
+                    }
+                }
+                if(!hasProcessed)insertText(textFound);
+            }
+        }
+
+        // By default, always have decorations off.
+        StyleConstants.setBold(styles, bold);
+        StyleConstants.setItalic(styles, italic);
+        StyleConstants.setUnderline(styles, underlined);
     }
 
     /**
