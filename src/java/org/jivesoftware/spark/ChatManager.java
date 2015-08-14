@@ -32,17 +32,7 @@ import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactItemHandler;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.GlobalMessageListener;
-import org.jivesoftware.spark.ui.MessageFilter;
-import org.jivesoftware.spark.ui.SparkTabHandler;
-import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -102,6 +92,7 @@ public class ChatManager implements ChatManagerListener {
 
     private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<SparkTabHandler>();
 
+    private List<TranscriptWindowTextProcesser> textProcessers = new ArrayList<TranscriptWindowTextProcesser>();
 
     private final ChatContainer chatContainer;
 
@@ -714,6 +705,24 @@ public class ChatManager implements ChatManagerListener {
      */
     public void removeTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
         interceptors.remove(interceptor);
+    }
+
+
+    public void addTranscriptWindowTextProcesser(TranscriptWindowTextProcesser processer){
+        textProcessers.add(processer);
+    }
+
+    public void removeTranscriptWindowTextProcesser(TranscriptWindowInterceptor processer){
+        textProcessers.remove(processer);
+    }
+
+    /**
+     * Returns the list of <code>TranscriptWindowTextProcesser</code>.
+     *
+     * @return the list of processers.
+     */
+    public Collection<TranscriptWindowTextProcesser> getTranscriptWindowTextProcessers(){
+        return textProcessers;
     }
 
     /**
