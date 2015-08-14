@@ -409,11 +409,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         boolean underlined = false;
 
         Collection<TranscriptWindowTextProcesser> processers= SparkManager.getChatManager().getTranscriptWindowTextProcessers();
-        if(processers.size()==0){
-            super.insert(text);
-            return;
-        }
-
         final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
@@ -612,7 +607,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         popup.add(printAction);
 
         popup.add(clearAction);
-        
+
         //History window
         Action viewLogAction = new AbstractAction() {
 
@@ -627,7 +622,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 					room = manager.getChatContainer().getActiveChatRoom();
 					HistoryWindow hw = new HistoryWindow(SparkManager.getUserDirectory(), room.getRoomname());
 					hw.showWindow();
-					 
+
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
