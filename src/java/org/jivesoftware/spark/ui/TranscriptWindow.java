@@ -412,27 +412,30 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
-            if ((textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www.")) &&
-                    textFound.indexOf(".") > 1) {
-                insertLink(textFound);
-            }
-            //write by bonashen,support file:/ url
-            else if(textFound.startsWith("file:/")){
-                insertLink(textFound);
-            }
-            else if ( textFound.startsWith("\\\\")  || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
-                insertAddress(textFound);
-            }
-            else if (!insertImage(textFound)) {
-                boolean hasProcessed = false;
-                for(TranscriptWindowTextProcesser processer:processers){
-                    if(processer.isProcessed(this,textFound)){
-                        hasProcessed=true;
-                        break;
-                    }
+            boolean hasProcessed = false;
+            for(TranscriptWindowTextProcesser processer:processers){
+                if(processer.isProcessed(this,textFound)){
+                    hasProcessed=true;
+                    break;
                 }
-                if(!hasProcessed)insertText(textFound);
+            }
+            if(!hasProcessed)
+            {
+                if ((textFound.startsWith("http://") || textFound.startsWith("ftp://")
+                        || textFound.startsWith("https://") || textFound.startsWith("www.")) &&
+                        textFound.indexOf(".") > 1) {
+                    insertLink(textFound);
+                }
+                //write by bonashen,support file:/ url
+                else if(textFound.startsWith("file:/")){
+                    insertLink(textFound);
+                }
+                else if ( textFound.startsWith("\\\\")  || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
+                    insertAddress(textFound);
+                }
+                else if (!insertImage(textFound)) {
+                    insertText(textFound);
+                }
             }
         }
 
