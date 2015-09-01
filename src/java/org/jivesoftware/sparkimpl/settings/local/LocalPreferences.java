@@ -677,7 +677,7 @@ public class LocalPreferences {
          * @return
          */
 	public int getReconnectPanelType() {
-	    return getInt("ReconnectPanelType", 0);
+	    return getInt("ReconnectPanelType", 1);
 	}
 
 	public void setCompressionEnabled(boolean on) {
