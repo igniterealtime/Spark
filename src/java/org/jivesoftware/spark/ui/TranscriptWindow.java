@@ -75,7 +75,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 	private static final long serialVersionUID = -2168845249388070573L;
 	private final SimpleDateFormat notificationDateFormatter;
     private final String notificationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
-
+    private SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    
     private Date lastUpdated;
 
     /**
@@ -172,6 +173,13 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
         String body = message.getBody();
 
+        Date dateToday = new Date();
+        if(myDateFormat.format(lastPost).compareTo(myDateFormat.format(dateToday)) != 0)
+        {
+        insertCustomText(notificationDateFormatter.format(dateToday), true, true, Color.BLACK);
+        lastPost = dateToday;
+        }
+        
         try {
             DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
             Date sentDate;
