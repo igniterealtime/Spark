@@ -43,6 +43,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -78,9 +79,6 @@ public class NotificationAlertUI extends JPanel {
         topLabel.setHorizontalTextPosition(JLabel.RIGHT);
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         topLabel.setForeground(Color.DARK_GRAY);
-
-        // Add Top Label
-        add(topLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Calller Block
         buildInnerBlock();
@@ -191,7 +189,6 @@ public class NotificationAlertUI extends JPanel {
             });
         }
 
-
         byte[] avatarBytes = null;
         try {
             avatarBytes = vcard.getAvatar();
@@ -203,7 +200,33 @@ public class NotificationAlertUI extends JPanel {
         if (avatarBytes != null) {
             try {
                 ImageIcon avatarIcon = new ImageIcon(avatarBytes);
+                                
+                                int w = avatarIcon.getIconWidth();
+                                int h = avatarIcon.getIconHeight();
+                                Double ratio = (double)w / (double)h;
+                                if ( w > 120 || h > 120)
+                                {
+                                	if ( w > h)
+                		            {
+                                		w = 120;
+                		             	h = (int)(w/ratio);
+                		            }else
+                		            {
+                		             	h = 120;
+                		             	w = (int)(h*ratio);
+                		            }
+                                }
+                                
+                                BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                                Graphics2D g2 = resizedImg.createGraphics();
+                                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                                g2.drawImage(avatarIcon.getImage(), 0, 0, w, h, null);
+                                g2.dispose();
+                                
+                                avatarIcon = new ImageIcon(resizedImg);
+                   
                 avatarLabel.setIcon(GraphicUtils.scale(avatarIcon, AVATAR_HEIGHT, AVATAR_WIDTH));
+            
             }
             catch (Exception e) {
                 // no issue

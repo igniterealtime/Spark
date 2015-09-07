@@ -703,6 +703,14 @@ public class LocalPreferences {
 	public String getEmoticonPack() {
 		return props.getProperty("emoticonPack", "Default");
 	}
+	
+	public void setNotificationsDisplayTime(Integer DisplayTime) {
+	       setInt("DisplayTime", DisplayTime);
+	}
+		    
+	public int getNotificationsDisplayTime() {
+	       return getInt("DisplayTime", 3);
+	}
 
 	public void setOfflineNotifications(boolean notify) {
 		setBoolean("notifyOnOffline", notify);
