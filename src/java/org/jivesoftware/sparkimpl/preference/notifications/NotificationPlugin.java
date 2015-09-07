@@ -41,6 +41,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -147,7 +148,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
    		 EventQueue.invokeAndWait(new Runnable(){
    			 public void run() {
    				 SparkToaster toaster = new SparkToaster();
-   				 toaster.setDisplayTime(5000);
+   				 toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
    				 toaster.setBorder(BorderFactory.createBevelBorder(0));
    				 toaster.setCustomAction(new ChatAction(jid));
    				 NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
@@ -161,8 +162,8 @@ public class NotificationPlugin implements Plugin, PacketListener {
    				 
    				 toaster.setToasterWidth(width);
    				 
-   				 toaster.showToaster("", alertUI);
-   				 toaster.hideTitle();
+   				toaster.showToaster(alertUI.topLabel.getText(), alertUI);
+   				toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
    			 }
    		 });
    	 }
@@ -183,11 +184,10 @@ public class NotificationPlugin implements Plugin, PacketListener {
    			 public void run() {   	 
 			        SparkToaster toaster = new SparkToaster();
 			        toaster.setCustomAction(new ChatAction(jid));
-			        toaster.setDisplayTime(5000);
+			        toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
 			        toaster.setBorder(BorderFactory.createBevelBorder(0));
 			
 			        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
-			
 			
 			        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
 			
@@ -198,8 +198,8 @@ public class NotificationPlugin implements Plugin, PacketListener {
 			
 			        toaster.setToasterWidth(width);
 			
-			        toaster.showToaster("", alertUI);
-			        toaster.hideTitle();
+			        toaster.showToaster(alertUI.topLabel.getText(), alertUI);
+			        toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
    			 }
    		 });
    	 }

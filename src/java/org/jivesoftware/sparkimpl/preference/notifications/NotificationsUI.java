@@ -24,12 +24,25 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 /**
  * Represents the UI for handling notification preferences within Spark.
@@ -46,40 +59,68 @@ public class NotificationsUI extends JPanel {
     private JCheckBox betaCheckBox;
     private JCheckBox SystemTrayNotificationBox;
     private JCheckBox showTypingNotificationBox;
+    
+    private JSpinner notificationDelay;
 
     public NotificationsUI() {
-        setLayout(new VerticalFlowLayout());
+
+    	Integer[] spinnerDelay = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+    	SpinnerListModel delayModel = new SpinnerListModel(spinnerDelay);
+    	notificationDelay = new JSpinner(delayModel);
+    	notificationDelay.setPreferredSize(new Dimension(40,20));
+    	        
+    	setLayout(new FlowLayout(FlowLayout.LEFT));
+    	        
+    	JPanel pn = new JPanel();
+    	pn.setLayout(new GridBagLayout());
+    	        
+    	JPanel pn_spinner = new JPanel();
+    	pn_spinner.setLayout(new FlowLayout(FlowLayout.RIGHT));
+    	pn_spinner.add(new JLabel(Res.getString("label.display.time")));
+    	pn_spinner.add(notificationDelay);
+    	pn_spinner.add(new JLabel(Res.getString("label.seconds")));
+    	pn_spinner.setPreferredSize(new Dimension(190,25));
+    	 
+    	JPanel pn_OnOffNotifications = new JPanel();
+    	pn_OnOffNotifications.setLayout(new GridBagLayout());
+    	        
+    	offlineNotificationBox = new JCheckBox();
+    	ResourceUtils.resButton(offlineNotificationBox, Res.getString("checkbox.notify.user.goes.offline"));
+    	pn_OnOffNotifications.add(offlineNotificationBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+    	        
+    	onlineNotificationBox = new JCheckBox();
+    	ResourceUtils.resButton(onlineNotificationBox, Res.getString("checkbox.notify.user.comes.online"));
+    	pn_OnOffNotifications.add(onlineNotificationBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+    	        
+    	pn_OnOffNotifications.add(pn_spinner, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+    	pn_OnOffNotifications.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray.brighter()));
 
         setBorder(BorderFactory.createTitledBorder(Res.getString("group.notification.options")));
 
         toasterBox = new JCheckBox();
         ResourceUtils.resButton(toasterBox, Res.getString("checkbox.show.toaster"));
-        add(toasterBox);
+        pn.add(toasterBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         windowFocusBox = new JCheckBox();
         ResourceUtils.resButton(windowFocusBox, Res.getString("checkbox.window.to.front"));
-        add(windowFocusBox);
-
-        offlineNotificationBox = new JCheckBox();
-        ResourceUtils.resButton(offlineNotificationBox, Res.getString("checkbox.notify.user.goes.offline"));
-        add(offlineNotificationBox);
-
-        onlineNotificationBox = new JCheckBox();
-        ResourceUtils.resButton(onlineNotificationBox, Res.getString("checkbox.notify.user.comes.online"));
-        add(onlineNotificationBox);
-
+        pn.add(windowFocusBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+                
+        pn.add(pn_OnOffNotifications, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        
         SystemTrayNotificationBox = new JCheckBox();
         ResourceUtils.resButton(SystemTrayNotificationBox, Res.getString("checkbox.notify.systemtray"));
-        add(SystemTrayNotificationBox);
-        
+        pn.add(SystemTrayNotificationBox, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+           
         showTypingNotificationBox = new JCheckBox();
         ResourceUtils.resButton(showTypingNotificationBox, Res.getString("checkbox.notify.typing.systemtray"));
-        add(showTypingNotificationBox);
+        pn.add(showTypingNotificationBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         
         betaCheckBox = new JCheckBox();
         ResourceUtils.resButton(betaCheckBox, Res.getString("menuitem.check.for.updates"));
         if(!Default.getBoolean(Default.DISABLE_UPDATES)){
-        add(betaCheckBox);
+        	pn.add(betaCheckBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        	   
+        	add(pn);	
         }
         
         windowFocusBox.addChangeListener(new ChangeListener(){
@@ -124,6 +165,16 @@ public class NotificationsUI extends JPanel {
     public boolean shouldWindowPopup() {
         return windowFocusBox.isSelected();
     }
+    
+    public void setNotificationsDisplayTime(int DisplayTime)
+    {
+        notificationDelay.setValue(DisplayTime);
+    }
+       
+    public Integer getNotificationsDisplayTime()
+    {
+        return Integer.valueOf(notificationDelay.getValue().toString())*1000;
+    }   
 
     public void setOfflineNotification(boolean notify) {
         offlineNotificationBox.setSelected(notify);

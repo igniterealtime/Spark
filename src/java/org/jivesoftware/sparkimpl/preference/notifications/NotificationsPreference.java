@@ -76,6 +76,7 @@ public class NotificationsPreference implements Preference {
 				boolean onlineNotification = localPreferences
 						.isOnlineNotificationsOn();
 				boolean betaChecking = localPreferences.isBetaCheckingEnabled();
+				int DisplayTime = localPreferences.getNotificationsDisplayTime();
 				boolean typingNotification = localPreferences
 						.isTypingNotificationShown();
 				boolean systemTrayNotification = localPreferences
@@ -86,6 +87,7 @@ public class NotificationsPreference implements Preference {
 				panel.setOfflineNotification(offlineNotification);
 				panel.setOnlineNotification(onlineNotification);
 				panel.setCheckForBeta(betaChecking);
+				panel.setNotificationsDisplayTime(DisplayTime/1000);
 				panel.setTypingNotification(typingNotification);
 				panel.setSystemTrayNotification(systemTrayNotification);
 				
@@ -115,6 +117,7 @@ public class NotificationsPreference implements Preference {
 
 		pref.setShowToasterPopup(panel.showToaster());
 		pref.setWindowTakesFocus(panel.shouldWindowPopup());
+		pref.setNotificationsDisplayTime(panel.getNotificationsDisplayTime());
 		pref.setOfflineNotifications(panel.isOfflineNotificationOn());
 		pref.setOnlineNotifications(panel.isOnlineNotificationOn());
 		pref.setCheckForBeta(panel.isBetaCheckingEnabled());

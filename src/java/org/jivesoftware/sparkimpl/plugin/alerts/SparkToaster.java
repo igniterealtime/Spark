@@ -56,6 +56,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.image.TileObserver;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -71,6 +72,8 @@ import javax.swing.border.Border;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -657,12 +660,13 @@ public class SparkToaster {
             setLayout(new GridBagLayout());
             label = new JLabel(text);
             label.setFont(new Font("Dialog", Font.BOLD, 11));
-            label.setHorizontalTextPosition(JLabel.LEFT);
+            label.setHorizontalTextPosition(JLabel.RIGHT);
             label.setHorizontalAlignment(JLabel.LEFT);
 
             add(label, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
       		closeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
+      		
       		if (showCloseIcon) {
       			add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
       		}
@@ -687,7 +691,12 @@ public class SparkToaster {
         public void setTitle(String title) {
             label.setText(title);
         }
-
+                
+                public JLabel getLabel()
+                {
+                	return label;
+                }
+                
         public void paintComponent(Graphics g) {
             final Image backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
             double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
@@ -717,6 +726,12 @@ public class SparkToaster {
         toaster.showToaster("HELLO", button);
 
     }
-
+        
+        public void setTitleAlert(Font font, Presence presence) {
+    		final Icon presenceIcon = PresenceManager.getIconFromPresence(presence);
+    		titleLabel.setIcon(presenceIcon);
+    		titleLabel.getLabel().setFont(font);
+    	}
+        
 }
 
