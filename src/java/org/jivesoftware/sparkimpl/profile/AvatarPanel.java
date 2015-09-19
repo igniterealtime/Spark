@@ -70,7 +70,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         setLayout(new GridBagLayout());
 
 
-        final JLabel photo = new JLabel("Avatar:");
+        final JLabel photo = new JLabel(Res.getString("label.avatar"));
 
         avatar = new JLabel();
 
