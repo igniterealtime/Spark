@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPException;
@@ -148,6 +149,9 @@ public class GatewayButton extends JPanel implements GatewayItem {
         final JMenuItem unregisterMenu = new JMenuItem(Res.getString("menuitem.delete.login.information"));
         unregisterMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
+            	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+            	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+            	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                 int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport", transport.getName()), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
