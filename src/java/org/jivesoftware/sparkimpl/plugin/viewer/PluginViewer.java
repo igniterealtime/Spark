@@ -53,6 +53,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JViewport;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -216,6 +217,10 @@ public class PluginViewer extends JPanel implements Plugin {
     }
 
     private boolean uninstall(final PublicPlugin plugin) {
+    	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+    	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+    	
         int ok = JOptionPane.showConfirmDialog(installedPanel, Res.getString("message.prompt.plugin.uninstall", plugin.getName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.YES_OPTION) {
             
@@ -238,7 +243,6 @@ public class PluginViewer extends JPanel implements Plugin {
             deactivatedPanel.add(ui);
             addDeactivatedListener(ui);
          
-            
             JOptionPane.showMessageDialog(this, Res.getString("message.restart.spark.changes"), Res.getString("title.reminder"), JOptionPane.INFORMATION_MESSAGE);
             PluginManager.getInstance().removePublicPlugin(plugin);
             return true;
@@ -319,6 +323,7 @@ public class PluginViewer extends JPanel implements Plugin {
                     availablePanel.validate();
                     availablePanel.repaint();
 
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(availablePanel, Res.getString("message.plugins.not.available"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }

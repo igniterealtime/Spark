@@ -1654,9 +1654,11 @@ public class ContactList extends JPanel implements ActionListener,
 	                LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), item.getJID()+client);
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
                 }
                 catch (Exception e1) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.unable.to.retrieve.last.activity", item.getJID()), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -1774,7 +1776,7 @@ public class ContactList extends JPanel implements ActionListener,
             for (Message message : broadcastMessages.values()) {
                 SparkManager.getConnection().sendPacket(message);
             }
-
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcasted.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
         }
 

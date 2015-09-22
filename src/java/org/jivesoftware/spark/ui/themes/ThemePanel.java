@@ -601,6 +601,7 @@ public class ThemePanel extends JPanel {
                 String name = emoticonManager.installPack(pack);
 
                 if (name == null) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(this, "Not a valid emoticon pack.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }

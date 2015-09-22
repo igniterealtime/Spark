@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -177,6 +178,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 changeAvatar(file, this);
             }
             else {
+            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(this, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             }
 

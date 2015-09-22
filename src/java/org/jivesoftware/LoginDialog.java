@@ -78,6 +78,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import org.dom4j.Document;
@@ -1127,6 +1128,7 @@ public class LoginDialog {
      							//progressBar.setIndeterminate(false);
 
      							// Show error dialog
+     							UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
      							if (loginDialog.isVisible()) {
      								if (!localPref.isSSOEnabled()) {
      	                        JOptionPane.showMessageDialog(loginDialog, finalerrorMessage, Res.getString("title.login.error"),

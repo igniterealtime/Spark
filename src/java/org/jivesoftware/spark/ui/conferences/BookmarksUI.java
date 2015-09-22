@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
-
+import javax.swing.UIManager;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -48,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -467,6 +468,7 @@ public class BookmarksUI extends JPanel {
 			public void actionPerformed(ActionEvent e) {
                 final String conferenceService = serviceField.getText();
                 if (hasService(conferenceService)) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(null, Res.getString("message.service.already.exists"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     serviceField.setText("");
                 }
@@ -524,6 +526,7 @@ public class BookmarksUI extends JPanel {
                                 addButton.setEnabled(true);
                             }
                             else {
+                            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.conference.service.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                                 serviceField.setText("");
                                 serviceField.setEnabled(true);

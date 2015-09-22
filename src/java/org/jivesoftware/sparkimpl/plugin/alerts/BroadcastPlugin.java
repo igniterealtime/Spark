@@ -48,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -132,6 +133,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                     selectedUser = contactItem.getJID();
                 }
 
+                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
+                
                 String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
                 if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
                     if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {

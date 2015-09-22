@@ -38,6 +38,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -67,6 +68,7 @@ public class SearchForm extends JPanel {
         }
         catch (XMPPException e) {
             Log.error("Unable to load search services.", e);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -145,6 +147,7 @@ public class SearchForm extends JPanel {
                     searchResults.repaint();
                 }
                 else {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(searchResults, Res.getString("message.no.results.found"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
                 }
             }

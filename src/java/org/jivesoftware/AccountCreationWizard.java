@@ -53,6 +53,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 /**
  * Allows the creation of accounts on an XMPP server.
@@ -215,6 +216,7 @@ public class AccountCreationWizard extends JPanel {
         }
 
         if (errors) {
+        	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -259,6 +261,7 @@ public class AccountCreationWizard extends JPanel {
                 if (connection == null) {
                     if (ui.isShowing()) {
                         createAccountButton.setEnabled(true);
+                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                         JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer()), Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
                         createAccountButton.setEnabled(true);
                     }
@@ -289,6 +292,7 @@ public class AccountCreationWizard extends JPanel {
             usernameField.setText("");
             usernameField.requestFocus();
         }
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
         createAccountButton.setEnabled(true);
     }
@@ -298,6 +302,7 @@ public class AccountCreationWizard extends JPanel {
      */
     private void accountCreationSuccessful() {
         registered = true;
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, Res.getString("message.account.created"), Res.getString("title.account.created"), JOptionPane.INFORMATION_MESSAGE);
         dialog.dispose();
     }

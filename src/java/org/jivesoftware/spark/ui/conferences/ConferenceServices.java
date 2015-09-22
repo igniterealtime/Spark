@@ -36,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -410,6 +411,7 @@ public class ConferenceServices implements InvitationListener {
                             }
                         }
                         catch (XMPPException e1) {
+                        	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(chatRoom, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         }
                     }

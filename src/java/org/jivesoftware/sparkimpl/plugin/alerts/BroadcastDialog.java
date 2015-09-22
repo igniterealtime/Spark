@@ -41,6 +41,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -325,6 +326,8 @@ public class BroadcastDialog extends JPanel {
      */
     private boolean sendBroadcasts(JDialog dlg) {
         final Set<String> jids = new HashSet<String>();
+        
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         
         for (CheckNode node : nodes) {
             if (node.isSelected()) {

@@ -50,6 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -311,7 +312,7 @@ public class SubscriptionDialog {
             dialog.setVisible(false);
             return true;
         }
-
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(dialog, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
         return false;
     }

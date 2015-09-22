@@ -41,6 +41,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.ui.themes.ColorSettingManager;
 import org.jivesoftware.spark.ui.themes.ColorSettings;
@@ -140,7 +141,8 @@ public final class Spark {
         if (workingDirectory == null) {
 
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists()) {
-                JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
+            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            	JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
             }
         }

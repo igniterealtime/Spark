@@ -22,6 +22,7 @@ package org.jivesoftware.sparkimpl.preference.chat;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -118,6 +119,7 @@ public class ChatPreference implements Preference {
                 SparkManager.getConnection().getAccountManager().changePassword(panel.getPassword());
             }
             catch (XMPPException passwordEx) {
+            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.unable.to.save.password"),
                     Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 Log.error("Unable to change password", passwordEx);

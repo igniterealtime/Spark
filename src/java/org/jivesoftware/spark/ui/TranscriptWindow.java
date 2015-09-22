@@ -483,12 +483,14 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                 final BufferedWriter writer = new BufferedWriter(new FileWriter(selFile));
                 writer.write(buf.toString());
                 writer.close();
+                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
                         "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch (Exception ex) {
             Log.error("Unable to save chat transcript.", ex);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 

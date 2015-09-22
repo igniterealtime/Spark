@@ -430,6 +430,7 @@ public class RosterDialog implements ActionListener {
 
             public void finished() {
                 if (get() == null) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(dialog, Res.getString("label.unable.to.add.contact"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -452,6 +453,8 @@ public class RosterDialog implements ActionListener {
     public void searchForContact(String byname, MouseEvent event)
 	    throws XMPPException {
 
+    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+    	
 	if (byname.contains("@")) {
 	    byname = byname.substring(0, byname.indexOf("@"));
 	}
@@ -606,6 +609,8 @@ public class RosterDialog implements ActionListener {
     private void addContactButton() {
 	String errorMessage = Res.getString("title.error");
 	String jid = getJID();
+	
+	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	
 	if(jid.length()==0)
 	{
