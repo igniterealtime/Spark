@@ -1456,6 +1456,9 @@ public class ContactList extends JPanel implements ActionListener,
 
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+            	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+            	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                 int ok = JOptionPane.showConfirmDialog(group, Res.getString("message.delete.confirmation", group.getGroupName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.YES_OPTION) {
                     String groupName = group.getGroupName();

@@ -283,6 +283,8 @@ public class ThemePanel extends JPanel {
             public void finished() {
                 // if the current laf is substance, and the new laf is not, we need to refresh all components,
                 //   but since substance is very stubborn, we must restart.
+            	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+            	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
                 if (UIManager.getLookAndFeel().getName().toLowerCase().contains("substance")
                         && !_lookandfeelname.get(_lookandfeel.getSelectedIndex()).toLowerCase().contains("substance")) { // substance is a PITA!
                     if (JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(), Res.getString("message.restart.required"),

@@ -37,8 +37,10 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.resource.Res;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -126,6 +128,9 @@ public class CallManager implements InterlocutorListener {
 
                 if (component instanceof PhonePanel) {
                     final InterlocutorUI ic = phonePanel.getActiveCall();
+                    UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+                    UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+                    UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                     if (ic.getCallState().equals(Call.CONNECTED)) {
                         // Prompt to close this window
                         int ok = JOptionPane.showConfirmDialog(component, PhoneRes.getIString("phone.closeconfirm"), PhoneRes.getIString("phone.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);

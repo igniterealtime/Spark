@@ -7,6 +7,7 @@ import java.security.PublicKey;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.otrplug.OTRManager;
@@ -15,6 +16,7 @@ import org.jivesoftware.spark.otrplug.util.OTRProperties;
 import org.jivesoftware.spark.otrplug.util.OTRResources;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.MessageEventListener;
+import org.jivesoftware.resource.Res;
 
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.UIComponentRegistry;
@@ -173,6 +175,10 @@ public class OTRSession {
 
                 @Override
                 public void sessionStatusChanged(SessionID arg0) {
+                	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+                	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+                	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
+                	
                     if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
                         _conPanel.successfullyCon();
 
