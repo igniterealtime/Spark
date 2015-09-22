@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -52,6 +53,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.resource.Res;
 
 public class Notes extends JPanel {
 	private static final long serialVersionUID = -7789684145607565950L;
@@ -207,6 +209,7 @@ public class Notes extends JPanel {
     }
 
     public void showError(String error) {
+    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, error, FpRes.getString("title.notes"), JOptionPane.ERROR_MESSAGE);
     }
 

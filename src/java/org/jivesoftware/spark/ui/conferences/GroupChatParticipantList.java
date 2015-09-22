@@ -53,6 +53,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.Res;
@@ -767,6 +768,7 @@ public class GroupChatParticipantList extends JPanel {
 									      // deny
 									      // changing
 									      // nick
+				    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 					JOptionPane
 						.showMessageDialog(
 							groupChatRoom,

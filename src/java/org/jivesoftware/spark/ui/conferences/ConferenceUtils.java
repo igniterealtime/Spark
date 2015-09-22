@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -239,6 +240,7 @@ public class ConferenceUtils {
             }
 
             public void finished() {
+            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 if (errors.size() > 0) {
                     String error = errors.get(0);
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
@@ -593,6 +595,7 @@ public class ConferenceUtils {
 
         if (errors.size() > 0) {
             String error = errors.get(0);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
             return null;
         }
@@ -602,6 +605,7 @@ public class ConferenceUtils {
             chatManager.getChatContainer().activateChatRoom(room);
         }
         else {
+        	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join the room.", "Error", JOptionPane.ERROR_MESSAGE);
             return null;
         }
@@ -667,6 +671,8 @@ public class ConferenceUtils {
             }
         }
 
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        
         if (errors.size() > 0) {
             String error = errors.get(0);
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Could Not Join Room", JOptionPane.ERROR_MESSAGE);

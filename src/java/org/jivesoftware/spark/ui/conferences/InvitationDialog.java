@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -136,6 +137,7 @@ final class InvitationDialog extends JPanel {
                 String jid = jidField.getText();
                 String server = StringUtils.parseBareAddress(jid);
                 if (server == null || server.indexOf("@") == -1) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(dlg, Res.getString("message.enter.valid.jid"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     jidField.setText("");
                     jidField.requestFocus();
@@ -316,7 +318,8 @@ final class InvitationDialog extends JPanel {
                     final String roomTitle = getSelectedRoomName();
                     final BookmarkedConference selectedBookmarkedConf = getSelectedBookmarkedConference();
                     int size = invitedUserList.getModel().getSize();
-
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    
                     if (size == 0) {
                         JOptionPane.showMessageDialog(dlg, Res.getString("message.specify.users.to.join.conference"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
@@ -390,6 +393,7 @@ final class InvitationDialog extends JPanel {
                                     }
                                 }
                                 catch (XMPPException e2) {
+                                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                     JOptionPane.showMessageDialog(pane, ConferenceUtils.getReason(e2), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                                 }
                             }

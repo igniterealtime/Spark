@@ -51,6 +51,7 @@ import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JButton;
+import javax.swing.UIManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -335,6 +336,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    }
 		    resourceField.setEnabled(!isSelected);
 		} catch (UnknownHostException e) {
+			UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 		    JOptionPane
 			.showMessageDialog(optionsDialog,
 			    Res.getString("message.unable.to.use.hostname.as.resource"),
@@ -374,6 +376,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    String resource = resourceField.getText();
 
 	    boolean valid = true;
+	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 
 	    try {
 		Integer.valueOf(timeOut);
@@ -631,6 +634,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 
 	public boolean validate_settings() {
 	    boolean valid = true;
+	    
+	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 
 	    if (useProxyBox.isSelected()) {
 		try {
@@ -919,6 +924,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	public boolean validate_settings() {
 
 	    boolean valid = true;
+	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 
 	    if (useSSOBox.isSelected() && showAdvBox.isSelected()) {
 		if (ssoMethodManualRadio.isSelected()) {
@@ -1169,6 +1175,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	public boolean validate_settings() {
 
 	    boolean valid = true;
+	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 
 	    if (usePKIBox.isSelected()) {
 		if (!ModelUtil.hasLength(fileField.getText())) {

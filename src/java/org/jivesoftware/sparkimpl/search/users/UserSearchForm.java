@@ -39,6 +39,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -183,6 +184,7 @@ public class UserSearchForm extends JPanel {
 
                         public void finished() {
                             if (newForm == null) {
+                            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                 JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
                             }
                             else {

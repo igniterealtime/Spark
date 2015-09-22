@@ -43,6 +43,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  * Allows for changing of default languages within Spark.
@@ -109,6 +110,9 @@ public class LanguagePlugin implements Plugin {
                         preferences.setLanguage(locale.toString());
                         SettingsManager.saveSettings();
 
+                        UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+                        UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+                        
                         int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res. getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
                         if (ok == JOptionPane.YES_OPTION) {
                             SparkManager.getMainWindow().closeConnectionAndInvoke("Language Change");

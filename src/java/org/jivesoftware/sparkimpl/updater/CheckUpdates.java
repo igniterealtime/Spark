@@ -55,6 +55,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.UIManager;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -306,6 +307,7 @@ public class CheckUpdates {
                 UPDATING = false;
 
                 if (!downloadComplete) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -417,7 +419,10 @@ public class CheckUpdates {
             if (serverVersion == null) {
                 UPDATING = false;
 
+                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                
                 if (explicit) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.no.updates"), Res.getString("title.no.updates"), JOptionPane.INFORMATION_MESSAGE);
                 }
                 return;

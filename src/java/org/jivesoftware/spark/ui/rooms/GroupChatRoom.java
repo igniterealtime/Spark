@@ -44,6 +44,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -784,6 +785,7 @@ public class GroupChatRoom extends ChatRoom {
 	    Destroy destroy = mucUser.getDestroy();
 	    if (destroy != null) {
 		String reason = destroy.getReason();
+		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 		JOptionPane.showMessageDialog(this,
 			Res.getString("message.room.destroyed", reason),
 			Res.getString("title.room.destroyed"),

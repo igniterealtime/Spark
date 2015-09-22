@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -487,6 +488,7 @@ public class VCardEditor {
 	    SparkManager.getVCardManager().notifyVCardListeners();
 	} catch (XMPPException e) {
 	    Log.error(e);
+	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	    JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
 		    Res.getString("message.vcard.not.supported"),
 		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

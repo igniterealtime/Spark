@@ -58,6 +58,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.UIManager;
+
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -182,7 +184,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	Hauptpanel.add(pane_hiddenButtons, BorderLayout.EAST);
 	this.add(Hauptpanel, BorderLayout.NORTH);
         
-    labelFilter = new JLabel(SparkRes.getString(SparkRes.FILTER_LABEL));
+    labelFilter = new JLabel(Res.getString("label.search"));
     txtFilter = new JTextField(20);       
     txtFilter.setMinimumSize(new Dimension(50,20));
         
@@ -421,6 +423,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void bookmarkRoom(String serviceName) {
         int selectedRow = roomsTable.getSelectedRow();
+        
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        
         if (-1 == selectedRow) {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.select.add.room.to.add"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -482,6 +487,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void joinSelectedRoom() {
 	int selectedRow = roomsTable.getSelectedRow();
+	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	if (-1 == selectedRow) {
 	    JOptionPane.showMessageDialog(dlg,
 		    Res.getString("message.select.room.to.join"),
@@ -537,6 +543,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     rooms = getRoomList(serviceName);
 
                     if (rooms == null) {
+                    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                         JOptionPane.showMessageDialog(conferences,
                             Res.getString("message.conference.info.error"),
                             Res.getString("title.error"),
@@ -779,6 +786,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void enterRoom() {
 	int selectedRow = roomsTable.getSelectedRow();
+	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	if (-1 == selectedRow) {
 	    JOptionPane.showMessageDialog(dlg,
 		    Res.getString("message.select.room.to.enter"),
@@ -859,6 +867,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         addRoomToTable(groupChat.getRoom(), StringUtils.parseName(groupChat.getRoom()), 1);
 	    } catch (XMPPException e1) {
 		Log.error("Error creating new room.", e1);
+		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 		JOptionPane
 			.showMessageDialog(this,
 				Res.getString("message.room.creation.error"),

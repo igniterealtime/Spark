@@ -40,8 +40,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -261,6 +263,7 @@ public class WorkgroupManager {
             if (field.isRequired() && !field.getValues().hasNext()) {
                 String variable = field.getVariable();
                 String elementName = workgroupForm.getField(variable).getLabel();
+                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(parent, variable + " is required to complete the form.", "Incomplete Form", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -391,6 +394,7 @@ public class WorkgroupManager {
                     invites.remove(workgroup.getWorkgroupJID());
                 }
                 else {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to contact a member of the workgroup. Please try back later.", "No Answer", JOptionPane.INFORMATION_MESSAGE);
                 }
             }

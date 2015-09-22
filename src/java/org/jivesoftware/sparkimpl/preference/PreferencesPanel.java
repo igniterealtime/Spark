@@ -35,6 +35,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -144,6 +145,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                     currentPreference.commit();
                 }
                 else {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
                             Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     list.removeListSelectionListener(this);
@@ -164,6 +166,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                 return true;
             }
             else {
+            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
                         Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 return false;

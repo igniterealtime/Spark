@@ -50,6 +50,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -537,6 +538,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
                 File logDir = new File(Spark.getLogDirectory(), "errors.log");
                 if (!logDir.exists()) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No error logs found.", "Error Log", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else {
@@ -906,6 +908,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Displays the About Box for Spark.
      */
     private static void showAboutBox() {
+    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), SparkManager.getMainWindow().getAboutBoxPane(),
             Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.MAIN_IMAGE));
     }

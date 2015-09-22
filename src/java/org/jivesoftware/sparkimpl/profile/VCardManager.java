@@ -48,6 +48,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -284,6 +285,7 @@ public class VCardManager {
                     viewProfile(jidToView, SparkManager.getWorkspace());
                 }
                 else if (ModelUtil.hasLength(jidToView)) {
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.invalid.jabber.id"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -309,6 +311,7 @@ public class VCardManager {
             public void finished() {
                 if (vcard == null) {
                     // Show vcard not found
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
                 }
                 else {
@@ -339,6 +342,7 @@ public class VCardManager {
             public void finished() {
                 if (vcard.getError() != null || vcard == null) {
                     // Show vcard not found
+                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
                 }
                 else {
