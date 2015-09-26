@@ -339,7 +339,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);
-        m.setFrom(nickname +" - "+broadcasttype);
+        m.setFrom(nickname+" - "+broadcasttype);
 
 	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
 	chatRoom.addToTranscript(m,true);
@@ -351,7 +351,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	    SparkToaster toaster = new SparkToaster();
 	    toaster.setDisplayTime(30000);
 	    toaster.setBorder(BorderFactory.createBevelBorder(0));
-	    toaster.setTitle(broadcasttype);
+	    toaster.setTitle(nickname+ " - "+broadcasttype);
 	    toaster.showToaster(message.getBody());
 	}
 
