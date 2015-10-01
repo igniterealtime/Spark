@@ -70,6 +70,7 @@ public class ContactInfoWindow extends JPanel {
     private final JLabel avatarLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
     private final JLabel titleLabel = new JLabel();
+    private final JLabel phoneLabel = new JLabel();
 
     private ContactItem contactItem;
 
@@ -108,11 +109,12 @@ public class ContactInfoWindow extends JPanel {
 
         setBackground(Color.white);
         if (populate) {
-		add(avatarLabel, new GridBagConstraints(0, 1, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+		add(avatarLabel, new GridBagConstraints(0, 1, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 		add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
 		add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
 		add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
 		add(titleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+		add(phoneLabel, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
 		add(fullJIDLabel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
 
@@ -125,8 +127,10 @@ public class ContactInfoWindow extends JPanel {
 		statusLabel.setBorder(null);
 		fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
 		fullJIDLabel.setForeground(Color.gray);
-		titleLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
+		titleLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
 		titleLabel.setForeground(Color.gray);
+		phoneLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+		phoneLabel.setForeground(Color.gray);
 
 
 		fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
@@ -307,15 +311,22 @@ public class ContactInfoWindow extends JPanel {
 
         // Get VCard from memory (if available)
         String title = "";
+        String phone = "";
         VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(contactItem.getJID()));
         if (vcard != null) {
             title = vcard.getField("TITLE");
+            phone = vcard.getPhoneWork("VOICE");
             if (!ModelUtil.hasLength(title)) {
                 title = "";
+            }
+            if (!ModelUtil.hasLength(phone)) {
+                phone = "";
             }
         }
 
         titleLabel.setText(title);
+        phoneLabel.setText(phone);
+
     }
 
     public void setContactItem(ContactItem contactItem) {
