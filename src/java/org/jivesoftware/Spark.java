@@ -284,7 +284,7 @@ public final class Spark {
 		    : Default.getString(Default.MENUBAR_TEXT);
 	    props.put("logoString", menubar);
 	    try {
-		Class<?> c = ClassLoader.getSystemClassLoader().loadClass(laf);
+		Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(laf);
 		Method m = c.getMethod("setCurrentTheme", Properties.class);
 		m.invoke(c.newInstance(), props);
 	    } catch (Exception e) {
