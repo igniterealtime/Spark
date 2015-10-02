@@ -126,8 +126,8 @@
               value="jingle.jar,mail.jar,activation.jar,dom4j.jar,startup.jar,base.jar,i4jruntime.jar"/>
 
 	<!-- IzPack Installer -->
-	<property name="installer.izpack.dir" value="/opt/IzPack/"/>
-	<property name="launch4j.dir" location="/opt/Launch4j" />
+	<property name="installer.izpack.dir" value="c:/progra~1/IzPack/" />
+	<property name="launch4j.dir" location="c:/progra~2/Launch4j/" />
 
 	<!-- Inno Setup -->
 	<property name="innosetup.dir" location="C:\\Programme\\Inno Setup 5\\" />
@@ -896,6 +896,26 @@
 
 		<IzPack input="${basedir}/build/installer/spark-izpack.xml" output="${basedir}/installer/spark-installer.jar" 
 				installerType="standard" izPackDir="${installer.izpack.dir}" basedir="${basedir}"/>
+	</target>
+
+	<!-- IzPack5 package ========================================================================= -->
+	<target name="installer.izpack5" depends="exe" description="build release an izpack5 installer">
+		<mkdir dir="${basedir}/installer/" />
+        <path id="build.classpath">
+            <fileset dir="${installer.izpack.dir}">
+                <include name="lib/*.jar" />
+            </fileset>
+        </path>
+		<taskdef name="IzPack"
+                 classpathref="build.classpath"
+				 classname="com.izforge.izpack.ant.IzPackTask"/>
+
+		<IzPack input="${basedir}/build/installer/spark-izpack5.xml" 
+                output="${basedir}/installer/spark-installer.jar"
+				installerType="standard" 
+                inheritAll="true"
+                izPackDir="${installer.izpack.dir}" 
+                basedir="${basedir}" />
 	</target>
 
 	<!-- IzPack exe package ===================================================================== -->

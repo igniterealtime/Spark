@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<izpack:installation version="5.0"
+              xmlns:izpack="http://izpack.org/schema/installation"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
+    
+    <info>
+        <appname>Spark</appname>
+        <appversion>2.7.2</appversion>
+        <url>http://www.igniterealtime.org</url>
+        <!--<pack200/>-->           <!-- Problem with the latest IzPack Release -->
+        <!--<run-privileged />-->   <!-- Problem with the latest IzPack Release -->
+        <javaversion>1.7</javaversion>
+        <requiresjdk>no</requiresjdk>
+        <run-privileged uninstaller="yes" />
+    </info>
+    
+    <guiprefs width="640" height="480" resizable="no">
+    </guiprefs>
+
+    <variables>
+        <variable name="DesktopShortcutCheckboxEnabled" value="true" />
+        <variable name="ApplicationShortcutPath" value="ApplicationShortcuts" />
+    </variables>
+
+        <locale>
+       	    <langpack iso3="eng" />
+        </locale>
+    
+        <resources>
+            <res src="documentation/LICENSE.html" id="HTMLLicencePanel.licence" />
+            <res src="build/installer/izpack/default_shortcutSpec.xml" id="shortcutSpec.xml" />
+            <res src="build/installer/izpack/unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml" />
+            <res src="build/installer/izpack/RegistrySpec.xml" id="RegistrySpec.xml" />
+        </resources>
+    
+        <panels>
+            <panel classname="HTMLLicencePanel" />
+            <panel classname="TargetPanel" />
+            <panel classname="PacksPanel" />
+            <panel classname="InstallPanel" />
+            <panel classname="ShortcutPanel" />
+            <panel classname="FinishPanel" />
+        </panels>
+    
+        <listeners>
+            <listener classname="RegistryInstallerListener" stage="install">
+                <os family="windows" />
+            </listener>
+            <listener classname="RegistryUninstallerListener" stage="uninstall">
+                <os family="windows" />
+            </listener>
+        </listeners>
+	        
+        <packs>
+            <pack name="Spark" required="yes">
+                <description>Spark Client</description>
+                    <file src="src/resources/images/spark.ico"	    targetdir="$INSTALL_PATH/resources/" />
+                    <file src="src/resources/images/spark-32x32.png"	targetdir="$INSTALL_PATH/resources/" />
+                    <file src="target/build/Spark.exe"				targetdir="$INSTALL_PATH" os="windows" />
+                    <file src="target/build/starter.exe"				targetdir="$INSTALL_PATH" os="windows" />
+                    <file src="build/installer/izpack/spark" 			targetdir="$INSTALL_PATH" os="unix" />
+                    <fileset dir="target/build/lib" 					targetdir="$INSTALL_PATH/lib/" />
+                    <fileset dir="target/build/plugins"					targetdir="$INSTALL_PATH/plugins/" />
+                    <fileset dir="target/build/resources" 				targetdir="$INSTALL_PATH/resources/" />
+                    <fileset dir="target/build/xtra" 					targetdir="$INSTALL_PATH/xtra/" />
+                
+                <parsable targetfile="$INSTALL_PATH/spark" os="unix" />
+                <!--  <parsable targetfile="$INSTALL_PATH/starter" os="unix"/>  -->
+        	
+                <executable targetfile="$INSTALL_PATH/spark" os="unix" />
+                <executable targetfile="$INSTALL_PATH/starter.exe" os="windows" />
+                <executable targetfile="$INSTALL_PATH/Spark.exe" os="windows" />
+            </pack>    
+        </packs>
+	
+	<!-- The native libraries to add -->
+    <natives>
+        <native type="izpack" name="ShellLink.dll" />
+        <native type="izpack" name="ShellLink_x64.dll" />
+        <native type="3rdparty" name="COIOSHelper.dll" stage="both">
+            <os family="windows" />
+        </native>    
+        <native type="3rdparty" name="COIOSHelper_x64.dll" stage="both">
+            <os family="windows" />
+        </native>
+    </natives>
+    
+</izpack:installation>
