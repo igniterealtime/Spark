@@ -186,7 +186,7 @@ public class HistoryTranscript extends SwingWorker {
     	StringBuilder builder = new StringBuilder();
     	final String personalNickname = SparkManager.getUserManager().getNickname();
 		Date lastPost = null;
-		String lastPerson = null;
+		String broadcastnick = null;
 		boolean initialized = false;
 
 		for (HistoryMessage message : messages) {
@@ -207,6 +207,7 @@ public class HistoryTranscript extends SwingWorker {
 					nickname = personalNickname;
 				} else {
 					nickname = StringUtils.parseName(nickname);
+					broadcastnick = message.getFrom();
 				}
 			}
 
@@ -233,37 +234,31 @@ public class HistoryTranscript extends SwingWorker {
 					builder.append("<tr><td><br></td></tr>");
 				}
 				builder.append(
-						"<tr><td colspan=2><font size=4 color=gray><b><u>")
+						"<tr><td colspan=2><font face=dialog size=3 color=black><b><u>")
 						.append(notificationDateFormatter.format(message
 								.getDate()))
 						.append("</u></b></font></td></tr>");
-				lastPerson = null;
 				initialized = true;
 			}
 
-			String value = "["
-					+ messageDateFormatter.format(message.getDate())
-					+ "]&nbsp;&nbsp;  ";
+			String value = "(" + messageDateFormatter.format(message.getDate()) + ") ";
 
-			boolean newInsertions = lastPerson == null
-					|| !lastPerson.equals(nickname);
-			if (newInsertions) {
-				builder.append("<tr valign=top><td colspan=2 nowrap>");
-				builder.append("<font size=4 color='").append(color).append("'><b>");
-				builder.append(nickname);
-				builder.append("</b></font>");
-				builder.append("</td></tr>");
-			}
-
-			builder.append("<tr valign=top><td align=left nowrap>");
+			builder.append("<tr valign=top><td colspan=2 nowrap>");
+			builder.append("<font face=dialog size=3 color='").append(color).append("'>");
 			builder.append(value);
-			builder.append("</td><td align=left>");
+			if (broadcastnick == null){
+				builder.append(nickname + ": ");
+			} else {
+				builder.append(broadcastnick + ": ");
+			}
+			builder.append("</font>");
+			builder.append("<font face=dialog size=3>");
 			builder.append(body);
-
-			builder.append("</td></tr>");
+			builder.append("</font>");
+			builder.append("</td></tr><br>");
 
 			lastPost = message.getDate();
-			lastPerson = nickname;
+			broadcastnick = null;
 		}
 		builder.append("</table></body></html>");
 
