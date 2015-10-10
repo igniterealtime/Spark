@@ -135,7 +135,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(format12s, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        if (!Default.getBoolean("HISTORY_DISABLED")) {
+        if (!Default.getBoolean("HISTORY_DISABLED") && !Default.getBoolean("HIDE_HISTORY_SETTINGS")) {
         chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }
@@ -176,6 +176,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
  	     });
         
         hideChatHistory.addActionListener(this);
+
     }
 
     /**
