@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.StringUtils;
@@ -71,6 +72,7 @@ public final class ChatTranscripts {
     public static void appendToTranscript(String jid, ChatTranscript transcript) {
         final File transcriptFile = getTranscriptFile(jid);
 
+        if (!Default.getBoolean("HISTORY_DISABLED")) {
         // Write Full Transcript, appending the messages.
         writeToFile(transcriptFile, transcript.getMessages(), true);
 
@@ -81,6 +83,7 @@ public final class ChatTranscripts {
             tempTranscript.addHistoryMessage(message);
         }
         writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(20), false);
+        }
     }
 
     private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {

@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.jivesoftware.MainWindowListener;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
@@ -111,7 +112,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         contactList.addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
+                	if (!Default.getBoolean("HISTORY_DISABLED")) {
                	 	popup.add(viewHistoryAction);
+                	}
                	 	popup.add(showStatusMessageAction);
                 }
             }
@@ -331,7 +334,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 return;
             }
             chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
+            if (!Default.getBoolean("HISTORY_DISABLED")) {
             chatRoom.addChatRoomButton(chatHistoryButton);
+            }
             chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
             chatHistoryButton.addActionListener(this);
         }
