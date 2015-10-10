@@ -51,6 +51,7 @@ import javax.swing.text.StyledDocument;
 
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
@@ -576,7 +577,9 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         popup.addSeparator();
         popup.add(printAction);
 
+        if (!Default.getBoolean("HIDE_HISTORY_SETTINGS")) {
         popup.add(clearAction);
+        }
         
         //History window
         Action viewLogAction = new AbstractAction() {
