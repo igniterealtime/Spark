@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -143,8 +144,9 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));	
 	inputPanel.add(_idleBox,        new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
 
-	
+	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD)) {
 	inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	}
 	inputPanel.add(_autoLoginBox,    new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 
 	if (Spark.isWindows()) {
