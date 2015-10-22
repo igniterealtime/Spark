@@ -1227,23 +1227,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 	    chatFrame.setState(Frame.NORMAL);
 
 	} else {
-	    if (System.getProperty("java.version").startsWith("1.7.")) {
-		try {
-		    //	TODO UPDATE ON JAVA 1.7.0 release
-		    // chatFrame.setAutoRequestFocus(false);
-		    
-		    // This can be removed once java 1.7 is mainstream  
-		    Class<?> c = ClassLoader.getSystemClassLoader().loadClass(
-			    JFrame.class.getCanonicalName());
-		    Method m = c
-			    .getMethod("setAutoRequestFocus", boolean.class);
-		    m.invoke(chatFrame, false);
-		} catch (Exception e) {
-		    Log.error(e);
-		}
-	    }
-	    chatFrame.setState(Frame.ICONIFIED);
-	}
+        chatFrame.setAutoRequestFocus(false);
+        chatFrame.setState(Frame.ICONIFIED);
+    }
       
         
         chatFrame.setVisible(true);
