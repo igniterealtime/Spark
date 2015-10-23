@@ -23,7 +23,7 @@
 	<property file="${basedir}/build/build.properties"/>
 	<property name="version.major" value="2"/>
 	<property name="version.minor" value="7"/>
-	<property name="version.revision" value="2"/>
+	<property name="version.revision" value="3"/>
 
     <!-- Spark Build Number
     Passed into ant via cmd line argument:
