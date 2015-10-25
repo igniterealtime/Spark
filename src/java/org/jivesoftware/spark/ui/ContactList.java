@@ -95,6 +95,7 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -104,6 +105,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -1567,7 +1569,7 @@ public class ContactList extends JPanel implements ActionListener,
         sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
         sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
 
-        if (item.getPresence() != null) {
+        if ((item.getPresence() != null) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
             popup.add(sendAction);
         }
 
