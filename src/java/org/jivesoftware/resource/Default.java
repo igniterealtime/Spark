@@ -103,7 +103,7 @@ public class Default {
     public static final String VERSION_AS_RESOURCE = "VERSION_AS_RESOURCE";
     public static final String HISTORY_DISABLED = "HISTORY_DISABLED";
     public static final String HIDE_HISTORY_SETTINGS = "HIDE_HISTORY_SETTINGS";
-    public static final String HIDE_SAVE_PASSWORD = "HIDE_SAVE_PASSWORD";
+    public static final String HIDE_SAVE_PASSWORD_AND_AUTOLOGIN = "HIDE_SAVE_PASSWORD_AND_AUTOLOGIN";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
