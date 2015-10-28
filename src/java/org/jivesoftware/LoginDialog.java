@@ -424,14 +424,14 @@ public class LoginDialog {
             add(headerLabel,
                     new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            if(!Default.getBoolean("HIDE_SAVE_PASSWORD")) {
+            if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN")) {
             add(savePasswordBox,
                     new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-            }
             add(autoLoginBox,
                     new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+            }
 	    add(loginAsInvisibleBox,
                     new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
