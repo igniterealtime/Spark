@@ -119,10 +119,9 @@ public class NotificationsUI extends JPanel {
         ResourceUtils.resButton(betaCheckBox, Res.getString("menuitem.check.for.updates"));
         if(!Default.getBoolean(Default.DISABLE_UPDATES)){
         	pn.add(betaCheckBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        	   
+        }   
         	add(pn);	
-        }
-        
+
         windowFocusBox.addChangeListener(new ChangeListener(){
         	public void stateChanged(ChangeEvent ce){
         		if(shouldWindowPopup()) {
