@@ -82,7 +82,7 @@ public class ContactItem extends JPanel {
 
     private JLabel sideIcon;
 
-    private int fontSize;
+    int fontSize;
 
     private int iconSize;
 
