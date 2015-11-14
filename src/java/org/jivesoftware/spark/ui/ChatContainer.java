@@ -32,7 +32,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -68,7 +66,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -1084,9 +1081,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             toaster.setBorder(BorderFactory.createBevelBorder(0));
             
             String nickname = room.getRoomTitle();
-            ContactList list = SparkManager.getContactList();
-            Presence presence = list.getContactItemByDisplayName(nickname).getPresence();
-            final Icon presenceIcon = PresenceManager.getIconFromPresence(presence);
               
             toaster.setToasterHeight(150);
             toaster.setToasterWidth(200);
@@ -1094,12 +1088,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             int size = room.getTranscripts().size();
             if(customMsg) {
                 toaster.setTitle(customMsgTitle);
-                toaster.showToaster(presenceIcon, customMsgText);
+                toaster.showToaster(room.getTabIcon(), customMsgText);
             } else {
                 toaster.setTitle(nickname);
                 if (size > 0) {
                     Message message = room.getTranscripts().get(size - 1);
-                    toaster.showToaster(presenceIcon, message.getBody());
+                    toaster.showToaster(room.getTabIcon(), message.getBody());
                 }
             }
         }
