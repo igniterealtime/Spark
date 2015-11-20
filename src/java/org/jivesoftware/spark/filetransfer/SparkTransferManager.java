@@ -327,17 +327,23 @@ public class SparkTransferManager {
 
     public void sendFileTo(ContactItem item) {
         FileDialog fileChooser = getFileChooser(SparkManager.getMainWindow(), Res.getString("title.select.file.to.send"));
+        if (defaultDirectory != null)
+        {
+            fileChooser.setDirectory( defaultDirectory.getAbsolutePath() );
+        }
         fileChooser.setVisible(true);
 
-        if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
+        final File[] files = fileChooser.getFiles();
+        if ( files.length == 0) {
+            // no selection
             return;
         }
 
-        File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
+        File file = files[0]; // Single-file selection is used. Using the first array item is safe.
 
         if (file.exists()) {
             defaultDirectory = file.getParentFile();
-            sendFile(file, item.getJID());
+            sendFile( file, item.getJID() );
         }
 
     }
@@ -773,7 +779,25 @@ public class SparkTransferManager {
      * @param directory the default directory.
      */
     public void setDefaultDirectory(File directory) {
-        defaultDirectory = directory;
+        if (directory == null) {
+            defaultDirectory = null;
+        } else if (directory.isDirectory() ) {
+            defaultDirectory = directory;
+        } else {
+            File parent = defaultDirectory.getParentFile();
+            if (parent != null && parent.isDirectory()) {
+                defaultDirectory = parent;
+            }
+        }
+    }
+
+    /**
+     * Returns the current default directory to store files.
+     *
+     * @return the default directory.
+     */
+    public File getDefaultDirectory() {
+        return defaultDirectory;
     }
 
     /**
