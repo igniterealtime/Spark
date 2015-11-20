@@ -135,13 +135,19 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
 
             public void finished() {
                 FileDialog fileChooser = SparkManager.getTransferManager().getFileChooser(SparkManager.getChatManager().getChatContainer().getChatFrame(), Res.getString("title.select.file.to.send"));
+                if (SparkManager.getTransferManager().getDefaultDirectory() != null)
+                {
+                    fileChooser.setDirectory(SparkManager.getTransferManager().getDefaultDirectory().getAbsolutePath());
+                }
                 fileChooser.setVisible(true);
 
-                if (fileChooser.getDirectory() == null || fileChooser.getFile() == null) {
+                final File[] files = fileChooser.getFiles();
+                if ( files.length == 0) {
+                    // no selection
                     return;
                 }
 
-                File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
+                File file = files[0]; // Single-file selection is used. Using the first array item is safe.
 
                 if (file.exists()) {
                     SparkManager.getTransferManager().setDefaultDirectory(file.getParentFile());
