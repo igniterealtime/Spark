@@ -83,7 +83,7 @@ public class TransferSettingsPreference implements Preference {
      * @return the name displayed in the list of preferences.
      */
     public String getListName() {
-        return "Transfer Guard";
+    	return TGuardRes.getString("guard.settings.title.list");
     }
 
     /**
