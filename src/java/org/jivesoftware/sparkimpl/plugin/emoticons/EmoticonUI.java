@@ -24,6 +24,7 @@ import org.jivesoftware.spark.component.RolloverButton;
 import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.JScrollPane;
+import javax.swing.BorderFactory;
 import java.awt.Container;
 import java.awt.Dimension;
 
@@ -63,11 +64,12 @@ public class EmoticonUI extends JPanel {
                         GridLayout grid = new GridLayout(0, cntInRow);
                         JScrollPane scrollPane = new JScrollPane(gridContainer);
                         
-//                        gridContainer.setBackground(Color.white);
+                 	scrollPane.getViewport().setBackground(Color.WHITE);
+			scrollPane.setBorder(BorderFactory.createEmptyBorder());
+                        
                         gridContainer.setLayout(grid);
 
                         // Show only vertical scrollbar if it needed
-//                        scrollPane.setBackground(Color.white);
                         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
                         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
