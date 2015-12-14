@@ -350,12 +350,12 @@ public class GroupChatParticipantList extends JPanel {
 	Icon icon = null;
 	if (_localPreferences.isShowingRoleIcons()) {
 	    icon = getIconForRole(userRole, affiliation);
-	} else {
+	} else if (userJID != null){
 		Presence jidPresence = PresenceManager.getPresence(userJID);
 	    icon = PresenceManager.getIconFromPresence(jidPresence);
-	    if (icon == null) {
+	}
+	if (icon == null) {
 		icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
-	    }
 	}
 
 	if (!exists(nickname)) {
