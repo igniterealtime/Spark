@@ -89,6 +89,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
@@ -249,6 +250,31 @@ public class LoginDialog {
 
         ConnectionConfiguration config = null;
 
+        ProxyInfo proxyInfo = null;
+        
+        if (localPref.isProxyEnabled()) {
+        	ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS5") ?
+        		ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
+        	String pHost = ModelUtil.hasLength(localPref.getHost()) ?
+        		localPref.getHost() : null;
+        	int pPort = ModelUtil.hasLength(localPref.getPort()) ?
+        		Integer.parseInt(localPref.getPort()) : 0;
+        	String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
+        		localPref.getProxyUsername() : null;
+        	String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
+        		localPref.getProxyPassword() : null;
+        	
+        	if (pHost != null && pPort != 0) {
+        		if (pUser == null || pPass == null) {
+        			proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
+        		} else {
+        			proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+        		}
+        	} else {
+        		Log.error("No proxy info found but proxy type is enabled!");
+        	}
+        }
+        
         if (useSSL) {
             if (!hostPortConfigured) {
                 config = new ConnectionConfiguration(loginServer, 5223);
