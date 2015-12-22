@@ -25,6 +25,7 @@ import net.java.sipmack.sip.event.CallListener;
 import net.java.sipmack.sip.event.CallStateEvent;
 import net.java.sipmack.softphone.SoftPhoneManager;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
@@ -32,24 +33,19 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.phone.PhoneManager;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-import org.jivesoftware.resource.Res;
 
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-
-import java.awt.Component;
-import java.awt.EventQueue;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
 /**
  *
@@ -222,12 +218,12 @@ public class CallManager implements InterlocutorListener {
         Presence current = SparkManager.getWorkspace().getStatusBar().getPresence();
 
         // Set offline presence if necessary.
-        if (offPhonePresence == null || !(current.getType().equals(Presence.Type.available) && current.getStatus().equals("On Phone") && current.getMode().equals(Presence.Mode.away))) {
+        if (offPhonePresence == null || !(current.getType().equals(Presence.Type.available) && current.getStatus().equals("On the phone") && current.getMode().equals(Presence.Mode.away))) {
             offPhonePresence = current;
         }
 
         // Send on phone presence
-        Presence onPhonePresence = new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away);
+        Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
         SparkManager.getSessionManager().changePresence(onPhonePresence);
 
         interlocutorUI.getCall().addStateChangeListener(new CallListener() {
