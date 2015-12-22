@@ -236,7 +236,7 @@ public class PhonePlugin implements Plugin {
                 offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
 
                 // Send on phone presence
-                Presence onPhonePresence = new Presence(Presence.Type.available, "On Phone", -1, Presence.Mode.away);
+                Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
                 SparkManager.getSessionManager().changePresence(onPhonePresence);
             }
 
