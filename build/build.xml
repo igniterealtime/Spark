@@ -711,10 +711,11 @@
 
 	<target name="mac.app" depends="mac.clean,mac.build.plugin">
 
-		<!-- http://www.loomcom.com/jarbundler/ -->
+		<!-- http://www.loomcom.com/jarbundler
+		https://github.com/UltraMixer/JarBundler/ -->
 		<taskdef name="jarbundler"
-                 classpath="${basedir}/build/lib/jarbundler-2.2.0.jar"
-                 classname="net.sourceforge.jarbundler.JarBundler"/>
+                 classpath="${basedir}/build/lib/jarbundler-core-3.3.0.jar"
+                 classname="com.ultramixer.jarbundler.JarBundler"/>
 
 		<mkdir dir="${mac.build.dir}"/>
 
@@ -724,9 +725,8 @@
                     icon="${target}/classes/images/message.icns"
                     version="${version.major}.${version.minor}.${version.revision}"
                     build="${version.extra}"
-                    infostring="${version.major}.${version.minor}.${version.revision}"
                     copyright="© Ignite Realtime 2014"
-                    aboutmenuname="Spark"
+                    shortname="Spark"
                     bundleid="com.jivesoftware.SparkBundle"
                     developmentregion="English"
                     jvmversion="1.7+"
