@@ -85,6 +85,7 @@ exit 0
 /usr/share/spark/lib/smack.jar
 /usr/share/spark/lib/smackx-debug.jar
 /usr/share/spark/lib/smackx.jar
+/usr/share/spark/lib/smackx-workgroup.jar
 /usr/share/spark/lib/spark.jar
 /usr/share/spark/lib/startup.jar
 /usr/share/spark/lib/swingx-all-1.6.3.jar
