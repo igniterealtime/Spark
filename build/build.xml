@@ -711,48 +711,46 @@
 
 	<target name="mac.app" depends="mac.clean,mac.build.plugin">
 
-		<!-- http://www.loomcom.com/jarbundler
-		https://github.com/UltraMixer/JarBundler/ -->
-		<taskdef name="jarbundler"
-                 classpath="${basedir}/build/lib/jarbundler-core-3.3.0.jar"
-                 classname="com.ultramixer.jarbundler.JarBundler"/>
+		<!-- https://bitbucket.org/infinitekind/appbundler
+		fork of java appbundler./ -->
+		<taskdef name="appbundler"
+				 classpath="${basedir}/build/lib/appbundler-1.0ea.jar"
+				 classname="com.oracle.appbundler.AppBundlerTask"/>
 
 		<mkdir dir="${mac.build.dir}"/>
 
-		<jarbundler dir="${mac.build.dir}"
-                    name="Spark"
-                    mainclass="org.jivesoftware.launcher.Startup"
-                    icon="${target}/classes/images/message.icns"
-                    version="${version.major}.${version.minor}.${version.revision}"
-                    build="${version.extra}"
-                    copyright="© Ignite Realtime 2014"
-                    shortname="Spark"
-                    bundleid="com.jivesoftware.SparkBundle"
-                    developmentregion="English"
-                    jvmversion="1.7+"
-					jvmarchs="i386"
-                    smalltabs="true"
-                    antialiasedgraphics="true"
-                    antialiasedtext="true"
-                    liveresize="true"
-                    growbox="true"
-                    growboxintrudes="true"
-                    screenmenu="true"
-                    vmoptions="-Dappdir=$APP_PACKAGE/Contents/Resources -Dswing.aatext=true -d32"
-                    workingdirectory="$APP_PACKAGE/Contents/Resources"
-                    extraclasspath="/System/Library/Java">
-			<jarfileset dir="${target.build}/lib">
+		<path id="osx.lib">
+			<fileset dir="${target.build}/lib">
 				<include name="**/*.jar"/>
 				<exclude name="**/windows/"/>
 				<exclude name="**/linux/"/>
-			</jarfileset>
-			<jarfileset dir="${target.build}/lib/windows">
+			</fileset>
+			<fileset dir="${target.build}/lib/windows">
 				<include name="jdic.jar"/>
-			</jarfileset>
-			<jarfileset dir="${basedir}/build/lib">
+			</fileset>
+			<fileset dir="${basedir}/build/lib">
 				<include name="i4jruntime.jar"/>
-			</jarfileset>
-		</jarbundler>
+			</fileset>
+		</path>
+
+		<appbundler outputdirectory="${mac.build.dir}"
+					classpathref="osx.lib"
+					name="Spark"
+					displayname="Spark"
+					mainclassname="org.jivesoftware.launcher.Startup"
+					icon="${target}/classes/images/message.icns"
+					shortversion="${version.major}.${version.minor}.${version.revision}"
+					version="${version.extra}"
+					copyright="© Ignite Realtime 2014"
+					executablename="SparkLauncher"
+					identifier="com.jivesoftware.SparkBundle"
+					jvmrequired="1.7"
+					jrepreferred="true">
+			<arch name="x86_64"/>
+			<arch name="i386"/>
+
+		</appbundler>
+
 
 		<copy todir="${mac.app.file}/Contents/Resources">
 			<fileset dir="${target.build}">
