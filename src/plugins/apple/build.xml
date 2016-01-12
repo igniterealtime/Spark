@@ -29,7 +29,9 @@
                classpathref="lib.classpath"
                source="1.7"
                debug="true"
-               target="1.7"/>
+               target="1.7">
+            <compilerarg value="-XDignore.symbol.file"/>
+        </javac>
         <copy todir="${classes.dir}">
             <fileset dir="${resources.dir}">
                 <include name="**/*"/>
