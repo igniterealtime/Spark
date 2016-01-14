@@ -323,7 +323,7 @@ public class Workspace extends JPanel implements PacketListener {
             boolean broadcast = message.getProperty("broadcast") != null;
 
             // Handle offline message.
-            DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+            DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
             if (offlineInformation != null && (Message.Type.chat == message.getType() ||
                 Message.Type.normal == message.getType())) {
                 handleOfflineMessage(message);

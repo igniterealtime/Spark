@@ -216,7 +216,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                     final Message message = (Message)packet;
 
                     // Do not handle errors or offline messages
-                    final DelayInformation offlineInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+                    final DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
                     if (offlineInformation != null || message.getError() != null) {
                         return;
                     }
@@ -357,7 +357,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
 
-        DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+        DelayInformation inf = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
         if (inf == null) {
             SoundPreference soundPreference = (SoundPreference)SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
             SoundPreferences preferences = soundPreference.getPreferences();
