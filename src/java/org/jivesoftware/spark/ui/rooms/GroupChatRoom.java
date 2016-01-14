@@ -654,8 +654,8 @@ public class GroupChatRoom extends ChatRoom {
 	final Message message = (Message) packet;
 	lastMessage = message;
 	if (message.getType() == Message.Type.groupchat) {
-	    DelayInformation inf = (DelayInformation) message.getExtension("x",
-		    "jabber:x:delay");
+	    DelayInformation inf = (DelayInformation) message.getExtension("delay",
+		    "urn:xmpp:delay");
 	    Date sentDate;
 	    if (inf != null) {
 		sentDate = inf.getStamp();

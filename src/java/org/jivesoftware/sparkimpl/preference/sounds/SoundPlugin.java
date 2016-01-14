@@ -89,7 +89,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
     public void messageReceived(ChatRoom room, Message message) {
 
         // Do not play sounds on history updates.
-        DelayInformation inf = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+        DelayInformation inf = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
         if (inf != null) {
             return;
         }

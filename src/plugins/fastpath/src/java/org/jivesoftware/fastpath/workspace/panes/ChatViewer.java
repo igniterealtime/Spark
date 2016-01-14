@@ -82,7 +82,7 @@ public class ChatViewer extends JPanel {
             if (packet instanceof Message) {
                 Message message = (Message)packet;
                 String from = StringUtils.parseResource(message.getFrom());
-                DelayInformation delayInformation = (DelayInformation)message.getExtension("x", "jabber:x:delay");
+                DelayInformation delayInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
                 if (delayInformation != null) {
                     stamp = delayInformation.getStamp();
