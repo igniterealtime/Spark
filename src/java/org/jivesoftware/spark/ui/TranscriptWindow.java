@@ -192,7 +192,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             if (inf != null) {
                 sentDate = inf.getStamp();
 
-                body = "(Offline) " + body;
+                body = "(" + Res.getString("offline") + ") " + body;
             }
             else {
                 sentDate = new Date();
