@@ -748,6 +748,7 @@
 					jrepreferred="true">
 			<arch name="x86_64"/>
 			<arch name="i386"/>
+			<option value="-Xdock:name=Spark"/>
 
 		</appbundler>
 
