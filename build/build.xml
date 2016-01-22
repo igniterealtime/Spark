@@ -741,7 +741,7 @@
 					icon="${target}/classes/images/message.icns"
 					shortversion="${version.major}.${version.minor}.${version.revision}"
 					version="${version.extra}"
-					copyright="© Ignite Realtime 2014"
+					copyright="Ignite Realtime"
 					executablename="SparkLauncher"
 					identifier="com.jivesoftware.SparkBundle"
 					jvmrequired="1.7"
