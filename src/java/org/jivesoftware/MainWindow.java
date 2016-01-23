@@ -444,7 +444,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final JMenuItem exitMenuItem = new JMenuItem();
 
         // Setup ResourceUtils
-        ResourceUtils.resButton(connectMenu, "&" + Default.getString(Default.APPLICATION_NAME));
+        ResourceUtils.resButton(connectMenu, "&" + Res.getString("menuitem.connect"));
         ResourceUtils.resButton(contactsMenu, Res.getString("menuitem.contacts"));
         ResourceUtils.resButton(actionsMenu, Res.getString("menuitem.actions"));
         ResourceUtils.resButton(exitMenuItem, Res.getString("menuitem.exit"));
