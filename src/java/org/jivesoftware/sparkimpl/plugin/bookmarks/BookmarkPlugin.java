@@ -79,8 +79,10 @@ public class BookmarkPlugin implements Plugin {
                 final JMenu bookmarkMenu = new JMenu(Res.getString("menuitem.bookmarks"));
 
                 createMenu(bookmarkMenu);
-
-                SparkManager.getMainWindow().getMenu().add(bookmarkMenu, 3);
+                
+                if (bookmarkMenu.getMenuComponentCount() > 0) {
+                    SparkManager.getMainWindow().getMenu().add(bookmarkMenu, 3);
+                }
 
                 BookmarksUI bookmarksUi = ConferenceServices.getBookmarkedConferences();
                 bookmarksUi.addBookmarksListener(new BookmarksListener() {
