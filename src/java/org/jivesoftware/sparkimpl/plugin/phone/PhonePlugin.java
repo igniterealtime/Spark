@@ -301,7 +301,7 @@ public class PhonePlugin implements Plugin {
         SparkToaster toasterManager = new SparkToaster();
 
         toasterManager.setTitle("Incoming Phone Call");
-        toasterManager.setDisplayTime(5000);
+        toasterManager.setDisplayTime(15000);
         toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
         toasterManager.setComponent(incomingCall);
 
