@@ -19,12 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.phone;
 
-import org.jivesoftware.phone.client.BasePhoneEventListener;
-import org.jivesoftware.phone.client.HangUpEvent;
-import org.jivesoftware.phone.client.OnPhoneEvent;
-import org.jivesoftware.phone.client.PhoneActionException;
-import org.jivesoftware.phone.client.PhoneClient;
-import org.jivesoftware.phone.client.RingEvent;
+import org.jivesoftware.phone.client.*;
 import org.jivesoftware.phone.client.action.PhoneActionIQProvider;
 import org.jivesoftware.phone.client.event.PhoneEventPacketExtensionProvider;
 import org.jivesoftware.resource.Res;
@@ -37,32 +32,16 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.event.*;
 import java.util.TimerTask;
 
 public class PhonePlugin implements Plugin {
@@ -71,7 +50,7 @@ public class PhonePlugin implements Plugin {
     //    private Alert incomingDialog;
     private JFrame dialDialog;
 
-    private Presence offPhonePresence;
+    public static Presence offPhonePresence;
 
     public void initialize() {
         ProviderManager.getInstance().addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
@@ -232,13 +211,12 @@ public class PhonePlugin implements Plugin {
             }
 
             // Set offline presence if necessary.
-            if (offPhonePresence == null) {
-                offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+            offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
 
                 // Send on phone presence
                 Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
                 SparkManager.getSessionManager().changePresence(onPhonePresence);
-            }
+
 
 
         }
@@ -249,17 +227,30 @@ public class PhonePlugin implements Plugin {
             }
 
             if (offPhonePresence != null) {
-                // Set user to previous presence state when all phone calls are hung up.
-                SparkManager.getSessionManager().changePresence(offPhonePresence);
 
-                offPhonePresence = null;
-            }
-            else {
+                if ((offPhonePresence.getStatus().contentEquals(UserIdlePlugin.pref.getIdleMessage())) && (!UserIdlePlugin.getDesktopLockStatus()) && (UserIdlePlugin.latestPresence != null)) {
+                    SparkManager.getSessionManager().changePresence(UserIdlePlugin.latestPresence);
+                    Log.debug("offPhonePresesence matched IdleMessage. Using status LatestPresence from UserIdlePlugin");
+                
+                } else if (UserIdlePlugin.getDesktopLockStatus()) {
+                 Log.debug("Desktop is lock " + (UserIdlePlugin.getDesktopLockStatus()));
+                    Presence presence = new Presence(Presence.Type.available, UserIdlePlugin.pref.getIdleMessage(), 1, Presence.Mode.away);
+                    SparkManager.getSessionManager().changePresence(presence);
+                    Log.debug("Desktop is Locked - Setting to away");
+                } else {
+                    // Set user to previous presence state when all phone calls are hung up.
+                    SparkManager.getSessionManager().changePresence(offPhonePresence);
+                    Log.debug("Returning Presence from Phone Plugin");
+                }
+
+
+            } else {
                 // If no previous state available, set status to Available
-                Presence availablePresence = new Presence(Presence.Type.available, "Available", 1, Presence.Mode.available);
+                Presence availablePresence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
 
                 SparkManager.getSessionManager().changePresence(availablePresence);
-                offPhonePresence = null;
+                Log.debug("no previous state available from Phone Plugin..setting to Online");
+
             }
         }
 

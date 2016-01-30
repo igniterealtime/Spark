@@ -18,34 +18,30 @@
  */
 package org.jivesoftware.sparkimpl.plugin.idle;
 
-import java.awt.AWTEvent;
-import java.awt.EventQueue;
-import java.awt.MouseInfo;
-import java.awt.PointerInfo;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.HMODULE;
+import com.sun.jna.platform.win32.WinDef.LRESULT;
+import com.sun.jna.platform.win32.WinDef.WPARAM;
+import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.platform.win32.WinUser.HHOOK;
+import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
+import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
+import com.sun.jna.platform.win32.WinUser.MSG;
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinUser;
-import com.sun.jna.platform.win32.WinDef.HMODULE;
-import com.sun.jna.platform.win32.WinDef.LRESULT;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
-import com.sun.jna.platform.win32.WinUser.HHOOK;
-import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
-import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
-import com.sun.jna.platform.win32.WinUser.MSG;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class UserIdlePlugin extends TimerTask implements Plugin {
 
@@ -54,9 +50,16 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     private double y = 0;
     private boolean hasChanged = false;
     private int counter = 0;
-    private LocalPreferences pref = SettingsManager.getLocalPreferences();
-    private Presence latestPresence;
+    public static LocalPreferences pref = SettingsManager.getLocalPreferences();
+    public static Presence latestPresence;
     private KeyHook keyHook;
+    private static boolean DesktopLockStatus;
+
+    public static boolean getDesktopLockStatus() {
+
+        return DesktopLockStatus;
+    }
+
 
     @Override
     public boolean canShutDown() {
@@ -89,18 +92,29 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     }
 
     private void setIdle() {
-	latestPresence = SparkManager.getWorkspace().getStatusBar()
-		.getPresence();
-	if ((latestPresence.getMode() == Presence.Mode.available)
-		|| latestPresence.getMode() == Presence.Mode.chat) {
-	    Presence presence = new Presence(Presence.Type.available,
-		    StringUtils.modifyWildcards(pref.getIdleMessage()), 1, Presence.Mode.away);
-	    SparkManager.getSessionManager().changePresence(presence);
-	}
+
+        latestPresence = SparkManager.getWorkspace().getStatusBar()
+                .getPresence();
+        if (latestPresence.isAway()) {
+            Log.debug("Presence is already set to away");
+        } else {
+            Presence presence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(pref.getIdleMessage()), 1, Presence.Mode.away);
+            SparkManager.getSessionManager().changePresence(presence);
+            Log.debug("Setting idle presence");
+        }
     }
 
+
+
     private void setOnline() {
-	SparkManager.getSessionManager().changePresence(latestPresence);
+    DesktopLockStatus = false;
+        if (latestPresence.getStatus().contains("On the phone")) {
+            SparkManager.getSessionManager().changePresence(PhonePlugin.offPhonePresence);
+            Log.debug("LatestPresence matched ON_THE_PHONE using status from PhonePlugin offPhonePressence");
+        } else { SparkManager.getSessionManager().changePresence(latestPresence);
+            Log.debug("Using LatestPresence"); }
+
+
     }
 
     @Override
@@ -126,6 +140,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			    Log.debug("Desktop Locked .. ");
 			    hasChanged = true;
 			    setIdle();
+                DesktopLockStatus = true;
 			    y = info.getLocation().getY();
 			    x = info.getLocation().getX();
 			}
@@ -135,6 +150,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			Log.debug("Desktop Locked .. ");
 			hasChanged = true;
 			setIdle();
+            DesktopLockStatus = true;
 			y = -1;
 			x = -1;
 		    }
