@@ -231,12 +231,12 @@ public class PhonePlugin implements Plugin {
                 if ((offPhonePresence.getStatus().contentEquals(UserIdlePlugin.pref.getIdleMessage())) && (!UserIdlePlugin.getDesktopLockStatus()) && (UserIdlePlugin.latestPresence != null)) {
                     SparkManager.getSessionManager().changePresence(UserIdlePlugin.latestPresence);
                     Log.debug("offPhonePresesence matched IdleMessage. Using status LatestPresence from UserIdlePlugin");
-                
+
                 } else if (UserIdlePlugin.getDesktopLockStatus()) {
-                 Log.debug("Desktop is lock " + (UserIdlePlugin.getDesktopLockStatus()));
+
                     Presence presence = new Presence(Presence.Type.available, UserIdlePlugin.pref.getIdleMessage(), 1, Presence.Mode.away);
                     SparkManager.getSessionManager().changePresence(presence);
-                    Log.debug("Desktop is Locked - Setting to away");
+                    Log.debug("Desktop is Locked - Setting presence using idle message");
                 } else {
                     // Set user to previous presence state when all phone calls are hung up.
                     SparkManager.getSessionManager().changePresence(offPhonePresence);
