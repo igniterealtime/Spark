@@ -19,28 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.preference.media;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.Vector;
-
-import javax.media.CaptureDeviceInfo;
-import javax.media.CaptureDeviceManager;
-import javax.media.Format;
-import javax.media.format.AudioFormat;
-import javax.media.format.VideoFormat;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import org.jitsi.impl.neomedia.MediaServiceImpl;
 import org.jitsi.impl.neomedia.device.AudioSystem;
 import org.jitsi.impl.neomedia.device.AudioSystem.DataFlow;
@@ -56,6 +34,19 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.media.CaptureDeviceInfo;
+import javax.media.CaptureDeviceManager;
+import javax.media.Format;
+import javax.media.format.AudioFormat;
+import javax.media.format.VideoFormat;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.Vector;
 
 public class MediaPreferencePanel  extends JPanel {
 	private static final long serialVersionUID = 8297469864676223072L;
@@ -163,7 +154,10 @@ public class MediaPreferencePanel  extends JPanel {
 			System.out.println(mediaService);		
 		
 			MediaDevice device = mediaService.getDefaultDevice(mediaType, MediaUseCase.CALL);
-			System.out.println(device.getDirection());
+			if (device != null)
+			{
+				System.out.println(device.getDirection());
+			}
 			System.err.println("Device: " + device);
 			System.err.println("================================");
 		}
@@ -185,8 +179,9 @@ public class MediaPreferencePanel  extends JPanel {
 		videoDevice.addItem("<None>");	
 		
 		AudioSystem mediaAudioSystem = ((MediaServiceImpl)LibJitsi.getMediaService()).getDeviceConfiguration().getAudioSystem();
-		for (AudioSystem system : mediaAudioSystem.getAudioSystems())
+		for (AudioSystem system : AudioSystem.getAudioSystems())
 		{
+			System.out.println(system);
 			vectorAudioSystem.add(system);
 			audioSystem.addItem(system);
 		}
