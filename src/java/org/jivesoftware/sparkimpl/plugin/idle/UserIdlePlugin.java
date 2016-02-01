@@ -215,6 +215,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	private Thread thread;
 
 	public void initKeyHook() {
+		System.setProperty( "jna.predictable_field_order","true");
 
 	    thread = new Thread(new Runnable() {
 
