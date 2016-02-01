@@ -1012,6 +1012,15 @@ public class LocalPreferences {
 	public boolean areVCardsVisible() {
 		return getBoolean("showVCards", true);
 	}
+	
+	public void setAudioSystem(String device) {
+		 props.setProperty("audioSystem", device);
+	}
+
+	public String getAudioSystem() {
+		return props.getProperty("audioSystem","wasapi");
+	}
+	
 
 	public void setAudioDevice(String device) {
 		 props.setProperty("audioDevice", device);
@@ -1019,6 +1028,14 @@ public class LocalPreferences {
 
 	public String getAudioDevice() {
 		return props.getProperty("audioDevice","javasound://");
+	}
+	
+	public void setPlaybackDevice(String device) {
+		 props.setProperty("playbackDevice", device);
+	}
+
+	public String getPlaybackDevice() {
+		return props.getProperty("playbackDevice","javasound://");
 	}
 
 	public void setVideoDevice(String device) {
