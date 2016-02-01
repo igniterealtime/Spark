@@ -59,7 +59,6 @@ public class AudioReceiver implements ReceiveStreamListener, SessionListener,
         ReceiveStream stream = evt.getReceiveStream();  // could be null.
         
         if (evt instanceof RemotePayloadChangeEvent) {
-
             System.err.println("  - Received an RTP PayloadChangeEvent.");
             System.err.println("Sorry, cannot handle payload change.");
             // System.exit(0);

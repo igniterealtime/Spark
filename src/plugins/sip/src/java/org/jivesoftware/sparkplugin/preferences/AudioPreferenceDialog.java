@@ -20,7 +20,9 @@
 package org.jivesoftware.sparkplugin.preferences;
 
 import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
+
 import net.java.sipmack.softphone.SoftPhoneManager;
+
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 
@@ -28,6 +30,7 @@ import javax.media.CaptureDeviceInfo;
 import javax.media.cdm.CaptureDeviceManager;
 import javax.media.format.AudioFormat;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,7 +44,7 @@ import java.util.Vector;
 public class AudioPreferenceDialog extends JPanel {
 
     private static final long serialVersionUID = -7436724748439424479L;
-    private JComboBox audioBox = new JComboBox();
+    private JComboBox<String> audioBox = new JComboBox<String>();
     private JDialog dialog;
     private JButton closeButton;
     private JavaMixer javaMixer = new JavaMixer();
@@ -49,7 +52,7 @@ public class AudioPreferenceDialog extends JPanel {
     public AudioPreferenceDialog() {
         setLayout(new GridBagLayout());
 
-        audioBox = new JComboBox();
+        audioBox = new JComboBox<String>();
 
         final JLabel inputValueLabel = new JLabel("Input Volume:");
         final JLabel outputValueLabel = new JLabel("Output Volume:");

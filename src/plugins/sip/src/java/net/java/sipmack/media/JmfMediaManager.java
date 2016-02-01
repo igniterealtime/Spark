@@ -27,6 +27,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.media.format.AudioFormat;
@@ -43,13 +44,15 @@ import javax.sdp.SessionName;
 import javax.sdp.TimeDescription;
 import javax.sdp.Version;
 
-import net.java.sip.communicator.impl.media.codec.Constants;
 import net.java.sipmack.common.Log;
 import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.NetworkAddressManager;
 import net.java.sipmack.sip.SIPConfig;
-import net.sf.fmj.media.BonusAudioFormatEncodings;
 
+import org.jitsi.service.libjitsi.LibJitsi;
+import org.jitsi.service.neomedia.codec.Constants;
+import org.jitsi.service.neomedia.format.MediaFormat;
+import org.jitsi.service.neomedia.format.MediaFormatFactory;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -83,7 +86,7 @@ public class JmfMediaManager {
      * @param local
      * @return
      */
-    public AudioMediaSession createMediaSession(final AudioFormat audioFormat, final TransportCandidate remote, final TransportCandidate local) {    	
+    public AudioMediaSession createMediaSession(final MediaFormat audioFormat, final TransportCandidate remote, final TransportCandidate local) {    	
         return new AudioMediaSession(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
     }
 
@@ -91,11 +94,13 @@ public class JmfMediaManager {
      * Setup API supported AudioFormats
      */
     private void setupAudioFormats() {
+    	
+  
+    	
         audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
         audioFormats.add(new AudioFormat(Constants.ALAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.GSM_RTP));       
-        audioFormats.add(new AudioFormat(BonusAudioFormatEncodings.ILBC_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.G723_RTP));        
     }
 
@@ -185,7 +190,7 @@ public class JmfMediaManager {
             remoteTransmisionDetails.put("video", sessionRemoteAddress);
         }
         ArrayList<Integer> ports = new ArrayList<Integer>();
-        ArrayList<ArrayList<String>> formatSets = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<MediaFormat>> formatSets = new ArrayList<ArrayList<MediaFormat>>();
         ArrayList<String> contents = new ArrayList<String>();
         ArrayList<Integer> localPorts = new ArrayList<Integer>();
         for (int i = 0; i < mediaDescriptions.size(); i++) {
@@ -204,6 +209,7 @@ public class JmfMediaManager {
             // Find ports
             try {
                 mediaPort = media.getMediaPort();
+                System.out.println("MediaType:" + mediaType + ":" + mediaPort);
             }
             catch (SdpParseException ex) {
                 throw (new MediaException(
@@ -351,7 +357,7 @@ public class JmfMediaManager {
             remoteTransmisionDetails.put("video", sessionRemoteAddress);
         }
         ArrayList<Integer> ports = new ArrayList<Integer>();
-        ArrayList<ArrayList<String>> formatSets = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<MediaFormat>> formatSets = new ArrayList<ArrayList<MediaFormat>>();
         ArrayList<String> contents = new ArrayList<String>();
         ArrayList<Integer> localPorts = new ArrayList<Integer>();
         for (int i = 0; i < mediaDescriptions.size(); i++) {
@@ -370,6 +376,8 @@ public class JmfMediaManager {
             // Find ports
             try {
                 mediaPort = media.getMediaPort();
+                System.out.println("MediaType:" + mediaType + ":" + mediaPort);
+
             }
             catch (SdpParseException ex) {
                 throw (new MediaException(
@@ -430,8 +438,11 @@ public class JmfMediaManager {
                 else
                     localPorts.add(Integer.valueOf(mediaPort));
 
+
+                //formatSets
+                 //       .add();
                 formatSets
-                        .add(extractTransmittableJmfFormats(sdpFormats));
+                .add(extractTransmittableJmfFormats(sdpFormats));
             }
             catch (MediaException ex) {
                 Log.error("StartMedia", ex);
@@ -444,12 +455,22 @@ public class JmfMediaManager {
         }
         if (atLeastOneTransmitterStarted) {
 
+        	System.out.println("Remote Port: " + ports.get(0));
+        	
             TransportCandidate.Fixed remote = new TransportCandidate.Fixed(remoteAddresses.get(0).toString(), (Integer) ports.get(0));
             TransportCandidate.Fixed local = new TransportCandidate.Fixed(NetworkAddressManager.getLocalHost().getHostAddress(), localPort);
 
-            AudioFormat audioFormat = new AudioFormat(((formatSets.get(0)).get(0)));
-				
-            AudioMediaSession audioMediaSession = new AudioMediaSession(audioFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
+
+            MediaFormat mediaFormat = (formatSets.get(0)).get(0);
+//            System.out.println("MediaFormat: " + format);
+//            System.out.println("MediaFormat: " + format.getRTPPayloadType());
+//            System.out.println("MediaFormat: " + format.getMediaType());
+//
+//            MediaFormat mediaFormat = LibJitsi.getMediaService().getFormatFactory().createMediaFormat("speex", 8000);
+//            System.out.println("MediaFormat: " + mediaFormat);
+//            System.out.println("MediaFormat: " + mediaFormat.getRTPPayloadType());
+//            System.out.println("MediaFormat: " + mediaFormat.getMediaType());
+            AudioMediaSession audioMediaSession = new AudioMediaSession(mediaFormat, remote, local, SettingsManager.getLocalPreferences().getAudioDevice());
 
             return audioMediaSession;
         }
@@ -463,9 +484,9 @@ public class JmfMediaManager {
      * @return
      * @throws MediaException
      */
-    public AudioReceiverChannel createAudioReceiverChannel(int localPort, String remoteIp, int remotePort) throws MediaException {
+    public AudioReceiverChannel createAudioReceiverChannel(int localPort, String remoteIp, int remotePort, int remoteRTCPPort) throws MediaException {
 
-        AudioReceiverChannel audioReceiverChannel = new AudioReceiverChannel(NetworkAddressManager.getLocalHost().getHostAddress(), localPort, remoteIp, remotePort);
+        AudioReceiverChannel audioReceiverChannel = new AudioReceiverChannel(NetworkAddressManager.getLocalHost().getHostAddress(), localPort, remoteIp, remotePort,remoteRTCPPort);
 
         return audioReceiverChannel;
 
@@ -478,14 +499,25 @@ public class JmfMediaManager {
      * @return
      * @throws MediaException
      */
-    protected ArrayList<String> extractTransmittableJmfFormats(Vector<?> sdpFormats)
+    protected ArrayList<MediaFormat> extractTransmittableJmfFormats(Vector<?> sdpFormats)
             throws MediaException {
-        ArrayList<String> jmfFormats = new ArrayList<String>();
+        ArrayList<MediaFormat> jmfFormats = new ArrayList<MediaFormat>();
         for (int i = 0; i < sdpFormats.size(); i++) {
-            String jmfFormat = AudioFormatUtils.findCorrespondingJmfFormat(sdpFormats
+    		System.out.println("Add1 ++++++++++++++++++" + sdpFormats);
+
+    		if (Integer.parseInt((String)sdpFormats.get(0)) == 31) 
+    		{
+        		System.out.println(sdpFormats.get(0));
+    			MediaFormat videoformat = LibJitsi.getMediaService().getFormatFactory().createMediaFormat(
+      	        		"H264",
+      	        		 MediaFormatFactory.CLOCK_RATE_NOT_SPECIFIED);
+    			jmfFormats.add(videoformat);   
+    		}
+        	MediaFormat mediaFormat = AudioFormatUtils.findCorrespondingJmfFormat(sdpFormats
                     .elementAt(i).toString());
-            if (jmfFormat != null) {
-                jmfFormats.add(jmfFormat);
+            if (mediaFormat != null) {
+        		System.out.println("Add2 ++++++++++++++++++" + mediaFormat);
+                jmfFormats.add(mediaFormat);     
             }
         }
         if (jmfFormats.size() == 0) {
@@ -734,7 +766,8 @@ public class JmfMediaManager {
 	   		 }
    		 }
    	 }
- System.out.println("FORMATE NEU: " + format);
+   	 
+   	 System.out.println("FORMATE NEU: " + format);
    	 return format;
     }
 }
