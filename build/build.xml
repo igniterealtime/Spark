@@ -722,6 +722,7 @@
 		<path id="osx.lib">
 			<fileset dir="${target.build}/lib">
 				<include name="**/*.jar"/>
+				<include name="**/*.jnilib"/>
 				<exclude name="**/windows/"/>
 				<exclude name="**/linux/"/>
 			</fileset>
@@ -748,6 +749,7 @@
 					jrepreferred="true">
 			<arch name="x86_64"/>
 			<arch name="i386"/>
+			<option value="-Djava.library.path=$APP_ROOT/Contents/Java/"/>
 			<option value="-Xdock:name=Spark"/>
 
 		</appbundler>
@@ -760,11 +762,6 @@
 				<exclude name="**/jniwrapper.*"/>
 				<exclude name="**/idlelinux.*"/>
 			</fileset>
-		</copy>
-
-		<!-- When building on PowerPC Macs we get a PowerPC binary for the JavaApplicationStub. We've gotten a few requests to fix that from the forums, so we'll manually copy one from an Intel Mac -->
-		<copy todir="${mac.app.file}/Contents/MacOS">
-			<fileset file="${basedir}/src/resources/JavaApplicationStub"/>
 		</copy>
 
 		<delete file="${plugins}/jniwrapper.jar"/>
