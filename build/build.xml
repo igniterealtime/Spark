@@ -1058,7 +1058,7 @@
 	<target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
 		<taskdef resource="checkstyletask.properties" classpath="build/lib/checkstyle.jar" />
 
-		<checkstyle maxErrors="16500" config="build/checkstyle.xml">
+		<checkstyle maxErrors="17000" config="build/checkstyle.xml">
 			<fileset dir="src/java" includes="**/*.java" />
 			<!-- <formatter type="plain"/> -->
 			<formatter type="xml" toFile="target/checkstyle.xml"/>
