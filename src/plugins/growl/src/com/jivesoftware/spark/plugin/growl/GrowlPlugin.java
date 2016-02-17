@@ -19,16 +19,11 @@
  */
 package com.jivesoftware.spark.plugin.growl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+
+import java.io.*;
 
 /**
  * Provides support for Growl Notifications on Mac OS X. Growl can be acquired
@@ -83,13 +78,13 @@ public class GrowlPlugin implements Plugin {
 
 	boolean result = false;
 
-	File f = new File("/Library/Java/Extensions/libgrowl.jnilib");
+	File f = new File(Spark.getUserHome() + "/Library/Java/Extensions/libgrowl.jnilib");
 
 	if (f.exists()) {
 	    return true;
 	}
 
-	String home = Spark.getUserHome() + "/Spark/plugins/growl/lib/";
+	String home = Spark.getSparkUserHome() + "/plugins/growl/lib/";
 	File library = new File(home + "libgrowl.jnilib");
 
 	System.out.println(f.exists() + " " + library.exists());
