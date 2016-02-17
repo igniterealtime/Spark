@@ -7,6 +7,6 @@
     <description>Shows awesome Popups</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <minSparkVersion>2.7.0</minSparkVersion>
-    <os>Windows,Linux</os>
+    <os>Windows,Linux,Mac</os>
     <java>1.7.0</java>
 </plugin>
