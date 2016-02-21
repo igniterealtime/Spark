@@ -380,13 +380,9 @@ public final class Spark {
      * @return the resource directory.
      */
     public static File getResourceDirectory() {
-        if (Spark.isMac()) {
-            RESOURCE_DIRECTORY = new File(System.getProperty("appdir"), "resources");
-            return RESOURCE_DIRECTORY;
-        } else {
-            if (RESOURCE_DIRECTORY == null) RESOURCE_DIRECTORY = initializeDirectory("resources");
-            return RESOURCE_DIRECTORY;
-        }
+        if (RESOURCE_DIRECTORY == null) RESOURCE_DIRECTORY = initializeDirectory("resources");
+        return RESOURCE_DIRECTORY;
+
     }
 
     /**
