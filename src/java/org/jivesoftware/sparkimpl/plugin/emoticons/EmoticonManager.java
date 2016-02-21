@@ -95,8 +95,13 @@ public class EmoticonManager {
 	 * Initialize the EmoticonManager
 	 */
 	private EmoticonManager() {
-		EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(),
-				"xtra/emoticons").getAbsoluteFile();
+		if (Spark.isMac()) {
+			EMOTICON_DIRECTORY = new File(System.getProperty("appdir"),
+					"xtra/emoticons").getAbsoluteFile();
+		} else {
+			EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(),
+					"xtra/emoticons").getAbsoluteFile();
+		}
 
 		File[] files = null;
 		files = EMOTICON_DIRECTORY.listFiles();
