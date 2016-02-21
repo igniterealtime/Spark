@@ -93,12 +93,7 @@ public class PluginManager implements MainWindowListener {
 
     private PluginManager() {
         try {
-            if (Spark.isMac()) {
-                PLUGINS_DIRECTORY = new File(System.getProperty("appdir"), "plugins").getCanonicalFile();
-            } else {
-                PLUGINS_DIRECTORY = new File(Spark.getBinDirectory().getParentFile(), "plugins").getCanonicalFile();
-
-            }
+            PLUGINS_DIRECTORY = new File(Spark.getBinDirectory().getParentFile(), "plugins").getCanonicalFile();
         }
         catch (IOException e) {
             Log.error(e);
