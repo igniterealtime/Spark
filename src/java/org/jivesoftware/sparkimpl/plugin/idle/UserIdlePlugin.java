@@ -33,7 +33,6 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
