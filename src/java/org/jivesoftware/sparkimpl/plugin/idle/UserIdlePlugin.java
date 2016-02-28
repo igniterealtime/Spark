@@ -28,10 +28,12 @@ import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
 import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
 import com.sun.jna.platform.win32.WinUser.MSG;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
@@ -93,13 +95,20 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
     private void setIdle() {
 
-        latestPresence = SparkManager.getWorkspace().getStatusBar()
-                .getPresence();
+        latestPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+        String statustext;
+        
+        if (latestPresence.getStatus().equals(Res.getString("status.online")) || latestPresence.getStatus().equals(Res.getString("status.free.to.chat"))) {
+    		statustext = pref.getIdleMessage();
+    	} else {
+    		statustext = latestPresence.getStatus();
+    	}
+        
         if (latestPresence.isAway()) {
             Log.debug("Presence is already set to away");
         } else {
-            Presence presence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(pref.getIdleMessage()), 1, Presence.Mode.away);
-            SparkManager.getSessionManager().changePresence(presence);
+        	Presence presence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 1, Presence.Mode.away);	
+        	SparkManager.getSessionManager().changePresence(presence);
             Log.debug("Setting idle presence");
         }
     }
