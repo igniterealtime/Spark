@@ -757,7 +757,23 @@ public class ChatManager implements ChatManagerListener {
         boolean isChatFrameInFocus = getChatContainer().getChatFrame().isInFocus();
         boolean isSelectedTab = getChatContainer().getSelectedComponent() == component;
         for (SparkTabHandler decorator : sparkTabHandlers) {
-            boolean isHandled = decorator.isTabHandled(tab, component, isSelectedTab, isChatFrameInFocus);
+            boolean isHandled = decorator.isTabHandled(tab, component, isSelectedTab, isChatFrameInFocus );
+            if (isHandled) {
+                tab.validateTab();
+                return;
+            }
+        }
+    }
+    
+    public void notifySparkBroadcastTabHandlers(Component component) {
+        final SparkTab tab = chatContainer.getTabContainingComponent(component);
+        if (tab == null) {
+            return;
+        }
+        boolean isChatFrameInFocus = getChatContainer().getChatFrame().isInFocus();
+        boolean isSelectedTab = getChatContainer().getSelectedComponent() == component;
+        for (SparkTabHandler decorator : sparkTabHandlers) {
+            boolean isHandled = decorator.isTabBroadcastHandled(tab, component, isSelectedTab, isChatFrameInFocus  );
             if (isHandled) {
                 tab.validateTab();
                 return;
@@ -885,5 +901,7 @@ public class ChatManager implements ChatManagerListener {
 		public void processMessage(Chat arg0, Message arg1) {			
 			// TODO Auto-generated method stub			
 		}
-    }    	
+    }
+
+	   	
 }
