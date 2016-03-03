@@ -327,7 +327,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	    chatRoom = (ChatRoomImpl)container.getChatRoom(jid);
 	}
 	catch (ChatRoomNotFoundException e) {
-
 	    chatRoom = new ChatRoomImpl(jid, nickname, nickname);
 	    SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
 	}
@@ -385,7 +384,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	            broadcastRooms.remove(room);
 
 	            // Notify decorators
-	            SparkManager.getChatManager().notifySparkBroadcastTabHandlers(room);
+	            SparkManager.getChatManager().notifySparkTabHandlers(room);
 	            waiting = false;
 	        }
 	    }
@@ -415,8 +414,34 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
     }
 
 
-    public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused , boolean isBroadcast) {
-    return false;
+    public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
+        if (component instanceof ChatRoom) {
+            ChatRoom chatroom = (ChatRoom)component;
+            if (broadcastRooms.contains(chatroom)) {
+                final ChatRoomImpl room = (ChatRoomImpl)component;
+                tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                String nickname = room.getTabTitle();
+                nickname = Res.getString("message.broadcast.from", nickname);
+                tab.setTabTitle(nickname);
+
+
+                if ((!chatFrameFocused || !isSelectedTab) && room.getUnreadMessageCount() > 0) {
+                    // Make tab red.
+                    tab.setTitleColor(Color.red);
+                    tab.setTabBold(true);
+                }
+                else {
+                    tab.setTitleColor(Color.black);
+                    tab.setTabFont(tab.getDefaultFont());
+                    room.clearUnreadMessageCount();
+                }
+
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -495,50 +520,4 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	alert.toFront();
 	alert.requestFocus();
     }
-
-	
-
-	
-	public boolean isTabBroadcastHandled(SparkTab tab, Component component,
-			boolean isSelectedTab, boolean chatFrameFocused ) {
-		// TODO Auto-generated method stub
-        if (component instanceof ChatRoom) {
-            ChatRoom chatroom = (ChatRoom)component;
-
-            if (broadcastRooms.contains(chatroom)) {
-                final ChatRoomImpl room = (ChatRoomImpl)component;
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-                String nickname = room.getTabTitle();
-                nickname = Res.getString("message.broadcast.from", nickname);
-                tab.setTabTitle(nickname);
-
-                if (!chatFrameFocused || !isSelectedTab) {
-                    // Make tab red.
-		 if(room.getUnreadMessageCount() > 0)
-		 {
-                    tab.setTitleColor(Color.red);
-                    tab.setTabBold(true);
-		 }
-                }
-                else {
-                    tab.setTitleColor(Color.black);
-                    tab.setTabFont(tab.getDefaultFont());
-                    room.clearUnreadMessageCount();
-                }
-
-
-                return true;
-            }
-        }
-
-        return false;
-		
-	}
-
-	@Override
-	public boolean isTabHandled(SparkTab tab, Component component,
-			boolean isSelectedTab, boolean chatFrameFocused) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }
