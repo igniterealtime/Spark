@@ -778,6 +778,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             final ContainerComponent comp = (ContainerComponent)o;
             chatFrame.setTitle(comp.getFrameTitle());
             chatFrame.setIconImage(comp.getTabIcon().getImage());
+
             SparkManager.getChatManager().notifySparkTabHandlers(comp.getGUI());
         }
     }
@@ -1017,7 +1018,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     public void fireChatRoomStateUpdated(final ChatRoom room) {
         final int index = indexOfComponent(room);
         if (index != -1) {
-	
             SparkManager.getChatManager().notifySparkTabHandlers(room);
         }
     }
@@ -1035,8 +1035,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     SparkManager.getNativeManager().stopFlashing(chatFrame);
 
                     // Notify decorators
-                    //SparkManager.getChatManager().notifySparkTabHandlers(component);
-		    SparkManager.getChatManager().notifySparkBroadcastTabHandlers(component);
+                    SparkManager.getChatManager().notifySparkTabHandlers(component);
                 }
                 catch (Exception ex) {
                     Log.error("Could not stop flashing because " + ex.getMessage(), ex);

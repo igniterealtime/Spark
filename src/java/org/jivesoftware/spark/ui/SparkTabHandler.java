@@ -33,8 +33,8 @@ import java.awt.Color;
  */
 public abstract class SparkTabHandler {
 
-    public abstract boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused );
-    public abstract boolean isTabBroadcastHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused);
+    public abstract boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused);
+
     /**
      * Updates the SparkTab to show it is in a stale state.
      *

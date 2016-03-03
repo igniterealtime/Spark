@@ -43,10 +43,6 @@ public class DefaultTabHandler extends SparkTabHandler {
 
     }
 
-
-    public boolean isTabBroadcastHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
-    return false;
-    }
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
 
         if (component instanceof ChatRoom) {
