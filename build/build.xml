@@ -687,7 +687,6 @@
 		</exec>
 		<delete file="${target}/tmp.dmg" />
 		<delete file="${mac.dmg.file}" />
-		<delete dir="${target}/jre" />
 	</target>
 
 	<target name="mac.build.plugin" depends="jar,build.plugins">
@@ -719,13 +718,6 @@
 				 classname="com.oracle.appbundler.AppBundlerTask"/>
 
 		<mkdir dir="${mac.build.dir}"/>
-		<mkdir dir="${target}/jre"/>
-		<untar dest="${target}/jre" compression="gzip">
-			<cutdirsmapper dirs="1" />
-			<fileset dir="${basedir}/build/installer/mac">
-				<include name="**/jre*.tar.gz"/>
-			</fileset>
-		</untar>
 
 		<path id="osx.lib">
 			<fileset dir="${target.build}/lib">
@@ -757,7 +749,6 @@
 					jrepreferred="true">
 			<arch name="x86_64"/>
 			<arch name="i386"/>
-			<runtime dir="${target}/jre/Contents/Home"/>
 			<option value="-Djava.library.path=$APP_ROOT/Contents/Java/"/>
 			<option value="-Dappdir=$APP_ROOT/Contents/Resources"/>
 			<option value="-Xdock:name=Spark"/>
