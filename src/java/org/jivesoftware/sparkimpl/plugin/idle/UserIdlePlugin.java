@@ -53,6 +53,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     private int counter = 0;
     public static LocalPreferences pref = SettingsManager.getLocalPreferences();
     public static Presence latestPresence;
+	public static Presence statusPresence;
     private KeyHook keyHook;
     private static boolean DesktopLockStatus;
 
@@ -104,11 +105,11 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     	}
         
         if (latestPresence.isAway()) {
-            Log.debug("Presence is already set to away");
+            Log.debug("UserIdlePlugin: Presence is already set to away");
         } else {
-        	Presence presence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 1, Presence.Mode.away);	
-        	SparkManager.getSessionManager().changePresence(presence);
-            Log.debug("Setting idle presence");
+        	Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 1, Presence.Mode.away);
+        	SparkManager.getSessionManager().changePresence(statusPresence);
+            Log.debug("UserIdlePlugin: Setting idle presence");
         }
     }
 
@@ -117,10 +118,11 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     private void setOnline() {
     DesktopLockStatus = false;
         if (latestPresence.getStatus().contains("On the phone")) {
-            SparkManager.getSessionManager().changePresence(PhonePlugin.offPhonePresence);
-            Log.debug("LatestPresence matched ON_THE_PHONE using status from PhonePlugin offPhonePressence");
+			Presence presence = new Presence(Presence.Type.available, PhonePlugin.offPhonePresence.getStatus(), 1, Presence.Mode.available);
+			SparkManager.getSessionManager().changePresence(presence);
+			Log.debug("UserIdlePlugin: LatestPresence matched ON_THE_PHONE using status from PhonePlugin");
         } else { SparkManager.getSessionManager().changePresence(latestPresence);
-            Log.debug("Using LatestPresence"); }
+            Log.debug("UserIdlePlugin: Using LatestPresence"); }
 
 
     }
