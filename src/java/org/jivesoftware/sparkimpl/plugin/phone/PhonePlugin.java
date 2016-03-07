@@ -228,19 +228,19 @@ public class PhonePlugin implements Plugin {
 
             if (offPhonePresence != null) {
 
-                if ((offPhonePresence.getStatus().contentEquals(UserIdlePlugin.pref.getIdleMessage())) && (!UserIdlePlugin.getDesktopLockStatus()) && (UserIdlePlugin.latestPresence != null)) {
+                if (((offPhonePresence.getStatus().contentEquals(UserIdlePlugin.pref.getIdleMessage())) || ((UserIdlePlugin.statusPresence !=null) && (UserIdlePlugin.statusPresence.isAway()))) && (!UserIdlePlugin.getDesktopLockStatus()) && (UserIdlePlugin.latestPresence != null)) {
                     SparkManager.getSessionManager().changePresence(UserIdlePlugin.latestPresence);
-                    Log.debug("offPhonePresesence matched IdleMessage. Using status LatestPresence from UserIdlePlugin");
+                    Log.debug("PhonePlugin: offPhonePresence matched UserIdlePlugin Messages. Setting presence from UserIdlePlugin");
 
-                } else if (UserIdlePlugin.getDesktopLockStatus()) {
+                } else if ((UserIdlePlugin.getDesktopLockStatus()) && (offPhonePresence.isAvailable())) {
 
-                    Presence presence = new Presence(Presence.Type.available, UserIdlePlugin.pref.getIdleMessage(), 1, Presence.Mode.away);
+                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), 1, Presence.Mode.away);
                     SparkManager.getSessionManager().changePresence(presence);
-                    Log.debug("Desktop is Locked - Setting presence using idle message");
+                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence using offPhonePresence.away");
                 } else {
                     // Set user to previous presence state when all phone calls are hung up.
                     SparkManager.getSessionManager().changePresence(offPhonePresence);
-                    Log.debug("Returning Presence from Phone Plugin");
+                    Log.debug("PhonePlugin: Setting Presence from PhonePlugin.");
                 }
 
 
