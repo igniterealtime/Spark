@@ -120,6 +120,9 @@
 	<property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
 	<property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
 	<property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
+	<!-- LOCAL PATH for MAC JRE files -->
+	<property name="mac.jre.localdir" value="/Users/j2ee-bamboo/jres"/>
+
 	<property name="win.msi.withjre" value="${basedir}\installer\spark_${version.filename}.msi"/>
 	<property name="win.msi.nojre" value="${basedir}\installer\spark_${version.filename}_online.msi"/>
 	<property name="pack200.excludes"
@@ -687,6 +690,7 @@
 		</exec>
 		<delete file="${target}/tmp.dmg" />
 		<delete file="${mac.dmg.file}" />
+		<delete dir="${target}/jre" />
 	</target>
 
 	<target name="mac.build.plugin" depends="jar,build.plugins">
@@ -718,6 +722,13 @@
 				 classname="com.oracle.appbundler.AppBundlerTask"/>
 
 		<mkdir dir="${mac.build.dir}"/>
+		<mkdir dir="${target}/jre"/>
+		<untar dest="${target}/jre" compression="gzip">
+			<cutdirsmapper dirs="1" />
+			<fileset dir="${mac.jre.localdir}">
+				<include name="**/jre*macosx-x64.tar.gz"/>
+			</fileset>
+		</untar>
 
 		<path id="osx.lib">
 			<fileset dir="${target.build}/lib">
@@ -745,10 +756,10 @@
 					copyright="Ignite Realtime"
 					executablename="SparkLauncher"
 					identifier="com.jivesoftware.SparkBundle"
-					jvmrequired="1.7"
+					jvmrequired="1.8"
 					jrepreferred="true">
 			<arch name="x86_64"/>
-			<arch name="i386"/>
+			<runtime dir="${target}/jre/Contents/Home"/>
 			<option value="-Djava.library.path=$APP_ROOT/Contents/Java/"/>
 			<option value="-Dappdir=$APP_ROOT/Contents/Resources"/>
 			<option value="-Xdock:name=Spark"/>
