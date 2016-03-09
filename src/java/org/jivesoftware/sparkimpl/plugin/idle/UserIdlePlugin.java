@@ -28,8 +28,8 @@ import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
 import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
 import com.sun.jna.platform.win32.WinUser.MSG;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -53,15 +53,26 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     private int counter = 0;
     public static LocalPreferences pref = SettingsManager.getLocalPreferences();
     public static Presence latestPresence;
-	public static Presence statusPresence;
-    private KeyHook keyHook;
+	private KeyHook keyHook;
     private static boolean DesktopLockStatus;
+	public static int IdlePresencePriority = -2;
 
-    public static boolean getDesktopLockStatus() {
+	public static boolean getDesktopLockStatus() {
 
         return DesktopLockStatus;
     }
+	private static boolean presencePriority() {
+		if (PhonePlugin.offPhonePresence !=null) {
+			int pp1 = PhonePlugin.offPhonePresence.getPriority();
+			int pp2 = IdlePresencePriority;
 
+			if (pp1 == pp2) {
+				return true;
+			} else {
+				return false;
+			}
+		} else return false;
+	}
 
     @Override
     public boolean canShutDown() {
@@ -107,7 +118,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
         if (latestPresence.isAway()) {
             Log.debug("UserIdlePlugin: Presence is already set to away");
         } else {
-        	Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 1, Presence.Mode.away);
+        	Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), IdlePresencePriority, Presence.Mode.away);
         	SparkManager.getSessionManager().changePresence(statusPresence);
             Log.debug("UserIdlePlugin: Setting idle presence");
         }
@@ -116,18 +127,40 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 
     private void setOnline() {
-    DesktopLockStatus = false;
-        if (latestPresence.getStatus().contains("On the phone")) {
+		DesktopLockStatus = false;
+		Log.debug("presencePriority returned " +presencePriority());
+		if (PhonePlugin.onPhonePresence !=null) {
+			SparkManager.getSessionManager().changePresence(PhonePlugin.onPhonePresence);
+			Log.debug("UserIdlePlugin: Returning from idle/lock - On the Phone");
+
+		} else if ((latestPresence.getStatus().contains("On the phone")) && ((PhonePlugin.offPhonePresence !=null)
+				&& (PhonePlugin.offPhonePresence.getStatus().contentEquals(pref.getIdleMessage())))) {
+			Presence presence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
+			SparkManager.getSessionManager().changePresence(presence);
+			Log.debug("UserIdlePlugin: Setting presence to Online based on PhonePlugin last status");
+
+		} else if ((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence !=null)
+				&& ((PhonePlugin.offPhonePresence.getMode().equals(Presence.Mode.dnd))
+				|| (PhonePlugin.offPhonePresence.getMode().equals(Presence.Mode.xa)))) {
+			SparkManager.getSessionManager().changePresence(PhonePlugin.offPhonePresence);
+			Log.debug("UserIdlePlugin: Matched DND/XA - Setting presence from PhonePlugin");
+
+		} else if (((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence !=null)
+				&& (presencePriority()))) {
 			Presence presence = new Presence(Presence.Type.available, PhonePlugin.offPhonePresence.getStatus(), 1, Presence.Mode.available);
 			SparkManager.getSessionManager().changePresence(presence);
-			Log.debug("UserIdlePlugin: LatestPresence matched ON_THE_PHONE using status from PhonePlugin");
-        } else { SparkManager.getSessionManager().changePresence(latestPresence);
-            Log.debug("UserIdlePlugin: Using LatestPresence"); }
+			Log.debug("UserIdlePlugin: Setting presence from PhonePlugin based on presencePriority value");
 
+		} else if ((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence !=null)) {
+				SparkManager.getSessionManager().changePresence(PhonePlugin.offPhonePresence);
+				Log.debug("UserIdlePlugin: Setting presence from PhonePlugin");
 
-    }
+		} else { SparkManager.getSessionManager().changePresence(latestPresence);
+			Log.debug("UserIdlePlugin: Setting presence using latestPresence"); }
 
-    @Override
+	}
+
+	@Override
     public void run() {
 	if (pref.isIdleOn()) {
 	    PointerInfo info = MouseInfo.getPointerInfo();

@@ -51,7 +51,7 @@ public class PhonePlugin implements Plugin {
     private JFrame dialDialog;
 
     public static Presence offPhonePresence;
-
+    public static Presence onPhonePresence;
     public void initialize() {
         ProviderManager.getInstance().addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
         ProviderManager.getInstance().addIQProvider("phone-action", "http://jivesoftware.com/xmlns/phone", new PhoneActionIQProvider());
@@ -210,33 +210,40 @@ public class PhonePlugin implements Plugin {
                 dialDialog.setVisible(false);
             }
 
-            // Set offline presence if necessary.
+            // Get current presence if necessary.
             offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
 
-                // Send on phone presence
-                Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
-                SparkManager.getSessionManager().changePresence(onPhonePresence);
 
-
-
+            // Send "on the phone" presence
+            onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
+            SparkManager.getSessionManager().changePresence(onPhonePresence);
         }
 
+
         public void handleHangUp(HangUpEvent event) {
+            onPhonePresence = null;
             if (dialDialog != null) {
                 dialDialog.setVisible(false);
             }
 
             if (offPhonePresence != null) {
 
-                if (((offPhonePresence.getStatus().contentEquals(UserIdlePlugin.pref.getIdleMessage())) || ((UserIdlePlugin.statusPresence !=null) && (UserIdlePlugin.statusPresence.isAway()))) && (!UserIdlePlugin.getDesktopLockStatus()) && (UserIdlePlugin.latestPresence != null)) {
+                if (((offPhonePresence.getMode().equals(Presence.Mode.away)) && (!UserIdlePlugin.getDesktopLockStatus())
+                        && (UserIdlePlugin.latestPresence != null)) && (!UserIdlePlugin.latestPresence.getStatus().contentEquals("On the Phone"))) {
                     SparkManager.getSessionManager().changePresence(UserIdlePlugin.latestPresence);
-                    Log.debug("PhonePlugin: offPhonePresence matched UserIdlePlugin Messages. Setting presence from UserIdlePlugin");
+                    Log.debug("PhonePlugin: Setting presence from UserIdlePlugin");
 
-                } else if ((UserIdlePlugin.getDesktopLockStatus()) && (offPhonePresence.isAvailable())) {
-
-                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), 1, Presence.Mode.away);
+                } else if ((UserIdlePlugin.getDesktopLockStatus()) && ((offPhonePresence.getStatus().equals("Online"))
+                        || (offPhonePresence.getStatus().equals("Free to chat")))) {
+                    Presence presence = new Presence(Presence.Type.available, UserIdlePlugin.pref.getIdleMessage(), 1, Presence.Mode.away);
                     SparkManager.getSessionManager().changePresence(presence);
-                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence using offPhonePresence.away");
+                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence from pref.idle message");
+
+                } else if (UserIdlePlugin.getDesktopLockStatus() && (!offPhonePresence.isAway())) {
+                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), UserIdlePlugin.IdlePresencePriority, Presence.Mode.away);
+                    SparkManager.getSessionManager().changePresence(presence);
+                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence from user defined presence");
+
                 } else {
                     // Set user to previous presence state when all phone calls are hung up.
                     SparkManager.getSessionManager().changePresence(offPhonePresence);
