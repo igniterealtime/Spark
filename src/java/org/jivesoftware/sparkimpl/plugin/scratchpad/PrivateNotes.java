@@ -46,9 +46,18 @@ public class PrivateNotes implements PrivateData {
     }
 
     public void setNotes(String notes) {
-        this.notes = notes;
+    	if(notes!=null)
+    		{	
+    			this.notes=notes.replaceAll("&","&amp;");
+    		} else {
+    			this.notes=notes;
+    	}
     }
 
+    public void setMyNotes(String notes) {
+    this.notes=notes;
+    
+    }
 
     /**
      * Returns the root element name.
@@ -146,6 +155,12 @@ public class PrivateNotes implements PrivateData {
             Log.error(e);
         }
 
+        if(notes.getNotes() != null )
+        	{
+        		String note=notes.getNotes().replaceAll("&amp;","&");
+        		notes.setMyNotes(note);
+        	}
+        
         return notes;
     }
 }
