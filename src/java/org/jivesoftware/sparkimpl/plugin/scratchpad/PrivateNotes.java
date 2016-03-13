@@ -39,16 +39,17 @@ public class PrivateNotes implements PrivateData {
      */
     public PrivateNotes() {
     }
-
-
+     
     public String getNotes() {
         return notes;
     }
 
     public void setNotes(String notes) {
-        this.notes = notes;
+	this.notes=notes.replaceAll("&","&amp;");
     }
-
+    public void setMyNotes(String notes) {
+	this.notes=notes;
+    }
 
     /**
      * Returns the root element name.
@@ -121,8 +122,8 @@ public class PrivateNotes implements PrivateData {
     }
 
     public static void savePrivateNotes(PrivateNotes notes) {
-        PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
-
+	PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
+	
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
         try {
             manager.setPrivateData(notes);
@@ -145,7 +146,9 @@ public class PrivateNotes implements PrivateData {
         catch (XMPPException e) {
             Log.error(e);
         }
-
+	String note=notes.getNotes().replaceAll("&amp;","&");
+        notes.setMyNotes(note);
+        
         return notes;
     }
 }
