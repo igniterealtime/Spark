@@ -45,7 +45,14 @@ public class PrivateNotes implements PrivateData {
     }
 
     public void setNotes(String notes) {
-	this.notes=notes.replaceAll("&","&amp;");
+	if(notes!=null)
+	{	
+	  this.notes=notes.replaceAll("&","&amp;");
+	}
+	else
+	{
+		this.notes=notes;
+	}
     }
     public void setMyNotes(String notes) {
 	this.notes=notes;
@@ -146,8 +153,11 @@ public class PrivateNotes implements PrivateData {
         catch (XMPPException e) {
             Log.error(e);
         }
-	String note=notes.getNotes().replaceAll("&amp;","&");
-        notes.setMyNotes(note);
+	if(notes.getNotes() != null )
+	{
+	  String note=notes.getNotes().replaceAll("&amp;","&");
+          notes.setMyNotes(note);
+	}
         
         return notes;
     }
