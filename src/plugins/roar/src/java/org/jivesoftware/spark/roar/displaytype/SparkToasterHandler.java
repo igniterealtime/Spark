@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.roar.RoarProperties;
+import org.jivesoftware.spark.roar.RoarResources;
 import org.jivesoftware.spark.roar.gui.SparkToaster;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -66,7 +67,7 @@ public class SparkToasterHandler implements RoarDisplayType {
 
     @Override
     public String toString() {
-	return "SparkToaster";
+	return "SparkToaster";  
     }
 
     public static String getName() {
@@ -74,7 +75,7 @@ public class SparkToasterHandler implements RoarDisplayType {
     }
 
     public static String getLocalizedName() {
-	return "SparkToaster";
+        return RoarResources.getString("roar.display.topright");
     }
 
 }
