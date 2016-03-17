@@ -42,6 +42,10 @@ public class SoftPhoneTabHandler extends SparkTabHandler {
         manager = SoftPhoneManager.getInstance();
     }
 
+     public boolean isTabBroadcastHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused )
+     {
+	  return false;
+     }
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         CallRoomState callState = manager.getCallRoomState(component);
         if (callState != null) {

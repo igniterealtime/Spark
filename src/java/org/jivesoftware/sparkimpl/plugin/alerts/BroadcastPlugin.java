@@ -319,6 +319,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
     private void userToUserBroadcast(Message message, Type type, String from) {
 	String jid = StringUtils.parseBareAddress(from);
 	String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatContainer container = chatManager.getChatContainer();
 
@@ -331,6 +332,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	    chatRoom = new ChatRoomImpl(jid, nickname, nickname);
 	    SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
 	}
+
+
 
 	Message m = new Message();
 	m.setBody(message.getBody());
@@ -346,7 +349,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	chatRoom.addToTranscript(m,true);
 	chatRoom.increaseUnreadMessageCount();
 	broadcastRooms.add(chatRoom);
-
 
 	LocalPreferences pref = SettingsManager.getLocalPreferences();
 	if (pref.getShowToasterPopup()) {
@@ -368,6 +370,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 SparkManager.getSoundManager().playClip(incomingFile);
             }
         }
+	SparkManager.getChatManager().notifySparkBroadcastTabHandlers(chatRoom);
 
 	chatRoom.addMessageListener(new MessageListener() {
 	    boolean waiting = true;
@@ -382,10 +385,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
 	    private void removeAsBroadcast(ChatRoom room) {
 	        if (waiting) {
-	            broadcastRooms.remove(room);
 
 	            // Notify decorators
 	            SparkManager.getChatManager().notifySparkBroadcastTabHandlers(room);
+
+	            broadcastRooms.remove(room);
 	            waiting = false;
 	        }
 	    }
@@ -503,6 +507,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 			boolean isSelectedTab, boolean chatFrameFocused ) {
 		// TODO Auto-generated method stub
         if (component instanceof ChatRoom) {
+
             ChatRoom chatroom = (ChatRoom)component;
 
             if (broadcastRooms.contains(chatroom)) {
@@ -511,7 +516,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 String nickname = room.getTabTitle();
                 nickname = Res.getString("message.broadcast.from", nickname);
                 tab.setTabTitle(nickname);
-
                 if (!chatFrameFocused || !isSelectedTab) {
                     // Make tab red.
 		 if(room.getUnreadMessageCount() > 0)

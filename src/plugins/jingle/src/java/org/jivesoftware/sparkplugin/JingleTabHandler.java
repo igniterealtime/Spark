@@ -41,7 +41,10 @@ public class JingleTabHandler extends SparkTabHandler {
     public JingleTabHandler() {
         manager = JingleStateManager.getInstance();
     }
-
+   public boolean isTabBroadcastHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused )
+   {
+    return false;
+   }
 
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         if (component instanceof ChatRoom) {
