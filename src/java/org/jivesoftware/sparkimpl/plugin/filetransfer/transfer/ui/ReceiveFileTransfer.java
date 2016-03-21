@@ -502,7 +502,7 @@ public class ReceiveFileTransfer extends JPanel {
             }
 
             public void mousePressed(MouseEvent e) {
-                launchFile(Downloads.getDownloadDirectory()+"\\"+request.getFileName());
+                launchFile(Downloads.getDownloadDirectory()+File.separator+request.getFileName());
             }
         });
 
@@ -768,7 +768,7 @@ public class ReceiveFileTransfer extends JPanel {
             return;
         Desktop dt = Desktop.getDesktop();
         try {
-            dt.browse(getFileURI(filePath));
+	    dt.browse(getFileURI(filePath));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
