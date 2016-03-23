@@ -78,7 +78,6 @@ exit 0
 /usr/share/spark/lib/jdom.jar
 /usr/share/spark/lib/i4jruntime.jar
 /usr/share/spark/lib/ice4j.jar
-/usr/share/spark/lib/jain-sdp.jar
 /usr/share/spark/lib/json-simple-1.1.1.jar
 /usr/share/spark/lib/jspeex.jar
 /usr/share/spark/lib/JTattoo.jar
