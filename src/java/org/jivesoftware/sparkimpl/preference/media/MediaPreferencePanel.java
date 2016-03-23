@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.preference.media;
 
 import org.jitsi.impl.neomedia.MediaServiceImpl;
+import org.jitsi.impl.neomedia.codec.video.AVFrameFormat;
 import org.jitsi.impl.neomedia.device.AudioSystem;
 import org.jitsi.impl.neomedia.device.AudioSystem.DataFlow;
 import org.jitsi.impl.neomedia.device.CaptureDeviceInfo2;
@@ -39,7 +40,6 @@ import javax.media.CaptureDeviceInfo;
 import javax.media.CaptureDeviceManager;
 import javax.media.Format;
 import javax.media.format.AudioFormat;
-import javax.media.format.VideoFormat;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -169,8 +169,8 @@ public class MediaPreferencePanel  extends JPanel {
 			String protocol = infoCaptureDevice.getLocator().getProtocol();
 			audioDevice.addItem("[" + protocol + "]" + convertSysString(infoCaptureDevice.getName()));
 		}
-		
-		vectorVideoDevices = CaptureDeviceManager.getDeviceList(new VideoFormat(VideoFormat.RGB));
+
+		vectorVideoDevices = CaptureDeviceManager.getDeviceList(new AVFrameFormat());
 		for (  CaptureDeviceInfo infoCaptureDevice : vectorVideoDevices )
 		{
             videoDevice.addItem(convertSysString(infoCaptureDevice.getName()));		

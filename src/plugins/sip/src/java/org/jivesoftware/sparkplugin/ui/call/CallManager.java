@@ -323,7 +323,7 @@ public class CallManager implements InterlocutorListener {
             if (offPhonePresence == null) {
 
                 // Set user to available when all phone calls are hung up.
-                Presence availablePresence = new Presence(Presence.Type.available, "Available", 1, Presence.Mode.available);
+                Presence availablePresence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
                 SparkManager.getSessionManager().changePresence(availablePresence);
 
             } else {

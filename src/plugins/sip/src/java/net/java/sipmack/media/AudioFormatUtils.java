@@ -19,18 +19,17 @@
  */
 package net.java.sipmack.media;
 
-import javax.media.format.AudioFormat;
-import javax.media.format.VideoFormat;
-import javax.sdp.SdpConstants;
-
 import net.sf.fmj.media.BonusAudioFormatEncodings;
 import net.sf.fmj.media.datasink.rtp.RTPBonusFormatsMgr;
-
 import org.jitsi.service.libjitsi.LibJitsi;
 import org.jitsi.service.neomedia.MediaService;
 import org.jitsi.service.neomedia.codec.Constants;
 import org.jitsi.service.neomedia.format.MediaFormat;
 import org.jitsi.service.neomedia.format.MediaFormatFactory;
+
+import javax.media.format.AudioFormat;
+import javax.media.format.VideoFormat;
+import javax.sdp.SdpConstants;
 
 /**
  * Audio Format Utils.

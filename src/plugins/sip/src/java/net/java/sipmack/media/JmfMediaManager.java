@@ -19,6 +19,21 @@
  */
 package net.java.sipmack.media;
 
+import net.java.sipmack.common.Log;
+import net.java.sipmack.sip.Call;
+import net.java.sipmack.sip.NetworkAddressManager;
+import net.java.sipmack.sip.SIPConfig;
+import org.jitsi.service.libjitsi.LibJitsi;
+import org.jitsi.service.neomedia.codec.Constants;
+import org.jitsi.service.neomedia.format.MediaFormat;
+import org.jitsi.service.neomedia.format.MediaFormatFactory;
+import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.media.format.AudioFormat;
+import javax.media.format.VideoFormat;
+import javax.sdp.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.Inet6Address;
@@ -27,35 +42,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
-
-import javax.media.format.AudioFormat;
-import javax.media.format.VideoFormat;
-import javax.sdp.Connection;
-import javax.sdp.Media;
-import javax.sdp.MediaDescription;
-import javax.sdp.Origin;
-import javax.sdp.SdpException;
-import javax.sdp.SdpFactory;
-import javax.sdp.SdpParseException;
-import javax.sdp.SessionDescription;
-import javax.sdp.SessionName;
-import javax.sdp.TimeDescription;
-import javax.sdp.Version;
-
-import net.java.sipmack.common.Log;
-import net.java.sipmack.sip.Call;
-import net.java.sipmack.sip.NetworkAddressManager;
-import net.java.sipmack.sip.SIPConfig;
-
-import org.jitsi.service.libjitsi.LibJitsi;
-import org.jitsi.service.neomedia.codec.Constants;
-import org.jitsi.service.neomedia.format.MediaFormat;
-import org.jitsi.service.neomedia.format.MediaFormatFactory;
-import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * JmfMediaManager using JMF based API.
@@ -94,10 +81,8 @@ public class JmfMediaManager {
      * Setup API supported AudioFormats
      */
     private void setupAudioFormats() {
-    	
-  
-    	
-        audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
+
+        //audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
         audioFormats.add(new AudioFormat(Constants.ALAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.GSM_RTP));       
@@ -505,7 +490,7 @@ public class JmfMediaManager {
         for (int i = 0; i < sdpFormats.size(); i++) {
     		System.out.println("Add1 ++++++++++++++++++" + sdpFormats);
 
-    		if (Integer.parseInt((String)sdpFormats.get(0)) == 31) 
+    		if (Integer.parseInt((String)sdpFormats.get(0)) == 31)
     		{
         		System.out.println(sdpFormats.get(0));
     			MediaFormat videoformat = LibJitsi.getMediaService().getFormatFactory().createMediaFormat(

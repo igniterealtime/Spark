@@ -19,10 +19,28 @@
  */
 package net.java.sipmack.media;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.io.IOException;
+import net.sf.fmj.media.RegistryDefaults;
+import org.jitsi.impl.neomedia.device.MediaDeviceImpl;
+import org.jitsi.service.libjitsi.LibJitsi;
+import org.jitsi.service.neomedia.*;
+import org.jitsi.service.neomedia.device.MediaDevice;
+import org.jitsi.service.neomedia.format.MediaFormat;
+import org.jitsi.service.neomedia.format.MediaFormatFactory;
+import org.jitsi.util.event.VideoEvent;
+import org.jitsi.util.event.VideoListener;
+import org.jitsi.util.swing.VideoContainer;
+
+import javax.media.CaptureDeviceInfo;
+import javax.media.CaptureDeviceManager;
+import javax.media.Format;
+import javax.media.MediaLocator;
+import javax.media.format.VideoFormat;
+import javax.media.rtp.ReceiveStreamListener;
+import javax.media.rtp.SendStream;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -30,40 +48,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import javax.media.CaptureDeviceInfo;
-import javax.media.CaptureDeviceManager;
-import javax.media.ControllerClosedEvent;
-import javax.media.ControllerEvent;
-import javax.media.ControllerListener;
-import javax.media.Format;
-import javax.media.MediaLocator;
-import javax.media.Processor;
-import javax.media.format.VideoFormat;
-import javax.media.rtp.ReceiveStreamListener;
-import javax.media.rtp.SendStream;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import net.sf.fmj.media.RegistryDefaults;
-
-import org.jitsi.impl.neomedia.device.MediaDeviceImpl;
-import org.jitsi.service.libjitsi.LibJitsi;
-import org.jitsi.service.neomedia.DefaultStreamConnector;
-import org.jitsi.service.neomedia.MediaDirection;
-import org.jitsi.service.neomedia.MediaService;
-import org.jitsi.service.neomedia.MediaStream;
-import org.jitsi.service.neomedia.MediaStreamTarget;
-import org.jitsi.service.neomedia.MediaType;
-import org.jitsi.service.neomedia.MediaUseCase;
-import org.jitsi.service.neomedia.StreamConnector;
-import org.jitsi.service.neomedia.VideoMediaStream;
-import org.jitsi.service.neomedia.device.MediaDevice;
-import org.jitsi.service.neomedia.format.MediaFormat;
-import org.jitsi.service.neomedia.format.MediaFormatFactory;
-import org.jitsi.util.event.VideoEvent;
-import org.jitsi.util.event.VideoListener;
-import org.jitsi.util.swing.VideoContainer;
 
 
 public class VideoChannel {
@@ -79,7 +63,8 @@ public class VideoChannel {
     private StreamConnector connector;
     private List<SendStream> sendStreams = new ArrayList<SendStream>();
     private List<ReceiveStreamListener> receiveListeners = new ArrayList<ReceiveStreamListener>();
-    MediaStream mediaStream = null;
+    private MediaStream mediaStream = null;
+    private JFrame frame = null;
     
     /**
      * Creates an Audio Channel for a desired jmf locator. For instance: new MediaLocator("dsound://")
@@ -110,18 +95,76 @@ public class VideoChannel {
     
     public synchronized void checkVideo()
     {
-        JPanel visualComponent = new JPanel( new BorderLayout() );
-    	VideoMediaStream vms = ((VideoMediaStream) mediaStream);
-    	visualComponent.setBackground(Color.BLACK);
-    	for( Component c : vms.getVisualComponents() ) {
-        	VideoContainer vc = new VideoContainer(c,true);
-            visualComponent.add(vc); 
-    	}
-    	    	
-    	JFrame frame = new JFrame("Frame");
-    	frame.setSize(640, 480);
-    	frame.add(visualComponent);
-    	frame.setVisible(true);
+        if (frame == null)
+        {
+            VideoMediaStream vms = ((VideoMediaStream) mediaStream);
+            frame = new VideoFrame("Frame",vms);
+            frame.setSize(640, 480);
+            frame.setVisible(true);
+        }
+    }
+    public class VideoFrame extends JFrame
+    {
+        private static final long serialVersionUID = -3359422087122668632L;
+
+        private VideoMediaStream vms;
+
+        public VideoFrame(String name,VideoMediaStream vms)
+        {
+            super(name);
+            final VideoFrame videoframe = this;
+
+            this.setSize(640, 480);
+            this.setLayout(new BorderLayout());
+            this.vms = vms;
+
+            JPanel visualComponent = new JPanel( new BorderLayout() );
+
+            for( Component c : vms.getVisualComponents() ) {
+                VideoContainer vc = new VideoContainer(c,true);
+                visualComponent.add(vc);
+            }
+
+            JPanel  controlComponent  = new JPanel( new FlowLayout() );
+            JButton play = new JButton("Play");
+            play.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    videoframe.pause();
+                }
+
+            });
+
+            JButton pause = new JButton("Pause");
+            pause.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    videoframe.pause();
+                }
+
+            });
+
+            controlComponent.add(play);
+            controlComponent.add(pause);
+
+            this.add(visualComponent,BorderLayout.CENTER);
+            this.add(controlComponent,BorderLayout.SOUTH);
+
+            this.pack();
+        }
+
+        public void pause() {
+            vms.setMute(true);
+        }
+
+        public void resume() {
+            vms.setMute(false);
+
+        }
     }
 
     /**
@@ -132,9 +175,23 @@ public class VideoChannel {
     public synchronized String start() {
     	try {
 	    	MediaService mediaService = LibJitsi.getMediaService();
+
 	        MediaDevice device = mediaService.getDefaultDevice(MediaType.VIDEO, MediaUseCase.ANY);
- 	
-	        mediaStream = mediaService.createMediaStream(device);
+            List<MediaDevice> devices = mediaService.getDevices(MediaType.VIDEO, MediaUseCase.ANY);
+            for (MediaDevice foundDevice : devices)
+            {
+                if (foundDevice instanceof MediaDeviceImpl)
+                {
+                    MediaDeviceImpl amdi = (MediaDeviceImpl) foundDevice;
+                    if(locator.equals(amdi.getCaptureDeviceInfo().getLocator()))
+                    {
+                        System.out.println("Test" + locator + "-" + amdi.getCaptureDeviceInfo().getLocator());
+                        device = foundDevice;
+                    }
+                }
+            }
+            System.out.println("Device:" + device);
+            mediaStream = mediaService.createMediaStream(device);
 	        mediaStream.setDirection(MediaDirection.SENDRECV);
 	  
 	        MediaFormat usedformat = mediaService.getFormatFactory().createMediaFormat(
@@ -223,6 +280,12 @@ public class VideoChannel {
 	    	mediaStream.close();
 	    	mediaStream = null;	    	
     	}
+
+        if (frame != null)
+        {
+            frame.dispose();
+            frame = null;
+        }
     	
     	remevoAllReceiverListener();
     }
