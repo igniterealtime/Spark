@@ -20,8 +20,12 @@
 
 package net.java.sipmack.sip;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import net.java.sipmack.common.Log;
+import net.java.sipmack.media.AudioMediaSession;
+import net.java.sipmack.media.AudioReceiverChannel;
+import net.java.sipmack.media.VideoMediaSession;
+import net.java.sipmack.sip.event.CallListener;
+import net.java.sipmack.sip.event.CallStateEvent;
 
 import javax.media.rtp.ReceiveStreamListener;
 import javax.media.rtp.event.ReceiveStreamEvent;
@@ -35,12 +39,8 @@ import javax.sip.address.URI;
 import javax.sip.header.FromHeader;
 import javax.sip.header.ToHeader;
 import javax.sip.message.Request;
-
-import net.java.sipmack.common.Log;
-import net.java.sipmack.media.AudioMediaSession;
-import net.java.sipmack.media.AudioReceiverChannel;
-import net.java.sipmack.sip.event.CallListener;
-import net.java.sipmack.sip.event.CallStateEvent;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Title: SIPark
@@ -84,6 +84,8 @@ public class Call implements ReceiveStreamListener {
     private boolean holdMic = false;
 
     private AudioMediaSession audioMediaSession = null;
+
+    private VideoMediaSession videoMediaSession = null;
 
     private AudioReceiverChannel audioReceiverChannel = null;
 
@@ -336,6 +338,13 @@ public class Call implements ReceiveStreamListener {
 
     public void setAudioMediaSession(AudioMediaSession audioMediaSession) {
         this.audioMediaSession = audioMediaSession;
+    }
+    public VideoMediaSession getVideoMediaSession() {
+        return videoMediaSession;
+    }
+
+    public void setVideoMediaSession(VideoMediaSession audioMediaSession) {
+        this.videoMediaSession = audioMediaSession;
     }
 
     // ====================== RECEIVE STREAMS EVENTS ==========================

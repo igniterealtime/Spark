@@ -19,52 +19,17 @@
  */
 package net.java.sipmack.softphone;
 
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.sdp.MediaDescription;
-import javax.sdp.SessionDescription;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-
 import net.java.sipmack.common.DialSoundManager;
 import net.java.sipmack.common.Log;
 import net.java.sipmack.events.UserActionListener;
-import net.java.sipmack.media.AudioMediaSession;
-import net.java.sipmack.media.AudioReceiverChannel;
-import net.java.sipmack.media.JmfMediaManager;
-import net.java.sipmack.media.MediaException;
-import net.java.sipmack.media.VideoMediaSession;
-import net.java.sipmack.sip.Call;
-import net.java.sipmack.sip.CommunicationsException;
-import net.java.sipmack.sip.Interlocutor;
-import net.java.sipmack.sip.InterlocutorUI;
-import net.java.sipmack.sip.NetworkAddressManager;
-import net.java.sipmack.sip.SIPConfig;
-import net.java.sipmack.sip.SipManager;
-import net.java.sipmack.sip.SipRegisterStatus;
-import net.java.sipmack.sip.event.CallEvent;
-import net.java.sipmack.sip.event.CallListener;
-import net.java.sipmack.sip.event.CallRejectedEvent;
-import net.java.sipmack.sip.event.CallStateEvent;
-import net.java.sipmack.sip.event.CommunicationsErrorEvent;
-import net.java.sipmack.sip.event.CommunicationsListener;
-import net.java.sipmack.sip.event.MessageEvent;
-import net.java.sipmack.sip.event.RegistrationEvent;
-import net.java.sipmack.sip.event.UnknownMessageEvent;
+import net.java.sipmack.media.*;
+import net.java.sipmack.sip.*;
+import net.java.sipmack.sip.event.*;
 import net.java.sipmack.softphone.gui.DefaultGuiManager;
 import net.java.sipmack.softphone.gui.GuiManager;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
 import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -84,6 +49,18 @@ import org.jivesoftware.sparkplugin.preferences.SipPreferences;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccount;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
 import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
+
+import javax.sdp.MediaDescription;
+import javax.sdp.SessionDescription;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Title: SIPark
@@ -458,6 +435,11 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
         if (audioMediaSession != null) {
             audioMediaSession.close();
         }
+        VideoMediaSession videoMediaSession = evt.getSourceCall().getVideoMediaSession();
+        if (videoMediaSession != null) {
+            videoMediaSession.stopTrasmit();
+            videoMediaSession.stopReceive();
+        }
     }
 
     /**
@@ -667,6 +649,11 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                         audioMediaSession.stopTrasmit();
                         audioMediaSession.stopReceive();
                     }
+                    VideoMediaSession videoMediaSession = evt.getSourceCall().getVideoMediaSession();
+                    if (videoMediaSession != null) {
+                        videoMediaSession.stopTrasmit();
+                        videoMediaSession.stopReceive();
+                    }
                     PhoneManager.setUsingMediaLocator(false);
                 }
 
@@ -739,6 +726,11 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
                 }
                 if (call.getAudioReceiverChannel() != null)
                     call.getAudioReceiverChannel().stop();
+                VideoMediaSession videoMediaSession = evt.getSourceCall().getVideoMediaSession();
+                if (videoMediaSession != null) {
+                    videoMediaSession.stopTrasmit();
+                    videoMediaSession.stopReceive();
+                }
 
                 PhoneManager.setUsingMediaLocator(false);
 
