@@ -688,6 +688,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
 		                if (videoMediaSession != null) {
 		                	videoMediaSession.startTrasmit();
 		                	videoMediaSession.startReceive();
+                            call.setVideoMediaSession(videoMediaSession);
 		                }
                 	}
                 }

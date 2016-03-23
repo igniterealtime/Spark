@@ -343,8 +343,8 @@ public class Call implements ReceiveStreamListener {
         return videoMediaSession;
     }
 
-    public void setVideoMediaSession(VideoMediaSession audioMediaSession) {
-        this.videoMediaSession = audioMediaSession;
+    public void setVideoMediaSession(VideoMediaSession videoMediaSession) {
+        this.videoMediaSession = videoMediaSession;
     }
 
     // ====================== RECEIVE STREAMS EVENTS ==========================
