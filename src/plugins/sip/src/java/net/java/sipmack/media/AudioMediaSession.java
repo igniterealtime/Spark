@@ -20,14 +20,13 @@
 
 package net.java.sipmack.media;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
-import javax.media.rtp.ReceiveStreamListener;
-
 import org.jitsi.service.neomedia.format.MediaFormat;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.media.rtp.ReceiveStreamListener;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 
 /**
@@ -133,7 +132,7 @@ public class AudioMediaSession {
             localPort = this.getLocal().getPort();
             remotePort = this.getRemote().getPort();
         }
-        System.out.println(this.getLocal().getConnection() + " " + ip + ": " + localPort + "->" + remotePort);
+        System.out.println(this.getLocal().getConnection() + " " + ip + ": " + localPort + "->" + remotePort + "-" + audioFormat);
 
         System.out.println("1----> AudioChannel");
         audioChannel = new AudioChannel(PhoneManager.getMediaLocator(locator), localIp, ip, localPort,-1,  remotePort, -1, audioFormat);

@@ -39,6 +39,8 @@ import javax.media.rtp.ReceiveStreamListener;
 import javax.media.rtp.SendStream;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -95,27 +97,73 @@ public class VideoChannel {
     {
         if (frame == null)
         {
-            JPanel visualComponent = new JPanel( new BorderLayout() );
             VideoMediaStream vms = ((VideoMediaStream) mediaStream);
-            visualComponent.setBackground(Color.BLACK);
-            for( Component c : vms.getVisualComponents() ) {
-                VideoContainer vc = new VideoContainer(c,true);
-                visualComponent.add(vc);
-            }
-            System.out.println("VMS: " + vms);
-            System.out.println("VMS: " + vms.getName());
-            frame = new VideoFrame("Frame");
+            frame = new VideoFrame("Frame",vms);
             frame.setSize(640, 480);
-            frame.add(visualComponent);
             frame.setVisible(true);
         }
     }
     public class VideoFrame extends JFrame
     {
         private static final long serialVersionUID = -3359422087122668632L;
-        public VideoFrame(String name)
+
+        private VideoMediaStream vms;
+
+        public VideoFrame(String name,VideoMediaStream vms)
         {
             super(name);
+            final VideoFrame videoframe = this;
+
+            this.setSize(640, 480);
+            this.setLayout(new BorderLayout());
+            this.vms = vms;
+
+            JPanel visualComponent = new JPanel( new BorderLayout() );
+
+            for( Component c : vms.getVisualComponents() ) {
+                VideoContainer vc = new VideoContainer(c,true);
+                visualComponent.add(vc);
+            }
+
+            JPanel  controlComponent  = new JPanel( new FlowLayout() );
+            JButton play = new JButton("Play");
+            play.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    videoframe.pause();
+                }
+
+            });
+
+            JButton pause = new JButton("Pause");
+            pause.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    videoframe.pause();
+                }
+
+            });
+
+            controlComponent.add(play);
+            controlComponent.add(pause);
+
+            this.add(visualComponent,BorderLayout.CENTER);
+            this.add(controlComponent,BorderLayout.SOUTH);
+
+            this.pack();
+        }
+
+        public void pause() {
+            vms.setMute(true);
+        }
+
+        public void resume() {
+            vms.setMute(false);
+
         }
     }
 
