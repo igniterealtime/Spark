@@ -81,10 +81,8 @@ public class JmfMediaManager {
      * Setup API supported AudioFormats
      */
     private void setupAudioFormats() {
-    	
-  
-    	
-        audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
+
+        //audioFormats.add(new AudioFormat(Constants.SPEEX_RTP));
         audioFormats.add(new AudioFormat(Constants.ALAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.ULAW_RTP));
         audioFormats.add(new AudioFormat(AudioFormat.GSM_RTP));       
