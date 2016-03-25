@@ -642,6 +642,14 @@ public class LocalPreferences {
 	    return getBoolean("toasterPopup", toasterPopup != null ? new Boolean(toasterPopup) : false);
 	}
 
+	public void setDisableAsteriskToasterPopup(boolean disable) {
+		setBoolean("disableAsteriskToasterPopup", disable);
+	}
+
+	public boolean getDisableAsteriskToasterPopup() {
+		return getBoolean("disableAsteriskToasterPopup", false);
+	}
+
 	public void setWindowTakesFocus(boolean focus) {
 		setBoolean("windowTakesFocus", focus);
 	}

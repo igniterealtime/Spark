@@ -70,6 +70,7 @@ public class NotificationsPreference implements Preference {
 
 			public void finished() {
 				boolean toaster = localPreferences.getShowToasterPopup();
+				boolean asteriskToaster = localPreferences.getDisableAsteriskToasterPopup();
 				boolean windowFocus = localPreferences.getWindowTakesFocus();
 				boolean offlineNotification = localPreferences
 						.isOfflineNotificationsOn();
@@ -83,6 +84,7 @@ public class NotificationsPreference implements Preference {
 						.isSystemTrayNotificationEnabled();
 
 				panel.setShowToaster(toaster);
+				panel.setDisableAsteriskToaster(asteriskToaster);
 				panel.setShowWindowPopup(windowFocus);
 				panel.setOfflineNotification(offlineNotification);
 				panel.setOnlineNotification(onlineNotification);
@@ -116,6 +118,7 @@ public class NotificationsPreference implements Preference {
 		LocalPreferences pref = SettingsManager.getLocalPreferences();
 
 		pref.setShowToasterPopup(panel.showToaster());
+		pref.setDisableAsteriskToasterPopup(panel.disableAsteriskToaster());
 		pref.setWindowTakesFocus(panel.shouldWindowPopup());
 		pref.setNotificationsDisplayTime(panel.getNotificationsDisplayTime());
 		pref.setOfflineNotifications(panel.isOfflineNotificationOn());
