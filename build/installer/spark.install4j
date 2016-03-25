@@ -572,6 +572,7 @@
         <entry location="bin/startup.bat" fileType="regular" />
         <entry location="bin/startup.sh" fileType="regular" />
         <entry location="lib/linux" fileType="regular" />
+        <entry location="lib/linux64" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="plugins/idlelinux.jar" fileType="regular" />
       </exclude>
@@ -608,6 +609,7 @@
         <entry location="bin/startup.bat" fileType="regular" />
         <entry location="bin/startup.sh" fileType="regular" />
         <entry location="lib/linux" fileType="regular" />
+        <entry location="lib/linux64" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="plugins/idlelinux.jar" fileType="regular" />
       </exclude>
