@@ -353,7 +353,7 @@ public class NetworkAddressManager {
             InetAddressWrapper other = o;
 
             if (this.value < other.getValue()) return -1;
-            else if (this.value < other.getValue()) return 0;
+            else if (this.value == other.getValue()) return 0;
             else return 1;
         }
     }
