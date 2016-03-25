@@ -39,6 +39,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -296,13 +297,14 @@ public class PhonePlugin implements Plugin {
             incomingCall.setCallerName(Res.getString("message.no.caller.id"));
         }
 
-        SparkToaster toasterManager = new SparkToaster();
+        if (!SettingsManager.getLocalPreferences().getDisableAsteriskToasterPopup()) {
+            SparkToaster toasterManager = new SparkToaster();
+            toasterManager.setTitle("Incoming Phone Call");
+            toasterManager.setDisplayTime(15000);
+            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+            toasterManager.setComponent(incomingCall);
 
-        toasterManager.setTitle("Incoming Phone Call");
-        toasterManager.setDisplayTime(15000);
-        toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
-        toasterManager.setComponent(incomingCall);
-
+        }
     }
 
 
