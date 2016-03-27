@@ -265,12 +265,11 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         boolean bold = false;
         boolean italic = false;
         boolean underlined = false;
-
         final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
         while (tokenizer.hasMoreTokens()) {
             String textFound = tokenizer.nextToken();
             if ((textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www.")) &&
+                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("file:/") ) &&
                     textFound.indexOf(".") > 1) {
                 insertLink(textFound);
             }
