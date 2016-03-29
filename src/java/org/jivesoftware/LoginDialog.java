@@ -733,18 +733,7 @@ public class LoginDialog {
                 }
             }
             else if (e.getSource() == loginButton) {
-		if(SettingsManager.getLocalPreferences().isProxyEnabled())
-                {
-                    try
-                    {
-                    updateProxyConfig();
-                    }
-                    catch(Exception ex)
-                    {
-                     Log.error("MyException"+ex);
-                    }
-                }
-               
+		            
                
                     validateLogin();
                 
