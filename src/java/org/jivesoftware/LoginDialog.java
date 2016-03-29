@@ -251,9 +251,8 @@ public class LoginDialog {
         ConnectionConfiguration config = null;
 
         ProxyInfo proxyInfo = null;
-        
         if (localPref.isProxyEnabled()) {
-        	ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS5") ?
+        	ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
         		ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
         	String pHost = ModelUtil.hasLength(localPref.getHost()) ?
         		localPref.getHost() : null;
@@ -265,10 +264,14 @@ public class LoginDialog {
         		localPref.getProxyPassword() : null;
         	
         	if (pHost != null && pPort != 0) {
+                   
         		if (pUser == null || pPass == null) {
+                                
         			proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
         		} else {
+                               
         			proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+                                                                       
         		}
         	} else {
         		Log.error("No proxy info found but proxy type is enabled!");
@@ -284,15 +287,41 @@ public class LoginDialog {
                 config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
                 config.setSocketFactory(new DummySSLSocketFactory());
             }
+            if(localPref.isProxyEnabled() &&  !hostPortConfigured)
+            {
+                
+                config = new ConnectionConfiguration(loginServer,5223,proxyInfo);
+            }
+            else if(localPref.isProxyEnabled() &&  !hostPortConfigured)
+            {
+                
+                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer,proxyInfo);
+            
+            }
         }
         else {
+            if(!localPref.isProxyEnabled())
+            {
             if (!hostPortConfigured) {
                 config = new ConnectionConfiguration(loginServer);
             }
             else {
+                
                 config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
             }
-
+            }
+            else
+            {
+                 if (!hostPortConfigured) {
+                     
+                config = new ConnectionConfiguration(loginServer,proxyInfo);
+            }
+            else {
+                
+                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer,proxyInfo);
+            }
+            
+            }
 
         }
         config.setReconnectionAllowed(true);
@@ -704,7 +733,22 @@ public class LoginDialog {
                 }
             }
             else if (e.getSource() == loginButton) {
-                validateLogin();
+		if(SettingsManager.getLocalPreferences().isProxyEnabled())
+                {
+                    try
+                    {
+                    updateProxyConfig();
+                    }
+                    catch(Exception ex)
+                    {
+                     Log.error("MyException"+ex);
+                    }
+                }
+               
+               
+                    validateLogin();
+                
+                
             }
             else if (e.getSource() == advancedButton) {
                 final LoginSettingDialog loginSettingsDialog = new LoginSettingDialog();
@@ -1110,6 +1154,8 @@ public class LoginDialog {
                     sessionManager.setJID(connection.getUser());
                 }
                 catch (Exception xee) {
+                   
+                   
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
                     }
