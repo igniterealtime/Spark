@@ -677,10 +677,18 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    if (ModelUtil.hasLength(getPort())) {
 		localPreferences.setPort(getPort());
 	    }
-
+            if(getUsername().equals("") || getUsername()== null)
+            {
+                localPreferences.setProxyUsername("");
+            }
 	    if (ModelUtil.hasLength(getUsername())) {
 		localPreferences.setProxyUsername(getUsername());
 	    }
+            if(getPassword().equals("") || getPassword()== null)
+            {
+                localPreferences.setProxyPassword("");
+            }
+            
 
 	    if (ModelUtil.hasLength(getPassword())) {
 		localPreferences.setProxyPassword(getPassword());
