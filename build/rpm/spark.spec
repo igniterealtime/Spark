@@ -39,7 +39,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/bin/
 
 #pushd $RPM_BUILD_ROOT%{homedir}
 cd $RPM_BUILD_ROOT%{homedir}
-gzip -cd %{SOURCE1} | tar xvf -
+#gzip -cd %{SOURCE1} | tar xvf -
 #popd
 
 echo "#!/bin/bash" > $RPM_BUILD_ROOT/usr/bin/spark
