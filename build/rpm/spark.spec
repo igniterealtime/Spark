@@ -106,6 +106,8 @@ exit 0
 /usr/share/spark/lib/linux64/libjnspeex.so
 /usr/share/spark/lib/linux64/libjnvideo4linux2.so
 /usr/share/spark/lib/linux64/libjnvpx.so
+/usr/share/spark/lib/linux64/libodbc.so
+/usr/share/spark/lib/linux64/libodbcinst.so
 %dir /usr/share/spark/lib/mac/
 /usr/share/spark/lib/mac/JavaSoundStream.fix.jar
 /usr/share/spark/lib/mac/libjnawtrenderer.jnilib
