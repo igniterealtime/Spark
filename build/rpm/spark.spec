@@ -5,7 +5,6 @@ Release: 1
 License: Apache license v2.0
 Group: misc/Spark
 Source: %{SPARK_SOURCE}
-Source1: jre-dist.tar.gz
 BuildRoot: %{_tmppath}/build-root-%{name}
 Packager: igniterealtime.org
 Distribution: Linux
@@ -178,6 +177,3 @@ exit 0
 /usr/share/spark/xtra/emoticons/POPO.adiumemoticonset.zip
 /usr/share/spark/xtra/emoticons/sparkEmoticonSet.zip
 %{homedir}/jre
-
-
-
