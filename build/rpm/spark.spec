@@ -44,7 +44,7 @@ cd $RPM_BUILD_ROOT%{homedir}
 
 echo "#!/bin/bash" > $RPM_BUILD_ROOT/usr/bin/spark
 echo "SPARKDIR=/usr/share/spark/" >> $RPM_BUILD_ROOT/usr/bin/spark
-echo "/usr/share/spark/jre/bin/java -Dappdir=\$SPARKDIR -cp \$SPARKDIR/lib/log4j.jar:\$SPARKDIR/lib/jdom.jar:\$SPARKDIR/lib/fmj.jar:\$SPARKDIR/lib/startup.jar:\$SPARKDIR/lib/linux/jdic.jar:\$SPARKDIR/resources org.jivesoftware.launcher.Startup" >> $RPM_BUILD_ROOT/usr/bin/spark
+echo "-Dappdir=\$SPARKDIR -cp \$SPARKDIR/lib/log4j.jar:\$SPARKDIR/lib/jdom.jar:\$SPARKDIR/lib/fmj.jar:\$SPARKDIR/lib/startup.jar:\$SPARKDIR/lib/linux/jdic.jar:\$SPARKDIR/resources org.jivesoftware.launcher.Startup" >> $RPM_BUILD_ROOT/usr/bin/spark
 
 chmod -R 755 $RPM_BUILD_ROOT/usr/bin/spark
 
@@ -176,4 +176,4 @@ exit 0
 /usr/share/spark/xtra/emoticons/GTalk.AdiumEmoticonset.zip
 /usr/share/spark/xtra/emoticons/POPO.adiumemoticonset.zip
 /usr/share/spark/xtra/emoticons/sparkEmoticonSet.zip
-%{homedir}/jre
+#%{homedir}/jre
