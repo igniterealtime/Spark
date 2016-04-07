@@ -92,6 +92,27 @@ public class RoarProperties {
             e.printStackTrace();
         }
     }
+    
+    public Object getObjectForKey(String propertyKey, Class<?> cast)
+    {
+    	if(cast == Integer.class)
+    	{
+    		return getInt(propertyKey);
+    	}
+    	else if(cast == Boolean.class)
+    	{
+    		return getBoolean(propertyKey, false);
+    	}
+    	else if(cast == Color.class)
+    	{
+    		return getColor(propertyKey, null);
+    	}
+    	else if(cast == String.class)
+    	{
+    		return props.getProperty(propertyKey);
+    	}
+    	return null;
+    }
 
     public boolean getShowingPopups() {
         return getBoolean(ACTIVE, false);
@@ -147,9 +168,7 @@ public class RoarProperties {
     }
 
     public String getDisplayType() {
-
         return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
-
     }
 
     public RoarDisplayType getDisplayTypeClass() {
@@ -169,27 +188,27 @@ public class RoarProperties {
     // ===============================================================================
     // ===============================================================================
     // ===============================================================================
-    private boolean getBoolean(String property, boolean defaultValue) {
+    public boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
-    private void setBoolean(String property, boolean value) {
+    public void setBoolean(String property, boolean value) {
         props.setProperty(property, Boolean.toString(value));
     }
 
-    private int getInt(String property) {
+    public int getInt(String property) {
         return Integer.parseInt(props.getProperty(property, "0"));
     }
 
-    private void setInt(String property, int integer) {
+    public void setInt(String property, int integer) {
         props.setProperty(property, "" + integer);
     }
 
-    private void setColor(String property, Color color) {
+    public void setColor(String property, Color color) {
         props.setProperty(property, convertColor(color));
     }
 
-    private Color getColor(String property, Color defaultcolor) {
+    public Color getColor(String property, Color defaultcolor) {
         try {
             return convertString(props.getProperty(property));
         } catch (Exception e) {
