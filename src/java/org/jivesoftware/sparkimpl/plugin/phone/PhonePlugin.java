@@ -216,7 +216,7 @@ public class PhonePlugin implements Plugin {
 
 
             // Send "on the phone" presence
-            onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
+            onPhonePresence = new Presence(Presence.Type.available, "On the phone", 1, Presence.Mode.away);
             SparkManager.getSessionManager().changePresence(onPhonePresence);
         }
 
@@ -241,7 +241,7 @@ public class PhonePlugin implements Plugin {
                     Log.debug("PhonePlugin: Desktop is Locked - Setting presence from pref.idle message");
 
                 } else if (UserIdlePlugin.getDesktopLockStatus() && (!offPhonePresence.isAway())) {
-                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), UserIdlePlugin.IdlePresencePriority, Presence.Mode.away);
+                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), 1, Presence.Mode.away);
                     SparkManager.getSessionManager().changePresence(presence);
                     Log.debug("PhonePlugin: Desktop is Locked - Setting presence from user defined presence");
 
