@@ -223,7 +223,7 @@ public class CallManager implements InterlocutorListener {
         }
 
         // Send on phone presence
-        Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
+        Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", 1, Presence.Mode.away);
         SparkManager.getSessionManager().changePresence(onPhonePresence);
 
         interlocutorUI.getCall().addStateChangeListener(new CallListener() {
