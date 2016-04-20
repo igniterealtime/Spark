@@ -8,7 +8,7 @@ public interface RoarDisplayType {
     /**
      * Do stuff when a message is received
      */
-    public void messageReceived(ChatRoom room, Message message);
+    public void messageReceived(ChatRoom room, Message message, PropertyBundle bundle);
     
     /**
      * Do stuff when a message is sent

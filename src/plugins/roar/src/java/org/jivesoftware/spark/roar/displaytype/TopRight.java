@@ -59,7 +59,7 @@ public class TopRight implements RoarDisplayType {
     }
 
     @Override
-    public void messageReceived(ChatRoom room, Message message) {
+    public void messageReceived(ChatRoom room, Message message, PropertyBundle property) {
         RoarProperties props = RoarProperties.getInstance();
 
         if (props.getShowingPopups() && (_amount < props.getMaximumPopups() || props.getMaximumPopups() == 0)) {
@@ -79,7 +79,7 @@ public class TopRight implements RoarDisplayType {
             }
 
             RoarPanel.popupWindow(this, icon, nickname, message.getBody(), _lastusedXpos, _lastusedYpos,
-                    props.getDuration(), props.getBackgroundColor(), props.getHeaderColor(), props.getTextColor(),
+                    property.duration, property.backgroundColor, property.headerColor, property.textColor,
                     _customaction);
 
             ++_amount;

@@ -42,13 +42,26 @@ public class RoarProperties {
     private Properties props;
     private File configFile;
 
+    public static final String ACTIVE = "active";
+    public static final String AMOUNT = "amount";
+    public static final String ROARDISPLAYTYPE = "roardisplaytype";
+
     public static final String BACKGROUNDCOLOR = "backgroundcolor";
     public static final String HEADERCOLOR = "headercolor";
     public static final String TEXTCOLOR = "textcolor";
     public static final String DURATION = "duration";
-    public static final String ACTIVE = "active";
-    public static final String AMOUNT = "amount";
-    public static final String ROARDISPLAYTYPE = "roardisplaytype";
+    
+    
+    public static final String BACKGROUNDCOLOR_GROUP = "backgroundcolor.group";
+    public static final String HEADERCOLOR_GROUP = "headercolor.group";
+    public static final String TEXTCOLOR_GROUP = "textcolor.group";
+    public static final String DURATION_GROUP = "duration.group";
+    
+    public static final String BACKGROUNDCOLOR_KEYWORD = "backgroundcolor.keyword";
+    public static final String HEADERCOLOR_KEYWORD = "headercolor.keyword";
+    public static final String TEXTCOLOR_KEYWORD = "textcolor.keyword";
+    public static final String DURATION_KEYWORD = "duration.keyword";
+    
 
     private static final Object LOCK = new Object();
     private static RoarProperties instance = null;
@@ -170,6 +183,10 @@ public class RoarProperties {
     public String getDisplayType() {
         return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
     }
+    
+    public String[] getKeywords() {
+        return props.getProperty("keywords").split(",");
+    }
 
     public RoarDisplayType getDisplayTypeClass() {
 
@@ -219,6 +236,10 @@ public class RoarProperties {
 
     public String getProperty(String property) {
         return props.getProperty(property);
+    }
+    
+    public void setProperty(String property, String value) {
+        props.setProperty(property, value);
     }
 
     /**

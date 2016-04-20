@@ -24,6 +24,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 
 /**
  * The Main Class of the Roar Plugin
+ * 
  * @author wolf.posdorfer
  *
  */
@@ -33,23 +34,23 @@ public class Roar implements Plugin {
 
     @Override
     public void initialize() {
-	
-	RoarPreference pref = new RoarPreference();
-	SparkManager.getPreferenceManager().addPreference(pref);
-	
-	_listener = new RoarMessageListener();
-	SparkManager.getChatManager().addGlobalMessageListener(_listener);
-	
+
+        RoarPreference pref = new RoarPreference();
+        SparkManager.getPreferenceManager().addPreference(pref);
+
+        _listener = new RoarMessageListener();
+        SparkManager.getChatManager().addGlobalMessageListener(_listener);
+
     }
 
     @Override
     public void shutdown() {
-	SparkManager.getChatManager().removeGlobalMessageListener(_listener);
+        SparkManager.getChatManager().removeGlobalMessageListener(_listener);
     }
 
     @Override
     public boolean canShutDown() {
-	return true;
+        return true;
     }
 
     @Override
