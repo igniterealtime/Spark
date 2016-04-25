@@ -25,10 +25,13 @@ import javax.swing.JFrame;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.roar.displaytype.PropertyBundle;
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
+import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 
 /**
  * Message Listener<br>
@@ -39,156 +42,129 @@ import org.jivesoftware.spark.ui.GlobalMessageListener;
 public class RoarMessageListener implements GlobalMessageListener {
 
     private RoarDisplayType _displaytype;
+    private RoarProperties _properties;
 
     private HashMap<String, Long> _rooms = new HashMap<String, Long>();
 
     public RoarMessageListener() {
-
-	_displaytype = RoarProperties.getInstance().getDisplayTypeClass();
-
+        _displaytype = RoarProperties.getInstance().getDisplayTypeClass();
+        _properties = RoarProperties.getInstance();
     }
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
 
-	try {
-	    ChatRoom activeroom = SparkManager.getChatManager()
-		    .getChatContainer().getActiveChatRoom();
+        try {
+            ChatRoom activeroom = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
 
-	    int framestate = SparkManager.getChatManager().getChatContainer()
-		    .getChatFrame().getState();
+            int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
 
-	    // boolean isoldgroupchat = isOldGroupchat(message);
+            boolean isoldgroupchat = checkTime(room, message);
+            if (framestate == JFrame.NORMAL && activeroom.equals(room) && room.isShowing()
+                    && (isoldgroupchat || isMessageFromRoom(room, message))) {
+                // Do Nothing
+            } else {
+                decideForRoomAndMessage(room, message);
+            }
 
-	    boolean isoldgroupchat = checkTime(room, message);
+        } catch (ChatRoomNotFoundException e) {
+            // i dont care
+        }
 
-	    if (framestate == JFrame.NORMAL && activeroom.equals(room)
-		    && room.isShowing()
-		    && (isoldgroupchat || isMessageFromRoom(room, message))) 
-	    {
-		// Do Nothing
-	    } else {
-		_displaytype.messageReceived(room, message);
-	    }
-
-	} catch (ChatRoomNotFoundException e) {
-	    // i dont care
-	}
-
+    }
+    
+    private void decideForRoomAndMessage(ChatRoom room, Message message) {
+        if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
+            _displaytype.messageReceived(room, message, getSingleBundle());
+        } else if (room instanceof GroupChatRoom && !isMutliRoomDisabled()) {
+            _displaytype.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
+        } else {
+            // check message for keywords
+            String[] keywords = _properties.getKeywords();
+            if (keywords != null) {
+                for (String keyword : keywords) {
+                    if (message.getBody().contains(keyword)) {
+                        _displaytype.messageReceived(room, message,
+                                isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    private boolean isSingleRoomDisabled()
+    {
+        return _properties.getBoolean("roar.disable.single", false);
+    }
+    
+    private boolean isMutliRoomDisabled()
+    {
+        return _properties.getBoolean("group.disable", false);
+    }
+    
+    private boolean isKeyWordDifferent() 
+    {
+        return _properties.getBoolean("keyword.different.enabled", false);
+    }
+    
+    private boolean isMultiRoomDifferent()
+    {
+        return _properties.getBoolean("group.different.enabled", false);
+    }
+    
+    private PropertyBundle getSingleBundle() {
+        return new PropertyBundle(_properties.getBackgroundColor(), _properties.getHeaderColor(),
+                _properties.getTextColor(), _properties.getDuration());
+    }
+    
+    private PropertyBundle getMultiBundle() {
+        return new PropertyBundle(
+                _properties.getColor(RoarProperties.BACKGROUNDCOLOR_GROUP, _properties.getBackgroundColor()),
+                _properties.getColor(RoarProperties.HEADERCOLOR_GROUP, _properties.getHeaderColor()),
+                _properties.getColor(RoarProperties.TEXTCOLOR_GROUP, _properties.getTextColor()),
+                _properties.getInt("group.duration"));
+    }
+    private PropertyBundle getKeywordBundle() {
+        return new PropertyBundle(
+                _properties.getColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, _properties.getBackgroundColor()),
+                _properties.getColor(RoarProperties.HEADERCOLOR_KEYWORD, _properties.getHeaderColor()),
+                _properties.getColor(RoarProperties.TEXTCOLOR_KEYWORD, _properties.getTextColor()),
+                _properties.getInt("keyword.duration"));
     }
 
     private boolean checkTime(ChatRoom room, Message message) {
 
-	boolean result = false;
-	
-	if (room.getChatType() == Message.Type.groupchat) {
+        boolean result = false;
 
-	    if (_rooms.containsKey(room.getRoomname())
-		    && _rooms.get(room.getRoomname()) == -1L) {
-		return true;
-	    }
+        if (room.getChatType() == Message.Type.groupchat) {
 
-	    if (!_rooms.containsKey(room.getRoomname())) {
-		_rooms.put(room.getRoomname(), System.currentTimeMillis());
-		return true;
-	    } else {
-		long start = _rooms.get(room.getRoomname());
-		long now = System.currentTimeMillis();
+            if (_rooms.containsKey(room.getRoomname()) && _rooms.get(room.getRoomname()) == -1L) {
+                return true;
+            }
 
-		result = (now - start) < 1500;
-		if (result) {
-		    _rooms.put(room.getRoomname(), -1L);
-		}
+            if (!_rooms.containsKey(room.getRoomname())) {
+                _rooms.put(room.getRoomname(), System.currentTimeMillis());
+                return true;
+            } else {
+                long start = _rooms.get(room.getRoomname());
+                long now = System.currentTimeMillis();
 
-	    }
-	}
+                result = (now - start) < 1500;
+                if (result) {
+                    _rooms.put(room.getRoomname(), -1L);
+                }
 
-	return result;
+            }
+        }
+
+        return result;
     }
-
-    // /**
-    // * Checks if the Messages come from a time prior entering the groupchat
-    // *
-    // * @param message
-    // * @return true if this is an old Message
-    // */
-    // private boolean isOldGroupchat(Message message) {
-    // Calendar cal = Calendar.getInstance();
-    //
-    // int day = cal.get(Calendar.DATE);
-    // int month = cal.get(Calendar.MONTH) + 1;
-    // int year = cal.get(Calendar.YEAR);
-    //
-    // StringBuilder build = new StringBuilder();
-    // // Append leading 0's to hour,minute,seconds
-    // build.append(year);
-    // build.append(month < 10 ? "0" + month : month);
-    // build.append(day < 10 ? "0" + day : day);
-    //
-    // int todaysDate = Integer.parseInt(build.toString());
-    //
-    // // Append leading 0's to hour,minute,seconds
-    // String hour = cal.get(Calendar.HOUR_OF_DAY) < 10 ? "0"
-    // + cal.get(Calendar.HOUR_OF_DAY) : ""
-    // + cal.get(Calendar.HOUR_OF_DAY);
-    // String minute = cal.get(Calendar.MINUTE) < 10 ? "0"
-    // + cal.get(Calendar.MINUTE) : "" + cal.get(Calendar.MINUTE);
-    // String second = cal.get(Calendar.SECOND) < 10 ? "0"
-    // + cal.get(Calendar.SECOND) : "" + cal.get(Calendar.SECOND);
-    //
-    // int todaysHour = Integer.parseInt(hour + minute + second);
-    //
-    // String stamp = "";
-    //
-    // // get String with timestamp
-    // // 20110526T08:27:18
-    // if (message.toXML().contains("stamp=")) {
-    // stamp = extractDate(message.toXML());
-    // }
-    //
-    // boolean isoldgroupchat = false;
-    //
-    // if (stamp.length() > 0) {
-    // // 20110526T08:27:18
-    // // split into 20110526
-    // // and 08:27:18
-    // String[] split = stamp.split("T");
-    // int dateFromMessage = Integer.parseInt(split[0]);
-    //
-    // int hourFromMessage = Integer.parseInt(split[1].replace(":", ""));
-    //
-    // // if dateFromMessage < todaysDate it is an old Chat
-    // isoldgroupchat = dateFromMessage < todaysDate;
-    //
-    // // if is still not old chat
-    // if (!isoldgroupchat) {
-    // // check if the time from Message < time now
-    // isoldgroupchat = hourFromMessage < todaysHour;
-    // }
-    //
-    // }
-    // return isoldgroupchat;
-    // }
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
-	_displaytype.messageSent(room, message);
+        _displaytype.messageSent(room, message);
     }
-
-    // /**
-    // * Extracts the time stamp from a given xmpp packet
-    // *
-    // * @param xmlstring
-    // * @return String like <b>20110526T08:27:18</b>, split at <b>"T"</b>
-    // */
-    // private String extractDate(String xmlstring) {
-    // int indexofstamp = xmlstring.indexOf("stamp=");
-    // String result = xmlstring
-    // .substring(indexofstamp + 7, indexofstamp + 24)
-    // .replace("-", "");
-    // return result;
-    //
-    // }
 
     /**
      * Check if the message comes directly from the room
@@ -198,8 +174,7 @@ public class RoarMessageListener implements GlobalMessageListener {
      * @return boolean
      */
     private boolean isMessageFromRoom(ChatRoom room, Message message) {
-	return message.getFrom().equals(room.getRoomname());
-
+        return message.getFrom().equals(room.getRoomname());
     }
 
 }

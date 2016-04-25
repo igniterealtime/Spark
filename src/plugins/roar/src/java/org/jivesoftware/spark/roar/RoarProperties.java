@@ -42,13 +42,26 @@ public class RoarProperties {
     private Properties props;
     private File configFile;
 
+    public static final String ACTIVE = "active";
+    public static final String AMOUNT = "amount";
+    public static final String ROARDISPLAYTYPE = "roardisplaytype";
+
     public static final String BACKGROUNDCOLOR = "backgroundcolor";
     public static final String HEADERCOLOR = "headercolor";
     public static final String TEXTCOLOR = "textcolor";
     public static final String DURATION = "duration";
-    public static final String ACTIVE = "active";
-    public static final String AMOUNT = "amount";
-    public static final String ROARDISPLAYTYPE = "roardisplaytype";
+    
+    
+    public static final String BACKGROUNDCOLOR_GROUP = "backgroundcolor.group";
+    public static final String HEADERCOLOR_GROUP = "headercolor.group";
+    public static final String TEXTCOLOR_GROUP = "textcolor.group";
+    public static final String DURATION_GROUP = "duration.group";
+    
+    public static final String BACKGROUNDCOLOR_KEYWORD = "backgroundcolor.keyword";
+    public static final String HEADERCOLOR_KEYWORD = "headercolor.keyword";
+    public static final String TEXTCOLOR_KEYWORD = "textcolor.keyword";
+    public static final String DURATION_KEYWORD = "duration.keyword";
+    
 
     private static final Object LOCK = new Object();
     private static RoarProperties instance = null;
@@ -91,6 +104,27 @@ public class RoarProperties {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public Object getObjectForKey(String propertyKey, Class<?> cast)
+    {
+    	if(cast == Integer.class)
+    	{
+    		return getInt(propertyKey);
+    	}
+    	else if(cast == Boolean.class)
+    	{
+    		return getBoolean(propertyKey, false);
+    	}
+    	else if(cast == Color.class)
+    	{
+    		return getColor(propertyKey, null);
+    	}
+    	else if(cast == String.class)
+    	{
+    		return props.getProperty(propertyKey);
+    	}
+    	return null;
     }
 
     public boolean getShowingPopups() {
@@ -147,9 +181,11 @@ public class RoarProperties {
     }
 
     public String getDisplayType() {
-
         return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
-
+    }
+    
+    public String[] getKeywords() {
+        return props.getProperty("keywords").split(",");
     }
 
     public RoarDisplayType getDisplayTypeClass() {
@@ -169,27 +205,27 @@ public class RoarProperties {
     // ===============================================================================
     // ===============================================================================
     // ===============================================================================
-    private boolean getBoolean(String property, boolean defaultValue) {
+    public boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
-    private void setBoolean(String property, boolean value) {
+    public void setBoolean(String property, boolean value) {
         props.setProperty(property, Boolean.toString(value));
     }
 
-    private int getInt(String property) {
+    public int getInt(String property) {
         return Integer.parseInt(props.getProperty(property, "0"));
     }
 
-    private void setInt(String property, int integer) {
+    public void setInt(String property, int integer) {
         props.setProperty(property, "" + integer);
     }
 
-    private void setColor(String property, Color color) {
+    public void setColor(String property, Color color) {
         props.setProperty(property, convertColor(color));
     }
 
-    private Color getColor(String property, Color defaultcolor) {
+    public Color getColor(String property, Color defaultcolor) {
         try {
             return convertString(props.getProperty(property));
         } catch (Exception e) {
@@ -200,6 +236,10 @@ public class RoarProperties {
 
     public String getProperty(String property) {
         return props.getProperty(property);
+    }
+    
+    public void setProperty(String property, String value) {
+        props.setProperty(property, value);
     }
 
     /**
