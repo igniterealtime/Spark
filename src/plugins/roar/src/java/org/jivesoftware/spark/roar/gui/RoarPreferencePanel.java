@@ -196,7 +196,7 @@ public class RoarPreferencePanel extends JPanel {
         groupPanel.setBackground(new Color(0, 0, 0, 0));
         groupPanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.group")));
 
-        JCheckBox enableDifferentGroup = new JCheckBox(RoarResources.getString("roar.group.different"));
+        final JCheckBox enableDifferentGroup = new JCheckBox(RoarResources.getString("roar.group.different"));
         JCheckBox disableGroup = new JCheckBox(RoarResources.getString("roar.group.disable"));
         JTextField durationGroup = new JTextField();
 
@@ -233,7 +233,7 @@ public class RoarPreferencePanel extends JPanel {
         panel.setBackground(new Color(0, 0, 0, 0));
         panel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.keyword")));
 
-        JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
+        final JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
         differentKeyword.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 toggleDifferentSettingsForKeyword(differentKeyword.isSelected());
