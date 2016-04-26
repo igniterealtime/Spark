@@ -71,7 +71,7 @@ public class BottomRight implements RoarDisplayType {
 
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
 
-            String nickname = RoarDisplayType.getNickname(room, message);
+            String nickname = RoarPopupHelper.getNickname(room, message);
             RoarPanel.popupWindow(this, icon, nickname, message.getBody(), _lastusedXpos, _lastusedYpos,
                     property.duration, property.backgroundColor, property.headerColor, property.textColor,
                     _customaction);

@@ -5,12 +5,17 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.roar.RoarResources;
 import org.jivesoftware.spark.ui.ChatRoom;
 
+/**
+ * Provides OS-based notifications
+ * 
+ * @author wolf.posdorfer
+ */
 public class SystemNotification implements RoarDisplayType {
 
     @Override
     public void messageReceived(ChatRoom room, Message message, PropertyBundle bundle) {
 
-        String nickname = RoarDisplayType.getNickname(room, message);
+        String nickname = RoarPopupHelper.getNickname(room, message);
         if (Spark.isMac()) {
             MacNotificationCenter.sendNotification(nickname, message.getBody());
         } else {
@@ -18,9 +23,6 @@ public class SystemNotification implements RoarDisplayType {
         }
     }
     
-    
-    
-
     @Override
     public void messageSent(ChatRoom room, Message message) {
         // doesn't apply
@@ -30,7 +32,6 @@ public class SystemNotification implements RoarDisplayType {
     public void closingRoarPanel(int x, int y) {
         // doesn't apply
     }
-    
     
     @Override
     public String toString() {
