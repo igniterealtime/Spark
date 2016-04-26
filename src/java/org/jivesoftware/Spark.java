@@ -21,6 +21,25 @@
 
 package org.jivesoftware;
 
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Properties;
+
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.PluginManager;
@@ -31,16 +50,6 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Properties;
 
 
 
@@ -383,6 +392,16 @@ public final class Spark {
         if (RESOURCE_DIRECTORY == null) RESOURCE_DIRECTORY = initializeDirectory("resources");
         return RESOURCE_DIRECTORY;
 
+    }
+    
+    /**
+     * Returns the plugins directory of the Spark install. THe plugins-dir contains all the third-party plugins.
+     * 
+     * @return the plugins directory
+     */
+    public static File getPluginDirectory() {
+        if (PLUGIN_DIRECTORY == null) PLUGIN_DIRECTORY = initializeDirectory("plugins");
+        return PLUGIN_DIRECTORY; 
     }
 
     /**

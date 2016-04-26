@@ -11,6 +11,7 @@
 	<property name="classes.dir" value="${spark.target}/plugins-dev/roar/classes"/>
 	<property name="src.dir" value="${plug.dir}/src/java"/>
 	<property name="resources.dir" location="${plug.dir}/src/resources"/>
+	<property name="lib.dir" location="${plug.dir}/src/lib"/>
 
 	<property name="target.dir" value="${spark.target}/plugins/roar"/>
 	<property name="target.lib.dir" value="${target.dir}/lib"/>
@@ -56,6 +57,9 @@
 
 		<copy todir="${target.dir}">
 			<fileset file="${plug.dir}/plugin.xml"/>
+			<fileset dir="${lib.dir}">
+					<include name="**/*"/>
+			</fileset>
 		</copy>
 
 		<jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
