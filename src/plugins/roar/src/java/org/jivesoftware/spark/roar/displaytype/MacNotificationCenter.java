@@ -7,6 +7,15 @@ import org.jivesoftware.Spark;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
+/**
+ * Provides Notification-Center integration for OSX 10.8+<br>
+ * <br>
+ * 
+ * NSUserNotificationsBridge is based on
+ * https://github.com/petesh/OSxNotificationCenter
+ * 
+ * @author wolf.posdorfer
+ */
 public class MacNotificationCenter {
 
     interface NSUserNotificationsBridge extends Library {
