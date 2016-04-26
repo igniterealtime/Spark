@@ -24,10 +24,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.roar.displaytype.BottomRight;
+import org.jivesoftware.spark.roar.displaytype.SystemNotification;
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import org.jivesoftware.spark.roar.displaytype.SparkToasterHandler;
 import org.jivesoftware.spark.roar.displaytype.TopRight;
@@ -50,21 +54,24 @@ public class RoarProperties {
     public static final String HEADERCOLOR = "headercolor";
     public static final String TEXTCOLOR = "textcolor";
     public static final String DURATION = "duration";
-    
-    
+
     public static final String BACKGROUNDCOLOR_GROUP = "backgroundcolor.group";
     public static final String HEADERCOLOR_GROUP = "headercolor.group";
     public static final String TEXTCOLOR_GROUP = "textcolor.group";
     public static final String DURATION_GROUP = "duration.group";
-    
+
     public static final String BACKGROUNDCOLOR_KEYWORD = "backgroundcolor.keyword";
     public static final String HEADERCOLOR_KEYWORD = "headercolor.keyword";
     public static final String TEXTCOLOR_KEYWORD = "textcolor.keyword";
     public static final String DURATION_KEYWORD = "duration.keyword";
-    
 
     private static final Object LOCK = new Object();
     private static RoarProperties instance = null;
+    
+    private List<String> keywords = null;
+    
+    private RoarDisplayType[] displayTypes = new RoarDisplayType[]{new TopRight(), new BottomRight(), new SparkToasterHandler(), new SystemNotification()};
+    
 
     /**
      * returns the Instance of this Properties file
@@ -106,25 +113,8 @@ public class RoarProperties {
         }
     }
     
-    public Object getObjectForKey(String propertyKey, Class<?> cast)
-    {
-    	if(cast == Integer.class)
-    	{
-    		return getInt(propertyKey);
-    	}
-    	else if(cast == Boolean.class)
-    	{
-    		return getBoolean(propertyKey, false);
-    	}
-    	else if(cast == Color.class)
-    	{
-    		return getColor(propertyKey, null);
-    	}
-    	else if(cast == String.class)
-    	{
-    		return props.getProperty(propertyKey);
-    	}
-    	return null;
+    public List<RoarDisplayType> getDisplayTypes() {
+        return Arrays.asList(displayTypes);
     }
 
     public boolean getShowingPopups() {
@@ -177,29 +167,50 @@ public class RoarProperties {
     }
 
     public void setDisplayType(String classstring) {
+        System.out.println("setting displaytype to: "+ classstring);
         props.setProperty(ROARDISPLAYTYPE, classstring);
     }
 
     public String getDisplayType() {
-        return props.getProperty(ROARDISPLAYTYPE, TopRight.getName());
+        return props.getProperty(ROARDISPLAYTYPE, displayTypes[0].getName()); // TopRight is default
     }
     
-    public String[] getKeywords() {
-        return props.getProperty("keywords").split(",");
+    public void setKeywords(String commaseparated) {
+        props.setProperty("keywords", commaseparated);
+
+        String[] pkeys = props.getProperty("keywords").split(",");
+        if (pkeys.length > 0) {
+            keywords = Arrays.asList(pkeys);
+        } else {
+            keywords = Collections.emptyList();
+        }
+    }
+
+    /**
+     * Returns a cached version of the keywords, loads them from properties if it hasn't before.
+     */
+    public List<String> getKeywords() {
+        if (keywords == null) {
+            String[] pkeys = props.getProperty("keywords").split(",");
+            if (pkeys.length > 0) {
+                keywords = Arrays.asList(pkeys);
+            } else {
+                keywords = Collections.emptyList();
+            }
+        }
+
+        return Collections.unmodifiableList(keywords);
     }
 
     public RoarDisplayType getDisplayTypeClass() {
 
-        if (getDisplayType().equals(TopRight.getName())) {
-            return new TopRight();
-        } else if (getDisplayType().equals(SparkToasterHandler.getName())) {
-            return new SparkToasterHandler();
+        String stringInProperty = getDisplayType();
+        for (RoarDisplayType type : displayTypes) {
+            if (type.getName().equals(stringInProperty)) {
+                return type;
+            }
         }
-
-        else {
-            return new BottomRight();
-        }
-
+        return displayTypes[0]; // TopRight is default
     }
 
     // ===============================================================================
@@ -237,7 +248,7 @@ public class RoarProperties {
     public String getProperty(String property) {
         return props.getProperty(property);
     }
-    
+
     public void setProperty(String property, String value) {
         props.setProperty(property, value);
     }

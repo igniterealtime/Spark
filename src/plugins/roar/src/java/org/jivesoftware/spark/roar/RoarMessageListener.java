@@ -59,9 +59,8 @@ public class RoarMessageListener implements GlobalMessageListener {
 
             int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
 
-            boolean isoldgroupchat = checkTime(room, message);
             if (framestate == JFrame.NORMAL && activeroom.equals(room) && room.isShowing()
-                    && (isoldgroupchat || isMessageFromRoom(room, message))) {
+                    && (isOldGroupChat(room) || isMessageFromRoom(room, message))) {
                 // Do Nothing
             } else {
                 decideForRoomAndMessage(room, message);
@@ -74,23 +73,22 @@ public class RoarMessageListener implements GlobalMessageListener {
     }
     
     private void decideForRoomAndMessage(ChatRoom room, Message message) {
-        if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
+        if (doesMessageMatchKeywords(message)) {
+            _displaytype.messageReceived(room, message, isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
+        } else if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
             _displaytype.messageReceived(room, message, getSingleBundle());
         } else if (room instanceof GroupChatRoom && !isMutliRoomDisabled()) {
             _displaytype.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
-        } else {
-            // check message for keywords
-            String[] keywords = _properties.getKeywords();
-            if (keywords != null) {
-                for (String keyword : keywords) {
-                    if (message.getBody().contains(keyword)) {
-                        _displaytype.messageReceived(room, message,
-                                isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
-                        break;
-                    }
-                }
+        }
+    }
+
+    private boolean doesMessageMatchKeywords(Message message) {
+        for (String keyword : _properties.getKeywords()) {
+            if (message.getBody().contains(keyword)) {
+                return true;
             }
         }
+        return false;
     }
     
     private boolean isSingleRoomDisabled()
@@ -133,7 +131,7 @@ public class RoarMessageListener implements GlobalMessageListener {
                 _properties.getInt("keyword.duration"));
     }
 
-    private boolean checkTime(ChatRoom room, Message message) {
+    private boolean isOldGroupChat(ChatRoom room) {
 
         boolean result = false;
 

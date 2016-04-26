@@ -9,10 +9,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.roar.RoarProperties;
 import org.jivesoftware.spark.roar.RoarResources;
@@ -66,18 +64,7 @@ public class TopRight implements RoarDisplayType {
 
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
 
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-            if (room.getChatType() == Message.Type.groupchat) {
-                nickname = StringUtils.parseResource(nickname);
-            }
-
-            boolean broadcast = message.getProperty("broadcast") != null;
-
-            if ((broadcast || message.getType() == Message.Type.normal || message.getType() == Message.Type.headline)
-                    && message.getBody() != null) {
-                nickname = Res.getString("broadcast") + " - " + nickname;
-            }
-
+            String nickname = RoarPopupHelper.getNickname(room, message);
             RoarPanel.popupWindow(this, icon, nickname, message.getBody(), _lastusedXpos, _lastusedYpos,
                     property.duration, property.backgroundColor, property.headerColor, property.textColor,
                     _customaction);
@@ -122,12 +109,19 @@ public class TopRight implements RoarDisplayType {
         return "TopRight";
     }
 
-    public static String getName() {
+    @Override
+    public String getName() {
         return "TopRight";
     }
 
-    public static String getLocalizedName() {
+    @Override
+    public String getLocalizedName() {
         return RoarResources.getString("roar.display.topright");
+    }
+    
+    @Override
+    public String getWarningMessage() {
+        return RoarResources.getString("roar.warning.topright");
     }
 
 }

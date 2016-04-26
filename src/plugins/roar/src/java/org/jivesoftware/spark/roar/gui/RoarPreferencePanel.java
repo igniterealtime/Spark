@@ -21,20 +21,18 @@ package org.jivesoftware.spark.roar.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -50,9 +48,7 @@ import javax.swing.event.ChangeListener;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.roar.RoarProperties;
 import org.jivesoftware.spark.roar.RoarResources;
-import org.jivesoftware.spark.roar.displaytype.BottomRight;
-import org.jivesoftware.spark.roar.displaytype.SparkToasterHandler;
-import org.jivesoftware.spark.roar.displaytype.TopRight;
+import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import org.jivesoftware.spark.util.ColorPick;
 
 /**
@@ -65,7 +61,7 @@ public class RoarPreferencePanel extends JPanel {
 
     private static final long serialVersionUID = -5334936099931215962L;
 
-    private Image _backgroundimage;
+    // private Image _backgroundimage;
 
     private JTextField _duration;
     private JTextField _amount;
@@ -83,7 +79,7 @@ public class RoarPreferencePanel extends JPanel {
     private String[] _typelistdata;
 
     private Insets INSETS = new Insets(5, 5, 5, 5);
-
+    
     public RoarPreferencePanel() {
 
         _components = new HashMap<String, Object>();
@@ -94,8 +90,8 @@ public class RoarPreferencePanel extends JPanel {
 
         this.setLayout(new BorderLayout());
 
-        ClassLoader cl = getClass().getClassLoader();
-        _backgroundimage = new ImageIcon(cl.getResource("background2.png")).getImage();
+        // ClassLoader cl = getClass().getClassLoader();
+        // _backgroundimage = new ImageIcon(cl.getResource("background2.png")).getImage();
 
         _duration = new JTextField();
         _amount = new JTextField();
@@ -114,12 +110,18 @@ public class RoarPreferencePanel extends JPanel {
         listModel.addElement(ColorTypes.TEXTCOLOR);
         _singleColorlist = new JList<>(listModel);
 
-        _typelistdata = new String[3];
-        _typelistdata[0] = TopRight.getLocalizedName();
-        _typelistdata[1] = BottomRight.getLocalizedName();
-        _typelistdata[2] = SparkToasterHandler.getLocalizedName();
-
+        List<RoarDisplayType> roarDisplayTypes = RoarProperties.getInstance().getDisplayTypes();
+        _typelistdata = new String[roarDisplayTypes.size()];
+        for (int i = 0; i < roarDisplayTypes.size(); i++) {
+            _typelistdata[i] = roarDisplayTypes.get(i).getLocalizedName();
+        }
+            
         _typelist = new JComboBox<String>(_typelistdata);
+        _typelist.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateWarningLabel(getDisplayTypeClass().getWarningMessage());
+            }
+        });
 
         add(makeGeneralSettingsPanel());
         _singleColorlist.addMouseListener(new MouseAdapter() {
@@ -132,7 +134,6 @@ public class RoarPreferencePanel extends JPanel {
     private JComponent makeGeneralSettingsPanel() {
         JPanel generalPanel = new JPanel();
         generalPanel.setLayout(new GridBagLayout());
-        generalPanel.setBackground(new Color(0, 0, 0, 0));
         generalPanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.settings")));
 
         int rowcount = 0;
@@ -150,7 +151,17 @@ public class RoarPreferencePanel extends JPanel {
                 new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
         generalPanel.add(_typelist,
                 new GridBagConstraints(1, rowcount, 1, 1, 0.8, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        
+        
+        rowcount++;
+        JLabel warningLabel = new JLabel("<html>placeholder :-)</html>");
+        //warningLabel.setForeground(Color.RED);
+        generalPanel.add(warningLabel, 
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
 
+        
+        _components.put("label.warning", warningLabel);
+        
         JPanel panel = new JPanel(new VerticalFlowLayout());
         panel.add(generalPanel);
         panel.add(makeSinglePanel());
@@ -165,7 +176,6 @@ public class RoarPreferencePanel extends JPanel {
     private JPanel makeSinglePanel() {
         JPanel singlePanel = new JPanel();
         singlePanel.setLayout(new GridBagLayout());
-        singlePanel.setBackground(new Color(0, 0, 0, 0));
         singlePanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.single")));
         JCheckBox disableSingle = new JCheckBox(RoarResources.getString("roar.single.disable"));
 
@@ -193,7 +203,6 @@ public class RoarPreferencePanel extends JPanel {
     private JPanel makeGroupChatPanel() {
         JPanel groupPanel = new JPanel();
         groupPanel.setLayout(new GridBagLayout());
-        groupPanel.setBackground(new Color(0, 0, 0, 0));
         groupPanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.group")));
 
         final JCheckBox enableDifferentGroup = new JCheckBox(RoarResources.getString("roar.group.different"));
@@ -230,7 +239,6 @@ public class RoarPreferencePanel extends JPanel {
     private JPanel makeKeyWordPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(new Color(0, 0, 0, 0));
         panel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.keyword")));
 
         final JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
@@ -309,7 +317,7 @@ public class RoarPreferencePanel extends JPanel {
         props.setInt("group.duration", getIntFromTextField("group.duration"));
         props.setInt("keyword.duration", getIntFromTextField("keyword.duration"));
 
-        props.setProperty("keywords", retrieveComponent("keywords", JTextField.class).getText());
+        props.setKeywords(retrieveComponent("keywords", JTextField.class).getText());
 
         props.setBackgroundColor(getColor(ColorTypes.BACKGROUNDCOLOR));
         props.setColor(RoarProperties.BACKGROUNDCOLOR_GROUP, getColor(ColorTypes.BACKGROUNDCOLOR_GROUP));
@@ -382,24 +390,35 @@ public class RoarPreferencePanel extends JPanel {
     }
 
     public void setDisplayType(String t) {
-        if (t.equals(TopRight.getName())) {
-            _typelist.setSelectedItem(TopRight.getLocalizedName());
-        } else if (t.equals(SparkToasterHandler.getName())) {
-            _typelist.setSelectedItem(SparkToasterHandler.getLocalizedName());
-        } else {
-            _typelist.setSelectedItem(BottomRight.getLocalizedName());
+        for (RoarDisplayType type : RoarProperties.getInstance().getDisplayTypes()) {
+            if (type.getName().equals(t)) {
+                _typelist.setSelectedItem(type.getLocalizedName());
+                updateWarningLabel(type.getWarningMessage());
+                return;
+            }
         }
     }
 
-    public String getDisplayType() {
+    
+    public void updateWarningLabel(String text) {
+        retrieveComponent("label.warning", JLabel.class).setText("<html>" + text + "</html>");
+    }
+    
+    
+    public RoarDisplayType getDisplayTypeClass() {
         String o = (String) _typelist.getSelectedItem();
-        if (o.equals(TopRight.getLocalizedName())) {
-            return TopRight.getName();
-        } else if (o.equals(SparkToasterHandler.getLocalizedName())) {
-            return SparkToasterHandler.getName();
-        } else {
-            return BottomRight.getName();
+
+        for (RoarDisplayType type : RoarProperties.getInstance().getDisplayTypes()) {
+            if (type.getLocalizedName().equals(o)) {
+                return type;
+            }
         }
+        return RoarProperties.getInstance().getDisplayTypes().get(0); 
+        // topright is default
+    }
+    
+    public String getDisplayType() {
+        return getDisplayTypeClass().getName();
     }
 
     private void toggleDifferentSettingsForKeyword(boolean isSelected) {
@@ -453,25 +472,24 @@ public class RoarPreferencePanel extends JPanel {
     // ============================================================================================================
     // ============================================================================================================
     // ============================================================================================================
-    public void paintComponent(Graphics g) {
-        // CENTER LOGO
-        // int imgwi = _backgroundimage.getWidth(null);
-        // int imghe = _backgroundimage.getHeight(null);
-        // int x = this.getSize().width;
-        // x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
-        //
-        // int y = this.getSize().height;
-        // y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
-
-        // LOGO in bottom right corner
-
-        int x = this.getSize().width - _backgroundimage.getWidth(null);
-        int y = this.getSize().height - _backgroundimage.getHeight(null);
-
-        super.paintComponent(g);
-        g.drawImage(_backgroundimage, x, y, this);
-    }
-
+    // public void paintComponent(Graphics g) {
+    // CENTER LOGO
+    // int imgwi = _backgroundimage.getWidth(null);
+    // int imghe = _backgroundimage.getHeight(null);
+    // int x = this.getSize().width;
+    // x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
+    //
+    // int y = this.getSize().height;
+    // y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
+    //
+    // LOGO in bottom right corner
+    //
+    // int x = this.getSize().width - _backgroundimage.getWidth(null);
+    // int y = this.getSize().height - _backgroundimage.getHeight(null);
+    //
+    // super.paintComponent(g);
+    // g.drawImage(_backgroundimage, x, y, this);
+    // }
     // ============================================================================================================
     // ============================================================================================================
     // ============================================================================================================
