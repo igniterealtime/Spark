@@ -60,11 +60,7 @@ public class JabberVersion implements Plugin {
                 // Handle Version Request
                 if (iq instanceof Version && iq.getType() == IQ.Type.get) {
                     // Send Version
-                    Version version = new Version();
-                    version.setName(JiveInfo.getName());
-
-                    version.setOs(JiveInfo.getOS());
-                    version.setVersion(JiveInfo.getVersion());
+                    Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
 
                     // Send back as a reply
                     version.setStanzaId(iq.getPacketID());
