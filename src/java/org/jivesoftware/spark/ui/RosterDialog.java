@@ -57,6 +57,7 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -561,7 +562,7 @@ public class RosterDialog implements ActionListener {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -585,7 +586,7 @@ public class RosterDialog implements ActionListener {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException ex) {
+        catch (XMPPException | SmackException ex) {
             Log.error(ex);
         }
         return userEntry;
@@ -647,7 +648,7 @@ public class RosterDialog implements ActionListener {
 	    try {
 		vcard.load(SparkManager.getConnection(), contact);
 		nickname = vcard.getNickName();
-	    } catch (XMPPException e1) {
+	    } catch (XMPPException | SmackException e1) {
 		Log.error(e1);
 	    }
 	    // If no nickname, use first name.

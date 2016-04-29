@@ -58,6 +58,7 @@ import javax.swing.UIManager;
 import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Stanza;
@@ -233,7 +234,7 @@ public class GroupChatParticipantList extends JPanel {
 		.getInstanceFor(SparkManager.getConnection());
 	try {
 	    roomInformation = disco.discoverInfo(chat.getRoom());
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    Log.debug("Unable to retrieve room information for "
 		    + chat.getRoom());
 	}
@@ -531,7 +532,7 @@ public class GroupChatParticipantList extends JPanel {
 		try {
 			chat.kickParticipant(nickname, Res
 					.getString("message.you.have.been.kicked"));
-		} catch (XMPPException e) {
+		} catch (XMPPException | SmackException e) {
 			groupChatRoom.insertText(Res.getString("message.kicked.error",
 					nickname));
 		}
@@ -546,7 +547,7 @@ public class GroupChatParticipantList extends JPanel {
 				chat.banUser(bareJID, Res
 						.getString("message.you.have.been.banned"));
 			}
-		} catch (XMPPException e) {
+		} catch (XMPPException | SmackException e) {
 		    groupChatRoom.getTranscriptWindow().
 		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
@@ -555,7 +556,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void unbanUser(String jid) {
 		try {
 			chat.grantMembership(jid);
-		} catch (XMPPException e) {
+		} catch (XMPPException | SmackException e) {
 		    groupChatRoom.getTranscriptWindow().
 		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
@@ -564,7 +565,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void grantVoice(String nickname) {
 		try {
 			chat.grantVoice(nickname);
-		} catch (XMPPException e) {
+		} catch (XMPPException | SmackException e) {
 		    groupChatRoom.getTranscriptWindow().
 		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
@@ -573,7 +574,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void revokeVoice(String nickname) {
 		try {
 			chat.revokeVoice(nickname);
-		} catch (XMPPException e) {
+		} catch (XMPPException | SmackException e) {
 		    groupChatRoom.getTranscriptWindow().
 		    insertNotificationMessage("No can do "+e.getMessage(), ChatManager.ERROR_COLOR);
 		}
@@ -582,7 +583,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void grantModerator(String nickname) {
 	try {
 	    chat.grantModerator(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -591,7 +592,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void revokeModerator(String nickname) {
 	try {
 	    chat.revokeModerator(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -603,7 +604,7 @@ public class GroupChatParticipantList extends JPanel {
 	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.grantMembership(nickname);
 
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -613,7 +614,7 @@ public class GroupChatParticipantList extends JPanel {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.revokeMembership(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -624,7 +625,7 @@ public class GroupChatParticipantList extends JPanel {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.grantAdmin(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -634,7 +635,7 @@ public class GroupChatParticipantList extends JPanel {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.revokeAdmin(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -645,7 +646,7 @@ public class GroupChatParticipantList extends JPanel {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.grantOwnership(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -655,7 +656,7 @@ public class GroupChatParticipantList extends JPanel {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
 	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.revokeOwnership(nickname);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
@@ -763,7 +764,7 @@ public class GroupChatParticipantList extends JPanel {
 				try {
 				    chat.changeNickname(newNickname);
 				    break;
-				} catch (XMPPException e1) {
+				} catch (XMPPException | SmackException e1) {
 				    if (e1.getXMPPError().getCode() == 406) { // handle
 									      // deny
 									      // changing
@@ -1048,7 +1049,7 @@ public class GroupChatParticipantList extends JPanel {
 		Iterator<Affiliate> bannedUsers = null;
 		try {
 		    bannedUsers = chat.getOutcasts().iterator();
-		} catch (XMPPException e) {
+		} catch (XMPPException | SmackException e) {
 		    Log.error("Error loading all banned users", e);
 		}
 

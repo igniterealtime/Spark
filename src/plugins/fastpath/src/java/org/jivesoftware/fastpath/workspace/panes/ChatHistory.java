@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
@@ -147,7 +148,7 @@ public class ChatHistory extends JPanel {
         try {
             history = agentSession.getAgentHistory(jid, 10, null);
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error("Error retrieving chat history.", e1);
         }
 
@@ -199,7 +200,7 @@ public class ChatHistory extends JPanel {
         try {
             transcript = FastpathPlugin.getAgentSession().getTranscript(sessionID);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Error showing transcripts.", e);
         }
 

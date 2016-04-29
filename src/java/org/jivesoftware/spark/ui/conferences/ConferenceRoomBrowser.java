@@ -63,6 +63,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.xdata.Form;
@@ -866,7 +867,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		// new DataFormDialog(groupChat, form);
 		groupChat.sendConfigurationForm(form);
         addRoomToTable(groupChat.getRoom(), XmppStringUtils.parseLocalpart(groupChat.getRoom()), 1);
-	    } catch (XMPPException e1) {
+	    } catch (XMPPException | SmackException e1) {
 		Log.error("Error creating new room.", e1);
 		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 		JOptionPane
@@ -980,13 +981,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 	    result = rif.isMembersOnly() || rif.isPasswordProtected();
 
-	} catch (XMPPException e) {
-
-	} catch (NumberFormatException nfe) {
+	} catch (XMPPException | SmackException | NumberFormatException e) {
 
 	}
 
-	return result;
+        return result;
     }
 
     /**

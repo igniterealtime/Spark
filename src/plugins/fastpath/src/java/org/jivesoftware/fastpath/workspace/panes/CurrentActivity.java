@@ -49,6 +49,7 @@ import javax.swing.JScrollPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
@@ -254,7 +255,7 @@ public final class CurrentActivity extends JPanel {
                                     try {
                                         owners = muc.getOwners();
                                     }
-                                    catch (XMPPException e1) {
+                                    catch (XMPPException | SmackException e1) {
                                         return;
                                     }
                                     Iterator iter = owners.iterator();
@@ -309,7 +310,7 @@ public final class CurrentActivity extends JPanel {
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error(e1);
                             }
                         }
@@ -320,7 +321,7 @@ public final class CurrentActivity extends JPanel {
                     menu.show(list, e.getX(), e.getY());
                 }
             }
-            catch (XMPPException e1) {
+            catch (XMPPException | SmackException e1) {
                 Log.error(e1);
                 return;
             }

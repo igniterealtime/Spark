@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -342,7 +343,7 @@ public class SubscriptionDialog {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -366,7 +367,7 @@ public class SubscriptionDialog {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException ex) {
+        catch (XMPPException | SmackException ex) {
             Log.error(ex);
         }
         return userEntry;

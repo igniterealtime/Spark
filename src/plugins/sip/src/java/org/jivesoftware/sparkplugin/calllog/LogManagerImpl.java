@@ -46,6 +46,7 @@ import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -145,7 +146,7 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
                 LogPacket.logEvent(SparkManager.getConnection(), e);
 
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("RemoteLogging", e);
             }
         }

@@ -46,6 +46,7 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.Affiliate;
@@ -303,7 +304,7 @@ public class UserInvitationPane {
             try {
                 owners = muc.getOwners();
             }
-            catch (XMPPException e1) {
+            catch (XMPPException | SmackException e1) {
                 return;
             }
 
@@ -329,7 +330,7 @@ public class UserInvitationPane {
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error(e);
                 }
             }

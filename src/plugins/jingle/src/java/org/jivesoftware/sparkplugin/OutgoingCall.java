@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingleold.JingleSession;
 import org.jivesoftware.smackx.jingleold.JingleSessionStatePending;
@@ -297,7 +298,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
                 session.terminate();
                 session = null;
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -310,7 +311,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
             try {
                 session.terminate();
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -333,7 +334,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
                         try {
                             session.terminate("No Media Received. This may be caused by firewall configuration problems.");
                         }
-                        catch (XMPPException e) {
+                        catch (XMPPException | SmackException e) {
                             Log.error(e);
                         }
                     }

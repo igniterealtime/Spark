@@ -20,13 +20,10 @@
 
 package org.jivesoftware.sparkplugin.sipaccount;
 
+import org.jivesoftware.smack.*;
 import org.jivesoftware.sparkplugin.calllog.LogPacket;
 import net.java.sipmack.common.Log;
 import net.java.sipmack.sip.SipRegisterStatus;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
@@ -240,7 +237,7 @@ public class SipAccountPacket extends IQ {
                 }
             }
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("isSparkPluginInstalled", e);
         }
 

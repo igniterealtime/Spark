@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.SparkManager;
@@ -144,7 +145,7 @@ public class RoomCreationDialog extends JPanel {
                             ConferenceUtils.joinConferenceRoom(room, room);
                             return;
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                             // Nothing to do
                         }
 

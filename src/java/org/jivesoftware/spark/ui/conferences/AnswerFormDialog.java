@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
@@ -147,7 +148,7 @@ public class AnswerFormDialog {
 	    
 	    String reg = Res.getString("message.groupchat.registered.member", chat.getRoom());
 	   room.getTranscriptWindow().insertNotificationMessage(reg,ChatManager.NOTIFICATION_COLOR);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    room.getTranscriptWindow().insertNotificationMessage(e.getMessage(),ChatManager.ERROR_COLOR);
 	}
 

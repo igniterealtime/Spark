@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.xdata.Form;
@@ -199,7 +200,7 @@ public class ConferenceUtils {
                                 }
                                 break;
                             }
-                            catch (XMPPException ex) {
+                            catch (XMPPException | SmackException ex) {
                                 int code = 0;
                                 if (ex.getXMPPError() != null) {
                                     code = ex.getXMPPError().getCode();
@@ -307,7 +308,7 @@ public class ConferenceUtils {
                         changePresenceToAvailableIfInvisible();
                         break;
                     }
-                    catch (XMPPException ex) {
+                    catch (XMPPException | SmackException ex) {
                         int code = 0;
                         if (ex.getXMPPError() != null) {
                             code = ex.getXMPPError().getCode();
@@ -385,7 +386,7 @@ public class ConferenceUtils {
             DiscoverInfo info = discover.discoverInfo(roomJID);
             return info.containsFeature("muc_passwordprotected");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         return false;
@@ -400,7 +401,8 @@ public class ConferenceUtils {
      * @param jids        a collection of the user JIDs to invite.
      * @throws XMPPException thrown if an error occurs during room creation.
      */
-    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws XMPPException {
+    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws SmackException
+    {
         final String roomJID = XmppStringUtils.escapeLocalpart(roomName) + "@" + serviceName;
         final MultiUserChat multiUserChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -411,8 +413,8 @@ public class ConferenceUtils {
             // Attempt to create room.
             multiUserChat.create(pref.getNickname());
         }
-        catch (XMPPException e) {
-            throw new XMPPException(e);
+        catch (XMPPException | SmackException e) {
+            throw new SmackException(e);
         }
 
         try {
@@ -427,7 +429,7 @@ public class ConferenceUtils {
 
             multiUserChat.sendConfigurationForm(submitForm);
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);
         }
 
@@ -554,7 +556,7 @@ public class ConferenceUtils {
                         }
                         break;
                     }
-                    catch (XMPPException ex) {
+                    catch (XMPPException | SmackException ex) {
                         int code = 0;
                         if (ex.getXMPPError() != null) {
                             code = ex.getXMPPError().getCode();
@@ -634,7 +636,7 @@ public class ConferenceUtils {
                         }
                         break;
                     }
-                    catch (XMPPException ex) {
+                    catch (XMPPException | SmackException ex) {
                         int code = 0;
                         if (ex.getXMPPError() != null) {
                             code = ex.getXMPPError().getCode();

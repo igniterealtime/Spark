@@ -49,6 +49,7 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
 import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.ReportedData;
@@ -100,7 +101,7 @@ public class ChatSearch implements Searchable {
                     results.add(result);
                 }
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
 
@@ -132,7 +133,7 @@ public class ChatSearch implements Searchable {
                         try {
                             transcript = FastpathPlugin.getAgentSession().getTranscript(item.getSessionID());
                         }
-                        catch (XMPPException ee) {
+                        catch (XMPPException | SmackException ee) {
                             Log.error("Error showing transcripts.", ee);
                         }
 
@@ -200,7 +201,7 @@ public class ChatSearch implements Searchable {
             GraphicUtils.centerWindowOnScreen(frame);
             frame.setVisible(true);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 

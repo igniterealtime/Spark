@@ -19,10 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -65,7 +62,7 @@ public class TransportUtils {
                 	try {
                         gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error("Unable to load private data for Gateways", e);
                     }
                 //}
@@ -90,7 +87,7 @@ public class TransportUtils {
     		try {
     			pdm.setPrivateData(gatewayPreferences);
     		}
-    		catch (XMPPException e) {
+    		catch (XMPPException | SmackException e) {
     			Log.error(e);
     		}
     	} else {
@@ -142,7 +139,7 @@ public class TransportUtils {
             DiscoverInfo info = discoveryManager.discoverInfo(transport.getServiceName());
             return info.containsFeature("jabber:iq:registered");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         return false;

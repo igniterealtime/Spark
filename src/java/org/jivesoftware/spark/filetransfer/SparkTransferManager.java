@@ -67,6 +67,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -604,7 +605,7 @@ public class SparkTransferManager {
         try {
             transfer.sendFile(file, "Sending file");
         }
-        catch (XMPPException e) {
+        catch (SmackException e) {
             Log.error(e);
         }
 

@@ -37,6 +37,7 @@ import javax.swing.text.StyledDocument;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -69,6 +70,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -218,7 +220,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             try {
                 discoverInfo = discoManager.discoverInfo(fullJID);
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.debug("Unable to disco " + fullJID);
             }
 
@@ -264,7 +266,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
         jid = SparkManager.getUserManager().getFullJID(jid);
 
-        ChatRoom room = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(jid));
+        ChatRoom room = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(jid));
         if (JingleStateManager.getInstance().getJingleRoomState(room) != null) {
             return;
         }

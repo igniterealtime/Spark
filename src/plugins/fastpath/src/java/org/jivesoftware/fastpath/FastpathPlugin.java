@@ -43,6 +43,7 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
@@ -115,7 +116,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                             try {
                                 return Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 return Collections.emptyList();
                             }
                         }
@@ -318,7 +319,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                         agentSession.setOnline(false);
                         agentSession.setOnline(true);
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error(e);
                         leaveWorkgroup();
                         joinButton.setEnabled(true);
@@ -330,7 +331,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     try {
                         agentSession.setOnline(true);
                     }
-                    catch (XMPPException e1) {
+                    catch (XMPPException | SmackException e1) {
                         Log.error(e1);
                         leaveWorkgroup();
                         joinButton.setEnabled(true);
@@ -387,7 +388,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));
             }
         }
-        catch (XMPPException ee) {
+        catch (XMPPException | SmackException ee) {
             // If the user does not belong to a workgroup, then don't initialize the rest of the plugin.
             return;
         }
@@ -395,7 +396,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         try {
             agentSession.setOnline(false);
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error(e1);
         }
         litWorkspace.unload();

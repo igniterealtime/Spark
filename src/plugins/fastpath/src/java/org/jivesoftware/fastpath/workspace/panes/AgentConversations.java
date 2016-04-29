@@ -46,6 +46,7 @@ import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
@@ -306,7 +307,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     try {
                                         owners = muc.getOwners();
                                     }
-                                    catch (XMPPException e1) {
+                                    catch (XMPPException | SmackException e1) {
                                         return;
                                     }
                                     Iterator iter = owners.iterator();
@@ -362,7 +363,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error(e1);
                             }
                         }
@@ -373,7 +374,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     menu.show(list, e.getX(), e.getY());
                 }
             }
-            catch (XMPPException e1) {
+            catch (XMPPException | SmackException e1) {
                 Log.error(e1);
                 return;
             }

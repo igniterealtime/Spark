@@ -21,6 +21,7 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -129,7 +130,7 @@ public class JabberBrowser implements Plugin {
         try {
             result = discoManager.discoverItems(serviceName);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
             return;
         }
@@ -155,7 +156,7 @@ public class JabberBrowser implements Plugin {
         try {
             result = discoManager.discoverItems(discoveredItem.getEntityID());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             browsePanel.invalidate();
             browsePanel.validate();
             browsePanel.repaint();

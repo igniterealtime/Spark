@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -106,7 +107,7 @@ public class RoomBrowser extends JPanel {
                     ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
                     items = manager.discoverItems(roomJID);
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error(e);
                 }
                 return "ok";

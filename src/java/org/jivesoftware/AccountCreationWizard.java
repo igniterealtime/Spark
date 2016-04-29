@@ -24,6 +24,7 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
@@ -244,7 +245,7 @@ public class AccountCreationWizard extends JPanel {
                     final AccountManager accountManager = new AccountManager(connection);
                     accountManager.createAccount(getUsername(), getPassword());
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     XMPPError error = e.getXMPPError();
                     if (error != null) {
                         errorCode = error.getCode();

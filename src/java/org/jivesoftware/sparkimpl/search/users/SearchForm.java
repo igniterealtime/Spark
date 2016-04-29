@@ -21,6 +21,7 @@
 package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.ReportedData;
@@ -66,7 +67,7 @@ public class SearchForm extends JPanel {
         try {
             searchForm = searchManager.getSearchForm(service);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Unable to load search services.", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
@@ -132,7 +133,7 @@ public class SearchForm extends JPanel {
                     Form answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Unable to load search service.", e);
                 }
 

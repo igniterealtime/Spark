@@ -20,6 +20,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -235,7 +236,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                             groupFound = group;
                             group.addEntry(entry);
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                             Log.error(e1);
                             return false;
                         }
@@ -248,7 +249,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     try {
                         groupFound.addEntry(entry);
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error(e);
                     }
                 }
@@ -291,7 +292,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     rosterGroup = group;
                     group.removeEntry(entry);
                 }
-                catch (XMPPException e1) {
+                catch (XMPPException | SmackException e1) {
                     return false;
                 }
             }

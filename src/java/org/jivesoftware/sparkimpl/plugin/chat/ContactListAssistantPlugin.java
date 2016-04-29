@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -299,7 +300,7 @@ public class ContactListAssistantPlugin implements Plugin {
                             }
                             group.addEntry(entry);
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                             Log.error(e1);
                             return false;
                         }
@@ -316,7 +317,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     	SparkManager.getContactList().toggleGroupVisibility(groupFound.getName(), true);
                         }  
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error(e);
                     }
                 }
@@ -366,7 +367,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     rosterGroup = group;
                     group.removeEntry(entry);
                 }
-                catch (XMPPException e1) {
+                catch (XMPPException | SmackException e1) {
                     return false;
                 }
             }

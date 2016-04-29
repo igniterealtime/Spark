@@ -50,6 +50,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
@@ -81,7 +82,7 @@ public class DataFormDialog extends JPanel {
         try {
             form = chat.getConfigurationForm();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -242,7 +243,7 @@ public class DataFormDialog extends JPanel {
                 BookmarkManager.getBookmarkManager(SparkManager.getConnection()).removeBookmarkedConference(info.getRoom());
             }
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }

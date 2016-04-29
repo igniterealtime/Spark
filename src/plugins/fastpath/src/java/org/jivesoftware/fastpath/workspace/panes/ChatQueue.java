@@ -41,6 +41,7 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
@@ -106,7 +107,7 @@ public class ChatQueue extends JPanel {
         try {
             form = FastpathPlugin.getWorkgroup().getWorkgroupForm();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Unable to retrieve Workgroup form.", e);
             return;
         }

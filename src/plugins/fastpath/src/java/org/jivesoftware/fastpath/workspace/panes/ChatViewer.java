@@ -38,6 +38,7 @@ import javax.swing.JTextPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
@@ -162,7 +163,7 @@ public class ChatViewer extends JPanel {
             ChatNotes note = agentSession.getNote(transcript.getSessionID());
             pane.setText(note.getNotes());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             pane.setText("");
             // Log.error(e);
         }

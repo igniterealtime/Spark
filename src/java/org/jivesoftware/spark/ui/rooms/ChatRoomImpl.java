@@ -41,6 +41,7 @@ import javax.swing.event.DocumentEvent;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.roster.Roster;
@@ -278,7 +279,7 @@ public class ChatRoomImpl extends ChatRoom {
 			try {
 				ChatStateManager.getInstance(connection).setCurrentState(state, chat);
 				lastNotificationSent = state;
-			} catch (XMPPException e) {
+			} catch (SmackException e) {
 				Log.error("Cannot send " + state + " chat notification");
 			}
 		}

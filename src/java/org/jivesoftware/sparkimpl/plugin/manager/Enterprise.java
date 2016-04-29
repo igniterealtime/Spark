@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.manager;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
@@ -84,7 +85,7 @@ public class Enterprise {
                     try {
                         featureInfo = disco.discoverInfo(item.getEntityID());
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error("Error while retrieving feature list for SparkManager.", e);
                     }
 

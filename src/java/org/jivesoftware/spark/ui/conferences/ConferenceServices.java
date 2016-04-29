@@ -40,6 +40,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -164,7 +165,7 @@ public class ConferenceServices implements InvitationListener {
 						BookmarkManager manager = BookmarkManager
 								.getBookmarkManager(SparkManager.getConnection());
 						bc = manager.getBookmarkedConferences();
-					} catch (XMPPException error) {
+					} catch (XMPPException | SmackException error) {
 						Log.error(error);
 					}
 				}
@@ -411,7 +412,7 @@ public class ConferenceServices implements InvitationListener {
                                         Res.getString("message.please.join.in.conference"), jids);
                             }
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                         	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(chatRoom, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         }

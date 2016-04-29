@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
@@ -161,7 +162,7 @@ public class ConferenceServiceBrowser {
                         answer.add(item.getEntityID());
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     // Nothing to do
                 }
             }

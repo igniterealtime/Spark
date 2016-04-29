@@ -20,6 +20,7 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.XMPPException;
@@ -289,7 +290,7 @@ public class ChatManager implements ChatManagerListener {
             // an instant room
             chatRoom.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);
             return null;
         }
@@ -508,7 +509,7 @@ public class ChatManager implements ChatManagerListener {
                     conferenceService = col.iterator().next();
                 }
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }

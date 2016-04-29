@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
@@ -271,7 +272,7 @@ public class SparkPrivacyList {
             PrivacyManager.getInstance().getPrivacyListManager().updatePrivacyList(getListName(), _privacyItems);
             PrivacyManager.getInstance().getPrivacyListManager().getPrivacyList(_listName).getItems().remove(item);
             _privacyItems.remove(item);
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not save PrivacyList "+_listName);
             e.printStackTrace();
         }

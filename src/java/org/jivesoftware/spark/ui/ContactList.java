@@ -69,14 +69,11 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -1376,7 +1373,7 @@ public class ContactList extends JPanel implements ActionListener,
             try {
                 roster.removeEntry(entry);
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.warning("Unable to remove roster entry.", e);
             }
         }
@@ -1470,7 +1467,7 @@ public class ContactList extends JPanel implements ActionListener,
                             try {
                                 rosterGroup.removeEntry(entry);
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error("Error removing entry", e1);
                             }
                         }
@@ -1803,7 +1800,7 @@ public class ContactList extends JPanel implements ActionListener,
                 try {
                     sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Unable to contact shared group info.", e);
                 }
 
@@ -1863,7 +1860,7 @@ public class ContactList extends JPanel implements ActionListener,
                                     removeContactItem(presence.getFrom());
                                     roster.removeEntry(entry);
                                 }
-                                catch (XMPPException e) {
+                                catch (XMPPException | SmackException e) {
                                     Presence unsub = new Presence(Presence.Type.unsubscribed);
                                     unsub.setTo(presence.getFrom());
                                     SparkManager.getConnection().sendStanza(unsub);
@@ -1901,7 +1898,7 @@ public class ContactList extends JPanel implements ActionListener,
                                     removeContactItem(presence.getFrom());
                                     roster.removeEntry(entry);
                                 }
-                                catch (XMPPException e) {
+                                catch (XMPPException | SmackException e) {
                                     Log.error(e);
                                 }
                             }

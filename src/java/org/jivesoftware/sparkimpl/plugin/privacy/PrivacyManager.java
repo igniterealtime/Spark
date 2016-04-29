@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
@@ -110,7 +111,7 @@ public class PrivacyManager {
         DiscoverInfo info = null;
     	try {
     		info = servDisc.discoverInfo(conn.getServiceName());
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             	// We could not query the server
         }
         if (info != null) {
@@ -136,7 +137,7 @@ public class PrivacyManager {
                if (!isListHidden(sparkList))
                    _privacyLists.add(sparkList);
             }  
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.error("Could not load PrivacyLists");
             e.printStackTrace();
         }
@@ -154,7 +155,7 @@ public class PrivacyManager {
             privacyManager.deletePrivacyList(listName);
            
             _privacyLists.remove(getPrivacyList(listName));
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not remove PrivacyList " + listName);
             e.printStackTrace();
         }
@@ -252,7 +253,7 @@ public class PrivacyManager {
             sparklist = new SparkPrivacyList(privacyManager.getPrivacyList(listName));
             _privacyLists.add(sparklist);
             sparklist.addSparkPrivacyListener(_presenceHandler);
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not create PrivacyList "+listName);
             e.printStackTrace();
         }
@@ -295,7 +296,7 @@ public class PrivacyManager {
             }
             _presenceHandler.setIconsForList(getActiveList());
             
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not activate PrivacyList " + listname);
             e.printStackTrace();
         }
@@ -311,7 +312,7 @@ public class PrivacyManager {
                 if (!plist.getListName().equals(listname))
                     plist.setListIsDefault(false);
             }
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not set PrivacyList " + listname+" as default");
             e.printStackTrace();
         }
@@ -331,7 +332,7 @@ public class PrivacyManager {
             for (SparkPrivacyList plist : _privacyLists) {
                 plist.setListAsActive(false);
             }
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not decline active privacy list");
             e.printStackTrace();
         }    
@@ -348,7 +349,7 @@ public class PrivacyManager {
                     plist.setListIsDefault(false);
                 }
             }
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not decline default privacy list");
             e.printStackTrace();
         }    
@@ -480,7 +481,7 @@ public class PrivacyManager {
             if (list != null)
                 return list;
             
-        } catch (XMPPException e1) {
+        } catch (XMPPException | SmackException e1) {
             Log.debug("PrivacyManager#ensureGloballyInvisibleListExists: Could not find globally invisible list. We need to create one");
         }
 
@@ -493,7 +494,7 @@ public class PrivacyManager {
             list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been created ");
         } 
-        catch (XMPPException e) 
+        catch (XMPPException | SmackException e)
         {
             Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME);
             //e.printStackTrace();

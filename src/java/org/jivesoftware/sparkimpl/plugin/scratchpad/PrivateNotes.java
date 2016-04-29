@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
@@ -136,7 +137,7 @@ public class PrivateNotes implements PrivateData {
         try {
             manager.setPrivateData(notes);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
@@ -151,7 +152,7 @@ public class PrivateNotes implements PrivateData {
         try {
             notes = (PrivateNotes)manager.getPrivateData("scratchpad", "scratchpad:notes");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 

@@ -46,6 +46,7 @@ import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.ext.macros.Macro;
 import org.jivesoftware.smackx.workgroup.ext.macros.MacroGroup;
@@ -118,7 +119,7 @@ public class MacrosEditor extends JPanel {
         try {
             personalGroup = FastpathPlugin.getAgentSession().getMacros(false);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("No personal macros set.");
             personalGroup = new MacroGroup();
         }

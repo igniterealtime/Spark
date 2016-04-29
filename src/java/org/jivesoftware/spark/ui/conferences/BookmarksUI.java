@@ -53,6 +53,7 @@ import javax.swing.tree.TreePath;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -187,7 +188,7 @@ public class BookmarksUI extends JPanel {
         try {
             manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         
@@ -198,7 +199,7 @@ public class BookmarksUI extends JPanel {
         		while(bc == null){
         			try {
         				bc = manager.getBookmarkedConferences();
-        			}catch (XMPPException error) {
+        			}catch (XMPPException | SmackException error) {
                         Log.error(error);
                     }
         		}
@@ -356,7 +357,7 @@ public class BookmarksUI extends JPanel {
                         mucServices = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getServiceNames();
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Unable to load MUC Service Names.", e);
                 }
                 return mucServices;
@@ -424,7 +425,7 @@ public class BookmarksUI extends JPanel {
             manager.addBookmarkedConference(roomName, roomJID, autoJoin, null, null);
             fireBookmarksAdded(roomJID);  //fire bookmark event
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
@@ -438,7 +439,7 @@ public class BookmarksUI extends JPanel {
             manager.removeBookmarkedConference(roomJID);
             fireBookmarksRemoved(roomJID); // fire bookmark remove event
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
@@ -505,7 +506,7 @@ public class BookmarksUI extends JPanel {
                                     }
                                 }
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error("Error in disco discovery.", e1);
                             }
                             return true;
@@ -567,7 +568,7 @@ public class BookmarksUI extends JPanel {
                         answer.add(item.getEntityID());
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Problem when loading conference service.", e);
                 }
             }
@@ -695,7 +696,7 @@ public class BookmarksUI extends JPanel {
         try {
             return manager.getBookmarkedConferences();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         return Collections.emptyList();

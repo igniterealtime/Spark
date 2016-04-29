@@ -22,6 +22,7 @@ package org.jivesoftware.sparkimpl.plugin.scratchpad;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
@@ -188,7 +189,7 @@ public class Tasks implements PrivateData {
         try {
             manager.setPrivateData(tasks);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
@@ -204,7 +205,7 @@ public class Tasks implements PrivateData {
         try {
             tasks = (Tasks)manager.getPrivateData("scratchpad", "scratchpad:tasks");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 

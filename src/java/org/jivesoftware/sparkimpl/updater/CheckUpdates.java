@@ -27,10 +27,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -109,7 +106,7 @@ public class CheckUpdates {
                     return serverVersion;
                 }
             }
-            catch (XMPPException e) {
+            catch (SmackException e) {
                 // Nothing to do
             }
 
@@ -562,7 +559,7 @@ public class CheckUpdates {
      * @return the information for about the latest Spark Client.
      * @throws XMPPException If unable to retrieve latest version.
      */
-    public static SparkVersion getLatestVersion(XMPPConnection connection) throws XMPPException {
+    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
         request.setTo("updater." + connection.getServiceName());
@@ -576,10 +573,10 @@ public class CheckUpdates {
         // Cancel the collector.
         collector.cancel();
         if (response == null) {
-            throw new XMPPException("No response from server.");
+            throw new SmackException("No response from server.");
         }
         if (response.getError() != null) {
-            throw new XMPPException(response.getError());
+            throw new SmackException(response.getError());
         }
         return response;
     }

@@ -57,6 +57,7 @@ import javax.swing.JProgressBar;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
@@ -286,10 +287,10 @@ public class ReceiveFileTransfer extends JPanel {
 	    _starttime = System.currentTimeMillis();
             transfer.recieveFile(downloadedFile);
         }
-        catch (XMPPException e) {
+        catch (SmackException | IOException e) {
             Log.error(e);
         }
-	
+
         progressBar.setMaximum(100); // setting it to percent
         progressBar.setStringPainted(true);
 

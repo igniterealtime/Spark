@@ -88,12 +88,8 @@ import org.dom4j.io.SAXReader;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.proxy.ProxyInfo;
-import org.jivesoftware.smack.SASLAuthentication;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
@@ -1107,7 +1103,7 @@ public class LoginDialog {
 				public void run() {
 				    try {
 					connection.connect();
-				    } catch (XMPPException e) {
+				    } catch (XMPPException | SmackException e) {
 					Log.error("connection error",e);
 				    }
 

@@ -21,6 +21,7 @@ package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
@@ -142,7 +143,7 @@ public class UserSearchService implements Searchable {
                 try {
                     info = discoManager.discoverInfo(item.getEntityID());
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     // Ignore Case
                     continue;
                 }

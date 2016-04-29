@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
@@ -193,7 +194,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
             presence.setTo(transport.getServiceName());
             SparkManager.getConnection().sendStanza(presence);
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             e1.printStackTrace();
             JOptionPane.showMessageDialog(this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
         }

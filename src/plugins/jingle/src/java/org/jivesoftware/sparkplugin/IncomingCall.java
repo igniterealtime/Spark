@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.jingleold.JingleSession;
@@ -93,7 +94,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         try {
             session = request.accept();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -184,7 +185,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                 session.terminate();
                 session = null;
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -298,7 +299,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                         try {
                             session.terminate("No Media Received. This may be caused by firewall configuration problems.");
                         }
-                        catch (XMPPException e) {
+                        catch (XMPPException | SmackException e) {
                             Log.error(e);
                         }
                     }
@@ -339,7 +340,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             try {
                 session.terminate();
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }

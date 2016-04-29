@@ -48,6 +48,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
@@ -203,7 +204,7 @@ public class GroupChatRoom extends ChatRoom {
 			    Form form = chat.getConfigurationForm()
 				    .createAnswerForm();
 			    new DataFormDialog(chatFrame, chat, form);
-			} catch (XMPPException e) {
+			} catch (XMPPException | SmackException e) {
 			    Log.error("Error configuring room.", e);
 			}
 		    }
@@ -231,7 +232,7 @@ public class GroupChatRoom extends ChatRoom {
 			if (ModelUtil.hasLength(newSubject)) {
 			    try {
 				chat.changeSubject(newSubject);
-			    } catch (XMPPException e) {
+			    } catch (XMPPException | SmackException e) {
 				Log.error(e);
 			    }
 			}
@@ -268,7 +269,7 @@ public class GroupChatRoom extends ChatRoom {
 			    try {
 				chat.destroy(reason, null);
 				getChatRoom().leaveChatRoom();
-			    } catch (XMPPException e1) {
+			    } catch (XMPPException | SmackException e1) {
 				Log.warning("Unable to destroy room", e1);
 			    }
 			}
@@ -398,7 +399,7 @@ public class GroupChatRoom extends ChatRoom {
 		    message);
 
 	    chat.sendMessage(message);
-	} catch (XMPPException ex) {
+	} catch (SmackException ex) {
 	    Log.error("Unable to send message in conference chat.", ex);
 	}
 
@@ -443,7 +444,7 @@ public class GroupChatRoom extends ChatRoom {
 	    addPacketID(message.getPacketID());
 
 	    chat.sendMessage(message);
-	} catch (XMPPException ex) {
+	} catch (SmackException ex) {
 	    Log.error("Unable to send message in conference chat.", ex);
 	}
 
@@ -1391,7 +1392,7 @@ public class GroupChatRoom extends ChatRoom {
 			    .getChatContainer().getChatFrame();
 		    Form form = chat.getConfigurationForm().createAnswerForm();
 		    new DataFormDialog(chatFrame, chat, form);
-		} catch (XMPPException xmpe) {
+		} catch (XMPPException | SmackException xmpe) {
 		    getTranscriptWindow().insertNotificationMessage(
 			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
 		    scrollToBottom();
@@ -1411,7 +1412,7 @@ public class GroupChatRoom extends ChatRoom {
 		if (ModelUtil.hasLength(newSubject)) {
 		    try {
 			chat.changeSubject(newSubject);
-		    } catch (XMPPException xmpee) {
+		    } catch (XMPPException | SmackException xmpee) {
 			getTranscriptWindow().insertNotificationMessage(
 				xmpee.getMessage(),
 				ChatManager.ERROR_COLOR);
@@ -1431,7 +1432,7 @@ public class GroupChatRoom extends ChatRoom {
 
 		    new AnswerFormDialog(chatFrame, chat, form);
 
-		}  catch (XMPPException xmpe) {
+		}  catch (XMPPException | SmackException xmpe) {
 		    getTranscriptWindow().insertNotificationMessage(
 			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
 		    scrollToBottom();

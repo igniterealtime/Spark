@@ -20,6 +20,7 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
@@ -94,7 +95,7 @@ public final class SessionManager implements ConnectionListener {
         try {
             discoverItems = disco.discoverItems(SparkManager.getConnection().getServiceName());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
             discoverItems = new DiscoverItems();
         }

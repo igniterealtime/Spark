@@ -49,6 +49,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
@@ -203,7 +204,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         try {
             workgroupAgents = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
             workgroupAgents = Collections.EMPTY_LIST;
         }

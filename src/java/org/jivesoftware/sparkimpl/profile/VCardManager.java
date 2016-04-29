@@ -52,6 +52,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaFilter;
@@ -261,7 +262,7 @@ public class VCardManager {
                         try {
                             personalVCard.load(SparkManager.getConnection());
                         }
-                        catch (XMPPException e) {
+                        catch (XMPPException | SmackException e) {
                             Log.error("Error loading vcard information.", e);
                         }
                         return true;
@@ -514,7 +515,7 @@ public class VCardManager {
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
         	////System.out.println(jid+" Fehler in reloadVCard ----> null");
         	vcard.setError(new XMPPError(XMPPError.Condition.request_timeout));
         	vcard.setJabberId(jid);

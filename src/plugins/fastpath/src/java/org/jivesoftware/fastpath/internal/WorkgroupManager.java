@@ -44,6 +44,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -159,7 +160,7 @@ public class WorkgroupManager {
                 settings = workgroup.getChatSettings();
                 chatSettings.put(workgroupName, settings);
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Error retrieving chat setting using key=" + key + " and workgroup=" + workgroupName, e);
             }
         }
@@ -299,7 +300,7 @@ public class WorkgroupManager {
         try {
             workgroup.joinQueue(form);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -335,7 +336,7 @@ public class WorkgroupManager {
                         invites.add(workgroup.getWorkgroupJID());
                         workgroup.departQueue();
                     }
-                    catch (XMPPException e1) {
+                    catch (XMPPException | SmackException e1) {
                         Log.error(e1);
                     }
                 }
@@ -357,7 +358,7 @@ public class WorkgroupManager {
                     try {
                         workgroup.departQueue();
                     }
-                    catch (XMPPException e1) {
+                    catch (XMPPException | SmackException e1) {
                         Log.error(e1);
                     }
                 }

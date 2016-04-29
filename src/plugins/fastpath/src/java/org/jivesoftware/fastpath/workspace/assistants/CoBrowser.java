@@ -45,6 +45,7 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
@@ -384,7 +385,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
 
             groupChatRoom.getMultiUserChat().sendMessage(message);
         }
-        catch (XMPPException ex) {
+        catch (SmackException ex) {
             Log.error("Unable to send message in conference chat.", ex);
         }
 

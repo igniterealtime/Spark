@@ -80,6 +80,7 @@ import org.jivesoftware.fastpath.workspace.panes.UserInvitationPane;
 import org.jivesoftware.fastpath.workspace.search.ChatSearch;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.resource.SoundsRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -436,7 +437,7 @@ public class Workpane {
         try {
             form = FastpathPlugin.getWorkgroup().getWorkgroupForm();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
             return;
         }
@@ -840,7 +841,7 @@ public class Workpane {
                     FastpathPlugin.getAgentSession().setStatus(presence.getMode(), status);
                 }
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
