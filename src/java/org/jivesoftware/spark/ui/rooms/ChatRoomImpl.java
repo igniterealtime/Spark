@@ -271,10 +271,10 @@ public class ChatRoomImpl extends ChatRoom {
     }    
     
     private void sendChatState(ChatState state) {
-    	Connection connection = SparkManager.getConnection();
+    	XMPPConnection connection = SparkManager.getConnection();
     	boolean connected = connection.isConnected();
 		if (connected) {
-			Chat chat = connection.getChatManager().createChat(getParticipantJID(), null);
+			Chat chat = org.jivesoftware.smack.chat.ChatManager.getInstanceFor( connection ).createChat(getParticipantJID(), null);
 			try {
 				ChatStateManager.getInstance(connection).setCurrentState(state, chat);
 				lastNotificationSent = state;

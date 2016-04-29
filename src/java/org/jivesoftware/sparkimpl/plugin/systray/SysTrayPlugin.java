@@ -102,7 +102,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	    SparkManager.getNativeManager().addNativeHandler(this);
 	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
 	    //XEP-0085 suport (replaces the obsolete XEP-0022)
-	    SparkManager.getConnection().getChatManager().addChatListener(this);
+		org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
 
 	    if (Spark.isLinux()) {
 		newMessageIcon = SparkRes

@@ -151,8 +151,8 @@ public class ChatManager implements ChatManagerListener {
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
-        // Add a Message Handler        
-        SparkManager.getConnection().getChatManager().addChatListener(this);
+        // Add a Message Handler
+        org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
     }
 
 
