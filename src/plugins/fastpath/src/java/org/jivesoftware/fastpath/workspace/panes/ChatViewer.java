@@ -28,10 +28,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -47,6 +44,7 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.ext.notes.ChatNotes;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
@@ -90,7 +88,7 @@ public class ChatViewer extends JPanel {
                 }
                 message.removeExtension(delayInformation);
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
-                message.setProperty("date", stamp);
+                message.addExtension( new JivePropertiesExtension( Collections.singletonMap( "date", stamp) ) );
                 message.setFrom(from);
                 chatTranscript.add(message);
             }

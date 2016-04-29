@@ -86,6 +86,7 @@ import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.sharedgroups.SharedGroupManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
@@ -1767,7 +1768,7 @@ public class ContactList extends JPanel implements ActionListener,
             for (ContactItem item : items) {
                 final Message message = new Message();
                 message.setTo(item.getJID());
-                message.setProperty("broadcast", true);
+                message.addExtension( new JivePropertiesExtension( Collections.singletonMap( "broadcast", true )) );
                 message.setBody(messageText);
                 if (!broadcastMessages.containsKey(item.getJID())) {
                     buf.append(item.getDisplayName()).append("\n");

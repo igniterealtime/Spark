@@ -61,6 +61,7 @@ import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
@@ -222,7 +223,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                         return;
                     }
 
-                    boolean broadcast = message.getProperty("broadcast") != null;
+                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                    final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
                     if ((broadcast || message.getType() == Message.Type.normal
                 	    || message.getType() == Message.Type.headline) && message.getBody() != null) {

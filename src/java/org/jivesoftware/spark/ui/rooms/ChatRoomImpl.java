@@ -59,6 +59,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.MessageEventManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.packet.MessageEvent;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
@@ -521,7 +522,8 @@ public class ChatRoomImpl extends ChatRoom {
                         }
                     }
 
-                    boolean broadcast = message.getProperty("broadcast") != null;
+                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                    final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
                     // If this is a group chat message, discard
                     if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||

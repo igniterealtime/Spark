@@ -57,6 +57,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -471,7 +472,13 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                     }
 
                     final String body = message.getBody();
-                    final Date insertionDate = (Date)message.getProperty("insertionDate");
+
+                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                    Date insertionDate = null;
+                    if ( extension != null ) {
+                        insertionDate = (Date) extension.getProperty( "insertionDate" );
+                    }
+
                     formatter = new SimpleDateFormat("hh:mm:ss");
 
                     String value = "";
