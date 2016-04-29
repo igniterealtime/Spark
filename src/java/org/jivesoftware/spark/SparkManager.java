@@ -25,7 +25,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.search.SearchManager;

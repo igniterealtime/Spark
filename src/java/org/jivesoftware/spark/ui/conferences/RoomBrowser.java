@@ -22,7 +22,7 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.packet.DiscoverItems;

@@ -22,7 +22,7 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;

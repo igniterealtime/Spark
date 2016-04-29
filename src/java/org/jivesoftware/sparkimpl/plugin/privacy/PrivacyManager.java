@@ -34,7 +34,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.PrivacyItem;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DiscoverInfo.Feature;
 import org.jivesoftware.spark.PresenceManager;

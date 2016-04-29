@@ -29,7 +29,7 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
