@@ -154,8 +154,7 @@ public class GroupChatRoom extends ChatRoom {
 	getSplitPane().setRightComponent(roomInfo.getGUI());
 
 	roomInfo.setChatRoom(this);
-	getSplitPane().setResizeWeight(.60);
-	getSplitPane().setDividerLocation(.80);
+	getSplitPane().setResizeWeight(1);
 
 	setupListeners();
 
