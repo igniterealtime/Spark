@@ -25,7 +25,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;

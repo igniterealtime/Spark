@@ -34,7 +34,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.ConfirmDialog;
 import org.jivesoftware.spark.component.ConfirmDialog.ConfirmListener;

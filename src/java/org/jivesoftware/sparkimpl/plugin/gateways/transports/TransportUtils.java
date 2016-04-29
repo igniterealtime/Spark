@@ -30,7 +30,7 @@ import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
