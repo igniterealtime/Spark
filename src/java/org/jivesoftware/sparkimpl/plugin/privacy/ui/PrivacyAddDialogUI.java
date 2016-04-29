@@ -52,7 +52,7 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;

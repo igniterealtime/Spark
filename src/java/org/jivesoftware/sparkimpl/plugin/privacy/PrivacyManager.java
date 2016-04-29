@@ -26,12 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.jivesoftware.smack.PrivacyList;
-import org.jivesoftware.smack.PrivacyListManager;
+import org.jivesoftware.smackx.privacy.PrivacyList;
+import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -233,7 +233,7 @@ public class PrivacyManager {
     
 
     /**
-     * Get <code>org.jivesoftware.smack.PrivacyListManager</code> instance
+     * Get <code>org.jivesoftware.smackx.privacy.PrivacyListManager</code> instance
      * 
      * @return PrivacyListManager
      */

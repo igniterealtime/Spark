@@ -31,8 +31,8 @@ import javax.swing.JPopupMenu;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 
-import org.jivesoftware.smack.packet.PrivacyItem;
-import org.jivesoftware.smack.packet.PrivacyItem.Type;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem.Type;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;

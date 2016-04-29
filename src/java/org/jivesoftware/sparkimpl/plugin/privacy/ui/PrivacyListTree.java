@@ -44,7 +44,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;

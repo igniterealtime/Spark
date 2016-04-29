@@ -5,7 +5,7 @@
 
 package org.jivesoftware.sparkimpl.plugin.privacy.list;
 
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 
 /**
  *

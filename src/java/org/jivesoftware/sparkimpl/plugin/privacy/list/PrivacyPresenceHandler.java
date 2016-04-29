@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
