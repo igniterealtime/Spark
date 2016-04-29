@@ -20,9 +20,12 @@
 package org.jivesoftware.sparkimpl.plugin.manager;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.provider.PacketExtensionProvider;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
+import org.jivesoftware.smackx.attention.packet.AttentionExtension;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,10 +68,12 @@ public class Features implements ExtensionElement {
         return buf.toString();
     }
 
-    public static class Provider implements PacketExtensionProvider {
+    public static class Provider extends ExtensionElementProvider<Features>
+    {
+        public Provider() {
+        }
 
-        public ExtensionElement parseExtension(XmlPullParser parser) throws Exception {
-
+        public Features parse( XmlPullParser parser, int initialDepth) throws XmlPullParserException, IOException {
             Features features = new Features();
             boolean done = false;
             while (!done) {
