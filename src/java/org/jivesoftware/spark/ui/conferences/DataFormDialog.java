@@ -92,24 +92,24 @@ public class DataFormDialog extends JPanel {
                 submitForm.addField(field);
                 String variable = field.getVariable();
                 String label = field.getLabel();
-                String type = field.getType();
+                FormField.Type type = field.getType();
 
                 List<String> valueList = field.getValues();
 
-                if (type.equals(FormField.TYPE_BOOLEAN)) {
+                if (type.equals(FormField.Type.bool)) {
                     String o = valueList.get(0);
                     boolean isSelected = o.equals("1");
                     JCheckBox box = new JCheckBox(label);
                     box.setSelected(isSelected);
                     addField(label, box, variable);
                 }
-                else if (type.equals(FormField.TYPE_TEXT_SINGLE) ||
-                        type.equals(FormField.TYPE_JID_SINGLE)) {
+                else if (type.equals(FormField.Type.text_single) ||
+                        type.equals(FormField.Type.jid_single)) {
                     String value = valueList.get(0);
                     addField(label, new JTextField(value), variable);
                 }
-                else if (type.equals(FormField.TYPE_TEXT_MULTI) ||
-                        type.equals(FormField.TYPE_JID_MULTI)) {
+                else if (type.equals(FormField.Type.text_multi) ||
+                        type.equals(FormField.Type.jid_multi)) {
                     StringBuffer buf = new StringBuffer();
                     final Iterator<String> iter = valueList.iterator();
                     while (iter.hasNext()) {
@@ -121,10 +121,10 @@ public class DataFormDialog extends JPanel {
                     }
                     addField(label, new JTextArea(buf.toString()), variable);
                 }
-                else if (type.equals(FormField.TYPE_TEXT_PRIVATE)) {
+                else if (type.equals(FormField.Type.text_private)) {
                     addField(label, new JPasswordField(), variable);
                 }
-                else if (type.equals(FormField.TYPE_LIST_SINGLE)) {
+                else if (type.equals(FormField.Type.list_single)) {
                     JComboBox box = new JComboBox();
                     for ( final FormField.Option option : field.getOptions() ) {
                         String value = option.getValue();
@@ -137,7 +137,7 @@ public class DataFormDialog extends JPanel {
 
                     addField(label, box, variable);
                 }
-                else if (type.equals(FormField.TYPE_LIST_MULTI)) {
+                else if (type.equals(FormField.Type.list_multi)) {
                     CheckBoxList checkBoxList = new CheckBoxList();
                     final List<String> values = field.getValues();
                     for ( final Option option : field.getOptions() ) {

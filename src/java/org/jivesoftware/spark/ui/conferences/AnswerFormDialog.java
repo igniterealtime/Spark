@@ -81,12 +81,12 @@ public class AnswerFormDialog {
 	int row = 0;
 	for ( final FormField formfield : form.getFields() ) {
 	    JLabel label = new JLabel(formfield.getLabel());
-	    String type = formfield.getType();
+	    FormField.Type type = formfield.getType();
 
 	    JComponent comp = null;
-	    if (type.equals(FormField.TYPE_TEXT_SINGLE)) {
+	    if (type.equals(FormField.Type.text_single)) {
 		comp = new JTextField();
-	    } else if (type.equals(FormField.TYPE_TEXT_MULTI)) {
+	    } else if (type.equals(FormField.Type.text_multi)) {
 		comp = new JTextArea();
 		comp.setBorder(new JTextField().getBorder());
 	    }

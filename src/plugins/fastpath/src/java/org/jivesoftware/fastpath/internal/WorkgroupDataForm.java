@@ -90,29 +90,29 @@ public class WorkgroupDataForm extends JPanel {
             }
 
             String label = field.getLabel();
-            String type = field.getType();
+            FormField.Type type = field.getType();
 
             List valueList = new ArrayList();
             for ( String value : field.getValues() ) {
                 valueList.add( value );
             }
 
-            if (type.equals(FormField.TYPE_BOOLEAN)) {
+            if (type.equals(FormField.Type.bool)) {
                 String o = (String)valueList.get(0);
                 boolean isSelected = o.equals("1");
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
                 addField(label, box, variable);
             }
-            else if (type.equals(FormField.TYPE_TEXT_SINGLE) || type.equals(FormField.TYPE_JID_SINGLE)) {
+            else if (type.equals(FormField.Type.text_single) || type.equals(FormField.Type.jid_single)) {
                 String v = "";
                 if (valueList.size() > 0) {
                     v = (String)valueList.get(0);
                 }
                 addField(label, new JTextField(v), variable);
             }
-            else if (type.equals(FormField.TYPE_TEXT_MULTI) ||
-                type.equals(FormField.TYPE_JID_MULTI)) {
+            else if (type.equals(FormField.Type.text_multi) ||
+                type.equals(FormField.Type.jid_multi)) {
                 StringBuffer buf = new StringBuffer();
                 iter = field.getOptions();
                 while (iter.hasNext()) {
@@ -120,10 +120,10 @@ public class WorkgroupDataForm extends JPanel {
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
             }
-            else if (type.equals(FormField.TYPE_TEXT_PRIVATE)) {
+            else if (type.equals(FormField.Type.text_private)) {
                 addField(label, new JPasswordField(), variable);
             }
-            else if (type.equals(FormField.TYPE_LIST_SINGLE)) {
+            else if (type.equals(FormField.Type.list_single)) {
                 JComboBox box = new JComboBox();
                 iter = field.getOptions();
                 while (iter.hasNext()) {
@@ -138,7 +138,7 @@ public class WorkgroupDataForm extends JPanel {
 
                 addField(label, box, variable);
             }
-            else if (type.equals(FormField.TYPE_LIST_MULTI)) {
+            else if (type.equals(FormField.Type.list_multi)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
                 Iterator i = field.getValues();
                 while (i.hasNext()) {
