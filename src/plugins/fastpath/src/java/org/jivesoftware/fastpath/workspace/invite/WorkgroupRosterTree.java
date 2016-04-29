@@ -108,9 +108,7 @@ public final class WorkgroupRosterTree extends JPanel {
     }
 
     private void buildFromRoster() {
-        final XMPPConnection xmppCon = SparkManager.getConnection();
-        final Roster roster = xmppCon.getRoster();
-
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(new RosterListener() {
             public void rosterModified() {

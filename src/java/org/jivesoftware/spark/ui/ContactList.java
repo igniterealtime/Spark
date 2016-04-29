@@ -330,9 +330,7 @@ public class ContactList extends JPanel implements ActionListener,
 		_reconnectpanelicon.getPanel().add(_reconnectpanelicon.getButton(), 0);
 		_reconnectpanelicon.getPanel().revalidate();
 		_reconnectpanelicon.setClosedOnError(onError);
-		final Collection<RosterEntry> roster = SparkManager
-			.getConnection().getRoster().getEntries();
-
+		final Collection<RosterEntry> roster = Roster.getInstanceFor( SparkManager.getConnection()).getEntries();
 		for (RosterEntry r : roster) {
 		    Presence p = new Presence(Presence.Type.unavailable);
 		    moveToOfflineGroup(p, r.getUser());
@@ -600,9 +598,7 @@ public class ContactList extends JPanel implements ActionListener,
      * Called to build the initial ContactList.
      */
     private void buildContactList() {
-        XMPPConnection con = SparkManager.getConnection();
-        final Roster roster = con.getRoster();
-
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(this);
 
