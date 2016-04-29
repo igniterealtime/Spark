@@ -68,6 +68,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
@@ -413,7 +414,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 	}
 
 	Collection<String> groupchatlist = new ArrayList<String>();
-	Collection<RosterEntry> rosterlist = SparkManager.getConnection().getRoster().getEntries();
+	Collection<RosterEntry> rosterlist = Roster.getInstanceFor( SparkManager.getConnection() ).getEntries();
 
 	if(SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom)
 	{

@@ -535,7 +535,7 @@ public class UserManager {
      * @return the valid jid to use.
      */
     public static String getValidJID(String jid) {
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Iterator<Presence> presences = roster.getPresences(jid);
         int count = 0;
         Presence p = null;

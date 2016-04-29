@@ -275,7 +275,7 @@ public class Workspace extends JPanel implements StanzaListener {
                 pluginManager.initializePlugins();
 
                 // Subscriptions are always manual
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                 roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }
         }, 2000);

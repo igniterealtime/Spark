@@ -178,7 +178,7 @@ public class UriManager {
 	    }
 	}
 
-	Roster roster = SparkManager.getConnection().getRoster();
+	Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 	RosterEntry userEntry = roster.getEntry(jid);
 
 	roster.createEntry(jid, name, new String[] { group });
@@ -211,7 +211,7 @@ public class UriManager {
 	// xmpp:romeo@montague.net?remove
 
 	String jid = retrieveJID(uri);
-	Roster roster = SparkManager.getConnection().getRoster();
+	Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 	RosterEntry entry = roster.getEntry(jid);
 	roster.removeEntry(entry);
     }

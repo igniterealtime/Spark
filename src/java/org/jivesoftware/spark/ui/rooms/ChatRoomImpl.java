@@ -173,7 +173,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         presence = PresenceManager.getPresence(participantJID);
 
-        roster = SparkManager.getConnection().getRoster();
+        roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         RosterEntry entry = roster.getEntry(participantJID);
 

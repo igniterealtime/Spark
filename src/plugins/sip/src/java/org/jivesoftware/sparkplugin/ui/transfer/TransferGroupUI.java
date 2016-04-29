@@ -73,7 +73,7 @@ public class TransferGroupUI extends JPanel {
         setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         setBackground(Color.white);
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         final RosterGroup rosterGroup = roster.getGroup(groupName);
 
         final List<RosterEntry> entries = new ArrayList<RosterEntry>(rosterGroup.getEntries());
@@ -103,7 +103,7 @@ public class TransferGroupUI extends JPanel {
 
         public UserEntry(RosterEntry entry) {
             setLayout(new GridBagLayout());
-            final Roster roster = SparkManager.getConnection().getRoster();
+            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
             Presence presence = roster.getPresence(entry.getUser());
 
             Icon icon = PresenceManager.getIconFromPresence(presence);

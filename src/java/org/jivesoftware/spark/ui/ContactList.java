@@ -306,7 +306,7 @@ public class ContactList extends JPanel implements ActionListener,
 	    public Object construct() { 
 		mainPanel.add(_reconnectpanelsmall,0);	
 		_reconnectpanelsmall.setClosedOnError(onError);
-		final Collection<RosterEntry> roster = SparkManager.getConnection().getRoster().getEntries();
+		final Collection<RosterEntry> roster = Roster.getInstanceFor( SparkManager.getConnection() ).getEntries();
 		
 		for(RosterEntry r : roster)
 		{
@@ -354,7 +354,7 @@ public class ContactList extends JPanel implements ActionListener,
             return;
         }
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
@@ -701,7 +701,7 @@ public class ContactList extends JPanel implements ActionListener,
     public void entriesAdded(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                 for (String jid : addresses) {
                     RosterEntry entry = roster.getEntry(jid);
@@ -742,7 +742,7 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
         // Update users icon
-        Presence presence = SparkManager.getConnection().getRoster().getPresence(entry.getUser());
+        Presence presence = Roster.getInstanceFor( SparkManager.getConnection() ).getPresence(entry.getUser());
         try {
             updateUserPresence(presence);
         }
@@ -784,7 +784,7 @@ public class ContactList extends JPanel implements ActionListener,
     private synchronized void handleEntriesUpdated(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                 Iterator<String> jids = addresses.iterator();
                 while (jids.hasNext()) {
@@ -1324,7 +1324,7 @@ public class ContactList extends JPanel implements ActionListener,
 	            ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
 	            contactItem.setAlias(newAlias);
 	
-	            final Roster roster = SparkManager.getConnection().getRoster();
+	            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 	            RosterEntry entry = roster.getEntry(address);
 	            entry.setName(newAlias);
 	
@@ -1351,7 +1351,7 @@ public class ContactList extends JPanel implements ActionListener,
     private void removeContactFromGroup(ContactItem item) {
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && contactGroup != offlineGroup) {
             try {
@@ -1372,7 +1372,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     private void removeContactFromRoster(ContactItem item) {
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null) {
             try {
@@ -1464,7 +1464,7 @@ public class ContactList extends JPanel implements ActionListener,
                 int ok = JOptionPane.showConfirmDialog(group, Res.getString("message.delete.confirmation", group.getGroupName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.YES_OPTION) {
                     String groupName = group.getGroupName();
-                    Roster roster = SparkManager.getConnection().getRoster();
+                    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                     RosterGroup rosterGroup = roster.getGroup(groupName);
                     if (rosterGroup != null) {
@@ -1495,7 +1495,7 @@ public class ContactList extends JPanel implements ActionListener,
                     return;
                 }
                 String groupName = group.getGroupName();
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                 RosterGroup rosterGroup = roster.getGroup(groupName);
                 //Do not remove ContactGroup if the name entered was the same 
@@ -1581,7 +1581,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
         if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
-            Roster roster = SparkManager.getConnection().getRoster();
+            Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
             RosterEntry entry = roster.getEntry(item.getJID());
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
@@ -1692,7 +1692,7 @@ public class ContactList extends JPanel implements ActionListener,
         subscribeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION));
         subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
@@ -1858,7 +1858,7 @@ public class ContactList extends JPanel implements ActionListener,
                 else if (presence.getType() == Presence.Type.unsubscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            Roster roster = SparkManager.getConnection().getRoster();
+                            Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                             RosterEntry entry = roster.getEntry(presence.getFrom());
                             if (entry != null) {
                                 try {
@@ -1884,7 +1884,7 @@ public class ContactList extends JPanel implements ActionListener,
 
                     // If item is not in the Contact List, add them.
                     if (item == null) {
-                        final Roster roster = SparkManager.getConnection().getRoster();
+                        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                         RosterEntry entry = roster.getEntry(jid);
                         if (entry != null) {
                             item = UIComponentRegistry.createContactItem(entry.getName(), null, jid);
@@ -1896,7 +1896,7 @@ public class ContactList extends JPanel implements ActionListener,
                 else if (presence.getType() == Presence.Type.unsubscribed) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            Roster roster = SparkManager.getConnection().getRoster();
+                            Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                             RosterEntry entry = roster.getEntry(presence.getFrom());
                             if (entry != null) {
                                 try {
@@ -2514,7 +2514,7 @@ public class ContactList extends JPanel implements ActionListener,
         String jid = contactItem.getJID();
         Boolean isFiled = false;
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
             if(contactGroup == null && group.getName() != ""){

@@ -224,7 +224,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                 RosterEntry entry = roster.getEntry(item.getJID());
 
                 RosterGroup groupFound = null;
@@ -280,7 +280,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
 
         // Remove entry from Roster Group
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
 
         RosterGroup rosterGroup = null;

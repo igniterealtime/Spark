@@ -129,7 +129,7 @@ public class PrivacyAddDialogUI extends JPanel {
 
     private void createList() {
         _userList.clear();
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         if (_showGroups) {
             for (RosterGroup group : roster.getGroups()) {
                 _showOffCheckbox.setVisible(false);

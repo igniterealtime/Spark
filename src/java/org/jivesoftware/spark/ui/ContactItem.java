@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -460,7 +461,7 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
+            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.
