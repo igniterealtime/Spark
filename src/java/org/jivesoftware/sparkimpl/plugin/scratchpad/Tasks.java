@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,11 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * @author Derek DeMoro
@@ -119,7 +122,7 @@ public class Tasks implements PrivateData {
             super();
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws Exception {
+        public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
@@ -143,7 +146,7 @@ public class Tasks implements PrivateData {
         }
     }
 
-    public static Task getTask(XmlPullParser parser) throws Exception {
+    public static Task getTask(XmlPullParser parser) throws XmlPullParserException, IOException {
         final Task task = new Task();
 
         boolean done = false;
@@ -183,7 +186,7 @@ public class Tasks implements PrivateData {
 
 
     public static void saveTasks(Tasks tasks, XMPPConnection con) {
-        PrivateDataManager manager = new PrivateDataManager(con);
+        PrivateDataManager manager = PrivateDataManager.getInstanceFor( con );
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:tasks", new Tasks.Provider());
         try {
@@ -195,7 +198,7 @@ public class Tasks implements PrivateData {
     }
 
     public static Tasks getTaskList(XMPPConnection con) {
-        PrivateDataManager manager = new PrivateDataManager(con);
+        PrivateDataManager manager = PrivateDataManager.getInstanceFor( con );
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:tasks", new Tasks.Provider());
 

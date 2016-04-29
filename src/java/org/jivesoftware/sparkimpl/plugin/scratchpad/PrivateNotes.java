@@ -27,6 +27,9 @@ import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * @author Derek DeMoro
@@ -111,7 +114,7 @@ public class PrivateNotes implements PrivateData {
             super();
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws Exception {
+        public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
@@ -131,7 +134,7 @@ public class PrivateNotes implements PrivateData {
     }
 
     public static void savePrivateNotes(PrivateNotes notes) {
-        PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
+        PrivateDataManager manager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
         try {
@@ -143,7 +146,7 @@ public class PrivateNotes implements PrivateData {
     }
 
     public static PrivateNotes getPrivateNotes() {
-        PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
+        PrivateDataManager manager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
 
