@@ -659,8 +659,6 @@ public class Workpane {
                 groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
                 groupChatRoom.getSplitPane().setDividerLocation(0.6);
 
-
-                groupChatRoom.setTabTitle(roomName);
                 groupChatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
 
                 groupChatRoom.getToolBar().setVisible(true);
