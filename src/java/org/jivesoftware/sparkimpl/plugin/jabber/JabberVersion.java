@@ -25,7 +25,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.Time;
+import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.packet.Version;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
