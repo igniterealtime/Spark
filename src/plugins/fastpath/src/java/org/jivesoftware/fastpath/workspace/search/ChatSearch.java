@@ -51,7 +51,7 @@ import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
 import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.Form;
-import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
 import org.jivesoftware.spark.SparkManager;

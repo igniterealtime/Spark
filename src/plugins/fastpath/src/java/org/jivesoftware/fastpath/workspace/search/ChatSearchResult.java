@@ -19,7 +19,7 @@
  */
 package org.jivesoftware.fastpath.workspace.search;
 
-import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.search.ReportedData;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
