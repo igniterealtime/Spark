@@ -54,7 +54,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.FormField.Option;
-import org.jivesoftware.smackx.bookmark.BookmarkManager;
+import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;

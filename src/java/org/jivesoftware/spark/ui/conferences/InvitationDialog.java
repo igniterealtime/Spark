@@ -23,7 +23,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;

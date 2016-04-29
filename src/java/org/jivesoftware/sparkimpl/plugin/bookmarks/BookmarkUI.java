@@ -20,8 +20,8 @@
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
-import org.jivesoftware.smackx.bookmark.BookmarkedURL;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
+import org.jivesoftware.smackx.bookmarks.BookmarkedURL;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.spark.util.GraphicUtils;
