@@ -28,7 +28,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ChatState;
 import org.jivesoftware.smackx.ChatStateListener;
-import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;

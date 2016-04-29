@@ -19,8 +19,8 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.ModelUtil;
 

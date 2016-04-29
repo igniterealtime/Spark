@@ -24,7 +24,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;

@@ -21,8 +21,8 @@ package org.jivesoftware.fastpath.internal;
 
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
