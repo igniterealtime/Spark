@@ -602,10 +602,10 @@ public class BookmarksUI extends JPanel {
         for (BookmarkedConference bookmark : bookmarks) {
             String serviceName = StringUtils.parseServer(bookmark.getJid());
             String roomJID = bookmark.getJid();
-            String roomName = bookmark.getName();
+            String roomName = StringUtils.parseName(bookmark.getJid());
 
             if (bookmark.isAutoJoin()) {
-                ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+                ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getPassword());
                 ConferenceUtils.addUnclosableChatRoom(roomJID);
                 autoJoinRooms.add(bookmark.getJid());
             }

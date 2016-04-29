@@ -154,8 +154,7 @@ public class GroupChatRoom extends ChatRoom {
 	getSplitPane().setRightComponent(roomInfo.getGUI());
 
 	roomInfo.setChatRoom(this);
-	getSplitPane().setResizeWeight(.60);
-	getSplitPane().setDividerLocation(.80);
+	getSplitPane().setResizeWeight(1);
 
 	setupListeners();
 
@@ -1266,13 +1265,13 @@ public class GroupChatRoom extends ChatRoom {
     public void reconnectionSuccessful() {
 
 	final String roomJID = chat.getRoom();
-	final String roomDesc = tabTitle;
+	final String roomName= tabTitle;
 	isActive = false;
 	EventQueue.invokeLater(new Runnable() {
 
 	    @Override
 	    public void run() {
-		ConferenceUtils.joinConferenceOnSeperateThread(roomDesc, roomJID, password);
+		ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, password);
 		closeChatRoom();
 	    }
 	});
