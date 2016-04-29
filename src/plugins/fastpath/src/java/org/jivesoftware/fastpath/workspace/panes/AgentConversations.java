@@ -49,6 +49,7 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -283,7 +284,8 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
-                                Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                Collection col = multiUserChatManager.getServiceNames();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -294,7 +296,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
 
                                 final String nickname = pref.getNickname();
-                                MultiUserChat muc = new MultiUserChat(SparkManager.getConnection(), roomName);
+                                MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 
@@ -344,7 +346,8 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
-                                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                Collection<String> col = multiUserChatManager.getServiceNames();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -354,7 +357,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
                                 final String nickname = pref.getNickname();
-                                MultiUserChat muc = new MultiUserChat(SparkManager.getConnection(), roomName);
+                                MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 

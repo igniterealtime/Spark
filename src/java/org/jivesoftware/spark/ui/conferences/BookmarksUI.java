@@ -61,6 +61,7 @@ import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -352,7 +353,7 @@ public class BookmarksUI extends JPanel {
             public Object construct() {
                 try {
                     if (SparkManager.getConnection().isConnected()) {
-                        mucServices = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                        mucServices = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getServiceNames();
                     }
                 }
                 catch (XMPPException e) {

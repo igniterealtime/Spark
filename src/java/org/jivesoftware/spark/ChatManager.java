@@ -28,6 +28,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -501,7 +502,8 @@ public class ChatManager implements ChatManagerListener {
     public String getDefaultConferenceService() {
         if (conferenceService == null) {
             try {
-                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                Collection<String> col = multiUserChatManager.getServiceNames();
                 if (col.size() > 0) {
                     conferenceService = col.iterator().next();
                 }
