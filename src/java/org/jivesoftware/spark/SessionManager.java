@@ -193,7 +193,7 @@ public final class SessionManager implements ConnectionListener {
         // Do NOT  send presence if disconnected.
         if (SparkManager.getConnection().isConnected()) {
             // Send Presence Packet
-            SparkManager.getConnection().sendPacket(presence);
+            SparkManager.getConnection().sendStanza(presence);
         }
     }
 

@@ -20,9 +20,9 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
@@ -52,7 +52,7 @@ import java.util.TimerTask;
  *
  * @author Derek DeMoro
  */
-public class NotificationPlugin implements Plugin, PacketListener {
+public class NotificationPlugin implements Plugin, StanzaListener {
 
     private Set<String> onlineUsers = new HashSet<String>();
     private LocalPreferences preferences;
@@ -88,12 +88,12 @@ public class NotificationPlugin implements Plugin, PacketListener {
         }
 
         // Add Presence Listener
-        SparkManager.getConnection().addPacketListener(this, new PacketTypeFilter(Presence.class));
+        SparkManager.getConnection().addAsyncStanzaListener(this, new StanzaTypeFilter(Presence.class));
     }
 
 
-    public void processPacket(Packet packet) {
-        final Presence presence = (Presence)packet;
+    public void processPacket(Stanza stanza) {
+        final Presence presence = (Presence)stanza;
         String jid = presence.getFrom();
         if (jid == null) {
             return;
@@ -134,7 +134,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
     }
 
     public void uninstall() {
-        SparkManager.getConnection().removePacketListener(this);
+        SparkManager.getConnection().removeAsyncStanzaListener(this);
     }
 
     /**

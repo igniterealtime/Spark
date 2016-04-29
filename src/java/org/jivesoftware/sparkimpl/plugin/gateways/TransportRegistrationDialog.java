@@ -191,7 +191,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
             final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
             Presence presence = statusBar.getPresence();
             presence.setTo(transport.getServiceName());
-            SparkManager.getConnection().sendPacket(presence);
+            SparkManager.getConnection().sendStanza(presence);
         }
         catch (XMPPException e1) {
             e1.printStackTrace();

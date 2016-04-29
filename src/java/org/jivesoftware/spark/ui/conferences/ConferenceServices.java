@@ -123,7 +123,7 @@ public class ConferenceServices implements InvitationListener {
                                     String jid = groupChatRoom.getMultiUserChat().getRoom();
 
                                     p.setTo(jid);
-                                    SparkManager.getConnection().sendPacket(p);
+                                    SparkManager.getConnection().sendStanza(p);
                                 }
                             }
                         }

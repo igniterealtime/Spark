@@ -346,7 +346,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 final Presence actualPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
                 Presence toWorkgroupPresence = new Presence(actualPresence.getType(), actualPresence.getStatus(), actualPresence.getPriority(), actualPresence.getMode());
                 toWorkgroupPresence.setTo(workgroup);
-                con.sendPacket(toWorkgroupPresence);
+                con.sendStanza(toWorkgroupPresence);
 
                 try {
                     wgroup = new Workgroup(workgroup, con);

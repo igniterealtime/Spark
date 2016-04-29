@@ -43,7 +43,7 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
@@ -70,17 +70,17 @@ public class ChatViewer extends JPanel {
      * @param transcript the <code>Transcript</code>
      */
     public ChatViewer(final Transcript transcript) {
-        List<Packet> packets = transcript.getPackets();
+        List<Stanza> stanzas = transcript.getPackets();
 
         final TranscriptWindow chatWindow = new TranscriptWindow();
         chatWindow.setBackground(Color.white);
         final List<Message> chatTranscript = new ArrayList<Message>();
 
-        Iterator<Packet> iter = packets.iterator();
+        Iterator<Stanza> iter = stanzas.iterator();
         while (iter.hasNext()) {
-            Packet packet = iter.next();
-            if (packet instanceof Message) {
-                Message message = (Message)packet;
+            Stanza stanza = iter.next();
+            if (stanza instanceof Message) {
+                Message message = (Message)stanza;
                 String from = StringUtils.parseResource(message.getFrom());
                 DelayInformation delayInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
@@ -94,7 +94,7 @@ public class ChatViewer extends JPanel {
                 chatTranscript.add(message);
             }
             else {
-                Presence presence = (Presence)packet;
+                Presence presence = (Presence)stanza;
                 String from = StringUtils.parseResource(presence.getFrom());
                 if (presence.getType() == Presence.Type.available) {
                     from = FpRes.getString("message.user.joined.room", from);

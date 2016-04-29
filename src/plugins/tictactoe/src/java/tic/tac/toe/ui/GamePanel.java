@@ -23,11 +23,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -87,12 +87,12 @@ public class GamePanel extends JPanel {
 
 	add(_gameboardpanel, BorderLayout.CENTER);
 	add(_playerdisplay, BorderLayout.SOUTH);
-	_connection.addPacketListener(new PacketListener() {
+	_connection.addAsyncStanzaListener(new StanzaListener() {
 
 	    @Override
-	    public void processPacket(Packet packet) {
+	    public void processPacket(Stanza stanza) {
 
-		MovePacket move = (MovePacket) packet.getExtension(
+		MovePacket move = (MovePacket) stanza.getExtension(
 			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
 
 		if (move.getGameID() == _gameID) {
@@ -110,7 +110,7 @@ public class GamePanel extends JPanel {
 			inval.setPositionY(move.getPositionY());
 			Message message =new Message(_opponent);
 			message.addExtension(inval);
-			_connection.sendPacket(message);
+			_connection.sendStanza(message);
 			
 			ChatRoom cr = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(_opponent));
 			cr.getTranscriptWindow().insertCustomText(_opponent+"seems to be cheating\n"+
@@ -123,10 +123,10 @@ public class GamePanel extends JPanel {
 	}, new PacketExtensionFilter(MovePacket.ELEMENT_NAME,
 		MovePacket.NAMESPACE));
 	
-	_connection.addPacketListener(new PacketListener() {
+	_connection.addAsyncStanzaListener(new StanzaListener() {
 	    
 	    @Override
-	    public void processPacket(Packet packet) {
+	    public void processPacket(Stanza stanza) {
 		
 		//InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
 		ChatRoom cr = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(_opponent));
@@ -172,7 +172,7 @@ public class GamePanel extends JPanel {
 	    Message message = new Message(_opponent);
 	    message.addExtension(move);
 
-	    _connection.sendPacket(message);
+	    _connection.sendStanza(message);
 
 	}
 

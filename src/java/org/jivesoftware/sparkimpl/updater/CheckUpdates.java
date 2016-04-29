@@ -569,7 +569,7 @@ public class CheckUpdates {
         request.setTo("updater." + connection.getServiceName());
 
         PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(request.getPacketID()));
-        connection.sendPacket(request);
+        connection.sendStanza(request);
 
 
         SparkVersion response = (SparkVersion)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());

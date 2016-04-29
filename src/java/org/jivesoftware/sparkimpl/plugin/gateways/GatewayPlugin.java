@@ -21,12 +21,12 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
@@ -211,13 +211,13 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     private void registerPresenceListener() {
-        PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
+        StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
 
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                if (packet instanceof Presence) {
-                    Presence presence = (Presence)packet;
-                    Transport transport = TransportUtils.getTransport(packet.getFrom());
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                if (stanza instanceof Presence) {
+                    Presence presence = (Presence)stanza;
+                    Transport transport = TransportUtils.getTransport(stanza.getFrom());
                     if (transport != null) {
                         boolean registered = true;
                         if (presence.getType() == Presence.Type.unavailable) {
@@ -241,8 +241,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 			worker.start();
                     }
                 }
-                else if (packet instanceof Message) {
-                    Message message = (Message)packet;
+                else if (stanza instanceof Message) {
+                    Message message = (Message)stanza;
                     String from = message.getFrom();
                     boolean hasError = message.getType() == Message.Type.error;
                     String body = message.getBody();
@@ -290,7 +290,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                         // Create new presence
                         Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
                         p.setTo(transport.getServiceName());
-                        SparkManager.getConnection().sendPacket(p);
+                        SparkManager.getConnection().sendStanza(p);
                     }
                 }
             }

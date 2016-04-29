@@ -10,10 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
@@ -29,7 +29,7 @@ import battleship.packets.MovePacket;
 public class BattleshipPlugin implements Plugin{
 
     
-    private PacketListener _gameofferListener;
+    private StanzaListener _gameofferListener;
     private ChatRoomOpeningListener _chatRoomListener;
     
     @Override
@@ -40,19 +40,19 @@ public class BattleshipPlugin implements Plugin{
 	ProviderManager.addExtensionProvider(MoveAnswerPacket.ELEMENT_NAME, MoveAnswerPacket.NAMESPACE, MoveAnswerPacket.class);
 
 	
-	_gameofferListener = new PacketListener() {
+	_gameofferListener = new StanzaListener() {
 	    
 	    @Override
-	    public void processPacket(Packet packet) {
-		GameOfferPacket invitation = (GameOfferPacket) packet;
+	    public void processPacket(Stanza stanza) {
+		GameOfferPacket invitation = (GameOfferPacket) stanza;
 		if (invitation.getType() == IQ.Type.GET) {
 		    showInvitationInChat(invitation);
 		}
 	    }
 	};
 	
-	SparkManager.getConnection().addPacketListener(_gameofferListener,
-		new PacketTypeFilter(GameOfferPacket.class));
+	SparkManager.getConnection().addAsyncStanzaListener(_gameofferListener,
+		new StanzaTypeFilter(GameOfferPacket.class));
 	
 	_chatRoomListener = new ChatRoomOpeningListener();
 	
@@ -86,7 +86,7 @@ public class BattleshipPlugin implements Plugin{
 	accept.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		SparkManager.getConnection().sendPacket(invitation);
+		SparkManager.getConnection().sendStanza(invitation);
 		invitation.setStartingPlayer(!invitation.isStartingPlayer());
 		ChatRoomOpeningListener.createWindow(invitation, invitation.getFrom());
 		panel.remove(3);
@@ -100,7 +100,7 @@ public class BattleshipPlugin implements Plugin{
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		invitation.setType(IQ.Type.ERROR);
-		SparkManager.getConnection().sendPacket(invitation);
+		SparkManager.getConnection().sendStanza(invitation);
 		panel.remove(3);
 		panel.remove(2);
 		panel.repaint();

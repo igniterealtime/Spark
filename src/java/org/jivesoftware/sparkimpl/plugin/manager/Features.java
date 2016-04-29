@@ -19,7 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.manager;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Features implements PacketExtension {
+public class Features implements ExtensionElement {
 
     private List<String> availableFeatures = new ArrayList<String>();
 
@@ -67,7 +67,7 @@ public class Features implements PacketExtension {
 
     public static class Provider implements PacketExtensionProvider {
 
-        public PacketExtension parseExtension(XmlPullParser parser) throws Exception {
+        public ExtensionElement parseExtension(XmlPullParser parser) throws Exception {
 
             Features features = new Features();
             boolean done = false;

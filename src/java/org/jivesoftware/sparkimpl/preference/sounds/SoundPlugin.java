@@ -23,10 +23,10 @@ package org.jivesoftware.sparkimpl.preference.sounds;
 import java.io.File;
 
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -48,9 +48,9 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
 
         SparkManager.getChatManager().addChatRoomListener(this);
 
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence presence = (Presence)stanza;
                 if (!presence.isAvailable()) {
                     SoundPreferences preferences = soundPreference.getPreferences();
                     if (preferences != null && preferences.isPlayOfflineSound()) {
@@ -62,7 +62,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
                     }
                 }
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
 
         // Load sound preferences.
         final Runnable soundLoader = new Runnable() {

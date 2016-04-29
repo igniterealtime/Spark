@@ -53,12 +53,12 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.spark.ChatManager;
@@ -91,7 +91,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
  */
-public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketListener {
+public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
     private Set<ChatRoom> broadcastRooms = new HashSet<ChatRoom>();
 
@@ -104,8 +104,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         // Add as ContainerDecoratr
         SparkManager.getChatManager().addSparkTabHandler(this);
 
-        PacketFilter serverFilter = new PacketTypeFilter(Message.class);
-        SparkManager.getConnection().addPacketListener(this, serverFilter);
+        StanzaFilter serverFilter = new StanzaTypeFilter(Message.class);
+        SparkManager.getConnection().addAsyncStanzaListener(this, serverFilter);
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
@@ -209,11 +209,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         return false;
     }
 
-    public void processPacket(final Packet packet) {
+    public void processPacket(final Stanza stanza) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    final Message message = (Message)packet;
+                    final Message message = (Message)stanza;
 
                     // Do not handle errors or offline messages
                     final DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
@@ -225,13 +225,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
                     if ((broadcast || message.getType() == Message.Type.normal
                 	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
-                        showAlert((Message)packet);
+                        showAlert((Message)stanza);
                     }
                     else {
                         String host = SparkManager.getSessionManager().getServerAddress();
-                        String from = packet.getFrom() != null ? packet.getFrom() : "";
+                        String from = stanza.getFrom() != null ? stanza.getFrom() : "";
                         if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
-                            showAlert((Message)packet);
+                            showAlert((Message)stanza);
                         }
                     }
                 }

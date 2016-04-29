@@ -120,7 +120,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 				oldPresence.getPriority(),
 				oldPresence.getMode());
 			presence.setTo(transport.getServiceName());
-			SparkManager.getConnection().sendPacket(presence);
+			SparkManager.getConnection().sendStanza(presence);
 		    }
 		}
 	    }
@@ -141,7 +141,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 		    final Presence offlinePresence = new Presence(
 			    Presence.Type.unavailable);
 		    offlinePresence.setTo(_transport.getServiceName());
-		    SparkManager.getConnection().sendPacket(offlinePresence);
+		    SparkManager.getConnection().sendStanza(offlinePresence);
 		    _statusIcon.setIcon(SparkRes
 			    .getImageIcon(SparkRes.YELLOW_BALL));
 
@@ -149,7 +149,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 		    final Presence onlinePresence = new Presence(
 			    Presence.Type.available);
 		    onlinePresence.setTo(_transport.getServiceName());
-		    SparkManager.getConnection().sendPacket(onlinePresence);
+		    SparkManager.getConnection().sendStanza(onlinePresence);
 		    _statusIcon.setIcon(SparkRes
 			    .getImageIcon(SparkRes.YELLOW_BALL));
 		}

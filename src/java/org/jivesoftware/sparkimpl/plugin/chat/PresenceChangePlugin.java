@@ -34,9 +34,9 @@ import javax.swing.JPopupMenu;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -125,12 +125,12 @@ public class PresenceChangePlugin implements Plugin {
         });
 
         // Check presence changes
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-	    public void processPacket(final Packet packet) {
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+	    public void processPacket(final Stanza stanza) {
 		try {
 		    EventQueue.invokeAndWait(new Runnable() {
 			public void run() {
-			    Presence presence = (Presence) packet;
+			    Presence presence = (Presence) stanza;
 			    if (!presence.isAvailable() || presence.isAway()) {
 				return;
 			    }
@@ -198,7 +198,7 @@ public class PresenceChangePlugin implements Plugin {
 		    ex.printStackTrace();
 		}
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
     }
 
     public void shutdown() {

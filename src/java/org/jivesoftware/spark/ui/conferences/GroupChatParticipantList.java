@@ -58,10 +58,10 @@ import javax.swing.UIManager;
 import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
@@ -108,7 +108,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	private JXList participantsList;
 
-	private PacketListener listener = null;
+	private StanzaListener listener = null;
 
 	private Map<String, String> invitees = new HashMap<String, String>();
 
@@ -190,11 +190,11 @@ public class GroupChatParticipantList extends JPanel {
 	    }
 	});
 
-	listener = new PacketListener() {
-	    public void processPacket(final Packet packet) {
+	listener = new StanzaListener() {
+	    public void processPacket(final Stanza stanza) {
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
-			Presence p = (Presence) packet;
+			Presence p = (Presence) stanza;
 			if (p.getError() != null) {
 			    if (p.getError()
 				    .getCondition()
@@ -378,7 +378,7 @@ public class GroupChatParticipantList extends JPanel {
 	String affi = "";
 	String role = "";
 
-	for (PacketExtension pack : p.getExtensions()) {
+	for (ExtensionElement pack : p.getExtensions()) {
 	    String[] args = pack.toXML().split(" ");
 
 	    for (String ss : args) {
@@ -1327,7 +1327,7 @@ public class GroupChatParticipantList extends JPanel {
 
     }
 
-    protected PacketListener getListener() {
+    protected StanzaListener getListener() {
         return listener;
     }
 

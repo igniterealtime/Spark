@@ -20,9 +20,9 @@
 
 package org.jivesoftware.sparkimpl.profile.ext;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
-public class VCardUpdateExtension implements PacketExtension {
+public class VCardUpdateExtension implements ExtensionElement {
     private String photoHash;
 
     public void setPhotoHash(String hash) {

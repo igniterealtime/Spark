@@ -39,12 +39,12 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
@@ -88,7 +88,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
  * <p/>
  * <li>Retrieve the ContactList.
  */
-public class Workspace extends JPanel implements PacketListener {
+public class Workspace extends JPanel implements StanzaListener {
 
 	private static final long serialVersionUID = 7076407890063933765L;
 	private SparkTabbedPane workspacePane;
@@ -226,15 +226,15 @@ public class Workspace extends JPanel implements PacketListener {
         // Add presence and message listeners
         // we listen for these to force open a 1-1 peer chat window from other operators if
         // one isn't already open
-        PacketFilter workspaceMessageFilter = new PacketTypeFilter(Message.class);
+        StanzaFilter workspaceMessageFilter = new StanzaTypeFilter(Message.class);
 
         // Add the packetListener to this instance
-        SparkManager.getSessionManager().getConnection().addPacketListener(this, workspaceMessageFilter);
+        SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(this, workspaceMessageFilter);
 
         // Make presence available to anonymous requests, if from anonymous user in the system.
-        PacketListener workspacePresenceListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+        StanzaListener workspacePresenceListener = new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence presence = (Presence)stanza;
                 if (presence.getProperty("anonymous") != null) {
                     boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
                     Presence reply = new Presence(Presence.Type.available);
@@ -242,12 +242,12 @@ public class Workspace extends JPanel implements PacketListener {
                         reply.setType(Presence.Type.unavailable);
                     }
                     reply.setTo(presence.getFrom());
-                    SparkManager.getSessionManager().getConnection().sendPacket(reply);
+                    SparkManager.getSessionManager().getConnection().sendStanza(reply);
                 }
             }
         };
 
-        SparkManager.getSessionManager().getConnection().addPacketListener(workspacePresenceListener, new PacketTypeFilter(Presence.class));
+        SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(workspacePresenceListener, new StanzaTypeFilter(Presence.class));
 
         // Until we have better plugin management, will init after presence updates.
         gatewayPlugin = new GatewayPlugin();
@@ -297,21 +297,21 @@ public class Workspace extends JPanel implements PacketListener {
     /**
      * This is to handle agent to agent conversations.
      *
-     * @param packet the smack packet to process.
+     * @param stanza the smack packet to process.
      */
-    public void processPacket(final Packet packet) {
+    public void processPacket(final Stanza stanza) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                handleIncomingPacket(packet);
+                handleIncomingPacket(stanza);
             }
         });
     }
 
 
-    private void handleIncomingPacket(Packet packet) {
+    private void handleIncomingPacket(Stanza stanza) {
         // We only handle message packets here.
-        if (packet instanceof Message) {
-            final Message message = (Message)packet;
+        if (stanza instanceof Message) {
+            final Message message = (Message)stanza;
             boolean isGroupChat = message.getType() == Message.Type.groupchat;
 
             // Check if Conference invite. If so, do not handle here.
@@ -339,7 +339,7 @@ public class Workspace extends JPanel implements PacketListener {
             }
 
             // Create new chat room for Agent Invite.
-            final String from = packet.getFrom();
+            final String from = stanza.getFrom();
             final String host = SparkManager.getSessionManager().getServerAddress();
 
             // Don't allow workgroup notifications to come through here.

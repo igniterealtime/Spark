@@ -174,7 +174,7 @@ public class SubscriptionDialog {
             Presence response = new Presence(Presence.Type.subscribed);
             response.setTo(jid);
 
-            SparkManager.getConnection().sendPacket(response);
+            SparkManager.getConnection().sendStanza(response);
             return;
         }
 
@@ -202,7 +202,7 @@ public class SubscriptionDialog {
                 if (!rosterBox.isSelected()) {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(jid);
-                    SparkManager.getConnection().sendPacket(response);
+                    SparkManager.getConnection().sendStanza(response);
                     dialog.dispose();
                     return;
                 }
@@ -211,7 +211,7 @@ public class SubscriptionDialog {
                 if (addEntry) {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(jid);
-                    SparkManager.getConnection().sendPacket(response);
+                    SparkManager.getConnection().sendStanza(response);
                 }
                 else {
                     dialog.dispose();
@@ -285,7 +285,7 @@ public class SubscriptionDialog {
     {
         Presence response = new Presence(Presence.Type.unsubscribe);
         response.setTo(jid);
-        SparkManager.getConnection().sendPacket(response);
+        SparkManager.getConnection().sendStanza(response);
 
         dialog.dispose();
     }

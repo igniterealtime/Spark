@@ -19,7 +19,7 @@
  */
 package org.jivesoftware.game.reversi;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
 /**
  * A packet extension that represents an individual game move. Each move is simply an integer
@@ -31,7 +31,7 @@ import org.jivesoftware.smack.packet.PacketExtension;
  *
  * @author Matt Tucker
  */
-public class GameMove implements PacketExtension {
+public class GameMove implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "reversi-move";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";

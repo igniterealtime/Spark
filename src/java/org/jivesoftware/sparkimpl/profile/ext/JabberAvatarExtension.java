@@ -20,10 +20,10 @@
 
 package org.jivesoftware.sparkimpl.profile.ext;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
 
-public class JabberAvatarExtension implements PacketExtension {
+public class JabberAvatarExtension implements ExtensionElement {
     private String photoHash;
 
     public void setPhotoHash(String hash) {

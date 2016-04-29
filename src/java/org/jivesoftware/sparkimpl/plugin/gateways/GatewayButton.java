@@ -90,7 +90,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
                         Presence oldPresence = statusBar.getPresence();
                         Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
                         presence.setTo(transport.getServiceName());
-                        SparkManager.getConnection().sendPacket(presence);
+                        SparkManager.getConnection().sendStanza(presence);
                     }
                 }
             }
@@ -114,7 +114,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
                 final Presence offlinePresence = new Presence(Presence.Type.unavailable);
                 offlinePresence.setTo(transport.getServiceName());
 
-                SparkManager.getConnection().sendPacket(offlinePresence);
+                SparkManager.getConnection().sendStanza(offlinePresence);
             }
         });
 
@@ -124,7 +124,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
             public void actionPerformed(ActionEvent actionEvent) {
                 final Presence onlinePresence = new Presence(Presence.Type.available);
                 onlinePresence.setTo(transport.getServiceName());
-                SparkManager.getConnection().sendPacket(onlinePresence);
+                SparkManager.getConnection().sendStanza(onlinePresence);
             }
         });
 

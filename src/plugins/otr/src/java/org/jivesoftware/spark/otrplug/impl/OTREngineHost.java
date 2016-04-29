@@ -49,7 +49,7 @@ public class OTREngineHost implements OtrEngineHost {
         String threadID = StringUtils.randomString(6);
         injection.setThread(threadID);
         injection.setBody(arg1);
-        SparkManager.getConnection().sendPacket(injection);
+        SparkManager.getConnection().sendStanza(injection);
     }
 
     @Override

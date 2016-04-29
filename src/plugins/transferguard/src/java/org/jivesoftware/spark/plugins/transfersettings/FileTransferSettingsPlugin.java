@@ -144,7 +144,7 @@ public class FileTransferSettingsPlugin implements Plugin {
                         Message message = new Message();
                         message.setTo(request.getRequestor());
                         message.setBody(responseMessage);
-                        SparkManager.getConnection().sendPacket(message);
+                        SparkManager.getConnection().sendStanza(message);
                     }
                     return true;
                 }

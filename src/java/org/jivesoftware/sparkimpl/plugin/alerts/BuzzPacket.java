@@ -19,14 +19,14 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
 /**
  * XEP-0224 Compliance<br>
  * see <a
  * href="http://xmpp.org/extensions/xep-0224.html">http://xmpp.org/extensions/xep-0224.html</a>
  */
-public class BuzzPacket implements PacketExtension {
+public class BuzzPacket implements ExtensionElement {
     public String getElementName() {
 	return "attention";
     }

@@ -67,13 +67,13 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.FromMatchesFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -492,9 +492,9 @@ public class SparkTransferManager {
     }
 
     private void addPresenceListener() {
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence presence = (Presence)stanza;
                 if (presence.isAvailable()) {
                     String bareJID = StringUtils.parseBareAddress(presence.getFrom());
 
@@ -520,7 +520,7 @@ public class SparkTransferManager {
                     waitMap.remove(bareJID);
                 }
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
     }
 
     /**
@@ -608,10 +608,10 @@ public class SparkTransferManager {
         }
 
         // Add listener to cancel transfer is sending file to user who just went offline.
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(bareJID));
-        final PacketListener packetListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(bareJID));
+        final StanzaListener packetListener = new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence presence = (Presence)stanza;
                 if (!presence.isAvailable()) {
                     if (transfer != null) {
                         transfer.cancel();
@@ -621,11 +621,11 @@ public class SparkTransferManager {
         };
 
         // Add presence listener to check if user is offline and cancel sending.
-        SparkManager.getConnection().addPacketListener(packetListener, presenceFilter);
+        SparkManager.getConnection().addAsyncStanzaListener(packetListener, presenceFilter);
 
         chatRoom.addClosingListener(new ChatRoomClosingListener() {
             public void closing() {
-                SparkManager.getConnection().removePacketListener(packetListener);
+                SparkManager.getConnection().removeAsyncStanzaListener(packetListener);
 
                 if (!transfer.isDone()) {
                     transfer.cancel();

@@ -19,11 +19,11 @@
  */
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;
@@ -52,10 +52,10 @@ public class JabberVersion implements Plugin {
 
     public void initialize() {
         // Create IQ Filter
-        PacketFilter packetFilter = new PacketTypeFilter(IQ.class);
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                IQ iq = (IQ)packet;
+        StanzaFilter packetFilter = new StanzaTypeFilter(IQ.class);
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                IQ iq = (IQ)stanza;
 
                 // Handle Version Request
                 if (iq instanceof Version && iq.getType() == IQ.Type.GET) {
@@ -71,7 +71,7 @@ public class JabberVersion implements Plugin {
                     version.setType(IQ.Type.RESULT);
                     version.setTo(iq.getFrom());
                     version.setFrom(iq.getTo());
-                    SparkManager.getConnection().sendPacket(version);
+                    SparkManager.getConnection().sendStanza(version);
                 }
                 // Send time
                 else if (iq instanceof Time && iq.getType() == IQ.Type.GET) {
@@ -83,7 +83,7 @@ public class JabberVersion implements Plugin {
                     time.setType(IQ.Type.RESULT);
 
                     // Send Time
-                    SparkManager.getConnection().sendPacket(time);
+                    SparkManager.getConnection().sendStanza(time);
                 }
             }
         }, packetFilter);

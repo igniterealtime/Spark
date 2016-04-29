@@ -20,7 +20,7 @@
 package org.jivesoftware.spark.plugin;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -180,7 +180,7 @@ public class PluginClassLoader extends URLClassLoader {
                                     provider)) {
                                 ProviderManager.addExtensionProvider(elementName, namespace, provider.newInstance());
                             }
-                            else if (PacketExtension.class.isAssignableFrom(
+                            else if (ExtensionElement.class.isAssignableFrom(
                                     provider)) {
                                 ProviderManager.addExtensionProvider(elementName, namespace, provider.newInstance());
                             }

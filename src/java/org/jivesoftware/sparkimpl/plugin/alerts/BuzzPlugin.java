@@ -20,10 +20,10 @@
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -61,10 +61,10 @@ public class BuzzPlugin implements Plugin {
 	ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
 		NAMESPACE_OLD, BuzzPacket.class);
 
-	SparkManager.getConnection().addPacketListener(new PacketListener() {
-	    public void processPacket(Packet packet) {
-		if (packet instanceof Message) {
-		    final Message message = (Message) packet;
+	SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+	    public void processPacket(Stanza stanza) {
+		if (stanza instanceof Message) {
+		    final Message message = (Message) stanza;
 
 		    boolean buzz = message.getExtension(ELEMENTNAME_OLD,
 			    NAMESPACE_OLD) != null
@@ -78,7 +78,7 @@ public class BuzzPlugin implements Plugin {
 		    }
 		}
 	    }
-	}, new PacketTypeFilter(Message.class));
+	}, new StanzaTypeFilter(Message.class));
 
 	SparkManager.getChatManager().addChatRoomListener(
 		new ChatRoomListener() {

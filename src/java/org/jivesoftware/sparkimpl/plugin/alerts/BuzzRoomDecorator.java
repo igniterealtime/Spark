@@ -76,7 +76,7 @@ public class BuzzRoomDecorator implements ActionListener {
         Message message = new Message();
         message.setTo(jid);
         message.addExtension(new BuzzPacket());
-        SparkManager.getConnection().sendPacket(message);
+        SparkManager.getConnection().sendStanza(message);
 
         chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), ChatManager.NOTIFICATION_COLOR);
         buzzButton.setEnabled(false);

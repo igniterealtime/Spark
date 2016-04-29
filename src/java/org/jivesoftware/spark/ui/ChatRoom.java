@@ -67,10 +67,10 @@ import javax.swing.text.Document;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
@@ -87,7 +87,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
 	private static final long serialVersionUID = 7981019929515888299L;
 	private final JPanel chatPanel;
     private final JSplitPane splitPane;
@@ -660,9 +660,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Process incoming packets.
      *
-     * @param packet - the packet to process
+     * @param stanza - the packet to process
      */
-    public void processPacket(Packet packet) {
+    public void processPacket(Stanza stanza) {
     }
 
 

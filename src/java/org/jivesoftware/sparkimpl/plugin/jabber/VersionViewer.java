@@ -91,7 +91,7 @@ public class VersionViewer {
             IQ result;
 
             public Object construct() {
-                SparkManager.getConnection().sendPacket(versionRequest);
+                SparkManager.getConnection().sendStanza(versionRequest);
                 result = (IQ)collector.nextResult(5000);
                 return result;
             }
@@ -119,7 +119,7 @@ public class VersionViewer {
             IQ timeResult = null;
 
             public Object construct() {
-                SparkManager.getConnection().sendPacket(time);
+                SparkManager.getConnection().sendStanza(time);
                 timeResult = (IQ)collector2.nextResult(5000);
                 return timeResult;
             }

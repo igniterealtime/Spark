@@ -418,7 +418,7 @@ public class PrivacyManager {
                 return;
             
             privacyManager.declineActiveList();
-            SparkManager.getConnection().sendPacket(PresenceManager.getAvailablePresence());
+            SparkManager.getConnection().sendStanza(PresenceManager.getAvailablePresence());
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been disabled ");
             if (previousActiveList != null) {
                 setListAsActive(previousActiveList.getListName());
@@ -441,7 +441,7 @@ public class PrivacyManager {
         try {
             previousActiveList = getActiveList();
             privacyManager.setActiveListName(INVISIBLE_LIST_NAME);
-            SparkManager.getConnection().sendPacket(PresenceManager.getAvailablePresence());
+            SparkManager.getConnection().sendStanza(PresenceManager.getAvailablePresence());
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been activated ");
         } catch (Exception e) {
            // e.printStackTrace();

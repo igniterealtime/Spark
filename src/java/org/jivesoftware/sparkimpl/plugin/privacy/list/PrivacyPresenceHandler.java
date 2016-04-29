@@ -31,7 +31,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
     public void sendUnavailableTo(String jid) {
         Presence pack = new Presence(Presence.Type.unavailable);                                                  
         pack.setTo(jid);
-        SparkManager.getConnection().sendPacket(pack);
+        SparkManager.getConnection().sendStanza(pack);
     }
 
     /**
@@ -44,7 +44,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence(); 
         Presence pack = new Presence(presence.getType(), presence.getStatus(), 1, presence.getMode()); 
         pack.setTo(jid);
-        SparkManager.getConnection().sendPacket(pack);
+        SparkManager.getConnection().sendStanza(pack);
     }
 
     public void setIconsForList(SparkPrivacyList list) {

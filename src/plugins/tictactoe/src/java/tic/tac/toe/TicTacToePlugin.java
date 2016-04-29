@@ -32,11 +32,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
@@ -62,7 +62,7 @@ import tic.tac.toe.ui.GamePanel;
 public class TicTacToePlugin implements Plugin {
 
     private ChatRoomListener _chatRoomListener;
-    private PacketListener _gameOfferListener;
+    private StanzaListener _gameOfferListener;
     
     private HashSet<String> _currentInvitations;
        
@@ -81,9 +81,9 @@ public class TicTacToePlugin implements Plugin {
 	ProviderManager.addExtensionProvider(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE, InvalidMove.class);
 
 	// Add IQ listener to listen for incoming game invitations.
-	_gameOfferListener = new PacketListener() {
-	    public void processPacket(Packet packet) {
-		GameOfferPacket invitation = (GameOfferPacket) packet;
+	_gameOfferListener = new StanzaListener() {
+	    public void processPacket(Stanza stanza) {
+		GameOfferPacket invitation = (GameOfferPacket) stanza;
 		if (invitation.getType() == IQ.Type.GET) {
 		    showInvitationAlert(invitation);
 		}
@@ -91,8 +91,8 @@ public class TicTacToePlugin implements Plugin {
 
 	};
 
-	SparkManager.getConnection().addPacketListener(_gameOfferListener,
-		new PacketTypeFilter(GameOfferPacket.class));
+	SparkManager.getConnection().addAsyncStanzaListener(_gameOfferListener,
+		new StanzaTypeFilter(GameOfferPacket.class));
 
 	addButtonToToolBar();
 
@@ -136,14 +136,14 @@ public class TicTacToePlugin implements Plugin {
 			_currentInvitations.add(StringUtils.parseBareAddress(opponentJID));
 			room.getTranscriptWindow().insertCustomText
 			    (TTTRes.getString("ttt.request.sent"), false, false, Color.BLUE);
-			SparkManager.getConnection().sendPacket(offer);
+			SparkManager.getConnection().sendStanza(offer);
 			
-			SparkManager.getConnection().addPacketListener(
-				new PacketListener() {
+			SparkManager.getConnection().addAsyncStanzaListener(
+				new StanzaListener() {
 				    @Override
-				    public void processPacket(Packet packet) {
+				    public void processPacket(Stanza stanza) {
 
-					GameOfferPacket answer = (GameOfferPacket)packet;
+					GameOfferPacket answer = (GameOfferPacket)stanza;
 					answer.setStartingPlayer(offer.isStartingPlayer());
 					answer.setGameID(offer.getGameID());
 					if (answer.getType() == IQ.Type.RESULT) {
@@ -188,7 +188,7 @@ public class TicTacToePlugin implements Plugin {
 
 	_currentInvitations.clear();
 	SparkManager.getChatManager().removeChatRoomListener(_chatRoomListener);
-	SparkManager.getConnection().removePacketListener(_gameOfferListener);
+	SparkManager.getConnection().removeAsyncStanzaListener(_gameOfferListener);
 
     }
 
@@ -236,7 +236,7 @@ public class TicTacToePlugin implements Plugin {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		SparkManager.getConnection().sendPacket(invitation);
+		SparkManager.getConnection().sendStanza(invitation);
 		invitation.setStartingPlayer(!invitation.isStartingPlayer());
 		createTTTWindow(invitation, invitation.getFrom());
 		panel.remove(3);
@@ -251,7 +251,7 @@ public class TicTacToePlugin implements Plugin {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		invitation.setType(IQ.Type.ERROR);
-		SparkManager.getConnection().sendPacket(invitation);
+		SparkManager.getConnection().sendStanza(invitation);
 		panel.remove(3);
 		panel.remove(2);
 		panel.repaint();

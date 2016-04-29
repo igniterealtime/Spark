@@ -25,7 +25,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -121,7 +121,7 @@ public class LogPacket extends IQ {
      * @return the information for about the latest Spark Client.
      * @throws XMPPException
      */
-    public static LogPacket logEvent(XMPPConnection connection, PacketExtension ext)
+    public static LogPacket logEvent(XMPPConnection connection, ExtensionElement ext)
             throws XMPPException {
 
         LogPacket lp = new LogPacket();
@@ -132,7 +132,7 @@ public class LogPacket extends IQ {
 
         PacketCollector collector = connection
                 .createPacketCollector(new PacketIDFilter(lp.getPacketID()));
-        connection.sendPacket(lp);
+        connection.sendStanza(lp);
 
         LogPacket response = (LogPacket)collector
                 .nextResult(SmackConfiguration.getPacketReplyTimeout());

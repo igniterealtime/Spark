@@ -70,17 +70,17 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.packet.StreamError;
@@ -1685,7 +1685,7 @@ public class ContactList extends JPanel implements ActionListener,
                 Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);
 
-                SparkManager.getConnection().sendPacket(response);
+                SparkManager.getConnection().sendStanza(response);
             }
         };
 
@@ -1779,7 +1779,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
 
             for (Message message : broadcastMessages.values()) {
-                SparkManager.getConnection().sendPacket(message);
+                SparkManager.getConnection().sendStanza(message);
             }
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcasted.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
@@ -1844,10 +1844,10 @@ public class ContactList extends JPanel implements ActionListener,
 
     public void addSubscriptionListener() {
         // Add subscription listener
-        PacketFilter packetFilter = new PacketTypeFilter(Presence.class);
-        PacketListener subscribeListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                final Presence presence = (Presence)packet;
+        StanzaFilter stanzaFilter = new StanzaTypeFilter(Presence.class);
+        StanzaListener subscribeListener = new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                final Presence presence = (Presence)stanza;
                 if (presence.getType() == Presence.Type.subscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
@@ -1868,7 +1868,7 @@ public class ContactList extends JPanel implements ActionListener,
                                 catch (XMPPException e) {
                                     Presence unsub = new Presence(Presence.Type.unsubscribed);
                                     unsub.setTo(presence.getFrom());
-                                    SparkManager.getConnection().sendPacket(unsub);
+                                    SparkManager.getConnection().sendStanza(unsub);
                                     Log.error(e);
                                 }
                             }
@@ -1945,7 +1945,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         };
 
-        SparkManager.getConnection().addPacketListener(subscribeListener, packetFilter);
+        SparkManager.getConnection().addAsyncStanzaListener(subscribeListener, stanzaFilter);
     }
 
 

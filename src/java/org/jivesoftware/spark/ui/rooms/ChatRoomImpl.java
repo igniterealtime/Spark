@@ -49,10 +49,10 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
@@ -150,12 +150,12 @@ public class ChatRoomImpl extends ChatRoom {
         // Loads the current history for this user.
         loadHistory();
 
-        // Register PacketListeners
-        PacketFilter fromFilter = new FromMatchesFilter(participantJID);
-        PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
-        PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
+        // Register StanzaListeners
+        StanzaFilter fromFilter = new FromMatchesFilter(participantJID);
+        StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
+        StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
-        SparkManager.getConnection().addPacketListener(this, andFilter);
+        SparkManager.getConnection().addAsyncStanzaListener(this, andFilter);
 
         // The roomname will be the participantJID
         this.roomname = participantJID;
@@ -297,7 +297,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         SparkManager.getChatManager().removeChat(this);
 
-        SparkManager.getConnection().removePacketListener(this);
+        SparkManager.getConnection().removeAsyncStanzaListener(this);
         if (typingTimerTask != null) {
             TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
             typingTimerTask = null;
@@ -387,7 +387,7 @@ public class ChatRoomImpl extends ChatRoom {
         // Send the message that contains the notifications request
         try {
             fireOutgoingMessageSending(message);
-            SparkManager.getConnection().sendPacket(message);
+            SparkManager.getConnection().sendStanza(message);
         }
         catch (Exception ex) {
             Log.error("Error sending message", ex);
@@ -462,18 +462,18 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Process incoming packets.
      *
-     * @param packet - the packet to process
+     * @param stanza - the packet to process
      */
-    public void processPacket(final Packet packet) {
+    public void processPacket(final Stanza stanza) {
         final Runnable runnable = new Runnable() {
             public void run() {
-                if (packet instanceof Presence) {
+                if (stanza instanceof Presence) {
                 	
                 	Presence.Type oldType = presence.getType();
                 	
-                    presence = (Presence)packet;
+                    presence = (Presence)stanza;
 
-                    final Presence presence = (Presence)packet;
+                    final Presence presence = (Presence)stanza;
 
                     ContactList list = SparkManager.getWorkspace().getContactList();
                     ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
@@ -487,12 +487,12 @@ public class ChatRoomImpl extends ChatRoom {
                         getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
                     }
                 }
-                else if (packet instanceof Message) {
+                else if (stanza instanceof Message) {
                     lastActivity = System.currentTimeMillis();
 
 
                     // Do something with the incoming packet here.
-                    final Message message = (Message)packet;
+                    final Message message = (Message)stanza;
                     fireReceivingIncomingMessage(message);
                     if (message.getError() != null) {
                         if (message.getError().getCode() == 404) {
@@ -616,7 +616,7 @@ public class ChatRoomImpl extends ChatRoom {
             event.setPacketID(packetID);
             msg.addExtension(event);
             // Send the packet
-            SparkManager.getConnection().sendPacket(msg);
+            SparkManager.getConnection().sendStanza(msg);
         }
     }
 

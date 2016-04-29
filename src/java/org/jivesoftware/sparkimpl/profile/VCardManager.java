@@ -52,19 +52,18 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketInterceptor;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.jivesoftware.smackx.provider.VCardProvider;
+import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.Base64;
@@ -142,15 +141,15 @@ public class VCardManager {
         initializeUI();
 
         // Intercept all presence packets being sent and append vcard information.
-        PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        SparkManager.getConnection().addPacketInterceptor(new PacketInterceptor() {
-            public void interceptPacket(Packet packet) {
-                Presence newPresence = (Presence)packet;
+        StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
+        SparkManager.getConnection().addPacketInterceptor(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence newPresence = (Presence)stanza;
                 VCardUpdateExtension update = new VCardUpdateExtension();
                 JabberAvatarExtension jax = new JabberAvatarExtension();
 
-                PacketExtension updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
-                PacketExtension jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
+                ExtensionElement updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
+                ExtensionElement jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
 
                 if (updateExt != null) {
                     newPresence.removeExtension(updateExt);
@@ -200,13 +199,13 @@ public class VCardManager {
 
         TaskEngine.getInstance().submit(queueListener);
         
-        PacketFilter filter = new PacketTypeFilter(VCard.class);
-        PacketListener myListener = new PacketListener() {
+        StanzaFilter filter = new StanzaTypeFilter(VCard.class);
+        StanzaListener myListener = new StanzaListener() {
 			@Override
-			public void processPacket(Packet packet) {
-				if (packet instanceof VCard)
+			public void processPacket(Stanza stanza) {
+				if (stanza instanceof VCard)
 				{
-					VCard VCardpacket = (VCard)packet;
+					VCard VCardpacket = (VCard)stanza;
 					String jid = VCardpacket.getFrom();
 					if (VCardpacket.getType().equals(IQ.Type.RESULT) && jid != null && delayedContacts.contains(jid))
 					{
@@ -219,7 +218,7 @@ public class VCardManager {
 			}
 		};
         	
-		SparkManager.getConnection().addPacketListener(myListener, filter);
+		SparkManager.getConnection().addAsyncStanzaListener(myListener, filter);
 
     }
 

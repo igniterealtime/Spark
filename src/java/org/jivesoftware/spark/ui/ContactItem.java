@@ -39,7 +39,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.util.StringUtils;
@@ -348,7 +348,7 @@ public class ContactItem extends JPanel {
 
         this.presence = presence;
 
-        final PacketExtension packetExtension = presence.getExtension("x", "vcard-temp:x:update");
+        final ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
 
         // Handle vCard update packet.
         if (packetExtension != null && packetExtension instanceof DefaultPacketExtension) {

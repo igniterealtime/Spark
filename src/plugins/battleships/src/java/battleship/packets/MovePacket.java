@@ -19,7 +19,7 @@
  */
 package battleship.packets;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
 /**
  * The Move Packet extension
@@ -27,7 +27,7 @@ import org.jivesoftware.smack.packet.PacketExtension;
  * @author wolf.posdorfer
  * @version 20.06.2011
  */
-public class MovePacket implements PacketExtension {
+public class MovePacket implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "bs-move";
     public static final String NAMESPACE = "battleship";

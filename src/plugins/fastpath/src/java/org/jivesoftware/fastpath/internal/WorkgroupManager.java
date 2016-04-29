@@ -45,10 +45,9 @@ import javax.swing.UIManager;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.xdata.Form;
@@ -275,8 +274,8 @@ public class WorkgroupManager {
     public void handleContactItem(final ContactItem contactItem) {
         Presence presence = contactItem.getPresence();
 
-        PacketExtension workgroup = presence.getExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
-        PacketExtension notifyQueue = presence.getExtension("notify-queue", "http://jabber.org/protocol/workgroup");
+        ExtensionElement workgroup = presence.getExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
+        ExtensionElement notifyQueue = presence.getExtension("notify-queue", "http://jabber.org/protocol/workgroup");
 
         if (workgroup == null && notifyQueue == null) {
             return;
@@ -406,7 +405,7 @@ public class WorkgroupManager {
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
     	@Override
-        public boolean handleInvitation(final Connection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+        public boolean handleInvitation(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
             invites.add(inviter);
 
             if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {

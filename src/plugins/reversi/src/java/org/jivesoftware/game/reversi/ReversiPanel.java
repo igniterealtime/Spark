@@ -28,9 +28,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 
@@ -56,7 +56,7 @@ public class ReversiPanel extends JPanel {
     private int otherPlayer;
     private int gameID;
     private String opponentJID;
-    private PacketListener gameMoveListener;
+    private StanzaListener gameMoveListener;
 
     private List<ReversiBlock> blocks = new ArrayList<ReversiBlock>();
     // Main game object
@@ -95,9 +95,9 @@ public class ReversiPanel extends JPanel {
         reversi = new ReversiModel();
 
         if (connection != null) {
-            gameMoveListener = new PacketListener() {
-                public void processPacket(Packet packet) {
-                    GameMove move = (GameMove)packet.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+            gameMoveListener = new StanzaListener() {
+                public void processPacket(Stanza stanza) {
+                    GameMove move = (GameMove)stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
                     // If this is a move for the current game.
                     if (move.getGameID() == gameID) {
                         int position = move.getPosition();
@@ -115,7 +115,7 @@ public class ReversiPanel extends JPanel {
                 }
             };
 
-            connection.addPacketListener(gameMoveListener, new PacketExtensionFilter(GameMove.ELEMENT_NAME,
+            connection.addAsyncStanzaListener(gameMoveListener, new PacketExtensionFilter(GameMove.ELEMENT_NAME,
                     GameMove.NAMESPACE));
             // TODO: at end of game, remove listener.
         }
@@ -153,8 +153,8 @@ public class ReversiPanel extends JPanel {
         Message message = new Message();
         message.setTo(opponentJID);
         message.addExtension(forfeit);
-        connection.sendPacket(message);
-        connection.removePacketListener(gameMoveListener);
+        connection.sendStanza(message);
+        connection.removeAsyncStanzaListener(gameMoveListener);
     }
 
     public void paintComponent(Graphics g) {
@@ -339,7 +339,7 @@ public class ReversiPanel extends JPanel {
                 move.setGameID(gameID);
                 move.setPosition(block.getIndex());
                 message.addExtension(move);
-                connection.sendPacket(message);
+                connection.sendStanza(message);
 
                 // Repaint board.
                 ReversiPanel.this.repaint();

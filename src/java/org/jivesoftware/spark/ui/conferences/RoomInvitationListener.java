@@ -39,5 +39,5 @@ public interface RoomInvitationListener {
      * @param message    the appened message.
      * @return true if you wish to intercept this invitation.
      */
-    boolean handleInvitation(final Connection connection, final String room, final String inviter, final String reason, final String password, final Message message);
+    boolean handleInvitation(final XMPPConnection connection, final String room, final String inviter, final String reason, final String password, final Message message);
 }

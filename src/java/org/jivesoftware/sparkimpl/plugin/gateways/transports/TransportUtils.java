@@ -25,7 +25,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
@@ -177,7 +177,7 @@ public class TransportUtils {
         registration.setAttributes(attributes);
 
         PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
+        con.sendStanza(registration);
 
         IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
         collector.cancel();
@@ -205,7 +205,7 @@ public class TransportUtils {
 
 
         PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
+        con.sendStanza(registration);
 
         IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
         collector.cancel();
@@ -218,7 +218,7 @@ public class TransportUtils {
     }
 
 
-    static class GatewayRegisterExtension implements PacketExtension {
+    static class GatewayRegisterExtension implements ExtensionElement {
 
         public String getElementName() {
             return "x";

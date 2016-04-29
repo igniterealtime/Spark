@@ -7,10 +7,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 
 
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -49,14 +49,14 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 		room.getTranscriptWindow().insertCustomText(
 			BsRes.getString("request"), false, false,
 			Color.BLUE);
-		SparkManager.getConnection().sendPacket(offer);
+		SparkManager.getConnection().sendStanza(offer);
 
-		SparkManager.getConnection().addPacketListener(
-			new PacketListener() {
+		SparkManager.getConnection().addAsyncStanzaListener(
+			new StanzaListener() {
 			    @Override
-			    public void processPacket(Packet packet) {
+			    public void processPacket(Stanza stanza) {
 
-				GameOfferPacket answer = (GameOfferPacket) packet;
+				GameOfferPacket answer = (GameOfferPacket) stanza;
 				answer.setStartingPlayer(offer
 					.isStartingPlayer());
 				answer.setGameID(offer.getGameID());

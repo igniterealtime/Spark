@@ -126,7 +126,7 @@ public class Gateway extends IQ {
 
         XMPPConnection con = SparkManager.getConnection();
         PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
+        con.sendStanza(registration);
 
         Gateway response = (Gateway)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
         collector.cancel();

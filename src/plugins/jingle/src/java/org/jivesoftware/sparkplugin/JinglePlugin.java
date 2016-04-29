@@ -37,10 +37,10 @@ import javax.swing.text.StyledDocument;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -330,9 +330,9 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
      */
     private void addPresenceListener() {
         // Check presence changes
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence presence = (Presence)stanza;
                 if (!presence.isAvailable()) {
                     String from = presence.getFrom();
                     if (ModelUtil.hasLength(from)) {
@@ -343,7 +343,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
 
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
     }
 
 

@@ -33,11 +33,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -60,7 +60,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 public class ReversiPlugin implements Plugin {
 
     private ChatRoomListener chatRoomListener;
-    private PacketListener gameOfferListener;
+    private StanzaListener gameOfferListener;
 
     private ConcurrentHashMap<String, JPanel> gameOffers;
     private ConcurrentHashMap<String, JPanel> gameInvitations;
@@ -88,9 +88,9 @@ public class ReversiPlugin implements Plugin {
         ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
 
         // Add IQ listener to listen for incoming game invitations.
-        gameOfferListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                GameOffer invitation = (GameOffer) packet;
+        gameOfferListener = new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                GameOffer invitation = (GameOffer) stanza;
                 if (invitation.getType() == IQ.Type.GET) {
                     showInvitationAlert(invitation);
                 } else if (invitation.getType() == IQ.Type.ERROR) {
@@ -98,14 +98,14 @@ public class ReversiPlugin implements Plugin {
                 }
             }
         };
-        SparkManager.getConnection().addPacketListener(gameOfferListener, new PacketTypeFilter(GameOffer.class));
+        SparkManager.getConnection().addAsyncStanzaListener(gameOfferListener, new StanzaTypeFilter(GameOffer.class));
     }
 
     public void shutdown() {
         // Remove Reversi button from chat toolbar.
         removeToolbarButton();
         // Remove IQ listener
-        SparkManager.getConnection().removePacketListener(gameOfferListener);
+        SparkManager.getConnection().removeAsyncStanzaListener(gameOfferListener);
 //
 //        // See if there are any pending offers or invitations. If so, cancel
 //        // them.
@@ -180,7 +180,7 @@ public class ReversiPlugin implements Plugin {
                 reply.setTo(invitation.getFrom());
                 reply.setPacketID(invitation.getPacketID());
                 reply.setType(IQ.Type.RESULT);
-                SparkManager.getConnection().sendPacket(reply);
+                SparkManager.getConnection().sendStanza(reply);
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
                 inviteAlert.remove(1);
@@ -204,7 +204,7 @@ public class ReversiPlugin implements Plugin {
                 reply.setTo(invitation.getFrom());
                 reply.setPacketID(invitation.getPacketID());
                 reply.setType(IQ.Type.ERROR);
-                SparkManager.getConnection().sendPacket(reply);
+                SparkManager.getConnection().sendStanza(reply);
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
 
@@ -297,7 +297,7 @@ public class ReversiPlugin implements Plugin {
                                GameOffer reply = new GameOffer();
                                reply.setTo(((ChatRoomImpl) room).getJID());
                                reply.setType(IQ.Type.ERROR);
-                               SparkManager.getConnection().sendPacket(reply);
+                               SparkManager.getConnection().sendStanza(reply);
                                cancelButton.setText("Canceled");
                                cancelButton.setEnabled(false);
                             }
@@ -311,9 +311,9 @@ public class ReversiPlugin implements Plugin {
                         offer.setTo(opponentJID);
 
                         // Add a listener for a reply to our offer.
-                        SparkManager.getConnection().addPacketListener(new PacketListener() {
-                            public void processPacket(Packet packet) {
-                                GameOffer offerReply = ((GameOffer) packet);
+                        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+                            public void processPacket(Stanza stanza) {
+                                GameOffer offerReply = ((GameOffer) stanza);
 
                                 if (offerReply.getType() == IQ.Type.RESULT) {
                                     // Remove the offer panel
@@ -333,7 +333,7 @@ public class ReversiPlugin implements Plugin {
                             }
                         }, new PacketIDFilter(offer.getPacketID()));
 
-                        SparkManager.getConnection().sendPacket(offer);
+                        SparkManager.getConnection().sendStanza(offer);
                     }
                 });
 

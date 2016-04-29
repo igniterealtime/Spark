@@ -50,12 +50,12 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
+import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.xdata.Form;
@@ -135,13 +135,13 @@ public class GroupChatRoom extends ChatRoom {
 
 	// Create the filter and register with the current connection
 	// making sure to filter by room
-	PacketFilter fromFilter = new FromContainsFilter(chat.getRoom());
-	PacketFilter orFilter = new OrFilter(new PacketTypeFilter(
-		Presence.class), new PacketTypeFilter(Message.class));
-	PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
+	StanzaFilter fromFilter = FromMatchesFilter.createBare(chat.getRoom());
+		StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(
+		Presence.class), new StanzaTypeFilter(Message.class));
+		StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
 	// Add packet Listener.
-	SparkManager.getConnection().addPacketListener(this, andFilter);
+	SparkManager.getConnection().addAsyncStanzaListener(this, andFilter);
 
 	// The Room Name is the same as the ChatRoom name
 	roomname = chat.getRoom();
@@ -335,7 +335,7 @@ public class GroupChatRoom extends ChatRoom {
 	super.closeChatRoom();
 
 	// Remove Listener
-	SparkManager.getConnection().removePacketListener(this);
+	SparkManager.getConnection().removeAsyncStanzaListener(this);
 
 	ChatContainer container = SparkManager.getChatManager()
 		.getChatContainer();
@@ -541,7 +541,7 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	// Remove Packet Listener
-	SparkManager.getConnection().removePacketListener(this);
+	SparkManager.getConnection().removeAsyncStanzaListener(this);
 
 	// Disable Send Field
 	getChatInputEditor().showAsDisabled();
@@ -616,23 +616,23 @@ public class GroupChatRoom extends ChatRoom {
     /**
      * Implementation of processPacket to handle muc related packets.
      *
-     * @param packet
+     * @param stanza
      *            the packet.
      */
-    public void processPacket(final Packet packet) {
-	super.processPacket(packet);
-	if (packet instanceof Presence) {
+    public void processPacket(final Stanza stanza) {
+	super.processPacket(stanza);
+	if (stanza instanceof Presence) {
 	    SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    handlePresencePacket(packet);
+		    handlePresencePacket(stanza);
 		}
 	    });
 
 	}
-	if (packet instanceof Message) {
+	if (stanza instanceof Message) {
 	    SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    handleMessagePacket(packet);
+		    handleMessagePacket(stanza);
 
 		    // Set last activity
 		    lastActivity = System.currentTimeMillis();
@@ -645,12 +645,12 @@ public class GroupChatRoom extends ChatRoom {
     /**
      * Handle all MUC related packets.
      *
-     * @param packet
+     * @param stanza
      *            the packet.
      */
-    private void handleMessagePacket(Packet packet) {
+    private void handleMessagePacket(Stanza stanza) {
 	// Do something with the incoming packet here.
-	final Message message = (Message) packet;
+	final Message message = (Message) stanza;
 	lastMessage = message;
 	if (message.getType() == Message.Type.groupchat) {
 	    DelayInformation inf = (DelayInformation) message.getExtension("delay",
@@ -762,11 +762,11 @@ public class GroupChatRoom extends ChatRoom {
     /**
      * Handle all presence packets being sent to this Group Chat Room.
      *
-     * @param packet
+     * @param stanza
      *            the presence packet.
      */
-    private void handlePresencePacket(Packet packet) {
-	Presence presence = (Presence) packet;
+    private void handlePresencePacket(Stanza stanza) {
+	Presence presence = (Presence) stanza;
 	if (presence.getError() != null) {
 	    return;
 	}
@@ -774,7 +774,7 @@ public class GroupChatRoom extends ChatRoom {
 	final String from = presence.getFrom();
 	final String nickname = StringUtils.parseResource(from);
 
-	MUCUser mucUser = (MUCUser) packet.getExtension("x",
+	MUCUser mucUser = (MUCUser) stanza.getExtension("x",
 		"http://jabber.org/protocol/muc#user");
 	String code = "";
 	if (mucUser != null) {

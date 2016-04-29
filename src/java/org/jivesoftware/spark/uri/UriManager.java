@@ -126,7 +126,7 @@ public class UriManager {
 
 	Presence response = new Presence(Presence.Type.subscribe);
 	response.setTo(jid);
-	SparkManager.getConnection().sendPacket(response);
+	SparkManager.getConnection().sendStanza(response);
     }
 
     /**
@@ -140,7 +140,7 @@ public class UriManager {
 
 	Presence response = new Presence(Presence.Type.unsubscribe);
 	response.setTo(jid);
-	SparkManager.getConnection().sendPacket(response);
+	SparkManager.getConnection().sendStanza(response);
     }
 
     /***

@@ -359,7 +359,7 @@ public class BroadcastDialog extends JPanel {
             else {
                 message.setType(Message.Type.headline);
             }
-            SparkManager.getConnection().sendPacket(message);
+            SparkManager.getConnection().sendStanza(message);
         }
        
         return true;

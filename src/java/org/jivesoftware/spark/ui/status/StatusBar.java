@@ -56,7 +56,7 @@ import javax.swing.border.Border;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
@@ -426,7 +426,7 @@ public class StatusBar extends JPanel implements VCardListener {
     		return;
     	
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
-            PacketExtension pe = presence.getExtension("x", "vcard-temp:x:update");
+            ExtensionElement pe = presence.getExtension("x", "vcard-temp:x:update");
             if (pe != null) {
                 // Update VCard
                 loadVCard();

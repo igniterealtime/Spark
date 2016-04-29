@@ -170,7 +170,7 @@ public class SipAccountPacket extends IQ {
         sp.setType(IQ.Type.GET);
 
         PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(sp.getPacketID()));
-        connection.sendPacket(sp);
+        connection.sendStanza(sp);
 
         SipAccountPacket response = (SipAccountPacket)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
 
@@ -204,7 +204,7 @@ public class SipAccountPacket extends IQ {
 
         PacketCollector collector = connection
                 .createPacketCollector(new PacketIDFilter(sp.getPacketID()));
-        connection.sendPacket(sp);
+        connection.sendStanza(sp);
 
         SipAccountPacket response = (SipAccountPacket)collector
                 .nextResult(SmackConfiguration.getPacketReplyTimeout());
