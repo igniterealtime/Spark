@@ -26,6 +26,7 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.packet.MUCUser;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.Icon;
 
@@ -110,7 +111,11 @@ public class PresenceManager {
      * @return the users presence.
      */
     public static Presence getPresence(String jid) {
-		if (jid!= null && jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+        if ( jid == null ) {
+            Log.error( "Unable to get the presence of a null jid!" );
+            return null;
+        }
+		if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
 			return SparkManager.getWorkspace().getStatusBar().getPresence();
 		} else {
 			final Roster roster = SparkManager.getConnection().getRoster();

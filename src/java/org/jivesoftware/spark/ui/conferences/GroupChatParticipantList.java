@@ -215,7 +215,7 @@ public class GroupChatParticipantList extends JPanel {
 				if (jid != null && jid.equals(SparkManager.getSessionManager().getBareAddress())) {
 					groupChatRoom.notifySettingsAccessRight();
 				}
-			    addParticipant(userid, p, jid);
+			    addParticipant(userid, p);
 			    agentInfoPanel.setVisible(true);
 			} else {
 			    removeUser(displayName);
@@ -324,7 +324,7 @@ public class GroupChatParticipantList extends JPanel {
 		return icon;
 	}	
 
-    protected void addParticipant(final String participantJID, Presence presence, String userJID) {
+    protected void addParticipant(final String participantJID, Presence presence) {
 	// Remove reference to invitees
 
 	for (String displayName : invitees.keySet()) {
@@ -350,12 +350,11 @@ public class GroupChatParticipantList extends JPanel {
 	Icon icon = null;
 	if (_localPreferences.isShowingRoleIcons()) {
 	    icon = getIconForRole(userRole, affiliation);
-	} else if (userJID != null){
-		Presence jidPresence = PresenceManager.getPresence(userJID);
-	    icon = PresenceManager.getIconFromPresence(jidPresence);
-	}
-	if (icon == null) {
-		icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+	} else {
+	    icon = PresenceManager.getIconFromPresence(presence);
+	    if (icon == null) {
+			icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+		}
 	}
 
 	if (!exists(nickname)) {
