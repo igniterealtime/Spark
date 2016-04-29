@@ -43,8 +43,8 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 /**
  * This is Privacy plugin for Spark.
  * 
- * This plugin built using specification: XEP-0016: Privacy Lists {@link http
- * ://xmpp.org/extensions/xep-0016.html}
+ * This plugin built using specification: XEP-0016: Privacy Lists
+ * {@see http://xmpp.org/extensions/xep-0016.html}
  * 
  * @author Zolotarev Konstantin, Bergunde Holger
  */
@@ -132,10 +132,9 @@ public class PrivacyPlugin implements Plugin {
                                             @Override
                                             public void actionPerformed(ActionEvent ae) {
                                                 if (item != null) {
-                                                    PrivacyItem pItem = new PrivacyItem(Type.jid.toString(), false, activeList.getNewItemOrder());
+                                                    PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJID(), false, activeList.getNewItemOrder());
                                                     pItem.setFilterMessage(true);
-                                                    pItem.setFilterPresence_out(true);
-                                                    pItem.setValue(item.getJID());
+                                                    pItem.setFilterPresenceOut(true);
 
                                                     activeList.addItem(pItem); // Add
                                                                                // to

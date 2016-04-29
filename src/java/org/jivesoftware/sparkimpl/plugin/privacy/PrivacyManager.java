@@ -115,9 +115,8 @@ public class PrivacyManager {
             	// We could not query the server
         }
         if (info != null) {
-            for (Iterator<Feature> i = info.getFeatures(); i.hasNext();) {
-                String s = i.next().getVar();
-                if (s.contains("jabber:iq:privacy")) {
+            for ( final Feature feature : info.getFeatures() ) {
+                if (feature.getVar().contains("jabber:iq:privacy")) {
                     return true;
                 }
             }
@@ -128,7 +127,7 @@ public class PrivacyManager {
     private void initializePrivacyLists()
     {
         try {
-            PrivacyList[] lists = privacyManager.getPrivacyLists();
+            List<PrivacyList> lists = privacyManager.getPrivacyLists();
             
             for (PrivacyList list: lists)
             {
@@ -243,7 +242,7 @@ public class PrivacyManager {
     }
 
     public SparkPrivacyList createPrivacyList(String listName) {
-        PrivacyItem item = new PrivacyItem(null,true,999999);
+        PrivacyItem item = new PrivacyItem(true,999999);
         ArrayList<PrivacyItem> items = new ArrayList<PrivacyItem>();
         items.add(item);
         SparkPrivacyList sparklist = null;
@@ -486,8 +485,8 @@ public class PrivacyManager {
         }
 
         try {
-            PrivacyItem item = new PrivacyItem(null, false, 1);
-            item.setFilterPresence_out(true);
+            PrivacyItem item = new PrivacyItem(false, 1);
+            item.setFilterPresenceOut(true);
 
             List<PrivacyItem> items = Arrays.asList(item);
             privacyManager.createPrivacyList(INVISIBLE_LIST_NAME, items);

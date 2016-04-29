@@ -81,7 +81,7 @@ public class SparkPrivacyList {
      *
      * @return
      */
-    private int getMaxItemOrder() {
+    private long getMaxItemOrder() {
         if(getLastItem() != null) {
             return getLastItem().getOrder();
         }
@@ -106,7 +106,7 @@ public class SparkPrivacyList {
      * @return last PrivacyItem ordered by Item order
      */
     public PrivacyItem getLastItem() {
-        int order = 0;
+        long order = 0;
         PrivacyItem item = null;
         for (PrivacyItem privacyItem : _privacyItems) {
             if ( order < privacyItem.getOrder() ) {
@@ -122,14 +122,13 @@ public class SparkPrivacyList {
      * 
      * @return
      */
-    public int getNewItemOrder() {
+    public long getNewItemOrder() {
         return (getMaxItemOrder()+1);
     }
 
     /**
      * Search privancyItem using Type & value
      * 
-     * @param type type of privacy item
      * @param value value of item
      * @return privacyItem or null if Item not found
      */
@@ -267,7 +266,7 @@ public class SparkPrivacyList {
      */
     public void save() {
         try {
-            PrivacyItem item = new PrivacyItem(null,true,999999);
+            PrivacyItem item = new PrivacyItem(true,999999);
            _privacyItems.add(item);
             PrivacyManager.getInstance().getPrivacyListManager().updatePrivacyList(getListName(), _privacyItems);
             PrivacyManager.getInstance().getPrivacyListManager().getPrivacyList(_listName).getItems().remove(item);

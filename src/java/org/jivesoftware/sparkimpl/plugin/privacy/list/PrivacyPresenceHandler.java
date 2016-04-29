@@ -51,7 +51,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         for (PrivacyItem pItem : list.getPrivacyItems()) {
             if (pItem.getType().equals(PrivacyItem.Type.jid)) {
                 setBlockedIconToContact(pItem.getValue());
-                if (pItem.isFilterPresence_out()) {
+                if (pItem.isFilterPresenceOut()) {
                     sendUnavailableTo(pItem.getValue());
                 }
             }
@@ -60,7 +60,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
                 ContactGroup group = SparkManager.getWorkspace().getContactList().getContactGroup(pItem.getValue());
                 for (ContactItem citem : group.getContactItems()) {
                     setBlockedIconToContact(citem.getJID());
-                    if (pItem.isFilterPresence_out()) {
+                    if (pItem.isFilterPresenceOut()) {
                         sendUnavailableTo(citem.getJID());
                     }
                 }
@@ -84,7 +84,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         for (PrivacyItem pItem : list.getPrivacyItems()) {
             if (pItem.getType().equals(PrivacyItem.Type.jid)) {
                 removeBlockedIconFromContact(pItem.getValue());
-                if (pItem.isFilterPresence_out()) {
+                if (pItem.isFilterPresenceOut()) {
                     sendRealPresenceTo(pItem.getValue());
                 }
             }
@@ -93,7 +93,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
                 ContactGroup group = SparkManager.getWorkspace().getContactList().getContactGroup(pItem.getValue());
                 for (ContactItem citem : group.getContactItems()) {
                     removeBlockedIconFromContact(citem.getJID());
-                    if (pItem.isFilterPresence_out()) {
+                    if (pItem.isFilterPresenceOut()) {
                         sendRealPresenceTo(citem.getJID());
                     }
                 }
@@ -119,7 +119,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         if (pmanager.getPrivacyList(listname).isActive()) {
             if (item.getType().equals(PrivacyItem.Type.jid)) {
                 setBlockedIconToContact(item.getValue());
-                if (item.isFilterPresence_out()) {
+                if (item.isFilterPresenceOut()) {
                     sendUnavailableTo(item.getValue());
                 }
             }
@@ -128,7 +128,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
                 ContactGroup group = SparkManager.getWorkspace().getContactList().getContactGroup(item.getValue());
                 for (ContactItem citem : group.getContactItems()) {
                     setBlockedIconToContact(citem.getJID());
-                    if (item.isFilterPresence_out()) {
+                    if (item.isFilterPresenceOut()) {
                         sendUnavailableTo(citem.getJID());
                     }
                 }
@@ -144,7 +144,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         if (pmanager.getPrivacyList(listname).isActive()) {
             if (item.getType().equals(PrivacyItem.Type.jid)) {
                 removeBlockedIconFromContact(item.getValue());
-                if (item.isFilterPresence_out()) {
+                if (item.isFilterPresenceOut()) {
                     sendRealPresenceTo(item.getValue());
                 }
             }
@@ -153,7 +153,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
                 ContactGroup group = SparkManager.getWorkspace().getContactList().getContactGroup(item.getValue());
                 for (ContactItem citem : group.getContactItems()) {
                     removeBlockedIconFromContact(citem.getJID());
-                    if (item.isFilterPresence_out()) {
+                    if (item.isFilterPresenceOut()) {
                         sendRealPresenceTo(citem.getJID());
                     }
                 }
