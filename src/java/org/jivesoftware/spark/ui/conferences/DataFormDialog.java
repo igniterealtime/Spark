@@ -52,6 +52,7 @@ import javax.swing.JTextField;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.FormField.Option;
@@ -237,7 +238,7 @@ public class DataFormDialog extends JPanel {
 
         try {
             chat.sendConfigurationForm(submitForm);
-            RoomInfo info = MultiUserChat.getRoomInfo(SparkManager.getConnection(), chat.getRoom());
+            RoomInfo info = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( chat.getRoom() );
             //remove bookmark if any for non persistent room
             if (!info.isPersistent()) {
                 BookmarkManager.getBookmarkManager(SparkManager.getConnection()).removeBookmarkedConference(info.getRoom());

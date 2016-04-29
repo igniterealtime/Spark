@@ -58,6 +58,7 @@ import javax.swing.UIManager;
 import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
@@ -110,7 +111,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	private JXList participantsList;
 
-	private StanzaListener listener = null;
+	private PresenceListener listener = null;
 
 	private Map<String, String> invitees = new HashMap<String, String>();
 
@@ -192,11 +193,10 @@ public class GroupChatParticipantList extends JPanel {
 	    }
 	});
 
-	listener = new StanzaListener() {
-	    public void processPacket(final Stanza stanza) {
+	listener = new PresenceListener() {
+	    public void processPresence(final Presence p) {
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
-			Presence p = (Presence) stanza;
 			if (p.getError() != null) {
 			    if (p.getError()
 				    .getCondition()
@@ -542,8 +542,8 @@ public class GroupChatParticipantList extends JPanel {
 		try {
 			Occupant occupant = chat.getOccupant(userMap.get(displayName));
 			if (occupant != null) {
-				String bareJID = StringUtils
-						.parseBareAddress(occupant.getJid());
+				String bareJID = XmppStringUtils
+						.parseBareJid(occupant.getJid());
 				chat.banUser(bareJID, Res
 						.getString("message.you.have.been.banned"));
 			}

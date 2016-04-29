@@ -35,6 +35,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -77,7 +78,7 @@ public class ConferenceUtils {
      * @throws Exception if an error occured during fetch.
      */
     public static Collection<HostedRoom> getRoomList(String serviceName) throws Exception {
-        return MultiUserChat.getHostedRooms(SparkManager.getConnection(), serviceName);
+        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
 
     /**
@@ -87,8 +88,8 @@ public class ConferenceUtils {
      * @return the number of occupants in the room if available.
      * @throws XMPPException thrown if an error occured during retrieval of the information.
      */
-    public static int getNumberOfOccupants(String roomJID) throws XMPPException {
-        final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
+    public static int getNumberOfOccupants(String roomJID) throws SmackException, XMPPException {
+        final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
         return roomInfo.getOccupantsCount();
     }
 
@@ -139,7 +140,7 @@ public class ConferenceUtils {
         ChatManager chatManager = SparkManager.getChatManager();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-        final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final String nickname = pref.getNickname().trim();
 
         // Check if room already exists. If so, join room again.
@@ -366,7 +367,8 @@ public class ConferenceUtils {
         inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
     }
 
-    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException {
+    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException, SmackException
+    {
         BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         return manager.getBookmarkedConferences();
     }
@@ -404,7 +406,7 @@ public class ConferenceUtils {
     public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws SmackException
     {
         final String roomJID = XmppStringUtils.escapeLocalpart(roomName) + "@" + serviceName;
-        final MultiUserChat multiUserChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+        final MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
 

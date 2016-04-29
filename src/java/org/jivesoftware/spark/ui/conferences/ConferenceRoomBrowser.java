@@ -66,6 +66,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
@@ -394,8 +395,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 if (stillSearchForOccupants) {
                 RoomInfo roomInfo = null;
                 try {
-                    roomInfo = MultiUserChat.getRoomInfo(
-                        SparkManager.getConnection(), roomJID);
+                    roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
                 } catch (Exception e) {
                     // Nothing to do
                 }
@@ -439,7 +439,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         // Check to see what type of room this is.
         boolean persistent = false;
         try {
-            final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
+            final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
             persistent = roomInfo.isPersistent();
         } catch (Exception e) {
             // Do not return
@@ -569,8 +569,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                             if (!partialDiscovery) {
                                 RoomInfo roomInfo = null;
                                 try {
-                                roomInfo = MultiUserChat.getRoomInfo(
-                                    SparkManager.getConnection(), roomJID);
+                                roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
                                 } catch (Exception e) {
                                 // Nothing to do
                                 }
@@ -820,8 +819,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      */
     private static Collection<HostedRoom> getRoomList(String serviceName)
 	    throws Exception {
-	return MultiUserChat.getHostedRooms(SparkManager.getConnection(),
-		serviceName);
+        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
 
     /**
@@ -976,8 +974,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	boolean result = false;
 	try {
 
-	    RoomInfo rif = MultiUserChat.getRoomInfo(
-		    SparkManager.getConnection(), roomjid);
+	    RoomInfo rif = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomjid );
 
 	    result = rif.isMembersOnly() || rif.isPasswordProtected();
 

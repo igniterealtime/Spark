@@ -23,6 +23,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -176,8 +177,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
             // Ignore
         }
 
-
-        MultiUserChat.decline(SparkManager.getConnection(), room, inviter, "No thank you");
+        MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you");
     }
 
     /**

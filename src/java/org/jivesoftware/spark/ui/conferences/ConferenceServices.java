@@ -51,6 +51,7 @@ import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -141,7 +142,7 @@ public class ConferenceServices implements InvitationListener {
      * Adds an invitation listener to check for any MUC invites.
      */
     private void addInvitationListener() {
-	MultiUserChat.addInvitationListener(SparkManager.getConnection(),this);
+        MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).addInvitationListener( this );
     }
 
     /**
@@ -336,7 +337,7 @@ public class ConferenceServices implements InvitationListener {
                 }
             }
             return bookmarkedConference;
-        } catch (XMPPException ex) {
+        } catch (XMPPException | SmackException ex) {
             Log.warning("No default bookmark");
             // no bookmark can be retrieved;
         }
@@ -424,7 +425,7 @@ public class ConferenceServices implements InvitationListener {
     }
 
     @Override
-    public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason,
+    public void invitationReceived(final XMPPConnection conn, final MultiUserChat room, final String inviter, final String reason,
 	    final String password, final Message message) {
 	SwingUtilities.invokeLater(new Runnable() {
 	    public void run() {
@@ -440,20 +441,21 @@ public class ConferenceServices implements InvitationListener {
 		// Make sure the user is not already in the
 		// room.
 		try {
-		    SparkManager.getChatManager().getChatContainer().getChatRoom(room);
+		    SparkManager.getChatManager().getChatContainer().getChatRoom(room.getRoom());
 		    return;
 		} catch (ChatRoomNotFoundException e) {
 		    // Ignore :)
 		}
 
-		final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room, inviter, password, reason);
+		final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room.getRoom(), inviter, password, reason);
 		String message = Res.getString("message.invite.to.groupchat", inviter);
 		String title = Res.getString("title.group.chat");
 		String bareJID = XmppStringUtils.parseBareJid(inviter);
 
 		if (_localPreferences.isAutoAcceptMucInvite()) {
-		    ConferenceUtils.enterRoomOnSameThread(XmppStringUtils.parseLocalpart(room), room, password);
-		    GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(new MultiUserChat(SparkManager.getConnection(), room));
+		    ConferenceUtils.enterRoomOnSameThread(XmppStringUtils.parseLocalpart(room.getRoom()), room.getRoom(), password);
+            MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+            GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
 
 		    showToaster(message, title, chat);
 		    return;
@@ -477,16 +479,15 @@ public class ConferenceServices implements InvitationListener {
 		    // If it doesn't exists. Create a new Group
 		    // Chat Room
 		    // Create the Group Chat Room
-		    final MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), room);
-
-		    GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(chat);
+            final MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+            final GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
 
 		    showToaster(message, title, groupChatRoom);
 
 		    groupChatRoom.getSplitPane().setDividerSize(5);
 		    groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
 		    groupChatRoom.getSplitPane().setDividerLocation(0.6);
-		    String roomName = XmppStringUtils.parseLocalpart(room);
+		    String roomName = XmppStringUtils.parseLocalpart(room.getRoom());
 		    groupChatRoom.setTabTitle(roomName);
 		    groupChatRoom.getToolBar().setVisible(true);
 		    SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);

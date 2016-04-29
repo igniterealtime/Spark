@@ -25,6 +25,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.WrappedLabel;
@@ -161,7 +162,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
             ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
         }
         else {
-            MultiUserChat.decline(SparkManager.getConnection(), roomName, inviter, "No thank you");
+            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
         }
 
         // Close Container
