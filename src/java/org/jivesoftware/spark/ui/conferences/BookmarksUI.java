@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
@@ -62,7 +61,6 @@ import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
-import org.jivesoftware.smackx.disco.packet.DiscoverInfo.Identity;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -486,9 +484,7 @@ public class BookmarksUI extends JPanel {
 
                             try {
                                 discoInfo = discoManager.discoverInfo(conferenceService);
-                                Iterator<Identity> iter = discoInfo.getIdentities();
-                                while (iter.hasNext()) {
-                                    DiscoverInfo.Identity identity = (DiscoverInfo.Identity)iter.next();
+                                for (DiscoverInfo.Identity identity : discoInfo.getIdentities() ) {
                                     if ("conference".equals(identity.getCategory())) {
                                         serviceList.add(conferenceService);
                                         break;
@@ -558,8 +554,7 @@ public class BookmarksUI extends JPanel {
         List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
-        for (Iterator<DiscoverItems.Item> it = items.getItems(); it.hasNext();) {
-            DiscoverItems.Item item = (DiscoverItems.Item)it.next();
+        for (DiscoverItems.Item item : items.getItems()) {
             if (item.getEntityID().startsWith("conference") || item.getEntityID().startsWith("private")) {
                 answer.add(item.getEntityID());
             }

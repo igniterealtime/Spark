@@ -70,7 +70,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 public class CheckUpdates {
@@ -600,9 +599,7 @@ public class CheckUpdates {
 
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            Iterator<DiscoverItems.Item> iter = items.getItems();
-            while (iter.hasNext()) {
-                DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+            for (DiscoverItems.Item item : items.getItems() ) {
                 if ("Spark Updater".equals(item.getName())) {
                     return true;
                 }

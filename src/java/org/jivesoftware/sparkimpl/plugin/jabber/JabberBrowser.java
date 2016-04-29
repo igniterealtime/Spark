@@ -44,7 +44,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -138,9 +137,7 @@ public class JabberBrowser implements Plugin {
         addAddress(serviceName);
 
 
-        Iterator<DiscoverItems.Item> discoverItems = result.getItems();
-        while (discoverItems.hasNext()) {
-            DiscoverItems.Item item = discoverItems.next();
+        for (DiscoverItems.Item item : result.getItems() ) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
         }
@@ -165,11 +162,8 @@ public class JabberBrowser implements Plugin {
             return;
         }
 
-        Iterator<DiscoverItems.Item> discoverItems = result.getItems();
         List<Entity> list = new ArrayList<Entity>();
-
-        while (discoverItems.hasNext()) {
-            DiscoverItems.Item item = discoverItems.next();
+        for (DiscoverItems.Item item : result.getItems() ) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
             list.add(entity);

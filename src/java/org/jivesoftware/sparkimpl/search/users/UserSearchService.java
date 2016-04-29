@@ -35,7 +35,6 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class UserSearchService implements Searchable {
@@ -137,9 +136,7 @@ public class UserSearchService implements Searchable {
         final Set<String> searchServices = new HashSet<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-        Iterator<DiscoverItems.Item> iter = items.getItems();
-        while (iter.hasNext()) {
-            DiscoverItems.Item item = iter.next();
+        for (DiscoverItems.Item item : items.getItems() ) {
             try {
                 DiscoverInfo info;
                 try {
@@ -152,8 +149,7 @@ public class UserSearchService implements Searchable {
 
                 if (info.containsFeature("jabber:iq:search")) {
                     // Check that the search service belongs to user searches (and not room searches or other searches)
-                    for (Iterator<DiscoverInfo.Identity> identities = info.getIdentities(); identities.hasNext();) {
-                        DiscoverInfo.Identity identity = identities.next();
+                    for (DiscoverInfo.Identity identity : info.getIdentities() ) {
                         if ("directory".equals(identity.getCategory()) && "user".equals(identity.getType())) {
                             searchServices.add(item.getEntityID());
                         }

@@ -26,8 +26,6 @@ import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.util.Iterator;
-
 /**
  * EnterpriseSparkManager is responsible for the detecting of features on the server. This allows for fine-grain control of
  * feature sets to enable/disable within Spark.
@@ -76,9 +74,7 @@ public class Enterprise {
     private void populateFeatureSet() {
         final ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-        Iterator<DiscoverItems.Item> iter = items.getItems();
-        while (iter.hasNext()) {
-            DiscoverItems.Item item = iter.next();
+        for (DiscoverItems.Item item : items.getItems() ) {
             String entity = item.getEntityID();
             if (entity != null) {
                 if (entity.startsWith("manager.")) {

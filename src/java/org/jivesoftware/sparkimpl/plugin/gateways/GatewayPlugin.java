@@ -31,7 +31,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
-import org.jivesoftware.smackx.disco.packet.DiscoverItems.Item;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -52,7 +51,6 @@ import javax.swing.*;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -130,11 +128,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     private void populateTransports() throws Exception {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
 
-        DiscoverItems.Item item;
+        for (DiscoverItems.Item item : discoItems.getItems() ) {
 
-        Iterator<DiscoverItems.Item> items = discoItems.getItems();
-        while (items.hasNext()) {
-            item = (Item)items.next();
             String entityName = item.getEntityID();
             if (entityName != null) {
         	if (entityName.startsWith("aim.")) {

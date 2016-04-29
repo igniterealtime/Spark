@@ -28,10 +28,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -104,9 +101,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 			
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            Iterator<DiscoverItems.Item> iter = items.getItems();
-            while (iter.hasNext()) {
-                DiscoverItems.Item item = iter.next();
+            for (DiscoverItems.Item item : items.getItems() ) {
                 String entityID = item.getEntityID() != null ? item.getEntityID() : "";
                 if (entityID.startsWith("workgroup")) {
                     // Log into workgroup

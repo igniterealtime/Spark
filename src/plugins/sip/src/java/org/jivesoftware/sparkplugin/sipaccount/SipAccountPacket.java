@@ -35,8 +35,6 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.xmlpull.v1.XmlPullParser;
 
-import java.util.Iterator;
-
 public class SipAccountPacket extends IQ {
 
     private SipAccount sipAccount;
@@ -235,9 +233,7 @@ public class SipAccountPacket extends IQ {
                 .getInstanceFor(con);
         try {
             DiscoverItems items = disco.discoverItems(con.getServiceName());
-            Iterator<DiscoverItems.Item> iter = items.getItems();
-            while (iter.hasNext()) {
-                DiscoverItems.Item item = iter.next();
+            for ( DiscoverItems.Item item : items.getItems() ) {
                 if ("SIP Controller".equals(item.getName())) {
                     Log.debug("SIP Controller Found");
                     return true;
