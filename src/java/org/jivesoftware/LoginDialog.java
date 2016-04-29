@@ -96,7 +96,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ChatStateManager;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;

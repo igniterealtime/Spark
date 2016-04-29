@@ -44,7 +44,7 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
@@ -57,7 +57,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.smack.ChatManagerListener;
-import org.jivesoftware.smackx.ChatStateListener;
+import org.jivesoftware.smackx.chatstates.ChatStateListener;
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
 	private static String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";

@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 
 public class ChatStatePanel extends JPanel{
 	private JLabel label;
