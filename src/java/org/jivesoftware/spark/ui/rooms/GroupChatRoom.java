@@ -1265,13 +1265,13 @@ public class GroupChatRoom extends ChatRoom {
     public void reconnectionSuccessful() {
 
 	final String roomJID = chat.getRoom();
-	final String roomDesc = tabTitle;
+	final String roomName= tabTitle;
 	isActive = false;
 	EventQueue.invokeLater(new Runnable() {
 
 	    @Override
 	    public void run() {
-		ConferenceUtils.joinConferenceOnSeperateThread(roomDesc, roomJID, password);
+		ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, password);
 		closeChatRoom();
 	    }
 	});
