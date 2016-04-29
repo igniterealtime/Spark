@@ -86,7 +86,7 @@ import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
-import org.jivesoftware.smackx.SharedGroupManager;
+import org.jivesoftware.smackx.sharedgroups.SharedGroupManager;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
