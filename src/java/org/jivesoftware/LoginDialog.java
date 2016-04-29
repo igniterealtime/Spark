@@ -113,6 +113,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -601,7 +602,7 @@ public class LoginDialog {
 
 
             if (userProp != null) {
-                usernameField.setText(StringUtils.unescapeNode(userProp));
+                usernameField.setText( XmppStringUtils.unescapeLocalpart(userProp));
             }
             if (serverProp != null) {
                 serverField.setText(serverProp);
@@ -672,7 +673,7 @@ public class LoginDialog {
          * @return the username.
          */
         private String getUsername() {
-            return StringUtils.escapeNode(usernameField.getText().trim());
+            return XmppStringUtils.escapeLocalpart(usernameField.getText().trim());
         }
 
         /**

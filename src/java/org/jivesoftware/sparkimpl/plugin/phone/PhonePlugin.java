@@ -144,7 +144,7 @@ public class PhonePlugin implements Plugin {
                     final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
                     boolean phoneEnabled = false;
                     try {
-                        phoneEnabled = phoneClient.isPhoneEnabled(StringUtils.parseBareAddress(chatRoom.getParticipantJID()));
+                        phoneEnabled = phoneClient.isPhoneEnabled(XmppStringUtils.parseBareJid(chatRoom.getParticipantJID()));
                     }
                     catch (Exception e) {
                         Log.error(e);

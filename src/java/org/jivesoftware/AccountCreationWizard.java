@@ -35,6 +35,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -138,7 +139,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsername() {
-        return StringUtils.escapeNode(usernameField.getText().toLowerCase());
+        return XmppStringUtils.escapeLocalpart(usernameField.getText().toLowerCase());
     }
 
     /**

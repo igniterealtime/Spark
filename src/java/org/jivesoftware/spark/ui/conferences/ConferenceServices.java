@@ -74,6 +74,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
@@ -302,7 +303,7 @@ public class ConferenceServices implements InvitationListener {
             }
         }
 
-        String userName = StringUtils.parseName(SparkManager.getSessionManager().getJID());
+        String userName = XmppStringUtils.parseLocalpart(SparkManager.getSessionManager().getJID());
         final String roomName = userName + "_" + StringUtils.randomString(3);
 
         String serviceName = getDefaultServiceName();
@@ -378,7 +379,7 @@ public class ConferenceServices implements InvitationListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            String userName = StringUtils.parseName(SparkManager.getSessionManager().getJID());
+            String userName = XmppStringUtils.parseLocalpart(SparkManager.getSessionManager().getJID());
             final String roomName = userName + "_" + StringUtils.randomString(3);
 
 
@@ -447,10 +448,10 @@ public class ConferenceServices implements InvitationListener {
 		final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room, inviter, password, reason);
 		String message = Res.getString("message.invite.to.groupchat", inviter);
 		String title = Res.getString("title.group.chat");
-		String bareJID = StringUtils.parseBareAddress(inviter);
+		String bareJID = XmppStringUtils.parseBareJid(inviter);
 
 		if (_localPreferences.isAutoAcceptMucInvite()) {
-		    ConferenceUtils.enterRoomOnSameThread(StringUtils.parseName(room), room, password);
+		    ConferenceUtils.enterRoomOnSameThread(XmppStringUtils.parseLocalpart(room), room, password);
 		    GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(new MultiUserChat(SparkManager.getConnection(), room));
 
 		    showToaster(message, title, chat);
@@ -484,7 +485,7 @@ public class ConferenceServices implements InvitationListener {
 		    groupChatRoom.getSplitPane().setDividerSize(5);
 		    groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
 		    groupChatRoom.getSplitPane().setDividerLocation(0.6);
-		    String roomName = StringUtils.parseName(room);
+		    String roomName = XmppStringUtils.parseLocalpart(room);
 		    groupChatRoom.setTabTitle(roomName);
 		    groupChatRoom.getToolBar().setVisible(true);
 		    SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);

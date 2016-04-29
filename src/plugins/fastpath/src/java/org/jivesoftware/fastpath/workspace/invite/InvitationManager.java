@@ -50,10 +50,7 @@ public class InvitationManager {
      * @param transfer    true if this is a transfer.
      */
     public static void transferOrInviteUser(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        messageText = StringUtils.escapeForXML(messageText);
-
-
-        String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
+        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -88,10 +85,7 @@ public class InvitationManager {
      * @param transfer    true if this is a transfer.
      */
     public static void transferOrInviteToQueue(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        messageText = StringUtils.escapeForXML(messageText);
-
-
-        String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
+        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -126,10 +120,7 @@ public class InvitationManager {
      * @param transfer    true if this is a transfer.
      */
     public static void transferOrInviteToWorkgroup(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        messageText = StringUtils.escapeForXML(messageText);
-
-
-        String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
+        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH

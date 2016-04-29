@@ -103,6 +103,7 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveFileTra
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendFileTransfer;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -288,7 +289,7 @@ public class SparkTransferManager {
         }
 
         String requestor = request.getRequestor();
-        String bareJID = StringUtils.parseBareAddress(requestor);
+        String bareJID = XmppStringUtils.parseBareJid(requestor);
         String fileName = request.getFileName();
 
 
@@ -496,7 +497,7 @@ public class SparkTransferManager {
             public void processPacket(Stanza stanza) {
                 Presence presence = (Presence)stanza;
                 if (presence.isAvailable()) {
-                    String bareJID = StringUtils.parseBareAddress(presence.getFrom());
+                    String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
 
                     // Iterate through map.
                     ArrayList<File> list = waitMap.get(bareJID);
@@ -557,7 +558,7 @@ public class SparkTransferManager {
 	}
 	
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        String bareJID = StringUtils.parseBareAddress(jid);
+        String bareJID = XmppStringUtils.parseBareJid(jid);
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
         if (!PresenceManager.isOnline(jid)) {

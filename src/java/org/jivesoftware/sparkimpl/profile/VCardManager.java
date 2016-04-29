@@ -76,6 +76,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
+import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -280,7 +281,7 @@ public class VCardManager {
         viewProfileMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
-                if (ModelUtil.hasLength(jidToView) && jidToView.indexOf("@") != -1 && ModelUtil.hasLength(StringUtils.parseServer(jidToView))) {
+                if (ModelUtil.hasLength(jidToView) && jidToView.indexOf("@") != -1 && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
                     viewProfile(jidToView, SparkManager.getWorkspace());
                 }
                 else if (ModelUtil.hasLength(jidToView)) {
@@ -473,7 +474,7 @@ public class VCardManager {
 	 * @return the VCard.
 	 */
     public VCard getVCard(String jid, boolean useCachedVCards) {
-        jid = StringUtils.parseBareAddress(jid);
+        jid = XmppStringUtils.parseBareJid(jid);
         if (useCachedVCards)
         {
         	return getVCardFromMemory(jid);
@@ -498,7 +499,7 @@ public class VCardManager {
 	 * @return the new network vCard or a vCard with an error 
 	 */
     public VCard reloadVCard(String jid) {
-        jid = StringUtils.parseBareAddress(jid);
+        jid = XmppStringUtils.parseBareJid(jid);
         VCard vcard = new VCard();
         try {
         	vcard.setJabberId(jid);
@@ -572,7 +573,7 @@ public class VCardManager {
      */
     public URL getAvatar(String jid) {
         // Handle own avatar file.
-        if (jid != null && StringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()).equals(StringUtils.parseBareAddress(jid))) {
+        if (jid != null && XmppStringUtils.parseBareJid(SparkManager.getSessionManager().getJID()).equals(XmppStringUtils.parseBareJid(jid))) {
             if (imageFile.exists()) {
                 try {
                     return imageFile.toURI().toURL();

@@ -38,6 +38,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -179,7 +180,7 @@ public class SubscriptionDialog {
         }
 
         String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(jid));
+        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(jid));
         Icon icon = null;
         if (transport != null) {
             icon = transport.getIcon();
@@ -193,7 +194,7 @@ public class SubscriptionDialog {
         UserManager userManager = SparkManager.getUserManager();
         
         String username = userManager.getNickname(userManager.getFullJID(jid));
-        username = username == null ? StringUtils.parseName(UserManager.unescapeJID(jid)) : username;
+        username = username == null ? XmppStringUtils.parseLocalpart(UserManager.unescapeJID(jid)) : username;
         usernameLabelValue.setText(UserManager.unescapeJID(jid));
         nicknameField.setText(username);
 

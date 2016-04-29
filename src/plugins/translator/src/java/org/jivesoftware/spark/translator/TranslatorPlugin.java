@@ -79,9 +79,9 @@ public class TranslatorPlugin implements Plugin {
                             	currentBody = TranslatorUtil.translate(currentBody, type);
                                 if(oldBody.equals(currentBody.substring(0,currentBody.length()-1)))
                                 {
-                                	chatManager.getChatRoom(org.jivesoftware.smack.util.StringUtils.parseBareAddress(message.getTo())).getTranscriptWindow().insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);				
+                                	chatManager.getChatRoom(org.jivesoftware.smack.util.XmppStringUtils.parseBareJid(message.getTo())).getTranscriptWindow().insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);
                                 } else  {
-                                    chatManager.getChatRoom(org.jivesoftware.smack.util.StringUtils.parseBareAddress(message.getTo())).getTranscriptWindow().insertNotificationMessage("-> "+currentBody, Color.gray);
+                                    chatManager.getChatRoom(org.jivesoftware.smack.util.XmppStringUtils.parseBareJid(message.getTo())).getTranscriptWindow().insertNotificationMessage("-> "+currentBody, Color.gray);
                                 	message.setBody(currentBody); 
                                 }
                             }

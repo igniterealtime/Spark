@@ -32,6 +32,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -143,7 +144,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
      */
     private void acceptInvitation() {
         setVisible(false);
-        String name = StringUtils.parseName(room);
+        String name = XmppStringUtils.parseLocalpart(room);
         ConferenceUtils.enterRoomOnSameThread(name, room, password);
 
         final TimerTask removeUITask = new SwingTimerTask() {

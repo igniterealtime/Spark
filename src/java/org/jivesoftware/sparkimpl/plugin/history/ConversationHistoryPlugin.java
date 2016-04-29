@@ -32,6 +32,7 @@ import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -199,7 +200,7 @@ public class ConversationHistoryPlugin implements Plugin {
         if (room instanceof ChatRoomImpl) {
             ChatRoomImpl roomImpl = (ChatRoomImpl) room;
             String jid = roomImpl.getParticipantJID();
-            jid = StringUtils.parseBareAddress(jid);
+            jid = XmppStringUtils.parseBareJid(jid);
             historyList.remove(jid);
             historyList.add(0, jid);
         }
@@ -273,7 +274,7 @@ public class ConversationHistoryPlugin implements Plugin {
             while (!done) {
                 int eventType = parser.next();
                 if (eventType == XmlPullParser.START_TAG && "user".equals(parser.getName())) {
-                    String jid = StringUtils.parseBareAddress(parser.nextText());
+                    String jid = XmppStringUtils.parseBareJid(parser.nextText());
                     historyList.add(jid);
                 }
                 else if (eventType == XmlPullParser.END_TAG && "conversations".equals(parser.getName())) {

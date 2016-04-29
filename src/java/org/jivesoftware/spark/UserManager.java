@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -97,7 +98,7 @@ public class UserManager {
 
         // Default to node if nothing.
         String username = SparkManager.getSessionManager().getUsername();
-        username = StringUtils.unescapeNode(username);
+        username = XmppStringUtils.unescapeLocalpart(username);
 
         return username;
     }
@@ -341,9 +342,9 @@ public class UserManager {
         }
 
         final StringBuilder builder = new StringBuilder();
-        String node = StringUtils.parseName(jid);
+        String node = XmppStringUtils.parseLocalpart(jid);
         String restOfJID = jid.substring(node.length());
-        builder.append(StringUtils.escapeNode(node));
+        builder.append(XmppStringUtils.escapeLocalpart(node));
         builder.append(restOfJID);
         return builder.toString();
     }
@@ -360,9 +361,9 @@ public class UserManager {
         }
 
         final StringBuilder builder = new StringBuilder();
-        String node = StringUtils.parseName(jid);
+        String node = XmppStringUtils.parseLocalpart(jid);
         String restOfJID = jid.substring(node.length());
-        builder.append(StringUtils.unescapeNode(node));
+        builder.append(XmppStringUtils.unescapeLocalpart(node));
         builder.append(restOfJID);
         return builder.toString();
     }

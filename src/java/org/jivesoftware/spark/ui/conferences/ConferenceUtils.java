@@ -59,6 +59,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
@@ -406,7 +407,7 @@ public class ConferenceUtils {
      * @throws XMPPException thrown if an error occurs during room creation.
      */
     public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws XMPPException {
-        final String roomJID = StringUtils.escapeNode(roomName) + "@" + serviceName;
+        final String roomJID = XmppStringUtils.escapeLocalpart(roomName) + "@" + serviceName;
         final MultiUserChat multiUserChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 

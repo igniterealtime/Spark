@@ -24,6 +24,7 @@ import battleship.listener.ChatRoomOpeningListener;
 import battleship.packets.GameOfferPacket;
 import battleship.packets.MoveAnswerPacket;
 import battleship.packets.MovePacket;
+import org.jxmpp.util.XmppStringUtils;
 
 
 public class BattleshipPlugin implements Plugin{
@@ -67,9 +68,9 @@ public class BattleshipPlugin implements Plugin{
 	invitation.setTo(invitation.getFrom());
 	
 	
-	final ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(invitation.getFrom()));
+	final ChatRoom room = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(invitation.getFrom()));
 	
-	String name = StringUtils.parseName(invitation.getFrom());
+	String name = XmppStringUtils.parseLocalpart(invitation.getFrom());
 	final JPanel panel = new JPanel();
 	JLabel text = new JLabel("Game request from" + name); 
 	JLabel game = new JLabel("Battleships");

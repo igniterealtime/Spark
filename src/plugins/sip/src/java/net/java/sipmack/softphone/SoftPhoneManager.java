@@ -1098,7 +1098,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      */
     public void callByJID(String jid) {
         if (getStatus() == SipRegisterStatus.Registered) {
-            final VCard vcard = SparkManager.getVCardManager().getVCard(StringUtils.parseBareAddress(jid));
+            final VCard vcard = SparkManager.getVCardManager().getVCard(XmppStringUtils.parseBareJid(jid));
 
             if (vcard != null) {
                 String number = vcard.getPhoneWork("VOICE");

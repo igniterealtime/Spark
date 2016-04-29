@@ -66,6 +66,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * UI to show all chats occuring.
@@ -155,7 +156,7 @@ public final class CurrentActivity extends JPanel {
                     }
 
                     public void presenceChanged(Presence presence) {
-                        String agentJID = StringUtils.parseBareAddress(presence.getFrom());
+                        String agentJID = XmppStringUtils.parseBareJid(presence.getFrom());
                         agentJID = UserManager.unescapeJID(agentJID);
                         AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 

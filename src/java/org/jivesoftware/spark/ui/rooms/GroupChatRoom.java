@@ -86,6 +86,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -147,7 +148,7 @@ public class GroupChatRoom extends ChatRoom {
 	roomname = chat.getRoom();
 
 	// We are just using a generic Group Chat.
-	tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
+	tabTitle = XmppStringUtils.parseLocalpart(XmppStringUtils.unescapeLocalpart(roomname));
 
 	// Room Information
 	roomInfo = UIComponentRegistry.createGroupChatParticipantList();
@@ -158,7 +159,7 @@ public class GroupChatRoom extends ChatRoom {
 
 	setupListeners();
 
-	conferenceService = StringUtils.parseServer(chat.getRoom());
+	conferenceService = XmppStringUtils.parseDomain(chat.getRoom());
 
 	subjectPanel = new SubjectPanel();
 
@@ -668,7 +669,7 @@ public class GroupChatRoom extends ChatRoom {
 		return;
 	    }
 
-	    String messageNickname = StringUtils.parseResource(message
+	    String messageNickname = XmppStringUtils.parseResource(message
 		    .getFrom());
 
 	    boolean isFromMe = messageNickname.equals(getNickname())
@@ -679,7 +680,7 @@ public class GroupChatRoom extends ChatRoom {
 		// Update transcript
 		super.insertMessage(message);
 
-		String from = StringUtils.parseResource(message.getFrom());
+		String from = XmppStringUtils.parseResource(message.getFrom());
 
 		if (inf != null) {
 		    getTranscriptWindow().insertHistoryMessage(from,
@@ -692,7 +693,7 @@ public class GroupChatRoom extends ChatRoom {
 		    boolean isFromRoom = message.getFrom().indexOf("/") == -1;
 
 		    if (!SparkManager.getUserManager().hasVoice(this,
-			    StringUtils.parseResource(message.getFrom()))
+			    XmppStringUtils.parseResource(message.getFrom()))
 			    && !isFromRoom) {
 			return;
 		    }
@@ -719,10 +720,10 @@ public class GroupChatRoom extends ChatRoom {
 		// chatRoom.insertMessage(message);
 		// }
 	    } catch (ChatRoomNotFoundException e) {
-		String userNickname = StringUtils.parseResource(message
+		String userNickname = XmppStringUtils.parseResource(message
 			.getFrom());
 		String roomTitle = userNickname + " - "
-			+ StringUtils.parseName(getRoomname());
+			+ XmppStringUtils.parseLocalpart(getRoomname());
 		
 		// Check to see if this is a message notification.
 		if (message.getBody() != null) {
@@ -772,7 +773,7 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	final String from = presence.getFrom();
-	final String nickname = StringUtils.parseResource(from);
+	final String nickname = XmppStringUtils.parseResource(from);
 
 	MUCUser mucUser = (MUCUser) stanza.getExtension("x",
 		"http://jabber.org/protocol/muc#user");
@@ -828,78 +829,78 @@ public class GroupChatRoom extends ChatRoom {
 	chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
 
 	    public void kicked(String participant, String actor, String reason) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.kicked.from.room",
 			nickname,actor,reason));
 	    }
 
 	    public void voiceGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.given.voice", nickname));
 	    }
 
 	    public void voiceRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.voice.revoked", nickname));
 	    }
 
 	    public void banned(String participant, String actor, String reason) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.banned", nickname, reason));
 	    }
 
 	    public void membershipGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.granted.membership",
 			nickname));
 	    }
 
 	    public void membershipRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.revoked.membership",
 			nickname));
 	    }
 
 	    public void moderatorGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.granted.moderator",
 			nickname));
 	    }
 
 	    public void moderatorRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.revoked.moderator",
 			nickname));
 	    }
 
 	    public void ownershipGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.granted.owner", nickname));
 	    }
 
 	    public void ownershipRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.revoked.owner", nickname));
 	    }
 
 	    public void adminGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.granted.admin", nickname));
 	    }
 
 	    public void adminRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.revoked.admin", nickname));
 	    }
 
 	    public void nicknameChanged(String participant, String nickname) {
 		insertText(Res.getString("message.user.nickname.changed",
-			StringUtils.parseResource(participant), nickname));
+			XmppStringUtils.parseResource(participant), nickname));
 	    }
 	});
 
@@ -985,7 +986,7 @@ public class GroupChatRoom extends ChatRoom {
 	public void subjectUpdated(String subject, String by) {
 	    subjectPanel.setSubject(subject);
 	    subjectPanel.setToolTipText(subject);
-	    String nickname = StringUtils.parseResource(by);
+	    String nickname = XmppStringUtils.parseResource(by);
 
 	    String insertMessage = Res.getString(
 		    "message.subject.has.been.changed.to", subject, nickname);
@@ -1149,7 +1150,7 @@ public class GroupChatRoom extends ChatRoom {
 	public void composingNotification(final String from, String packetID) {
 	    SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    String bareAddress = StringUtils.parseBareAddress(from);
+		    String bareAddress = XmppStringUtils.parseBareJid(from);
 
 		    if (bareAddress.equals(getRoomname())) {
 			showUserIsTyping();
@@ -1204,7 +1205,7 @@ public class GroupChatRoom extends ChatRoom {
 		    final Iterator<String> iter = chat.getOccupants();
 		    while (iter.hasNext()) {
 			String from = iter.next();
-			String tFrom = StringUtils.parseResource(from);
+			String tFrom = XmppStringUtils.parseResource(from);
 			String nickname = chat.getNickname();
 			if (tFrom != null && !tFrom.equals(nickname)) {
 			    SparkManager.getMessageEventManager()

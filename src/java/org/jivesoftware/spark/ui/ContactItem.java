@@ -234,9 +234,9 @@ public class ContactItem extends JPanel {
         int windowWidth = settings.getMainWindowWidth();
 
         if (nickLength > windowWidth) {
-            displayNameLabel.setText(StringUtils.unescapeNode(displayName).substring(0, windowWidth) + "...");
+            displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName).substring(0, windowWidth) + "...");
         } else {
-            displayNameLabel.setText(StringUtils.unescapeNode(displayName));
+            displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName));
         }
     }
 

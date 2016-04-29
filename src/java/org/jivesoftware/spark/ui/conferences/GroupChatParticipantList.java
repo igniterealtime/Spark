@@ -86,6 +86,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such
@@ -205,7 +206,7 @@ public class GroupChatParticipantList extends JPanel {
 			}
 			final String userid = p.getFrom();
 
-			String displayName = StringUtils.parseResource(userid);
+			String displayName = XmppStringUtils.parseResource(userid);
 			userMap.put(displayName, userid);			
 
 			if (p.getType() == Presence.Type.available) {
@@ -318,7 +319,7 @@ public class GroupChatParticipantList extends JPanel {
 	}
 
 	protected ImageIcon getImageIcon(String participantJID) {
-		String displayName = StringUtils.parseResource(participantJID);
+		String displayName = XmppStringUtils.parseResource(participantJID);
 		ImageIcon icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
 		icon.setDescription(displayName);
 		return icon;
@@ -340,7 +341,7 @@ public class GroupChatParticipantList extends JPanel {
 	    }
 	}
 
-	String nickname = StringUtils.parseResource(participantJID);
+	String nickname = XmppStringUtils.parseResource(participantJID);
 
 	String affiliation  = parseRoleFromPacket(presence)[0];
 	String userRole = parseRoleFromPacket(presence)[1];
@@ -480,11 +481,11 @@ public class GroupChatParticipantList extends JPanel {
 	}
 
 	protected void startChat(ChatRoom groupChat, String groupJID) {
-		String userNickname = StringUtils.parseResource(groupJID);
+		String userNickname = XmppStringUtils.parseResource(groupJID);
 		String roomTitle = userNickname + " - "
-				+ StringUtils.parseName(groupChat.getRoomname());
+				+ XmppStringUtils.parseLocalpart(groupChat.getRoomname());
 
-		String nicknameOfUser = StringUtils.parseResource(groupJID);
+		String nicknameOfUser = XmppStringUtils.parseResource(groupJID);
 		String nickname = groupChat.getNickname();
 
 		if (nicknameOfUser.equals(nickname)) {
@@ -599,7 +600,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void grantMember(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
-	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.grantMembership(nickname);
 
 	} catch (XMPPException e) {
@@ -610,7 +611,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void revokeMember(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
-	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.revokeMembership(nickname);
 	} catch (XMPPException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
@@ -621,7 +622,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void grantAdmin(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
-	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.grantAdmin(nickname);
 	} catch (XMPPException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
@@ -631,7 +632,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void revokeAdmin(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
-	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.revokeAdmin(nickname);
 	} catch (XMPPException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
@@ -642,7 +643,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void grantOwner(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
-	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.grantOwnership(nickname);
 	} catch (XMPPException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
@@ -652,7 +653,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void revokeOwner(String nickname) {
 	try {
 	    Occupant o = userManager.getOccupant(groupChatRoom,nickname);
-	    nickname = StringUtils.parseBareAddress(o.getJid());
+	    nickname = XmppStringUtils.parseBareJid(o.getJid());
 	    chat.revokeOwnership(nickname);
 	} catch (XMPPException e) {
 	    groupChatRoom.getTranscriptWindow().insertNotificationMessage(
@@ -684,7 +685,7 @@ public class GroupChatParticipantList extends JPanel {
 	    final JLabel userLabel = (JLabel) model.getElementAt(index);
 	    final String selectedUser = userLabel.getText();
 	    final String groupJID = userMap.get(selectedUser);
-	    String groupJIDNickname = StringUtils.parseResource(groupJID);
+	    String groupJIDNickname = XmppStringUtils.parseResource(groupJID);
 
 	    final String nickname = groupChatRoom.getNickname();
 	    final Occupant occupant = userManager.getOccupant(groupChatRoom,

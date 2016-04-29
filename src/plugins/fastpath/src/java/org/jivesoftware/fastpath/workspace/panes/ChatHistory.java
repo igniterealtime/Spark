@@ -53,6 +53,7 @@ import org.jivesoftware.smackx.workgroup.packet.Transcript;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 public class ChatHistory extends JPanel {
 
@@ -111,7 +112,7 @@ public class ChatHistory extends JPanel {
 
     public void showDialog() {
         AgentSession agentSession = FastpathPlugin.getAgentSession();
-        String workgroupName = StringUtils.parseName(agentSession.getWorkgroupJID());
+        String workgroupName = XmppStringUtils.parseLocalpart(agentSession.getWorkgroupJID());
 
 
         if (mainFrame == null) {

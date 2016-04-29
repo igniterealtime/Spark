@@ -46,6 +46,7 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.packet.GameOfferPacket;
 import tic.tac.toe.packet.InvalidMove;
 import tic.tac.toe.packet.MovePacket;
@@ -124,7 +125,7 @@ public class TicTacToePlugin implements Plugin {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
 			
-			if(_currentInvitations.contains(StringUtils.parseBareAddress(opponentJID)))
+			if(_currentInvitations.contains(XmppStringUtils.parseBareJid(opponentJID)))
 			{
 			    return;
 			}
@@ -133,7 +134,7 @@ public class TicTacToePlugin implements Plugin {
 			offer.setTo(opponentJID);
 			offer.setType(IQ.Type.get );
 			
-			_currentInvitations.add(StringUtils.parseBareAddress(opponentJID));
+			_currentInvitations.add(XmppStringUtils.parseBareJid(opponentJID));
 			room.getTranscriptWindow().insertCustomText
 			    (TTTRes.getString("ttt.request.sent"), false, false, Color.BLUE);
 			SparkManager.getConnection().sendStanza(offer);
@@ -148,7 +149,7 @@ public class TicTacToePlugin implements Plugin {
 					answer.setGameID(offer.getGameID());
 					if (answer.getType() == IQ.Type.result) {
 					    // ACCEPT
-					    _currentInvitations.remove(StringUtils.parseBareAddress(opponentJID));
+					    _currentInvitations.remove(XmppStringUtils.parseBareJid(opponentJID));
 					    
 					    room.getTranscriptWindow().insertCustomText
 					    (TTTRes.getString("ttt.request.accept"), false, false, Color.BLUE);
@@ -158,7 +159,7 @@ public class TicTacToePlugin implements Plugin {
 					    // DECLINE
 					    room.getTranscriptWindow().insertCustomText
 					    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
-					    _currentInvitations.remove(StringUtils.parseBareAddress(opponentJID));
+					    _currentInvitations.remove(XmppStringUtils.parseBareJid(opponentJID));
 					}
 
 				    }
@@ -214,9 +215,9 @@ public class TicTacToePlugin implements Plugin {
 	invitation.setTo(invitation.getFrom());
 	
 	
-	final ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(invitation.getFrom()));
+	final ChatRoom room = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(invitation.getFrom()));
 	
-	String name = StringUtils.parseName(invitation.getFrom());
+	String name = XmppStringUtils.parseLocalpart(invitation.getFrom());
 	
 	final JPanel panel = new JPanel();
 	JLabel text = new JLabel(TTTRes.getString("ttt.game.request",name)); 
@@ -270,7 +271,7 @@ public class TicTacToePlugin implements Plugin {
      */
     private void createTTTWindow(GameOfferPacket gop, String opponentJID) {
 	
-	String name = StringUtils.parseName(opponentJID);
+	String name = XmppStringUtils.parseLocalpart(opponentJID);
 	
 	// tictactoe versus ${name}
 	JFrame f = new JFrame(TTTRes.getString("ttt.window.title", TTTRes.getString("ttt.game.name"),name));

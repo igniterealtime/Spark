@@ -159,7 +159,7 @@ final public class FormUtils {
      * @return the nickname of the user who sent the message.
      */
     public static String getNickname(Message message) {
-        String from = org.jivesoftware.smack.util.StringUtils.parseResource(message.getFrom());
+        String from = org.jivesoftware.smack.util.XmppStringUtils.parseResource(message.getFrom());
         return from;
     }
 

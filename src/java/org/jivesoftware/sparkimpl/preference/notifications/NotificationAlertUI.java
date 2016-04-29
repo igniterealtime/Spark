@@ -28,6 +28,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -69,9 +70,9 @@ public class NotificationAlertUI extends JPanel {
         setLayout(new GridBagLayout());
 
         this.available = available;
-        this.jid = StringUtils.parseBareAddress(jid);
+        this.jid = XmppStringUtils.parseBareJid(jid);
 
-        vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(jid));
+        vcard = SparkManager.getVCardManager().getVCardFromMemory(XmppStringUtils.parseBareJid(jid));
 
         final Icon presenceIcon = PresenceManager.getIconFromPresence(presence);
 

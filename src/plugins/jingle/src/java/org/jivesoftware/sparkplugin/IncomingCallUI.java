@@ -43,6 +43,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 public class IncomingCallUI extends JPanel {
 	private static final long serialVersionUID = -7758898282948774412L;
@@ -60,9 +61,9 @@ public class IncomingCallUI extends JPanel {
     public IncomingCallUI(String jid) {
         setLayout(new GridBagLayout());
 
-        this.jid = StringUtils.parseBareAddress(jid);
+        this.jid = XmppStringUtils.parseBareJid(jid);
 
-        vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(jid));
+        vcard = SparkManager.getVCardManager().getVCardFromMemory(XmppStringUtils.parseBareJid(jid));
 
         final JLabel topLabel = new JLabel();
         topLabel.setIcon(JinglePhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));

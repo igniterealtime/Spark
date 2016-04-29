@@ -53,6 +53,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -619,7 +620,7 @@ public class ChatManager implements ChatManagerListener {
 
                 ChatRoom chatRoom;
                 try {
-                    chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {                    	
                         typingNotificationList.add(chatRoom);
                         // Notify Decorators
@@ -642,7 +643,7 @@ public class ChatManager implements ChatManagerListener {
 
                 ChatRoom chatRoom;
                 try {
-                    chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
                         typingNotificationList.remove(chatRoom);
                         // Notify Decorators

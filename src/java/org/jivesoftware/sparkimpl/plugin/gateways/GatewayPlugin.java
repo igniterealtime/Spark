@@ -44,6 +44,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 
 import javax.swing.*;
@@ -264,7 +265,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             for (ContactItem contactItem : contactGroup.getContactItems()) {
                 Presence presence = contactItem.getPresence();
                 if (presence.isAvailable()) {
-                    String domain = StringUtils.parseServer(presence.getFrom());
+                    String domain = XmppStringUtils.parseDomain(presence.getFrom());
                     Transport transport = TransportUtils.getTransport(domain);
                     if (transport != null) {
                         handlePresence(contactItem, presence);
@@ -295,7 +296,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
     public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence.isAvailable()) {
-            String domain = StringUtils.parseServer(presence.getFrom());
+            String domain = XmppStringUtils.parseDomain(presence.getFrom());
             Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
                 if (presence.getType() == Presence.Type.available) {
@@ -316,7 +317,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     public Icon getIcon(String jid) {
-        String domain = StringUtils.parseServer(jid);
+        String domain = XmppStringUtils.parseDomain(jid);
         Transport transport = TransportUtils.getTransport(domain);
         if (transport != null) {
             if (PresenceManager.isOnline(jid)) {

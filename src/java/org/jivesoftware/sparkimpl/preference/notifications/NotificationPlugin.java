@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -81,7 +82,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem item : contactGroup.getContactItems()) {
                 if (item != null && item.getJID() != null && item.getPresence().isAvailable()) {
-                    String bareJID = StringUtils.parseBareAddress(item.getJID());
+                    String bareJID = XmppStringUtils.parseBareJid(item.getJID());
                     onlineUsers.add(bareJID);
                 }
             }
@@ -105,7 +106,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
             return;
         }
 
-        jid = StringUtils.parseBareAddress(jid);
+        jid = XmppStringUtils.parseBareJid(jid);
         boolean isOnline = onlineUsers.contains(jid);
 
         if (presence.isAvailable()) {

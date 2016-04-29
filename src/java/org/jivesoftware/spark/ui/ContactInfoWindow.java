@@ -53,6 +53,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -273,15 +274,15 @@ public class ContactInfoWindow extends JPanel {
         }
         statusLabel.setText(status);
 
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(contactItem.getJID()));
+        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(contactItem.getJID()));
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            String name = StringUtils.parseName(contactItem.getJID());
-            name = StringUtils.unescapeNode(name);
+            String name = XmppStringUtils.parseLocalpart(contactItem.getJID());
+            name = XmppStringUtils.unescapeLocalpart(name);
             fullJIDLabel.setText(transport.getName() + " - " + name);
         }
         else {
-            String name = StringUtils.unescapeNode(contactItem.getJID());
+            String name = XmppStringUtils.unescapeLocalpart(contactItem.getJID());
             fullJIDLabel.setText(name);
             fullJIDLabel.setIcon(null);
         }
@@ -312,7 +313,7 @@ public class ContactInfoWindow extends JPanel {
         // Get VCard from memory (if available)
         String title = "";
         String phone = "";
-        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(contactItem.getJID()));
+        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(XmppStringUtils.parseBareJid(contactItem.getJID()));
         if (vcard != null) {
             title = vcard.getField("TITLE");
             phone = vcard.getPhoneWork("VOICE");

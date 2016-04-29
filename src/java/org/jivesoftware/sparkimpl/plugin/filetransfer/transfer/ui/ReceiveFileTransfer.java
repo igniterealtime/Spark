@@ -74,6 +74,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
+import org.jxmpp.util.XmppStringUtils;
 
 public class ReceiveFileTransfer extends JPanel {
 
@@ -163,7 +164,7 @@ public class ReceiveFileTransfer extends JPanel {
         String fileName = request.getFileName();
         long fileSize = request.getFileSize();
         String requestor = request.getRequestor();
-        String bareJID = StringUtils.parseBareAddress(requestor);
+        String bareJID = XmppStringUtils.parseBareJid(requestor);
 
         ByteFormat format = new ByteFormat();
         String text = format.format(fileSize);
@@ -262,7 +263,7 @@ public class ReceiveFileTransfer extends JPanel {
 
     private void acceptRequest(final FileTransferRequest request) {
 	String requestor = request.getRequestor();
-	String bareJID = StringUtils.parseBareAddress(requestor);
+	String bareJID = XmppStringUtils.parseBareJid(requestor);
 
 	ContactList contactList = SparkManager.getWorkspace().getContactList();
 	final ContactItem contactItem = contactList
@@ -470,7 +471,7 @@ public class ReceiveFileTransfer extends JPanel {
 
         showAlert(true);
 
-        String bareJID = StringUtils.parseBareAddress(request.getRequestor());
+        String bareJID = XmppStringUtils.parseBareJid(request.getRequestor());
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);

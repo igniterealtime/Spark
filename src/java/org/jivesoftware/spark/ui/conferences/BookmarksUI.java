@@ -72,6 +72,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
@@ -595,9 +596,9 @@ public class BookmarksUI extends JPanel {
     public void setBookmarks(Collection<BookmarkedConference> bookmarks) {
 
         for (BookmarkedConference bookmark : bookmarks) {
-            String serviceName = StringUtils.parseServer(bookmark.getJid());
+            String serviceName = XmppStringUtils.parseDomain(bookmark.getJid());
             String roomJID = bookmark.getJid();
-            String roomName = StringUtils.parseName(bookmark.getJid());
+            String roomName = XmppStringUtils.parseLocalpart(bookmark.getJid());
 
             if (bookmark.isAutoJoin()) {
                 ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getPassword());

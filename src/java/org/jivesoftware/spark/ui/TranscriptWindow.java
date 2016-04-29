@@ -65,6 +65,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -464,8 +465,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                     }
 
                     if (Message.Type.groupchat == message.getType()) {
-                        if (ModelUtil.hasLength(StringUtils.parseResource(from))) {
-                            from = StringUtils.parseResource(from);
+                        if (ModelUtil.hasLength( XmppStringUtils.parseResource(from))) {
+                            from = XmppStringUtils.parseResource(from);
                         }
                     }
 

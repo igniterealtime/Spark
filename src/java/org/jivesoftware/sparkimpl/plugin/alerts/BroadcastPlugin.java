@@ -87,6 +87,7 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -137,7 +138,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                 
                 String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
-                if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
+                if (ModelUtil.hasLength(jid) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jid))) {
                     if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                         // Append server address
                         jid = jid + "@" + SparkManager.getConnection().getServiceName();
@@ -317,7 +318,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      *            the sender
      */
     private void userToUserBroadcast(Message message, Type type, String from) {
-	String jid = StringUtils.parseBareAddress(from);
+	String jid = XmppStringUtils.parseBareJid(from);
 	String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatContainer container = chatManager.getChatContainer();
@@ -335,7 +336,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	m.setBody(message.getBody());
 	m.setTo(message.getTo());
 
-	String name = StringUtils.parseName(message.getFrom());
+	String name = XmppStringUtils.parseLocalpart(message.getFrom());
 
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);

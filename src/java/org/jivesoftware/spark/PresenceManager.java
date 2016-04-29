@@ -27,6 +27,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.Icon;
 
@@ -141,7 +142,7 @@ public class PresenceManager {
 			if (extension instanceof MUCUser) {
 				final MUCUser mucUser = (MUCUser) extension;
 				String fullJid = mucUser.getItem().getJid();
-				String userJid = StringUtils.parseBareAddress(fullJid);
+				String userJid = XmppStringUtils.parseBareJid(fullJid);
 				return userJid;
 			}
 		}

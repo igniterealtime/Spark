@@ -65,6 +65,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -182,7 +183,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
 
         // Build Tree
-        String joinedWorkgroupName = StringUtils.parseName(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        String joinedWorkgroupName = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
         final JiveTreeNode workgroupNode = new JiveTreeNode(joinedWorkgroupName, true);
 
         final Iterator agentIter = agents.iterator();
@@ -212,7 +213,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
             while (workgroups.hasNext()) {
                 String workgroup = workgroups.next();
 
-                String workgroupName = StringUtils.parseName(workgroup);
+                String workgroupName = XmppStringUtils.parseLocalpart(workgroup);
                 final JiveTreeNode wgNode = new JiveTreeNode(workgroupName, false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 workgroupsNode.add(wgNode);
             }

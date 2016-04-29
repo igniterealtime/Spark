@@ -81,6 +81,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -236,7 +237,7 @@ public class RosterDialog implements ActionListener {
 
                 String nickname = nicknameField.getText();
                 if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(jid)) {
-                    nickname = StringUtils.parseName(jid);
+                    nickname = XmppStringUtils.parseLocalpart(jid);
                     if (!ModelUtil.hasLength(nickname)) {
                         nickname = jid;
                     }
@@ -525,7 +526,7 @@ public class RosterDialog implements ActionListener {
 		popup.show(_searchForName, event.getX(), event.getY());
 	    } else if (popup.getComponentCount() == 2) {
 		jidField.setText(((JMenuItem) popup.getComponent(1)).getText());
-		nicknameField.setText(StringUtils.parseName(((JMenuItem) popup
+		nicknameField.setText(XmppStringUtils.parseLocalpart(((JMenuItem) popup
 			.getComponent(1)).getText()));
 	    } else {
 		JOptionPane.showMessageDialog(jidField,
@@ -651,7 +652,7 @@ public class RosterDialog implements ActionListener {
 	    }
 	    // If no nickname, use first name.
 	    if (!ModelUtil.hasLength(nickname)) {
-		nickname = StringUtils.parseName(contact);
+		nickname = XmppStringUtils.parseLocalpart(contact);
 	    }
 	    nicknameField.setText(nickname);
 	}
@@ -665,7 +666,7 @@ public class RosterDialog implements ActionListener {
 		    .getString("message.cannot.add.contact.to.shared.group");
 	} else if (!ModelUtil.hasLength(contact)) {
 	    errorMessage = Res.getString("message.specify.contact.jid");
-	} else if (!StringUtils.parseBareAddress(contact).contains("@")) {
+	} else if (!XmppStringUtils.parseBareJid(contact).contains("@")) {
 	    errorMessage = Res.getString("message.invalid.jid.error");
 	} else if (!ModelUtil.hasLength(group)) {
 	    errorMessage = Res.getString("message.specify.group");

@@ -115,6 +115,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jxmpp.util.XmppStringUtils;
 
 public class Workpane {
     // Tracks all the offers coming into the client.
@@ -207,7 +208,7 @@ public class Workpane {
             public void actionPerformed(ActionEvent e) {
                 final Workgroup workgroup = FastpathPlugin.getWorkgroup();
                 String serviceName = "conference." + SparkManager.getSessionManager().getServerAddress();
-                final String roomName = "workgroup-" + StringUtils.parseName(workgroup.getWorkgroupJID()) + "@" + serviceName;
+                final String roomName = "workgroup-" + XmppStringUtils.parseLocalpart(workgroup.getWorkgroupJID()) + "@" + serviceName;
                 ConferenceUtils.joinConferenceOnSeperateThread("Workgroup Chat", roomName, null);
             }
         });
@@ -283,7 +284,7 @@ public class Workpane {
                     return;
                 }
                 String roomName = room.getRoomname();
-                String sessionID = StringUtils.parseName(roomName);
+                String sessionID = XmppStringUtils.parseLocalpart(roomName);
                 if (offerMap.get(sessionID) != null) {
                     Offer offer = (Offer)offerMap.get(sessionID);
                     Map metadata = offer.getMetaData();
@@ -293,7 +294,7 @@ public class Workpane {
 
             public void chatRoomClosed(ChatRoom room) {
                 String roomName = room.getRoomname();
-                String sessionID = StringUtils.parseName(roomName);
+                String sessionID = XmppStringUtils.parseLocalpart(roomName);
                 offerMap.remove(sessionID);
             }
         });
@@ -308,7 +309,7 @@ public class Workpane {
 
     public void decorateRoom(ChatRoom room, Map metadata) {
         String roomName = room.getRoomname();
-        String sessionID = StringUtils.parseName(roomName);
+        String sessionID = XmppStringUtils.parseLocalpart(roomName);
 
 
         RequestUtils utils = new RequestUtils(metadata);
@@ -414,7 +415,7 @@ public class Workpane {
                 // Queueu
                 InvitationManager.transferOrInviteToQueue(room, workgroup, sessionID, jid, message, transfer);
             }
-            else if (StringUtils.parseServer(jid).startsWith("workgroup")) {
+            else if ( XmppStringUtils.parseDomain(jid).startsWith("workgroup")) {
                 InvitationManager.transferOrInviteToWorkgroup(room, workgroup, sessionID, jid, message, transfer);
             }
             else {
@@ -686,7 +687,7 @@ public class Workpane {
                 MetaData metaDataExt = (MetaData)message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
                 if (metaDataExt != null) {
                     Map metadata = metaDataExt.getMetaData();
-                    metadata.put("sessionID", StringUtils.parseName(room));
+                    metadata.put("sessionID", XmppStringUtils.parseLocalpart(room));
 
                     RequestUtils utils = new RequestUtils(metadata);
                     inviteMap.put(utils.getSessionID(), metadata);
@@ -739,7 +740,7 @@ public class Workpane {
 
 
     public Properties getWorkgroupProperties() {
-        String workgroupName = StringUtils.parseName(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        String workgroupName = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
 
         File workgroupDir = new File(Spark.getSparkUserHome(), "workgroups/" + workgroupName);
         workgroupDir.mkdirs();
@@ -756,7 +757,7 @@ public class Workpane {
     }
 
     public void saveProperties(Properties props) {
-        String workgroupName = StringUtils.parseName(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        String workgroupName = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
 
         File propertiesFile = new File(new File(Spark.getSparkUserHome(), "workgroups/" + workgroupName), "workgroup.properties");
 

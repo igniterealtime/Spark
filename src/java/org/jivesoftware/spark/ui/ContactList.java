@@ -109,6 +109,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 
 public class ContactList extends JPanel implements ActionListener,
@@ -356,7 +357,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
-        final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
+        final String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
@@ -923,7 +924,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public ContactItem getContactItemByJID(String jid) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 return item;
             }
@@ -940,7 +941,7 @@ public class ContactList extends JPanel implements ActionListener,
     public Collection<ContactItem> getContactItemsByJID(String jid) {
         final List<ContactItem> list = new ArrayList<ContactItem>();
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 list.add(item);
             }
@@ -951,7 +952,7 @@ public class ContactList extends JPanel implements ActionListener,
          */
         for( ContactGroup group : getContactGroups() ) {
             for (ContactItem offlineItem : group.getOfflineContacts() ) {
-                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(StringUtils.parseBareAddress(jid)) ) {
+                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(XmppStringUtils.parseBareJid(jid)) ) {
                     if ( !list.contains(offlineItem) ) {
                         list.add(offlineItem);
                     }
@@ -970,7 +971,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public void setIconFor(String jid, Icon icon) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 item.setIcon(icon);
                 group.fireContactGroupUpdated();
@@ -985,7 +986,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public void useDefaults(String jid) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 item.updatePresenceIcon(item.getPresence());
                 group.fireContactGroupUpdated();
@@ -1330,7 +1331,7 @@ public class ContactList extends JPanel implements ActionListener,
 	
 	
 	            final Iterator<ContactGroup> contactGroups = groupList.iterator();
-	            String user = StringUtils.parseBareAddress(address);
+	            String user = XmppStringUtils.parseBareJid(address);
 	            while (contactGroups.hasNext()) {
 	                ContactGroup cg = contactGroups.next();
 	                ContactItem ci = cg.getContactItemByJID(user);
@@ -1879,7 +1880,7 @@ public class ContactList extends JPanel implements ActionListener,
                 }
                 else if (presence.getType() == Presence.Type.subscribe) {
                     // Find Contact in Contact List
-                    String jid = StringUtils.parseBareAddress(presence.getFrom());
+                    String jid = XmppStringUtils.parseBareJid(presence.getFrom());
                     ContactItem item = getContactItemByJID(jid);
 
                     // If item is not in the Contact List, add them.
@@ -1907,7 +1908,7 @@ public class ContactList extends JPanel implements ActionListener,
                                     Log.error(e);
                                 }
                             }
-                            String jid = StringUtils.parseBareAddress(presence.getFrom());
+                            String jid = XmppStringUtils.parseBareJid(presence.getFrom());
                             removeContactItem(jid);
                         }
                     });

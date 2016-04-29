@@ -30,6 +30,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -156,7 +157,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
-            String name = StringUtils.parseName(roomName);
+            String name = XmppStringUtils.parseLocalpart(roomName);
             ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
         }
         else {

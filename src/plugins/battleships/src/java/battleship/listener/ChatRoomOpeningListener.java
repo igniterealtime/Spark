@@ -22,6 +22,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import battleship.BsRes;
 import battleship.gui.GUI;
 import battleship.packets.GameOfferPacket;
+import org.jxmpp.util.XmppStringUtils;
 
 public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 
@@ -60,7 +61,7 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 				answer.setStartingPlayer(offer
 					.isStartingPlayer());
 				answer.setGameID(offer.getGameID());
-				String name = StringUtils.parseName(opponentJID);
+				String name = XmppStringUtils.parseLocalpart(opponentJID);
 				if (answer.getType() == IQ.Type.result) {
 				    // ACCEPT
 
@@ -87,7 +88,7 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 
     public static void createWindow(GameOfferPacket answer, String opponentJID) {
 
-	JFrame frame = new JFrame(BsRes.getString("versus", StringUtils.parseName(opponentJID)));
+	JFrame frame = new JFrame(BsRes.getString("versus", XmppStringUtils.parseLocalpart(opponentJID)));
 	frame.add(new GUI(answer.isStartingPlayer(),frame,SparkManager.getConnection(),answer.getGameID()));
 	frame.pack();
 	frame.setLocationRelativeTo(SparkManager.getChatManager().getChatContainer());

@@ -72,6 +72,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * The inner Container for Spark. The Workspace is the container for all plugins into the Spark
@@ -343,7 +344,7 @@ public class Workspace extends JPanel implements StanzaListener {
             final String host = SparkManager.getSessionManager().getServerAddress();
 
             // Don't allow workgroup notifications to come through here.
-            final String bareJID = StringUtils.parseBareAddress(from);
+            final String bareJID = XmppStringUtils.parseBareJid(from);
             if (host.equalsIgnoreCase(from) || from == null) {
                 return;
             }
@@ -374,9 +375,9 @@ public class Workspace extends JPanel implements StanzaListener {
             return;
         }
 
-        String bareJID = StringUtils.parseBareAddress(message.getFrom());
+        String bareJID = XmppStringUtils.parseBareJid(message.getFrom());
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = StringUtils.parseName(bareJID);
+        String nickname = XmppStringUtils.parseLocalpart(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
         }
@@ -405,7 +406,7 @@ public class Workspace extends JPanel implements StanzaListener {
      */
     private void createOneToOneRoom(String bareJID, Message message) {
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = StringUtils.parseName(bareJID);
+        String nickname = XmppStringUtils.parseLocalpart(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
         }

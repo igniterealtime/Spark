@@ -275,7 +275,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         session.startIncoming();
 
         if (chatRoom == null) {
-            chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(request.getFrom()));
+            chatRoom = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(request.getFrom()));
             SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
             SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
             notifyRoom();

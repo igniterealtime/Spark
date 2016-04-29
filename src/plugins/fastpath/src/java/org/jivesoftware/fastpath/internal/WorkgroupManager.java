@@ -69,6 +69,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -199,7 +200,7 @@ public class WorkgroupManager {
 
 
         String workgroupJID = contactItem.getJID();
-        String nameOfWorkgroup = StringUtils.parseName(workgroupJID);
+        String nameOfWorkgroup = XmppStringUtils.parseLocalpart(workgroupJID);
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), "Contact " + nameOfWorkgroup + " Workgroup");
         Workgroup workgroup = new Workgroup(workgroupJID, SparkManager.getConnection());
 
@@ -291,7 +292,7 @@ public class WorkgroupManager {
     }
 
     private void enterQueue(String workgroupJID, Form form) {
-        String workgroupName = StringUtils.parseName(workgroupJID).toUpperCase();
+        String workgroupName = XmppStringUtils.parseLocalpart(workgroupJID).toUpperCase();
 
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), workgroupName + " Workgroup");
 
@@ -409,7 +410,7 @@ public class WorkgroupManager {
             invites.add(inviter);
 
             if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {
-                String workgroupName = StringUtils.parseName(inviter);
+                String workgroupName = XmppStringUtils.parseLocalpart(inviter);
                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room, password);
 
                 int tabLocation = SparkManager.getChatManager().getChatContainer().indexOfComponent(groupChatRoom);

@@ -205,7 +205,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             return Collections.emptyList();
         }
 
-        Boolean supportsJingle = jingleFeature.get(StringUtils.parseBareAddress(jid));
+        Boolean supportsJingle = jingleFeature.get(XmppStringUtils.parseBareJid(jid));
         if (supportsJingle == null) {
             // Disco for event.
             // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
@@ -264,7 +264,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 
         jid = SparkManager.getUserManager().getFullJID(jid);
 
-        ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(jid));
+        ChatRoom room = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(jid));
         if (JingleStateManager.getInstance().getJingleRoomState(room) != null) {
             return;
         }

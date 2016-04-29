@@ -87,6 +87,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * A UI that handles all Group Rooms contained in an XMPP Messenger server. This
@@ -864,7 +865,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 		// new DataFormDialog(groupChat, form);
 		groupChat.sendConfigurationForm(form);
-        addRoomToTable(groupChat.getRoom(), StringUtils.parseName(groupChat.getRoom()), 1);
+        addRoomToTable(groupChat.getRoom(), XmppStringUtils.parseLocalpart(groupChat.getRoom()), 1);
 	    } catch (XMPPException e1) {
 		Log.error("Error creating new room.", e1);
 		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -931,7 +932,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 }
 
                 final Object[] insertRoom = new Object[] { iconLabel, roomName,
-                    StringUtils.parseName(jid), occupants };
+                    XmppStringUtils.parseLocalpart(jid), occupants };
                 return insertRoom;
             }
             

@@ -32,6 +32,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ShakeWindow;
+import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.GameBoard;
 import tic.tac.toe.Mark;
 import tic.tac.toe.TTTRes;
@@ -112,7 +113,7 @@ public class GamePanel extends JPanel {
 			message.addExtension(inval);
 			_connection.sendStanza(message);
 			
-			ChatRoom cr = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(_opponent));
+			ChatRoom cr = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(_opponent));
 			cr.getTranscriptWindow().insertCustomText(_opponent+"seems to be cheating\n"+
 				"He tried placing a wrong Move", true, false, Color.red);
 			
@@ -129,7 +130,7 @@ public class GamePanel extends JPanel {
 	    public void processPacket(Stanza stanza) {
 		
 		//InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
-		ChatRoom cr = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(_opponent));
+		ChatRoom cr = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(_opponent));
 		cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n"+
 			"You placed a wrong Move", true, false, Color.red);
 		ShakeWindow sw = new ShakeWindow(_frame);

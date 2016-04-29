@@ -35,6 +35,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -112,8 +113,7 @@ public class TransportUtils {
      * @return true if the jid is from a gateway.
      */
     public static boolean isFromGateway(String jid) {
-        jid = StringUtils.parseBareAddress(jid);
-        String serviceName = StringUtils.parseServer(jid);
+        String serviceName = XmppStringUtils.parseDomain(jid);
         return transports.containsKey(serviceName);
     }
 

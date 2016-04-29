@@ -31,6 +31,7 @@ import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Features;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
 
@@ -73,7 +74,7 @@ public final class SessionManager implements ConnectionListener {
         this.connection = connection;
         this.username = username;
         this.password = password;
-        this.userBareAddress = StringUtils.parseBareAddress(connection.getUser());
+        this.userBareAddress = XmppStringUtils.parseBareJid(connection.getUser());
 
         // create workgroup session
         personalDataManager = new PrivateDataManager(getConnection());
@@ -167,7 +168,7 @@ public final class SessionManager implements ConnectionListener {
      * @return the username associated with this session.
      */
     public String getUsername() {
-        return StringUtils.unescapeNode(username);
+        return XmppStringUtils.unescapeLocalpart(username);
     }
 
     /**

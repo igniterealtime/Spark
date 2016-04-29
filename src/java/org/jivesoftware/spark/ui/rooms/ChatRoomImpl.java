@@ -80,6 +80,7 @@ import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -191,7 +192,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         // If the user is not in the roster, then allow user to add them.
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
-        if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
+        if (entry == null && !XmppStringUtils.parseResource(participantJID).equals(participantNickname)) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
             if(!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
             	addChatRoomButton(addToRosterButton);
@@ -200,7 +201,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // If this is a private chat from a group chat room, do not show toolbar.
-        if (StringUtils.parseResource(participantJID).equals(participantNickname)) {
+        if (XmppStringUtils.parseResource(participantJID).equals(participantNickname)) {
             getToolBar().setVisible(false);
         }
 
@@ -752,7 +753,7 @@ public class ChatRoomImpl extends ChatRoom {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
             String messageBody = message.getBody();
             if (nickname.equals(message.getFrom())) {
-                String otherJID = StringUtils.parseBareAddress(message.getFrom());
+                String otherJID = XmppStringUtils.parseBareJid(message.getFrom());
                 String myJID = SparkManager.getSessionManager().getBareAddress();
 
                 if (otherJID.equals(myJID)) {
@@ -765,7 +766,7 @@ public class ChatRoomImpl extends ChatRoom {
                     }
                     catch(Exception e)
                     {
-                        nickname = StringUtils.parseName(nickname);
+                        nickname = XmppStringUtils.parseLocalpart(nickname);
                     }
                 }
             }
@@ -800,7 +801,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
         else if (e.getSource() == addToRosterButton) {
             RosterDialog rosterDialog = new RosterDialog();
-            rosterDialog.setDefaultJID(StringUtils.parseBareAddress(participantJID));
+            rosterDialog.setDefaultJID(XmppStringUtils.parseBareJid(participantJID));
             rosterDialog.setDefaultNickname(getParticipantNickname());
             rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
         } else {

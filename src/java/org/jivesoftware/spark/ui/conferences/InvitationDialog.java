@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -135,7 +136,7 @@ final class InvitationDialog extends JPanel {
         addJIDButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 String jid = jidField.getText();
-                String server = StringUtils.parseBareAddress(jid);
+                String server = XmppStringUtils.parseBareJid(jid);
                 if (server == null || server.indexOf("@") == -1) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(dlg, Res.getString("message.enter.valid.jid"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

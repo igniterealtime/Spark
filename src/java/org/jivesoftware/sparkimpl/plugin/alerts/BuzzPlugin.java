@@ -38,6 +38,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.util.TimerTask;
 
@@ -123,10 +124,10 @@ public class BuzzPlugin implements Plugin {
 
     private void shakeWindow(Message message) {
 
-	String bareJID = StringUtils.parseBareAddress(message.getFrom());
+	String bareJID = XmppStringUtils.parseBareJid(message.getFrom());
 	ContactItem contact = SparkManager.getWorkspace().getContactList()
 		.getContactItemByJID(bareJID);
-	String nickname = StringUtils.parseName(bareJID);
+	String nickname = XmppStringUtils.parseLocalpart(bareJID);
 	if (contact != null) {
 	    nickname = contact.getDisplayName();
 	}

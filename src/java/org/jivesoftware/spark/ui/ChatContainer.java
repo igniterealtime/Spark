@@ -81,6 +81,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -376,7 +377,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param p the presence to handle.
      */
     private void handleRoomPresence(final Presence p) {
-        final String roomname = StringUtils.parseBareAddress(p.getFrom());
+        final String roomname = XmppStringUtils.parseBareJid(p.getFrom());
         ChatRoom chatRoom;
         try {
             chatRoom = getChatRoom(roomname);
@@ -386,7 +387,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        final String userid = StringUtils.parseResource(p.getFrom());
+        final String userid = XmppStringUtils.parseResource(p.getFrom());
         if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
         }

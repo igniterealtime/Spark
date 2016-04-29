@@ -63,6 +63,7 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 public class InvitationPane {
 
@@ -169,7 +170,7 @@ public class InvitationPane {
                         chatRoom.getSplitPane().setDividerLocation(0.8);
                         transcriptAlert.setVisible(false);
 
-                        String name = StringUtils.parseName(roomName);
+                        String name = XmppStringUtils.parseLocalpart(roomName);
 
                         try {
                             chatRoom.setTabTitle(roomName);

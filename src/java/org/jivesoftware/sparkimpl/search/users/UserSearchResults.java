@@ -36,6 +36,7 @@ import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -170,7 +171,7 @@ public class UserSearchResults extends JPanel {
                     int col = column.getModelIndex();
                     String nickname = (String)resultsTable.getValueAt(row, col);
                     if (!ModelUtil.hasLength(nickname)) {
-                        nickname = StringUtils.parseName(jid);
+                        nickname = XmppStringUtils.parseLocalpart(jid);
                     }
                     dialog.setDefaultNickname(nickname);
                 }
@@ -253,7 +254,7 @@ public class UserSearchResults extends JPanel {
 
     private void openChatRoom(int row) {
         String jid = (String)resultsTable.getValueAt(row, 0);
-        String nickname = StringUtils.parseName(jid);
+        String nickname = XmppStringUtils.parseLocalpart(jid);
 
         TableColumn column;
         try {
@@ -261,7 +262,7 @@ public class UserSearchResults extends JPanel {
             int col = column.getModelIndex();
             nickname = (String)resultsTable.getValueAt(row, col);
             if (!ModelUtil.hasLength(nickname)) {
-                nickname = StringUtils.parseName(jid);
+                nickname = XmppStringUtils.parseLocalpart(jid);
             }
         }
         catch (Exception e1) {

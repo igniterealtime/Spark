@@ -56,6 +56,7 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Displays Fastpath transcripts.
@@ -81,7 +82,7 @@ public class ChatViewer extends JPanel {
             Stanza stanza = iter.next();
             if (stanza instanceof Message) {
                 Message message = (Message)stanza;
-                String from = StringUtils.parseResource(message.getFrom());
+                String from = XmppStringUtils.parseResource(message.getFrom());
                 DelayInformation delayInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
                 if (delayInformation != null) {
@@ -95,7 +96,7 @@ public class ChatViewer extends JPanel {
             }
             else {
                 Presence presence = (Presence)stanza;
-                String from = StringUtils.parseResource(presence.getFrom());
+                String from = XmppStringUtils.parseResource(presence.getFrom());
                 if (presence.getType() == Presence.Type.available) {
                     from = FpRes.getString("message.user.joined.room", from);
                 }
