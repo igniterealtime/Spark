@@ -118,9 +118,7 @@ public class ChatQueue extends JPanel {
         Color linkColor = new Color(69, 92, 137);
 
         int count = 1;
-        Iterator fields = form.getFields();
-        while (fields.hasNext()) {
-            FormField field = (FormField)fields.next();
+        for ( final FormField field : form.getFields() ) {
             String variable = field.getVariable();
             String label = field.getLabel();
             if (label != null) {

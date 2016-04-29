@@ -72,21 +72,16 @@ public class DataFormUI extends JPanel {
 
     private void buildUI(Form form) {
         // Add default answers to the form to submit
-        Iterator<FormField> fields = form.getFields();
-        while (fields.hasNext()) {
-            FormField field = fields.next();
+        for ( final FormField field : form.getFields() ) {
             String variable = field.getVariable();
             String label = field.getLabel();
             String type = field.getType();
 
-            Iterator<?> iter = field.getValues();
-            List<Object> valueList = new ArrayList<Object>();
-            while (iter.hasNext()) {
-                valueList.add(iter.next());
-            }
+
+            List<String> valueList =field.getValues();
 
             if (type.equals(FormField.TYPE_BOOLEAN)) {
-                String o = (String)valueList.get(0);
+                String o = valueList.get(0);
                 boolean isSelected = o.equals("1");
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
@@ -95,16 +90,15 @@ public class DataFormUI extends JPanel {
             else if (type.equals(FormField.TYPE_TEXT_SINGLE) || type.equals(FormField.TYPE_JID_SINGLE)) {
                 String v = "";
                 if (valueList.size() > 0) {
-                    v = (String)valueList.get(0);
+                    v = valueList.get(0);
                 }
                 addField(label, new JTextField(v), variable);
             }
             else if (type.equals(FormField.TYPE_TEXT_MULTI) ||
                     type.equals(FormField.TYPE_JID_MULTI)) {
                 StringBuffer buf = new StringBuffer();
-                iter = field.getOptions();
-                while (iter.hasNext()) {
-                    buf.append((String)iter.next());
+                for ( FormField.Option option : field.getOptions() ) {
+                    buf.append(option);
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
             }
@@ -113,13 +107,11 @@ public class DataFormUI extends JPanel {
             }
             else if (type.equals(FormField.TYPE_LIST_SINGLE)) {
                 JComboBox box = new JComboBox();
-                iter = field.getOptions();
-                while (iter.hasNext()) {
-                    FormField.Option option = (FormField.Option)iter.next();
+                for ( final FormField.Option option : field.getOptions() ) {
                     box.addItem(option);
                 }
                 if (valueList.size() > 0) {
-                    String defaultValue = (String)valueList.get(0);
+                    String defaultValue = valueList.get(0);
                     box.setSelectedItem(defaultValue);
                 }
 
@@ -127,9 +119,7 @@ public class DataFormUI extends JPanel {
             }
             else if (type.equals(FormField.TYPE_LIST_MULTI)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                Iterator<?> i = field.getValues();
-                while (i.hasNext()) {
-                    String value = (String)i.next();
+                for ( final String value : field.getValues() ) {
                     checkBoxList.addCheckBox(new JCheckBox(value), value);
                 }
                 addField(label, checkBoxList, variable);
@@ -147,7 +137,7 @@ public class DataFormUI extends JPanel {
         Iterator<String> valueIter = valueMap.keySet().iterator();
         Form answerForm = searchForm.createAnswerForm();
         while (valueIter.hasNext()) {
-            String answer = (String)valueIter.next();
+            String answer = valueIter.next();
             Object o = valueMap.get(answer);
             if (o instanceof JCheckBox) {
                 boolean isSelected = ((JCheckBox)o).isSelected();

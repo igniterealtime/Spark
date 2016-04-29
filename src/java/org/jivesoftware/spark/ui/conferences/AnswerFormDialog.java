@@ -78,11 +78,8 @@ public class AnswerFormDialog {
 	dialog = new JDialog(parent, true);
 	dialog.setTitle(Res.getString("button.register").replace("&", ""));
 
-	Iterator<FormField> iterator = form.getFields();
 	int row = 0;
-	while (iterator.hasNext()) {
-	    FormField formfield = iterator.next();
-	    
+	for ( final FormField formfield : form.getFields() ) {
 	    JLabel label = new JLabel(formfield.getLabel());
 	    String type = formfield.getType();
 

@@ -87,24 +87,17 @@ public class DataFormDialog extends JPanel {
 
         // Create a new form to submit based on the original form
         try {
-            Iterator<FormField> fields = form.getFields();
-
             // Add default answers to the form to submit
-            while (fields.hasNext()) {
-                FormField field = fields.next();
+            for ( final FormField field : form.getFields() ) {
                 submitForm.addField(field);
                 String variable = field.getVariable();
                 String label = field.getLabel();
                 String type = field.getType();
 
-                Iterator<?> iter = field.getValues();
-                List<Object> valueList = new ArrayList<Object>();
-                while (iter.hasNext()) {
-                    valueList.add(iter.next());
-                }
+                List<String> valueList = field.getValues();
 
                 if (type.equals(FormField.TYPE_BOOLEAN)) {
-                    String o = (String)valueList.get(0);
+                    String o = valueList.get(0);
                     boolean isSelected = o.equals("1");
                     JCheckBox box = new JCheckBox(label);
                     box.setSelected(isSelected);
@@ -112,16 +105,15 @@ public class DataFormDialog extends JPanel {
                 }
                 else if (type.equals(FormField.TYPE_TEXT_SINGLE) ||
                         type.equals(FormField.TYPE_JID_SINGLE)) {
-                    String value = (String)valueList.get(0);
+                    String value = valueList.get(0);
                     addField(label, new JTextField(value), variable);
                 }
                 else if (type.equals(FormField.TYPE_TEXT_MULTI) ||
                         type.equals(FormField.TYPE_JID_MULTI)) {
                     StringBuffer buf = new StringBuffer();
-                    iter = field.getValues();
-
+                    final Iterator<String> iter = valueList.iterator();
                     while (iter.hasNext()) {
-                        buf.append((String)iter.next());
+                        buf.append( iter.next() );
 
                         if (iter.hasNext()) {
                             buf.append(",");
@@ -134,9 +126,7 @@ public class DataFormDialog extends JPanel {
                 }
                 else if (type.equals(FormField.TYPE_LIST_SINGLE)) {
                     JComboBox box = new JComboBox();
-                    iter = field.getOptions();
-                    while (iter.hasNext()) {
-                        FormField.Option option = (FormField.Option)iter.next();
+                    for ( final FormField.Option option : field.getOptions() ) {
                         String value = option.getValue();
                         box.addItem(value);
                     }
@@ -149,19 +139,10 @@ public class DataFormDialog extends JPanel {
                 }
                 else if (type.equals(FormField.TYPE_LIST_MULTI)) {
                     CheckBoxList checkBoxList = new CheckBoxList();
-                    Iterator<Option> options = field.getOptions();
-                    Option option = null;
-                    String optionLabel = null;
-                    String optionValue = null;
-                    Iterator<?> i = field.getValues();
-                    List<String> values = new ArrayList<String>();
-                    while (i.hasNext()) {
-                        values.add((String)i.next());
-                    }
-                    while (options.hasNext()) {
-                        option = options.next();
-                        optionLabel = option.getLabel();
-                        optionValue = option.getValue();
+                    final List<String> values = field.getValues();
+                    for ( final Option option : field.getOptions() ) {
+                        String optionLabel = option.getLabel();
+                        String optionValue = option.getValue();
                         checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
                     }
                     addField(label, checkBoxList, variable);

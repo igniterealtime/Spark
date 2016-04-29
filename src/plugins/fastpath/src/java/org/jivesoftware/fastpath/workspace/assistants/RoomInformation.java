@@ -100,9 +100,7 @@ public class RoomInformation extends JPanel {
         setBackground(Color.white);
 
         int count = 1;
-        Iterator<FormField> fields = form.getFields();
-        while (fields.hasNext()) {
-            FormField field = fields.next();
+        for ( final FormField field : form.getFields() ) {
             String variable = field.getVariable();
             String label = field.getLabel();
             if (label != null) {

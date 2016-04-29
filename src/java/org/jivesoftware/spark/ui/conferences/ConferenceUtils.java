@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -35,7 +34,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -44,7 +42,7 @@ import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
-import org.jivesoftware.smackx.packet.DataForm;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
@@ -105,22 +103,18 @@ public class ConferenceUtils {
 
         final DateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
         DiscoverInfo infoResult = discoManager.discoverInfo(roomJID);
-        DataForm dataForm = (DataForm)infoResult.getExtension("x", "jabber:x:data");
+        DataForm dataForm = infoResult.getExtension("x", "jabber:x:data");
         if (dataForm == null) {
             return "Not available";
         }
-        Iterator<FormField> fieldIter = dataForm.getFields();
         String creationDate = "";
-        while (fieldIter.hasNext()) {
-            FormField field = fieldIter.next();
+        for ( final FormField field : dataForm.getFields() ) {
             String label = field.getLabel();
 
 
             if (label != null && "Creation date".equalsIgnoreCase(label)) {
-                Iterator<String> valueIterator = field.getValues();
-                while (valueIterator.hasNext()) {
-                    Object oo = valueIterator.next();
-                    creationDate = "" + oo;
+                for ( String value : field.getValues() ) {
+                    creationDate = value;
                     Date date = dateFormatter.parse(creationDate);
                     creationDate = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.MEDIUM).format(date);
                 }

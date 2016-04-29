@@ -79,9 +79,7 @@ public class WorkgroupDataForm extends JPanel {
 
     private void buildUI(Form form) {
         // Add default answers to the form to submit
-        Iterator<FormField> fields = form.getFields();
-        while (fields.hasNext()) {
-            FormField field = fields.next();
+        for ( final FormField field : form.getFields() ) {
             String variable = field.getVariable();
             if(field.isRequired()){
                 requiredList.add(variable);
@@ -94,10 +92,9 @@ public class WorkgroupDataForm extends JPanel {
             String label = field.getLabel();
             String type = field.getType();
 
-            Iterator iter = field.getValues();
             List valueList = new ArrayList();
-            while (iter.hasNext()) {
-                valueList.add(iter.next());
+            for ( String value : field.getValues() ) {
+                valueList.add( value );
             }
 
             if (type.equals(FormField.TYPE_BOOLEAN)) {

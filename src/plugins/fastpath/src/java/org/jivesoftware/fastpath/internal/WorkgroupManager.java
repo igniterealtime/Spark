@@ -257,10 +257,8 @@ public class WorkgroupManager {
     }
 
     private static boolean validateForm(JDialog parent, Form workgroupForm, Form form) {
-        Iterator iter = form.getFields();
-        while (iter.hasNext()) {
-            FormField field = (FormField)iter.next();
-            if (field.isRequired() && !field.getValues().hasNext()) {
+        for ( final FormField field : form.getFields()) {
+            if (field.isRequired() && field.getValues().isEmpty()) {
                 String variable = field.getVariable();
                 String elementName = workgroupForm.getField(variable).getLabel();
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
