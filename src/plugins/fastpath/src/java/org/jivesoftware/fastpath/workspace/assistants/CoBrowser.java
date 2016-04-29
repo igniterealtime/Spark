@@ -47,7 +47,7 @@ import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.MessageEventManager;
+import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.workgroup.util.ModelUtil;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
