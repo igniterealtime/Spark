@@ -76,9 +76,9 @@ public class TicTacToePlugin implements Plugin {
 	buttonimg = new ImageIcon(cl.getResource("ttt.button.png"));
 	_currentInvitations = new HashSet<String>();
 
-	ProviderManager.getInstance().addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE,GameOfferPacket.class);
-	ProviderManager.getInstance().addExtensionProvider(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE, MovePacket.class);
-	ProviderManager.getInstance().addExtensionProvider(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE, InvalidMove.class);
+	ProviderManager.addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE,GameOfferPacket.class);
+	ProviderManager.addExtensionProvider(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE, MovePacket.class);
+	ProviderManager.addExtensionProvider(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE, InvalidMove.class);
 
 	// Add IQ listener to listen for incoming game invitations.
 	_gameOfferListener = new PacketListener() {

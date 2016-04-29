@@ -82,7 +82,7 @@ public final class SessionManager implements ConnectionListener {
         discoverItems();
 
 
-        ProviderManager.getInstance().addExtensionProvider("event", "http://jabber.org/protocol/disco#info", new Features.Provider());
+        ProviderManager.addExtensionProvider("event", "http://jabber.org/protocol/disco#info", new Features.Provider());
     }
 
     /**

@@ -55,10 +55,10 @@ public class BuzzPlugin implements Plugin {
     private static final String NAMESPACE_OLD = "http://www.jivesoftware.com/spark";
 
     public void initialize() {
-	ProviderManager.getInstance().addExtensionProvider(ELEMENTNAME,
+	ProviderManager.addExtensionProvider(ELEMENTNAME,
 		NAMESPACE, BuzzPacket.class);
 
-	ProviderManager.getInstance().addExtensionProvider(ELEMENTNAME_OLD,
+	ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
 		NAMESPACE_OLD, BuzzPacket.class);
 
 	SparkManager.getConnection().addPacketListener(new PacketListener() {

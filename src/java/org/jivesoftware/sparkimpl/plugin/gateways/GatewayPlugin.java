@@ -72,7 +72,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     private JPanel transferTab = new JPanel();
 
     public void initialize() {
-	ProviderManager.getInstance().addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
+	ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
 	LocalPreferences localPref = SettingsManager.getLocalPreferences();
 	useTab = localPref.getShowTransportTab();
 	transferTab.setBackground((Color)UIManager.get("ContactItem.background"));

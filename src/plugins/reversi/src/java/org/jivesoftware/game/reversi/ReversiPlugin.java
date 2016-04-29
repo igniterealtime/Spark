@@ -83,9 +83,9 @@ public class ReversiPlugin implements Plugin {
         // communicate game offers
         // and current game state. Adding the Smack providers lets us use the
         // custom protocol.
-        ProviderManager.getInstance().addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
-        ProviderManager.getInstance().addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
-        ProviderManager.getInstance().addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
+        ProviderManager.addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
+        ProviderManager.addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
+        ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
 
         // Add IQ listener to listen for incoming game invitations.
         gameOfferListener = new PacketListener() {
@@ -121,9 +121,9 @@ public class ReversiPlugin implements Plugin {
         gameInvitations.clear();
 
         // Remove Smack providers.
-        ProviderManager.getInstance().removeIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE);
-        ProviderManager.getInstance().removeExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
-        ProviderManager.getInstance().removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
+        ProviderManager.removeIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE);
+        ProviderManager.removeExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+        ProviderManager.removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
     }
 
     public boolean canShutDown() {

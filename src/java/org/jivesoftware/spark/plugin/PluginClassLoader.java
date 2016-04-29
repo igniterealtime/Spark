@@ -145,10 +145,10 @@ public class PluginClassLoader extends URLClassLoader {
                             // Add the provider to the map.
                             Class<?> provider = this.loadClass(className);
                             if (IQProvider.class.isAssignableFrom(provider)) {
-                                ProviderManager.getInstance().addIQProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addIQProvider(elementName, namespace, provider.newInstance());
                             }
                             else if (IQ.class.isAssignableFrom(provider)) {
-                                ProviderManager.getInstance().addIQProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addIQProvider(elementName, namespace, provider.newInstance());
                             }
                         }
                         catch (ClassNotFoundException cnfe) {
@@ -178,11 +178,11 @@ public class PluginClassLoader extends URLClassLoader {
                             Class<?> provider = this.loadClass(className);
                             if (PacketExtensionProvider.class.isAssignableFrom(
                                     provider)) {
-                                ProviderManager.getInstance().addExtensionProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addExtensionProvider(elementName, namespace, provider.newInstance());
                             }
                             else if (PacketExtension.class.isAssignableFrom(
                                     provider)) {
-                                ProviderManager.getInstance().addExtensionProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addExtensionProvider(elementName, namespace, provider.newInstance());
                             }
                         }
                         catch (ClassNotFoundException cnfe) {
