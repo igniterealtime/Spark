@@ -19,7 +19,7 @@
  */ 
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 
 

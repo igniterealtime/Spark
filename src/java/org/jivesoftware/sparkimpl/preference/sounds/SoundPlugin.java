@@ -22,7 +22,7 @@ package org.jivesoftware.sparkimpl.preference.sounds;
 
 import java.io.File;
 
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;

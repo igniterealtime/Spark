@@ -80,7 +80,7 @@ import org.jivesoftware.fastpath.workspace.panes.UserInvitationPane;
 import org.jivesoftware.fastpath.workspace.search.ChatSearch;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.resource.SoundsRes;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;

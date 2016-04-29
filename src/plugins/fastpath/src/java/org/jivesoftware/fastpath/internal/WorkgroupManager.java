@@ -44,7 +44,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
