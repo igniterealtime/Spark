@@ -178,7 +178,7 @@ public class ReversiPlugin implements Plugin {
                 // Accept the game offer by sending a positive reply packet.
                 GameOffer reply = new GameOffer();
                 reply.setTo(invitation.getFrom());
-                reply.setPacketID(invitation.getPacketID());
+                reply.setStanzaId(invitation.getPacketID());
                 reply.setType(IQ.Type.result);
                 SparkManager.getConnection().sendStanza(reply);
                 // Hide the response panel. TODO: make this work.
@@ -202,7 +202,7 @@ public class ReversiPlugin implements Plugin {
                 // Reject the game offer by sending an error packet.
                 GameOffer reply = new GameOffer();
                 reply.setTo(invitation.getFrom());
-                reply.setPacketID(invitation.getPacketID());
+                reply.setStanzaId(invitation.getPacketID());
                 reply.setType(IQ.Type.error);
                 SparkManager.getConnection().sendStanza(reply);
                 // Hide the response panel. TODO: make this work.

@@ -67,7 +67,7 @@ public class JabberVersion implements Plugin {
                     version.setVersion(JiveInfo.getVersion());
 
                     // Send back as a reply
-                    version.setPacketID(iq.getPacketID());
+                    version.setStanzaId(iq.getPacketID());
                     version.setType(IQ.Type.result);
                     version.setTo(iq.getFrom());
                     version.setFrom(iq.getTo());
@@ -76,7 +76,7 @@ public class JabberVersion implements Plugin {
                 // Send time
                 else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
                     Time time = new Time();
-                    time.setPacketID(iq.getPacketID());
+                    time.setStanzaId(iq.getPacketID());
                     time.setFrom(iq.getTo());
                     time.setTo(iq.getFrom());
                     time.setTime(new Date());

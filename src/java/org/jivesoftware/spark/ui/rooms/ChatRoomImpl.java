@@ -617,7 +617,7 @@ public class ChatRoomImpl extends ChatRoom {
             if (messageEvent.isDisplayed()) {
                 event.setDisplayed(true);
             }
-            event.setPacketID(packetID);
+            event.setStanzaId(packetID);
             msg.addExtension(event);
             // Send the packet
             SparkManager.getConnection().sendStanza(msg);
