@@ -56,7 +56,7 @@ import net.java.sipmack.softphone.SoftPhoneManager;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
 
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.phone.Phone;

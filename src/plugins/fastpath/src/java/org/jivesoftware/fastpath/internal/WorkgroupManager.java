@@ -53,7 +53,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.workgroup.settings.ChatSetting;
 import org.jivesoftware.smackx.workgroup.settings.ChatSettings;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
