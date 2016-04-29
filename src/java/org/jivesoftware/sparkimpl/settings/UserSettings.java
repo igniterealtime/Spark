@@ -20,7 +20,7 @@
 package org.jivesoftware.sparkimpl.settings;
 
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.PrivateDataManager;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;

@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.PrivateDataManager;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.packet.PrivateData;
 import org.jivesoftware.smackx.provider.PrivateDataProvider;
 import org.jivesoftware.spark.util.ModelUtil;
