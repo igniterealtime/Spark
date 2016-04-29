@@ -58,7 +58,7 @@ public class JabberVersion implements Plugin {
                 IQ iq = (IQ)stanza;
 
                 // Handle Version Request
-                if (iq instanceof Version && iq.getType() == IQ.Type.GET) {
+                if (iq instanceof Version && iq.getType() == IQ.Type.get) {
                     // Send Version
                     Version version = new Version();
                     version.setName(JiveInfo.getName());
@@ -68,19 +68,19 @@ public class JabberVersion implements Plugin {
 
                     // Send back as a reply
                     version.setPacketID(iq.getPacketID());
-                    version.setType(IQ.Type.RESULT);
+                    version.setType(IQ.Type.result);
                     version.setTo(iq.getFrom());
                     version.setFrom(iq.getTo());
                     SparkManager.getConnection().sendStanza(version);
                 }
                 // Send time
-                else if (iq instanceof Time && iq.getType() == IQ.Type.GET) {
+                else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
                     Time time = new Time();
                     time.setPacketID(iq.getPacketID());
                     time.setFrom(iq.getTo());
                     time.setTo(iq.getFrom());
                     time.setTime(new Date());
-                    time.setType(IQ.Type.RESULT);
+                    time.setType(IQ.Type.result);
 
                     // Send Time
                     SparkManager.getConnection().sendStanza(time);

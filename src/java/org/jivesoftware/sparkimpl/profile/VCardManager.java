@@ -207,7 +207,7 @@ public class VCardManager {
 				{
 					VCard VCardpacket = (VCard)stanza;
 					String jid = VCardpacket.getFrom();
-					if (VCardpacket.getType().equals(IQ.Type.RESULT) && jid != null && delayedContacts.contains(jid))
+					if (VCardpacket.getType().equals(IQ.Type.result) && jid != null && delayedContacts.contains(jid))
 					{
 						delayedContacts.remove(jid);
 						addVCard(jid, VCardpacket);

@@ -83,7 +83,7 @@ public class VersionViewer {
 
         // Load Version
         final Version versionRequest = new Version();
-        versionRequest.setType(IQ.Type.GET);
+        versionRequest.setType(IQ.Type.get);
         versionRequest.setTo(jid);
         final PacketCollector collector = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(versionRequest.getPacketID()));
 
@@ -98,7 +98,7 @@ public class VersionViewer {
 
             public void finished() {
                 // Wait up to 5 seconds for a result.
-                if (result != null && result.getType() == IQ.Type.RESULT) {
+                if (result != null && result.getType() == IQ.Type.result) {
                     Version versionResult = (Version)result;
                     softwareField.setText(versionResult.getName());
                     versionField.setText(versionResult.getVersion());
@@ -111,7 +111,7 @@ public class VersionViewer {
 
 
         final Time time = new Time();
-        time.setType(IQ.Type.GET);
+        time.setType(IQ.Type.get);
         time.setTo(jid);
         final PacketCollector collector2 = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(time.getPacketID()));
 
@@ -127,7 +127,7 @@ public class VersionViewer {
             public void finished() {
                 // Wait up to 5 seconds for a result.
 
-                if (timeResult != null && timeResult.getType() == IQ.Type.RESULT) {
+                if (timeResult != null && timeResult.getType() == IQ.Type.result) {
                     Time t = (Time)timeResult;
                     if (t.getDisplay() != null) {
                         timeField.setText(t.getDisplay());

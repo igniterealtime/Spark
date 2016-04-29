@@ -120,7 +120,7 @@ public class Gateway extends IQ {
      */
     public static String getJID(String serviceName, String username) throws XMPPException {
         Gateway registration = new Gateway();
-        registration.setType(IQ.Type.SET);
+        registration.setType(IQ.Type.set);
         registration.setTo(serviceName);
         registration.setUsername(username);
 
@@ -133,7 +133,7 @@ public class Gateway extends IQ {
         if (response == null) {
             throw new XMPPException("Server timed out");
         }
-        if (response.getType() == IQ.Type.ERROR) {
+        if (response.getType() == IQ.Type.error) {
             throw new XMPPException("Error registering user", response.getError());
         }
 

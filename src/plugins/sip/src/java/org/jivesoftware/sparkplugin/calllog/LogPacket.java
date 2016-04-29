@@ -128,7 +128,7 @@ public class LogPacket extends IQ {
         lp.addExtension(ext);
 
         lp.setTo(NAME + "." + connection.getServiceName());
-        lp.setType(IQ.Type.SET);
+        lp.setType(IQ.Type.set);
 
         PacketCollector collector = connection
                 .createPacketCollector(new PacketIDFilter(lp.getPacketID()));

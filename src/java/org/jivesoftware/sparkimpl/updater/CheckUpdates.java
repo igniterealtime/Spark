@@ -565,7 +565,7 @@ public class CheckUpdates {
      */
     public static SparkVersion getLatestVersion(XMPPConnection connection) throws XMPPException {
         SparkVersion request = new SparkVersion();
-        request.setType(IQ.Type.GET);
+        request.setType(IQ.Type.get);
         request.setTo("updater." + connection.getServiceName());
 
         PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(request.getPacketID()));

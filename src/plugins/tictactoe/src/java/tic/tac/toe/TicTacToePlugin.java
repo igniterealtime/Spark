@@ -84,7 +84,7 @@ public class TicTacToePlugin implements Plugin {
 	_gameOfferListener = new StanzaListener() {
 	    public void processPacket(Stanza stanza) {
 		GameOfferPacket invitation = (GameOfferPacket) stanza;
-		if (invitation.getType() == IQ.Type.GET) {
+		if (invitation.getType() == IQ.Type.get) {
 		    showInvitationAlert(invitation);
 		}
 	    }
@@ -131,7 +131,7 @@ public class TicTacToePlugin implements Plugin {
 			
 			final GameOfferPacket offer = new GameOfferPacket();
 			offer.setTo(opponentJID);
-			offer.setType(IQ.Type.GET );
+			offer.setType(IQ.Type.get );
 			
 			_currentInvitations.add(StringUtils.parseBareAddress(opponentJID));
 			room.getTranscriptWindow().insertCustomText
@@ -146,7 +146,7 @@ public class TicTacToePlugin implements Plugin {
 					GameOfferPacket answer = (GameOfferPacket)stanza;
 					answer.setStartingPlayer(offer.isStartingPlayer());
 					answer.setGameID(offer.getGameID());
-					if (answer.getType() == IQ.Type.RESULT) {
+					if (answer.getType() == IQ.Type.result) {
 					    // ACCEPT
 					    _currentInvitations.remove(StringUtils.parseBareAddress(opponentJID));
 					    
@@ -210,7 +210,7 @@ public class TicTacToePlugin implements Plugin {
     private void showInvitationAlert(final GameOfferPacket invitation) {
 	
 	
-	invitation.setType(IQ.Type.RESULT);
+	invitation.setType(IQ.Type.result);
 	invitation.setTo(invitation.getFrom());
 	
 	
@@ -250,7 +250,7 @@ public class TicTacToePlugin implements Plugin {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		invitation.setType(IQ.Type.ERROR);
+		invitation.setType(IQ.Type.error);
 		SparkManager.getConnection().sendStanza(invitation);
 		panel.remove(3);
 		panel.remove(2);

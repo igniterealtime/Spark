@@ -44,7 +44,7 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 
 		final GameOfferPacket offer = new GameOfferPacket();
 		offer.setTo(opponentJID);
-		offer.setType(IQ.Type.GET);
+		offer.setType(IQ.Type.get);
 
 		room.getTranscriptWindow().insertCustomText(
 			BsRes.getString("request"), false, false,
@@ -61,7 +61,7 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 					.isStartingPlayer());
 				answer.setGameID(offer.getGameID());
 				String name = StringUtils.parseName(opponentJID);
-				if (answer.getType() == IQ.Type.RESULT) {
+				if (answer.getType() == IQ.Type.result) {
 				    // ACCEPT
 
 				    room.getTranscriptWindow()

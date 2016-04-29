@@ -160,7 +160,7 @@ public class TransportUtils {
      */
     public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname) throws XMPPException {
         Registration registration = new Registration();
-        registration.setType(IQ.Type.SET);
+        registration.setType(IQ.Type.set);
         registration.setTo(gatewayDomain);
         registration.addExtension(new GatewayRegisterExtension());
 
@@ -184,7 +184,7 @@ public class TransportUtils {
         if (response == null) {
             throw new XMPPException("Server timed out");
         }
-        if (response.getType() == IQ.Type.ERROR) {
+        if (response.getType() == IQ.Type.error) {
             throw new XMPPException("Error registering user", response.getError());
         }
 
@@ -197,7 +197,7 @@ public class TransportUtils {
      */
     public static void unregister(XMPPConnection con, String gatewayDomain) throws XMPPException {
         Registration registration = new Registration();
-        registration.setType(IQ.Type.SET);
+        registration.setType(IQ.Type.set);
         registration.setTo(gatewayDomain);
         Map<String,String> map = new HashMap<String,String>();
         map.put("remove", "");
@@ -212,7 +212,7 @@ public class TransportUtils {
         if (response == null) {
             throw new XMPPException("Server timed out");
         }
-        if (response.getType() == IQ.Type.ERROR) {
+        if (response.getType() == IQ.Type.error) {
             throw new XMPPException("Error registering user", response.getError());
         }
     }

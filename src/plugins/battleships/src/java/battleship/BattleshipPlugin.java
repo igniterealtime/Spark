@@ -45,7 +45,7 @@ public class BattleshipPlugin implements Plugin{
 	    @Override
 	    public void processPacket(Stanza stanza) {
 		GameOfferPacket invitation = (GameOfferPacket) stanza;
-		if (invitation.getType() == IQ.Type.GET) {
+		if (invitation.getType() == IQ.Type.get) {
 		    showInvitationInChat(invitation);
 		}
 	    }
@@ -63,7 +63,7 @@ public class BattleshipPlugin implements Plugin{
     }
 
     private void showInvitationInChat(final GameOfferPacket invitation) {
-	invitation.setType(IQ.Type.RESULT);
+	invitation.setType(IQ.Type.result);
 	invitation.setTo(invitation.getFrom());
 	
 	
@@ -99,7 +99,7 @@ public class BattleshipPlugin implements Plugin{
 	decline.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		invitation.setType(IQ.Type.ERROR);
+		invitation.setType(IQ.Type.error);
 		SparkManager.getConnection().sendStanza(invitation);
 		panel.remove(3);
 		panel.remove(2);

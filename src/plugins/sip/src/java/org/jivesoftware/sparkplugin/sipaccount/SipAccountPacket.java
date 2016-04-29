@@ -167,7 +167,7 @@ public class SipAccountPacket extends IQ {
         SipAccountPacket sp = new SipAccountPacket();
 
         sp.setTo("sipark." + connection.getServiceName());
-        sp.setType(IQ.Type.GET);
+        sp.setType(IQ.Type.get);
 
         PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(sp.getPacketID()));
         connection.sendStanza(sp);
@@ -199,7 +199,7 @@ public class SipAccountPacket extends IQ {
         SipAccountPacket sp = new SipAccountPacket(SipAccountPacket.Type.status);
 
         sp.setTo("sipark." + connection.getServiceName());
-        sp.setType(IQ.Type.SET);
+        sp.setType(IQ.Type.set);
         sp.setContent(register.name());
 
         PacketCollector collector = connection

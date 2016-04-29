@@ -91,9 +91,9 @@ public class ReversiPlugin implements Plugin {
         gameOfferListener = new StanzaListener() {
             public void processPacket(Stanza stanza) {
                 GameOffer invitation = (GameOffer) stanza;
-                if (invitation.getType() == IQ.Type.GET) {
+                if (invitation.getType() == IQ.Type.get) {
                     showInvitationAlert(invitation);
-                } else if (invitation.getType() == IQ.Type.ERROR) {
+                } else if (invitation.getType() == IQ.Type.error) {
                     handleErrorIQ(invitation);
                 }
             }
@@ -179,7 +179,7 @@ public class ReversiPlugin implements Plugin {
                 GameOffer reply = new GameOffer();
                 reply.setTo(invitation.getFrom());
                 reply.setPacketID(invitation.getPacketID());
-                reply.setType(IQ.Type.RESULT);
+                reply.setType(IQ.Type.result);
                 SparkManager.getConnection().sendStanza(reply);
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
@@ -203,7 +203,7 @@ public class ReversiPlugin implements Plugin {
                 GameOffer reply = new GameOffer();
                 reply.setTo(invitation.getFrom());
                 reply.setPacketID(invitation.getPacketID());
-                reply.setType(IQ.Type.ERROR);
+                reply.setType(IQ.Type.error);
                 SparkManager.getConnection().sendStanza(reply);
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
@@ -296,7 +296,7 @@ public class ReversiPlugin implements Plugin {
                             public void actionPerformed(ActionEvent e) {
                                GameOffer reply = new GameOffer();
                                reply.setTo(((ChatRoomImpl) room).getJID());
-                               reply.setType(IQ.Type.ERROR);
+                               reply.setType(IQ.Type.error);
                                SparkManager.getConnection().sendStanza(reply);
                                cancelButton.setText("Canceled");
                                cancelButton.setEnabled(false);
@@ -315,14 +315,14 @@ public class ReversiPlugin implements Plugin {
                             public void processPacket(Stanza stanza) {
                                 GameOffer offerReply = ((GameOffer) stanza);
 
-                                if (offerReply.getType() == IQ.Type.RESULT) {
+                                if (offerReply.getType() == IQ.Type.result) {
                                     // Remove the offer panel
                                     room.getTranscriptWindow().remove(request);
                                     content.remove(1);
                                     label.setText("Starting game...");
                                     // Show game board (using original offer!).
                                     showReversiBoard(offer.getGameID(), room, offer.isStartingPlayer(), offerReply.getFrom());
-                                } else if (offerReply.getType() == IQ.Type.ERROR) {
+                                } else if (offerReply.getType() == IQ.Type.error) {
                                     cancelButton.setVisible(false);
                                     JPanel userDeclinedPanel = new JPanel(new BorderLayout());
                                     JLabel userDeclined = new JLabel("User declined...");

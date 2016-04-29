@@ -86,7 +86,7 @@ public class GameOfferPacket extends IQ {
     public String getChildElementXML() {
 	StringBuffer buf = new StringBuffer();
 	buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
-	if (getType() == IQ.Type.GET) {
+	if (getType() == IQ.Type.get) {
 	    buf.append("<gameID>").append(gameID).append("</gameID>");
 	    buf.append("<startingPlayer>").append(imTheStartingPlayer)
 		    .append("</startingPlayer>");
