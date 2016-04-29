@@ -175,6 +175,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             }
         });
 
+        setEditorKit( new WrapEditorKit() ); // SPARK-1613 Ensure that long text wraps.
     }
 
     /**
