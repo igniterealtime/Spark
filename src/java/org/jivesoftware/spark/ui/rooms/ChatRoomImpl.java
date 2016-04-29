@@ -41,7 +41,7 @@ import javax.swing.event.DocumentEvent;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
