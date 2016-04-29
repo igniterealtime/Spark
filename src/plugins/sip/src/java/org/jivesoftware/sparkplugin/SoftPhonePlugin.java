@@ -39,8 +39,8 @@ import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
 
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.Plugin;

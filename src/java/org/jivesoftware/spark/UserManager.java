@@ -20,7 +20,7 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.Occupant;

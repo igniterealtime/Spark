@@ -22,8 +22,8 @@ package org.jivesoftware.sparkplugin.ui.transfer;
 
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.sparkplugin.ui.TelephoneTextField;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;

@@ -37,7 +37,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;

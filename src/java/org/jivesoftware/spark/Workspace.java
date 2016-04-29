@@ -40,7 +40,7 @@ import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;

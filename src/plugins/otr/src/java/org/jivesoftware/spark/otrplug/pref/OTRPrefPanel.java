@@ -19,7 +19,7 @@ import javax.swing.event.TableModelListener;
 
 import net.java.otr4j.session.SessionID;
 
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.spark.SparkManager;
 
 import org.jivesoftware.spark.otrplug.OTRManager;

@@ -20,10 +20,10 @@
 package org.jivesoftware.spark.component;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
-import org.jivesoftware.smack.RosterListener;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
+import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;

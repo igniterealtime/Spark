@@ -21,8 +21,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;

@@ -68,7 +68,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.spark.ChatAreaSendField;
