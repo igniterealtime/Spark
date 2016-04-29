@@ -20,7 +20,7 @@
 
 package org.jivesoftware.sparkimpl.settings;
 
-import org.jivesoftware.smackx.packet.PrivateData;
+import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 
 import java.util.Iterator;
 import java.util.Map;

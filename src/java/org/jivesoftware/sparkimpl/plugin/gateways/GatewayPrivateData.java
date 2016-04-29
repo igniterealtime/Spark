@@ -19,8 +19,8 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.smackx.packet.PrivateData;
-import org.jivesoftware.smackx.provider.PrivateDataProvider;
+import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
+import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.HashMap;
