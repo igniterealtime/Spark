@@ -25,7 +25,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.MUCUser;
+import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.Icon;
