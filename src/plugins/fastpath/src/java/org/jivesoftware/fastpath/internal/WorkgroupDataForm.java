@@ -114,9 +114,8 @@ public class WorkgroupDataForm extends JPanel {
             else if (type.equals(FormField.Type.text_multi) ||
                 type.equals(FormField.Type.jid_multi)) {
                 StringBuffer buf = new StringBuffer();
-                iter = field.getOptions();
-                while (iter.hasNext()) {
-                    buf.append((String)iter.next());
+                for ( final FormField.Option option : field.getOptions() ) {
+                    buf.append(option);
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
             }
@@ -125,9 +124,7 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (type.equals(FormField.Type.list_single)) {
                 JComboBox box = new JComboBox();
-                iter = field.getOptions();
-                while (iter.hasNext()) {
-                    FormField.Option option = (FormField.Option)iter.next();
+                for ( final FormField.Option option : field.getOptions() ) {
                     String value = option.getValue();
                     box.addItem(option);
                 }
@@ -140,9 +137,7 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (type.equals(FormField.Type.list_multi)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                Iterator i = field.getValues();
-                while (i.hasNext()) {
-                    String value = (String)i.next();
+                for ( final String value : field.getValues() ) {
                     checkBoxList.addCheckBox(new JCheckBox(value), value);
                 }
                 addField(label, checkBoxList, variable);
