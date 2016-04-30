@@ -40,6 +40,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
@@ -201,6 +202,16 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	     */
 	    SparkManager.getConnection().addConnectionListener(
 		    new ConnectionListener() {
+
+			@Override
+			public void connected( XMPPConnection xmppConnection ) {
+				trayIcon.setImage( availableIcon.getImage() );
+			}
+
+			@Override
+			public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+				trayIcon.setImage( availableIcon.getImage() );
+			}
 
 			@Override
 			public void connectionClosed() {
